@@ -27,7 +27,7 @@
 
 #include "vtkDICOMImageReader.h"
 #include "vtkvmtkWin32Header.h"
-
+#if 0
 #include "DICOMParser.h"
 #include "DICOMAppHelper.h"
 
@@ -59,7 +59,7 @@ class VTK_VMTK_IO_EXPORT vtkvmtkDICOMParser : public DICOMParser
   public:
 };
 //ETX
-
+#endif
 class VTK_VMTK_IO_EXPORT vtkvmtkDICOMImageReader : public vtkDICOMImageReader
 {
   public:

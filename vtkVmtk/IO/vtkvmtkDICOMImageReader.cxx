@@ -30,7 +30,7 @@
 
 vtkCxxRevisionMacro(vtkvmtkDICOMImageReader,"$Revision: 1.8 $");
 vtkStandardNewMacro(vtkvmtkDICOMImageReader);
-
+#if 0
 class DICOMAppHelperImplementation
 {
 public:
@@ -117,10 +117,11 @@ void vtkvmtkDICOMAppHelper::ImageOrientationPatientCallback(DICOMParser *parser,
     memcpy( this->ImageOrientationPatient, (*it).second.ImageOrientationPatient, 6*sizeof(float) );
     }
 }
-
+#endif
 
 vtkvmtkDICOMImageReader::vtkvmtkDICOMImageReader()
 {
+#if 0
   if (this->Parser)
     {
     delete this->Parser;
@@ -134,7 +135,7 @@ vtkvmtkDICOMImageReader::vtkvmtkDICOMImageReader()
     }
 
   this->AppHelper = new vtkvmtkDICOMAppHelper();
-
+#endif
   this->AutoOrientImage = 1;
 
   this->OrientationStringX = NULL;
@@ -171,7 +172,7 @@ void vtkvmtkDICOMImageReader::ExecuteInformation()
   Superclass::ExecuteInformation();
   this->ComputeOutputVoxelSpacing();
 }
-/*        
+#if 0        
 int vtkvmtkDICOMImageReader::RequestInformation (
   vtkInformation       * vtkNotUsed( request ),
   vtkInformationVector** vtkNotUsed( inputVector ),
@@ -189,7 +190,7 @@ int vtkvmtkDICOMImageReader::RequestInformation (
   vtkDataObject::SetPointDataActiveScalarInfo(outInfo, this->DataScalarType,this->NumberOfScalarComponents);
   return 1;
 }
-*/
+#endif
 void vtkvmtkDICOMImageReader::ComputeOutputVoxelSpacing()
 {
   double voxelSpacing[3] = {0.0, 0.0, 0.0};
@@ -327,8 +328,11 @@ void vtkvmtkDICOMImageReader::GenerateOrientationString(float direction[3], char
 
 void vtkvmtkDICOMImageReader::OrientImageData()
 {
+#if 0
   vtkvmtkDICOMAppHelper* appHelper = (vtkvmtkDICOMAppHelper*)this->AppHelper;
   float* imageOrientation = appHelper->GetImageOrientationPatient();
+#endif
+  float* imageOrientation = this->AppHelper->GetImageOrientationPatient();
   
   float directionX[3],directionY[3], directionZ[3];
   directionX[0] = imageOrientation[0];
