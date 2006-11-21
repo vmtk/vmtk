@@ -1,0 +1,1136 @@
+Testing ... solver = mg, smoother = 1, preconditioner = 0
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.0669e-01
+  2. iteration ... accuracy =  1.6171e-02
+  3. iteration ... accuracy =  2.8634e-03
+  4. iteration ... accuracy =  5.2075e-04
+  5. iteration ... accuracy =  9.5453e-05
+Testing ... solver = mg, smoother = 1, preconditioner = 1
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.0669e-01
+  2. iteration ... accuracy =  1.6171e-02
+  3. iteration ... accuracy =  2.8634e-03
+  4. iteration ... accuracy =  5.2075e-04
+  5. iteration ... accuracy =  9.5453e-05
+Testing ... solver = mg, smoother = 1, preconditioner = 2
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.0669e-01
+  2. iteration ... accuracy =  1.6171e-02
+  3. iteration ... accuracy =  2.8634e-03
+  4. iteration ... accuracy =  5.2075e-04
+  5. iteration ... accuracy =  9.5453e-05
+Testing ... solver = mg, smoother = 1, preconditioner = 3
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.0669e-01
+  2. iteration ... accuracy =  1.6171e-02
+  3. iteration ... accuracy =  2.8634e-03
+  4. iteration ... accuracy =  5.2075e-04
+  5. iteration ... accuracy =  9.5453e-05
+Testing ... solver = mg, smoother = 2, preconditioner = 0
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  8.4988e-02
+  2. iteration ... accuracy =  8.6062e-03
+  3. iteration ... accuracy =  1.0422e-03
+  4. iteration ... accuracy =  1.3117e-04
+  5. iteration ... accuracy =  1.6761e-05
+Testing ... solver = mg, smoother = 2, preconditioner = 1
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  8.4988e-02
+  2. iteration ... accuracy =  8.6062e-03
+  3. iteration ... accuracy =  1.0422e-03
+  4. iteration ... accuracy =  1.3117e-04
+  5. iteration ... accuracy =  1.6761e-05
+Testing ... solver = mg, smoother = 2, preconditioner = 2
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  8.4993e-02
+  2. iteration ... accuracy =  8.6084e-03
+  3. iteration ... accuracy =  1.0428e-03
+  4. iteration ... accuracy =  1.3128e-04
+  5. iteration ... accuracy =  1.6780e-05
+Testing ... solver = mg, smoother = 2, preconditioner = 3
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  8.4993e-02
+  2. iteration ... accuracy =  8.6084e-03
+  3. iteration ... accuracy =  1.0428e-03
+  4. iteration ... accuracy =  1.3128e-04
+  5. iteration ... accuracy =  1.6780e-05
+Testing ... solver = mg, smoother = 3, preconditioner = 0
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  8.4988e-02
+  2. iteration ... accuracy =  8.6062e-03
+  3. iteration ... accuracy =  1.0422e-03
+  4. iteration ... accuracy =  1.3117e-04
+  5. iteration ... accuracy =  1.6761e-05
+Testing ... solver = mg, smoother = 3, preconditioner = 1
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  8.4988e-02
+  2. iteration ... accuracy =  8.6062e-03
+  3. iteration ... accuracy =  1.0422e-03
+  4. iteration ... accuracy =  1.3117e-04
+  5. iteration ... accuracy =  1.6761e-05
+Testing ... solver = mg, smoother = 3, preconditioner = 2
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  8.4993e-02
+  2. iteration ... accuracy =  8.6084e-03
+  3. iteration ... accuracy =  1.0428e-03
+  4. iteration ... accuracy =  1.3128e-04
+  5. iteration ... accuracy =  1.6780e-05
+Testing ... solver = mg, smoother = 3, preconditioner = 3
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  8.4993e-02
+  2. iteration ... accuracy =  8.6084e-03
+  3. iteration ... accuracy =  1.0428e-03
+  4. iteration ... accuracy =  1.3128e-04
+  5. iteration ... accuracy =  1.6780e-05
+Testing ... solver = mg, smoother = 4, preconditioner = 0
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  4.0570e-02
+  2. iteration ... accuracy =  2.0295e-03
+  3. iteration ... accuracy =  1.1725e-04
+  4. iteration ... accuracy =  7.3033e-06
+  5. iteration ... accuracy =  4.7718e-07
+Testing ... solver = mg, smoother = 4, preconditioner = 1
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  4.0570e-02
+  2. iteration ... accuracy =  2.0295e-03
+  3. iteration ... accuracy =  1.1725e-04
+  4. iteration ... accuracy =  7.3033e-06
+  5. iteration ... accuracy =  4.7718e-07
+Testing ... solver = mg, smoother = 4, preconditioner = 2
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  4.0570e-02
+  2. iteration ... accuracy =  2.0295e-03
+  3. iteration ... accuracy =  1.1726e-04
+  4. iteration ... accuracy =  7.3034e-06
+  5. iteration ... accuracy =  4.7715e-07
+Testing ... solver = mg, smoother = 4, preconditioner = 3
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  4.0570e-02
+  2. iteration ... accuracy =  2.0295e-03
+  3. iteration ... accuracy =  1.1726e-04
+  4. iteration ... accuracy =  7.3034e-06
+  5. iteration ... accuracy =  4.7715e-07
+Testing ... solver = mg, smoother = 6, preconditioner = 0
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.7159e-01
+  2. iteration ... accuracy =  1.8502e-02
+  3. iteration ... accuracy =  5.1503e-04
+  4. iteration ... accuracy =  3.9045e-05
+  5. iteration ... accuracy =  1.7627e-06
+Testing ... solver = mg, smoother = 6, preconditioner = 1
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.7159e-01
+  2. iteration ... accuracy =  1.8502e-02
+  3. iteration ... accuracy =  5.1503e-04
+  4. iteration ... accuracy =  3.9045e-05
+  5. iteration ... accuracy =  1.7627e-06
+Testing ... solver = mg, smoother = 6, preconditioner = 2
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  8.5066e-02
+  2. iteration ... accuracy =  1.8813e-03
+  3. iteration ... accuracy =  1.7591e-05
+  4. iteration ... accuracy =  3.6169e-07
+  5. iteration ... accuracy =  4.4378e-09
+Testing ... solver = mg, smoother = 6, preconditioner = 3
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  5.2956e-02
+  2. iteration ... accuracy =  3.4019e-04
+  3. iteration ... accuracy =  4.3741e-06
+  4. iteration ... accuracy =  9.7128e-08
+  5. iteration ... accuracy =  2.5572e-09
+Testing ... solver = mg, smoother = 7, preconditioner = 0
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  9.7075e-02
+  2. iteration ... accuracy =  1.9437e-02
+  3. iteration ... accuracy =  4.8223e-03
+  4. iteration ... accuracy =  1.3824e-03
+  5. iteration ... accuracy =  4.3660e-04
+Testing ... solver = mg, smoother = 7, preconditioner = 1
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  9.7075e-02
+  2. iteration ... accuracy =  1.9437e-02
+  3. iteration ... accuracy =  4.8223e-03
+  4. iteration ... accuracy =  1.3824e-03
+  5. iteration ... accuracy =  4.3660e-04
+Testing ... solver = mg, smoother = 7, preconditioner = 2
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  4.0593e-02
+  2. iteration ... accuracy =  1.9884e-03
+  3. iteration ... accuracy =  1.1853e-04
+  4. iteration ... accuracy =  7.4011e-06
+  5. iteration ... accuracy =  4.9876e-07
+Testing ... solver = mg, smoother = 7, preconditioner = 3
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  3.1965e-02
+  2. iteration ... accuracy =  1.1675e-03
+  3. iteration ... accuracy =  5.5906e-05
+  4. iteration ... accuracy =  2.1381e-06
+  5. iteration ... accuracy =  4.2371e-08
+Testing ... solver = mg, smoother = 8, preconditioner = 0
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  5.2003e-02
+  2. iteration ... accuracy =  2.9665e-03
+  3. iteration ... accuracy =  6.4421e-05
+  4. iteration ... accuracy =  2.5697e-06
+  5. iteration ... accuracy =  1.0426e-07
+Testing ... solver = mg, smoother = 8, preconditioner = 1
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  5.2003e-02
+  2. iteration ... accuracy =  2.9665e-03
+  3. iteration ... accuracy =  6.4421e-05
+  4. iteration ... accuracy =  2.5697e-06
+  5. iteration ... accuracy =  1.0426e-07
+Testing ... solver = mg, smoother = 8, preconditioner = 2
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.7662e-02
+  2. iteration ... accuracy =  4.2322e-04
+  3. iteration ... accuracy =  3.6559e-06
+  4. iteration ... accuracy =  4.6531e-08
+  5. iteration ... accuracy =  4.2256e-10
+Testing ... solver = mg, smoother = 8, preconditioner = 3
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.2095e-02
+  2. iteration ... accuracy =  8.7121e-05
+  3. iteration ... accuracy =  1.1241e-06
+  4. iteration ... accuracy =  7.9428e-09
+Testing ... solver = mg, smoother = 9, preconditioner = 0
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.7159e-01
+  2. iteration ... accuracy =  1.8502e-02
+  3. iteration ... accuracy =  5.1503e-04
+  4. iteration ... accuracy =  3.9045e-05
+  5. iteration ... accuracy =  1.7627e-06
+Testing ... solver = mg, smoother = 9, preconditioner = 1
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.7159e-01
+  2. iteration ... accuracy =  1.8502e-02
+  3. iteration ... accuracy =  5.1503e-04
+  4. iteration ... accuracy =  3.9045e-05
+  5. iteration ... accuracy =  1.7627e-06
+Testing ... solver = mg, smoother = 9, preconditioner = 2
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  8.5066e-02
+  2. iteration ... accuracy =  1.8813e-03
+  3. iteration ... accuracy =  1.7591e-05
+  4. iteration ... accuracy =  3.6169e-07
+  5. iteration ... accuracy =  4.4378e-09
+Testing ... solver = mg, smoother = 9, preconditioner = 3
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  5.2956e-02
+  2. iteration ... accuracy =  3.4019e-04
+  3. iteration ... accuracy =  4.3741e-06
+  4. iteration ... accuracy =  9.7128e-08
+  5. iteration ... accuracy =  2.5572e-09
+Testing ... solver = mg, smoother = 10, preconditioner = 0
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  7.4454e-02
+  2. iteration ... accuracy =  2.7467e-03
+  3. iteration ... accuracy =  1.1794e-04
+  4. iteration ... accuracy =  5.1332e-06
+  5. iteration ... accuracy =  2.5310e-07
+Testing ... solver = mg, smoother = 10, preconditioner = 1
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  5.2003e-02
+  2. iteration ... accuracy =  2.9665e-03
+  3. iteration ... accuracy =  6.4421e-05
+  4. iteration ... accuracy =  2.5697e-06
+  5. iteration ... accuracy =  1.0426e-07
+Testing ... solver = mg, smoother = 10, preconditioner = 2
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.5488e-02
+  2. iteration ... accuracy =  1.9946e-04
+  3. iteration ... accuracy =  4.5177e-06
+  4. iteration ... accuracy =  3.3564e-08
+  5. iteration ... accuracy =  1.3189e-09
+Testing ... solver = mg, smoother = 10, preconditioner = 3
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.0832e-02
+  2. iteration ... accuracy =  9.6993e-05
+  3. iteration ... accuracy =  8.0888e-07
+  4. iteration ... accuracy =  6.3721e-09
+Testing ... solver = mg, smoother = 11, preconditioner = 0
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.4071e+01
+  2. iteration ... accuracy =  4.7060e-01
+  3. iteration ... accuracy =  1.0696e-02
+  4. iteration ... accuracy =  2.6509e-03
+  5. iteration ... accuracy =  3.5229e-05
+Testing ... solver = mg, smoother = 11, preconditioner = 1
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.4071e+01
+  2. iteration ... accuracy =  4.7060e-01
+  3. iteration ... accuracy =  1.0696e-02
+  4. iteration ... accuracy =  2.6509e-03
+  5. iteration ... accuracy =  3.5229e-05
+Testing ... solver = mg, smoother = 11, preconditioner = 2
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  9.7633e-01
+  2. iteration ... accuracy =  3.2473e-03
+  3. iteration ... accuracy =  6.5405e-04
+  4. iteration ... accuracy =  3.5010e-06
+  5. iteration ... accuracy =  1.5325e-08
+Testing ... solver = mg, smoother = 11, preconditioner = 3
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.7014e-01
+  2. iteration ... accuracy =  1.4000e-03
+  3. iteration ... accuracy =  8.1754e-06
+  4. iteration ... accuracy =  2.5981e-08
+  5. iteration ... accuracy =  7.0280e-10
+Testing ... solver = mg, smoother = 12, preconditioner = 0
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.0686e-01
+  2. iteration ... accuracy =  1.5408e-03
+  3. iteration ... accuracy =  1.3596e-05
+  4. iteration ... accuracy =  1.8147e-07
+  5. iteration ... accuracy =  8.8460e-09
+Testing ... solver = mg, smoother = 12, preconditioner = 1
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.0686e-01
+  2. iteration ... accuracy =  1.5408e-03
+  3. iteration ... accuracy =  1.3596e-05
+  4. iteration ... accuracy =  1.8147e-07
+  5. iteration ... accuracy =  8.8460e-09
+Testing ... solver = mg, smoother = 12, preconditioner = 2
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.5460e-02
+  2. iteration ... accuracy =  5.3214e-05
+  3. iteration ... accuracy =  4.6796e-07
+  4. iteration ... accuracy =  4.1786e-09
+Testing ... solver = mg, smoother = 12, preconditioner = 3
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  6.0886e-03
+  2. iteration ... accuracy =  1.1062e-05
+  3. iteration ... accuracy =  1.9604e-08
+  4. iteration ... accuracy =  2.1863e-10
+Testing ... solver = mgpcg, smoother = 1, preconditioner = 0
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  8.8944e-02
+  2. iteration ... accuracy =  8.1643e-03
+  3. iteration ... accuracy =  9.3620e-04
+  4. iteration ... accuracy =  2.0589e-05
+  5. iteration ... accuracy =  7.1638e-07
+Testing ... solver = mgpcg, smoother = 1, preconditioner = 1
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  8.8944e-02
+  2. iteration ... accuracy =  8.1643e-03
+  3. iteration ... accuracy =  9.3620e-04
+  4. iteration ... accuracy =  2.0589e-05
+  5. iteration ... accuracy =  7.1638e-07
+Testing ... solver = mgpcg, smoother = 1, preconditioner = 2
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  8.8944e-02
+  2. iteration ... accuracy =  8.1643e-03
+  3. iteration ... accuracy =  9.3620e-04
+  4. iteration ... accuracy =  2.0589e-05
+  5. iteration ... accuracy =  7.1638e-07
+Testing ... solver = mgpcg, smoother = 1, preconditioner = 3
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  8.8944e-02
+  2. iteration ... accuracy =  8.1643e-03
+  3. iteration ... accuracy =  9.3620e-04
+  4. iteration ... accuracy =  2.0589e-05
+  5. iteration ... accuracy =  7.1638e-07
+Testing ... solver = mgpcg, smoother = 2, preconditioner = 0
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  6.8456e-02
+  2. iteration ... accuracy =  5.1641e-03
+  3. iteration ... accuracy =  3.7146e-04
+  4. iteration ... accuracy =  6.3442e-06
+  5. iteration ... accuracy =  5.6811e-07
+Testing ... solver = mgpcg, smoother = 2, preconditioner = 1
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  6.8456e-02
+  2. iteration ... accuracy =  5.1641e-03
+  3. iteration ... accuracy =  3.7146e-04
+  4. iteration ... accuracy =  6.3442e-06
+  5. iteration ... accuracy =  5.6811e-07
+Testing ... solver = mgpcg, smoother = 2, preconditioner = 2
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  6.8462e-02
+  2. iteration ... accuracy =  5.1648e-03
+  3. iteration ... accuracy =  3.7189e-04
+  4. iteration ... accuracy =  6.3620e-06
+  5. iteration ... accuracy =  5.8231e-07
+Testing ... solver = mgpcg, smoother = 2, preconditioner = 3
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  6.8462e-02
+  2. iteration ... accuracy =  5.1648e-03
+  3. iteration ... accuracy =  3.7189e-04
+  4. iteration ... accuracy =  6.3620e-06
+  5. iteration ... accuracy =  5.8231e-07
+Testing ... solver = mgpcg, smoother = 3, preconditioner = 0
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  6.8456e-02
+  2. iteration ... accuracy =  5.1641e-03
+  3. iteration ... accuracy =  3.7146e-04
+  4. iteration ... accuracy =  6.3442e-06
+  5. iteration ... accuracy =  5.6811e-07
+Testing ... solver = mgpcg, smoother = 3, preconditioner = 1
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  6.8456e-02
+  2. iteration ... accuracy =  5.1641e-03
+  3. iteration ... accuracy =  3.7146e-04
+  4. iteration ... accuracy =  6.3442e-06
+  5. iteration ... accuracy =  5.6811e-07
+Testing ... solver = mgpcg, smoother = 3, preconditioner = 2
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  6.8462e-02
+  2. iteration ... accuracy =  5.1648e-03
+  3. iteration ... accuracy =  3.7189e-04
+  4. iteration ... accuracy =  6.3620e-06
+  5. iteration ... accuracy =  5.8231e-07
+Testing ... solver = mgpcg, smoother = 3, preconditioner = 3
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  6.8462e-02
+  2. iteration ... accuracy =  5.1648e-03
+  3. iteration ... accuracy =  3.7189e-04
+  4. iteration ... accuracy =  6.3620e-06
+  5. iteration ... accuracy =  5.8231e-07
+Testing ... solver = mgpcg, smoother = 4, preconditioner = 0
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.5266e-02
+  2. iteration ... accuracy =  2.4567e-04
+  3. iteration ... accuracy =  1.4807e-05
+  4. iteration ... accuracy =  1.9526e-07
+  5. iteration ... accuracy =  4.5392e-09
+Testing ... solver = mgpcg, smoother = 4, preconditioner = 1
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.5266e-02
+  2. iteration ... accuracy =  2.4567e-04
+  3. iteration ... accuracy =  1.4807e-05
+  4. iteration ... accuracy =  1.9526e-07
+  5. iteration ... accuracy =  4.5392e-09
+Testing ... solver = mgpcg, smoother = 4, preconditioner = 2
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.5266e-02
+  2. iteration ... accuracy =  2.4564e-04
+  3. iteration ... accuracy =  1.4794e-05
+  4. iteration ... accuracy =  1.9570e-07
+  5. iteration ... accuracy =  4.5343e-09
+Testing ... solver = mgpcg, smoother = 4, preconditioner = 3
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.5266e-02
+  2. iteration ... accuracy =  2.4564e-04
+  3. iteration ... accuracy =  1.4794e-05
+  4. iteration ... accuracy =  1.9570e-07
+  5. iteration ... accuracy =  4.5343e-09
+Testing ... solver = mgpcg, smoother = 6, preconditioner = 0
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.7304e-01
+  2. iteration ... accuracy =  1.8966e-02
+  3. iteration ... accuracy =  6.7305e-04
+  4. iteration ... accuracy =  5.9683e-05
+  5. iteration ... accuracy =  3.0792e-06
+Testing ... solver = mgpcg, smoother = 6, preconditioner = 1
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.7304e-01
+  2. iteration ... accuracy =  1.8966e-02
+  3. iteration ... accuracy =  6.7305e-04
+  4. iteration ... accuracy =  5.9683e-05
+  5. iteration ... accuracy =  3.0792e-06
+Testing ... solver = mgpcg, smoother = 6, preconditioner = 2
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  8.6112e-02
+  2. iteration ... accuracy =  1.7080e-03
+  3. iteration ... accuracy =  2.6039e-05
+  4. iteration ... accuracy =  1.3229e-06
+  5. iteration ... accuracy =  3.8755e-08
+Testing ... solver = mgpcg, smoother = 6, preconditioner = 3
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  5.3429e-02
+  2. iteration ... accuracy =  2.6314e-04
+  3. iteration ... accuracy =  4.6488e-06
+  4. iteration ... accuracy =  4.6077e-08
+  5. iteration ... accuracy =  9.9028e-10
+Testing ... solver = mgpcg, smoother = 7, preconditioner = 0
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  8.0414e-02
+  2. iteration ... accuracy =  1.5471e-02
+  3. iteration ... accuracy =  3.2569e-03
+  4. iteration ... accuracy =  3.1971e-04
+  5. iteration ... accuracy =  5.3808e-05
+Testing ... solver = mgpcg, smoother = 7, preconditioner = 1
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  8.0414e-02
+  2. iteration ... accuracy =  1.5471e-02
+  3. iteration ... accuracy =  3.2569e-03
+  4. iteration ... accuracy =  3.1971e-04
+  5. iteration ... accuracy =  5.3808e-05
+Testing ... solver = mgpcg, smoother = 7, preconditioner = 2
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  2.7089e-02
+  2. iteration ... accuracy =  1.4588e-03
+  3. iteration ... accuracy =  6.5129e-05
+  4. iteration ... accuracy =  3.0073e-06
+  5. iteration ... accuracy =  9.6260e-08
+Testing ... solver = mgpcg, smoother = 7, preconditioner = 3
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  2.4474e-02
+  2. iteration ... accuracy =  1.0600e-03
+  3. iteration ... accuracy =  2.4968e-05
+  4. iteration ... accuracy =  5.1705e-07
+  5. iteration ... accuracy =  1.0048e-08
+Testing ... solver = mgpcg, smoother = 8, preconditioner = 0
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  4.6185e-02
+  2. iteration ... accuracy =  2.9224e-03
+  3. iteration ... accuracy =  7.5281e-05
+  4. iteration ... accuracy =  1.9574e-06
+  5. iteration ... accuracy =  7.5692e-08
+Testing ... solver = mgpcg, smoother = 8, preconditioner = 1
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  4.6185e-02
+  2. iteration ... accuracy =  2.9224e-03
+  3. iteration ... accuracy =  7.5281e-05
+  4. iteration ... accuracy =  1.9574e-06
+  5. iteration ... accuracy =  7.5692e-08
+Testing ... solver = mgpcg, smoother = 8, preconditioner = 2
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.7178e-02
+  2. iteration ... accuracy =  5.2105e-04
+  3. iteration ... accuracy =  3.2971e-06
+  4. iteration ... accuracy =  6.8990e-08
+  5. iteration ... accuracy =  8.3983e-10
+Testing ... solver = mgpcg, smoother = 8, preconditioner = 3
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.1037e-02
+  2. iteration ... accuracy =  5.6435e-05
+  3. iteration ... accuracy =  2.7675e-07
+  4. iteration ... accuracy =  1.3349e-09
+Testing ... solver = mgpcg, smoother = 9, preconditioner = 0
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.7304e-01
+  2. iteration ... accuracy =  1.8966e-02
+  3. iteration ... accuracy =  6.7305e-04
+  4. iteration ... accuracy =  5.9683e-05
+  5. iteration ... accuracy =  3.0792e-06
+Testing ... solver = mgpcg, smoother = 9, preconditioner = 1
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.7304e-01
+  2. iteration ... accuracy =  1.8966e-02
+  3. iteration ... accuracy =  6.7305e-04
+  4. iteration ... accuracy =  5.9683e-05
+  5. iteration ... accuracy =  3.0792e-06
+Testing ... solver = mgpcg, smoother = 9, preconditioner = 2
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  8.6112e-02
+  2. iteration ... accuracy =  1.7080e-03
+  3. iteration ... accuracy =  2.6039e-05
+  4. iteration ... accuracy =  1.3229e-06
+  5. iteration ... accuracy =  3.8755e-08
+Testing ... solver = mgpcg, smoother = 9, preconditioner = 3
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  5.3429e-02
+  2. iteration ... accuracy =  2.6314e-04
+  3. iteration ... accuracy =  4.6488e-06
+  4. iteration ... accuracy =  4.6077e-08
+  5. iteration ... accuracy =  9.9028e-10
+Testing ... solver = mgpcg, smoother = 10, preconditioner = 0
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  7.7554e-02
+  2. iteration ... accuracy =  2.4396e-03
+  3. iteration ... accuracy =  8.3414e-05
+  4. iteration ... accuracy =  3.2753e-06
+  5. iteration ... accuracy =  1.2505e-07
+Testing ... solver = mgpcg, smoother = 10, preconditioner = 1
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  4.6185e-02
+  2. iteration ... accuracy =  2.9224e-03
+  3. iteration ... accuracy =  7.5281e-05
+  4. iteration ... accuracy =  1.9574e-06
+  5. iteration ... accuracy =  7.5692e-08
+Testing ... solver = mgpcg, smoother = 10, preconditioner = 2
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.3893e-02
+  2. iteration ... accuracy =  2.3766e-04
+  3. iteration ... accuracy =  1.6487e-06
+  4. iteration ... accuracy =  1.7116e-08
+  5. iteration ... accuracy =  1.4454e-10
+Testing ... solver = mgpcg, smoother = 10, preconditioner = 3
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.0256e-02
+  2. iteration ... accuracy =  4.3304e-05
+  3. iteration ... accuracy =  2.4814e-07
+  4. iteration ... accuracy =  1.2416e-09
+Testing ... solver = mgpcg, smoother = 11, preconditioner = 0
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  3.9109e+00
+  2. iteration ... accuracy =  5.7636e+00
+  3. iteration ... accuracy =  5.9699e+00
+  4. iteration ... accuracy =  4.8230e+00
+  5. iteration ... accuracy =  2.8490e+00
+Testing ... solver = mgpcg, smoother = 11, preconditioner = 1
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  3.9109e+00
+  2. iteration ... accuracy =  5.7636e+00
+  3. iteration ... accuracy =  5.9699e+00
+  4. iteration ... accuracy =  4.8230e+00
+  5. iteration ... accuracy =  2.8490e+00
+Testing ... solver = mgpcg, smoother = 11, preconditioner = 2
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  9.8396e-01
+  2. iteration ... accuracy =  4.3962e-02
+  3. iteration ... accuracy =  2.0849e-02
+  4. iteration ... accuracy =  1.6923e-03
+  5. iteration ... accuracy =  3.6418e-04
+Testing ... solver = mgpcg, smoother = 11, preconditioner = 3
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.6927e-01
+  2. iteration ... accuracy =  1.0431e-03
+  3. iteration ... accuracy =  4.6599e-04
+  4. iteration ... accuracy =  9.4250e-06
+  5. iteration ... accuracy =  4.0563e-06
+Testing ... solver = mgpcg, smoother = 12, preconditioner = 0
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.0947e-01
+  2. iteration ... accuracy =  1.9427e-03
+  3. iteration ... accuracy =  3.6582e-05
+  4. iteration ... accuracy =  9.7619e-07
+  5. iteration ... accuracy =  1.7512e-08
+Testing ... solver = mgpcg, smoother = 12, preconditioner = 1
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.0947e-01
+  2. iteration ... accuracy =  1.9427e-03
+  3. iteration ... accuracy =  3.6582e-05
+  4. iteration ... accuracy =  9.7619e-07
+  5. iteration ... accuracy =  1.7512e-08
+Testing ... solver = mgpcg, smoother = 12, preconditioner = 2
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.6623e-02
+  2. iteration ... accuracy =  6.2702e-05
+  3. iteration ... accuracy =  2.6571e-07
+  4. iteration ... accuracy =  1.9282e-09
+Testing ... solver = mgpcg, smoother = 12, preconditioner = 3
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  6.6141e-03
+  2. iteration ... accuracy =  1.3384e-05
+  3. iteration ... accuracy =  2.3742e-08
+  4. iteration ... accuracy =  7.3616e-11
+Testing ... solver = bpxpcg, smoother = 1, preconditioner = 0
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.7505e+00
+  2. iteration ... accuracy =  5.1430e-01
+  3. iteration ... accuracy =  1.4442e-01
+  4. iteration ... accuracy =  4.9518e-02
+  5. iteration ... accuracy =  1.9442e-02
+  6. iteration ... accuracy =  3.6116e-03
+  7. iteration ... accuracy =  1.7143e-03
+  8. iteration ... accuracy =  3.3720e-04
+  9. iteration ... accuracy =  9.6714e-05
+ 10. iteration ... accuracy =  2.1893e-05
+Testing ... solver = bpxpcg, smoother = 1, preconditioner = 1
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.7505e+00
+  2. iteration ... accuracy =  5.1430e-01
+  3. iteration ... accuracy =  1.4442e-01
+  4. iteration ... accuracy =  4.9518e-02
+  5. iteration ... accuracy =  1.9442e-02
+  6. iteration ... accuracy =  3.6116e-03
+  7. iteration ... accuracy =  1.7143e-03
+  8. iteration ... accuracy =  3.3720e-04
+  9. iteration ... accuracy =  9.6714e-05
+ 10. iteration ... accuracy =  2.1893e-05
+Testing ... solver = bpxpcg, smoother = 1, preconditioner = 2
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.7505e+00
+  2. iteration ... accuracy =  5.1430e-01
+  3. iteration ... accuracy =  1.4442e-01
+  4. iteration ... accuracy =  4.9518e-02
+  5. iteration ... accuracy =  1.9442e-02
+  6. iteration ... accuracy =  3.6116e-03
+  7. iteration ... accuracy =  1.7143e-03
+  8. iteration ... accuracy =  3.3720e-04
+  9. iteration ... accuracy =  9.6714e-05
+ 10. iteration ... accuracy =  2.1893e-05
+Testing ... solver = bpxpcg, smoother = 1, preconditioner = 3
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.7505e+00
+  2. iteration ... accuracy =  5.1430e-01
+  3. iteration ... accuracy =  1.4442e-01
+  4. iteration ... accuracy =  4.9518e-02
+  5. iteration ... accuracy =  1.9442e-02
+  6. iteration ... accuracy =  3.6116e-03
+  7. iteration ... accuracy =  1.7143e-03
+  8. iteration ... accuracy =  3.3720e-04
+  9. iteration ... accuracy =  9.6714e-05
+ 10. iteration ... accuracy =  2.1893e-05
+Testing ... solver = bpxpcg, smoother = 2, preconditioner = 0
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.7408e+00
+  2. iteration ... accuracy =  5.1709e-01
+  3. iteration ... accuracy =  1.6202e-01
+  4. iteration ... accuracy =  4.0621e-02
+  5. iteration ... accuracy =  1.6824e-02
+  6. iteration ... accuracy =  2.7919e-03
+  7. iteration ... accuracy =  1.0167e-03
+  8. iteration ... accuracy =  3.0007e-04
+  9. iteration ... accuracy =  1.2514e-04
+ 10. iteration ... accuracy =  2.1621e-05
+Testing ... solver = bpxpcg, smoother = 2, preconditioner = 1
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.7408e+00
+  2. iteration ... accuracy =  5.1709e-01
+  3. iteration ... accuracy =  1.6202e-01
+  4. iteration ... accuracy =  4.0621e-02
+  5. iteration ... accuracy =  1.6824e-02
+  6. iteration ... accuracy =  2.7919e-03
+  7. iteration ... accuracy =  1.0167e-03
+  8. iteration ... accuracy =  3.0007e-04
+  9. iteration ... accuracy =  1.2514e-04
+ 10. iteration ... accuracy =  2.1621e-05
+Testing ... solver = bpxpcg, smoother = 2, preconditioner = 2
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.7408e+00
+  2. iteration ... accuracy =  5.1709e-01
+  3. iteration ... accuracy =  1.6206e-01
+  4. iteration ... accuracy =  4.0648e-02
+  5. iteration ... accuracy =  1.6830e-02
+  6. iteration ... accuracy =  2.7912e-03
+  7. iteration ... accuracy =  1.0160e-03
+  8. iteration ... accuracy =  2.9997e-04
+  9. iteration ... accuracy =  1.2512e-04
+ 10. iteration ... accuracy =  2.1616e-05
+Testing ... solver = bpxpcg, smoother = 2, preconditioner = 3
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.7408e+00
+  2. iteration ... accuracy =  5.1709e-01
+  3. iteration ... accuracy =  1.6206e-01
+  4. iteration ... accuracy =  4.0648e-02
+  5. iteration ... accuracy =  1.6830e-02
+  6. iteration ... accuracy =  2.7912e-03
+  7. iteration ... accuracy =  1.0160e-03
+  8. iteration ... accuracy =  2.9997e-04
+  9. iteration ... accuracy =  1.2512e-04
+ 10. iteration ... accuracy =  2.1616e-05
+Testing ... solver = bpxpcg, smoother = 3, preconditioner = 0
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.7408e+00
+  2. iteration ... accuracy =  5.1709e-01
+  3. iteration ... accuracy =  1.6202e-01
+  4. iteration ... accuracy =  4.0621e-02
+  5. iteration ... accuracy =  1.6824e-02
+  6. iteration ... accuracy =  2.7919e-03
+  7. iteration ... accuracy =  1.0167e-03
+  8. iteration ... accuracy =  3.0007e-04
+  9. iteration ... accuracy =  1.2514e-04
+ 10. iteration ... accuracy =  2.1621e-05
+Testing ... solver = bpxpcg, smoother = 3, preconditioner = 1
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.7408e+00
+  2. iteration ... accuracy =  5.1709e-01
+  3. iteration ... accuracy =  1.6202e-01
+  4. iteration ... accuracy =  4.0621e-02
+  5. iteration ... accuracy =  1.6824e-02
+  6. iteration ... accuracy =  2.7919e-03
+  7. iteration ... accuracy =  1.0167e-03
+  8. iteration ... accuracy =  3.0007e-04
+  9. iteration ... accuracy =  1.2514e-04
+ 10. iteration ... accuracy =  2.1621e-05
+Testing ... solver = bpxpcg, smoother = 3, preconditioner = 2
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.7408e+00
+  2. iteration ... accuracy =  5.1709e-01
+  3. iteration ... accuracy =  1.6206e-01
+  4. iteration ... accuracy =  4.0648e-02
+  5. iteration ... accuracy =  1.6830e-02
+  6. iteration ... accuracy =  2.7912e-03
+  7. iteration ... accuracy =  1.0160e-03
+  8. iteration ... accuracy =  2.9997e-04
+  9. iteration ... accuracy =  1.2512e-04
+ 10. iteration ... accuracy =  2.1616e-05
+Testing ... solver = bpxpcg, smoother = 3, preconditioner = 3
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.7408e+00
+  2. iteration ... accuracy =  5.1709e-01
+  3. iteration ... accuracy =  1.6206e-01
+  4. iteration ... accuracy =  4.0648e-02
+  5. iteration ... accuracy =  1.6830e-02
+  6. iteration ... accuracy =  2.7912e-03
+  7. iteration ... accuracy =  1.0160e-03
+  8. iteration ... accuracy =  2.9997e-04
+  9. iteration ... accuracy =  1.2512e-04
+ 10. iteration ... accuracy =  2.1616e-05
+Testing ... solver = bpxpcg, smoother = 4, preconditioner = 0
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.7191e+00
+  2. iteration ... accuracy =  5.1385e-01
+  3. iteration ... accuracy =  1.6118e-01
+  4. iteration ... accuracy =  3.3603e-02
+  5. iteration ... accuracy =  1.2737e-02
+  6. iteration ... accuracy =  2.1816e-03
+  7. iteration ... accuracy =  8.6333e-04
+  8. iteration ... accuracy =  2.8905e-04
+  9. iteration ... accuracy =  5.9024e-05
+ 10. iteration ... accuracy =  1.2953e-05
+Testing ... solver = bpxpcg, smoother = 4, preconditioner = 1
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.7191e+00
+  2. iteration ... accuracy =  5.1385e-01
+  3. iteration ... accuracy =  1.6118e-01
+  4. iteration ... accuracy =  3.3603e-02
+  5. iteration ... accuracy =  1.2737e-02
+  6. iteration ... accuracy =  2.1816e-03
+  7. iteration ... accuracy =  8.6333e-04
+  8. iteration ... accuracy =  2.8905e-04
+  9. iteration ... accuracy =  5.9024e-05
+ 10. iteration ... accuracy =  1.2953e-05
+Testing ... solver = bpxpcg, smoother = 4, preconditioner = 2
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.7191e+00
+  2. iteration ... accuracy =  5.1385e-01
+  3. iteration ... accuracy =  1.6118e-01
+  4. iteration ... accuracy =  3.3603e-02
+  5. iteration ... accuracy =  1.2737e-02
+  6. iteration ... accuracy =  2.1816e-03
+  7. iteration ... accuracy =  8.6335e-04
+  8. iteration ... accuracy =  2.8905e-04
+  9. iteration ... accuracy =  5.9019e-05
+ 10. iteration ... accuracy =  1.2953e-05
+Testing ... solver = bpxpcg, smoother = 4, preconditioner = 3
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.7191e+00
+  2. iteration ... accuracy =  5.1385e-01
+  3. iteration ... accuracy =  1.6118e-01
+  4. iteration ... accuracy =  3.3603e-02
+  5. iteration ... accuracy =  1.2737e-02
+  6. iteration ... accuracy =  2.1816e-03
+  7. iteration ... accuracy =  8.6335e-04
+  8. iteration ... accuracy =  2.8905e-04
+  9. iteration ... accuracy =  5.9019e-05
+ 10. iteration ... accuracy =  1.2953e-05
+Testing ... solver = bpxpcg, smoother = 6, preconditioner = 0
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  2.5564e+00
+  2. iteration ... accuracy =  1.7783e+00
+  3. iteration ... accuracy =  9.7851e-01
+  4. iteration ... accuracy =  4.5593e-01
+  5. iteration ... accuracy =  2.3218e-01
+  6. iteration ... accuracy =  1.0342e-01
+  7. iteration ... accuracy =  4.9978e-02
+  8. iteration ... accuracy =  2.2013e-02
+  9. iteration ... accuracy =  1.0979e-02
+ 10. iteration ... accuracy =  5.4205e-03
+Testing ... solver = bpxpcg, smoother = 6, preconditioner = 1
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  2.5564e+00
+  2. iteration ... accuracy =  1.7783e+00
+  3. iteration ... accuracy =  9.7851e-01
+  4. iteration ... accuracy =  4.5593e-01
+  5. iteration ... accuracy =  2.3218e-01
+  6. iteration ... accuracy =  1.0342e-01
+  7. iteration ... accuracy =  4.9978e-02
+  8. iteration ... accuracy =  2.2013e-02
+  9. iteration ... accuracy =  1.0979e-02
+ 10. iteration ... accuracy =  5.4205e-03
+Testing ... solver = bpxpcg, smoother = 6, preconditioner = 2
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.8766e+00
+  2. iteration ... accuracy =  1.2336e+00
+  3. iteration ... accuracy =  6.6067e-01
+  4. iteration ... accuracy =  2.9875e-01
+  5. iteration ... accuracy =  1.3229e-01
+  6. iteration ... accuracy =  3.7368e-02
+  7. iteration ... accuracy =  1.4405e-02
+  8. iteration ... accuracy =  8.2180e-03
+  9. iteration ... accuracy =  2.4387e-03
+ 10. iteration ... accuracy =  1.2169e-03
+Testing ... solver = bpxpcg, smoother = 6, preconditioner = 3
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.6017e+00
+  2. iteration ... accuracy =  1.0426e+00
+  3. iteration ... accuracy =  6.2328e-01
+  4. iteration ... accuracy =  2.0497e-01
+  5. iteration ... accuracy =  6.8314e-02
+  6. iteration ... accuracy =  2.3985e-02
+  7. iteration ... accuracy =  1.1952e-02
+  8. iteration ... accuracy =  2.6568e-03
+  9. iteration ... accuracy =  8.7353e-04
+ 10. iteration ... accuracy =  3.3271e-04
+Testing ... solver = bpxpcg, smoother = 7, preconditioner = 0
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.7843e+00
+  2. iteration ... accuracy =  6.3498e-01
+  3. iteration ... accuracy =  2.3362e-01
+  4. iteration ... accuracy =  8.9895e-02
+  5. iteration ... accuracy =  3.8598e-02
+  6. iteration ... accuracy =  2.6574e-02
+  7. iteration ... accuracy =  5.7897e-03
+  8. iteration ... accuracy =  2.8664e-03
+  9. iteration ... accuracy =  1.1504e-03
+ 10. iteration ... accuracy =  6.3216e-04
+Testing ... solver = bpxpcg, smoother = 7, preconditioner = 1
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.7843e+00
+  2. iteration ... accuracy =  6.3498e-01
+  3. iteration ... accuracy =  2.3362e-01
+  4. iteration ... accuracy =  8.9895e-02
+  5. iteration ... accuracy =  3.8598e-02
+  6. iteration ... accuracy =  2.6574e-02
+  7. iteration ... accuracy =  5.7897e-03
+  8. iteration ... accuracy =  2.8664e-03
+  9. iteration ... accuracy =  1.1504e-03
+ 10. iteration ... accuracy =  6.3216e-04
+Testing ... solver = bpxpcg, smoother = 7, preconditioner = 2
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  2.1550e+00
+  2. iteration ... accuracy =  7.8145e-01
+  3. iteration ... accuracy =  2.9872e-01
+  4. iteration ... accuracy =  9.3632e-02
+  5. iteration ... accuracy =  3.1633e-02
+  6. iteration ... accuracy =  8.6600e-03
+  7. iteration ... accuracy =  3.9249e-03
+  8. iteration ... accuracy =  1.1158e-03
+  9. iteration ... accuracy =  3.8935e-04
+ 10. iteration ... accuracy =  1.4366e-04
+Testing ... solver = bpxpcg, smoother = 7, preconditioner = 3
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  2.1316e+00
+  2. iteration ... accuracy =  9.4861e-01
+  3. iteration ... accuracy =  4.2833e-01
+  4. iteration ... accuracy =  1.8145e-01
+  5. iteration ... accuracy =  7.3818e-02
+  6. iteration ... accuracy =  1.8342e-02
+  7. iteration ... accuracy =  5.8729e-03
+  8. iteration ... accuracy =  2.4985e-03
+  9. iteration ... accuracy =  1.2292e-03
+ 10. iteration ... accuracy =  3.5931e-04
+Testing ... solver = bpxpcg, smoother = 8, preconditioner = 0
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.9206e+00
+  2. iteration ... accuracy =  7.9672e-01
+  3. iteration ... accuracy =  2.7499e-01
+  4. iteration ... accuracy =  8.0238e-02
+  5. iteration ... accuracy =  2.7168e-02
+  6. iteration ... accuracy =  9.0506e-03
+  7. iteration ... accuracy =  2.7851e-03
+  8. iteration ... accuracy =  9.0490e-04
+  9. iteration ... accuracy =  3.2658e-04
+ 10. iteration ... accuracy =  1.1013e-04
+Testing ... solver = bpxpcg, smoother = 8, preconditioner = 1
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.9206e+00
+  2. iteration ... accuracy =  7.9672e-01
+  3. iteration ... accuracy =  2.7499e-01
+  4. iteration ... accuracy =  8.0238e-02
+  5. iteration ... accuracy =  2.7168e-02
+  6. iteration ... accuracy =  9.0506e-03
+  7. iteration ... accuracy =  2.7851e-03
+  8. iteration ... accuracy =  9.0490e-04
+  9. iteration ... accuracy =  3.2658e-04
+ 10. iteration ... accuracy =  1.1013e-04
+Testing ... solver = bpxpcg, smoother = 8, preconditioner = 2
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.7409e+00
+  2. iteration ... accuracy =  7.5189e-01
+  3. iteration ... accuracy =  3.0236e-01
+  4. iteration ... accuracy =  1.2244e-01
+  5. iteration ... accuracy =  4.0098e-02
+  6. iteration ... accuracy =  7.4445e-03
+  7. iteration ... accuracy =  1.6789e-03
+  8. iteration ... accuracy =  7.0084e-04
+  9. iteration ... accuracy =  1.4388e-04
+ 10. iteration ... accuracy =  5.4548e-05
+Testing ... solver = bpxpcg, smoother = 8, preconditioner = 3
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.4330e+00
+  2. iteration ... accuracy =  6.4895e-01
+  3. iteration ... accuracy =  3.3252e-01
+  4. iteration ... accuracy =  1.2697e-01
+  5. iteration ... accuracy =  3.1446e-02
+  6. iteration ... accuracy =  5.5103e-03
+  7. iteration ... accuracy =  2.6932e-03
+  8. iteration ... accuracy =  9.3656e-04
+  9. iteration ... accuracy =  1.8145e-04
+ 10. iteration ... accuracy =  5.7740e-05
+Testing ... solver = bpxpcg, smoother = 9, preconditioner = 0
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  2.5564e+00
+  2. iteration ... accuracy =  1.7783e+00
+  3. iteration ... accuracy =  9.7851e-01
+  4. iteration ... accuracy =  4.5593e-01
+  5. iteration ... accuracy =  2.3218e-01
+  6. iteration ... accuracy =  1.0342e-01
+  7. iteration ... accuracy =  4.9978e-02
+  8. iteration ... accuracy =  2.2013e-02
+  9. iteration ... accuracy =  1.0979e-02
+ 10. iteration ... accuracy =  5.4205e-03
+Testing ... solver = bpxpcg, smoother = 9, preconditioner = 1
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  2.5564e+00
+  2. iteration ... accuracy =  1.7783e+00
+  3. iteration ... accuracy =  9.7851e-01
+  4. iteration ... accuracy =  4.5593e-01
+  5. iteration ... accuracy =  2.3218e-01
+  6. iteration ... accuracy =  1.0342e-01
+  7. iteration ... accuracy =  4.9978e-02
+  8. iteration ... accuracy =  2.2013e-02
+  9. iteration ... accuracy =  1.0979e-02
+ 10. iteration ... accuracy =  5.4205e-03
+Testing ... solver = bpxpcg, smoother = 9, preconditioner = 2
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.8766e+00
+  2. iteration ... accuracy =  1.2336e+00
+  3. iteration ... accuracy =  6.6067e-01
+  4. iteration ... accuracy =  2.9875e-01
+  5. iteration ... accuracy =  1.3229e-01
+  6. iteration ... accuracy =  3.7368e-02
+  7. iteration ... accuracy =  1.4405e-02
+  8. iteration ... accuracy =  8.2180e-03
+  9. iteration ... accuracy =  2.4387e-03
+ 10. iteration ... accuracy =  1.2169e-03
+Testing ... solver = bpxpcg, smoother = 9, preconditioner = 3
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.6017e+00
+  2. iteration ... accuracy =  1.0426e+00
+  3. iteration ... accuracy =  6.2328e-01
+  4. iteration ... accuracy =  2.0497e-01
+  5. iteration ... accuracy =  6.8314e-02
+  6. iteration ... accuracy =  2.3985e-02
+  7. iteration ... accuracy =  1.1952e-02
+  8. iteration ... accuracy =  2.6568e-03
+  9. iteration ... accuracy =  8.7353e-04
+ 10. iteration ... accuracy =  3.3271e-04
+Testing ... solver = bpxpcg, smoother = 10, preconditioner = 0
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.9809e+00
+  2. iteration ... accuracy =  7.7771e-01
+  3. iteration ... accuracy =  2.9212e-01
+  4. iteration ... accuracy =  7.8608e-02
+  5. iteration ... accuracy =  2.9355e-02
+  6. iteration ... accuracy =  8.5400e-03
+  7. iteration ... accuracy =  2.9718e-03
+  8. iteration ... accuracy =  8.9363e-04
+  9. iteration ... accuracy =  2.9736e-04
+ 10. iteration ... accuracy =  9.5858e-05
+Testing ... solver = bpxpcg, smoother = 10, preconditioner = 1
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.9206e+00
+  2. iteration ... accuracy =  7.9672e-01
+  3. iteration ... accuracy =  2.7499e-01
+  4. iteration ... accuracy =  8.0238e-02
+  5. iteration ... accuracy =  2.7168e-02
+  6. iteration ... accuracy =  9.0506e-03
+  7. iteration ... accuracy =  2.7851e-03
+  8. iteration ... accuracy =  9.0490e-04
+  9. iteration ... accuracy =  3.2658e-04
+ 10. iteration ... accuracy =  1.1013e-04
+Testing ... solver = bpxpcg, smoother = 10, preconditioner = 2
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.7490e+00
+  2. iteration ... accuracy =  7.8321e-01
+  3. iteration ... accuracy =  2.9855e-01
+  4. iteration ... accuracy =  1.1362e-01
+  5. iteration ... accuracy =  3.7561e-02
+  6. iteration ... accuracy =  8.0085e-03
+  7. iteration ... accuracy =  1.7317e-03
+  8. iteration ... accuracy =  6.6660e-04
+  9. iteration ... accuracy =  1.3090e-04
+ 10. iteration ... accuracy =  3.7017e-05
+Testing ... solver = bpxpcg, smoother = 10, preconditioner = 3
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.4235e+00
+  2. iteration ... accuracy =  6.4635e-01
+  3. iteration ... accuracy =  3.1257e-01
+  4. iteration ... accuracy =  1.2443e-01
+  5. iteration ... accuracy =  3.2404e-02
+  6. iteration ... accuracy =  5.0623e-03
+  7. iteration ... accuracy =  1.5140e-03
+  8. iteration ... accuracy =  7.1196e-04
+  9. iteration ... accuracy =  2.3077e-04
+ 10. iteration ... accuracy =  7.1497e-05
+Testing ... solver = bpxpcg, smoother = 11, preconditioner = 0
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  3.5650e+00
+  2. iteration ... accuracy =  6.3201e+00
+  3. iteration ... accuracy =  8.7112e+00
+  4. iteration ... accuracy =  1.0830e+01
+  5. iteration ... accuracy =  1.2729e+01
+  6. iteration ... accuracy =  1.4420e+01
+  7. iteration ... accuracy =  1.5892e+01
+  8. iteration ... accuracy =  1.7128e+01
+  9. iteration ... accuracy =  1.8108e+01
+ 10. iteration ... accuracy =  1.8817e+01
+Testing ... solver = bpxpcg, smoother = 11, preconditioner = 1
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  3.5650e+00
+  2. iteration ... accuracy =  6.3201e+00
+  3. iteration ... accuracy =  8.7112e+00
+  4. iteration ... accuracy =  1.0830e+01
+  5. iteration ... accuracy =  1.2729e+01
+  6. iteration ... accuracy =  1.4420e+01
+  7. iteration ... accuracy =  1.5892e+01
+  8. iteration ... accuracy =  1.7128e+01
+  9. iteration ... accuracy =  1.8108e+01
+ 10. iteration ... accuracy =  1.8817e+01
+Testing ... solver = bpxpcg, smoother = 11, preconditioner = 2
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  6.4683e+00
+  2. iteration ... accuracy =  9.7511e+00
+  3. iteration ... accuracy =  1.0778e+01
+  4. iteration ... accuracy =  1.0044e+01
+  5. iteration ... accuracy =  7.7796e+00
+  6. iteration ... accuracy =  5.0024e+00
+  7. iteration ... accuracy =  2.5905e+00
+  8. iteration ... accuracy =  3.2479e+00
+  9. iteration ... accuracy =  4.3382e+00
+ 10. iteration ... accuracy =  4.6437e+00
+Testing ... solver = bpxpcg, smoother = 11, preconditioner = 3
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  4.9628e+00
+  2. iteration ... accuracy =  5.1861e+00
+  3. iteration ... accuracy =  3.9523e+00
+  4. iteration ... accuracy =  2.2215e+00
+  5. iteration ... accuracy =  9.4070e-01
+  6. iteration ... accuracy =  8.1093e-01
+  7. iteration ... accuracy =  7.3508e-01
+  8. iteration ... accuracy =  5.7065e-01
+  9. iteration ... accuracy =  3.7008e-01
+ 10. iteration ... accuracy =  1.5974e-01
+Testing ... solver = bpxpcg, smoother = 12, preconditioner = 0
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.7802e+00
+  2. iteration ... accuracy =  1.0985e+00
+  3. iteration ... accuracy =  4.7147e-01
+  4. iteration ... accuracy =  1.8928e-01
+  5. iteration ... accuracy =  6.7010e-02
+  6. iteration ... accuracy =  1.9944e-02
+  7. iteration ... accuracy =  8.7823e-03
+  8. iteration ... accuracy =  2.8024e-03
+  9. iteration ... accuracy =  6.0159e-04
+ 10. iteration ... accuracy =  2.5377e-04
+Testing ... solver = bpxpcg, smoother = 12, preconditioner = 1
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.7802e+00
+  2. iteration ... accuracy =  1.0985e+00
+  3. iteration ... accuracy =  4.7147e-01
+  4. iteration ... accuracy =  1.8928e-01
+  5. iteration ... accuracy =  6.7010e-02
+  6. iteration ... accuracy =  1.9944e-02
+  7. iteration ... accuracy =  8.7823e-03
+  8. iteration ... accuracy =  2.8024e-03
+  9. iteration ... accuracy =  6.0159e-04
+ 10. iteration ... accuracy =  2.5377e-04
+Testing ... solver = bpxpcg, smoother = 12, preconditioner = 2
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.4035e+00
+  2. iteration ... accuracy =  6.4069e-01
+  3. iteration ... accuracy =  2.7975e-01
+  4. iteration ... accuracy =  1.0753e-01
+  5. iteration ... accuracy =  3.2897e-02
+  6. iteration ... accuracy =  7.0047e-03
+  7. iteration ... accuracy =  2.5795e-03
+  8. iteration ... accuracy =  6.3895e-04
+  9. iteration ... accuracy =  1.4200e-04
+ 10. iteration ... accuracy =  5.1622e-05
+Testing ... solver = bpxpcg, smoother = 12, preconditioner = 3
+  0. iteration ... accuracy =  1.0000e+00
+  1. iteration ... accuracy =  1.1262e+00
+  2. iteration ... accuracy =  5.2724e-01
+  3. iteration ... accuracy =  2.5274e-01
+  4. iteration ... accuracy =  9.0036e-02
+  5. iteration ... accuracy =  2.1751e-02
+  6. iteration ... accuracy =  1.7537e-03
+  7. iteration ... accuracy =  5.9658e-04
+  8. iteration ... accuracy =  1.8214e-04
+  9. iteration ... accuracy =  7.5829e-05
+ 10. iteration ... accuracy =  1.8560e-05

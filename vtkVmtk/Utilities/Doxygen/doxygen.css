@@ -1,0 +1,26 @@
+body {
+ font-family: arial, sans-serif; 
+ font-size:12px;  
+/* background: #808080; */
+/* color: #333333; */
+ margin: 20px;
+ border:0;
+ }
+
+A:link {
+ color: #333333
+}
+                                                                                
+A:visited {
+ color: #333333
+}
+                                                                                
+A:active {
+ color: #333333
+}
+
+p, pre {
+ padding: 5px 10px 5px 20px;
+ margin: 0;
+ text-align:justify;
+ }

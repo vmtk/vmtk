@@ -1,0 +1,98 @@
+#! /bin/csh
+#
+# installation script for the LASPack library
+#
+# written by Tomas Skalicky, August 1995
+# with some changes by Eric van der Maarel
+#
+# This script builds and installs the libraries liblaspack.a and libxc.a
+# in the directory $HOME/lib$ARCH_EXT.
+# It also builds the test programs and installs them in the directory
+# $HOME/bin$ARCH_EXT.
+# 
+# The (enviroment) variable $ARCH_EXT can be used in order
+# to install libraries and programs in different directories
+# depending on computer the architecture,
+# it could be set e.g. to ARCH_EXT = '/sunos' for Sun workstations,
+# '/hp-ux' for HP workstations...
+#
+
+set dir = `pwd`
+set env_var = `env | grep ARCH_EXT`
+
+#
+# fitting of the makefiles
+#
+
+rm -f install.sed
+
+cat << EOT > install.sed
+/sources/ s/INCROOT/# INCROOT/
+/sources/ a\
+INCROOT		= $dir
+EOT
+
+if ( $env_var == "" ) echo '/\$ARCH_EXT/ s/\$ARCH_EXT//g' >> install.sed
+
+if ( ! -x /usr/bin/ranlib ) echo "/ranlib/ s/^#*/#/" >> install.sed
+
+foreach f ( */makefile */*/*/makefile )
+    rm -f $f~
+    sed -f install.sed $f > $f~
+    cp $f~ $f
+end
+
+rm -f install.sed
+
+#
+# generation of binaries
+#
+
+if ( $1 == "local" ) then
+    if ( ! -d /usr/local/lib ) mkdir /usr/local/lib
+    if ( ! -d /usr/local/include ) mkdir /usr/local/include
+    if ( ! -d /usr/local/bin ) mkdir /usr/local/bin
+else
+    if ( ! -d $HOME/lib ) mkdir $HOME/lib
+    if ( ! -d $HOME/include ) mkdir $HOME/include
+    if ( ! -d $HOME/bin ) mkdir $HOME/bin
+    if ( $env_var != "" ) then
+        if ( ! -d $HOME/lib$ARCH_EXT ) mkdir $HOME/lib$ARCH_EXT
+        if ( ! -d $HOME/bin$ARCH_EXT ) mkdir $HOME/bin$ARCH_EXT
+    endif
+endif
+
+foreach d ( \
+	xc \
+	laspack \
+	laspack/examples/mlstest \
+	laspack/examples/lastest \
+	laspack/examples/vectopt \
+	laspack/examples/matropt \
+)
+	echo ''
+	echo "directory: $d"
+	echo ''
+        if ( $1 == "local" ) then
+ 	    csh -c "cd $d; make clean; make install-local"
+        else
+	    csh -c "cd $d; make clean; make install"
+	endif
+end
+
+rehash
+echo ""
+echo "LASPack installed."
+
+sleep 5
+
+#
+# check
+#
+
+echo ""
+cd laspack/check
+echo ""
+check
+echo ""
+cd ../..

@@ -1,0 +1,73 @@
+#!/usr/bin/env python
+
+## Program:   VMTK
+## Module:    $RCSfile: vmtksurfacenormals.py,v $
+## Language:  Python
+## Date:      $Date: 2005/09/14 09:49:59 $
+## Version:   $Revision: 1.7 $
+
+##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
+##   See LICENCE file for details.
+
+##      This software is distributed WITHOUT ANY WARRANTY; without even 
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      PURPOSE.  See the above copyright notices for more information.
+
+
+import vtk
+import vtkvmtk
+import sys
+
+import pypes
+
+vmtksurfacenormals = 'vmtkSurfaceNormals'
+
+class vmtkSurfaceNormals(pypes.pypeScript):
+
+    def __init__(self):
+
+        pypes.pypeScript.__init__(self)
+        
+        self.Surface = None
+        self.NormalsArrayName = ''
+
+        self.AutoOrientNormals = 1
+        self.FlipNormals = 0
+
+        self.SetScriptName('vmtksurfacenormals')
+        self.SetScriptDoc('compute normals to a surface')
+        self.SetInputMembers([
+            ['Surface','i','vtkPolyData',1,'the input surface','vmtksurfacereader'],
+            ['NormalsArrayName','normalsarray','str',1,'name of the array where normals have to be stored'],
+            ['AutoOrientNormals','autoorientnormals','int',1,'try to auto orient normals outwards'],
+            ['FlipNormals','flipnormals','int',1,'flip normals after computing them']
+            ])
+        self.SetOutputMembers([
+            ['Surface','o','vtkPolyData',1,'the output surface','vmtksurfacewriter']
+            ])
+
+    def Execute(self):
+
+        if self.Surface == None:
+            self.PrintError('Error: No Surface.')
+
+        normalsFilter = vtk.vtkPolyDataNormals()
+        normalsFilter.SetInput(self.Surface)
+        normalsFilter.SetAutoOrientNormals(self.AutoOrientNormals)
+        normalsFilter.SetFlipNormals(self.FlipNormals)
+      	normalsFilter.SplittingOff()
+        normalsFilter.ConsistencyOn()
+        normalsFilter.Update()
+
+        self.Surface = normalsFilter.GetOutput()
+
+        if self.Surface.GetSource():
+            self.Surface.GetSource().UnRegisterAllOutputs()
+
+        if self.NormalsArrayName != '':
+            self.Surface.GetPointData().GetNormals().SetName(self.NormalsArrayName)
+
+if __name__=='__main__':
+    main = pypes.pypeMain()
+    main.Arguments = sys.argv
+    main.Execute()

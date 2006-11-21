@@ -1,0 +1,4 @@
+PROJECT (LASPACK)
+
+SUBDIRS(laspack)
+

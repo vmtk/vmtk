@@ -1,0 +1,38 @@
+export DOXYGEN_PROG="@DOXYGEN@"
+export PERL_PROG="@PERL@"
+export RM_PROG="@RM@"
+                                                                                                                          
+export SOURCE_DIR="@VTK_VMTK_SOURCE_DIR@"
+                                           
+export PATH_TO_VTK_VMTK_DOX_SCRIPTS="@VTK_VMTK_SOURCE_DIR@/Utilities/Doxygen"
+
+export REL_PATH_TO_TOP=.
+
+export DOXTEMP="@VTK_VMTK_BINARY_DIR@/Utilities/Doxygen"
+export INTERMEDIATE_DOX_DIR="$DOXTEMP/dox"
+
+export DOXYFILE="$DOXTEMP/doxyfile"
+export OUTPUT_DIRECTORY="$DOXTEMP/doc"
+
+$PERL_PROG $PATH_TO_VTK_VMTK_DOX_SCRIPTS/doc_header2doxygen.pl \
+        --to "$INTERMEDIATE_DOX_DIR" \
+        --relativeto "$SOURCE_DIR/$REL_PATH_TO_TOP" \
+        "$SOURCE_DIR/$REL_PATH_TO_TOP/Common" \
+        "$SOURCE_DIR/$REL_PATH_TO_TOP/ComputationalGeometry" \
+        "$SOURCE_DIR/$REL_PATH_TO_TOP/DifferentialGeometry" \
+        "$SOURCE_DIR/$REL_PATH_TO_TOP/Misc" \
+        "$SOURCE_DIR/$REL_PATH_TO_TOP/IO" \
+        "$SOURCE_DIR/$REL_PATH_TO_TOP/Segmentation" 
+
+$RM_PROG -fr $OUTPUT_DIRECTORY
+
+$DOXYGEN_PROG $DOXYFILE
+
+$PERL_PROG $PATH_TO_VTK_VMTK_DOX_SCRIPTS/doc_rmpath.pl \
+        --to "$INTERMEDIATE_DOX_DIR" \
+        --html "$OUTPUT_DIRECTORY/html"
+
+$PERL_PROG $PATH_TO_VTK_VMTK_DOX_SCRIPTS/doc_cleanhtml.pl \
+        --html "$OUTPUT_DIRECTORY/html"
+
+$RM_PROG -fr $INTERMEDIATE_DOX_DIR

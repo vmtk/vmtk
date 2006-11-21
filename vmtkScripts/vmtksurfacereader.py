@@ -1,0 +1,203 @@
+#!/usr/bin/env python
+
+## Program:   VMTK
+## Module:    $RCSfile: vmtksurfacereader.py,v $
+## Language:  Python
+## Date:      $Date: 2006/05/22 08:33:12 $
+## Version:   $Revision: 1.13 $
+
+##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
+##   See LICENCE file for details.
+
+##      This software is distributed WITHOUT ANY WARRANTY; without even 
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      PURPOSE.  See the above copyright notices for more information.
+
+import vtk
+import sys
+
+import pypes
+
+vmtksurfacereader = 'vmtkSurfaceReader'
+
+class vmtkSurfaceReader(pypes.pypeScript):
+
+    def __init__(self):
+
+        pypes.pypeScript.__init__(self)
+
+        self.Format = 'vtkxml'
+        self.GuessFormat = 1
+        self.InputFileName = ''
+        self.Surface = 0
+        self.Output = 0
+
+        self.SetScriptName('vmtksurfacereader')
+        self.SetScriptDoc('read a surface and store it in a vtkPolyData object')
+        self.SetInputMembers([
+            ['Format','f','str',1,'file format (vtkxml, vtk, stl, tecplot)'],
+            ['GuessFormat','guessformat','int',1,'guess file format from extension'],
+            ['InputFileName','ifile','str',1,'input file name'],
+            ['InputFileName','i','str',1,'input file name (deprecated: use -ifile)']
+            ])
+        self.SetOutputMembers([
+            ['Surface','o','vtkPolyData',1,'the output surface','vmtksurfacewriter']
+            ])
+
+    def ReadVTKSurfaceFile(self):
+        if (self.InputFileName == ''):
+            self.PrintError('Error: no InputFileName.')
+        self.PrintLog('Reading VTK surface file.')
+        reader = vtk.vtkPolyDataReader()
+        reader.SetFileName(self.InputFileName)
+        reader.Update()
+        self.Surface = reader.GetOutput()
+
+    def ReadVTKXMLSurfaceFile(self):
+        if (self.InputFileName == ''):
+            self.PrintError('Error: no InputFileName.')
+        self.PrintLog('Reading VTK XML surface file.')
+        reader = vtk.vtkXMLPolyDataReader()
+        reader.SetFileName(self.InputFileName)
+        reader.Update()
+        self.Surface = reader.GetOutput()
+
+    def ReadSTLSurfaceFile(self):
+        if (self.InputFileName == ''):
+            self.PrintError('Error: no InputFileName.')
+        self.PrintLog('Reading STL surface file.')
+        reader = vtk.vtkSTLReader()
+        reader.SetFileName(self.InputFileName)
+        reader.Update()
+        self.Surface = reader.GetOutput()
+
+    def ReadTecplotSurfaceFile(self):
+        self.PrintLog('Reading Tecplot surface file.')
+        f=open(self.InputFileName, 'r')
+        line = f.readline()
+        if line.split()[0] == 'TITLE':
+            line = f.readline()
+        if (line.split()[0] == 'VARIABLES') | (line.split('=')[0] == 'VARIABLES'):
+            arrayNames = line.split('=')[1].strip().split(',')
+            arrayNames[0:3] = []
+            self.PrintLog("ArrayNames" + str(arrayNames))
+            line = f.readline()
+        if line.split()[0] == 'ZONE':
+            lineNid = line.find('N=')
+            lineN = line[lineNid : lineNid+line[lineNid:].find(',') ].split('=')[1]
+            numberOfNodes = int(lineN)
+            lineEid = line.find('E=')
+            lineE = line[lineEid : lineEid+line[lineEid:].find(',') ].split('=')[1]
+            numberOfElements = int(lineE)
+        self.PrintLog("Reading " + str(numberOfNodes)+" nodes.")
+        points = vtk.vtkPoints()
+        cells = vtk.vtkCellArray()
+        points.SetNumberOfPoints(numberOfNodes)
+        self.Surface = vtk.vtkPolyData()
+        self.Surface.SetPoints(points)
+        self.Surface.SetPolys(cells)
+        for arrayName in arrayNames:
+            array = vtk.vtkDoubleArray()
+            array.SetName(arrayName)
+            array.SetNumberOfTuples(numberOfNodes)
+            self.Surface.GetPointData().AddArray(array)
+        self.Surface.Update()
+        data = f.read().split()
+        dataCounter = 0
+        for i in range(numberOfNodes):
+            point = [float(data[dataCounter]),float(data[dataCounter+1]),float(data[dataCounter+2])]
+            dataCounter += 3
+            points.SetPoint(i,point)
+            for j in range(len(arrayNames)):
+                self.Surface.GetPointData().GetArray(arrayNames[j]).SetComponent(i,0,float(data[dataCounter]))
+                dataCounter += 1
+        self.PrintLog("Reading " + str(numberOfElements)+" elements.")
+        cellIds = vtk.vtkIdList()
+        for i in range(numberOfElements):
+            cellIds.Initialize()
+            cellIds.InsertNextId(int(data[dataCounter])-1)
+            dataCounter += 1
+            cellIds.InsertNextId(int(data[dataCounter])-1)
+            dataCounter += 1
+            cellIds.InsertNextId(int(data[dataCounter])-1)
+            dataCounter += 1
+            cells.InsertNextCell(cellIds)
+##         self.PrintLog('Reading Tecplot surface file.')
+##         f=open(self.InputFileName, 'r')
+##         line = f.readline()
+##         arrayNames = line.split('=')[1].strip().split(',')
+##         arrayNames[0:3] = []
+##         self.PrintLog("ArrayNames" + str(arrayNames))
+##         line = f.readline()
+##         splitLine = line.split('=')
+##         numberOfNodes = int(splitLine[1].split(',')[0])
+##         numberOfElements = int(splitLine[2].split(',')[0])
+##         self.PrintLog("Reading " + str(numberOfNodes)+" nodes.")
+##         points = vtk.vtkPoints()
+##         cells = vtk.vtkCellArray()
+##         points.SetNumberOfPoints(numberOfNodes)
+##         self.Surface = vtk.vtkPolyData()
+##         self.Surface.SetPoints(points)
+##         self.Surface.SetPolys(cells)
+##         for arrayName in arrayNames:
+##             array = vtk.vtkDoubleArray()
+##             array.SetName(arrayName)
+##             array.SetNumberOfTuples(numberOfNodes)
+##             self.Surface.GetPointData().AddArray(array)
+##         self.Surface.Update()
+##         for i in range(numberOfNodes):
+##             line = f.readline()
+##             splitLine = line.strip().split(' ')
+##             point = [float(splitLine[0]),float(splitLine[1]),float(splitLine[2])]
+##             points.SetPoint(i,point)
+##             for j in range(len(arrayNames)):
+##                 self.Surface.GetPointData().GetArray(arrayNames[j]).SetComponent(i,0,float(splitLine[j+3]))
+##         self.PrintLog("Reading " + str(numberOfElements)+" elements.")
+##         cellIds = vtk.vtkIdList()
+##         for i in range(numberOfElements):
+##             cellIds.Initialize()
+##             line = f.readline()
+##             splitLine = line.strip().split(' ')
+##             cellIds.InsertNextId(int(splitLine[0])-1)
+##             cellIds.InsertNextId(int(splitLine[1])-1)
+##             cellIds.InsertNextId(int(splitLine[2])-1)
+##             cells.InsertNextCell(cellIds)
+
+    def Execute(self):
+
+        extensionFormats = {'vtp':'vtkxml',
+                            'vtkxml':'vtkxml',
+                            'vtk':'vtk',
+                            'stl':'stl',
+                            'tec':'tecplot',
+                            'dat':'tecplot'}
+
+        if self.GuessFormat and self.InputFileName:
+            import os.path
+            extension = os.path.splitext(self.InputFileName)[1]
+            if extension:
+                extension = extension[1:]
+                if extension in extensionFormats.keys():
+                    self.Format = extensionFormats[extension]
+
+        if (self.Format == 'vtk'):
+            self.ReadVTKSurfaceFile()
+        elif (self.Format == 'vtkxml'):
+            self.ReadVTKXMLSurfaceFile()
+        elif (self.Format == 'stl'):
+            self.ReadSTLSurfaceFile()
+        elif (self.Format == 'tecplot'):
+            self.ReadTecplotSurfaceFile()
+        else:
+            self.PrintError('Error: unsupported format '+ self.Format + '.')
+
+        if self.Surface.GetSource():
+            self.Surface.GetSource().UnRegisterAllOutputs()
+
+        self.Output = self.Surface
+
+
+if __name__=='__main__':
+    main = pypes.pypeMain()
+    main.Arguments = sys.argv
+    main.Execute()

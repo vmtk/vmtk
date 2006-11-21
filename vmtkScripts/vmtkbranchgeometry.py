@@ -1,0 +1,89 @@
+#!/usr/bin/env python
+
+## Program:   VMTK
+## Module:    $RCSfile: vmtkbranchgeometry.py,v $
+## Language:  Python
+## Date:      $Date: 2005/09/14 09:48:31 $
+## Version:   $Revision: 1.7 $
+
+##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
+##   See LICENCE file for details.
+
+##      This software is distributed WITHOUT ANY WARRANTY; without even 
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      PURPOSE.  See the above copyright notices for more information.
+
+
+import vtk
+import vtkvmtk
+import sys
+
+import pypes
+
+vmtkbranchgeometry = 'vmtkBranchGeometry'
+
+class vmtkBranchGeometry(pypes.pypeScript):
+
+    def __init__(self):
+
+        pypes.pypeScript.__init__(self)
+        
+        self.Centerlines = None
+      	self.GeometryData = None
+
+        self.RadiusArrayName = ''
+        self.GroupIdsArrayName = ''
+        self.BlankingArrayName = ''
+
+        self.LengthArrayName = 'Length'
+        self.CurvatureArrayName = 'Curvature'
+        self.TorsionArrayName = 'Torsion'
+        self.TortuosityArrayName = 'Tortuosity'
+
+        self.SetScriptName('vmtkbranchgeometry')
+        self.SetScriptDoc('compute geometric parameters for each branch of a tree. The script takes in input the centerlines already split into branches.')
+        self.SetInputMembers([
+            ['Centerlines','i','vtkPolyData',1,'the input split centerlines','vmtksurfacereader'],
+      	    ['RadiusArrayName','radiusarray','str',1,'name of the array where centerline radius values are stored'],
+      	    ['GroupIdsArrayName','groupidsarray','str',1,'name of the array where centerline group ids are stored'],
+      	    ['BlankingArrayName','blankingarray','str',1,'name of the array where blanking information about branches is stored'],
+      	    ['LengthArrayName','lengtharray','str',1,'name of the array where the average length of each branch has to be stored'],
+      	    ['CurvatureArrayName','curvaturearray','str',1,'name of the array where the average curvature of each branch has to be stored'],
+      	    ['TorsionArrayName','torsionarray','str',1,'name of the array where the average torsion of each branch has to be stored'],
+      	    ['TortuosityArrayName','tortuosityarray','str',1,'name of the array where the average tortuosity of each branch, defined as the length of a line divided by the distance of its endpoints, has to be stored'],
+            ])
+        self.SetOutputMembers([
+            ['GeometryData','o','vtkPolyData',1,'the output data set','vmtksurfacewriter'],
+            ['LengthArrayName','lengtharray','str',1,'name of the array where the average length of each branch is stored'],
+            ['CurvatureArrayName','curvaturearray','str',1,'name of the array where the average curvature of each branch is stored'],
+            ['TorsionArrayName','torsionarray','str',1,'name of the array where the average torsion of each branch is stored'],
+      	    ['TortuosityArrayName','tortuosityarray','str',1,'name of the array where the average tortuosity of each branch, defined as the length of a line divided by the distance of its endpoints minus one (L/D - 1), is stored']
+            ])
+
+    def Execute(self):
+
+        if self.Centerlines == None:
+            self.PrintError('Error: No input centerlines.')
+
+        centerlineBranchGeometry = vtkvmtk.vtkvmtkCenterlineBranchGeometry()
+        centerlineBranchGeometry.SetInput(self.Centerlines)
+        centerlineBranchGeometry.SetRadiusArrayName(self.RadiusArrayName)
+        centerlineBranchGeometry.SetGroupIdsArrayName(self.GroupIdsArrayName)
+        centerlineBranchGeometry.SetBlankingArrayName(self.BlankingArrayName)
+        centerlineBranchGeometry.SetLengthArrayName(self.LengthArrayName)
+        centerlineBranchGeometry.SetCurvatureArrayName(self.CurvatureArrayName)
+        centerlineBranchGeometry.SetTorsionArrayName(self.TorsionArrayName)
+        centerlineBranchGeometry.SetTortuosityArrayName(self.TortuosityArrayName)
+        centerlineBranchGeometry.Update()
+
+        self.GeometryData = centerlineBranchGeometry.GetOutput()
+
+        if self.GeometryData.GetSource():
+            self.GeometryData.GetSource().UnRegisterAllOutputs()
+        
+
+if __name__=='__main__':
+
+    main = pypes.pypeMain()
+    main.Arguments = sys.argv
+    main.Execute()

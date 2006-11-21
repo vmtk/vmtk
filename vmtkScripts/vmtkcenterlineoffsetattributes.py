@@ -1,0 +1,109 @@
+#!/usr/bin/env python
+
+## Program:   VMTK
+## Module:    $RCSfile: vmtkcenterlineoffsetattributes.py,v $
+## Language:  Python
+## Date:      $Date: 2006/04/06 16:46:43 $
+## Version:   $Revision: 1.8 $
+
+##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
+##   See LICENCE file for details.
+
+##      This software is distributed WITHOUT ANY WARRANTY; without even 
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      PURPOSE.  See the above copyright notices for more information.
+
+
+import vtk
+import vtkvmtk
+import sys
+
+import pypes
+
+vmtkcenterlineoffsetattributes = 'vmtkCenterlineOffsetAttributes'
+
+class vmtkCenterlineOffsetAttributes(pypes.pypeScript):
+
+    def __init__(self):
+
+        pypes.pypeScript.__init__(self)
+        
+        self.Centerlines = None
+        self.ReferenceSystems = None
+
+        self.ReferenceGroupId = -1
+
+        self.AbscissasArrayName = ''
+        self.NormalsArrayName = ''
+        self.GroupIdsArrayName = ''
+        self.CenterlineIdsArrayName = ''
+        self.ReferenceSystemsNormalArrayName = ''
+
+        self.ReplaceAttributes = 1
+
+        self.OffsetAbscissasArrayName = 'OffsetAbscissas'
+        self.OffsetNormalsArrayName = 'OffsetNormals'
+
+        self.SetScriptName('vmtkcenterlineoffsetattributes')
+        self.SetScriptDoc('offset centerline attributes relative to a bifurcation reference system, in such a way that the abscissa of the closest point the the origin is zero, and the centerline normal at that point coincides with the bifurcation reference system normal')
+        self.SetInputMembers([
+            ['Centerlines','i','vtkPolyData',1,'the input split centerlines','vmtksurfacereader'],
+            ['ReferenceSystems','referencesystems','vtkPolyData',1,'bifurcation reference systems','vmtksurfacereader'],
+            ['ReferenceGroupId','referencegroupid','int',1,'group id of the reference system to which attributes have to be offset'],
+            ['ReplaceAttributes','replaceattributes','int',1,'overwrite the existing attributes'],
+	          ['AbscissasArrayName','abscissasarray','str',1,'name of the array where centerline abscissas are stored'],
+      	    ['NormalsArrayName','normalsarray','str',1,'name of the array where centerline normals are stored'],
+      	    ['GroupIdsArrayName','groupidsarray','str',1,'name of the array where centerline group ids are stored'],
+      	    ['CenterlineIdsArrayName','centerlineidsarray','str',1,'name of the array where centerline ids are stored'],
+      	    ['ReferenceSystemsNormalArrayName','referencesystemsnormalarray','str',1,'name of the array where reference system normals are stored'],
+      	    ['OffsetAbscissasArrayName','offsetabscissasarray','str',1,'name of the array where offset centerline abscissas have to be stored if ReplaceAttributes is off'],
+      	    ['OffsetNormalsArrayName','offsetnormalsarray','str',1,'name of the array where offset centerline normals have to be stored if ReplaceAttributes is off']
+            ])
+        self.SetOutputMembers([
+            ['Centerlines','o','vtkPolyData',1,'the output centerlines','vmtksurfacewriter'],
+            ['ReferenceGroupId','referencegroupid','int',1,'group id of the reference system to which attributes are offset'],
+      	    ['OffsetAbscissasArrayName','offsetabscissasarray','str',1,'name of the array where offset centerline abscissas are stored if ReplaceAttributes is off'],
+      	    ['OffsetNormalsArrayName','offsetnormalsarray','str',1,'name of the array where offset centerline normals are stored if ReplaceAttributes is off'],
+      	    ['AbscissasArrayName','abscissasarray','str',1,'name of the array where centerline abscissas are stored'],
+      	    ['NormalsArrayName','normalsarray','str',1,'name of the array where centerline normals are stored']
+            ])
+
+    def Execute(self):
+
+        if self.Centerlines == None:
+            self.PrintError('Error: No input centerlines.')
+
+        if self.ReferenceSystems == None:
+            self.PrintError('Error: No input reference systems.')
+
+        offsetFilter = vtkvmtk.vtkvmtkCenterlineReferenceSystemAttributesOffset()
+        offsetFilter.SetInput(self.Centerlines)
+        offsetFilter.SetReferenceSystems(self.ReferenceSystems)
+        offsetFilter.SetAbscissasArrayName(self.AbscissasArrayName)
+        offsetFilter.SetNormalsArrayName(self.NormalsArrayName)
+        if not self.ReplaceAttributes:
+            offsetFilter.SetOffsetAbscissasArrayName(self.OffsetAbscissasArrayName)
+            offsetFilter.SetOffsetNormalsArrayName(self.OffsetNormalsArrayName)
+        else:
+            offsetFilter.SetOffsetAbscissasArrayName(self.AbscissasArrayName)
+            offsetFilter.SetOffsetNormalsArrayName(self.NormalsArrayName)
+        offsetFilter.SetGroupIdsArrayName(self.GroupIdsArrayName)
+        offsetFilter.SetCenterlineIdsArrayName(self.CenterlineIdsArrayName)
+        offsetFilter.SetReferenceSystemsNormalArrayName(self.ReferenceSystemsNormalArrayName)
+        offsetFilter.SetReferenceSystemsGroupIdsArrayName(self.GroupIdsArrayName)
+        offsetFilter.SetReferenceGroupId(self.ReferenceGroupId)
+        offsetFilter.Update()
+        
+        self.Centerlines = offsetFilter.GetOutput()
+
+        if (self.ReferenceGroupId == -1):
+            self.ReferenceGroupId = offsetFilter.GetReferenceGroupId()
+
+        if self.Centerlines.GetSource():
+            self.Centerlines.GetSource().UnRegisterAllOutputs()
+
+if __name__=='__main__':
+
+    main = pypes.pypeMain()
+    main.Arguments = sys.argv
+    main.Execute()

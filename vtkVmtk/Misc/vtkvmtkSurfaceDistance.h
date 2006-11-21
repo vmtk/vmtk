@@ -1,0 +1,72 @@
+/*=========================================================================
+
+Program:   VMTK
+Module:    $RCSfile: vtkvmtkSurfaceDistance.h,v $
+Language:  C++
+Date:      $Date: 2006/04/06 16:47:48 $
+Version:   $Revision: 1.4 $
+
+  Copyright (c) Luca Antiga, David Steinman. All rights reserved.
+  See LICENCE file for details.
+
+  Portions of this code are covered under the VTK copyright.
+  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
+  for details.
+
+     This software is distributed WITHOUT ANY WARRANTY; without even 
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     PURPOSE.  See the above copyright notices for more information.
+
+=========================================================================*/
+  // .NAME vtkvmtkSurfaceDistance - ...
+  // .SECTION Description
+  // .
+
+#ifndef __vtkvmtkSurfaceDistance_h
+#define __vtkvmtkSurfaceDistance_h
+
+#include "vtkPolyDataAlgorithm.h"
+#include "vtkPolyData.h"
+#include "vtkvmtkWin32Header.h"
+
+class vtkPolyData;
+
+class VTK_VMTK_MISC_EXPORT vtkvmtkSurfaceDistance : public vtkPolyDataAlgorithm
+{
+  public: 
+  vtkTypeRevisionMacro(vtkvmtkSurfaceDistance,vtkPolyDataAlgorithm);
+  void PrintSelf(ostream& os, vtkIndent indent); 
+
+  static vtkvmtkSurfaceDistance *New();
+
+  // Description:
+  // Set/Get the name of the array where the computed distance has to be stored.
+  vtkSetStringMacro(DistanceArrayName);
+  vtkGetStringMacro(DistanceArrayName);
+
+  // Description:
+  // Set/Get the name of the array where the computed distance has to be stored.
+  vtkSetStringMacro(SignedDistanceArrayName);
+  vtkGetStringMacro(SignedDistanceArrayName);
+
+  // Description:
+  // Set/Get the reference surface to compute distance from.
+  vtkSetObjectMacro(ReferenceSurface,vtkPolyData);
+  vtkGetObjectMacro(ReferenceSurface,vtkPolyData);
+
+  protected:
+  vtkvmtkSurfaceDistance();
+  ~vtkvmtkSurfaceDistance();  
+
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+
+  char *DistanceArrayName;
+  char *SignedDistanceArrayName;
+  vtkPolyData *ReferenceSurface;
+
+  private:
+  vtkvmtkSurfaceDistance(const vtkvmtkSurfaceDistance&);  // Not implemented.
+  void operator=(const vtkvmtkSurfaceDistance&);  // Not implemented.
+};
+
+#endif
