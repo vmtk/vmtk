@@ -49,7 +49,6 @@ SET(SCRIPTS_SRCS
   vmtkmeshwriter.py
   vmtkpotentialfit.py
   vmtkrenderer.py
-  vmtkscripts.py
   vmtksurfacecapper.py
   vmtksurfacecelldatatopointdata.py
   vmtksurfaceclipper.py
