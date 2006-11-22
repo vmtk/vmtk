@@ -50,7 +50,7 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
         self.AdvectionScaling = 1.0
         
         self.IsoSurfaceValue = 0.0
-        self.MaxvmtkmRMSError = 1E-20
+        self.MaximumRMSError = 1E-20
         self.DerivativeSigma = 0.0
         self.FeatureDerivativeSigma = 0.0
 
@@ -380,16 +380,16 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
         featureImage = None
         if self.SigmoidRemapping==1:
             scalarRange = gradientMagnitude.GetOutput().GetPointData().GetScalars().GetRange()
-            inputMinvmtkm = scalarRange[0]
-            inputMaxvmtkm = scalarRange[1]
-            alpha = - (inputMaxvmtkm - inputMinvmtkm) / 6.0
-            beta = (inputMaxvmtkm + inputMinvmtkm) / 2.0
+            inputMinimum = scalarRange[0]
+            inputMaximum = scalarRange[1]
+            alpha = - (inputMaximum - inputMinimum) / 6.0
+            beta = (inputMaximum + inputMinimum) / 2.0
             sigmoid = vtkvmtk.vtkvmtkSigmoidImageFilter()
             sigmoid.SetInput(gradientMagnitude.GetOutput())
             sigmoid.SetAlpha(alpha)
             sigmoid.SetBeta(beta)
-            sigmoid.SetOutputMinvmtkm(0.0)
-            sigmoid.SetOutputMaxvmtkm(1.0)
+            sigmoid.SetOutputMinimum(0.0)
+            sigmoid.SetOutputMaximum(1.0)
             sigmoid.Update()
             featureImage = sigmoid.GetOutput()
         else:
@@ -423,16 +423,16 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
         featureImage = None
         if self.SigmoidRemapping==1:
             scalarRange = gradientMagnitude.GetOutput().GetPointData().GetScalars().GetRange()
-            inputMinvmtkm = scalarRange[0]
-            inputMaxvmtkm = scalarRange[1]
-            alpha = - (inputMaxvmtkm - inputMinvmtkm) / 6.0
-            beta = (inputMaxvmtkm + inputMinvmtkm) / 2.0
+            inputMinimum = scalarRange[0]
+            inputMaximum = scalarRange[1]
+            alpha = - (inputMaximum - inputMinimum) / 6.0
+            beta = (inputMaximum + inputMinimum) / 2.0
             sigmoid = vtkvmtk.vtkvmtkSigmoidImageFilter()
             sigmoid.SetInput(gradientMagnitude.GetOutput())
             sigmoid.SetAlpha(alpha)
             sigmoid.SetBeta(beta)
-            sigmoid.SetOutputMinvmtkm(0.0)
-            sigmoid.SetOutputMaxvmtkm(1.0)
+            sigmoid.SetOutputMinimum(0.0)
+            sigmoid.SetOutputMaximum(1.0)
             sigmoid.Update()
             featureImage = sigmoid.GetOutput()
         else:
@@ -461,7 +461,7 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
         levelSets.SetCurvatureScaling(self.CurvatureScaling)
         levelSets.SetAdvectionScaling(self.AdvectionScaling)
         levelSets.SetIsoSurfaceValue(self.IsoSurfaceValue)
-        levelSets.SetMaxvmtkmRMSError(self.MaxvmtkmRMSError)
+        levelSets.SetMaximumRMSError(self.MaximumRMSError)
         levelSets.SetInterpolateSurfaceLocation(1)
         levelSets.AddObserver("ProgressEvent", self.PrintProgress)
         levelSets.Update()
@@ -480,12 +480,12 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
         if self.LevelSets == None:
             self.LevelSets = self.LevelSetsOutput
         else:
-            minvmtkm = vtk.vtkImageMathematics()
-            minvmtkm.SetOperationToMin()
-            minvmtkm.SetInput1(self.LevelSets)
-            minvmtkm.SetInput2(self.LevelSetsOutput)
-            minvmtkm.Update()
-            self.LevelSets = minvmtkm.GetOutput()
+            minFilter = vtk.vtkImageMathematics()
+            minFilter.SetOperationToMin()
+            minFilter.SetInput1(self.LevelSets)
+            minFilter.SetInput2(self.LevelSetsOutput)
+            minFilter.Update()
+            self.LevelSets = minFilter.GetOutput()
 
         if self.LevelSets.GetSource():
             self.LevelSets.GetSource().UnRegisterAllOutputs()
@@ -507,48 +507,43 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
         self.SurfaceViewer.BuildView()
 
     def MakeImageIsotropic(self):
-        
-        spacing = self.Image.GetSpacing()
-        if (spacing[0] == spacing[1]) & (spacing[1] == spacing[2]) & (self.ResampleSpacing == 0.0):
+       
+        if not self.ResampleImage:
             return
 
-        isotropicSpacing = spacing[0]
-        if self.ResampleSpacing != 0.0:
-            isotropicSpacing = self.ResampleSpacing
+        spacing = self.Image.GetSpacing()
 
-        reslice = vtk.vtkImageReslice()
-        reslice.SetInput(self.Image)
-        reslice.SetBackgroundLevel(self.Image.GetPointData().GetScalars().GetValue(0))
-        reslice.SetInterpolationModeToCubic()
-        reslice.InterpolateOn()
-        reslice.SetOutputSpacing(isotropicSpacing,isotropicSpacing,isotropicSpacing)
-        reslice.Update()
-        self.Image = reslice.GetOutput()
+        isotropicImage = 0
+        if (spacing[0] == spacing[1]) & (spacing[1] == spacing[2]):
+            isotropicImage = 1
 
-        if self.InitialLevelSets != None:
-          reslice2 = vtk.vtkImageReslice()
-          reslice2.SetInput(self.InitialLevelSets)
-          reslice2.SetBackgroundLevel(self.InitialLevelSets.GetPointData().GetScalars().GetValue(0))
-          reslice2.SetInterpolationModeToLinear()
-          reslice2.InterpolateOn()
-          reslice2.SetOutputSpacing(isotropicSpacing,isotropicSpacing,isotropicSpacing)
-          reslice2.Update()
-          self.InitialLevelSets = reslice2.GetOutput()
+        if self.ResampleSpacing != 0.0 or not isotropicImage:
+            isotropicSpacing = spacing[0]
+            if self.ResampleSpacing != 0.0:
+                isotropicSpacing = self.ResampleSpacing
+            reslice = vtk.vtkImageReslice()
+            reslice.SetInput(self.Image)
+            reslice.SetBackgroundLevel(self.Image.GetPointData().GetScalars().GetValue(0))
+            reslice.SetInterpolationModeToCubic()
+            reslice.SetOutputSpacing(isotropicSpacing,isotropicSpacing,isotropicSpacing)
+            reslice.Update()
+            self.Image = reslice.GetOutput()
 
-##        reslice = vtk.vtkImageResample()
-##        reslice.SetInput(self.Image)
-##        reslice.SetBackgroundLevel(self.Image.GetPointData().GetScalars().GetValue(0))
-##        reslice.SetInterpolationModeToCubic()
-##        reslice.InterpolateOn()
-##        reslice.SetAxisOutputSpacing(0,isotropicSpacing)
-##        reslice.SetAxisOutputSpacing(1,isotropicSpacing)
-##        reslice.SetAxisOutputSpacing(2,isotropicSpacing)
-##        reslice.SetDimensionality(3)
-##        reslice.Update()
-##        self.Image = reslice.GetOutput()
+        if self.InitialLevelSets:
+            reslice = vtk.vtkImageReslice()
+            reslice.SetInput(self.InitialLevelSets)
+            reslice.SetInformationInput(self.Image)
+            reslice.SetInterpolationModeToLinear()
+            reslice.Update()
+            self.InitialLevelSets = reslice.GetOutput()
 
-##        if self.Image.GetSource():
-##            self.Image.GetSource().UnRegisterAllOutputs()
+        if self.LevelSets:
+            reslice = vtk.vtkImageReslice()
+            reslice.SetInput(self.LevelSets)
+            reslice.SetInformationInput(self.Image)
+            reslice.SetInterpolationModeToLinear()
+            reslice.Update()
+            self.LevelSets = reslice.GetOutput()
 
     def InitializationTypeValidator(self,text):
         if text in ['0','1','2','3']:
@@ -625,22 +620,22 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
         while (endSegmentation == 0):
   
             if self.InitialLevelSets == None:
-              endInitialization = 0
-              while (endInitialization == 0):
-                queryString = 'Please choose initialization type: (0: colliding fronts; 1: fast marching; 2: threshold; 3: isosurface): '
-                initializationType = self.InputText(queryString,self.InitializationTypeValidator)
-                initializationMethods[initializationType]()
-                self.DisplayLevelSetSurface(self.LevelSetsInput,self.IsoSurfaceValue)
-                queryString = 'Accept initialization? (y/n): '
-                inputString = self.InputText(queryString,self.YesNoValidator)
-                if (inputString == 'y'):
-                  endInitialization = 1
-                elif (inputString == 'n'):
-                  endInitialization = 0
+                endInitialization = 0
+                while (endInitialization == 0):
+                    queryString = 'Please choose initialization type: (0: colliding fronts; 1: fast marching; 2: threshold; 3: isosurface): '
+                    initializationType = self.InputText(queryString,self.InitializationTypeValidator)
+                    initializationMethods[initializationType]()
+                    self.DisplayLevelSetSurface(self.LevelSetsInput,self.IsoSurfaceValue)
+                    queryString = 'Accept initialization? (y/n): '
+                    inputString = self.InputText(queryString,self.YesNoValidator)
+                    if (inputString == 'y'):
+                        endInitialization = 1
+                    elif (inputString == 'n'):
+                        endInitialization = 0
             else:
-              self.LevelSetsInput = self.InitialLevelSets
-              self.InitialLevelSets = None
-              self.DisplayLevelSetSurface(self.LevelSetsInput,self.IsoSurfaceValue)
+                  self.LevelSetsInput = self.InitialLevelSets
+                  self.InitialLevelSets = None
+                  self.DisplayLevelSetSurface(self.LevelSetsInput,self.IsoSurfaceValue)
   
             endEvolution = 0
             while (endEvolution == 0):

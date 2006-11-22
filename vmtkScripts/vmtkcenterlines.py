@@ -430,7 +430,7 @@ class vmtkCenterlines(pypes.pypeScript):
         self.SeedSelectorName = 'pickpoint'
         self.FlipNormals = 0
         self.CapDisplacement = 0.1
-        self.RadiusArrayName = 'MaxvmtkmInscribedSphereRadius'
+        self.RadiusArrayName = 'MaximumInscribedSphereRadius'
         self.CostFunction = '1/R'
         self.AppendEndPoints = 0
         

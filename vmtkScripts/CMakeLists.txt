@@ -25,9 +25,11 @@ SET(SCRIPTS_SRCS
   vmtkendpointextractor.py
   vmtkflowextensions.py
   vmtkicpregistration.py
+  vmtkimagecompose.py
   vmtkimagelinetracer.py
   vmtkimagemipviewer.py
   vmtkimagereader.py
+  vmtkimagereslice.py
   vmtkimageseeder.py
   vmtkimageviewer.py
   vmtkimagevoipainter.py

@@ -35,7 +35,7 @@ class vmtkBoundaryLayer(pypes.pypeScript):
 
         self.Thickness = 1.0
         self.ThicknessRatio = 0.1
-        self.MaxvmtkmThickness = 1E10
+        self.MaximumThickness = 1E10
 
         self.NumberOfSubLayers = 1
         self.SubLayerRatio = 1.0
@@ -52,7 +52,7 @@ class vmtkBoundaryLayer(pypes.pypeScript):
             ['ThicknessArrayName','thicknessarray','str',1,'name of the array where scalars defining boundary layer thickness are stored'],
             ['Thickness','thickness','float',1,'value of constant boundary layer thickness'],
             ['ThicknessRatio','thicknessratio','float',1,'multiplying factor for boundary layer thickness'],
-            ['MaxvmtkmThickness','maxvmtkmthickness','float',1,'maxvmtkm allowed value for boundary layer thickness'],
+            ['MaximumThickness','maximumthickness','float',1,'maximum allowed value for boundary layer thickness'],
             ['NumberOfSubLayers','numberofsublayers','int',1,'number of sublayers which the boundary layer has to be made of'],
             ['SubLayerRatio','sublayerratio','float',1,'ratio between the thickness of two successive boundary layers'],
             ['UseWarpVectorMagnitudeAsThickness','warpvectormagnitudeasthickness','int',1,'compute boundary layer thickness as the norm of warp vectors'],
@@ -74,7 +74,7 @@ class vmtkBoundaryLayer(pypes.pypeScript):
         boundaryLayerGenerator.SetLayerThickness(self.Thickness)
         boundaryLayerGenerator.SetLayerThicknessArrayName(self.ThicknessArrayName)
         boundaryLayerGenerator.SetLayerThicknessRatio(self.ThicknessRatio)
-        boundaryLayerGenerator.SetMaxvmtkmLayerThickness(self.MaxvmtkmThickness)
+        boundaryLayerGenerator.SetMaximumLayerThickness(self.MaximumThickness)
         boundaryLayerGenerator.SetNumberOfSubLayers(self.NumberOfSubLayers)
         boundaryLayerGenerator.SetSubLayerRatio(self.SubLayerRatio)
         boundaryLayerGenerator.SetConstantThickness(self.ConstantThickness)

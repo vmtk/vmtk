@@ -36,7 +36,7 @@ class vmtkSurfaceDistance(pypes.pypeScript):
         self.FlipNormals = 0
 
         self.SetScriptName('vmtksurfacedistance')
-        self.SetScriptDoc('compute the pointwise minvmtkm distance of the input surface from a reference surface')
+        self.SetScriptDoc('compute the pointwise minimum distance of the input surface from a reference surface')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'the input surface','vmtksurfacereader'],
             ['ReferenceSurface','r','vtkPolyData',1,'the reference surface','vmtksurfacereader'],

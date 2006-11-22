@@ -75,9 +75,9 @@ class vmtkICPRegistration(pypes.pypeScript):
         icpTransform.SetTarget(self.ReferenceSurface)
         icpTransform.GetLandmarkTransform().SetModeToRigidBody()
         icpTransform.StartByMatchingCentroidsOn()
-        icpTransform.SetMaxvmtkmNumberOfLandmarks(1000)
-        icpTransform.SetMaxvmtkmNumberOfIterations(1000)
-        icpTransform.SetMaxvmtkmMeanDistance(1E-2)
+        icpTransform.SetMaximumNumberOfLandmarks(1000)
+        icpTransform.SetMaximumNumberOfIterations(1000)
+        icpTransform.SetMaximumMeanDistance(1E-2)
 
         transformFilter = vtk.vtkTransformPolyDataFilter()
         transformFilter.SetInput(self.Surface)

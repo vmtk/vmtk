@@ -82,7 +82,7 @@ class vmtkImageMIPViewer(pypes.pypeScript):
 
         volumeMapper = vtk.vtkFixedPointVolumeRayCastMapper()
         volumeMapper.SetInput(self.Image)
-        volumeMapper.SetBlendModeToMaxvmtkmIntensity()
+        volumeMapper.SetBlendModeToMaximumIntensity()
         if self.AutoSampleDistance:
             volumeMapper.AutoAdjustSampleDistancesOn()
         else:
