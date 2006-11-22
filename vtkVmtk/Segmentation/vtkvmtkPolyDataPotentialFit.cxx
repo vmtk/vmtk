@@ -26,7 +26,7 @@ Version:   $Revision: 1.3 $
 
 #include "vtkvmtkPolyDataPotentialFit.h"
 
-#include "vtkbvgNeighborhoods.h"
+#include "vtkvmtkNeighborhoods.h"
 #include "vtkvmtkConstants.h"
 #include "vtkMath.h"
 #include "vtkPolyData.h"
@@ -160,7 +160,7 @@ void vtkvmtkPolyDataPotentialFit::ComputeStiffnessDisplacement(vtkIdType pointId
   vtkIdType ijk[3];
   double pcoords[3];
   vtkIdType numberOfNeighborhoodPoints;
-  vtkbvgNeighborhood *neighborhood;
+  vtkvmtkNeighborhood *neighborhood;
   vtkPolyData *output;
 
   output = this->GetOutput();
@@ -348,7 +348,7 @@ void vtkvmtkPolyDataPotentialFit::Execute()
     this->Neighborhoods = NULL;
     }
 
-  this->Neighborhoods = vtkbvgNeighborhoods::New();
+  this->Neighborhoods = vtkvmtkNeighborhoods::New();
   this->Neighborhoods->SetNeighborhoodTypeToPolyDataManifoldNeighborhood();
   this->Neighborhoods->SetDataSet(input);
   this->Neighborhoods->Build();

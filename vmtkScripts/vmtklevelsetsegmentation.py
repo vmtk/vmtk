@@ -633,9 +633,9 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
                     elif (inputString == 'n'):
                         endInitialization = 0
             else:
-                  self.LevelSetsInput = self.InitialLevelSets
-                  self.InitialLevelSets = None
-                  self.DisplayLevelSetSurface(self.LevelSetsInput,self.IsoSurfaceValue)
+                self.LevelSetsInput = self.InitialLevelSets
+                self.InitialLevelSets = None
+                self.DisplayLevelSetSurface(self.LevelSetsInput,self.IsoSurfaceValue)
   
             endEvolution = 0
             while (endEvolution == 0):

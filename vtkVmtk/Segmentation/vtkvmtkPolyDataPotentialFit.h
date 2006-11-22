@@ -35,7 +35,7 @@ Version:   $Revision: 1.3 $
 
 class vtkImageData;
 class vtkDoubleArray;
-class vtkbvgNeighborhoods;
+class vtkvmtkNeighborhoods;
 
 class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkPolyDataPotentialFit : public vtkPolyDataToPolyDataFilter
 {
@@ -127,7 +127,7 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkPolyDataPotentialFit : public vtkPolyD
 
   vtkDoubleArray *Displacements;
 
-  vtkbvgNeighborhoods *Neighborhoods;
+  vtkvmtkNeighborhoods *Neighborhoods;
 
   int VoxelOffsets[8][3];
 
