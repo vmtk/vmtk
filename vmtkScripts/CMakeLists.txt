@@ -26,6 +26,7 @@ SET(SCRIPTS_SRCS
   vmtkflowextensions.py
   vmtkicpregistration.py
   vmtkimagecompose.py
+  vmtkimagefeatures.py
   vmtkimagelinetracer.py
   vmtkimagemipviewer.py
   vmtkimagereader.py

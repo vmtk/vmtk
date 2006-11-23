@@ -34,15 +34,12 @@ class vmtkPotentialFit(pypes.pypeScript):
 
         self.NumberOfIterations = 100
         self.NumberOfStiffnessSubIterations = 5
-        self.Relaxation = 0.1
         self.PotentialWeight = 1.0
         self.StiffnessWeight = 1.0
-        self.Convergence = 1E-1
+        self.Convergence = 1E-3
         self.MaxTimeStep = 1.0
         self.Relaxation = 1E-1
-
-        self.InplanePotential = 0
-        self.InplaneTolerance = 1E-4
+        self.Dimensionality = 3
 
         self.SetScriptName('vmtkpotentialfit')
         self.SetInputMembers([
@@ -55,54 +52,30 @@ class vmtkPotentialFit(pypes.pypeScript):
             ['Convergence','convergence','float',1],
             ['MaxTimeStep','maxtimestep','float',1],
             ['Relaxation','relaxation','float',1],
-            ['InplanePotential','inplanepotential','int',1],
-            ['InplaneTolerance','inplanetolerance','float',1] 
+            ['Dimensionality','dimensionality','int',1]
             ])
         self.SetOutputMembers([
-            ['Surface','o','vtkPolyData',1,'','vmtksurfacewriter'],
-            ['PotentialImage','potentialimage','vtkImageData',1,'','vmtkimagewriter']
+            ['Surface','o','vtkPolyData',1,'','vmtksurfacewriter']
             ])
 
-    def SetRequiredImageType(self):
-        cast = vtk.vtkImageCast()
-        cast.SetInput(self.Image)
-        cast.SetOutputScalarTypeToDouble()
-        cast.Update()
-        self.Image = cast.GetOutput()
-
-    def SetImageRequirements(self):
-        self.SetRequiredImageType()
-
-    def BuildPotentialImage(self):
-        gradientMagnitudeFilter = vtk.vtkImageGradientMagnitude()
-        gradientMagnitudeFilter.SetInput(self.Image)
-        gradientMagnitudeFilter.SetDimensionality(3)
-        gradientMagnitudeFilter.Update()
-        gradientFilter = vtk.vtkImageGradient()
-        gradientFilter.SetInput(gradientMagnitudeFilter.GetOutput())
-        gradientFilter.SetDimensionality(3)
-        gradientFilter.Update()
-        self.PotentialImage = gradientFilter.GetOutput()
-    
     def Execute(self):
 
         if (self.Image == None):
             self.PrintError('Error: Image not set.')
-
-        self.SetImageRequirements()
-
-        self.BuildPotentialImage()
+        
+        gradientFilter = vtk.vtkImageGradient()
+        gradientFilter.SetInput(self.Image)
+        gradientFilter.SetDimensionality(self.Dimensionality)
+        gradientFilter.Update()
 
         polyDataPotentialFit = vtkvmtk.vtkvmtkPolyDataPotentialFit()
         polyDataPotentialFit.SetInput(self.Surface)
-        polyDataPotentialFit.SetPotentialImage(self.PotentialImage)
+        polyDataPotentialFit.SetPotentialImage(gradientFilter.GetOutput())
         polyDataPotentialFit.SetMaxTimeStep(self.MaxTimeStep)
         polyDataPotentialFit.SetRelaxation(self.Relaxation)
         polyDataPotentialFit.SetConvergence(self.Convergence)
         polyDataPotentialFit.SetPotentialWeight(self.PotentialWeight)
         polyDataPotentialFit.SetStiffnessWeight(self.StiffnessWeight)
-        polyDataPotentialFit.SetInplanePotential(self.InplanePotential)
-        polyDataPotentialFit.SetInplaneTolerance(self.InplaneTolerance)
         polyDataPotentialFit.SetNumberOfStiffnessSubIterations(self.NumberOfStiffnessSubIterations)
         polyDataPotentialFit.SetNumberOfIterations(self.NumberOfIterations)
         polyDataPotentialFit.Update()

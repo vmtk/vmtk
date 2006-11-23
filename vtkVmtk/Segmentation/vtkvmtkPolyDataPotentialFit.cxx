@@ -55,9 +55,6 @@ vtkvmtkPolyDataPotentialFit::vtkvmtkPolyDataPotentialFit()
   this->StiffnessWeight = 0.0;
   this->PotentialMaxNorm = 0.0;
 
-  this->InplanePotential = 0;
-  this->InplaneTolerance = 1E-4;
-
   this->MaxTimeStep = 1.0; // pixels per time step
 
   this->NumberOfStiffnessSubIterations = 5;
@@ -102,7 +99,6 @@ void vtkvmtkPolyDataPotentialFit::EvaluateForce(double point[3], double force[3]
   vtkIdType ijk[3];
   double pcoords[3];
   double weights[8];
-  double *scalarPointer;
   int inBounds;
   int i;
 
@@ -115,22 +111,19 @@ void vtkvmtkPolyDataPotentialFit::EvaluateForce(double point[3], double force[3]
     return;
     }
 
-  if (this->InplanePotential)
-    {
-    if (!((pcoords[2] < this->InplaneTolerance) || (1.0 - pcoords[2] < this->InplaneTolerance)))
-      {
-      return;
-      }
-    }
-
   vtkVoxel::InterpolationFunctions(pcoords,weights);
 
   for (i=0; i<8; i++)
     {
-    scalarPointer = (double*)this->PotentialImage->GetScalarPointer(ijk[0]+VoxelOffsets[i][0],ijk[1]+VoxelOffsets[i][1],ijk[2]+VoxelOffsets[i][2]);
-    force[0] += weights[i] * scalarPointer[0];
-    force[1] += weights[i] * scalarPointer[1];
-    force[2] += weights[i] * scalarPointer[2];
+    double vectorValue[3];
+    int offsetIjk[3];
+    offsetIjk[0] = ijk[0]+VoxelOffsets[i][0];
+    offsetIjk[1] = ijk[1]+VoxelOffsets[i][1];
+    offsetIjk[2] = ijk[2]+VoxelOffsets[i][2];
+    this->PotentialImage->GetPointData()->GetScalars()->GetTuple(this->PotentialImage->ComputePointId(offsetIjk),vectorValue);
+    force[0] += weights[i] * vectorValue[0];
+    force[1] += weights[i] * vectorValue[1];
+    force[2] += weights[i] * vectorValue[2];
     }
 
   if (normalize && this->PotentialMaxNorm > VTK_VMTK_DOUBLE_TOL)
@@ -139,6 +132,10 @@ void vtkvmtkPolyDataPotentialFit::EvaluateForce(double point[3], double force[3]
     force[1] /= this->PotentialMaxNorm;
     force[2] /= this->PotentialMaxNorm;
     }
+
+  force[0] *= -1.0;
+  force[1] *= -1.0;
+  force[2] *= -1.0;
 }
 
 void vtkvmtkPolyDataPotentialFit::ComputePotentialDisplacement(vtkIdType pointId, double potentialDisplacement[3])

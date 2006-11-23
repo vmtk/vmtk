@@ -251,12 +251,12 @@ class PypeTkPad(object):
     def QuitHandler(self,event):
         self.QuitCommand()
  
-    def RunAllKeyboardHandler(self,event):
-        self.RunAllCommand()
-        return "break"
- 
-    def RunLineKeyboardHandler(self,event):
-        self.RunLineCommand()
+    def RunKeyboardHandler(self,event):
+        try: 
+            self.text_input.index(SEL_FIRST)
+            self.RunSelectionCommand()
+        except TclError:
+            self.RunLineCommand()
         return "break"
          
     def RunAllHandler(self,event):
@@ -360,7 +360,7 @@ class PypeTkPad(object):
         self.popupmenu.add_command(label="Run selection", command=self.RunSelectionCommand)
                        
         self.text_input.bind("<Button-3>", self.PopupHandler)
-        self.text_input.bind("<Control-Return>", self.RunLineKeyboardHandler)
+        self.text_input.bind("<Control-Return>", self.RunKeyboardHandler)
  
         self.input_scrollbar = Scrollbar(self.frame1,orient=VERTICAL,command=self.text_input.yview)
         self.input_scrollbar.pack(side=RIGHT,fill=Y)

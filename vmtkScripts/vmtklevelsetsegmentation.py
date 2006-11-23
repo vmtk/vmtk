@@ -348,103 +348,6 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
 
         return 1
 
-    def BuildFWHMBasedFeatureImage(self):
-        
-        cast = vtk.vtkImageCast()
-        cast.SetInput(self.Image)
-        cast.SetOutputScalarTypeToFloat()
-        cast.Update()
-
-        fwhmFeatureImageFilter = vtkvmtk.vtkvmtkFWHMFeatureImageFilter()
-        fwhmFeatureImageFilter.SetInput(cast.GetOutput())
-        fwhmFeatureImageFilter.SetRadius(self.FWHMRadius)
-        fwhmFeatureImageFilter.SetBackgroundValue(self.FWHMBackgroundValue)
-        fwhmFeatureImageFilter.Update()
-	
-        self.FeatureImage = vtk.vtkImageData()
-        self.FeatureImage.DeepCopy(fwhmFeatureImageFilter.GetOutput())
-        self.FeatureImage.Update()
-
-    def BuildUpwindGradientBasedFeatureImage(self):
- 
-        cast = vtk.vtkImageCast()
-        cast.SetInput(self.Image)
-        cast.SetOutputScalarTypeToFloat()
-        cast.Update()
-       
-        gradientMagnitude = vtkvmtk.vtkvmtkUpwindGradientMagnitudeImageFilter()
-        gradientMagnitude.SetInput(cast.GetOutput())
-        gradientMagnitude.SetUpwindFactor(self.UpwindFactor)
-        gradientMagnitude.Update()
-
-        featureImage = None
-        if self.SigmoidRemapping==1:
-            scalarRange = gradientMagnitude.GetOutput().GetPointData().GetScalars().GetRange()
-            inputMinimum = scalarRange[0]
-            inputMaximum = scalarRange[1]
-            alpha = - (inputMaximum - inputMinimum) / 6.0
-            beta = (inputMaximum + inputMinimum) / 2.0
-            sigmoid = vtkvmtk.vtkvmtkSigmoidImageFilter()
-            sigmoid.SetInput(gradientMagnitude.GetOutput())
-            sigmoid.SetAlpha(alpha)
-            sigmoid.SetBeta(beta)
-            sigmoid.SetOutputMinimum(0.0)
-            sigmoid.SetOutputMaximum(1.0)
-            sigmoid.Update()
-            featureImage = sigmoid.GetOutput()
-        else:
-            boundedReciprocal = vtkvmtk.vtkvmtkBoundedReciprocalImageFilter()
-            boundedReciprocal.SetInput(gradientMagnitude.GetOutput())
-            boundedReciprocal.Update()
-            featureImage = boundedReciprocal.GetOutput()
- 
-        self.FeatureImage = vtk.vtkImageData()
-        self.FeatureImage.DeepCopy(featureImage)
-        self.FeatureImage.Update()
-   
-    def BuildGradientBasedFeatureImage(self):
-
-        cast = vtk.vtkImageCast()
-        cast.SetInput(self.Image)
-        cast.SetOutputScalarTypeToFloat()
-        cast.Update()
-
-        if (self.DerivativeSigma > 0.0):
-            gradientMagnitude = vtkvmtk.vtkvmtkGradientMagnitudeRecursiveGaussianImageFilter()
-            gradientMagnitude.SetInput(cast.GetOutput())
-            gradientMagnitude.SetSigma(self.DerivativeSigma)
-            gradientMagnitude.SetNormalizeAcrossScale(0)
-            gradientMagnitude.Update()
-        else:
-            gradientMagnitude = vtkvmtk.vtkvmtkGradientMagnitudeImageFilter()
-            gradientMagnitude.SetInput(cast.GetOutput())
-            gradientMagnitude.Update()
-
-        featureImage = None
-        if self.SigmoidRemapping==1:
-            scalarRange = gradientMagnitude.GetOutput().GetPointData().GetScalars().GetRange()
-            inputMinimum = scalarRange[0]
-            inputMaximum = scalarRange[1]
-            alpha = - (inputMaximum - inputMinimum) / 6.0
-            beta = (inputMaximum + inputMinimum) / 2.0
-            sigmoid = vtkvmtk.vtkvmtkSigmoidImageFilter()
-            sigmoid.SetInput(gradientMagnitude.GetOutput())
-            sigmoid.SetAlpha(alpha)
-            sigmoid.SetBeta(beta)
-            sigmoid.SetOutputMinimum(0.0)
-            sigmoid.SetOutputMaximum(1.0)
-            sigmoid.Update()
-            featureImage = sigmoid.GetOutput()
-        else:
-            boundedReciprocal = vtkvmtk.vtkvmtkBoundedReciprocalImageFilter()
-            boundedReciprocal.SetInput(gradientMagnitude.GetOutput())
-            boundedReciprocal.Update()
-            featureImage = boundedReciprocal.GetOutput()
- 
-        self.FeatureImage = vtk.vtkImageData()
-        self.FeatureImage.DeepCopy(featureImage)
-        self.FeatureImage.Update()
-
     def PrintProgress(self,obj,event):
         self.OutputProgress(obj.GetProgress(),10)
 
@@ -575,14 +478,17 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
         if self.ResampleImage==1:
             self.MakeImageIsotropic()
 
-        if self.FeatureImageType == 'gradient':
-          self.BuildGradientBasedFeatureImage()
-        elif self.FeatureImageType == 'upwind':
-          self.BuildUpwindGradientBasedFeatureImage()
-        elif self.FeatureImageType == 'fwhm':
-          self.BuildFWHMBasedFeatureImage()
-        else:
-          self.PrintError('Error: unsupported feature image type')
+        imageFeatures = vmtkscripts.vmtkImageFeatures()
+        imageFeatures.Image = self.Image
+        imageFeatures.FeatureImageType = self.FeatureImageType
+        imageFeatures.SigmoidRemapping = self.SigmoidRemapping
+        imageFeatures.DerivativeSigma = self.FeatureDerivativeSigma
+        imageFeatures.UpwindFactor = self.UpwindFactor
+        imageFeatures.FWHMRadius = self.FWHMRadius
+        imageFeatures.FWHMBackgroundValue = self.FWHMBackgroundValue
+        imageFeatures.Execute()
+
+        self.FeatureImage = imageFeatures.FeatureImage
 
         if self.NumberOfIterations != 0:
             self.LevelSetsInput = self.InitialLevelSets

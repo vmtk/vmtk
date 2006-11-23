@@ -69,13 +69,6 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkPolyDataPotentialFit : public vtkPolyD
   vtkSetMacro(MaxTimeStep, double);
   vtkGetMacro(MaxTimeStep, double);
 
-  vtkSetMacro(InplanePotential, int);
-  vtkGetMacro(InplanePotential, int);
-  vtkBooleanMacro(InplanePotential, int);
-
-  vtkSetMacro(InplaneTolerance, double);
-  vtkGetMacro(InplaneTolerance, double);
-
   protected:
   vtkvmtkPolyDataPotentialFit();
   ~vtkvmtkPolyDataPotentialFit();  

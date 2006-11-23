@@ -24,6 +24,7 @@ __all__ = [
   'vmtkflowextensions',
   'vmtkicpregistration',
   'vmtkimagecompose',
+  'vmtkimagefeatures',
   'vmtkimagelinetracer',
   'vmtkimagemipviewer',
   'vmtkimagereader',
