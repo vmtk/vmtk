@@ -29,6 +29,7 @@ __all__ = [
   'vmtkimagereader',
   'vmtkimagereslice',
   'vmtkimageseeder',
+  'vmtkimagesmoothing',
   'vmtkimageviewer',
   'vmtkimagevoipainter',
   'vmtkimagevoiselector',

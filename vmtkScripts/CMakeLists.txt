@@ -31,6 +31,7 @@ SET(SCRIPTS_SRCS
   vmtkimagereader.py
   vmtkimagereslice.py
   vmtkimageseeder.py
+  vmtkimagesmoothing.py
   vmtkimageviewer.py
   vmtkimagevoipainter.py
   vmtkimagevoiselector.py
