@@ -30,17 +30,17 @@ Version:   $Revision: 1.3 $
 #ifndef __vtkvmtkPolyDataPotentialFit_h
 #define __vtkvmtkPolyDataPotentialFit_h
 
-#include "vtkPolyDataToPolyDataFilter.h"
+#include "vtkPolyDataAlgorithm.h"
 #include "vtkvmtkWin32Header.h"
 
 class vtkImageData;
 class vtkDoubleArray;
 class vtkvmtkNeighborhoods;
 
-class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkPolyDataPotentialFit : public vtkPolyDataToPolyDataFilter
+class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkPolyDataPotentialFit : public vtkPolyDataAlgorithm
 {
   public: 
-  vtkTypeRevisionMacro(vtkvmtkPolyDataPotentialFit,vtkPolyDataToPolyDataFilter);
+  vtkTypeRevisionMacro(vtkvmtkPolyDataPotentialFit,vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent); 
 
   static vtkvmtkPolyDataPotentialFit *New();
@@ -54,6 +54,9 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkPolyDataPotentialFit : public vtkPolyD
   vtkSetMacro(NumberOfStiffnessSubIterations, int);
   vtkGetMacro(NumberOfStiffnessSubIterations, int);
 
+  vtkSetMacro(NumberOfInflationSubIterations, int);
+  vtkGetMacro(NumberOfInflationSubIterations, int);
+
   vtkSetMacro(Relaxation, double);
   vtkGetMacro(Relaxation, double);
 
@@ -63,22 +66,41 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkPolyDataPotentialFit : public vtkPolyD
   vtkSetMacro(StiffnessWeight, double);
   vtkGetMacro(StiffnessWeight, double);
 
+  vtkSetMacro(InflationWeight, double);
+  vtkGetMacro(InflationWeight, double);
+
   vtkSetMacro(Convergence, double);
   vtkGetMacro(Convergence, double);
 
   vtkSetMacro(MaxTimeStep, double);
   vtkGetMacro(MaxTimeStep, double);
 
+  vtkSetMacro(TimeStep, double);
+  vtkGetMacro(TimeStep, double);
+  
+  vtkSetMacro(AdaptiveTimeStep, int);
+  vtkGetMacro(AdaptiveTimeStep, int);
+  vtkBooleanMacro(AdaptiveTimeStep, int);
+  
+  vtkSetMacro(FlipNormals, int);
+  vtkGetMacro(FlipNormals, int);
+  vtkBooleanMacro(FlipNormals, int);
+
+  vtkSetMacro(Dimensionality, int);
+  vtkGetMacro(Dimensionality, int);
+
   protected:
   vtkvmtkPolyDataPotentialFit();
   ~vtkvmtkPolyDataPotentialFit();  
 
-  void Execute();
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
 
   void EvaluateForce(double point[3], double force[3], bool normalize = true);
-  void ComputeDisplacements(bool potential, bool stiffness);
+  double EvaluatePotential(double point[3]);
+  void ComputeDisplacements(bool potential, bool stiffness, bool inflation);
   void ComputePotentialDisplacement(vtkIdType pointId, double potentialDisplacement[3]);
   void ComputeStiffnessDisplacement(vtkIdType pointId, double stiffnessDisplacement[3]);
+  void ComputeInflationDisplacement(vtkIdType pointId, double inflationDisplacement[3]);
   void ComputeTimeStep();
   void ApplyDisplacements();
 
@@ -97,13 +119,12 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkPolyDataPotentialFit : public vtkPolyD
     }
 
   vtkImageData *PotentialImage;
-
-  int InplanePotential;
-  double InplaneTolerance;
+  vtkImageData *PotentialGradientImage;
 
   int NumberOfIterations;
 
   int NumberOfStiffnessSubIterations;
+  int NumberOfInflationSubIterations;
 
   double TimeStep;
   double Relaxation;
@@ -114,15 +135,21 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkPolyDataPotentialFit : public vtkPolyD
 
   double PotentialWeight;
   double StiffnessWeight;
+  double InflationWeight;
 
   double PotentialMaxNorm;
+  
   double MaxTimeStep;
+  int AdaptiveTimeStep;
+
+  int FlipNormals;
+
+  int Dimensionality;
 
   vtkDoubleArray *Displacements;
 
   vtkvmtkNeighborhoods *Neighborhoods;
-
-  int VoxelOffsets[8][3];
+  vtkDataArray *Normals;
 
   private:
   vtkvmtkPolyDataPotentialFit(const vtkvmtkPolyDataPotentialFit&);  // Not implemented.

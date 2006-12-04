@@ -180,10 +180,10 @@ int vtkvmtkFDNEUTReader::RequestData(
         switch (geometry)
           {
           case QUADRILATERAL:
-	    if (this->VolumeElementsOnly)
-	      {
-	      continue;
-	      }
+            if (this->VolumeElementsOnly)
+              {
+              continue;
+              }
             if (nodesPerElement==4)
               {
               type = VTK_QUAD;
@@ -227,10 +227,10 @@ int vtkvmtkFDNEUTReader::RequestData(
               }
             break;
           case TRIANGLE:
-	    if (this->VolumeElementsOnly)
-	      {
-	      continue;
-	      }
+            if (this->VolumeElementsOnly)
+              {
+              continue;
+              }
             if (nodesPerElement==3)
               {
               type = VTK_TRIANGLE;

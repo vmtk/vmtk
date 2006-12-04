@@ -145,13 +145,8 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
         queryString = "Please input isosurface level (\'i\' to activate image, \'n\' for none): "
         self.IsoSurfaceValue = self.ThresholdInput(queryString)
         
-        cast = vtk.vtkImageCast()
-        cast.SetInput(self.Image)
-        cast.SetOutputScalarTypeToFloat()
-        cast.Update()
-
         imageMathematics = vtk.vtkImageMathematics()
-        imageMathematics.SetInput(cast.GetOutput())
+        imageMathematics.SetInput(self.Image)
         imageMathematics.SetConstantK(-1.0)
         imageMathematics.SetOperationToMultiplyByK()
         imageMathematics.Update()
@@ -172,18 +167,13 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
         queryString = "Please input upper threshold (\'i\' to activate image, \'n\' for none): "
         self.UpperThreshold = self.ThresholdInput(queryString)
 
-        cast = vtk.vtkImageCast()
-        cast.SetInput(self.Image)
-        cast.SetOutputScalarTypeToFloat()
-        cast.Update()
-                                                                
-        scalarRange = cast.GetOutput().GetScalarRange()
+        scalarRange = self.Image.GetScalarRange()
 
-        thresholdedImage = cast.GetOutput()
+        thresholdedImage = self.Image
 	
         if self.LowerThreshold or self.UpperThreshold:
             threshold = vtk.vtkImageThreshold()
-            threshold.SetInput(cast.GetOutput())
+            threshold.SetInput(self.Image)
             if self.LowerThreshold and self.UpperThreshold:
                 threshold.ThresholdBetween(self.LowerThreshold,self.UpperThreshold)
             elif self.LowerThreshold:
@@ -228,18 +218,13 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
         for i in range(targetSeeds.GetNumberOfPoints()):
             targetSeedIds.InsertNextId(self.Image.FindPoint(targetSeeds.GetPoint(i)))
 
-        cast = vtk.vtkImageCast()
-        cast.SetInput(self.Image)
-        cast.SetOutputScalarTypeToFloat()
-        cast.Update()
-                                                                
-        scalarRange = cast.GetOutput().GetScalarRange()
+        scalarRange = self.Image.GetScalarRange()
 
-        thresholdedImage = cast.GetOutput()
+        thresholdedImage = self.Image
 	
         if (self.LowerThreshold is not None) | (self.UpperThreshold is not None):
             threshold = vtk.vtkImageThreshold()
-            threshold.SetInput(cast.GetOutput())
+            threshold.SetInput(self.Image)
             if (self.LowerThreshold is not None) & (self.UpperThreshold is not None):
                 threshold.ThresholdBetween(self.LowerThreshold,self.UpperThreshold)
             elif (self.LowerThreshold is not None):
@@ -298,18 +283,13 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
         seedIds1.InsertNextId(self.Image.FindPoint(seeds.GetPoint(0)))
         seedIds2.InsertNextId(self.Image.FindPoint(seeds.GetPoint(1)))
 
-        cast = vtk.vtkImageCast()
-        cast.SetInput(self.Image)
-        cast.SetOutputScalarTypeToFloat()
-        cast.Update()
-        
-        scalarRange = cast.GetOutput().GetScalarRange()
+        scalarRange = self.Image.GetScalarRange()
 	
-        thresholdedImage = cast.GetOutput()
+        thresholdedImage = self.Image
 
         if (self.LowerThreshold is not None) | (self.UpperThreshold is not None):
             threshold = vtk.vtkImageThreshold()
-            threshold.SetInput(cast.GetOutput())
+            threshold.SetInput(self.Image)
             if (self.LowerThreshold is not None) & (self.UpperThreshold is not None):
                 threshold.ThresholdBetween(self.LowerThreshold,self.UpperThreshold)
             elif (self.LowerThreshold is not None):
@@ -411,6 +391,13 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
 
     def MakeImageIsotropic(self):
        
+        cast = vtk.vtkImageCast()
+        cast.SetInput(self.Image)
+        cast.SetOutputScalarTypeToFloat()
+        cast.Update()
+
+        self.Image = cast.GetOutput()
+
         if not self.ResampleImage:
             return
 

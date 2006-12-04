@@ -35,6 +35,7 @@ class vmtkImageReslice(pypes.pypeScript):
         self.OutputExtent = []
 
         self.Interpolation = 1
+        self.Cast = 1
 
         self.BackgroundLevel = 0.0
 
@@ -47,6 +48,7 @@ class vmtkImageReslice(pypes.pypeScript):
             ['OutputOrigin','origin','float',3,'the output origin'],
             ['OutputExtent','extent','int',6,'the output extent'],
             ['Interpolation','interpolation','int',1,'toggle linear interpolation during reslice'],
+            ['Cast','cast','int',1,'toggle cast image to float type'],
             ['BackgroundLevel','background','float',1,'the output image background']
             ])
         self.SetOutputMembers([
@@ -57,6 +59,13 @@ class vmtkImageReslice(pypes.pypeScript):
 
         if self.Image == None:
             self.PrintError('Error: No input image.')
+
+        if self.Cast:
+            cast = vtk.vtkImageCast()
+            cast.SetInput(self.Image)
+            cast.SetOutputScalarTypeToFloat()
+            cast.Update()
+            self.Image = cast.GetOutput()
 
         resliceFilter = vtk.vtkImageReslice()
         resliceFilter.SetInput(self.Image)

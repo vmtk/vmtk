@@ -72,7 +72,7 @@ class vmtkImageFeatures(pypes.pypeScript):
         imageAdd = vtk.vtkImageMathematics()
         imageAdd.SetInput(gradientMagnitude.GetOutput())
         imageAdd.SetOperationToAddConstant()
-        imageAdd.SetConstantC(1E-3)
+        imageAdd.SetConstantC(1.0)
         imageAdd.Update()
 
         imageInvert = vtk.vtkImageMathematics()

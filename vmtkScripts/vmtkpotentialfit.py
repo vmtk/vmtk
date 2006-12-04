@@ -33,11 +33,15 @@ class vmtkPotentialFit(pypes.pypeScript):
         self.PotentialImage = None
 
         self.NumberOfIterations = 100
-        self.NumberOfStiffnessSubIterations = 5
+        self.NumberOfStiffnessSubIterations = 0
+        self.NumberOfInflationSubIterations = 0
         self.PotentialWeight = 1.0
         self.StiffnessWeight = 1.0
-        self.Convergence = 1E-3
+        self.InflationWeight = 1.0
+        self.Convergence = 1E-5
         self.MaxTimeStep = 1.0
+        self.TimeStep = 1.0
+        self.AdaptiveTimeStep = 1
         self.Relaxation = 1E-1
         self.Dimensionality = 3
 
@@ -46,11 +50,15 @@ class vmtkPotentialFit(pypes.pypeScript):
             ['Surface','i','vtkPolyData',1,'','vmtksurfacereader'], 
             ['Image','image','vtkImageData',1,'','vmtkimagereader'],
             ['NumberOfIterations','iterations','int',1],
-            ['NumberOfStiffnessSubIterations','subiterations','int',1],
+            ['NumberOfStiffnessSubIterations','stiffnesssubiterations','int',1],
+            ['NumberOfInflationSubIterations','inflationsubiterations','int',1],
             ['PotentialWeight','potentialweight','float',1],
             ['StiffnessWeight','stiffnessweight','float',1],
+            ['InflationWeight','inflationweight','float',1],
             ['Convergence','convergence','float',1],
             ['MaxTimeStep','maxtimestep','float',1],
+            ['TimeStep','timestep','float',1],
+            ['AdaptiveTimeStep','adaptivetimestep','int',1],
             ['Relaxation','relaxation','float',1],
             ['Dimensionality','dimensionality','int',1]
             ])
@@ -63,21 +71,21 @@ class vmtkPotentialFit(pypes.pypeScript):
         if (self.Image == None):
             self.PrintError('Error: Image not set.')
         
-        gradientFilter = vtk.vtkImageGradient()
-        gradientFilter.SetInput(self.Image)
-        gradientFilter.SetDimensionality(self.Dimensionality)
-        gradientFilter.Update()
-
         polyDataPotentialFit = vtkvmtk.vtkvmtkPolyDataPotentialFit()
         polyDataPotentialFit.SetInput(self.Surface)
-        polyDataPotentialFit.SetPotentialImage(gradientFilter.GetOutput())
+        polyDataPotentialFit.SetPotentialImage(self.Image)
         polyDataPotentialFit.SetMaxTimeStep(self.MaxTimeStep)
+        polyDataPotentialFit.SetTimeStep(self.TimeStep)
+        polyDataPotentialFit.SetAdaptiveTimeStep(self.AdaptiveTimeStep)
         polyDataPotentialFit.SetRelaxation(self.Relaxation)
         polyDataPotentialFit.SetConvergence(self.Convergence)
         polyDataPotentialFit.SetPotentialWeight(self.PotentialWeight)
         polyDataPotentialFit.SetStiffnessWeight(self.StiffnessWeight)
+        polyDataPotentialFit.SetInflationWeight(self.InflationWeight)
         polyDataPotentialFit.SetNumberOfStiffnessSubIterations(self.NumberOfStiffnessSubIterations)
+        polyDataPotentialFit.SetNumberOfInflationSubIterations(self.NumberOfInflationSubIterations)
         polyDataPotentialFit.SetNumberOfIterations(self.NumberOfIterations)
+        polyDataPotentialFit.SetDimensionality(self.Dimensionality)
         polyDataPotentialFit.Update()
 
         self.Surface = polyDataPotentialFit.GetOutput()

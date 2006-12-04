@@ -31,10 +31,15 @@ Version:   $Revision: 1.3 $
 #include "vtkMath.h"
 #include "vtkPolyData.h"
 #include "vtkImageData.h"
+#include "vtkImageGradient.h"
 #include "vtkDoubleArray.h"
 #include "vtkVoxel.h"
+#include "vtkPixel.h"
 #include "vtkPointData.h"
 #include "vtkCellData.h"
+#include "vtkPolyDataNormals.h"
+#include "vtkInformation.h"
+#include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 
 vtkCxxRevisionMacro(vtkvmtkPolyDataPotentialFit, "$Revision: 1.3 $");
@@ -43,6 +48,7 @@ vtkStandardNewMacro(vtkvmtkPolyDataPotentialFit);
 vtkvmtkPolyDataPotentialFit::vtkvmtkPolyDataPotentialFit()
 {
   this->PotentialImage = NULL;
+  this->PotentialGradientImage = NULL;
   this->NumberOfIterations = VTK_VMTK_LARGE_INTEGER;
   this->TimeStep = 0.0;
   this->MaxDisplacementNorm = 0.0;
@@ -53,22 +59,19 @@ vtkvmtkPolyDataPotentialFit::vtkvmtkPolyDataPotentialFit()
   this->Convergence = 1E-1;
   this->PotentialWeight = 0.0;
   this->StiffnessWeight = 0.0;
+  this->InflationWeight = 0.0;
   this->PotentialMaxNorm = 0.0;
 
   this->MaxTimeStep = 1.0; // pixels per time step
+  this->AdaptiveTimeStep = 1;
+  
+  this->FlipNormals = 0;
+  this->Dimensionality = 3;
 
   this->NumberOfStiffnessSubIterations = 5;
+  this->NumberOfInflationSubIterations = 0;
 
   this->Neighborhoods = NULL;
-
-  VoxelOffsets[0][0] = 0;  VoxelOffsets[0][1] = 0;  VoxelOffsets[0][2] = 0;
-  VoxelOffsets[1][0] = 1;  VoxelOffsets[1][1] = 0;  VoxelOffsets[1][2] = 0;
-  VoxelOffsets[2][0] = 0;  VoxelOffsets[2][1] = 1;  VoxelOffsets[2][2] = 0;
-  VoxelOffsets[3][0] = 1;  VoxelOffsets[3][1] = 1;  VoxelOffsets[3][2] = 0;
-  VoxelOffsets[4][0] = 0;  VoxelOffsets[4][1] = 0;  VoxelOffsets[4][2] = 1;
-  VoxelOffsets[5][0] = 1;  VoxelOffsets[5][1] = 0;  VoxelOffsets[5][2] = 1;
-  VoxelOffsets[6][0] = 0;  VoxelOffsets[6][1] = 1;  VoxelOffsets[6][2] = 1;
-  VoxelOffsets[7][0] = 1;  VoxelOffsets[7][1] = 1;  VoxelOffsets[7][2] = 1;
 }
 
 vtkvmtkPolyDataPotentialFit::~vtkvmtkPolyDataPotentialFit()
@@ -77,6 +80,12 @@ vtkvmtkPolyDataPotentialFit::~vtkvmtkPolyDataPotentialFit()
     {
     this->PotentialImage->Delete();
     this->PotentialImage = NULL;
+    }
+
+  if (this->PotentialGradientImage)
+    {
+    this->PotentialGradientImage->Delete();
+    this->PotentialGradientImage = NULL;
     }
 
   if (this->Displacements)
@@ -104,38 +113,97 @@ void vtkvmtkPolyDataPotentialFit::EvaluateForce(double point[3], double force[3]
 
   force[0] = force[1] = force[2] = 0.0;
 
-  inBounds = this->PotentialImage->ComputeStructuredCoordinates(point,ijk,pcoords);
+  inBounds = this->PotentialGradientImage->ComputeStructuredCoordinates(point,ijk,pcoords);
 
-  if (!inBounds || !this->IsCellInExtent(this->PotentialImage->GetExtent(),ijk,0))
+  if (!inBounds || !this->IsCellInExtent(this->PotentialGradientImage->GetExtent(),ijk,0))
     {
     return;
     }
 
-  vtkVoxel::InterpolationFunctions(pcoords,weights);
+  vtkCell* cell = this->PotentialGradientImage->GetCell(this->PotentialGradientImage->ComputeCellId(ijk));
 
-  for (i=0; i<8; i++)
-    {
+  if (cell->GetCellType() == VTK_VOXEL)
+  {
+    vtkVoxel::InterpolationFunctions(pcoords,weights);
+  }
+  else if (cell->GetCellType() == VTK_PIXEL)
+  {
+    vtkPixel::InterpolationFunctions(pcoords,weights);
+  }
+  else
+  {
+    vtkErrorMacro("Non voxel or pixel cell found in PotentialImage");
+  }
+
+  int numberOfCellPoints = cell->GetNumberOfPoints();
+
+  vtkDataArray* gradientVectorsArray = this->PotentialGradientImage->GetPointData()->GetScalars();
+
+  for (i=0; i<numberOfCellPoints; i++)
+  {
     double vectorValue[3];
-    int offsetIjk[3];
-    offsetIjk[0] = ijk[0]+VoxelOffsets[i][0];
-    offsetIjk[1] = ijk[1]+VoxelOffsets[i][1];
-    offsetIjk[2] = ijk[2]+VoxelOffsets[i][2];
-    this->PotentialImage->GetPointData()->GetScalars()->GetTuple(this->PotentialImage->ComputePointId(offsetIjk),vectorValue);
+    gradientVectorsArray->GetTuple(cell->GetPointId(i),vectorValue);
     force[0] += weights[i] * vectorValue[0];
     force[1] += weights[i] * vectorValue[1];
     force[2] += weights[i] * vectorValue[2];
-    }
+  }
 
   if (normalize && this->PotentialMaxNorm > VTK_VMTK_DOUBLE_TOL)
-    {
+  {
     force[0] /= this->PotentialMaxNorm;
     force[1] /= this->PotentialMaxNorm;
     force[2] /= this->PotentialMaxNorm;
-    }
+  }
 
   force[0] *= -1.0;
   force[1] *= -1.0;
   force[2] *= -1.0;
+}
+
+double vtkvmtkPolyDataPotentialFit::EvaluatePotential(double point[3])
+{
+  vtkIdType ijk[3];
+  double pcoords[3];
+  double weights[8];
+  int inBounds;
+  int i;
+
+  double potential = 0.0;
+
+  inBounds = this->PotentialImage->ComputeStructuredCoordinates(point,ijk,pcoords);
+
+  if (!inBounds || !this->IsCellInExtent(this->PotentialImage->GetExtent(),ijk,0))
+    {
+    return 0.0;
+    }
+
+  vtkCell* cell = this->PotentialImage->GetCell(this->PotentialImage->ComputeCellId(ijk));
+
+  if (cell->GetCellType() == VTK_VOXEL)
+  {
+    vtkVoxel::InterpolationFunctions(pcoords,weights);
+  }
+  else if (cell->GetCellType() == VTK_PIXEL)
+  {
+    vtkPixel::InterpolationFunctions(pcoords,weights);
+  }
+  else
+  {
+    vtkErrorMacro("Non voxel or pixel cell found in PotentialImage");
+    return 0.0;
+  }
+
+  int numberOfCellPoints = cell->GetNumberOfPoints();
+
+  vtkDataArray* potentialArray = this->PotentialImage->GetPointData()->GetScalars();
+
+  for (i=0; i<numberOfCellPoints; i++)
+  {
+    double value = potentialArray->GetTuple1(cell->GetPointId(i));
+    potential += weights[i] * value;
+  }
+
+  return potential;
 }
 
 void vtkvmtkPolyDataPotentialFit::ComputePotentialDisplacement(vtkIdType pointId, double potentialDisplacement[3])
@@ -154,8 +222,6 @@ void vtkvmtkPolyDataPotentialFit::ComputeStiffnessDisplacement(vtkIdType pointId
   vtkIdType j;
   double point[3];
   double laplacianPoint[3], neighborhoodPoint[3];
-  vtkIdType ijk[3];
-  double pcoords[3];
   vtkIdType numberOfNeighborhoodPoints;
   vtkvmtkNeighborhood *neighborhood;
   vtkPolyData *output;
@@ -166,16 +232,6 @@ void vtkvmtkPolyDataPotentialFit::ComputeStiffnessDisplacement(vtkIdType pointId
   output->GetPoint(pointId,point);
 
   stiffnessDisplacement[0] = stiffnessDisplacement[1] = stiffnessDisplacement[2] = 0.0;
-
-  this->PotentialImage->ComputeStructuredCoordinates(point,ijk,pcoords);
-
-  if (this->InplanePotential)
-    {
-    if ((pcoords[2] < this->InplaneTolerance) || (1.0 - pcoords[2] < this->InplaneTolerance))
-      {
-      return;
-      }
-    }
 
 //   double weight;
 //   double weightSum;
@@ -209,7 +265,64 @@ void vtkvmtkPolyDataPotentialFit::ComputeStiffnessDisplacement(vtkIdType pointId
   stiffnessDisplacement[2] = laplacianPoint[2] - point[2];
 }
 
-void vtkvmtkPolyDataPotentialFit::ComputeDisplacements(bool potential, bool stiffness)
+void vtkvmtkPolyDataPotentialFit::ComputeInflationDisplacement(vtkIdType pointId, double inflationDisplacement[3])
+{
+  vtkIdType j;
+  double point[3], inputOutwardNormal[3];
+  double neighborhoodVector[3], firstNeighborhoodVector[3];
+  double cross[3], neighborhoodNormal[3];
+  double neighborhoodPoint[3];
+  double dot;
+  vtkIdType numberOfNeighborhoodPoints;
+  vtkvmtkNeighborhood *neighborhood;
+  vtkPolyData *output;
+
+  output = this->GetOutput();
+  neighborhood = this->Neighborhoods->GetNeighborhood(pointId);
+  
+  output->GetPoint(pointId,point);
+  this->Normals->GetTuple(pointId,inputOutwardNormal);
+
+  double potential = this->EvaluatePotential(point);
+
+  neighborhoodNormal[0] = 0.0;
+  neighborhoodNormal[1] = 0.0;
+  neighborhoodNormal[2] = 0.0;
+
+  output->GetPoint(neighborhood->GetPointId(0),neighborhoodPoint);
+  firstNeighborhoodVector[0] = neighborhoodPoint[0] - point[0];
+  firstNeighborhoodVector[1] = neighborhoodPoint[1] - point[1];
+  firstNeighborhoodVector[2] = neighborhoodPoint[2] - point[2];
+
+  numberOfNeighborhoodPoints = neighborhood->GetNumberOfPoints();
+  for (j=1; j<numberOfNeighborhoodPoints; j++)
+    {
+    output->GetPoint(neighborhood->GetPointId(j),neighborhoodPoint);
+    neighborhoodVector[0] = neighborhoodPoint[0] - point[0];
+    neighborhoodVector[1] = neighborhoodPoint[1] - point[1];
+    neighborhoodVector[2] = neighborhoodPoint[2] - point[2];
+    vtkMath::Cross(firstNeighborhoodVector,neighborhoodVector,cross);
+    neighborhoodNormal[0] += cross[0];
+    neighborhoodNormal[1] += cross[1];
+    neighborhoodNormal[2] += cross[2];
+    }
+  vtkMath::Normalize(neighborhoodNormal);
+
+  dot = vtkMath::Dot(inputOutwardNormal,neighborhoodNormal);
+
+  if (dot < 0.0)
+  {
+    neighborhoodNormal[0] *= -1.0;
+    neighborhoodNormal[1] *= -1.0;
+    neighborhoodNormal[2] *= -1.0;
+  }
+
+  inflationDisplacement[0] = potential * neighborhoodNormal[0];
+  inflationDisplacement[1] = potential * neighborhoodNormal[1];
+  inflationDisplacement[2] = potential * neighborhoodNormal[2];
+}
+
+void vtkvmtkPolyDataPotentialFit::ComputeDisplacements(bool potential, bool stiffness, bool inflation)
 {
   vtkIdType i;
   vtkIdType numberOfPoints;
@@ -217,6 +330,7 @@ void vtkvmtkPolyDataPotentialFit::ComputeDisplacements(bool potential, bool stif
   double displacement[3];
   double potentialDisplacement[3];
   double stiffnessDisplacement[3];
+  double inflationDisplacement[3];
   double displacementNorm;
 
   numberOfPoints = this->GetOutput()->GetNumberOfPoints();
@@ -243,6 +357,14 @@ void vtkvmtkPolyDataPotentialFit::ComputeDisplacements(bool potential, bool stif
       displacement[2] += this->StiffnessWeight * stiffnessDisplacement[2];
       }
 
+    if (inflation)
+      {
+      this->ComputeInflationDisplacement(i, inflationDisplacement);
+      displacement[0] += this->InflationWeight * inflationDisplacement[0];
+      displacement[1] += this->InflationWeight * inflationDisplacement[1];
+      displacement[2] += this->InflationWeight * inflationDisplacement[2];
+      }
+
     this->Displacements->SetTuple(i, displacement);
     displacementNorm = vtkMath::Norm(displacement);
 
@@ -255,6 +377,11 @@ void vtkvmtkPolyDataPotentialFit::ComputeDisplacements(bool potential, bool stif
 
 void vtkvmtkPolyDataPotentialFit::ComputeTimeStep()
 {
+  if (!this->AdaptiveTimeStep)
+  {
+    return;
+  }
+
   if (this->MaxDisplacementNorm > VTK_VMTK_DOUBLE_TOL)
     {
     this->TimeStep = this->MinPotentialSpacing / this->MaxDisplacementNorm;
@@ -302,17 +429,23 @@ int vtkvmtkPolyDataPotentialFit::TestConvergence()
   return this->TimeStep * this->MaxDisplacementNorm < this->Convergence ? 1 : 0;
 }
 
-void vtkvmtkPolyDataPotentialFit::Execute()
+int vtkvmtkPolyDataPotentialFit::RequestData(
+  vtkInformation *vtkNotUsed(request),
+  vtkInformationVector **inputVector,
+  vtkInformationVector *outputVector)
 {
-  bool potential, stiffness;
-  vtkIdType n;
+  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
+  vtkInformation *outInfo = outputVector->GetInformationObject(0);
+
+  vtkPolyData *input = vtkPolyData::SafeDownCast(
+    inInfo->Get(vtkDataObject::DATA_OBJECT()));
+  vtkPolyData *output = vtkPolyData::SafeDownCast(
+    outInfo->Get(vtkDataObject::DATA_OBJECT()));
+
+  bool potential, stiffness, inflation;
+  vtkIdType n, m;
   vtkIdType numberOfPoints;
   vtkPoints *newPoints;
-  vtkPolyData *input;
-  vtkPolyData *output;
-
-  input = this->GetInput();
-  output = this->GetOutput();
 
   numberOfPoints = input->GetNumberOfPoints();
 
@@ -328,6 +461,22 @@ void vtkvmtkPolyDataPotentialFit::Execute()
   this->Displacements = vtkDoubleArray::New();
   this->Displacements->SetNumberOfComponents(3);
   this->Displacements->SetNumberOfTuples(numberOfPoints);
+
+  vtkImageGradient* gradientFilter = vtkImageGradient::New();
+  gradientFilter->SetInput(this->PotentialImage);
+  gradientFilter->SetDimensionality(this->Dimensionality);
+  gradientFilter->Update();
+
+  if (this->PotentialGradientImage)
+  {
+    this->PotentialGradientImage->Delete();
+    this->PotentialGradientImage = NULL;
+  }
+
+  this->PotentialGradientImage = vtkImageData::New();
+  this->PotentialGradientImage->DeepCopy(gradientFilter->GetOutput());
+
+  gradientFilter->Delete();
 
   output->SetPoints(newPoints);
   output->SetVerts(input->GetVerts());
@@ -350,27 +499,60 @@ void vtkvmtkPolyDataPotentialFit::Execute()
   this->Neighborhoods->SetDataSet(input);
   this->Neighborhoods->Build();
 
+  vtkPolyDataNormals* surfaceNormals = vtkPolyDataNormals::New();
+  surfaceNormals->SetInput(input);
+  surfaceNormals->SplittingOff();
+  surfaceNormals->AutoOrientNormalsOn();
+  surfaceNormals->SetFlipNormals(this->FlipNormals);
+  surfaceNormals->ComputePointNormalsOn();
+  surfaceNormals->ConsistencyOn();
+  surfaceNormals->Update();
+
+  this->Normals = surfaceNormals->GetOutput()->GetPointData()->GetNormals();
+
   this->MinPotentialSpacing = this->ComputeMinSpacing(this->PotentialImage->GetSpacing());
 
-  this->PotentialMaxNorm = this->PotentialImage->GetPointData()->GetScalars()->GetMaxNorm();
+  this->PotentialMaxNorm = this->PotentialGradientImage->GetPointData()->GetScalars()->GetMaxNorm();
 
   for (n=0; n<this->NumberOfIterations; n++)
+  {
+    for (m=0; m<this->NumberOfStiffnessSubIterations; m++)
     {
-    stiffness = true;
-    potential = n % this->NumberOfStiffnessSubIterations ? false : true;
+      potential = false;
+      stiffness = true;
+      inflation = false;
+      this->ComputeDisplacements(potential, stiffness, inflation);
+      this->ComputeTimeStep();
+      this->ApplyDisplacements();
+    }
     
-    this->ComputeDisplacements(potential, stiffness);
+    for (m=0; m<this->NumberOfInflationSubIterations; m++)
+    {
+      potential = false;
+      stiffness = false;
+      inflation = true;
+      this->ComputeDisplacements(potential, stiffness, inflation);
+      this->ComputeTimeStep();
+      this->ApplyDisplacements();
+    }
+
+    potential = true;
+    stiffness = true;
+    inflation = true;
+    this->ComputeDisplacements(potential, stiffness, inflation);
     this->ComputeTimeStep();
     this->ApplyDisplacements();
-    if (potential)
-      {
-//       cout<<n<<" "<<this->MaxDisplacementNorm<<" "<<this->TimeStep<<endl;
-      if (this->TestConvergence())
-        {
-        break;
-        }
-      }
+
+    if (this->TestConvergence())
+    {
+      break;
     }
+  }
+
+  surfaceNormals->Delete();
+  this->Normals = NULL;
+
+  return 1;
 }
 
 void vtkvmtkPolyDataPotentialFit::PrintSelf(ostream& os, vtkIndent indent)
