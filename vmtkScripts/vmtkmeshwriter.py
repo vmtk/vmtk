@@ -39,7 +39,7 @@ class vmtkMeshWriter(pypes.pypeScript):
         self.SetScriptDoc('write a mesh to disk')
         self.SetInputMembers([
             ['Mesh','i','vtkUnstructuredGrid',1,'the input mesh','vmtkmeshreader'],
-            ['Format','f','str',1,'file format (vtkxml, vtk, xda - libmesh ascii format, fdneut - FIDAP neutral format, pointdata)'],
+            ['Format','f','str',1,'file format (vtkxml, vtk, xda - libmesh ascii format, fdneut - FIDAP neutral format, tecplot, pointdata)'],
             ['GuessFormat','guessformat','int',1,'guess file format from extension'],
             ['OutputFileName','ofile','str',1,'output file name'],
             ['OutputFileName','o','str',1,'output file name (deprecated: use -ofile)'],
@@ -85,6 +85,57 @@ class vmtkMeshWriter(pypes.pypeScript):
         writer.SetFileName(self.OutputFileName)
         writer.Write()
 
+    def WriteTecplotMeshFile(self):
+        if (self.OutputFileName == ''):
+            self.PrintError('Error: no OutputFileName.')
+        self.PrintLog('Writing Tecplot file.')
+        triangleFilter = vtk.vtkDataSetTriangleFilter()
+        triangleFilter.SetInput(self.Mesh)
+        triangleFilter.Update()
+        self.Mesh = triangleFilter.GetOutput()
+        f=open(self.OutputFileName, 'w')
+        line = "VARIABLES = X,Y,Z"
+        arrayNames = []
+        for i in range(self.Mesh.GetPointData().GetNumberOfArrays()):
+            array = self.Mesh.GetPointData().GetArray(i)
+            arrayName = array.GetName()
+            if arrayName == None:
+                continue
+            if (arrayName[-1]=='_'):
+                continue
+            arrayNames.append(arrayName)
+            if (array.GetNumberOfComponents() == 1):
+                line = line + ',' + arrayName
+            else:
+                for j in range(array.GetNumberOfComponents()):
+                    line = line + ',' + arrayName + str(j)
+        line = line + '\n'
+        f.write(line)
+        tetraCellIdArray = vtk.vtkIdTypeArray()
+        tetraCellType = 10
+        self.Mesh.GetIdsOfCellsOfType(tetraCellType,tetraCellIdArray)
+        numberOfTetras = tetraCellIdArray.GetNumberOfTuples()
+        line = "ZONE " + "N=" + str(self.Mesh.GetNumberOfPoints()) + ',' + "E=" + str(numberOfTetras) + ',' + "F=FEPOINT" + ',' + "ET=TETRAHEDRON" + '\n'
+        f.write(line)
+        for i in range(self.Mesh.GetNumberOfPoints()):
+            point = self.Mesh.GetPoint(i)
+            line = str(point[0]) + ' ' + str(point[1]) + ' ' + str(point[2])
+            for arrayName in arrayNames:
+                array = self.Mesh.GetPointData().GetArray(arrayName)
+                for j in range(array.GetNumberOfComponents()):
+                    line = line + ' ' + str(array.GetComponent(i,j))
+            line = line + '\n'
+            f.write(line)
+        for i in range(numberOfTetras):
+            cellPointIds = self.Mesh.GetCell(tetraCellIdArray.GetValue(i)).GetPointIds()
+            line = ''
+            for j in range(cellPointIds.GetNumberOfIds()):
+                if (j>0):
+                    line = line + ' '
+                line = line + str(cellPointIds.GetId(j)+1)
+            line = line + '\n'
+            f.write(line)
+
     def WritePointDataMeshFile(self):
         if (self.OutputFileName == ''):
             self.PrintError('Error: no OutputFileName.')
@@ -129,6 +180,7 @@ class vmtkMeshWriter(pypes.pypeScript):
                             'vtk':'vtk',
                             'xda':'xda',
                             'FDNEUT':'fdneut',
+                            'tec':'tecplot',
                             'dat':'pointdata'}
 
         if self.GuessFormat and self.OutputFileName:
@@ -147,6 +199,8 @@ class vmtkMeshWriter(pypes.pypeScript):
             self.WriteXdaMeshFile()
         elif (self.Format == 'fdneut'):
             self.WriteFDNEUTMeshFile()
+        elif (self.Format == 'tecplot'):
+            self.WriteTecplotMeshFile()
         elif (self.Format == 'pointdata'):
             self.WritePointDataMeshFile()
         else:
