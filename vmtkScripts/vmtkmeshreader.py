@@ -33,10 +33,8 @@ class vmtkMeshReader(pypes.pypeScript):
         self.Mesh = 0
         self.Output = 0
         
-        self.EntityName = ''
         self.GhostNodes = 1
         self.VolumeElementsOnly = 0
-        self.ReadEntityInformation = 1
 
         self.CellEntityIdsArrayName = 'CellEntityIds'
 
@@ -47,8 +45,6 @@ class vmtkMeshReader(pypes.pypeScript):
             ['GuessFormat','guessformat','int',1,'guess file format from extension'],
             ['InputFileName','i','str',1,'input file name (deprecated: use -ifile)'],
             ['InputFileName','ifile','str',1,'input file name'],
-            ['EntityName','entity','str',1,'name of the entity to read - fdneut only'],
-            ['ReadEntityInformation','readentityinformation','int',1,'read information about entities - fdneut only'],
             ['GhostNodes','ghostnodes','int',1,'store all nodes for 9-noded quads, 7-noded triangles, 27-noded hexahedra, 18-noded wedges; otherwise, store them as 8-noded quads, 6-noded triangles, 20-noded hexahedra, 15-noded wedges - fdneut only'],
             ['VolumeElementsOnly','volumeelementsonly','int',1,'only read volume elements - fdneut and ngneut'],
             ['CellEntityIdsArrayName','entityidsarray','str',1,'name of the array where entity ids have to be stored - ngneut only']
@@ -93,9 +89,8 @@ class vmtkMeshReader(pypes.pypeScript):
         self.PrintLog('Reading FDNEUT mesh file.')
         reader = vtkvmtk.vtkvmtkFDNEUTReader()
         reader.SetFileName(self.InputFileName)
-        reader.SetEntityName(self.EntityName)
-        reader.SetReadEntityInformation(self.ReadEntityInformation)
         reader.SetGhostNodes(self.GhostNodes)
+        reader.SetSingleCellDataEntityArrayName(self.CellEntityIdsArrayName)
         reader.SetVolumeElementsOnly(self.VolumeElementsOnly)
         reader.Update()
         self.Mesh = reader.GetOutput()

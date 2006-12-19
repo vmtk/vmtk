@@ -25,12 +25,15 @@
 #ifndef __vtkvmtkDICOMImageReader_h
 #define __vtkvmtkDICOMImageReader_h
 
-#include "vtkDICOMImageReader.h"
-#include "vtkvmtkWin32Header.h"
-#if 0
 #include "DICOMParser.h"
 #include "DICOMAppHelper.h"
+//#include "/usr/local/include/vtk-5.0/DICOMParser.h"
+//#include "/usr/local/include/vtk-5.0/DICOMAppHelper.h"
 
+#include "vtkDICOMImageReader.h"
+#include "vtkvmtkWin32Header.h"
+
+#if 0
 //BTX
 class VTK_VMTK_IO_EXPORT vtkvmtkDICOMAppHelper : public DICOMAppHelper
 {
@@ -60,6 +63,7 @@ class VTK_VMTK_IO_EXPORT vtkvmtkDICOMParser : public DICOMParser
 };
 //ETX
 #endif
+
 class VTK_VMTK_IO_EXPORT vtkvmtkDICOMImageReader : public vtkDICOMImageReader
 {
   public:

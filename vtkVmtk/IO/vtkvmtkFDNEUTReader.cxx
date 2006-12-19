@@ -24,7 +24,7 @@ Version:   $Revision: 1.8 $
 #include "vtkIntArray.h"
 #include "vtkObjectFactory.h"
 #include "vtkPoints.h"
-#include "vtkPointData.h"
+#include "vtkCellData.h"
 #include "vtkCellArray.h"
 #include "vtkUnsignedCharArray.h"
 #include "vtkUnstructuredGrid.h"
@@ -38,19 +38,17 @@ vtkStandardNewMacro(vtkvmtkFDNEUTReader);
 
 vtkvmtkFDNEUTReader::vtkvmtkFDNEUTReader()
 {
-  this->EntityName = NULL;
-  this->Scale = 1.0;
   this->GhostNodes = 1;
   this->VolumeElementsOnly = 0;
-  this->ReadEntityInformation = 1;
-//   this->EntityStorageMode = VTKVMTK_POINT_DATA_ENTITY_STORAGE_MODE;
+  this->SingleCellDataEntityArrayName = NULL;
 }
 
 vtkvmtkFDNEUTReader::~vtkvmtkFDNEUTReader()
 {
-  if (this->EntityName)
+  if (this->SingleCellDataEntityArrayName)
     {
-    delete[] this->EntityName;
+    delete[] this->SingleCellDataEntityArrayName;
+    this->SingleCellDataEntityArrayName = NULL;
     }
 }
 
@@ -103,10 +101,6 @@ int vtkvmtkFDNEUTReader::RequestData(
     fscanf(FDNEUTFile, "%f", &point[2]);
     while (fgetc(FDNEUTFile) != '\n');
 
-    point[0] *= this->Scale;
-    point[1] *= this->Scale;
-    point[2] *= this->Scale;
-
     doublePoint[0] = point[0];
     doublePoint[1] = point[1];
     doublePoint[2] = point[2];
@@ -121,6 +115,12 @@ int vtkvmtkFDNEUTReader::RequestData(
 
   vtkCellArray* gridCellArray = vtkCellArray::New();
 
+  int entityCounter = 0;
+  vtkUnsignedCharArray* singleEntityArray;
+  singleEntityArray = vtkUnsignedCharArray::New();
+  singleEntityArray->SetName(this->SingleCellDataEntityArrayName);
+  output->GetCellData()->AddArray(singleEntityArray);
+ 
   vtkIntArray* typesArray = vtkIntArray::New();
   while (fscanf(FDNEUTFile, "%s", buffer)!=EOF)
     {
@@ -145,376 +145,328 @@ int vtkvmtkFDNEUTReader::RequestData(
     int type;
     int pointBuffer;
     int numberOfCellPoints = 0;
-
-    bool readEntity = false;
-
-    if (!this->EntityName)
+#if 0
+    vtkUnsignedCharArray* entityArray = NULL;
+    entityArray = vtkUnsignedCharArray::New();
+    entityArray->SetName(currentEntityName);
+    output->GetCellData()->AddArray(entityArray);
+#endif
+    while(fscanf(FDNEUTFile, "%d", &cellId)>0)
       {
-      readEntity = true;
-      }
-    else if (strcmp("",this->EntityName)==0)
-      {
-      readEntity = true;
-      }
-    else if (strcmp(currentEntityName,this->EntityName)==0)
-      {
-      readEntity = true;
-      }
-    
-    if (readEntity)
-      {
-      vtkUnsignedCharArray* entityArray = NULL;
-      if (this->ReadEntityInformation)
+      int* cellPoints = NULL;
+      bool invalid = false;
+      switch (geometry)
         {
-        entityArray = vtkUnsignedCharArray::New();
-        entityArray->SetName(currentEntityName);
-        entityArray->SetNumberOfComponents(1);
-        entityArray->SetNumberOfTuples(numberOfPoints);
-        entityArray->FillComponent(0,0.0);
-        output->GetPointData()->AddArray(entityArray);
-        }
-
-      while(fscanf(FDNEUTFile, "%d", &cellId)>0)
-        {
-        int* cellPoints = NULL;
-        switch (geometry)
-          {
-          case QUADRILATERAL:
-            if (this->VolumeElementsOnly)
+        case QUADRILATERAL:
+          if (this->VolumeElementsOnly)
+            {
+            continue;
+            }
+          if (nodesPerElement==4)
+            {
+            type = VTK_QUAD;
+            numberOfCellPoints = this->GhostNodes ? nodesPerElement : 4;
+            cellPoints = new int[numberOfCellPoints];
+            for (i=0; i<nodesPerElement; i++)
               {
-              continue;
+              fscanf(FDNEUTFile, "%d", &cellPoints[i]);
               }
-            if (nodesPerElement==4)
+            }
+          else if ((nodesPerElement==8) || (nodesPerElement==9))
+            {
+            type = VTK_QUADRATIC_QUAD;
+            numberOfCellPoints = this->GhostNodes ? nodesPerElement : 8;
+            cellPoints = new int[numberOfCellPoints];
+            fscanf(FDNEUTFile, "%d", &cellPoints[0]);
+            fscanf(FDNEUTFile, "%d", &cellPoints[4]);
+            fscanf(FDNEUTFile, "%d", &cellPoints[1]);
+            fscanf(FDNEUTFile, "%d", &cellPoints[5]);
+            fscanf(FDNEUTFile, "%d", &cellPoints[2]);
+            fscanf(FDNEUTFile, "%d", &cellPoints[6]);
+            fscanf(FDNEUTFile, "%d", &cellPoints[3]);
+            fscanf(FDNEUTFile, "%d", &cellPoints[7]);
+            if (nodesPerElement==9)
               {
-              type = VTK_QUAD;
-              typesArray->InsertNextValue(type);
-              numberOfCellPoints = this->GhostNodes ? nodesPerElement : 4;
-              cellPoints = new int[numberOfCellPoints];
-              for (i=0; i<nodesPerElement; i++)
-                {
-                fscanf(FDNEUTFile, "%d", &cellPoints[i]);
-                }
-              this->OneToZeroOffset(numberOfCellPoints,cellPoints);
-              gridCellArray->InsertNextCell(numberOfCellPoints,cellPoints);
-              }
-            else if ((nodesPerElement==8) || (nodesPerElement==9))
-              {
-              type = VTK_QUADRATIC_QUAD;
-              typesArray->InsertNextValue(type);
-              numberOfCellPoints = this->GhostNodes ? nodesPerElement : 8;
-              cellPoints = new int[numberOfCellPoints];
-              fscanf(FDNEUTFile, "%d", &cellPoints[0]);
-              fscanf(FDNEUTFile, "%d", &cellPoints[4]);
-              fscanf(FDNEUTFile, "%d", &cellPoints[1]);
-              fscanf(FDNEUTFile, "%d", &cellPoints[5]);
-              fscanf(FDNEUTFile, "%d", &cellPoints[2]);
-              fscanf(FDNEUTFile, "%d", &cellPoints[6]);
-              fscanf(FDNEUTFile, "%d", &cellPoints[3]);
-              fscanf(FDNEUTFile, "%d", &cellPoints[7]);
-              if (nodesPerElement==9)
-                {
-                if (this->GhostNodes)
-                  {
-                  fscanf(FDNEUTFile, "%d",&cellPoints[8]);
-                  }
-                else
-                  {
-                  fscanf(FDNEUTFile, "%d",&pointBuffer);
-                  }
-                }
-              this->OneToZeroOffset(numberOfCellPoints,cellPoints);
-              gridCellArray->InsertNextCell(numberOfCellPoints,cellPoints);
-              }
-            break;
-          case TRIANGLE:
-            if (this->VolumeElementsOnly)
-              {
-              continue;
-              }
-            if (nodesPerElement==3)
-              {
-              type = VTK_TRIANGLE;
-              typesArray->InsertNextValue(type);
-              numberOfCellPoints = this->GhostNodes ? nodesPerElement : 3;
-              cellPoints = new int[numberOfCellPoints];
-              for (i=0; i<nodesPerElement; i++)
-                {
-                fscanf(FDNEUTFile, "%d", &cellPoints[i]);
-                }
-              this->OneToZeroOffset(3,cellPoints);
-              gridCellArray->InsertNextCell(3,cellPoints);
-              }
-            else if ((nodesPerElement==6) || (nodesPerElement==7))
-              {
-              type = VTK_QUADRATIC_TRIANGLE;
-              typesArray->InsertNextValue(type);
-              numberOfCellPoints = this->GhostNodes ? nodesPerElement : 6;
-              cellPoints = new int[numberOfCellPoints];
-              fscanf(FDNEUTFile, "%d", &cellPoints[0]);
-              fscanf(FDNEUTFile, "%d", &cellPoints[3]);
-              fscanf(FDNEUTFile, "%d", &cellPoints[1]);
-              fscanf(FDNEUTFile, "%d", &cellPoints[4]);
-              fscanf(FDNEUTFile, "%d", &cellPoints[2]);
-              fscanf(FDNEUTFile, "%d", &cellPoints[5]);
-              if (nodesPerElement==7)
-                {
-                if (this->GhostNodes)
-                  {
-                  fscanf(FDNEUTFile, "%d",&cellPoints[6]);
-                  }
-                else
-                  {
-                  fscanf(FDNEUTFile, "%d",&pointBuffer);
-                  }
-                }
-              this->OneToZeroOffset(numberOfCellPoints,cellPoints);
-              gridCellArray->InsertNextCell(numberOfCellPoints,cellPoints);
-              }
-            break;
-          case BRICK:
-            if (nodesPerElement==8)
-              {
-              type = VTK_HEXAHEDRON;
-              typesArray->InsertNextValue(type);
-              numberOfCellPoints = this->GhostNodes ? nodesPerElement : 8;
-              cellPoints = new int[numberOfCellPoints];
-              fscanf(FDNEUTFile, "%d", &cellPoints[0]);
-              fscanf(FDNEUTFile, "%d", &cellPoints[1]);
-              fscanf(FDNEUTFile, "%d", &cellPoints[3]);
-              fscanf(FDNEUTFile, "%d", &cellPoints[2]);
-              fscanf(FDNEUTFile, "%d", &cellPoints[4]);
-              fscanf(FDNEUTFile, "%d", &cellPoints[5]);
-              fscanf(FDNEUTFile, "%d", &cellPoints[7]);
-              fscanf(FDNEUTFile, "%d", &cellPoints[6]);
-              this->OneToZeroOffset(numberOfCellPoints,cellPoints);
-              gridCellArray->InsertNextCell(numberOfCellPoints,cellPoints);
-              }
-            else if (nodesPerElement==27)
-              {
-              type = VTK_QUADRATIC_HEXAHEDRON;
-              typesArray->InsertNextValue(type);
-              numberOfCellPoints = this->GhostNodes ? nodesPerElement : 20;
-              cellPoints = new int[numberOfCellPoints];
-              fscanf(FDNEUTFile, "%d", &cellPoints[0]);
-              fscanf(FDNEUTFile, "%d", &cellPoints[8]);
-              fscanf(FDNEUTFile, "%d", &cellPoints[1]);
-
-              fscanf(FDNEUTFile, "%d", &cellPoints[11]);
               if (this->GhostNodes)
                 {
-                fscanf(FDNEUTFile, "%d", &cellPoints[24]);
+                fscanf(FDNEUTFile, "%d",&cellPoints[8]);
                 }
               else
                 {
-                fscanf(FDNEUTFile, "%d", &pointBuffer);
+                fscanf(FDNEUTFile, "%d",&pointBuffer);
                 }
-              fscanf(FDNEUTFile, "%d", &cellPoints[9]);
+              }
+            }
+          break;
+        case TRIANGLE:
+          if (this->VolumeElementsOnly)
+            {
+            continue;
+            }
+          if (nodesPerElement==3)
+            {
+            type = VTK_TRIANGLE;
+            numberOfCellPoints = this->GhostNodes ? nodesPerElement : 3;
+            cellPoints = new int[numberOfCellPoints];
+            for (i=0; i<nodesPerElement; i++)
+              {
+              fscanf(FDNEUTFile, "%d", &cellPoints[i]);
+              }
+            }
+          else if ((nodesPerElement==6) || (nodesPerElement==7))
+            {
+            type = VTK_QUADRATIC_TRIANGLE;
+            numberOfCellPoints = this->GhostNodes ? nodesPerElement : 6;
+            cellPoints = new int[numberOfCellPoints];
+            fscanf(FDNEUTFile, "%d", &cellPoints[0]);
+            fscanf(FDNEUTFile, "%d", &cellPoints[3]);
+            fscanf(FDNEUTFile, "%d", &cellPoints[1]);
+            fscanf(FDNEUTFile, "%d", &cellPoints[4]);
+            fscanf(FDNEUTFile, "%d", &cellPoints[2]);
+            fscanf(FDNEUTFile, "%d", &cellPoints[5]);
+ 
+            if (nodesPerElement==7)
+              {
+              if (this->GhostNodes)
+                {
+                fscanf(FDNEUTFile, "%d",&cellPoints[6]);
+                }
+              else
+                {
+                fscanf(FDNEUTFile, "%d",&pointBuffer);
+                }
+              }
+            }
+          break;
+        case BRICK:
+          if (nodesPerElement==8)
+            {
+            type = VTK_HEXAHEDRON;
+            numberOfCellPoints = this->GhostNodes ? nodesPerElement : 8;
+            cellPoints = new int[numberOfCellPoints];
+            fscanf(FDNEUTFile, "%d", &cellPoints[0]);
+            fscanf(FDNEUTFile, "%d", &cellPoints[1]);
+            fscanf(FDNEUTFile, "%d", &cellPoints[3]);
+            fscanf(FDNEUTFile, "%d", &cellPoints[2]);
+            fscanf(FDNEUTFile, "%d", &cellPoints[4]);
+            fscanf(FDNEUTFile, "%d", &cellPoints[5]);
+            fscanf(FDNEUTFile, "%d", &cellPoints[7]);
+            fscanf(FDNEUTFile, "%d", &cellPoints[6]);
+            }
+          else if (nodesPerElement==27)
+            {
+            type = VTK_QUADRATIC_HEXAHEDRON;
+            numberOfCellPoints = this->GhostNodes ? nodesPerElement : 20;
+            cellPoints = new int[numberOfCellPoints];
+            fscanf(FDNEUTFile, "%d", &cellPoints[0]);
+            fscanf(FDNEUTFile, "%d", &cellPoints[8]);
+            fscanf(FDNEUTFile, "%d", &cellPoints[1]);
 
-              fscanf(FDNEUTFile, "%d", &cellPoints[3]);
-              fscanf(FDNEUTFile, "%d", &cellPoints[10]);
-              fscanf(FDNEUTFile, "%d", &cellPoints[2]);
+            fscanf(FDNEUTFile, "%d", &cellPoints[11]);
+            if (this->GhostNodes)
+              {
+              fscanf(FDNEUTFile, "%d", &cellPoints[24]);
+              }
+            else
+              {
+              fscanf(FDNEUTFile, "%d", &pointBuffer);
+              }
+            fscanf(FDNEUTFile, "%d", &cellPoints[9]);
 
+            fscanf(FDNEUTFile, "%d", &cellPoints[3]);
+            fscanf(FDNEUTFile, "%d", &cellPoints[10]);
+            fscanf(FDNEUTFile, "%d", &cellPoints[2]);
+
+            fscanf(FDNEUTFile, "%d", &cellPoints[16]);
+            if (this->GhostNodes)
+              {
+              fscanf(FDNEUTFile, "%d", &cellPoints[20]);
+              }
+            else
+              {
+              fscanf(FDNEUTFile, "%d", &pointBuffer);
+              }
+            fscanf(FDNEUTFile, "%d", &cellPoints[17]);
+
+            if (this->GhostNodes)
+              {
+              fscanf(FDNEUTFile, "%d", &cellPoints[23]);
+              fscanf(FDNEUTFile, "%d", &cellPoints[26]);
+              fscanf(FDNEUTFile, "%d", &cellPoints[21]);
+              }
+            else
+              {
+              fscanf(FDNEUTFile, "%d", &pointBuffer);
+              fscanf(FDNEUTFile, "%d", &pointBuffer);
+              fscanf(FDNEUTFile, "%d", &pointBuffer);
+              }
+
+            fscanf(FDNEUTFile, "%d",&cellPoints[19]);
+            if (this->GhostNodes)
+              {
+              fscanf(FDNEUTFile, "%d", &cellPoints[22]);
+              }
+            else
+              {
+              fscanf(FDNEUTFile, "%d", &pointBuffer);
+              }
+            fscanf(FDNEUTFile, "%d",&cellPoints[18]);
+
+            fscanf(FDNEUTFile, "%d",&cellPoints[4]);
+            fscanf(FDNEUTFile, "%d",&cellPoints[12]);
+            fscanf(FDNEUTFile, "%d",&cellPoints[5]);
+
+            fscanf(FDNEUTFile, "%d",&cellPoints[15]);
+            if (this->GhostNodes)
+              {
+              fscanf(FDNEUTFile, "%d", &cellPoints[25]);
+              }
+            else
+              {
+              fscanf(FDNEUTFile, "%d", &pointBuffer);
+              }
+            fscanf(FDNEUTFile, "%d",&cellPoints[13]);
+
+            fscanf(FDNEUTFile, "%d",&cellPoints[7]);
+            fscanf(FDNEUTFile, "%d",&cellPoints[14]);
+            fscanf(FDNEUTFile, "%d",&cellPoints[6]);
+            }
+          break;
+        case TETRAHEDRON:
+          if (nodesPerElement==4)
+            {
+            type = VTK_TETRA;
+            numberOfCellPoints = this->GhostNodes ? nodesPerElement : 4;
+            cellPoints = new int[numberOfCellPoints];
+            for (i=0; i<nodesPerElement; i++)
+              {
+              fscanf(FDNEUTFile, "%d", &cellPoints[i]);
+              }
+            }
+          else if (nodesPerElement==10)
+            {
+            type = VTK_QUADRATIC_TETRA;
+            numberOfCellPoints = this->GhostNodes ? nodesPerElement : 10;
+            cellPoints = new int[numberOfCellPoints];
+            fscanf(FDNEUTFile, "%d", &cellPoints[0]);
+            fscanf(FDNEUTFile, "%d", &cellPoints[4]);
+            fscanf(FDNEUTFile, "%d", &cellPoints[1]);
+            fscanf(FDNEUTFile, "%d", &cellPoints[6]);
+            fscanf(FDNEUTFile, "%d", &cellPoints[5]);
+            fscanf(FDNEUTFile, "%d", &cellPoints[2]);
+            fscanf(FDNEUTFile, "%d", &cellPoints[7]);
+            fscanf(FDNEUTFile, "%d", &cellPoints[8]);
+            fscanf(FDNEUTFile, "%d", &cellPoints[9]);
+            fscanf(FDNEUTFile, "%d", &cellPoints[3]);
+            }
+          break;
+        case WEDGE:
+          if (nodesPerElement==6)
+            {
+            type = VTK_WEDGE;
+            numberOfCellPoints = this->GhostNodes ? nodesPerElement : 6;
+            cellPoints = new int[numberOfCellPoints];
+            for (i=0; i<nodesPerElement; i++)
+              {
+              fscanf(FDNEUTFile, "%d", &cellPoints[i]);
+              }
+            }
+          else if (nodesPerElement==18)
+            {
+            type = VTK_QUADRATIC_WEDGE;
+            numberOfCellPoints = this->GhostNodes ? nodesPerElement : 15;
+            cellPoints = new int[numberOfCellPoints];
+            fscanf(FDNEUTFile, "%d", &cellPoints[0]);
+            fscanf(FDNEUTFile, "%d", &cellPoints[6]);
+            fscanf(FDNEUTFile, "%d", &cellPoints[1]);
+
+            fscanf(FDNEUTFile, "%d", &cellPoints[8]);
+            fscanf(FDNEUTFile, "%d", &cellPoints[7]);
+            fscanf(FDNEUTFile, "%d", &cellPoints[2]);
+
+            fscanf(FDNEUTFile, "%d", &cellPoints[12]);
+            if (this->GhostNodes)
+              {
+              fscanf(FDNEUTFile, "%d", &cellPoints[15]);
+              }
+            else
+              {
+              fscanf(FDNEUTFile, "%d", &pointBuffer);
+              }
+            fscanf(FDNEUTFile, "%d", &cellPoints[13]);
+
+            if (this->GhostNodes)
+              {
               fscanf(FDNEUTFile, "%d", &cellPoints[16]);
-              if (this->GhostNodes)
-                {
-                fscanf(FDNEUTFile, "%d", &cellPoints[20]);
-                }
-              else
-                {
-                fscanf(FDNEUTFile, "%d", &pointBuffer);
-                }
               fscanf(FDNEUTFile, "%d", &cellPoints[17]);
-
-              if (this->GhostNodes)
-                {
-                fscanf(FDNEUTFile, "%d", &cellPoints[23]);
-                fscanf(FDNEUTFile, "%d", &cellPoints[26]);
-                fscanf(FDNEUTFile, "%d", &cellPoints[21]);
-                }
-              else
-                {
-                fscanf(FDNEUTFile, "%d", &pointBuffer);
-                fscanf(FDNEUTFile, "%d", &pointBuffer);
-                fscanf(FDNEUTFile, "%d", &pointBuffer);
-                }
-
-              fscanf(FDNEUTFile, "%d",&cellPoints[19]);
-              if (this->GhostNodes)
-                {
-                fscanf(FDNEUTFile, "%d", &cellPoints[22]);
-                }
-              else
-                {
-                fscanf(FDNEUTFile, "%d", &pointBuffer);
-                }
-              fscanf(FDNEUTFile, "%d",&cellPoints[18]);
-
-              fscanf(FDNEUTFile, "%d",&cellPoints[4]);
-              fscanf(FDNEUTFile, "%d",&cellPoints[12]);
-              fscanf(FDNEUTFile, "%d",&cellPoints[5]);
-
-              fscanf(FDNEUTFile, "%d",&cellPoints[15]);
-              if (this->GhostNodes)
-                {
-                fscanf(FDNEUTFile, "%d", &cellPoints[25]);
-                }
-              else
-                {
-                fscanf(FDNEUTFile, "%d", &pointBuffer);
-                }
-              fscanf(FDNEUTFile, "%d",&cellPoints[13]);
-
-              fscanf(FDNEUTFile, "%d",&cellPoints[7]);
-              fscanf(FDNEUTFile, "%d",&cellPoints[14]);
-              fscanf(FDNEUTFile, "%d",&cellPoints[6]);
-
-              this->OneToZeroOffset(numberOfCellPoints,cellPoints);
-              gridCellArray->InsertNextCell(numberOfCellPoints,cellPoints);
               }
-            break;
-          case TETRAHEDRON:
-            if (nodesPerElement==4)
+            else
               {
-              type = VTK_TETRA;
-              typesArray->InsertNextValue(type);
-              numberOfCellPoints = this->GhostNodes ? nodesPerElement : 4;
-              cellPoints = new int[numberOfCellPoints];
-              for (i=0; i<nodesPerElement; i++)
-                {
-                fscanf(FDNEUTFile, "%d", &cellPoints[i]);
-                }
-              this->OneToZeroOffset(4,cellPoints);
-              gridCellArray->InsertNextCell(4,cellPoints);
+              fscanf(FDNEUTFile, "%d", &pointBuffer);
+              fscanf(FDNEUTFile, "%d", &pointBuffer);
               }
-            else if (nodesPerElement==10)
-              {
-              type = VTK_QUADRATIC_TETRA;
-              typesArray->InsertNextValue(type);
-              numberOfCellPoints = this->GhostNodes ? nodesPerElement : 10;
-              cellPoints = new int[numberOfCellPoints];
-              fscanf(FDNEUTFile, "%d", &cellPoints[0]);
-              fscanf(FDNEUTFile, "%d", &cellPoints[4]);
-              fscanf(FDNEUTFile, "%d", &cellPoints[1]);
-              fscanf(FDNEUTFile, "%d", &cellPoints[6]);
-              fscanf(FDNEUTFile, "%d", &cellPoints[5]);
-              fscanf(FDNEUTFile, "%d", &cellPoints[2]);
-              fscanf(FDNEUTFile, "%d", &cellPoints[7]);
-              fscanf(FDNEUTFile, "%d", &cellPoints[8]);
-              fscanf(FDNEUTFile, "%d", &cellPoints[9]);
-              fscanf(FDNEUTFile, "%d", &cellPoints[3]);
-              this->OneToZeroOffset(numberOfCellPoints,cellPoints);
-              gridCellArray->InsertNextCell(numberOfCellPoints,cellPoints);
-              }
-            break;
-          case WEDGE:
-            if (nodesPerElement==6)
-              {
-              type = VTK_WEDGE;
-              typesArray->InsertNextValue(type);
-              numberOfCellPoints = this->GhostNodes ? nodesPerElement : 6;
-              cellPoints = new int[numberOfCellPoints];
-              for (i=0; i<nodesPerElement; i++)
-                {
-                fscanf(FDNEUTFile, "%d", &cellPoints[i]);
-                }
-              this->OneToZeroOffset(6,cellPoints);
-              gridCellArray->InsertNextCell(6,cellPoints);
-              }
-            else if (nodesPerElement==18)
-              {
-              type = VTK_QUADRATIC_WEDGE;
-              typesArray->InsertNextValue(type);
-              numberOfCellPoints = this->GhostNodes ? nodesPerElement : 15;
-              cellPoints = new int[numberOfCellPoints];
-              fscanf(FDNEUTFile, "%d", &cellPoints[0]);
-              fscanf(FDNEUTFile, "%d", &cellPoints[6]);
-              fscanf(FDNEUTFile, "%d", &cellPoints[1]);
+            fscanf(FDNEUTFile, "%d", &cellPoints[14]);
 
-              fscanf(FDNEUTFile, "%d", &cellPoints[8]);
-              fscanf(FDNEUTFile, "%d", &cellPoints[7]);
-              fscanf(FDNEUTFile, "%d", &cellPoints[2]);
+            fscanf(FDNEUTFile, "%d", &cellPoints[3]);
+            fscanf(FDNEUTFile, "%d", &cellPoints[9]);
+            fscanf(FDNEUTFile, "%d", &cellPoints[4]);
 
-              fscanf(FDNEUTFile, "%d", &cellPoints[12]);
-              if (this->GhostNodes)
-                {
-                fscanf(FDNEUTFile, "%d", &cellPoints[15]);
-                }
-              else
-                {
-                fscanf(FDNEUTFile, "%d", &pointBuffer);
-                }
-              fscanf(FDNEUTFile, "%d", &cellPoints[13]);
+            fscanf(FDNEUTFile, "%d",&cellPoints[11]);
+            fscanf(FDNEUTFile, "%d",&cellPoints[10]);
+            fscanf(FDNEUTFile, "%d",&cellPoints[5]);
+            }
+          else if (nodesPerElement==15)
+            {
+            type = VTK_QUADRATIC_WEDGE;
+            numberOfCellPoints = this->GhostNodes ? nodesPerElement : 15;
+            cellPoints = new int[numberOfCellPoints];
+            fscanf(FDNEUTFile, "%d", &cellPoints[0]);
+            fscanf(FDNEUTFile, "%d", &cellPoints[6]);
+            fscanf(FDNEUTFile, "%d", &cellPoints[1]);
 
-              if (this->GhostNodes)
-                {
-                fscanf(FDNEUTFile, "%d", &cellPoints[16]);
-                fscanf(FDNEUTFile, "%d", &cellPoints[17]);
-                }
-              else
-                {
-                fscanf(FDNEUTFile, "%d", &pointBuffer);
-                fscanf(FDNEUTFile, "%d", &pointBuffer);
-                }
-              fscanf(FDNEUTFile, "%d", &cellPoints[14]);
+            fscanf(FDNEUTFile, "%d", &cellPoints[8]);
+            fscanf(FDNEUTFile, "%d", &cellPoints[7]);
+            fscanf(FDNEUTFile, "%d", &cellPoints[2]);
 
-              fscanf(FDNEUTFile, "%d", &cellPoints[3]);
-              fscanf(FDNEUTFile, "%d", &cellPoints[9]);
-              fscanf(FDNEUTFile, "%d", &cellPoints[4]);
+            fscanf(FDNEUTFile, "%d", &cellPoints[12]);
+            fscanf(FDNEUTFile, "%d", &cellPoints[13]);
+            fscanf(FDNEUTFile, "%d", &cellPoints[14]);
 
-              fscanf(FDNEUTFile, "%d",&cellPoints[11]);
-              fscanf(FDNEUTFile, "%d",&cellPoints[10]);
-              fscanf(FDNEUTFile, "%d",&cellPoints[5]);
+            fscanf(FDNEUTFile, "%d", &cellPoints[3]);
+            fscanf(FDNEUTFile, "%d", &cellPoints[9]);
+            fscanf(FDNEUTFile, "%d", &cellPoints[4]);
 
-              this->OneToZeroOffset(numberOfCellPoints,cellPoints);
-              gridCellArray->InsertNextCell(numberOfCellPoints,cellPoints);
-              }
-            else if (nodesPerElement==15)
-              {
-              type = VTK_QUADRATIC_WEDGE;
-              typesArray->InsertNextValue(type);
-              numberOfCellPoints = this->GhostNodes ? nodesPerElement : 15;
-              cellPoints = new int[numberOfCellPoints];
-              fscanf(FDNEUTFile, "%d", &cellPoints[0]);
-              fscanf(FDNEUTFile, "%d", &cellPoints[6]);
-              fscanf(FDNEUTFile, "%d", &cellPoints[1]);
-
-              fscanf(FDNEUTFile, "%d", &cellPoints[8]);
-              fscanf(FDNEUTFile, "%d", &cellPoints[7]);
-              fscanf(FDNEUTFile, "%d", &cellPoints[2]);
-
-              fscanf(FDNEUTFile, "%d", &cellPoints[12]);
-              fscanf(FDNEUTFile, "%d", &cellPoints[13]);
-              fscanf(FDNEUTFile, "%d", &cellPoints[14]);
-
-              fscanf(FDNEUTFile, "%d", &cellPoints[3]);
-              fscanf(FDNEUTFile, "%d", &cellPoints[9]);
-              fscanf(FDNEUTFile, "%d", &cellPoints[4]);
-
-              fscanf(FDNEUTFile, "%d",&cellPoints[11]);
-              fscanf(FDNEUTFile, "%d",&cellPoints[10]);
-              fscanf(FDNEUTFile, "%d",&cellPoints[5]);
-
-              this->OneToZeroOffset(numberOfCellPoints,cellPoints);
-              gridCellArray->InsertNextCell(numberOfCellPoints,cellPoints);
-              }
-            break;
-          }
-        for (int i=0; i<numberOfCellPoints; i++)
-          {
-          entityArray->SetValue(cellPoints[i],1);
-          }
+            fscanf(FDNEUTFile, "%d",&cellPoints[11]);
+            fscanf(FDNEUTFile, "%d",&cellPoints[10]);
+            fscanf(FDNEUTFile, "%d",&cellPoints[5]);
+            }
+          break;
+        default:
+          invalid = true;
+        }
+#if 0
+      entityArray->InsertValue(gridCellArray->GetNumberOfCells()-1,1);
+#endif
+      if (!invalid)
+        {
+        typesArray->InsertNextValue(type);
+        this->OneToZeroOffset(numberOfCellPoints,cellPoints);
+        gridCellArray->InsertNextCell(numberOfCellPoints,cellPoints);
+        singleEntityArray->InsertNextValue(entityCounter);
         delete[] cellPoints;
         }
-      if (entityArray)
+      else
         {
-        entityArray->Delete();
+        cout<<"foo"<<endl;
         }
       }
-    else
-      {
-      while(fscanf(FDNEUTFile, "%d", &cellId)>0);
-      }
+#if 0
+    entityArray->Delete();
+#endif
+    ++entityCounter;
     }
+
+  singleEntityArray->Delete();
 
   fclose(FDNEUTFile);
 

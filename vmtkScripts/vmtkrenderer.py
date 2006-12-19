@@ -58,7 +58,10 @@ class vmtkRenderer(pypes.pypeScript):
             self.Renderer.SetBackground(self.Background)
             self.RenderWindow = vtk.vtkRenderWindow()
             self.RenderWindow.AddRenderer(self.Renderer)
-            self.RenderWindow.SetSize(self.WindowSize)
+            self.RenderWindow.SetSize(self.WindowSize[0],self.WindowSize[1])
+            self.RenderWindow.PointSmoothingOn()
+            self.RenderWindow.LineSmoothingOn()
+            self.RenderWindow.PolygonSmoothingOn()
             self.RenderWindowInteractor = vtk.vtkRenderWindowInteractor()
             self.RenderWindow.SetInteractor(self.RenderWindowInteractor)
 

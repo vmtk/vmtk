@@ -40,11 +40,8 @@ class VTK_VMTK_IO_EXPORT vtkvmtkFDNEUTReader : public vtkUnstructuredGridReader
 
   static vtkvmtkFDNEUTReader *New();
 
-  vtkSetStringMacro(EntityName);
-  vtkGetStringMacro(EntityName);
-
-  vtkSetMacro(Scale,double);
-  vtkGetMacro(Scale,double);
+  vtkSetStringMacro(SingleCellDataEntityArrayName);
+  vtkGetStringMacro(SingleCellDataEntityArrayName);
 
   vtkSetMacro(GhostNodes,int);
   vtkGetMacro(GhostNodes,int);
@@ -53,25 +50,6 @@ class VTK_VMTK_IO_EXPORT vtkvmtkFDNEUTReader : public vtkUnstructuredGridReader
   vtkSetMacro(VolumeElementsOnly,int);
   vtkGetMacro(VolumeElementsOnly,int);
   vtkBooleanMacro(VolumeElementsOnly,int);
-
-  vtkSetMacro(ReadEntityInformation,int);
-  vtkGetMacro(ReadEntityInformation,int);
-  vtkBooleanMacro(ReadEntityInformation,int);
-
-//   vtkSetMacro(EntityStorageMode,int);
-//   vtkGetMacro(EntityStorageMode,int);
-//   void SetEntityStorageModeToPointData()
-//     { this->SetEntityStorageMode(VTKVMTK_POINT_DATA_ENTITY_STORAGE_MODE); }
-//   void SetEntityStorageModeToCellData()
-//     { this->SetEntityStorageMode(VTKVMTK_CELL_DATA_ENTITY_STORAGE_MODE); }
-
-//   //BTX
-//   enum
-//   {
-//     VTKVMTK_POINT_DATA_ENTITY_STORAGE_MODE,
-//     VTKVMTK_CELL_DATA_ENTITY_STORAGE_MODE
-//   };
-//   //ETX
 
   //BTX
   enum
@@ -94,14 +72,10 @@ class VTK_VMTK_IO_EXPORT vtkvmtkFDNEUTReader : public vtkUnstructuredGridReader
   static void OneToZeroOffset(int npts, int* pts)
   { for (int i=0; i<npts; i++) --pts[i]; }
 
-  char* EntityName;
-  double Scale;
+  char* SingleCellDataEntityArrayName;
 
   int GhostNodes;
   int VolumeElementsOnly;
-
-  int ReadEntityInformation;
-//   int EntityStorageMode;
 
   private:
   vtkvmtkFDNEUTReader(const vtkvmtkFDNEUTReader&);  // Not implemented.
