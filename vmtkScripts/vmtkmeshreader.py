@@ -27,7 +27,7 @@ class vmtkMeshReader(pypes.pypeScript):
 
         pypes.pypeScript.__init__(self)
 
-        self.Format = 'vtkxml'
+        self.Format = ''
         self.GuessFormat = 1
         self.InputFileName = ''
         self.Mesh = 0
@@ -244,7 +244,7 @@ class vmtkMeshReader(pypes.pypeScript):
                             'neu':'ngneut',
                             'tec':'tecplot'}
 
-        if self.GuessFormat and self.InputFileName:
+        if self.GuessFormat and self.InputFileName and not self.Format:
             import os.path
             extension = os.path.splitext(self.InputFileName)[1]
             if extension:

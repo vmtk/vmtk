@@ -27,7 +27,7 @@ class vmtkImageReader(pypes.pypeScript):
 
         pypes.pypeScript.__init__(self)
         
-        self.Format = 'meta'
+        self.Format = ''
         self.GuessFormat = 1
         self.InputFileName = ''
         self.InputFilePrefix = ''
@@ -204,7 +204,7 @@ class vmtkImageReader(pypes.pypeScript):
                             'tif':'tiff',
                             'png':'png'}
 
-        if self.GuessFormat and self.InputFileName:
+        if self.GuessFormat and self.InputFileName and not self.Format:
             import os.path
             extension = os.path.splitext(self.InputFileName)[1]
             if extension:

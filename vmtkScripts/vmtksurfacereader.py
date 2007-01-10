@@ -26,7 +26,7 @@ class vmtkSurfaceReader(pypes.pypeScript):
 
         pypes.pypeScript.__init__(self)
 
-        self.Format = 'vtkxml'
+        self.Format = ''
         self.GuessFormat = 1
         self.InputFileName = ''
         self.Surface = 0
@@ -172,7 +172,7 @@ class vmtkSurfaceReader(pypes.pypeScript):
                             'tec':'tecplot',
                             'dat':'tecplot'}
 
-        if self.GuessFormat and self.InputFileName:
+        if self.GuessFormat and self.InputFileName and not self.Format:
             import os.path
             extension = os.path.splitext(self.InputFileName)[1]
             if extension:

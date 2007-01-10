@@ -26,7 +26,7 @@ class vmtkSurfaceWriter(pypes.pypeScript):
 
         pypes.pypeScript.__init__(self)
 
-        self.Format = 'vtkxml'
+        self.Format = ''
         self.GuessFormat = 1
         self.OutputFileName = ''
         self.Surface = None
@@ -177,7 +177,7 @@ class vmtkSurfaceWriter(pypes.pypeScript):
                             'tec':'tecplot',
                             'dat':'pointdata'}
 
-        if self.GuessFormat and self.OutputFileName:
+        if self.GuessFormat and self.OutputFileName and not self.Format:
             import os.path
             extension = os.path.splitext(self.OutputFileName)[1]
             if extension:

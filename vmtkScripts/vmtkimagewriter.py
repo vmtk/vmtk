@@ -27,7 +27,7 @@ class vmtkImageWriter(pypes.pypeScript):
 
         pypes.pypeScript.__init__(self)
 
-        self.Format = 'meta'
+        self.Format = ''
         self.GuessFormat = 1
         self.OutputFileName = ''
         self.OutputRawFileName = ''
@@ -191,7 +191,7 @@ class vmtkImageWriter(pypes.pypeScript):
                             'png':'png',
                             'dat':'pointdata'}
 
-        if self.GuessFormat and self.OutputFileName:
+        if self.GuessFormat and self.OutputFileName and not self.Format:
             import os.path
             extension = os.path.splitext(self.OutputFileName)[1]
             if extension:
