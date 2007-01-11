@@ -36,6 +36,7 @@ SET(VTK_VMTK_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
 # If this is a build tree, provide an option for putting
 # this project's executables and libraries in with VTK's.
 IF (EXISTS ${VTK_DIR}/bin)
+  INCLUDE_DIRECTORIES(${VTK_SOURCE_DIR}/Utilities/DICOMParser)
   OPTION(USE_VTK_OUTPUT_PATHS
          "Use VTK's output directory for this project's executables and libraries."
          OFF)

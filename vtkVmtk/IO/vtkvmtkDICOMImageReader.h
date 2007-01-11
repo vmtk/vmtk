@@ -27,8 +27,6 @@
 
 #include "DICOMParser.h"
 #include "DICOMAppHelper.h"
-//#include "/usr/local/include/vtk-5.0/DICOMParser.h"
-//#include "/usr/local/include/vtk-5.0/DICOMAppHelper.h"
 
 #include "vtkDICOMImageReader.h"
 #include "vtkvmtkWin32Header.h"
