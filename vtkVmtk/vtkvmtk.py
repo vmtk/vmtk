@@ -11,6 +11,7 @@ if os.name == 'posix':
     from libvtkvmtkIOPython import *
     from libvtkvmtkMiscPython import *
     from libvtkvmtkSegmentationPython import *
+    from libvtkITKPython import *
 else:
     from vtkvmtkCommonPython import *
     from vtkvmtkComputationalGeometryPython import *
@@ -18,4 +19,5 @@ else:
     from vtkvmtkIOPython import *
     from vtkvmtkMiscPython import *
     from vtkvmtkSegmentationPython import *
+    from vtkITKPython import *
     

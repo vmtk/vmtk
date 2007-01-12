@@ -1,75 +1,120 @@
-PROJECT (VTKITK)
+PROJECT(vtkITK)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.4)
 
-#SET( VTKITK_SRCS
-#vtkITKImageToImageFilter.h
-#vtkITKImageToImageFilter2DFF.h
-#vtkITKImageToImageFilterFF.h
-#vtkITKImageToImageFilterF2F.h
-#vtkITKImageToImageFilterF3F3.h
-#vtkITKImageToImageFilterFUL.h
-#vtkITKImageToImageFilterULUL.h
-#vtkITKImageToImageFilterSF.h
-#vtkITKImageToImageFilterSUL.h
-#vtkITKImageToImageFilterUSUL.h
-#vtkITKImageToImageFilterUSUS.h
-#vtkITKImageToImageFilterSS.h
-#)
+# --------------------------------------------------------------------------
+# Sources
 
-#SET_SOURCE_FILES_PROPERTIES ( 
-#vtkITKImageToImageFilter.h
-#vtkITKImageToImageFilter2DFF.h
-#vtkITKImageToImageFilterFF.h
-#vtkITKImageToImageFilterF2F.h
-#vtkITKImageToImageFilterF3F3.h
-#vtkITKImageToImageFilterFUL.h
-#vtkITKImageToImageFilterULUL.h
-#vtkITKImageToImageFilterSF.h
-#vtkITKImageToImageFilterSUL.h
-#vtkITKImageToImageFilterUSUL.h
-#vtkITKImageToImageFilterUSUS.h
-#vtkITKImageToImageFilterSS.h
-#ABSTRACT
-#)
+# include a test for endianness (used to be done by default)
+INCLUDE (${CMAKE_ROOT}/Modules/TestBigEndian.cmake)
+TEST_BIG_ENDIAN(CMAKE_WORDS_BIGENDIAN)
 
-SET (VTKITK_SRCS
-  vtkITKImageToImageFilter.cxx
-  vtkITKImageToImageFilter2DFF.cxx
-  vtkITKImageToImageFilterFF.cxx
+FIND_PACKAGE(VTK REQUIRED)
+INCLUDE(${VTK_USE_FILE})
+
+FIND_PACKAGE(ITK REQUIRED)
+INCLUDE(${ITK_USE_FILE})
+
+SET(vtkITK_SRCS
+    vtkITKArchetypeImageSeriesReader.cxx
+    vtkITKArchetypeImageSeriesScalarReader.cxx
+    vtkITKArchetypeImageSeriesVectorReader.cxx
+    vtkITKImageWriter.cxx
+    vtkITKImageToImageFilter.cxx
+    vtkITKImageToImageFilter2DFF.cxx
+    vtkITKImageToImageFilterFF.cxx
+)
+
+# Abstract/pure virtual classes
+
+#SET_SOURCE_FILES_PROPERTIES(
+#  ABSTRACT
+#  )
+
+# Helper classes
+
+#SET_SOURCE_FILES_PROPERTIES(
+#  WRAP_EXCLUDE
+#  )
+
+# --------------------------------------------------------------------------
+# Include dirs
+
+INCLUDE_DIRECTORIES(
+  ${vtkITK_SOURCE_DIR}
+  ${vtkITK_BINARY_DIR}
+  ${ITK_INCLUDE_DIRS}
+  ${VTK_INCLUDE_DIRS}
   )
 
-SET_SOURCE_FILES_PROPERTIES ( 
-  vtkITKImageToImageFilter.cxx
-  vtkITKImageToImageFilter2DFF.cxx
-  vtkITKImageToImageFilterFF.cxx
-  ABSTRACT
-  )
+# --------------------------------------------------------------------------
+# Build the library
 
-SET (VTKITK_EXTRA_INCLUDES
-  vtkITKUtility.h
-  )
+ADD_LIBRARY (vtkITK ${vtkITK_SRCS})
+SET_TARGET_PROPERTIES(vtkITK PROPERTIES LINKER_LANGUAGE CXX)
+TARGET_LINK_LIBRARIES(vtkITK vtkImaging ITKNumerics ITKBasicFilters ITKIO ITKDICOMParser)
 
-IF(BORLAND)
-  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w-8004")
-ENDIF(BORLAND)
+INSTALL_TARGETS(${VTK_VMTK_INSTALL_LIB_DIR} vtkITK)
+INSTALL_FILES(${VTK_VMTK_INSTALL_INCLUDE_DIR} .h ${vtkITK_SRCS} ${VTKITK_EXTRA_INCLUDES})
 
-INCLUDE_DIRECTORIES(${VTKITK_SOURCE_DIR})
-INCLUDE_DIRECTORIES(${VTKITK_BINARY_DIR})
 
-ADD_LIBRARY (vtkVTKITK ${VTKITK_SRCS})
-SET_TARGET_PROPERTIES(vtkVTKITK PROPERTIES LINKER_LANGUAGE CXX)
-TARGET_LINK_LIBRARIES(vtkVTKITK vtkImaging ITKIO ITKNumerics ITKBasicFilters)
+# --------------------------------------------------------------------------
+# Wrapping
 
-INSTALL_TARGETS(${VTK_VMTK_INSTALL_LIB_DIR} vtkVTKITK)
-INSTALL_FILES(${VTK_VMTK_INSTALL_INCLUDE_DIR} .h ${VTKITK_SRCS} ${VTKITK_EXTRA_INCLUDES})
-
-# Configure Python wrappers.
+#INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
+#INCLUDE("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
+#VTK_WRAP_TCL3(vtkITK vtkITK_TCL_SRCS "${vtkITK_SRCS}" "")
 IF (VTK_WRAP_PYTHON)
-  VTK_WRAP_PYTHON3(vtkVTKITKPython VTKITKPython_SRCS "${VTKITK_SRCS}")
-  ADD_LIBRARY(vtkVTKITKPythonD ${VTKITKPython_SRCS})
-  ADD_LIBRARY(vtkVTKITKPython MODULE vtkVTKITKPythonInit.cxx)
-  TARGET_LINK_LIBRARIES(vtkVTKITKPythonD vtkVTKITK vtkCommon vtkCommonPythonD vtkFiltering vtkFilteringPythonD)
-  TARGET_LINK_LIBRARIES (vtkVTKITKPython vtkVTKITKPythonD)
-  INSTALL_TARGETS(${VTK_VMTK_INSTALL_LIB_DIR} vtkVTKITKPythonD)
-  INSTALL_TARGETS(${VTK_VMTK_INSTALL_LIB_DIR} vtkVTKITKPython)
+  VTK_WRAP_PYTHON3(vtkITKPython vtkITKPython_SRCS "${vtkITK_SRCS}")
+  ADD_LIBRARY(vtkITKPythonD ${vtkITKPython_SRCS})
+  ADD_LIBRARY(vtkITKPython MODULE vtkITKPythonInit.cxx)
+  TARGET_LINK_LIBRARIES(vtkITKPythonD vtkITK vtkCommon vtkCommonPythonD vtkFiltering vtkFilteringPythonD)
+  TARGET_LINK_LIBRARIES (vtkITKPython vtkITKPythonD)
+  INSTALL_TARGETS(${VTK_VMTK_INSTALL_LIB_DIR} vtkITKPythonD)
+  INSTALL_TARGETS(${VTK_VMTK_INSTALL_LIB_DIR} vtkITKPython)
 ENDIF (VTK_WRAP_PYTHON)
 
+# --------------------------------------------------------------------------
+# Build the library
+
+#ADD_LIBRARY(vtkITK 
+#  ${vtkITK_SRCS} 
+#  )
+#
+#IF(Slicer3_SOURCE_DIR)
+#  IF(BUILD_SHARED_LIBS)
+#  INSTALL_TARGETS(${SLICER3_LIB_INSTALL_DIR} vtkITK)
+#  ENDIF(BUILD_SHARED_LIBS)
+#ENDIF(Slicer3_SOURCE_DIR)
+#
+#TARGET_LINK_LIBRARIES(vtkITK 
+#  vtkCommonTCL
+#  vtkFilteringTCL
+#  vtkImagingTCL
+#  ITKAlgorithms
+#  ITKNumerics 
+#  ITKCommon
+#  ITKBasicFilters
+#  ITKNumerics
+#  ITKStatistics
+#  ITKBasicFilters
+#  ITKIO
+#  ITKDICOMParser
+#  )
+#
+#
+## --------------------------------------------------------------------------
+## Testing (requires some of the examples)
+#
+#IF(BUILD_TESTING)
+#  SUBDIRS(Testing)
+#ENDIF(BUILD_TESTING)
+#
+CONFIGURE_FILE(
+  ${vtkITK_SOURCE_DIR}/vtkITKConfigure.h.in 
+  ${vtkITK_BINARY_DIR}/vtkITKConfigure.h
+)
+
+CONFIGURE_FILE(
+  ${vtkITK_SOURCE_DIR}/vtkITKConfig.cmake.in 
+  ${vtkITK_BINARY_DIR}/vtkITKConfig.cmake
+)

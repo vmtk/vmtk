@@ -24,3 +24,9 @@ Version:   $Revision: 1.1 $
 =========================================================================*/
 
 #include "vtkvmtkObjectnessMeasureImageFilter.h"
+#include "vtkObjectFactory.h"
+
+vtkCxxRevisionMacro(vtkvmtkObjectnessMeasureImageFilter, "$Revision: 1.3 $");
+vtkStandardNewMacro(vtkvmtkObjectnessMeasureImageFilter);
+
+

@@ -34,7 +34,6 @@ Version:   $Revision: 1.3 $
 
 #include "vtkITKImageToImageFilterFF.h"
 #include "itkSigmoidImageFilter.h"
-#include "vtkObjectFactory.h"
 #include "vtkvmtkWin32Header.h"
 
 class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkSigmoidImageFilter : public vtkITKImageToImageFilterFF
@@ -76,9 +75,6 @@ private:
   vtkvmtkSigmoidImageFilter(const vtkvmtkSigmoidImageFilter&);  // Not implemented.
   void operator=(const vtkvmtkSigmoidImageFilter&);  // Not implemented.
 };
-
-vtkCxxRevisionMacro(vtkvmtkSigmoidImageFilter, "$Revision: 1.3 $");
-vtkStandardNewMacro(vtkvmtkSigmoidImageFilter);
 
 #endif
 

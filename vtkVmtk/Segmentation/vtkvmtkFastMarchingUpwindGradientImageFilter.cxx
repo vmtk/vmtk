@@ -24,3 +24,9 @@ Version:   $Revision: 1.1 $
 =========================================================================*/
 
 #include "vtkvmtkFastMarchingUpwindGradientImageFilter.h"
+#include "vtkObjectFactory.h"
+
+vtkCxxRevisionMacro(vtkvmtkFastMarchingUpwindGradientImageFilter, "$Revision: 1.4 $");
+vtkStandardNewMacro(vtkvmtkFastMarchingUpwindGradientImageFilter);
+
+

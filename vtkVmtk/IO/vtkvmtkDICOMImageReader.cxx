@@ -31,115 +31,14 @@
 #include <vtkstd/vector>
 #include <vtkstd/string>
 
+#include "DICOMParser.h"
+#include "DICOMAppHelper.h"
 
 vtkCxxRevisionMacro(vtkvmtkDICOMImageReader,"$Revision: 1.8 $");
 vtkStandardNewMacro(vtkvmtkDICOMImageReader);
-#if 0
-class DICOMAppHelperImplementation
-{
-public:
-  // map from series UID to vector of files in the series 
-  dicom_stl::map<dicom_stl::string, dicom_stl::vector<dicom_stl::string>, ltstdstr> SeriesUIDMap;
-
-  // map from filename to intraseries sortable tags
-  dicom_stl::map<dicom_stl::string, DICOMOrderingElements, ltstdstr> SliceOrderingMap;
-
-  typedef dicom_stl::map<dicom_stl::pair<doublebyte, doublebyte>, DICOMTagInfo> TagMapType;
-  TagMapType TagMap;
-
-}; 
-
-void vtkvmtkDICOMAppHelper::ImageOrientationPatientCallback(DICOMParser *parser,
-                                                           doublebyte group,
-                                                           doublebyte element,
-                                                           DICOMParser::VRTypes type,
-                                                           unsigned char* val,
-                                                           quadbyte len)
-{
-//  DICOMAppHelper::ImageOrientationPatientCallback(parser,group,element,type,val,len);
-  // Look for the current file in the map of slice ordering data
-  dicom_stl::map<dicom_stl::string, DICOMOrderingElements, ltstdstr>::iterator it;
-  it = this->Implementation->SliceOrderingMap.find(parser->GetFileName());
-  if (it == Implementation->SliceOrderingMap.end())
-    {
-    // file not found, create a new entry
-    DICOMOrderingElements ord;
-    if (val)
-      {
-      sscanf( (char*)(val), "%f\\%f\\%f\\%f\\%f\\%f",
-              &ord.ImageOrientationPatient[0],
-              &ord.ImageOrientationPatient[1],
-              &ord.ImageOrientationPatient[2],
-              &ord.ImageOrientationPatient[3],
-              &ord.ImageOrientationPatient[4],
-              &ord.ImageOrientationPatient[5] );
-      }
-    else
-      {
-      // no orientation defined, default to an standard axial orientation
-      ord.ImageOrientationPatient[0] = 1.0;
-      ord.ImageOrientationPatient[1] = 0.0;
-      ord.ImageOrientationPatient[2] = 0.0;
-      ord.ImageOrientationPatient[3] = 0.0;
-      ord.ImageOrientationPatient[4] = 1.0;
-      ord.ImageOrientationPatient[5] = 0.0;
-
-      }
-
-    // insert into the map
-    this->Implementation->SliceOrderingMap.insert(dicom_stl::pair<const dicom_stl::string, DICOMOrderingElements>(parser->GetFileName(), ord));
-
-    // cache the value
-    memcpy( this->ImageOrientationPatient, ord.ImageOrientationPatient, 6*sizeof(float) );
-
-    }
-  else
-    {
-    // file found, add new values
-    if (val)
-      {
-      sscanf( (char*)(val), "%f\\%f\\%f\\%f\\%f\\%f",
-              &(*it).second.ImageOrientationPatient[0],
-              &(*it).second.ImageOrientationPatient[1],
-              &(*it).second.ImageOrientationPatient[2],
-              &(*it).second.ImageOrientationPatient[3],
-              &(*it).second.ImageOrientationPatient[4],
-              &(*it).second.ImageOrientationPatient[5] );
-      }
-    else
-      {
-      // no orientation defined, default to an standard axial orientation
-      (*it).second.ImageOrientationPatient[0] = 1.0;
-      (*it).second.ImageOrientationPatient[1] = 0.0;
-      (*it).second.ImageOrientationPatient[2] = 0.0;
-      (*it).second.ImageOrientationPatient[3] = 0.0;
-      (*it).second.ImageOrientationPatient[4] = 1.0;
-      (*it).second.ImageOrientationPatient[5] = 0.0;
-      }
-
-    // cache the value
-    memcpy( this->ImageOrientationPatient, (*it).second.ImageOrientationPatient, 6*sizeof(float) );
-    }
-}
-#endif
 
 vtkvmtkDICOMImageReader::vtkvmtkDICOMImageReader()
 {
-#if 0
-  if (this->Parser)
-    {
-    delete this->Parser;
-    }
-
-  this->Parser = new vtkvmtkDICOMParser();
-
-  if (this->AppHelper)
-    {
-    delete this->AppHelper;
-    }
-
-  this->AppHelper = new vtkvmtkDICOMAppHelper();
-#endif
   this->AutoOrientImage = 1;
 
   this->OrientationStringX = NULL;
@@ -176,25 +75,7 @@ void vtkvmtkDICOMImageReader::ExecuteInformation()
   Superclass::ExecuteInformation();
   this->ComputeOutputVoxelSpacing();
 }
-#if 0        
-int vtkvmtkDICOMImageReader::RequestInformation (
-  vtkInformation       * vtkNotUsed( request ),
-  vtkInformationVector** vtkNotUsed( inputVector ),
-  vtkInformationVector * outputVector)
-{
-  // get the info objects
-  vtkInformation* outInfo = outputVector->GetInformationObject(0);
 
-  this->ComputeOutputVoxelSpacing();
- 
-  outInfo->Set(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(),this->DataExtent, 6);
-  outInfo->Set(vtkDataObject::SPACING(), this->DataSpacing, 3);
-  outInfo->Set(vtkDataObject::ORIGIN(), this->DataOrigin, 3);
-
-  vtkDataObject::SetPointDataActiveScalarInfo(outInfo, this->DataScalarType,this->NumberOfScalarComponents);
-  return 1;
-}
-#endif
 void vtkvmtkDICOMImageReader::ComputeOutputVoxelSpacing()
 {
   double voxelSpacing[3] = {0.0, 0.0, 0.0};
@@ -332,10 +213,6 @@ void vtkvmtkDICOMImageReader::GenerateOrientationString(float direction[3], char
 
 void vtkvmtkDICOMImageReader::OrientImageData()
 {
-#if 0
-  vtkvmtkDICOMAppHelper* appHelper = (vtkvmtkDICOMAppHelper*)this->AppHelper;
-  float* imageOrientation = appHelper->GetImageOrientationPatient();
-#endif
   float* imageOrientation = this->AppHelper->GetImageOrientationPatient();
   
   float directionX[3],directionY[3], directionZ[3];

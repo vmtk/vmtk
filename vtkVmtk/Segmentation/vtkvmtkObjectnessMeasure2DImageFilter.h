@@ -34,7 +34,6 @@ Version:   $Revision: 1.2 $
 
 #include "vtkITKImageToImageFilter2DFF.h"
 #include "itkObjectnessMeasureImageFilter.h"
-#include "vtkObjectFactory.h"
 #include "vtkvmtkWin32Header.h"
 
 class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkObjectnessMeasure2DImageFilter : public vtkITKImageToImageFilter2DFF
@@ -101,9 +100,6 @@ private:
   vtkvmtkObjectnessMeasure2DImageFilter(const vtkvmtkObjectnessMeasure2DImageFilter&);  // Not implemented.
   void operator=(const vtkvmtkObjectnessMeasure2DImageFilter&);  // Not implemented.
 };
-
-vtkCxxRevisionMacro(vtkvmtkObjectnessMeasure2DImageFilter, "$Revision: 1.2 $");
-vtkStandardNewMacro(vtkvmtkObjectnessMeasure2DImageFilter);
 
 #endif
 

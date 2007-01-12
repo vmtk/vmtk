@@ -33,7 +33,6 @@ Version:   $Revision: 1.3 $
 
 #include "vtkITKImageToImageFilterFF.h"
 #include "itkFWHMFeatureImageFilter.h"
-#include "vtkObjectFactory.h"
 #include "vtkvmtkWin32Header.h"
 
 class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkFWHMFeatureImageFilter : public vtkITKImageToImageFilterFF
@@ -94,20 +93,6 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkFWHMFeatureImageFilter : public vtkITK
 
   void Update()
   {
-    // Wire the internal pipeline according to how the user selected
-    // CastInput.
-    if (this->CastInput)
-      {
-      // set the pipeline to do an internal cast to a pixeltype
-      // consistent with the ITK instantiation
-      this->vtkExporter->SetInput( this->vtkCast->GetOutput() );
-      }
-    else
-      {
-      // skip the cast operation
-      this->vtkExporter->SetInput( this->vtkCast->GetInput() );
-      }
-
     this->itkImporter->Update();
     if (this->vtkExporter->GetInput())
     {
@@ -149,8 +134,5 @@ private:
   vtkvmtkFWHMFeatureImageFilter(const vtkvmtkFWHMFeatureImageFilter&);  // Not implemented.
   void operator=(const vtkvmtkFWHMFeatureImageFilter&);  // Not implemented.
 };
-
-vtkCxxRevisionMacro(vtkvmtkFWHMFeatureImageFilter, "$Revision: 1.3 $");
-vtkStandardNewMacro(vtkvmtkFWHMFeatureImageFilter);
 
 #endif

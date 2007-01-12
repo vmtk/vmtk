@@ -24,3 +24,10 @@ Version:   $Revision: 1.1 $
 =========================================================================*/
 
 #include "vtkvmtkFWHMFeatureImageFilter.h"
+#include "vtkObjectFactory.h"
+
+vtkCxxRevisionMacro(vtkvmtkFWHMFeatureImageFilter, "$Revision: 1.3 $");
+vtkStandardNewMacro(vtkvmtkFWHMFeatureImageFilter);
+
+
+

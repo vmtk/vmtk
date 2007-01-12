@@ -25,42 +25,11 @@
 #ifndef __vtkvmtkDICOMImageReader_h
 #define __vtkvmtkDICOMImageReader_h
 
-#include "DICOMParser.h"
-#include "DICOMAppHelper.h"
-
 #include "vtkDICOMImageReader.h"
 #include "vtkvmtkWin32Header.h"
 
-#if 0
-//BTX
-class VTK_VMTK_IO_EXPORT vtkvmtkDICOMAppHelper : public DICOMAppHelper
-{
-  public:
-
-  float *GetImageOrientationPatient()
-    {
-      return this->ImageOrientationPatient;
-    }
-
-
-  virtual void ImageOrientationPatientCallback(DICOMParser *parser,
-                                               doublebyte group,
-                                               doublebyte element,
-                                               DICOMParser::VRTypes type,
-                                               unsigned char* val,
-                                               quadbyte len);
-
-  protected:
-  
-  float ImageOrientationPatient[6];
-};
-
-class VTK_VMTK_IO_EXPORT vtkvmtkDICOMParser : public DICOMParser
-{
-  public:
-};
-//ETX
-#endif
+//#include "DICOMParser/DICOMParser.h"
+//#include "DICOMParser/DICOMAppHelper.h"
 
 class VTK_VMTK_IO_EXPORT vtkvmtkDICOMImageReader : public vtkDICOMImageReader
 {
@@ -82,9 +51,6 @@ class VTK_VMTK_IO_EXPORT vtkvmtkDICOMImageReader : public vtkDICOMImageReader
   vtkvmtkDICOMImageReader();
   ~vtkvmtkDICOMImageReader();
 
-//  virtual int RequestInformation(vtkInformation* request,
-//                                 vtkInformationVector** inputVector,
-//                                 vtkInformationVector* outputVector);
   virtual void ExecuteInformation();
   virtual void ExecuteData(vtkDataObject *out);
 

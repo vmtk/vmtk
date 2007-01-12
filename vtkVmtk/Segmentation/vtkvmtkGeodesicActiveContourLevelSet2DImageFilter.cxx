@@ -24,3 +24,9 @@ Version:   $Revision: 1.1 $
 =========================================================================*/
 
 #include "vtkvmtkGeodesicActiveContourLevelSet2DImageFilter.h"
+#include "vtkObjectFactory.h"
+
+vtkCxxRevisionMacro(vtkvmtkGeodesicActiveContourLevelSet2DImageFilter, "$Revision: 1.4 $");
+vtkStandardNewMacro(vtkvmtkGeodesicActiveContourLevelSet2DImageFilter);
+
+

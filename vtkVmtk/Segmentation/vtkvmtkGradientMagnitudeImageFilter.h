@@ -34,7 +34,6 @@ Version:   $Revision: 1.3 $
 
 #include "vtkITKImageToImageFilterFF.h"
 #include "itkGradientMagnitudeImageFilter.h"
-#include "vtkObjectFactory.h"
 #include "vtkvmtkWin32Header.h"
 
 class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkGradientMagnitudeImageFilter : public vtkITKImageToImageFilterFF
@@ -56,9 +55,6 @@ private:
   vtkvmtkGradientMagnitudeImageFilter(const vtkvmtkGradientMagnitudeImageFilter&);  // Not implemented.
   void operator=(const vtkvmtkGradientMagnitudeImageFilter&);  // Not implemented.
 };
-
-vtkCxxRevisionMacro(vtkvmtkGradientMagnitudeImageFilter, "$Revision: 1.3 $");
-vtkStandardNewMacro(vtkvmtkGradientMagnitudeImageFilter);
 
 #endif
 

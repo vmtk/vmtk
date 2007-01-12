@@ -24,3 +24,9 @@ Version:   $Revision: 1.1 $
 =========================================================================*/
 
 #include "vtkvmtkGradientMagnitudeRecursiveGaussianImageFilter.h"
+#include "vtkObjectFactory.h"
+
+vtkCxxRevisionMacro(vtkvmtkGradientMagnitudeRecursiveGaussianImageFilter, "$Revision: 1.3 $");
+vtkStandardNewMacro(vtkvmtkGradientMagnitudeRecursiveGaussianImageFilter);
+
+

@@ -24,3 +24,9 @@ Version:   $Revision: 1.1 $
 =========================================================================*/
 
 #include "vtkvmtkCurvesLevelSetImageFilter.h"
+#include "vtkObjectFactory.h"
+
+vtkCxxRevisionMacro(vtkvmtkCurvesLevelSetImageFilter, "$Revision: 1.4 $");
+vtkStandardNewMacro(vtkvmtkCurvesLevelSetImageFilter);
+
+

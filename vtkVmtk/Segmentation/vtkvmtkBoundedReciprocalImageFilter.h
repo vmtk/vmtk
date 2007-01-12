@@ -34,7 +34,6 @@ Version:   $Revision: 1.3 $
 
 #include "vtkITKImageToImageFilterFF.h"
 #include "itkBoundedReciprocalImageFilter.h"
-#include "vtkObjectFactory.h"
 #include "vtkvmtkWin32Header.h"
 
 class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkBoundedReciprocalImageFilter : public vtkITKImageToImageFilterFF
@@ -56,9 +55,6 @@ private:
   vtkvmtkBoundedReciprocalImageFilter(const vtkvmtkBoundedReciprocalImageFilter&);  // Not implemented.
   void operator=(const vtkvmtkBoundedReciprocalImageFilter&);  // Not implemented.
 };
-
-vtkCxxRevisionMacro(vtkvmtkBoundedReciprocalImageFilter, "$Revision: 1.3 $");
-vtkStandardNewMacro(vtkvmtkBoundedReciprocalImageFilter);
 
 #endif
 

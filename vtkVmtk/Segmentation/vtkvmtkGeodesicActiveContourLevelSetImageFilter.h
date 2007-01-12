@@ -34,7 +34,6 @@ Version:   $Revision: 1.4 $
 
 #include "vtkITKImageToImageFilterFF.h"
 #include "itkGeodesicActiveContourLevelSetImageFilter.h"
-#include "vtkObjectFactory.h"
 #include "vtkvmtkWin32Header.h"
 
 class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkGeodesicActiveContourLevelSetImageFilter : public vtkITKImageToImageFilterFF
@@ -209,9 +208,6 @@ private:
                                                                           // Not implemented
   
 };
-
-vtkCxxRevisionMacro(vtkvmtkGeodesicActiveContourLevelSetImageFilter, "$Revision: 1.4 $");
-vtkStandardNewMacro(vtkvmtkGeodesicActiveContourLevelSetImageFilter);
 
 #endif
 

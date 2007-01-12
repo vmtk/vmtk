@@ -34,7 +34,6 @@ Version:   $Revision: 1.4 $
 #include "vtkITKImageToImageFilterFF.h"
 #include "itkFastMarchingUpwindGradientImageFilter.h"
 #include "vtkIdList.h"
-#include "vtkObjectFactory.h"
 #include "vtkvmtkWin32Header.h"
 
 class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkFastMarchingUpwindGradientImageFilter : public vtkITKImageToImageFilterFF
@@ -123,20 +122,6 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkFastMarchingUpwindGradientImageFilter 
   void Update()
   {
   //BTX
-    // Wire the internal pipeline according to how the user selected
-    // CastInput.
-    if (this->CastInput)
-      {
-      // set the pipeline to do an internal cast to a pixeltype
-      // consistent with the ITK instantiation
-      this->vtkExporter->SetInput( this->vtkCast->GetOutput() );
-      }
-    else
-      {
-      // skip the cast operation
-      this->vtkExporter->SetInput( this->vtkCast->GetInput() );
-      }
-
     this->itkImporter->Update();
     if (this->vtkExporter->GetInput())
     {
@@ -213,8 +198,5 @@ private:
   vtkvmtkFastMarchingUpwindGradientImageFilter(const vtkvmtkFastMarchingUpwindGradientImageFilter&);  // Not implemented.
   void operator=(const vtkvmtkFastMarchingUpwindGradientImageFilter&);  // Not implemented.
 };
-
-vtkCxxRevisionMacro(vtkvmtkFastMarchingUpwindGradientImageFilter, "$Revision: 1.4 $");
-vtkStandardNewMacro(vtkvmtkFastMarchingUpwindGradientImageFilter);
 
 #endif

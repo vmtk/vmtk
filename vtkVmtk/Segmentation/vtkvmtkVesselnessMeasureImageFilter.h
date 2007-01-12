@@ -34,7 +34,6 @@ Version:   $Revision: 1.2 $
 
 #include "vtkITKImageToImageFilterFF.h"
 #include "itkVesselnessMeasureImageFilter.h"
-#include "vtkObjectFactory.h"
 #include "vtkvmtkWin32Header.h"
 
 class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkVesselnessMeasureImageFilter : public vtkITKImageToImageFilterFF
@@ -76,9 +75,6 @@ private:
   vtkvmtkVesselnessMeasureImageFilter(const vtkvmtkVesselnessMeasureImageFilter&);  // Not implemented.
   void operator=(const vtkvmtkVesselnessMeasureImageFilter&);  // Not implemented.
 };
-
-vtkCxxRevisionMacro(vtkvmtkVesselnessMeasureImageFilter, "$Revision: 1.2 $");
-vtkStandardNewMacro(vtkvmtkVesselnessMeasureImageFilter);
 
 #endif
 

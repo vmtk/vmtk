@@ -29,6 +29,7 @@ class vmtkImageReader(pypes.pypeScript):
         
         self.Format = ''
         self.GuessFormat = 1
+        self.UseITKIO = 1
         self.InputFileName = ''
         self.InputFilePrefix = ''
         self.InputFilePattern = ''
@@ -51,6 +52,7 @@ class vmtkImageReader(pypes.pypeScript):
         self.SetInputMembers([
             ['Format','f','str',1,'file format (vtkxml, vtk, dicom, raw, meta image, tiff, png)'],
             ['GuessFormat','guessformat','int',1,'guess file format from extension'],
+            ['UseITKIO','useitk','int',1,'use ITKIO mechanism'],
             ['InputFileName','i','str',1,'input file name (deprecated: use -ifile)'],
             ['InputFileName','ifile','str',1,'input file name'],
             ['InputFilePrefix','prefix','str',1,'input file prefix (e.g. foo_)'],
@@ -192,6 +194,19 @@ class vmtkImageReader(pypes.pypeScript):
         reader.Update()
         self.Image = reader.GetOutput()
 
+    def ReadITKIO(self):
+        if self.InputFileName == '':
+            self.PrintError('Error: no InputFileName.')
+        reader = vtkvmtk.vtkITKArchetypeImageSeriesScalarReader()
+        reader.SetArchetype(self.InputFileName)
+        reader.SetOutputScalarTypeToNative()
+        reader.SetDesiredCoordinateOrientationToNative()
+#        reader.SetDesiredCoordinateOrientationToAxial()
+        reader.SetUseNativeOriginOn()
+        reader.Update()
+        self.Image = vtk.vtkImageData()
+        self.Image.DeepCopy(reader.GetOutput())
+
     def Execute(self):
 
         extensionFormats = {'vti':'vtkxml', 
@@ -212,25 +227,28 @@ class vmtkImageReader(pypes.pypeScript):
                 if extension in extensionFormats.keys():
                     self.Format = extensionFormats[extension]
 
-        if self.Format == 'vtkxml':
-            self.ReadVTKXMLImageFile()
-        elif self.Format == 'vtk':
-            self.ReadVTKImageFile()
-        elif self.Format == 'dicom':
-            if self.InputDirectoryName != '':
-                self.ReadDICOMDirectory()
-            else:
-                self.ReadDICOMFile()
-        elif self.Format == 'raw':
-            self.ReadRawImageFile()
-        elif self.Format == 'meta':
-            self.ReadMetaImageFile()
-        elif self.Format == 'png':
-            self.ReadPNGImageFile()
-        elif self.Format == 'tiff':
-            self.ReadTIFFImageFile()
+        if self.UseITKIO and self.Format not in ['vtkxml']:
+            self.ReadITKIO()    
         else:
-            self.PrintError('Error: unsupported format '+ self.Format + '.')
+            if self.Format == 'vtkxml':
+                self.ReadVTKXMLImageFile()
+            elif self.Format == 'vtk':
+                self.ReadVTKImageFile()
+            elif self.Format == 'dicom':
+                if self.InputDirectoryName != '':
+                    self.ReadDICOMDirectory()
+                else:
+                    self.ReadDICOMFile()
+            elif self.Format == 'raw':
+                self.ReadRawImageFile()
+            elif self.Format == 'meta':
+                self.ReadMetaImageFile()
+            elif self.Format == 'png':
+                self.ReadPNGImageFile()
+            elif self.Format == 'tiff':
+                self.ReadTIFFImageFile()
+            else:
+                self.PrintError('Error: unsupported format '+ self.Format + '.')
 
         if (self.Flip[0] == 1) | (self.Flip[1] == 1) | (self.Flip[2] == 1):
             temp0 = self.Image

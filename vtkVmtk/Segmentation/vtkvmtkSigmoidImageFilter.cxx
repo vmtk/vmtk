@@ -24,3 +24,9 @@ Version:   $Revision: 1.1 $
 =========================================================================*/
 
 #include "vtkvmtkSigmoidImageFilter.h"
+#include "vtkObjectFactory.h"
+
+vtkCxxRevisionMacro(vtkvmtkSigmoidImageFilter, "$Revision: 1.3 $");
+vtkStandardNewMacro(vtkvmtkSigmoidImageFilter);
+
+

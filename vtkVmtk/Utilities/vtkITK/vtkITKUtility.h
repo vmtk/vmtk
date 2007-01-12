@@ -1,17 +1,17 @@
 /*=========================================================================
 
-  Program:   Insight Segmentation & Registration Toolkit
-  Language:  C++
+  Copyright Brigham and Women's Hospital (BWH) All Rights Reserved.
 
-  Copyright (c) Insight Software Consortium. All rights reserved.
-  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for
-details.
+  See Doc/copyright/copyright.txt
+  or http://www.slicer.org/copyright/copyright.txt for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notices for more information.
+  Program:   vtkITK
+  Module:    $HeadURL: http://www.na-mic.org/svn/Slicer3/trunk/Libs/vtkITK/vtkITKUtility.h $
+  Date:      $Date: 2006-12-21 13:21:52 +0100 (Thu, 21 Dec 2006) $
+  Version:   $Revision: 1900 $
 
-=========================================================================*/
+==========================================================================*/
+
 #ifndef __vtkITKUtility_h
 #define __vtkITKUtility_h
 
@@ -70,17 +70,6 @@ if ( 1 ) { \
   if ( tempFilter ) \
     { \
     tempFilter->name ( arg ); \
-    this->Modified(); \
-    } \
-  }
-
-#define DelegateITKInputMacro2(name,arg1,arg2) \
-if ( 1 ) { \
-  vtkDebugMacro( << this->GetClassName() << " (" << this << "): setting " #name " to " << #arg1 << ", " << #arg2 ); \
-  ImageFilterType* tempFilter = dynamic_cast<ImageFilterType*> ( this->m_Filter.GetPointer() ); \
-  if ( tempFilter ) \
-    { \
-    tempFilter->name ( arg1, arg2 ); \
     this->Modified(); \
     } \
   }

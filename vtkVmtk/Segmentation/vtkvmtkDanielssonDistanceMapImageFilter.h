@@ -34,7 +34,6 @@ Version:   $Revision: 1.3 $
 
 #include "vtkITKImageToImageFilterFF.h"
 #include "itkDanielssonDistanceMapImageFilter.h"
-#include "vtkObjectFactory.h"
 #include "vtkvmtkWin32Header.h"
 
 class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkDanielssonDistanceMapImageFilter : public vtkITKImageToImageFilterFF
@@ -87,9 +86,6 @@ private:
   vtkvmtkDanielssonDistanceMapImageFilter(const vtkvmtkDanielssonDistanceMapImageFilter&);  // Not implemented.
   void operator=(const vtkvmtkDanielssonDistanceMapImageFilter&);  // Not implemented.
 };
-
-vtkCxxRevisionMacro(vtkvmtkDanielssonDistanceMapImageFilter, "$Revision: 1.3 $");
-vtkStandardNewMacro(vtkvmtkDanielssonDistanceMapImageFilter);
 
 #endif
 

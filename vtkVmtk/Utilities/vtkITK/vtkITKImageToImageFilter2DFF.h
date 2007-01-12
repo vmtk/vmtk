@@ -1,23 +1,23 @@
 /*=========================================================================
 
-  Program:   Insight Segmentation & Registration Toolkit
-  Language:  C++
+  Copyright Brigham and Women's Hospital (BWH) All Rights Reserved.
 
-  Copyright (c) Insight Software Consortium. All rights reserved.
-  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for
-details.
+  See Doc/copyright/copyright.txt
+  or http://www.slicer.org/copyright/copyright.txt for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notices for more information.
+  Program:   vtkITK
+  Module:    $HeadURL: http://www.na-mic.org/svn/Slicer3/trunk/Libs/vtkITK/vtkITKImageToImageFilter2DFF.h $
+  Date:      $Date: 2006-12-21 13:21:52 +0100 (Thu, 21 Dec 2006) $
+  Version:   $Revision: 1900 $
 
-=========================================================================*/
+==========================================================================*/
+
 // .NAME vtkITKImageToImageFilter - Abstract base class for connecting ITK and VTK
 // .SECTION Description
 // vtkITKImageToImageFilter provides a 
 
-#ifndef __vtkITKImageToImageFilter2DFF_h
-#define __vtkITKImageToImageFilter2DFF_h
+#ifndef __vtkITKImageToImageFilterFF_h
+#define __vtkITKImageToImageFilterFF_h
 
 
 #include "vtkITKImageToImageFilter.h"
@@ -28,7 +28,7 @@ details.
 #include "vtkITKUtility.h"
 
 
-class VTK_EXPORT vtkITKImageToImageFilter2DFF : public vtkITKImageToImageFilter
+class VTK_ITK_EXPORT vtkITKImageToImageFilter2DFF : public vtkITKImageToImageFilter
 {
 public:
   vtkTypeMacro(vtkITKImageToImageFilter2DFF,vtkITKImageToImageFilter);

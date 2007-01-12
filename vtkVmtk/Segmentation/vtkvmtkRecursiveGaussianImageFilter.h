@@ -34,7 +34,6 @@ Version:   $Revision: 1.2 $
 
 #include "vtkITKImageToImageFilterFF.h"
 #include "itkRecursiveGaussianImageFilter.h"
-#include "vtkObjectFactory.h"
 #include "vtkvmtkWin32Header.h"
 
 class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkRecursiveGaussianImageFilter : public vtkITKImageToImageFilterFF
@@ -71,9 +70,6 @@ private:
   vtkvmtkRecursiveGaussianImageFilter(const vtkvmtkRecursiveGaussianImageFilter&);  // Not implemented.
   void operator=(const vtkvmtkRecursiveGaussianImageFilter&);  // Not implemented.
 };
-
-vtkCxxRevisionMacro(vtkvmtkRecursiveGaussianImageFilter, "$Revision: 1.2 $");
-vtkStandardNewMacro(vtkvmtkRecursiveGaussianImageFilter);
 
 #endif
 
