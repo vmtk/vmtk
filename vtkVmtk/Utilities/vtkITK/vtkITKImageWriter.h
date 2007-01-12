@@ -60,9 +60,7 @@ public:
   void Write();
 
   // Set orienation matrix
-  void SetRasToIJKMatrix( vtkMatrix4x4* mat) {
-    RasToIJKMatrix = mat;
-  }
+  vtkSetObjectMacro(RasToIJKMatrix,vtkMatrix4x4);
 
 protected:
   vtkITKImageWriter();

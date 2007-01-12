@@ -29,6 +29,7 @@ class vmtkImageWriter(pypes.pypeScript):
 
         self.Format = ''
         self.GuessFormat = 1
+        self.UseITKIO = 1
         self.OutputFileName = ''
         self.OutputRawFileName = ''
         self.OutputDirectoryName = ''
@@ -43,6 +44,7 @@ class vmtkImageWriter(pypes.pypeScript):
             ['Image','i','vtkImageData',1,'the input image','vmtkimagereader'],
             ['Format','f','str',1,'file format (vtkxml, vtk, meta image, tiff, png, point data)'],
             ['GuessFormat','guessformat','int',1,'guess file format from extension'],
+            ['UseITKIO','useitk','int',1,'use ITKIO mechanism'],
             ['OutputFileName','ofile','str',1,'output file name'],
             ['OutputFileName','o','str',1,'output file name (deprecated: use -ofile)'],
             ['OutputRawFileName','rawfile','str',1,'name of the output raw file - meta image only'],
@@ -175,6 +177,14 @@ class vmtkImageWriter(pypes.pypeScript):
             line = line + '\n'
             f.write(line)
 
+    def WriteITKIO(self):
+        if self.OutputFileName == '':
+            self.PrintError('Error: no OutputFileName.')
+        writer = vtkvmtk.vtkITKImageWriter()
+        writer.SetInput(self.Image)
+        writer.SetFileName(self.OutputFileName)
+        writer.Write()
+
     def Execute(self):
 
         if self.Image == None:
@@ -212,21 +222,24 @@ class vmtkImageWriter(pypes.pypeScript):
                 self.PrintError('Error: unsupported pixel representation '+ self.PixelRepresentation + '.')
             cast.Update()
             self.Image = cast.GetOutput()
-	
-        if (self.Format == 'vtkxml'):
-            self.WriteVTKXMLImageFile()
-        elif (self.Format == 'vtk'):
-            self.WriteVTKImageFile()
-        elif (self.Format == 'meta'):
-            self.WriteMetaImageFile()
-        elif (self.Format == 'png'):
-            self.WritePNGImageFile()
-        elif (self.Format == 'tiff'):
-            self.WriteTIFFImageFile()
-        elif (self.Format == 'pointdata'):
-            self.WritePointDataImageFile()
-        else:
-            self.PrintError('Error: unsupported format '+ self.Format + '.')
+
+        if self.UseITKIO and self.Format not in ['vtkxml','tif','png','dat']:
+            self.WriteITKIO()
+        else:	
+            if (self.Format == 'vtkxml'):
+                self.WriteVTKXMLImageFile()
+            elif (self.Format == 'vtk'):
+                self.WriteVTKImageFile()
+            elif (self.Format == 'meta'):
+                self.WriteMetaImageFile()
+            elif (self.Format == 'png'):
+                self.WritePNGImageFile()
+            elif (self.Format == 'tiff'):
+                self.WriteTIFFImageFile()
+            elif (self.Format == 'pointdata'):
+                self.WritePointDataImageFile()
+            else:
+                self.PrintError('Error: unsupported format '+ self.Format + '.')
 
 
 if __name__=='__main__':

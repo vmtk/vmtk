@@ -67,7 +67,6 @@ void ITKWriteVTKImage(vtkITKImageWriter *self, vtkImageData *inputImage, char *f
     }
   }
   
-  
   // ITK image direction are in LPS space
   // convert from ijkToRas to ijkToLps
   vtkMatrix4x4* rasToLpsMatrix = vtkMatrix4x4::New();
@@ -157,6 +156,10 @@ vtkITKImageWriter::~vtkITKImageWriter()
     delete [] this->FileName;
     this->FileName = NULL;
   }
+  if (this->RasToIJKMatrix)
+    {
+    this->RasToIJKMatrix->Delete();
+    }
 }
 
 
@@ -218,6 +221,12 @@ void vtkITKImageWriter::Write()
     vtkErrorMacro(<<"vtkITKImageWriter: Please specify a FileName");
     return;
   }
+
+  if (!this->RasToIJKMatrix) 
+    {
+    this->RasToIJKMatrix = vtkMatrix4x4::New();
+    this->RasToIJKMatrix->Identity(); 
+    }
 
   this->GetInput()->UpdateInformation();
   this->GetInput()->SetUpdateExtent(this->GetInput()->GetWholeExtent());
