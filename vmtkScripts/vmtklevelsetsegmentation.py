@@ -171,14 +171,14 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
 
         thresholdedImage = self.Image
 	
-        if self.LowerThreshold or self.UpperThreshold:
+        if self.LowerThreshold != None or self.UpperThreshold != None:
             threshold = vtk.vtkImageThreshold()
             threshold.SetInput(self.Image)
-            if self.LowerThreshold and self.UpperThreshold:
+            if self.LowerThreshold != None and self.UpperThreshold != None:
                 threshold.ThresholdBetween(self.LowerThreshold,self.UpperThreshold)
-            elif self.LowerThreshold:
+            elif self.LowerThreshold != None:
                 threshold.ThresholdByUpper(self.LowerThreshold)
-            elif self.UpperThreshold:
+            elif self.UpperThreshold != None:
                 threshold.ThresholdByLower(self.UpperThreshold)
             threshold.ReplaceInOn()
             threshold.ReplaceOutOn()

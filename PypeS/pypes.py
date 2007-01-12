@@ -4,6 +4,7 @@ __all__ = [
     'pypescript',
     'pype',
     'pypebatch',
+    'pypewrapper',
     'pyperun'
     ]
 
