@@ -46,6 +46,7 @@ class vmtkImageReader(pypes.pypeScript):
         self.FileDimensionality = 3
         self.Flip = [0, 0, 0]
         self.AutoOrientDICOMImage = 1
+        self.RasToIjkMatrixCoefficients = []
 
         self.SetScriptName('vmtkimagereader')
         self.SetScriptDoc('read an image and stores it in a vtkImageData object')
@@ -69,7 +70,8 @@ class vmtkImageReader(pypes.pypeScript):
             ['AutoOrientDICOMImage','autoorientdicom','int',1,'flip a dicom stack in order to have a left-to-right, posterio-to-anterior, inferior-to-superior image; this is based on the \"image orientation (patient)\" field in the dicom header']
             ])
         self.SetOutputMembers([
-            ['Image','o','vtkImageData',1,'the output image','vmtkimagewriter']
+            ['Image','o','vtkImageData',1,'the output image','vmtkimagewriter'],
+            ['RasToIjkMatrixCoefficients','omatrix','float',16]
             ])
 
     def ReadVTKXMLImageFile(self):
@@ -201,11 +203,17 @@ class vmtkImageReader(pypes.pypeScript):
         reader.SetArchetype(self.InputFileName)
         reader.SetOutputScalarTypeToNative()
         reader.SetDesiredCoordinateOrientationToNative()
-#        reader.SetDesiredCoordinateOrientationToAxial()
-        reader.SetUseNativeOriginOn()
+        reader.SetUseNativeOriginOff()
         reader.Update()
         self.Image = vtk.vtkImageData()
         self.Image.DeepCopy(reader.GetOutput())
+        matrix = reader.GetRasToIjkMatrix()
+#        self.RasToIjkMatrixCoefficients = [
+#            matrix.GetElement(0,0), matrix.GetElement(0,1), matrix.GetElement(0,2), matrix.GetElement(0,3),
+#            matrix.GetElement(0,1), matrix.GetElement(1,1), matrix.GetElement(1,2), matrix.GetElement(1,3),
+#            matrix.GetElement(0,2), matrix.GetElement(2,1), matrix.GetElement(2,2), matrix.GetElement(2,3),
+#            matrix.GetElement(0,3), matrix.GetElement(3,1), matrix.GetElement(3,2), matrix.GetElement(3,3)
+#            ]
 
     def Execute(self):
 
@@ -227,7 +235,7 @@ class vmtkImageReader(pypes.pypeScript):
                 if extension in extensionFormats.keys():
                     self.Format = extensionFormats[extension]
 
-        if self.UseITKIO and self.Format not in ['vtkxml']:
+        if self.UseITKIO and self.Format not in ['vtkxml'] and not self.InputDirectoryName:
             self.ReadITKIO()    
         else:
             if self.Format == 'vtkxml':

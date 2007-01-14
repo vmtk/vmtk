@@ -37,6 +37,7 @@ class vmtkImageWriter(pypes.pypeScript):
         self.Image = None
         self.Input = None
       	self.WindowLevel = [0.0, 0.0]
+        self.RasToIjkMatrixCoefficients = []
 
         self.SetScriptName('vmtkimagewriter')
         self.SetScriptDoc('write an image to disk')
@@ -50,7 +51,8 @@ class vmtkImageWriter(pypes.pypeScript):
             ['OutputRawFileName','rawfile','str',1,'name of the output raw file - meta image only'],
             ['OutputDirectoryName','d','str',1,'output directory name - png, tiff'],
             ['PixelRepresentation','r','str',1,'output scalar type (double, float, short)'],
-            ['WindowLevel','windowlevel','float',2,'window and level for mapping graylevels to 0-255 before writing - png, tiff']
+            ['WindowLevel','windowlevel','float',2,'window and level for mapping graylevels to 0-255 before writing - png, tiff'],
+            ['RasToIjkMatrixCoefficients','matrix','float',16]
             ])
         self.SetOutputMembers([])
 
@@ -183,6 +185,25 @@ class vmtkImageWriter(pypes.pypeScript):
         writer = vtkvmtk.vtkITKImageWriter()
         writer.SetInput(self.Image)
         writer.SetFileName(self.OutputFileName)
+#        if self.RasToIjkMatrixCoefficients:
+#            matrix = vtk.vtkMatrix4x4()
+#            matrix.SetElement(0,0,self.RasToIjkMatrixCoefficients[0])
+#            matrix.SetElement(0,1,self.RasToIjkMatrixCoefficients[1])
+#            matrix.SetElement(0,2,self.RasToIjkMatrixCoefficients[2])
+#            matrix.SetElement(0,3,self.RasToIjkMatrixCoefficients[3])
+#            matrix.SetElement(1,0,self.RasToIjkMatrixCoefficients[4])
+#            matrix.SetElement(1,1,self.RasToIjkMatrixCoefficients[5])
+#            matrix.SetElement(1,2,self.RasToIjkMatrixCoefficients[6])
+#            matrix.SetElement(1,3,self.RasToIjkMatrixCoefficients[7])
+#            matrix.SetElement(2,0,self.RasToIjkMatrixCoefficients[8])
+#            matrix.SetElement(2,1,self.RasToIjkMatrixCoefficients[9])
+#            matrix.SetElement(2,2,self.RasToIjkMatrixCoefficients[10])
+#            matrix.SetElement(2,3,self.RasToIjkMatrixCoefficients[11])
+#            matrix.SetElement(3,0,self.RasToIjkMatrixCoefficients[12])
+#            matrix.SetElement(3,1,self.RasToIjkMatrixCoefficients[13])
+#            matrix.SetElement(3,2,self.RasToIjkMatrixCoefficients[14])
+#            matrix.SetElement(3,3,self.RasToIjkMatrixCoefficients[15])
+#            writer.SetRasToIJKMatrix(matrix)
         writer.Write()
 
     def Execute(self):

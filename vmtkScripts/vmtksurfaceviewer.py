@@ -39,6 +39,7 @@ class vmtkSurfaceViewer(pypes.pypeScript):
         self.FlatInterpolation = 0
         self.DisplayCellData = 0
         self.Color = [-1.0, -1.0, -1.0]
+        self.LineWidth = 1
 
         self.Actor = None
         self.ScalarBarActor = None
@@ -57,6 +58,7 @@ class vmtkSurfaceViewer(pypes.pypeScript):
             ['FlatInterpolation','flat','int',1,'toggle flat or shaded surface display'],
             ['DisplayCellData','celldata','int',1,'toggle display of point or cell data'],
             ['Color','color','float',3,'RGB color of the object in the scene'],
+            ['LineWidth','linewidth','int',1,'width of line objects in the scene'],
             ['LegendTitle','legendtitle','str',1,'title of the scalar bar']])
         self.SetOutputMembers([
             ['Surface','o','vtkPolyData',1,'the output surface','vmtksurfacewriter']
@@ -103,6 +105,7 @@ class vmtkSurfaceViewer(pypes.pypeScript):
             if (self.Color[0] >= 0.0):
                 self.Actor.GetProperty().SetColor(self.Color)
             self.Actor.GetProperty().SetOpacity(self.Opacity)
+            self.Actor.GetProperty().SetLineWidth(self.LineWidth)
             if self.FlatInterpolation:
                 self.Actor.GetProperty().SetInterpolationToFlat()
             self.vmtkRenderer.Renderer.AddActor(self.Actor)

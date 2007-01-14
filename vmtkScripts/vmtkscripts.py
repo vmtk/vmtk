@@ -23,6 +23,7 @@ __all__ = [
   'vmtkendpointextractor',
   'vmtkflowextensions',
   'vmtkicpregistration',
+  'vmtkimagecast',
   'vmtkimagecompose',
   'vmtkimagefeatures',
   'vmtkimageinitialization',

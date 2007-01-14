@@ -25,6 +25,7 @@ SET(SCRIPTS_SRCS
   vmtkendpointextractor.py
   vmtkflowextensions.py
   vmtkicpregistration.py
+  vmtkimagecast.py
   vmtkimagecompose.py
   vmtkimagefeatures.py
   vmtkimageinitialization.py

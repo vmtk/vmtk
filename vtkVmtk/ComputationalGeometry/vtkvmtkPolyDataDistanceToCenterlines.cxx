@@ -40,6 +40,7 @@ vtkvmtkPolyDataDistanceToCenterlines::vtkvmtkPolyDataDistanceToCenterlines()
   this->CenterlineRadiusArrayName = NULL;
 
   this->UseRadiusInformation = 1;
+  this->EvaluateTubeFunction = 0;
 }
 
 vtkvmtkPolyDataDistanceToCenterlines::~vtkvmtkPolyDataDistanceToCenterlines()
@@ -88,6 +89,11 @@ int vtkvmtkPolyDataDistanceToCenterlines::RequestData(
     return 1;
     }
 
+  if (this->EvaluateTubeFunction)
+    {
+    this->UseRadiusInformation = 1;
+    }
+
   if (this->UseRadiusInformation)
     {
     if (!this->CenterlineRadiusArrayName)
@@ -130,9 +136,16 @@ int vtkvmtkPolyDataDistanceToCenterlines::RequestData(
   for (int i=0; i<numberOfInputPoints; i++)
     {
     input->GetPoint(i,point);
-    tube->EvaluateFunction(point);
-    tube->GetLastPolyBallCenter(centerlinePoint);
-    distanceToCenterlines = sqrt(vtkMath::Distance2BetweenPoints(point,centerlinePoint));
+    double tubeFunctionValue = tube->EvaluateFunction(point);
+    if (this->EvaluateTubeFunction)
+      {
+      distanceToCenterlines = tubeFunctionValue;
+      }
+    else
+      {
+      tube->GetLastPolyBallCenter(centerlinePoint);
+      distanceToCenterlines = sqrt(vtkMath::Distance2BetweenPoints(point,centerlinePoint));
+      }
     distanceToCenterlinesArray->SetComponent(i,0,distanceToCenterlines);
     }
 
