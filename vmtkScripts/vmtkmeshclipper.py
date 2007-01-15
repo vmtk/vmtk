@@ -17,7 +17,6 @@ import vtk
 import sys
 
 import vmtkrenderer
-
 import pypes
 
 vmtkmeshclipper = 'vmtkMeshClipper'

@@ -3,9 +3,7 @@
 __all__ = [
     'pypescript',
     'pype',
-    'pypebatch',
-    'pypewrapper',
-    'pyperun'
+    'pypebatch'
     ]
 
 for item in __all__:

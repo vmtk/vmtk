@@ -15,8 +15,9 @@
 
 
 import vtk
-import vtkvmtk
 import sys
+
+import vtkvmtk
 import vmtkrenderer
 import pypes
 

@@ -16,8 +16,8 @@
 
 import sys
 import vtk
-import vtkvmtk
 
+import vtkvmtk
 import pypes
 
 vmtksurfacecapper = 'vmtkSurfaceCapper'

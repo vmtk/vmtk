@@ -15,7 +15,7 @@
 
 
 import sys
-import pypes
+from vmtk import pypes
 
 if __name__=='__main__':
     main = pypes.pypeMain()

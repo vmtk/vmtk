@@ -17,9 +17,9 @@ import sys
 import math
 import string
 import vtk
+
 import vtkvmtk
 import vmtkscripts
-
 import pypes
 
 vmtklevelsetsegmentation = 'vmtkLevelSetSegmentation'

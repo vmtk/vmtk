@@ -70,7 +70,7 @@ IF (VTK_WRAP_PYTHON)
   TARGET_LINK_LIBRARIES(vtkITKPythonD vtkITK vtkCommon vtkCommonPythonD vtkFiltering vtkFilteringPythonD)
   TARGET_LINK_LIBRARIES (vtkITKPython vtkITKPythonD)
   INSTALL_TARGETS(${VTK_VMTK_INSTALL_LIB_DIR} vtkITKPythonD)
-  INSTALL_TARGETS(${VTK_VMTK_INSTALL_LIB_DIR} vtkITKPython)
+  INSTALL_TARGETS(${VTK_VMTK_MODULE_INSTALL_LIB_DIR} vtkITKPython)
 ENDIF (VTK_WRAP_PYTHON)
 
 # --------------------------------------------------------------------------

@@ -13,11 +13,11 @@
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
 ##      PURPOSE.  See the above copyright notices for more information.
 
-import vtkvmtk
-import vmtkrenderer
 import vtk
 import sys
 
+import vtkvmtk
+import vmtkrenderer
 import pypes
 
 vmtkimagelinetracer = 'vmtkImageLineTracer'

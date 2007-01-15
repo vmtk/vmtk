@@ -15,10 +15,10 @@
 
 
 import vtk
-import vtkvmtk
-import vmtkrenderer
 import sys
 
+import vtkvmtk
+import vmtkrenderer
 import pypes
 
 vmtkcenterlineviewer = 'vmtkCenterlineViewer'

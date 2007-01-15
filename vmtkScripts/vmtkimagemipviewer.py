@@ -14,10 +14,10 @@
 ##      PURPOSE.  See the above copyright notices for more information.
 
 import vtk
-import vtkvmtk
-import vmtkrenderer
 import sys
 
+import vtkvmtk
+import vmtkrenderer
 import pypes
 
 vmtkimagemipviewer = 'vmtkImageMIPViewer'

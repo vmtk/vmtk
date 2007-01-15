@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import sys
-import pypes
+from vmtk import pypes
 
 
 vmtkOptions = ['--help', '--ui', '--file']
@@ -42,7 +42,7 @@ else:
 
     if ui == 'pad':
         try:
-            import pypepad
+            from vmtk import pypepad
         except ImportError:
             ui = 'console'
         else:

@@ -15,9 +15,9 @@
 
 
 import vtk
-import vtkvmtk
 import sys
 
+import vtkvmtk
 import pypes
 
 vmtkflowextensions = 'vmtkFlowExtensions'

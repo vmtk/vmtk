@@ -50,6 +50,6 @@ IF (VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
   TARGET_LINK_LIBRARIES(vtkvmtkDifferentialGeometryPythonD vtkvmtkDifferentialGeometry vtkvmtkComputationalGeometryPythonD vtkCommonPythonD vtkFilteringPythonD vtkGraphicsPythonD)
   TARGET_LINK_LIBRARIES (vtkvmtkDifferentialGeometryPython vtkvmtkDifferentialGeometryPythonD)
   INSTALL_TARGETS(${VTK_VMTK_INSTALL_LIB_DIR} vtkvmtkDifferentialGeometryPythonD)
-  INSTALL_TARGETS(${VTK_VMTK_INSTALL_LIB_DIR} vtkvmtkDifferentialGeometryPython)
+  INSTALL_TARGETS(${VTK_VMTK_MODULE_INSTALL_LIB_DIR} vtkvmtkDifferentialGeometryPython)
 ENDIF (VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
 
