@@ -36,7 +36,7 @@ class vmtkImageWriter(pypes.pypeScript):
       	self.PixelRepresentation = ''
         self.Image = None
         self.Input = None
-      	self.WindowLevel = [0.0, 0.0]
+      	self.WindowLevel = [1.0, 0.0]
         self.RasToIjkMatrixCoefficients = []
 
         self.SetScriptName('vmtkimagewriter')
@@ -90,23 +90,20 @@ class vmtkImageWriter(pypes.pypeScript):
             self.PrintError('Error: no OutputFileName.')
         self.PrintLog('Writing PNG image file.')
         outputImage = self.Image
-        shiftScale = vtk.vtkImageShiftScale()
-        shiftScale.SetInput(self.Image)
-        if self.WindowLevel[0] == 0.0 and self.Image.GetScalarTypeAsString() != 'unsigned char':
-            scalarRange = self.Image.GetScalarRange()
-            shiftScale.SetShift(-scalarRange[0])
-            shiftScale.SetScale(255.0/(scalarRange[1]-scalarRange[0]))
-      	else: 
-            shiftScale.SetShift(-(self.WindowLevel[1]-self.WindowLevel[0]/2.0))
-            shiftScale.SetScale(255.0/self.WindowLevel[0])
-        shiftScale.SetOutputScalarTypeToUnsignedChar()
-        shiftScale.ClampOverflowOn()
-        shiftScale.Update()
-        cast = vtk.vtkImageCast()
-        cast.SetInput(shiftScale.GetOutput())
-        cast.SetOutputScalarTypeToUnsignedChar()
-        cast.Update()
-        outputImage = cast.GetOutput()
+        if self.Image.GetScalarTypeAsString() != 'unsigned char':
+            shiftScale = vtk.vtkImageShiftScale()
+            shiftScale.SetInput(self.Image)
+            if self.WindowLevel[0] == 0.0:
+                scalarRange = self.Image.GetScalarRange()
+                shiftScale.SetShift(-scalarRange[0])
+                shiftScale.SetScale(255.0/(scalarRange[1]-scalarRange[0]))
+            else:
+                shiftScale.SetShift(-(self.WindowLevel[1]-self.WindowLevel[0]/2.0))
+                shiftScale.SetScale(255.0/self.WindowLevel[0])
+            shiftScale.SetOutputScalarTypeToUnsignedChar()
+            shiftScale.ClampOverflowOn()
+            shiftScale.Update()
+            outputImage = shiftScale.GetOutput()
         writer = vtk.vtkPNGWriter()
         writer.SetInput(outputImage)
         if self.Image.GetDimensions()[2] == 1:
@@ -121,23 +118,20 @@ class vmtkImageWriter(pypes.pypeScript):
             self.PrintError('Error: no OutputFileName.')
         self.PrintLog('Writing TIFF image file.')
         outputImage = self.Image
-        shiftScale = vtk.vtkImageShiftScale()
-        shiftScale.SetInput(self.Image)
-        if self.WindowLevel[0] == 0.0 and self.Image.GetScalarTypeAsString() != 'unsigned char':
-            scalarRange = self.Image.GetScalarRange()
-            shiftScale.SetShift(-scalarRange[0])
-            shiftScale.SetScale(255.0/(scalarRange[1]-scalarRange[0]))
-      	else: 
-            shiftScale.SetShift(-(self.WindowLevel[1]-self.WindowLevel[0]/2.0))
-            shiftScale.SetScale(255.0/self.WindowLevel[0])
-        shiftScale.SetOutputScalarTypeToUnsignedChar()
-        shiftScale.ClampOverflowOn()
-        shiftScale.Update()
-        cast = vtk.vtkImageCast()
-        cast.SetInput(shiftScale.GetOutput())
-        cast.SetOutputScalarTypeToUnsignedChar()
-        cast.Update()
-        outputImage = cast.GetOutput()
+        if self.Image.GetScalarTypeAsString() != 'unsigned char':
+            shiftScale = vtk.vtkImageShiftScale()
+            shiftScale.SetInput(self.Image)
+            if self.WindowLevel[0] == 0.0:
+                scalarRange = self.Image.GetScalarRange()
+                shiftScale.SetShift(-scalarRange[0])
+                shiftScale.SetScale(255.0/(scalarRange[1]-scalarRange[0]))
+            else: 
+                shiftScale.SetShift(-(self.WindowLevel[1]-self.WindowLevel[0]/2.0))
+                shiftScale.SetScale(255.0/self.WindowLevel[0])
+            shiftScale.SetOutputScalarTypeToUnsignedChar()
+            shiftScale.ClampOverflowOn()
+            shiftScale.Update()
+            outputImage = shiftScale.GetOutput()
         writer = vtk.vtkTIFFWriter()
         writer.SetInput(outputImage)
         if self.Image.GetDimensions()[2] == 1:
@@ -244,7 +238,7 @@ class vmtkImageWriter(pypes.pypeScript):
             cast.Update()
             self.Image = cast.GetOutput()
 
-        if self.UseITKIO and self.Format not in ['vtkxml','tif','png','dat']:
+        if self.UseITKIO and self.Format not in ['vtkxml','tiff','png','dat']:
             self.WriteITKIO()
         else:	
             if (self.Format == 'vtkxml'):

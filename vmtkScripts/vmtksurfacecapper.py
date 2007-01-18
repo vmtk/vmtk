@@ -71,7 +71,6 @@ class vmtkSurfaceCapper(pypes.pypeScript):
                 self.vmtkRenderer.Initialize()
                 self.OwnRenderer = 1
 
-            import vtkvmtk
             boundaryExtractor = vtkvmtk.vtkvmtkPolyDataBoundaryExtractor()
             boundaryExtractor.SetInput(self.Surface)
             boundaryExtractor.Update()
