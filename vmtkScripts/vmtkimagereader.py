@@ -46,7 +46,8 @@ class vmtkImageReader(pypes.pypeScript):
         self.FileDimensionality = 3
         self.Flip = [0, 0, 0]
         self.AutoOrientDICOMImage = 1
-        self.RasToIjkMatrixCoefficients = []
+        self.RasToIjkMatrixCoefficients = [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1]
+        self.RasToLocalMatrixCoefficients = [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1]
 
         self.SetScriptName('vmtkimagereader')
         self.SetScriptDoc('read an image and stores it in a vtkImageData object')
@@ -71,7 +72,8 @@ class vmtkImageReader(pypes.pypeScript):
             ])
         self.SetOutputMembers([
             ['Image','o','vtkImageData',1,'the output image','vmtkimagewriter'],
-            ['RasToIjkMatrixCoefficients','omatrix','float',16]
+            ['RasToIjkMatrixCoefficients','rastoijkmatrix','float',16],
+            ['RasToLocalMatrixCoefficients','rastolocalmatrix','float',16]
             ])
 
     def ReadVTKXMLImageFile(self):
@@ -203,17 +205,33 @@ class vmtkImageReader(pypes.pypeScript):
         reader.SetArchetype(self.InputFileName)
         reader.SetOutputScalarTypeToNative()
         reader.SetDesiredCoordinateOrientationToNative()
-        reader.SetUseNativeOriginOff()
         reader.Update()
         self.Image = vtk.vtkImageData()
         self.Image.DeepCopy(reader.GetOutput())
         matrix = reader.GetRasToIjkMatrix()
-#        self.RasToIjkMatrixCoefficients = [
-#            matrix.GetElement(0,0), matrix.GetElement(0,1), matrix.GetElement(0,2), matrix.GetElement(0,3),
-#            matrix.GetElement(0,1), matrix.GetElement(1,1), matrix.GetElement(1,2), matrix.GetElement(1,3),
-#            matrix.GetElement(0,2), matrix.GetElement(2,1), matrix.GetElement(2,2), matrix.GetElement(2,3),
-#            matrix.GetElement(0,3), matrix.GetElement(3,1), matrix.GetElement(3,2), matrix.GetElement(3,3)
-#            ]
+        self.RasToIjkMatrixCoefficients = [
+            matrix.GetElement(0,0), matrix.GetElement(0,1), matrix.GetElement(0,2), matrix.GetElement(0,3),
+            matrix.GetElement(1,0), matrix.GetElement(1,1), matrix.GetElement(1,2), matrix.GetElement(1,3),
+            matrix.GetElement(2,0), matrix.GetElement(2,1), matrix.GetElement(2,2), matrix.GetElement(2,3),
+            matrix.GetElement(3,0), matrix.GetElement(3,1), matrix.GetElement(3,2), matrix.GetElement(3,3)]
+        row0 = [matrix.GetElement(0,0), matrix.GetElement(0,1), matrix.GetElement(0,2)]
+        row1 = [matrix.GetElement(1,0), matrix.GetElement(1,1), matrix.GetElement(1,2)]
+        row2 = [matrix.GetElement(2,0), matrix.GetElement(2,1), matrix.GetElement(2,2)]
+        vtk.vtkMath.Normalize(row0)
+        vtk.vtkMath.Normalize(row1)
+        vtk.vtkMath.Normalize(row2)
+
+        self.RasToLocalMatrixCoefficients = [
+            row0[0], row0[1], row0[2], 0.0,
+            row1[0], row1[1], row1[2], 0.0,
+            row2[0], row2[1], row2[2], 0.0,
+            0.0,     0.0,     0.0,     1.0]
+        
+        origin = self.Image.GetOrigin()
+        matrix = vtk.vtkMatrix4x4()
+        matrix.DeepCopy(self.RasToLocalMatrixCoefficients)
+        localOrigin = matrix.MultiplyPoint([origin[0],origin[1],origin[2],0.0])
+        self.Image.SetOrigin(localOrigin[0],localOrigin[1],localOrigin[2])
 
     def Execute(self):
 

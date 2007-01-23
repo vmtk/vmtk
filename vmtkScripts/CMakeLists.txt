@@ -53,6 +53,7 @@ SET(SCRIPTS_SRCS
   vmtkmeshtosurface.py
   vmtkmeshviewer.py
   vmtkmeshwriter.py
+  vmtkpointtransform.py
   vmtkpotentialfit.py
   vmtkrenderer.py
   vmtksurfacecapper.py
@@ -69,6 +70,7 @@ SET(SCRIPTS_SRCS
   vmtksurfacescaling.py
   vmtksurfacesmoothing.py
   vmtksurfacesubdivision.py
+  vmtksurfacetransform.py
   vmtksurfacetomesh.py
   vmtksurfaceviewer.py
   vmtksurfacewriter.py
