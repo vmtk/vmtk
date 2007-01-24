@@ -20,13 +20,14 @@ Version:   $Revision: 1.4 $
 =========================================================================*/
 
 #include "vtkvmtkMergeCenterlines.h"
-#include "../Common/vtkvmtkConstants.h"
+#include "vtkvmtkCenterlineUtilities.h"
+#include "vtkSplineFilter.h"
+#include "vtkCleanPolyData.h"
+#include "vtkDoubleArray.h"
 #include "vtkPointData.h"
 #include "vtkCellData.h"
 #include "vtkCellArray.h"
-#include "vtkPolyLine.h"
 #include "vtkIdList.h"
-#include "vtkMath.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
@@ -36,188 +37,181 @@ vtkStandardNewMacro(vtkvmtkMergeCenterlines);
 
 vtkvmtkMergeCenterlines::vtkvmtkMergeCenterlines()
 {
-  this->CenterlinesToMerge = NULL;
+  this->RadiusArrayName = NULL;
+  this->GroupIdsArrayName = NULL;
+  this->BlankingArrayName = NULL;
+  this->ResamplingStepLength = 0.0;
 }
 
 vtkvmtkMergeCenterlines::~vtkvmtkMergeCenterlines()
 {
-  if (this->CenterlinesToMerge)
+  if (this->RadiusArrayName)
     {
-    this->CenterlinesToMerge->Delete();
-    this->CenterlinesToMerge = NULL;
+    delete[] this->RadiusArrayName;
+    this->RadiusArrayName = NULL;
+    }
+
+  if (this->GroupIdsArrayName)
+    {
+    delete[] this->GroupIdsArrayName;
+    this->GroupIdsArrayName = NULL;
+    }
+
+  if (this->BlankingArrayName)
+    {
+    delete[] this->BlankingArrayName;
+    this->BlankingArrayName = NULL;
     }
 }
 
-int vtkvmtkMergeCenterlines::RequestData(
-  vtkInformation *vtkNotUsed(request),
-  vtkInformationVector **inputVector,
-  vtkInformationVector *outputVector)
+int vtkvmtkMergeCenterlines::RequestData(vtkInformation *vtkNotUsed(request), vtkInformationVector **inputVector, vtkInformationVector *outputVector)
 {
   vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
   vtkInformation *outInfo = outputVector->GetInformationObject(0);
 
-  vtkPolyData *input = vtkPolyData::SafeDownCast(
-    inInfo->Get(vtkDataObject::DATA_OBJECT()));
-  vtkPolyData *output = vtkPolyData::SafeDownCast(
-    outInfo->Get(vtkDataObject::DATA_OBJECT()));
+  vtkPolyData *input = vtkPolyData::SafeDownCast(inInfo->Get(vtkDataObject::DATA_OBJECT()));
+  vtkPolyData *output = vtkPolyData::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
-  vtkIdType j, k;
-  vtkIdType jointId0, jointId1;
-  vtkIdType jointPointId0, jointPointId1;
-  vtkIdType jointCellId0, jointCellId1;
-  vtkIdType minDistCellId, minDistId;
-  jointPointId0 = jointPointId1 = -1;
-  jointCellId0 = jointCellId1 = -1;
-  minDistCellId = minDistId = -1;
-  vtkIdType lastId;
-  double point1[3], closestPoint[3];
-  double dist2, minDist2;
-  vtkIdType subId;
-  double* weights;
-  double parCoords[3];
-  vtkPolyLine *polyLine1, *polyLine;
-  vtkIdList* newLine;
-  vtkPoints* newPoints;
-  vtkCellArray* newCellArray;
-  vtkPointData* newPointData = this->GetOutput()->GetPointData();
-  vtkCellData* newCellData = this->GetOutput()->GetCellData();
-
-  if (!this->CenterlinesToMerge)
+  if (!this->RadiusArrayName)
     {
-    vtkErrorMacro(<< "No centerline to merge specified!");
+    vtkErrorMacro(<<"RadiusArrayName not specified");
     return 1;
     }
 
-  newLine = vtkIdList::New();
+  vtkDataArray* radiusArray = input->GetPointData()->GetArray(this->RadiusArrayName);
 
-  newPoints = vtkPoints::New();
-  newCellArray = vtkCellArray::New();
+  if (!radiusArray)
+    {
+    vtkErrorMacro(<<"RadiusArray with name specified does not exist");
+    return 1;
+    }
 
-  newPoints->DeepCopy(input->GetPoints());
-  newCellArray->DeepCopy(input->GetLines());
+  if (!this->GroupIdsArrayName)
+    {
+    vtkErrorMacro(<<"GroupIdsArrayName not specified");
+    return 1;
+    }
 
-  input->BuildCells();
-  this->CenterlinesToMerge->BuildCells();
+  vtkDataArray* groupIdsArray = input->GetCellData()->GetArray(this->GroupIdsArrayName);
 
-  // TODO: GENERALIZE TO NCELLS
+  if (!groupIdsArray)
+    {
+    vtkErrorMacro(<<"GroupIdsArray with name specified does not exist");
+    return 1;
+    }
 
-  polyLine1 = (vtkPolyLine*)this->CenterlinesToMerge->GetCell(0);
+  if (!this->BlankingArrayName)
+    {
+    vtkErrorMacro(<<"BlankingArrayName not specified");
+    return 1;
+    }
+
+  vtkDataArray* blankingArray = input->GetCellData()->GetArray(this->BlankingArrayName);
+
+  if (!blankingArray)
+    {
+    vtkErrorMacro(<<"BlankingArray with name specified does not exist");
+    return 1;
+    }
+
+  vtkCleanPolyData* cleaner = vtkCleanPolyData::New();
+  cleaner->SetInput(input);
+  cleaner->Update();
   
-  jointId0 = -1;
-  jointId1 = -1;
-  for (j=0; j<polyLine1->GetNumberOfPoints(); j++)
+  if (this->ResamplingStepLength < 1E-12)
     {
-    minDist2 = VTK_VMTK_LARGE_DOUBLE;
-    polyLine1->GetPoints()->GetPoint(j,point1);
-    for (k=0; k<input->GetNumberOfCells(); k++)
+    this->ResamplingStepLength = 0.01 * cleaner->GetOutput()->GetLength();
+    }
+
+  vtkSplineFilter* resampler = vtkSplineFilter::New();
+  resampler->SetInput(cleaner->GetOutput());
+  resampler->SetSubdivideToLength();
+  resampler->SetLength(this->ResamplingStepLength);
+  resampler->Update();
+
+  vtkPolyData* resampledCenterlines = vtkPolyData::New();
+  resampledCenterlines->DeepCopy(resampler->GetOutput());
+
+  resampler->Delete(); 
+
+  radiusArray = resampledCenterlines->GetPointData()->GetArray(this->RadiusArrayName);
+
+  vtkPoints* outputPoints = vtkPoints::New();
+  vtkCellArray* outputLines = vtkCellArray::New();
+
+  output->SetPoints(outputPoints);
+  output->SetLines(outputLines);
+
+  output->GetPointData()->CopyAllocate(resampledCenterlines->GetPointData());
+  output->GetCellData()->CopyAllocate(resampledCenterlines->GetCellData());
+
+  vtkIdList* nonBlankedGroupIds = vtkIdList::New();
+  vtkvmtkCenterlineUtilities::GetNonBlankedGroupsIdList(resampledCenterlines,this->GroupIdsArrayName,this->BlankingArrayName,nonBlankedGroupIds);
+
+  int i;
+  for (i=0; i<nonBlankedGroupIds->GetNumberOfIds(); i++)
+    {
+    vtkIdType groupId = nonBlankedGroupIds->GetId(i);
+    vtkIdList* groupUniqueCellIds = vtkIdList::New();
+
+    vtkvmtkCenterlineUtilities::GetGroupUniqueCellIds(resampledCenterlines,this->GroupIdsArrayName,groupId,groupUniqueCellIds);
+
+    int numberOfMergedCellPoints = 0;
+    int j;
+    for (j=0; j<groupUniqueCellIds->GetNumberOfIds(); j++)
       {
-      polyLine = (vtkPolyLine*)input->GetCell(k);
-      weights = new double[polyLine->GetNumberOfPoints()];
-      polyLine->EvaluatePosition(point1,closestPoint,subId,parCoords,dist2,weights);
-      
-      if (dist2 - minDist2 < -VTK_VMTK_DOUBLE_TOL)
+      vtkIdType cellId = groupUniqueCellIds->GetId(j);
+      int numberOfCellPoints = resampledCenterlines->GetCell(cellId)->GetNumberOfPoints();
+      if ((j==0) || (numberOfCellPoints < numberOfMergedCellPoints))
         {
-        minDist2 = dist2;
-        minDistCellId = k;
-        if (parCoords[0]-0.5 < VTK_VMTK_DOUBLE_TOL)
-          {
-          minDistId = polyLine->GetPointId(subId);
-          }
-        else
-          {
-          minDistId = polyLine->GetPointId(subId+1);
-          }
+        numberOfMergedCellPoints = numberOfCellPoints;
         }
       }
-    if (minDist2 < VTK_VMTK_DOUBLE_TOL)
+
+    vtkIdType mergedCellId = outputLines->InsertNextCell(numberOfMergedCellPoints);
+    int k;
+    for (k=0; k<numberOfMergedCellPoints; k++)
       {
-      if ((jointId0==-1)||(jointId1!=-1))
-       {
-        jointId0 = j;
-        jointPointId0 = minDistId;
-        jointCellId0 = minDistCellId;
-        jointId1 = -1;
-        jointCellId1 = -1;
-        }
-      else if (jointId1==-1)
+      double mergedPoint[3];
+      mergedPoint[0] = 0.0;
+      mergedPoint[1] = 0.0;
+      mergedPoint[2] = 0.0;
+      double weightSum = 0.0;
+      for (j=0; j<groupUniqueCellIds->GetNumberOfIds(); j++)
         {
-        if (j==jointId0+1)
-          {
-          jointId0 = j;
-          jointPointId0 = minDistId;
-          jointCellId0 = minDistCellId;
-          }
-        else
-          {
-          jointId1 = j;
-          jointPointId1 = minDistId;
-          jointCellId1 = minDistCellId;
-          }
+        vtkIdType cellId = groupUniqueCellIds->GetId(j);
+        double point[3];
+        vtkIdType pointId = resampledCenterlines->GetCell(cellId)->GetPointId(k);
+        resampledCenterlines->GetPoint(pointId,point);
+        double radius = radiusArray->GetTuple1(pointId);
+        double weight = radius*radius;
+        resampledCenterlines->GetCell(cellId)->GetPoints()->GetPoint(k,point);
+        mergedPoint[0] += weight * point[0];
+        mergedPoint[1] += weight * point[1];
+        mergedPoint[2] += weight * point[2];
+        weightSum += weight;
         }
-      }
-    else
-      {
-      if (j==jointId1+1)
-        {
-        jointId0 = jointId1;
-        jointPointId0 = jointPointId1;
-        jointCellId0 = jointCellId1;
-        jointId1 = -1;
-        jointCellId1 = -1;
-        }
+      mergedPoint[0] /= weightSum;
+      mergedPoint[1] /= weightSum;
+      mergedPoint[2] /= weightSum;
+      vtkIdType mergedPointId = outputPoints->InsertNextPoint(mergedPoint);
+      outputLines->InsertCellPoint(mergedPointId);
+      vtkIdType cellId = groupUniqueCellIds->GetId(0);
+      vtkIdType pointId = resampledCenterlines->GetCell(cellId)->GetPointId(k);
+      output->GetPointData()->CopyData(resampledCenterlines->GetPointData(),pointId,mergedPointId);
       }
 
-    if (((jointCellId0!=-1)&&(jointCellId1!=-1))&&(jointCellId0!=jointCellId1))
-      {
-      break;
-      }
+    vtkIdType cellId = groupUniqueCellIds->GetId(0);
+    output->GetCellData()->CopyData(resampledCenterlines->GetCellData(),cellId,mergedCellId);
+
+    groupUniqueCellIds->Delete();
     }
 
-  vtkDataArray* dataArray;
-  for (k=0; k<input->GetPointData()->GetNumberOfArrays(); k++)
-    {
-    dataArray = input->GetPointData()->GetArray(k)->NewInstance();
-    dataArray->DeepCopy(input->GetPointData()->GetArray(k));
-    dataArray->SetName(input->GetPointData()->GetArray(k)->GetName());
-    newPointData->AddArray(dataArray);
-    dataArray->Delete();
-    }
-  for (k=0; k<input->GetCellData()->GetNumberOfArrays(); k++)
-    {
-    dataArray = input->GetCellData()->GetArray(k)->NewInstance();
-    dataArray->DeepCopy(input->GetCellData()->GetArray(k));
-    dataArray->SetName(input->GetCellData()->GetArray(k)->GetName());
-    newPointData->AddArray(dataArray);
-    dataArray->Delete();
-    }
+  nonBlankedGroupIds->Delete();
+  resampledCenterlines->Delete();
+  outputPoints->Delete();
+  outputLines->Delete();
 
-  newLine->InsertNextId(jointPointId0);
-  for (j=jointId0+1; j<jointId1; j++)
-    {
-    polyLine1->GetPoints()->GetPoint(j,point1);
-    lastId = newPoints->InsertNextPoint(point1);
-    for (k=0; k<newPointData->GetNumberOfArrays(); k++)
-      {
-      newPointData->GetArray(k)->InsertNextTuple(this->CenterlinesToMerge->GetPointData()->GetArray(k)->GetTuple(polyLine1->GetPointId(j)));
-      }
-    for (k=0; k<newCellData->GetNumberOfArrays(); k++)
-      {
-      newCellData->GetArray(k)->InsertNextTuple(this->CenterlinesToMerge->GetCellData()->GetArray(k)->GetTuple(polyLine1->GetPointId(j)));
-      }
-    newLine->InsertNextId(lastId);
-    }
-  newLine->InsertNextId(jointPointId1);
-
-  newCellArray->InsertNextCell(newLine);
-
-  newLine->Delete();
-
-  output->SetPoints(newPoints);
-  output->SetLines(newCellArray);
-
-  newPoints->Delete();
-  newCellArray->Delete();
-  
   return 1;
 }
 

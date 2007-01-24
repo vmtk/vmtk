@@ -27,10 +27,7 @@ Version:   $Revision: 1.4 $
 
 #include "vtkPolyDataAlgorithm.h"
 #include "vtkPolyData.h"
-//#include "vtkvmtkComputationalGeometryWin32Header.h"
 #include "vtkvmtkWin32Header.h"
-
-  // TODO: this class needs to be rewritten or removed
 
 class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkMergeCenterlines : public vtkPolyDataAlgorithm
 {
@@ -40,8 +37,17 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkMergeCenterlines : public vt
 
   static vtkvmtkMergeCenterlines *New();
   
-  vtkSetObjectMacro(CenterlinesToMerge,vtkPolyData);
-  vtkGetObjectMacro(CenterlinesToMerge,vtkPolyData);
+  vtkSetStringMacro(RadiusArrayName);
+  vtkGetStringMacro(RadiusArrayName);
+
+  vtkSetStringMacro(GroupIdsArrayName);
+  vtkGetStringMacro(GroupIdsArrayName);
+
+  vtkSetStringMacro(BlankingArrayName);
+  vtkGetStringMacro(BlankingArrayName);
+
+  vtkSetMacro(ResamplingStepLength,double);
+  vtkGetMacro(ResamplingStepLength,double);
 
   protected:
   vtkvmtkMergeCenterlines();
@@ -49,7 +55,11 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkMergeCenterlines : public vt
 
   virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
 
-  vtkPolyData* CenterlinesToMerge;
+  char* RadiusArrayName;
+  char* GroupIdsArrayName;
+  char* BlankingArrayName;
+
+  double ResamplingStepLength;
 
   private:
   vtkvmtkMergeCenterlines(const vtkvmtkMergeCenterlines&);  // Not implemented.

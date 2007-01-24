@@ -14,6 +14,7 @@ __all__ = [
   'vmtkcenterlineattributes',
   'vmtkcenterlinegeometry',
   'vmtkcenterlinelabeler',
+  'vmtkcenterlinemerge',
   'vmtkcenterlineoffsetattributes',
   'vmtkcenterlines',
   'vmtkcenterlinesections',
