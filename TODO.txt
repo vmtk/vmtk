@@ -1,4 +1,4 @@
-- avoid littering the global namespace. Move all python scripts and the *Python.so libraries in /usr/local/lib/vmtk/vmtk (at least, if not use setup.py to put them in /usr/local/lib/python2.3/site-packages, which would probably be much better).
-Write __init__.py and put it in vmtk/vmtk. It must only contain import pypes, import vtkvmtk, import vmtkscripts.
-At this point, we have to slightly change the way pypes calls the modules, prepending vmtk.
-
+- centerline splitting and grouping is not bullet-proof. It can fail in very weird situations. It would be good to review the code (and maybe lifting the tree assumption)
+- branch clipping should use a connectivity criterion (region growing?) to ensure avoiding islands in strange geometries
+- write filter to close holes with smooth caps (using subdivision or thin plate splines)
+- write selective smoothing filter

@@ -21,7 +21,7 @@
 
 #include "vtkvmtkMath.h"
 
-vtkCxxRevisionMacro(vtkvmtkMath, "$Revision: 1.0 $");
+//vtkCxxRevisionMacro(vtkvmtkMath, "$Revision: 1.0 $");
 
 double vtkvmtkMath::Cotangent(double point0[3], double point1[3], double point2[3])
   {

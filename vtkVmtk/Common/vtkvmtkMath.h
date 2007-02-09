@@ -38,7 +38,8 @@ class VTK_VMTK_COMMON_EXPORT vtkvmtkMath : public vtkObject
 {
 public:
 
-  vtkTypeRevisionMacro(vtkvmtkMath,vtkObject);
+//  vtkTypeRevisionMacro(vtkvmtkMath,vtkObject);
+  vtkTypeMacro(vtkvmtkMath,vtkObject);
   
   static double Cotangent(double point0[3], double point1[3], double point2[3]);
   static double TriangleArea(double point0[3], double point1[3], double point2[3]);

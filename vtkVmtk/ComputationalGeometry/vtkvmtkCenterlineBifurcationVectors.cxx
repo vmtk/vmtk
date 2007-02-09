@@ -529,6 +529,12 @@ void vtkvmtkCenterlineBifurcationVectors::ComputeBifurcationVectors(vtkPolyData*
       
       vtkvmtkCenterlineSphereDistance::FindTouchingSphereCenter(input,this->RadiusArrayName,cellId,pointSubId,pointPCoord,touchingSubId,touchingPCoord,forward);
 
+      if (touchingSubId == -1)
+        {
+        touchingSubId = numberOfCellPoints-2;
+        touchingPCoord = 1.0;
+        }
+
       //accumulate last point and touching point (weighted with radius^2)
 
       averageLastPoint[0] += lastPointRadius * lastPointRadius * lastPoint[0];

@@ -6,6 +6,13 @@ SET (VTK_VMTK_IO_SRCS
   vtkvmtkXdaWriter.cxx
   )
 
+IF (EXISTS ${VTK_DIR}/bin)
+  #this is a hack to make DICOMParser be included correctly - VTK source
+  INCLUDE_DIRECTORIES(BEFORE ${VTK_SOURCE_DIR}/Utilities/DICOMParser)
+ELSE (EXISTS ${VTK_DIR}/bin)
+  INCLUDE_DIRECTORIES(BEFORE ${VTK_INCLUDE_DIRS})
+ENDIF (EXISTS ${VTK_DIR}/bin)
+
 ADD_LIBRARY (vtkvmtkIO ${VTK_VMTK_IO_SRCS})
 SET_TARGET_PROPERTIES(vtkvmtkIO PROPERTIES LINKER_LANGUAGE CXX)
 TARGET_LINK_LIBRARIES(vtkvmtkIO vtkCommon vtkImaging vtkIO vtkDICOMParser)
