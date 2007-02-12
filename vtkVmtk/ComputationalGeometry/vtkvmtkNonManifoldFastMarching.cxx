@@ -21,7 +21,7 @@ Version:   $Revision: 1.5 $
 
 
 #include "vtkvmtkNonManifoldFastMarching.h"
-#include "../Common/vtkvmtkConstants.h"
+#include "vtkvmtkConstants.h"
 #include "vtkCellData.h"
 #include "vtkPointData.h"
 #include "vtkDoubleArray.h"
@@ -699,7 +699,7 @@ int vtkvmtkNonManifoldFastMarching::RequestData(
       }
     if (!this->UnitSpeed)
       {
-      vtkWarningMacro(<<"Only unit speed available for boundary conditions as poly data!");
+      vtkWarningMacro(<<"Initialization can be inaccurate if unit speed is not used for poly data boundary conditions.");
       }
     }
 

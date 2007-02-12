@@ -25,13 +25,11 @@
 #ifndef __vtkvmtkPolyDataHarmonicMappingFilter_h
 #define __vtkvmtkPolyDataHarmonicMappingFilter_h
 
-#include "vtkPolyDataToPolyDataFilter.h"
-//#include "vtkvmtkDifferentialGeometryWin32Header.h"
 #include "vtkvmtkWin32Header.h"
+#include "vtkPolyDataAlgorithm.h"
 
 #include "vtkIdList.h"
 #include "vtkDoubleArray.h"
-#include "vtkPolyDataAlgorithm.h"
 
 class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkPolyDataHarmonicMappingFilter : public vtkPolyDataAlgorithm
 {
@@ -51,6 +49,21 @@ public:
   vtkSetMacro(ConvergenceTolerance,double);
   vtkGetMacro(ConvergenceTolerance,double);
 
+  vtkSetMacro(AssemblyMode,int);
+  vtkGetMacro(AssemblyMode,int);
+  void SetAssemblyModeToStencils()
+  { this->SetAssemblyMode(VTK_VMTK_ASSEMBLY_STENCILS); }
+   void SetAssemblyModeToFiniteElements()
+  { this->SetAssemblyMode(VTK_VMTK_ASSEMBLY_FINITEELEMENTS); }
+
+//BTX
+  enum 
+    {
+    VTK_VMTK_ASSEMBLY_STENCILS,
+    VTK_VMTK_ASSEMBLY_FINITEELEMENTS
+    };
+//ETX
+
 protected:
   vtkvmtkPolyDataHarmonicMappingFilter();
   ~vtkvmtkPolyDataHarmonicMappingFilter();
@@ -61,8 +74,8 @@ protected:
   vtkDoubleArray* BoundaryValues;
 
   char* HarmonicMappingArrayName;
-
   double ConvergenceTolerance;
+  int AssemblyMode;
 
 private:
   vtkvmtkPolyDataHarmonicMappingFilter(const vtkvmtkPolyDataHarmonicMappingFilter&);  // Not implemented.

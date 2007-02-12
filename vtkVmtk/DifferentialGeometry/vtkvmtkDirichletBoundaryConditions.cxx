@@ -46,10 +46,9 @@ void vtkvmtkDirichletBoundaryConditions::Apply()
   systemSize = this->LinearSystem->GetX()->GetNumberOfElements();
   numberOfBoundaryNodes = this->BoundaryNodes->GetNumberOfIds();
 
-/// TO FIX: when boundary conditions apply is called, linear system hasn't checked if matrix and vectors exist
+/// FIXME: when boundary conditions apply is called, linear system hasn't checked if matrix and vectors exist
   systemMatrix = this->LinearSystem->GetA();
   rhsVector = this->LinearSystem->GetB();
-
 
   for (i=0; i<numberOfBoundaryNodes; i++)
     {

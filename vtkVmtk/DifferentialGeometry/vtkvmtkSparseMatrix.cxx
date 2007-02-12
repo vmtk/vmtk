@@ -28,12 +28,12 @@ vtkCxxRevisionMacro(vtkvmtkSparseMatrix, "$Revision: 1.3 $");
 vtkStandardNewMacro(vtkvmtkSparseMatrix);
 
 vtkvmtkSparseMatrix::vtkvmtkSparseMatrix()
-  {
+{
   this->ItemType = VTK_VMTK_SPARSE_MATRIX_ROW;
-  }
+}
 
 vtkvmtkItem* vtkvmtkSparseMatrix::InstantiateNewItem(int itemType)
-  {
+{
   vtkvmtkSparseMatrixRow* newRow;
 
   switch(itemType)
@@ -50,11 +50,10 @@ vtkvmtkItem* vtkvmtkSparseMatrix::InstantiateNewItem(int itemType)
   newRow->Delete();
 
   return newRow;
-  }
-
+}
 
 void vtkvmtkSparseMatrix::CopyRowsFromStencils(vtkvmtkStencils *stencils)
-  {
+{
   vtkIdType i;
   vtkIdType numberOfStencils;
   
@@ -74,11 +73,33 @@ void vtkvmtkSparseMatrix::CopyRowsFromStencils(vtkvmtkStencils *stencils)
     {
     this->GetRow(i)->CopyStencil(stencils->GetStencil(i));
     }
+}
 
-  }
+void vtkvmtkSparseMatrix::AllocateRowsFromNeighborhoods(vtkvmtkNeighborhoods *neighborhoods)
+{
+  vtkIdType i;
+  vtkIdType numberOfNeighborhoods;
+  
+  if (neighborhoods==NULL)
+    {
+    vtkErrorMacro(<<"No neighborhoods provided.");
+    return;
+    }
+
+  numberOfNeighborhoods = neighborhoods->GetNumberOfNeighborhoods();
+
+  this->Initialize();
+  this->Allocate(numberOfNeighborhoods);
+  this->SetNumberOfRows(numberOfNeighborhoods);
+
+  for (i=0; i<numberOfNeighborhoods; i++)
+    {
+    this->GetRow(i)->CopyNeighborhood(neighborhoods->GetNeighborhood(i));
+    }
+}
 
 void vtkvmtkSparseMatrix::Multiply(vtkvmtkDoubleVector* x, vtkvmtkDoubleVector* y)
-  {
+{
   vtkIdType i, j, numberOfRows, numberOfRowElements;
   double yValue, xValue;
 
@@ -104,10 +125,10 @@ void vtkvmtkSparseMatrix::Multiply(vtkvmtkDoubleVector* x, vtkvmtkDoubleVector* 
 
     y->SetElement(i,yValue);
     }
-  }
+}
 
 void vtkvmtkSparseMatrix::TransposeMultiply(vtkvmtkDoubleVector* x, vtkvmtkDoubleVector* y)
-  {
+{
   vtkIdType i, j, id, numberOfRows, numberOfRowElements;
   double xValue, yValue;
 
@@ -139,4 +160,4 @@ void vtkvmtkSparseMatrix::TransposeMultiply(vtkvmtkDoubleVector* x, vtkvmtkDoubl
 
     y->SetElement(i,yValue);
    }
-  }
+}

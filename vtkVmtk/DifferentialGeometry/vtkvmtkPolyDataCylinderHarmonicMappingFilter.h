@@ -26,7 +26,6 @@
 #define __vtkvmtkPolyDataCylinderHarmonicMappingFilter_h
 
 #include "vtkvmtkPolyDataHarmonicMappingFilter.h"
-//#include "vtkvmtkDifferentialGeometryWin32Header.h"
 #include "vtkvmtkWin32Header.h"
 
 class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkPolyDataCylinderHarmonicMappingFilter : public vtkvmtkPolyDataHarmonicMappingFilter

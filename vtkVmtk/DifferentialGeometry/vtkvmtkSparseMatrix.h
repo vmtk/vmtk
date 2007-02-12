@@ -28,10 +28,10 @@
 #include "vtkObject.h"
 #include "vtkvmtkItems.h"
 #include "vtkvmtkSparseMatrixRow.h"
+#include "vtkvmtkNeighborhoods.h"
 #include "vtkvmtkStencils.h"
 #include "vtkvmtkDoubleVector.h"
 #include "vtkDataSet.h"
-//#include "vtkvmtkDifferentialGeometryWin32Header.h"
 #include "vtkvmtkWin32Header.h"
 
 class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkSparseMatrix : public vtkvmtkItems
@@ -52,6 +52,7 @@ public:
   vtkIdType GetNumberOfRows() {return this->GetNumberOfItems();};
 
   void CopyRowsFromStencils(vtkvmtkStencils *stencils);
+  void AllocateRowsFromNeighborhoods(vtkvmtkNeighborhoods *neighborhoods);
 
   void AllocateRow(vtkIdType i) {this->AllocateItem(i,VTK_VMTK_SPARSE_MATRIX_ROW);};
 

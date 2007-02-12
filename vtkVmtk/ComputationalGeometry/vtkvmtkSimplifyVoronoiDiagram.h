@@ -68,6 +68,10 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkSimplifyVoronoiDiagram : pub
   vtkGetMacro(IncludeUnremovable,int);
   vtkBooleanMacro(IncludeUnremovable,int);
 
+  vtkSetMacro(OnePassOnly,int);
+  vtkGetMacro(OnePassOnly,int);
+  vtkBooleanMacro(OnePassOnly,int);
+
   protected:
   vtkvmtkSimplifyVoronoiDiagram();
   ~vtkvmtkSimplifyVoronoiDiagram();  
@@ -80,6 +84,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkSimplifyVoronoiDiagram : pub
 
   int Simplification;
   int IncludeUnremovable;
+  int OnePassOnly;
 
   private:
   vtkvmtkSimplifyVoronoiDiagram(const vtkvmtkSimplifyVoronoiDiagram&);  // Not implemented.

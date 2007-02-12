@@ -27,7 +27,6 @@
 
 #include "vtkObject.h"
 #include "vtkDataSet.h"
-//#include "vtkvmtkDifferentialGeometryWin32Header.h"
 #include "vtkvmtkWin32Header.h"
 
 class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkItem : public vtkObject 

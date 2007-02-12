@@ -27,15 +27,15 @@ vtkCxxRevisionMacro(vtkvmtkSparseMatrixRow, "$Revision: 1.2 $");
 vtkStandardNewMacro(vtkvmtkSparseMatrixRow);
 
 vtkvmtkSparseMatrixRow::vtkvmtkSparseMatrixRow()
-  {
+{
   this->NElements = 0;
   this->ElementIds = NULL;
   this->Elements = NULL;
   this->DiagonalElement = 0.0;
-  }
+}
 
 vtkvmtkSparseMatrixRow::~vtkvmtkSparseMatrixRow()
-  {
+{
   if (this->ElementIds!=NULL)
     {
     delete[] this->ElementIds;
@@ -47,10 +47,10 @@ vtkvmtkSparseMatrixRow::~vtkvmtkSparseMatrixRow()
     delete[] this->Elements;
     this->Elements = NULL;
     }
-  }
+}
 
 void vtkvmtkSparseMatrixRow::Initialize()
-  {
+{
   this->NElements = 0;
 
   if (this->ElementIds!=NULL)
@@ -66,10 +66,10 @@ void vtkvmtkSparseMatrixRow::Initialize()
     }
 
   this->DiagonalElement = 0.0;
-  }
+}
 
 void vtkvmtkSparseMatrixRow::SetNumberOfElements(vtkIdType numberOfElements)
-  {
+{
   vtkIdType i;
 
   this->NElements = numberOfElements;
@@ -79,7 +79,9 @@ void vtkvmtkSparseMatrixRow::SetNumberOfElements(vtkIdType numberOfElements)
     delete[] this->ElementIds;
     this->ElementIds = NULL;
     }
+
   this->ElementIds = new vtkIdType[this->NElements];
+
   for (i=0; i<this->NElements; i++)
     {
     this->ElementIds[i] = 0;
@@ -90,17 +92,39 @@ void vtkvmtkSparseMatrixRow::SetNumberOfElements(vtkIdType numberOfElements)
     delete[] this->Elements;
     this->Elements = NULL;
     }
+
   this->Elements = new double[this->NElements];
+
   for (i=0; i<this->NElements; i++)
     {
     this->Elements[i] = 0.0;
     }
 
   this->DiagonalElement = 0.0;
-  }
+}
+
+vtkIdType vtkvmtkSparseMatrixRow::GetElementIndex(vtkIdType id)
+{
+  vtkIdType index = -1;
+  int j;
+  for (j=0; j<this->NElements; j++)
+    {
+    if (this->ElementIds[j] == id)
+      {
+      index = j;
+      break;
+      }
+    }
+  if (index == -1)
+    {
+    vtkErrorMacro("Error: ElementId not in sparse matrix");
+    return -1;
+    } 
+  return index;
+}
 
 void vtkvmtkSparseMatrixRow::CopyStencil(vtkvmtkStencil* stencil)
-  {
+{
   vtkIdType i;
 
   this->NElements = stencil->GetNumberOfPoints();
@@ -123,17 +147,54 @@ void vtkvmtkSparseMatrixRow::CopyStencil(vtkvmtkStencil* stencil)
     delete[] this->Elements;
     this->Elements = NULL;
     }
+
   this->Elements = new double[this->NElements];
+
   for (i=0; i<this->NElements; i++)
     {
     this->Elements[i] = stencil->GetWeight(i);
     }
 
   this->DiagonalElement = stencil->GetCenterWeight();
-  }
+}
+
+void vtkvmtkSparseMatrixRow::CopyNeighborhood(vtkvmtkNeighborhood* neighborhood)
+{
+  vtkIdType i;
+
+  this->NElements = neighborhood->GetNumberOfPoints();
+
+  if (this->ElementIds!=NULL)
+    {
+    delete[] this->ElementIds;
+    this->ElementIds = NULL;
+    }
+
+  this->ElementIds = new vtkIdType[this->NElements];
+
+  for (i=0; i<this->NElements; i++)
+    {
+    this->ElementIds[i] = neighborhood->GetPointId(i);
+    }
+
+  if (this->Elements!=NULL)
+    {
+    delete[] this->Elements;
+    this->Elements = NULL;
+    }
+
+  this->Elements = new double[this->NElements];
+
+  for (i=0; i<this->NElements; i++)
+    {
+    this->Elements[i] = 0.0;
+    }
+
+  this->DiagonalElement = 0.0;
+}
 
 void vtkvmtkSparseMatrixRow::DeepCopy(vtkvmtkItem *src)
-  {
+{
   this->Superclass::DeepCopy(src);
 
   vtkvmtkSparseMatrixRow* rowSrc = vtkvmtkSparseMatrixRow::SafeDownCast(src);
@@ -166,5 +227,5 @@ void vtkvmtkSparseMatrixRow::DeepCopy(vtkvmtkItem *src)
     }
 
   this->DiagonalElement = rowSrc->DiagonalElement;
-  }
+}
 

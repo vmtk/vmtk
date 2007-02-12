@@ -38,6 +38,7 @@ vtkvmtkSimplifyVoronoiDiagram::vtkvmtkSimplifyVoronoiDiagram()
   this->UnremovableCellIds = NULL;
   this->Simplification = VTK_VMTK_REMOVE_BOUNDARY_POINTS;
   this->IncludeUnremovable = 1;
+  this->OnePassOnly = 0;
 }
 
 vtkvmtkSimplifyVoronoiDiagram::~vtkvmtkSimplifyVoronoiDiagram()
@@ -104,7 +105,6 @@ int vtkvmtkSimplifyVoronoiDiagram::RequestData(
   vtkPolyData *output = vtkPolyData::SafeDownCast(
     outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
-  // Declare
   bool anyRemoved, removeCell, considerPoint;
   bool* isUnremovable;
   vtkIdType i, j, id;
@@ -117,12 +117,8 @@ int vtkvmtkSimplifyVoronoiDiagram::RequestData(
   vtkIdType newCellId;
   vtkCellArray* inputPolys = input->GetPolys();
 
-  // Allocate
-
-  newPolys = vtkCellArray::New();
   currentPolys = vtkCellArray::New();
   currentLinks = vtkCellLinks::New();
-  newCell = vtkIdList::New();
 
   n = 0;
   if (this->Simplification==VTK_VMTK_REMOVE_BOUNDARY_POINTS)
@@ -136,7 +132,7 @@ int vtkvmtkSimplifyVoronoiDiagram::RequestData(
 
   isUnremovable = new bool[n];
 
-  // Execute 
+  bool anyUnremovable = false;
 
   for (i=0; i<n; i++)
     {
@@ -151,9 +147,14 @@ int vtkvmtkSimplifyVoronoiDiagram::RequestData(
         {
         id = this->UnremovablePointIds->GetId(i);
         if ((id >= 0) && (id < n))
+          {
+          anyUnremovable = true;
           isUnremovable[id] = true;
+          }
         else 
+          {
           vtkErrorMacro(<< "Out of range id found among UnremovablePointIds!");
+          }
         }
       }
     }
@@ -165,9 +166,14 @@ int vtkvmtkSimplifyVoronoiDiagram::RequestData(
         {
         id = this->UnremovableCellIds->GetId(i);
         if ((id >= 0) && (id < n))
+          {
+          anyUnremovable = true;
           isUnremovable[id] = true;
+          }
         else if (id<0)
+          {
           vtkErrorMacro(<< "Out of range id found among UnremovableCellIds!");
+          }
         }
       }
     }
@@ -177,11 +183,13 @@ int vtkvmtkSimplifyVoronoiDiagram::RequestData(
   currentLinks->Allocate(input->GetNumberOfPoints());
   currentLinks->BuildLinks(input,currentPolys);
 
+  bool insertCell = true;
   anyRemoved = true;
   while (anyRemoved)
     {
     anyRemoved = false;
-    newPolys->Reset();
+    vtkCellArray* newPolys = vtkCellArray::New();
+    vtkIdList* newCell = vtkIdList::New();
     currentPolys->InitTraversal();
     for (i=0; i<currentPolys->GetNumberOfCells(); i++)
       {
@@ -189,7 +197,6 @@ int vtkvmtkSimplifyVoronoiDiagram::RequestData(
       
       if (npts==0)
         {
-        newPolys->InsertNextCell(npts,pts);
         continue;
         }
 
@@ -202,23 +209,26 @@ int vtkvmtkSimplifyVoronoiDiagram::RequestData(
           ncells = currentLinks->GetNcells(pts[j]);
         
           if (ncells==1)
+            {
             considerPoint = true;
+            }
 
           if (considerPoint)
             {
             if (isUnremovable[pts[j]])
+              {
               newCell->InsertNextId(pts[j]);
+              }
             else
+              {
               anyRemoved = true;
+              }
             }
           else
             {
             newCell->InsertNextId(pts[j]);
             }
           }
-
-        if (newCell->GetNumberOfIds()<3)
-          newCell->Initialize();
         }
       else if (this->Simplification==VTK_VMTK_REMOVE_BOUNDARY_CELLS)
         {
@@ -245,11 +255,16 @@ int vtkvmtkSimplifyVoronoiDiagram::RequestData(
         else
           {
           for (j=0; j<npts; j++)
+            {
             newCell->InsertNextId(pts[j]);
+            }
           }
         }
-      
-      newCellId = newPolys->InsertNextCell(newCell);
+ 
+      if (newCell->GetNumberOfIds() > 2)
+        {     
+        newCellId = newPolys->InsertNextCell(newCell);
+        }
       }
 
     currentPolys->DeepCopy(newPolys);
@@ -257,12 +272,19 @@ int vtkvmtkSimplifyVoronoiDiagram::RequestData(
     currentLinks = vtkCellLinks::New();
     currentLinks->Allocate(input->GetNumberOfPoints());
     currentLinks->BuildLinks(input,currentPolys);
-    }
 
-  if (!this->IncludeUnremovable)
+    newPolys->Delete();
+    newCell->Delete();
+    if (this->OnePassOnly)
+      {
+      break;
+      }
+    }
+  
+  if (anyUnremovable && !this->IncludeUnremovable)
     {
-    currentPolys->DeepCopy(newPolys);
-    newPolys->Reset();
+    vtkCellArray* newPolys = vtkCellArray::New();
+    vtkIdList* newCell = vtkIdList::New();
     currentPolys->InitTraversal();
     for (i=0; i<currentPolys->GetNumberOfCells(); i++)
       {
@@ -276,11 +298,18 @@ int vtkvmtkSimplifyVoronoiDiagram::RequestData(
       if (!isUnremovable[i])
         {
         for (j=0; j<npts; j++)
+          {
           newCell->InsertNextId(pts[j]);
+          }
         }
-      newPolys->InsertNextCell(newCell);
+      if (newCell->GetNumberOfIds() > 2)
+        {
+        newPolys->InsertNextCell(newCell);
+        }
       }
     currentPolys->DeepCopy(newPolys);
+    newPolys->Delete();
+    newCell->Delete();
     }
 
   // simply passes points and point data (eventually vtkCleanPolyData)
@@ -290,11 +319,8 @@ int vtkvmtkSimplifyVoronoiDiagram::RequestData(
   // WARNING: cell data are thrown away in the current version
   output->SetPolys(currentPolys);
 
-  // Destroy
-  newPolys->Delete();
   currentLinks->Delete();
   currentPolys->Delete();
-  newCell->Delete();
   delete[] isUnremovable;
 
   return 1;

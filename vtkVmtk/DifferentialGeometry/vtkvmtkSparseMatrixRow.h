@@ -28,8 +28,8 @@
 #include "vtkObject.h"
 #include "vtkvmtkItem.h"
 #include "vtkvmtkStencil.h"
+#include "vtkvmtkNeighborhood.h"
 #include "vtkvmtkConstants.h"
-//#include "vtkvmtkDifferentialGeometryWin32Header.h"
 #include "vtkvmtkWin32Header.h"
 
 class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkSparseMatrixRow : public vtkvmtkItem 
@@ -45,6 +45,8 @@ public:
   double GetElement(vtkIdType i) {return this->Elements[i];};
   void SetElement(vtkIdType i, double element) {this->Elements[i] = element;};
 
+  vtkIdType GetElementIndex(vtkIdType id);
+
   vtkIdType GetNumberOfElements() {return this->NElements;};
   void SetNumberOfElements(vtkIdType numberOfElements);
 
@@ -56,6 +58,7 @@ public:
   void Initialize();
 
   void CopyStencil(vtkvmtkStencil* stencil);
+  void CopyNeighborhood(vtkvmtkNeighborhood* neighborhood);
 
   // Description:
   // Standard DeepCopy method.  Since this object contains no reference

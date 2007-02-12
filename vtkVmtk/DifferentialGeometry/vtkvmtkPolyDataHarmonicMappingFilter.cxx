@@ -25,6 +25,7 @@
 #include "vtkDoubleArray.h"
 #include "vtkvmtkDoubleVector.h"
 #include "vtkvmtkStencils.h"
+#include "vtkvmtkPolyDataFELaplaceAssembler.h"
 #include "vtkvmtkSparseMatrix.h"
 #include "vtkvmtkSparseMatrixRow.h"
 #include "vtkvmtkLinearSystem.h"
@@ -45,6 +46,7 @@ vtkvmtkPolyDataHarmonicMappingFilter::vtkvmtkPolyDataHarmonicMappingFilter()
   
   this->HarmonicMappingArrayName = NULL;
   this->ConvergenceTolerance = 1E-6;
+  this->SetAssemblyModeToStencils();
 }
 
 vtkvmtkPolyDataHarmonicMappingFilter::~vtkvmtkPolyDataHarmonicMappingFilter()
@@ -101,15 +103,30 @@ int vtkvmtkPolyDataHarmonicMappingFilter::RequestData(
 
   int numberOfInputPoints = input->GetNumberOfPoints();
 
-  vtkvmtkStencils* stencils = vtkvmtkStencils::New();
-  stencils->SetStencilTypeToFELaplaceBeltramiStencil();
-  stencils->WeightScalingOff();
-  stencils->NegateWeightsOn();
-  stencils->SetDataSet(input);
-  stencils->Build();
-
   vtkvmtkSparseMatrix* sparseMatrix = vtkvmtkSparseMatrix::New();
-  sparseMatrix->CopyRowsFromStencils(stencils);
+
+  if (this->AssemblyMode == VTK_VMTK_ASSEMBLY_STENCILS)
+    {
+    vtkvmtkStencils* stencils = vtkvmtkStencils::New();
+    stencils->SetStencilTypeToFELaplaceBeltramiStencil();
+    stencils->WeightScalingOff();
+    stencils->NegateWeightsOn();
+    stencils->SetDataSet(input);
+    stencils->Build();
+
+    sparseMatrix->CopyRowsFromStencils(stencils);
+
+    stencils->Delete();
+    }
+  else if (this->AssemblyMode == VTK_VMTK_ASSEMBLY_FINITEELEMENTS)
+    {
+    vtkvmtkPolyDataFELaplaceAssembler* assembler = vtkvmtkPolyDataFELaplaceAssembler::New();
+    assembler->SetDataSet(input);
+    assembler->SetMatrix(sparseMatrix);
+    assembler->Build();
+
+    assembler->Delete();
+    }
     
   vtkvmtkDoubleVector* rhsVector = vtkvmtkDoubleVector::New();
   rhsVector->SetNormTypeToLInf();
@@ -153,7 +170,6 @@ int vtkvmtkPolyDataHarmonicMappingFilter::RequestData(
 
   solver->Delete();
   harmonicMappingArray->Delete();
-  stencils->Delete();
   sparseMatrix->Delete();
   rhsVector->Delete();
   solutionVector->Delete();
