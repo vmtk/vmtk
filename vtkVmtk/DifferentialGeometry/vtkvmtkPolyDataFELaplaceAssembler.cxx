@@ -25,6 +25,7 @@
 #include "vtkvmtkSparseMatrixRow.h"
 #include "vtkvmtkNeighborhoods.h"
 #include "vtkCell.h"
+#include "vtkMath.h"
 #include "vtkObjectFactory.h"
 
 vtkCxxRevisionMacro(vtkvmtkPolyDataFELaplaceAssembler, "$Revision: 1.3 $");
@@ -35,7 +36,6 @@ vtkvmtkPolyDataFELaplaceAssembler::vtkvmtkPolyDataFELaplaceAssembler()
   this->DataSet = NULL;
   this->Matrix = NULL;
   this->QuadratureOrder = 1;
-  this->UseAbsoluteJacobians = 1;
 }
 
 vtkvmtkPolyDataFELaplaceAssembler::~vtkvmtkPolyDataFELaplaceAssembler()
@@ -82,7 +82,6 @@ void vtkvmtkPolyDataFELaplaceAssembler::Build()
     int numberOfCellPoints = cell->GetNumberOfPoints();
     double* weights = new double[numberOfCellPoints];
     double* derivs = new double[2*numberOfCellPoints];
-    int subId;
     int i, j;
     int q;
     for (q=0; q<numberOfQuadraturePoints; q++)
@@ -90,39 +89,22 @@ void vtkvmtkPolyDataFELaplaceAssembler::Build()
       gaussQuadrature->GetQuadraturePoint(q,quadraturePCoords);
       double quadratureWeight = gaussQuadrature->GetQuadratureWeight(q);
       double jacobian = feShapeFunctions->GetJacobian(q);
-      if (this->UseAbsoluteJacobians)
-        {
-        jacobian = fabs(jacobian);
-        }
-//      feShapeFunctions->GetInterpolationDerivs(cell,quadraturePCoords,derivs);
+      double dphii[3], dphij[3];
       for (i=0; i<numberOfCellPoints; i++)
         {
         vtkIdType iId = cell->GetPointId(i);
         vtkvmtkSparseMatrixRow* row = this->Matrix->GetRow(iId);
+        feShapeFunctions->GetDPhi(q,i,dphii);
         for (j=0; j<numberOfCellPoints; j++)
           {
           vtkIdType jId = cell->GetPointId(j);
-          double gradphii_gradphij = derivs[i]*derivs[j] + derivs[numberOfCellPoints+i]*derivs[numberOfCellPoints+j];
+          feShapeFunctions->GetDPhi(q,j,dphij);
+          double gradphii_gradphij = vtkMath::Dot(dphii,dphij);
+          if ((iId == 55 && jId == 54) || (iId == 54 && jId == 55))
+            {
+            cout<<iId<<" "<<jId<<" "<<dphii[0]<<" "<<dphii[1]<<" "<<dphii[2]<<" "<<dphij[0]<<" "<<dphij[1]<<" "<<dphij[2]<<" "<<endl;
+            }
           double value = jacobian * quadratureWeight * gradphii_gradphij;
-//          if (k==68)
-          if (iId==53)
-            {
-            cout<<k<<" "<<iId<<" "<<jId<<" "<<value<<" "<<gradphii_gradphij<<endl;
-            }
-//          if (k==70)
-          if (iId==55)
-            {
-            cout<<k<<" "<<iId<<" "<<jId<<" "<<value<<" "<<gradphii_gradphij<<endl;
-            }
-//          if (iId == 5)
-//            {
-//            cout<<"5 "<<jacobian<<" "<<value<<" "<<quadratureWeight<<" "<<endl;
-//            }
-//          if (iId == 53)
-//            {
-//            cout<<"53 "<<jacobian<<" "<<value<<" "<<quadratureWeight<<" "<<endl;
-//            }
-
           if (iId != jId)
             {
             double currentValue = row->GetElement(row->GetElementIndex(jId));

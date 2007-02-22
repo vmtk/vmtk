@@ -89,13 +89,13 @@ void vtkvmtkGaussQuadrature::Initialize(vtkIdType cellType)
   
   switch(cellType)
   {
-//    case VTK_LINE:
-//    case VTK_QUADRATIC_EDGE:
-//    {
-//      this->QuadraturePoints->SetNumberOfComponents(1);
-//      this->Initialize1DGauss();
-//      break;
-//    }
+    case VTK_LINE:
+    case VTK_QUADRATIC_EDGE:
+    {
+      this->QuadraturePoints->SetNumberOfComponents(1);
+      this->Initialize1DGauss();
+      break;
+    }
     case VTK_QUAD:
     case VTK_QUADRATIC_QUAD:
     {

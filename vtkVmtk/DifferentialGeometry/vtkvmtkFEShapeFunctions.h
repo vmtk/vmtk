@@ -39,6 +39,18 @@ public:
 
   void Initialize(vtkCell* cell, vtkDoubleArray* pcoords);
 
+  double GetPhi(vtkIdType id, vtkIdType i)
+  { return this->Phi->GetValue(id*this->NumberOfCellPoints+i); }
+
+  void GetDPhi(vtkIdType id, vtkIdType i, double* dphi)
+  { this->DPhi->GetTuple(id*this->NumberOfCellPoints+i,dphi); }
+
+  double* GetDPhi(vtkIdType id, vtkIdType i)
+  { return this->DPhi->GetTuple(id*this->NumberOfCellPoints+i); }
+
+  double GetDPhiComp(vtkIdType id, vtkIdType i, int c)
+  { return this->DPhi->GetComponent(id*this->NumberOfCellPoints+i,c); }
+
   double GetJacobian(vtkIdType i)
   { return this->Jacobians->GetValue(i); }
 
@@ -46,12 +58,17 @@ protected:
   vtkvmtkFEShapeFunctions();
   ~vtkvmtkFEShapeFunctions();
 
-  double ComputeJacobian(vtkCell* cell, double* pcoords);
+  void GetInterpolationFunctions(vtkCell* cell, double* pcoords, double* sf);
   void GetInterpolationDerivs(vtkCell* cell, double* pcoords, double* derivs);
+  
+  double ComputeJacobian(vtkCell* cell, double* pcoords);
+  void ComputeInverseJacobianMatrix2D(vtkCell* cell, double* pcoords, double inverseJacobianMatrix[2][3]);
+  void ComputeInverseJacobianMatrix3D(vtkCell* cell, double* pcoords, double inverseJacobianMatrix[3][3]);
 
   vtkDoubleArray* Phi;
   vtkDoubleArray* DPhi;
   vtkDoubleArray* Jacobians;
+  vtkIdType NumberOfCellPoints;
 
 private:  
   vtkvmtkFEShapeFunctions(const vtkvmtkFEShapeFunctions&);  // Not implemented.

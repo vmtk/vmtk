@@ -43,10 +43,6 @@ public:
   vtkSetObjectMacro(Matrix,vtkvmtkSparseMatrix);
   vtkGetObjectMacro(Matrix,vtkvmtkSparseMatrix);
 
-  vtkSetMacro(UseAbsoluteJacobians,int);
-  vtkGetMacro(UseAbsoluteJacobians,int);
-  vtkBooleanMacro(UseAbsoluteJacobians,int);
-
   void Build();
 
   void DeepCopy(vtkvmtkPolyDataFELaplaceAssembler *src);
@@ -61,8 +57,6 @@ protected:
   vtkvmtkSparseMatrix* Matrix;
 
   int QuadratureOrder;
-
-  int UseAbsoluteJacobians;
 
 private:
   vtkvmtkPolyDataFELaplaceAssembler(const vtkvmtkPolyDataFELaplaceAssembler&);  // Not implemented.
