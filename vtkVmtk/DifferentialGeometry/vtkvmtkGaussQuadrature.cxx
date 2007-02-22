@@ -89,13 +89,13 @@ void vtkvmtkGaussQuadrature::Initialize(vtkIdType cellType)
   
   switch(cellType)
   {
-    case VTK_LINE:
-    case VTK_QUADRATIC_EDGE:
-    {
-      this->QuadraturePoints->SetNumberOfComponents(1);
-      this->Initialize1DGauss();
-      break;
-    }
+//    case VTK_LINE:
+//    case VTK_QUADRATIC_EDGE:
+//    {
+//      this->QuadraturePoints->SetNumberOfComponents(1);
+//      this->Initialize1DGauss();
+//      break;
+//    }
     case VTK_QUAD:
     case VTK_QUADRATIC_QUAD:
     {
@@ -109,6 +109,20 @@ void vtkvmtkGaussQuadrature::Initialize(vtkIdType cellType)
     case VTK_TRIANGLE:
     case VTK_QUADRATIC_TRIANGLE:
     {
+      if (this->Order == 0 || this->Order ==1)
+      {
+        this->QuadraturePoints->SetNumberOfComponents(2);
+        this->QuadraturePoints->SetNumberOfTuples(1);
+        this->QuadratureWeights->SetNumberOfTuples(1);
+        double point[2];
+        double weight;
+        point[0] = 0.33333333333333333333333333333333;
+        point[1] = 0.33333333333333333333333333333333;
+        weight = 0.5;
+        this->QuadraturePoints->SetTuple(0,point);
+        this->QuadratureWeights->SetValue(0,weight);
+        break;
+      }
       vtkvmtkGaussQuadrature* gauss1D = vtkvmtkGaussQuadrature::New();
       gauss1D->SetOrder(this->Order);
       gauss1D->Initialize1DGauss();
@@ -168,88 +182,6 @@ void vtkvmtkGaussQuadrature::Initialize(vtkIdType cellType)
       return;
     }
   }
-}
-
-void vtkvmtkGaussQuadrature::GetInterpolationDerivs(vtkCell* cell, double pcoords[3], double* derivs)
-{
-  switch (cell->GetCellType())
-  {
-    case VTK_LINE:
-//      vtkLine::SafeDownCast(cell)->InterpolationDerivs(pcoords,derivs);
-      vtkErrorMacro("Error: InterpolationDerivs not defined for Line.");
-      break;
-    case VTK_QUADRATIC_EDGE:
-      vtkQuadraticEdge::SafeDownCast(cell)->InterpolationDerivs(pcoords,derivs);
-      break;
-    case VTK_QUAD:
-      vtkQuad::SafeDownCast(cell)->InterpolationDerivs(pcoords,derivs);
-      break;
-    case VTK_QUADRATIC_QUAD:
-      vtkQuadraticQuad::SafeDownCast(cell)->InterpolationDerivs(pcoords,derivs);
-      break;
-    case VTK_TRIANGLE:
-      vtkTriangle::SafeDownCast(cell)->InterpolationDerivs(pcoords,derivs);
-      break;
-    case VTK_QUADRATIC_TRIANGLE:
-      vtkQuadraticTriangle::SafeDownCast(cell)->InterpolationDerivs(pcoords,derivs);
-      break;
-    case VTK_HEXAHEDRON:
-      vtkHexahedron::SafeDownCast(cell)->InterpolationDerivs(pcoords,derivs);
-      break;
-    case VTK_QUADRATIC_HEXAHEDRON:
-      vtkQuadraticHexahedron::SafeDownCast(cell)->InterpolationDerivs(pcoords,derivs);
-      break;
-    case VTK_WEDGE:
-      vtkWedge::SafeDownCast(cell)->InterpolationDerivs(pcoords,derivs);
-      break;
-    case VTK_QUADRATIC_WEDGE:
-      vtkQuadraticWedge::SafeDownCast(cell)->InterpolationDerivs(pcoords,derivs);
-      break;
-    case VTK_TETRA:
-      vtkTetra::SafeDownCast(cell)->InterpolationDerivs(derivs);
-      break;
-    case VTK_QUADRATIC_TETRA:
-      vtkQuadraticTetra::SafeDownCast(cell)->InterpolationDerivs(pcoords,derivs);
-      break;
-    default:
-      vtkErrorMacro("Error: unsupported cell type.");
-      return;
-  }
-}
-
-double vtkvmtkGaussQuadrature::ComputeJacobian(vtkCell* cell, double pcoords[3])
-{
-  int numberOfCellPoints = cell->GetNumberOfPoints();
-  double* derivs = new double[3*numberOfCellPoints];
-
-  this->GetInterpolationDerivs(cell,pcoords,derivs);
-
-  int i, j;
-
-  double jacobianMatrix[3][3];
-  for (i=0; i < 3; i++)
-  {
-    jacobianMatrix[0][i] = jacobianMatrix[1][i] = jacobianMatrix[2][i] = 0.0;
-  }
-
-  double x[3];
-  for (j=0; j<numberOfCellPoints; j++)
-  {
-    cell->GetPoints()->GetPoint(j,x);
-    for (i=0; i<3; i++)
-    {
-      jacobianMatrix[0][i] += x[i] * derivs[j];
-      jacobianMatrix[1][i] += x[i] * derivs[numberOfCellPoints+j];
-      jacobianMatrix[2][i] += x[i] * derivs[2*numberOfCellPoints+j];
-    }
-  }
-
-  delete[] derivs;
-
-  double jacobian = 0.0;
-  jacobian = vtkMath::Determinant3x3(jacobianMatrix);
-
-  return jacobian;
 }
 
 void vtkvmtkGaussQuadrature::ScaleTo01()

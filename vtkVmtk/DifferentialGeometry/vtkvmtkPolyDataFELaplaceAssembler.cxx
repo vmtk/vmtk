@@ -21,6 +21,7 @@
 
 #include "vtkvmtkPolyDataFELaplaceAssembler.h"
 #include "vtkvmtkGaussQuadrature.h"
+#include "vtkvmtkFEShapeFunctions.h"
 #include "vtkvmtkSparseMatrixRow.h"
 #include "vtkvmtkNeighborhoods.h"
 #include "vtkCell.h"
@@ -33,7 +34,8 @@ vtkvmtkPolyDataFELaplaceAssembler::vtkvmtkPolyDataFELaplaceAssembler()
 {
   this->DataSet = NULL;
   this->Matrix = NULL;
-  this->QuadratureOrder = 3;
+  this->QuadratureOrder = 1;
+  this->UseAbsoluteJacobians = 1;
 }
 
 vtkvmtkPolyDataFELaplaceAssembler::~vtkvmtkPolyDataFELaplaceAssembler()
@@ -53,7 +55,7 @@ vtkvmtkPolyDataFELaplaceAssembler::~vtkvmtkPolyDataFELaplaceAssembler()
 void vtkvmtkPolyDataFELaplaceAssembler::Build()
 {
   vtkvmtkNeighborhoods* neighborhoods = vtkvmtkNeighborhoods::New();
-  neighborhoods->SetNeighborhoodTypeToPolyDataManifoldNeighborhood();
+  neighborhoods->SetNeighborhoodTypeToPolyDataNeighborhood();
   neighborhoods->SetDataSet(this->DataSet);
   neighborhoods->Build();
   this->Matrix->AllocateRowsFromNeighborhoods(neighborhoods);
@@ -61,6 +63,8 @@ void vtkvmtkPolyDataFELaplaceAssembler::Build()
 
   vtkvmtkGaussQuadrature* gaussQuadrature = vtkvmtkGaussQuadrature::New();
   gaussQuadrature->SetOrder(this->QuadratureOrder);
+
+  vtkvmtkFEShapeFunctions* feShapeFunctions = vtkvmtkFEShapeFunctions::New();
 
   int numberOfCells = this->DataSet->GetNumberOfCells();
   int k;
@@ -72,11 +76,12 @@ void vtkvmtkPolyDataFELaplaceAssembler::Build()
       continue;
       } 
     gaussQuadrature->Initialize(cell->GetCellType());
+    feShapeFunctions->Initialize(cell,gaussQuadrature->GetQuadraturePoints());
     int numberOfQuadraturePoints = gaussQuadrature->GetNumberOfQuadraturePoints();
     double quadraturePCoords[3], quadraturePoint[3];
     int numberOfCellPoints = cell->GetNumberOfPoints();
     double* weights = new double[numberOfCellPoints];
-    double* derivs = new double[3*numberOfCellPoints];
+    double* derivs = new double[2*numberOfCellPoints];
     int subId;
     int i, j;
     int q;
@@ -84,8 +89,12 @@ void vtkvmtkPolyDataFELaplaceAssembler::Build()
       {
       gaussQuadrature->GetQuadraturePoint(q,quadraturePCoords);
       double quadratureWeight = gaussQuadrature->GetQuadratureWeight(q);
-      double jacobian = gaussQuadrature->ComputeJacobian(cell,quadraturePCoords);
-      gaussQuadrature->GetInterpolationDerivs(cell,quadraturePCoords,derivs);
+      double jacobian = feShapeFunctions->GetJacobian(q);
+      if (this->UseAbsoluteJacobians)
+        {
+        jacobian = fabs(jacobian);
+        }
+//      feShapeFunctions->GetInterpolationDerivs(cell,quadraturePCoords,derivs);
       for (i=0; i<numberOfCellPoints; i++)
         {
         vtkIdType iId = cell->GetPointId(i);
@@ -93,11 +102,27 @@ void vtkvmtkPolyDataFELaplaceAssembler::Build()
         for (j=0; j<numberOfCellPoints; j++)
           {
           vtkIdType jId = cell->GetPointId(j);
-          //FIXME: check what derivs really is!
-//          double gradigradj = derivs[i]*derivs[j] + derivs[numberOfCellPoints+i]*derivs[numberOfCellPoints+j] + derivs[2*numberOfCellPoints+i]*derivs[2*numberOfCellPoints+j];
-          double gradigradj = derivs[i]*derivs[j] + derivs[numberOfCellPoints+i]*derivs[numberOfCellPoints+j];
-          double value = jacobian * quadratureWeight * gradigradj;
-//          cout<<jacobian<<" "<<quadratureWeight<<" "<<gradigradj<<" "<<value<<endl;
+          double gradphii_gradphij = derivs[i]*derivs[j] + derivs[numberOfCellPoints+i]*derivs[numberOfCellPoints+j];
+          double value = jacobian * quadratureWeight * gradphii_gradphij;
+//          if (k==68)
+          if (iId==53)
+            {
+            cout<<k<<" "<<iId<<" "<<jId<<" "<<value<<" "<<gradphii_gradphij<<endl;
+            }
+//          if (k==70)
+          if (iId==55)
+            {
+            cout<<k<<" "<<iId<<" "<<jId<<" "<<value<<" "<<gradphii_gradphij<<endl;
+            }
+//          if (iId == 5)
+//            {
+//            cout<<"5 "<<jacobian<<" "<<value<<" "<<quadratureWeight<<" "<<endl;
+//            }
+//          if (iId == 53)
+//            {
+//            cout<<"53 "<<jacobian<<" "<<value<<" "<<quadratureWeight<<" "<<endl;
+//            }
+
           if (iId != jId)
             {
             double currentValue = row->GetElement(row->GetElementIndex(jId));
@@ -114,7 +139,9 @@ void vtkvmtkPolyDataFELaplaceAssembler::Build()
     delete[] weights;
     delete[] derivs;
     }
+
   gaussQuadrature->Delete();
+  feShapeFunctions->Delete();
 }
 
 void vtkvmtkPolyDataFELaplaceAssembler::DeepCopy(vtkvmtkPolyDataFELaplaceAssembler *src)

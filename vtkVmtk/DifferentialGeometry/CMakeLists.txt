@@ -7,6 +7,7 @@ SET (VTK_VMTK_DIFFERENTIALGEOMETRY_SRCS
   vtkvmtkEllipticProblem.cxx
   vtkvmtkEmptyNeighborhood.cxx
   vtkvmtkEmptyStencil.cxx
+  vtkvmtkFEShapeFunctions.cxx
   vtkvmtkGaussQuadrature.cxx
   vtkvmtkItem.cxx
   vtkvmtkItems.cxx
@@ -28,6 +29,7 @@ SET (VTK_VMTK_DIFFERENTIALGEOMETRY_SRCS
   vtkvmtkPolyDataManifoldStencil.cxx
   vtkvmtkPolyDataMeanCurvature.cxx
   vtkvmtkPolyDataMultipleCylinderHarmonicMappingFilter.cxx
+  vtkvmtkPolyDataNeighborhood.cxx
   vtkvmtkPolyDataStencilFlowFilter.cxx
   vtkvmtkPolyDataUmbrellaStencil.cxx
   vtkvmtkSparseMatrix.cxx

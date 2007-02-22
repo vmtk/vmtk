@@ -42,8 +42,12 @@ public:
 
   void SetNieghborhoodTypeToEmptyNeighborhood()
     {this->SetItemType(VTK_VMTK_EMPTY_NEIGHBORHOOD);};  
+  void SetNeighborhoodTypeToPolyDataNeighborhood()
+    {this->SetItemType(VTK_VMTK_POLYDATA_NEIGHBORHOOD);};  
   void SetNeighborhoodTypeToPolyDataManifoldNeighborhood()
     {this->SetItemType(VTK_VMTK_POLYDATA_MANIFOLD_NEIGHBORHOOD);};  
+  void SetNeighborhoodTypeToPolyDataManifoldExtendedNeighborhood()
+    {this->SetItemType(VTK_VMTK_POLYDATA_MANIFOLD_EXTENDED_NEIGHBORHOOD);};  
 
   // Description:
   // Get a stencil given a point id.

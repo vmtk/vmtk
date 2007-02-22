@@ -69,9 +69,6 @@ public:
   void Initialize1DJacobi(int alpha, int beta);
   void ScaleTo01();
  
-  void GetInterpolationDerivs(vtkCell* cell, double pcoords[3], double* derivs);
-  double ComputeJacobian(vtkCell* cell, double pcoords[3]);
-
 protected:
   vtkvmtkGaussQuadrature();
   ~vtkvmtkGaussQuadrature();

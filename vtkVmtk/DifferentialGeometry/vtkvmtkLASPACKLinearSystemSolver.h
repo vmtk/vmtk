@@ -43,9 +43,41 @@ public:
 
   vtkSetMacro(SolverType,int);
   vtkGetMacro(SolverType,int);
+  void SetSolverTypeToJacobi()
+    { this->SetSolverType(VTK_VMTK_LASPACK_SOLVER_JACOBI); }
+  void SetSolverTypeToSORForw()
+    { this->SetSolverType(VTK_VMTK_LASPACK_SOLVER_SORFORW); }
+  void SetSolverTypeToSORBackw()
+    { this->SetSolverType(VTK_VMTK_LASPACK_SOLVER_SORBACKW); }
+  void SetSolverTypeToSSOR()
+    { this->SetSolverType(VTK_VMTK_LASPACK_SOLVER_SSOR); }
+  void SetSolverTypeToChebyshev()
+    { this->SetSolverType(VTK_VMTK_LASPACK_SOLVER_CHEBYSHEV); }
+  void SetSolverTypeToCG()
+    { this->SetSolverType(VTK_VMTK_LASPACK_SOLVER_CG); }
+  void SetSolverTypeToCGN()
+    { this->SetSolverType(VTK_VMTK_LASPACK_SOLVER_CGN); }
+  void SetSolverTypeToGMRES()
+    { this->SetSolverType(VTK_VMTK_LASPACK_SOLVER_GMRES); }
+  void SetSolverTypeToBiCG()
+    { this->SetSolverType(VTK_VMTK_LASPACK_SOLVER_BICG); }
+  void SetSolverTypeToQMR()
+    { this->SetSolverType(VTK_VMTK_LASPACK_SOLVER_QMR); }
+  void SetSolverTypeToCGS()
+    { this->SetSolverType(VTK_VMTK_LASPACK_SOLVER_CGS); }
+  void SetSolverTypeToBiCGStab()
+    { this->SetSolverType(VTK_VMTK_LASPACK_SOLVER_BICGSTAB); }
 
   vtkSetMacro(PreconditionerType,int);
   vtkGetMacro(PreconditionerType,int);
+  void SetPreconditionerTypeToNone()
+    { this->SetPreconditionerType(VTK_VMTK_LASPACK_PRECONDITIONER_NONE); }
+  void SetPreconditionerTypeToJacobi()
+    { this->SetPreconditionerType(VTK_VMTK_LASPACK_PRECONDITIONER_JACOBI); }
+  void SetPreconditionerTypeToSSOR()
+    { this->SetPreconditionerType(VTK_VMTK_LASPACK_PRECONDITIONER_SSOR); }
+  void SetPreconditionerTypeToILU()
+    { this->SetPreconditionerType(VTK_VMTK_LASPACK_PRECONDITIONER_ILU); }
 
   //BTX
   enum
