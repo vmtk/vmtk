@@ -179,7 +179,7 @@ void vtkvmtkFEShapeFunctions::ComputeInverseJacobianMatrix2D(vtkCell* cell, doub
   inverseJacobianMatrixSquared[0][0] =  jacobianMatrixSquared[1][1] * inverseJacobianSquared;
   inverseJacobianMatrixSquared[0][1] = -jacobianMatrixSquared[0][1] * inverseJacobianSquared;
   inverseJacobianMatrixSquared[1][0] = -jacobianMatrixSquared[1][0] * inverseJacobianSquared;
-  inverseJacobianMatrixSquared[1][1] =  jacobianMatrixSquared[1][1] * inverseJacobianSquared;
+  inverseJacobianMatrixSquared[1][1] =  jacobianMatrixSquared[0][0] * inverseJacobianSquared;
 
   inverseJacobianMatrix[0][0] = inverseJacobianMatrixSquared[0][0] * jacobianMatrixTr[0][0] + inverseJacobianMatrixSquared[0][1] * jacobianMatrixTr[1][0];
   inverseJacobianMatrix[0][1] = inverseJacobianMatrixSquared[0][0] * jacobianMatrixTr[0][1] + inverseJacobianMatrixSquared[0][1] * jacobianMatrixTr[1][1];

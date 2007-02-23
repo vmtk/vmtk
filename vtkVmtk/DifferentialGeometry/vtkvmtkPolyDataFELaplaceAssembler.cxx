@@ -100,10 +100,14 @@ void vtkvmtkPolyDataFELaplaceAssembler::Build()
           vtkIdType jId = cell->GetPointId(j);
           feShapeFunctions->GetDPhi(q,j,dphij);
           double gradphii_gradphij = vtkMath::Dot(dphii,dphij);
-          if ((iId == 55 && jId == 54) || (iId == 54 && jId == 55))
-            {
-            cout<<iId<<" "<<jId<<" "<<dphii[0]<<" "<<dphii[1]<<" "<<dphii[2]<<" "<<dphij[0]<<" "<<dphij[1]<<" "<<dphij[2]<<" "<<endl;
-            }
+//          if (iId == 55)
+//            {
+//            cout<<iId<<" "<<jId<<" "<<dphii[0]<<" "<<dphii[1]<<" "<<dphii[2]<<" "<<dphij[0]<<" "<<dphij[1]<<" "<<dphij[2]<<" "<<endl;
+//            }
+//          else if (iId == 53)
+//            {
+//            cout<<iId<<" "<<jId<<" "<<dphii[0]<<" "<<dphii[1]<<" "<<dphii[2]<<" "<<dphij[0]<<" "<<dphij[1]<<" "<<dphij[2]<<" "<<endl;
+//            }
           double value = jacobian * quadratureWeight * gradphii_gradphij;
           if (iId != jId)
             {
