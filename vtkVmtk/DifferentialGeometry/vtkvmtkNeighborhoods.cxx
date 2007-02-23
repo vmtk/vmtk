@@ -28,6 +28,7 @@
 #include "vtkvmtkPolyDataNeighborhood.h"
 #include "vtkvmtkPolyDataManifoldNeighborhood.h"
 #include "vtkvmtkPolyDataManifoldExtendedNeighborhood.h"
+#include "vtkvmtkUnstructuredGridNeighborhood.h"
 
 vtkCxxRevisionMacro(vtkvmtkNeighborhoods, "$Revision: 1.3 $");
 vtkStandardNewMacro(vtkvmtkNeighborhoods);
@@ -49,6 +50,9 @@ vtkvmtkItem* vtkvmtkNeighborhoods::InstantiateNewItem(int itemType)
       break;
     case VTK_VMTK_POLYDATA_MANIFOLD_EXTENDED_NEIGHBORHOOD:
       newItem = vtkvmtkPolyDataManifoldExtendedNeighborhood::New();
+      break;
+    case VTK_VMTK_UNSTRUCTUREDGRID_NEIGHBORHOOD:
+      newItem = vtkvmtkUnstructuredGridNeighborhood::New();
       break;
     default:
       vtkErrorMacro(<<"Invalid neighborhood type");

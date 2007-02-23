@@ -41,7 +41,9 @@ void vtkvmtkPolyDataManifoldExtendedNeighborhood::Build()
   vtkPolyData* pdata = vtkPolyData::SafeDownCast(this->DataSet);
 
   if (pdata==NULL)
+    {
     vtkErrorMacro(<< "Input data NULL or not poly data");
+    }
 
   pointId = this->DataSetPointId;
 
@@ -56,55 +58,57 @@ void vtkvmtkPolyDataManifoldExtendedNeighborhood::Build()
     if ((this->NPoints==3)||(this->NPoints==4))
       {
       for (i=0; i<this->NPoints; i++)
-	{
-	extendedStencilIds->InsertNextId(this->PointIds[i]);
+        {
+        extendedStencilIds->InsertNextId(this->PointIds[i]);
 
-	p1 = this->PointIds[i];
-	p2 = this->PointIds[(i+1)%this->NPoints];
-	pdata->GetCellEdgeNeighbors (-1, p1, p2, cellIds);
-	if (cellIds->GetNumberOfIds()>1)
-	  {
-	  outerP = -1;
-	  for (j=0; j<2; j++)
-	    {
-	    cell = pdata->GetCell(cellIds->GetId(j));
-	    for (k=0; k<3; k++)
-	      {
-	      p = cell->GetPointId(k);
-	      if (p!=pointId  && p!=p1 && p!=p2)
-		{
-		outerP = p;
-		break;
-		}
-	      }
-	    if (outerP != -1)
-	      break;
-	    }
+        p1 = this->PointIds[i];
+        p2 = this->PointIds[(i+1)%this->NPoints];
+        pdata->GetCellEdgeNeighbors (-1, p1, p2, cellIds);
+        if (cellIds->GetNumberOfIds()>1)
+          {
+          outerP = -1;
+          for (j=0; j<2; j++)
+            {
+            cell = pdata->GetCell(cellIds->GetId(j));
+            for (k=0; k<3; k++)
+              {
+              p = cell->GetPointId(k);
+              if (p!=pointId  && p!=p1 && p!=p2)
+                {
+                outerP = p;
+                break;
+                }
+              }
+            if (outerP != -1)
+              {
+              break;
+              }
+            }
 	
-	  pdata->GetPoint(p1,point1);
-	  pdata->GetPoint(p2,point2);
-	  pdata->GetPoint(outerP,outerPoint);
-	  edgeVector[0] = point1[0] - point2[0];
-	  edgeVector[1] = point1[1] - point2[1];
-	  edgeVector[2] = point1[2] - point2[2];
-	  outerVector1[0] = outerPoint[0] - point1[0];
-	  outerVector1[1] = outerPoint[1] - point1[1];
-	  outerVector1[2] = outerPoint[2] - point1[2];
-	  outerVector2[0] = outerPoint[0] - point2[0];
-	  outerVector2[1] = outerPoint[1] - point2[1];
-	  outerVector2[2] = outerPoint[2] - point2[2];
+          pdata->GetPoint(p1,point1);
+          pdata->GetPoint(p2,point2);
+          pdata->GetPoint(outerP,outerPoint);
+          edgeVector[0] = point1[0] - point2[0];
+          edgeVector[1] = point1[1] - point2[1];
+          edgeVector[2] = point1[2] - point2[2];
+          outerVector1[0] = outerPoint[0] - point1[0];
+          outerVector1[1] = outerPoint[1] - point1[1];
+          outerVector1[2] = outerPoint[2] - point1[2];
+          outerVector2[0] = outerPoint[0] - point2[0];
+          outerVector2[1] = outerPoint[1] - point2[1];
+          outerVector2[2] = outerPoint[2] - point2[2];
 
-	  if (vtkMath::Dot(edgeVector,outerVector1)*vtkMath::Dot(edgeVector,outerVector2) < 0.0)
-	    extendedStencilIds->InsertNextId(outerP);
-	  }
-	}
+          if (vtkMath::Dot(edgeVector,outerVector1)*vtkMath::Dot(edgeVector,outerVector2) < 0.0)
+            extendedStencilIds->InsertNextId(outerP);
+          }
+        }
 
       this->NPoints = extendedStencilIds->GetNumberOfIds();
       if (this->PointIds!=NULL)
-	{
-	delete[] this->PointIds;
-	this->PointIds = NULL;
-    	}
+        {
+        delete[] this->PointIds;
+        this->PointIds = NULL;
+        }
       this->PointIds = new vtkIdType[this->NPoints];
       memcpy(this->PointIds,extendedStencilIds->GetPointer(0),this->NPoints*sizeof(vtkIdType));
       }
@@ -113,5 +117,5 @@ void vtkvmtkPolyDataManifoldExtendedNeighborhood::Build()
   cellIds->Delete();
   ptIds->Delete();
   extendedStencilIds->Delete();
-  }
+}
 

@@ -38,7 +38,7 @@ void vtkvmtkPolyDataManifoldNeighborhood::Build()
   vtkIdType bp1, bp2;
   vtkIdType K;
   vtkIdType pointId;
-  vtkIdList *cellIds, *ptIds, *stencilIds, *extendedStencilIds;
+  vtkIdList *cellIds, *ptIds, *stencilIds;
   vtkCell* cell;
   vtkPolyData* pdata = vtkPolyData::SafeDownCast(this->DataSet);
 
@@ -54,14 +54,15 @@ void vtkvmtkPolyDataManifoldNeighborhood::Build()
   cellIds = vtkIdList::New();
   ptIds = vtkIdList::New();
   stencilIds = vtkIdList::New();
-  extendedStencilIds = vtkIdList::New();
 
   pdata->GetPointCells (pointId, cellIds);
   numCellsInStencil = cellIds->GetNumberOfIds();
   if (numCellsInStencil < 1)
     {
     //          vtkWarningMacro("numCellsInStencil < 1: " << numCellsInStencil);
-    stencilIds->Reset();
+    cellIds->Delete();
+    ptIds->Delete();
+    stencilIds->Delete();
     return;
     }
 
@@ -87,7 +88,6 @@ void vtkvmtkPolyDataManifoldNeighborhood::Build()
     startCell = cellIds->GetId(1);
     }
 
-  stencilIds->Reset();
   stencilIds->InsertNextId(p2);
 
   // walk around the stencil counter-clockwise and get cells
@@ -173,6 +173,5 @@ void vtkvmtkPolyDataManifoldNeighborhood::Build()
   cellIds->Delete();
   ptIds->Delete();
   stencilIds->Delete();
-  extendedStencilIds->Delete();
 }
 

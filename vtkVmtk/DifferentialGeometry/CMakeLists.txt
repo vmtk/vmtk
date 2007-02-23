@@ -36,6 +36,8 @@ SET (VTK_VMTK_DIFFERENTIALGEOMETRY_SRCS
   vtkvmtkSparseMatrixRow.cxx
   vtkvmtkStencil.cxx
   vtkvmtkStencils.cxx
+  vtkvmtkUnstructuredGridNeighborhood.cxx
+  vtkvmtkUnstructuredGridFELaplaceAssembler.cxx
   )
 
 INCLUDE_DIRECTORIES(${LASPACK_SOURCE_DIR})

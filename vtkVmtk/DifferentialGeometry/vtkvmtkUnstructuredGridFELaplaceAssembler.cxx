@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   VMTK
-  Module:    $RCSfile: vtkvmtkPolyDataFELaplaceAssembler.cxx,v $
+  Module:    $RCSfile: vtkvmtkUnstructuredGridFELaplaceAssembler.cxx,v $
   Language:  C++
   Date:      $Date: 2005/11/15 17:39:25 $
   Version:   $Revision: 1.3 $
@@ -19,7 +19,7 @@
 
 =========================================================================*/
 
-#include "vtkvmtkPolyDataFELaplaceAssembler.h"
+#include "vtkvmtkUnstructuredGridFELaplaceAssembler.h"
 #include "vtkvmtkGaussQuadrature.h"
 #include "vtkvmtkFEShapeFunctions.h"
 #include "vtkvmtkSparseMatrixRow.h"
@@ -28,17 +28,17 @@
 #include "vtkMath.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkPolyDataFELaplaceAssembler, "$Revision: 1.3 $");
-vtkStandardNewMacro(vtkvmtkPolyDataFELaplaceAssembler);
+vtkCxxRevisionMacro(vtkvmtkUnstructuredGridFELaplaceAssembler, "$Revision: 1.3 $");
+vtkStandardNewMacro(vtkvmtkUnstructuredGridFELaplaceAssembler);
 
-vtkvmtkPolyDataFELaplaceAssembler::vtkvmtkPolyDataFELaplaceAssembler()
+vtkvmtkUnstructuredGridFELaplaceAssembler::vtkvmtkUnstructuredGridFELaplaceAssembler()
 {
   this->DataSet = NULL;
   this->Matrix = NULL;
   this->QuadratureOrder = 1;
 }
 
-vtkvmtkPolyDataFELaplaceAssembler::~vtkvmtkPolyDataFELaplaceAssembler()
+vtkvmtkUnstructuredGridFELaplaceAssembler::~vtkvmtkUnstructuredGridFELaplaceAssembler()
 {
   if (this->DataSet)
     {
@@ -52,10 +52,10 @@ vtkvmtkPolyDataFELaplaceAssembler::~vtkvmtkPolyDataFELaplaceAssembler()
     }
 }
 
-void vtkvmtkPolyDataFELaplaceAssembler::Build()
+void vtkvmtkUnstructuredGridFELaplaceAssembler::Build()
 {
   vtkvmtkNeighborhoods* neighborhoods = vtkvmtkNeighborhoods::New();
-  neighborhoods->SetNeighborhoodTypeToPolyDataNeighborhood();
+  neighborhoods->SetNeighborhoodTypeToUnstructuredGridNeighborhood();
   neighborhoods->SetDataSet(this->DataSet);
   neighborhoods->Build();
   this->Matrix->AllocateRowsFromNeighborhoods(neighborhoods);
@@ -66,7 +66,7 @@ void vtkvmtkPolyDataFELaplaceAssembler::Build()
 
   vtkvmtkFEShapeFunctions* feShapeFunctions = vtkvmtkFEShapeFunctions::New();
 
-  int dimension = 2;
+  int dimension = 3;
 
   int numberOfCells = this->DataSet->GetNumberOfCells();
   int k;
@@ -124,14 +124,14 @@ void vtkvmtkPolyDataFELaplaceAssembler::Build()
   feShapeFunctions->Delete();
 }
 
-void vtkvmtkPolyDataFELaplaceAssembler::DeepCopy(vtkvmtkPolyDataFELaplaceAssembler *src)
+void vtkvmtkUnstructuredGridFELaplaceAssembler::DeepCopy(vtkvmtkUnstructuredGridFELaplaceAssembler *src)
 {
   this->DataSet->DeepCopy(src->DataSet);
   this->Matrix->DeepCopy(src->Matrix);
   this->QuadratureOrder = src->QuadratureOrder;
 }
  
-void vtkvmtkPolyDataFELaplaceAssembler::ShallowCopy(vtkvmtkPolyDataFELaplaceAssembler *src)
+void vtkvmtkUnstructuredGridFELaplaceAssembler::ShallowCopy(vtkvmtkUnstructuredGridFELaplaceAssembler *src)
 {
   this->DataSet = src->DataSet;
   this->DataSet->Register(this);
