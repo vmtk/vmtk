@@ -226,7 +226,7 @@ void vtkvmtkFEShapeFunctions::ComputeInverseJacobianMatrix3D(vtkCell* cell, doub
 
   vtkMath::Invert3x3(jacobianMatrix,inverseJacobianMatrix);
 
-//  vtkMath::Transpose3x3(inverseJacobianMatrix,inverseJacobianMatrix);
+  vtkMath::Transpose3x3(inverseJacobianMatrix,inverseJacobianMatrix);
 }
 
 void vtkvmtkFEShapeFunctions::GetInterpolationFunctions(vtkCell* cell, double* pcoords, double* sf)
