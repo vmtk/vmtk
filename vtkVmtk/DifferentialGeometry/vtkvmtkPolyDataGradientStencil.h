@@ -26,16 +26,19 @@
 #define __vtkvmtkPolyDataGradientStencil_h
 
 #include "vtkObject.h"
+#include "vtkvmtkConstants.h"
 #include "vtkvmtkPolyDataManifoldStencil.h"
-//#include "vtkvmtkDifferentialGeometryWin32Header.h"
 #include "vtkvmtkWin32Header.h"
 
 class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkPolyDataGradientStencil : public vtkvmtkPolyDataManifoldStencil
 {
 public:
 
+  static vtkvmtkPolyDataGradientStencil *New();
   vtkTypeRevisionMacro(vtkvmtkPolyDataGradientStencil,vtkvmtkPolyDataManifoldStencil);
 
+  virtual vtkIdType GetItemType() {return VTK_VMTK_GRADIENT_STENCIL;};
+  
   void Build();
 
 protected:

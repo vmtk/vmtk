@@ -28,7 +28,6 @@
 #include "vtkObject.h"
 #include "vtkvmtkConstants.h"
 #include "vtkvmtkPolyDataLaplaceBeltramiStencil.h"
-//#include "vtkvmtkDifferentialGeometryWin32Header.h"
 #include "vtkvmtkWin32Header.h"
 
 class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkPolyDataFELaplaceBeltramiStencil : public vtkvmtkPolyDataLaplaceBeltramiStencil

@@ -29,7 +29,6 @@
 #include "vtkvmtkConstants.h"
 #include "vtkvmtkNeighborhood.h"
 #include "vtkPolyData.h"
-//#include "vtkvmtkDifferentialGeometryWin32Header.h"
 #include "vtkvmtkWin32Header.h"
 
 class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkPolyDataNeighborhood : public vtkvmtkNeighborhood 

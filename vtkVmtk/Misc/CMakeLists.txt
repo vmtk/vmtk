@@ -11,6 +11,7 @@ SET (VTK_VMTK_MISC_SRCS
   vtkvmtkSimpleCapPolyData.cxx
   vtkvmtkSurfaceDistance.cxx
   vtkvmtkSurfaceProjection.cxx
+  vtkvmtkTetGenWrapper.cxx
   )
 
 INCLUDE_DIRECTORIES(${TETGEN_SOURCE_DIR})

@@ -50,6 +50,8 @@ public:
     {this->SetItemType(VTK_VMTK_FE_LAPLACE_BELTRAMI_STENCIL);};  
   void SetStencilTypeToFVFELaplaceBeltramiStencil()
     {this->SetItemType(VTK_VMTK_FVFE_LAPLACE_BELTRAMI_STENCIL);};
+  void SetStencilTypeToGradientStencil()
+    {this->SetItemType(VTK_VMTK_GRADIENT_STENCIL);};  
 
   // Description:
   // Get a stencil given a point id.

@@ -27,6 +27,7 @@
 #include "vtkvmtkPolyDataAreaWeightedUmbrellaStencil.h"
 #include "vtkvmtkPolyDataFELaplaceBeltramiStencil.h"
 #include "vtkvmtkPolyDataFVFELaplaceBeltramiStencil.h"
+#include "vtkvmtkPolyDataGradientStencil.h"
 
 vtkCxxRevisionMacro(vtkvmtkStencils, "$Revision: 1.3 $");
 vtkStandardNewMacro(vtkvmtkStencils);
@@ -58,6 +59,9 @@ vtkvmtkItem* vtkvmtkStencils::InstantiateNewItem(int itemType)
       break;
     case VTK_VMTK_FVFE_LAPLACE_BELTRAMI_STENCIL:
       newStencil = vtkvmtkPolyDataFVFELaplaceBeltramiStencil::New();
+      break;
+    case VTK_VMTK_GRADIENT_STENCIL:
+      newStencil = vtkvmtkPolyDataGradientStencil::New();
       break;
     default:
       vtkErrorMacro(<<"Invalid stencil type");

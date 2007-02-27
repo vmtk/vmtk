@@ -47,7 +47,7 @@ public:
   {
     return this->QuadraturePoints->GetNumberOfTuples();
   }
-  
+ 
   double* GetQuadraturePoint(vtkIdType id)
   {
     return this->QuadraturePoints->GetTuple(id);
@@ -57,13 +57,23 @@ public:
   {
     this->QuadraturePoints->GetTuple(id,quadraturePoint);
   }
-  
+ 
+  double GetQuadraturePoint(vtkIdType id, int c)
+  {
+    return this->QuadraturePoints->GetComponent(id,c);
+  }
+ 
   double GetQuadratureWeight(vtkIdType id)
   {
     return this->QuadratureWeights->GetValue(id);
   }
  
   void Initialize(vtkIdType cellType);
+
+  void Initialize(vtkCell* cell)
+  {
+    this->Initialize(cell->GetCellType());
+  }
  
   void Initialize1DGauss();
   void Initialize1DJacobi(int alpha, int beta);

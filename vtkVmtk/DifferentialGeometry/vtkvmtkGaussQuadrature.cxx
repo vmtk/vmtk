@@ -161,6 +161,21 @@ void vtkvmtkGaussQuadrature::Initialize(vtkIdType cellType)
     case VTK_TETRA:
     case VTK_QUADRATIC_TETRA:
     {
+      if (this->Order == 0 || this->Order ==1)
+      {
+        this->QuadraturePoints->SetNumberOfComponents(3);
+        this->QuadraturePoints->SetNumberOfTuples(1);
+        this->QuadratureWeights->SetNumberOfTuples(1);
+        double point[3];
+        double weight;
+        point[0] = 0.25;
+        point[1] = 0.25;
+        point[2] = 0.25;
+        weight = .1666666666666666666666666666666666666666666667;
+        this->QuadraturePoints->SetTuple(0,point);
+        this->QuadratureWeights->SetValue(0,weight);
+        break;
+      }
       vtkvmtkGaussQuadrature* gauss1D = vtkvmtkGaussQuadrature::New();
       gauss1D->SetOrder(this->Order);
       gauss1D->Initialize1DGauss();

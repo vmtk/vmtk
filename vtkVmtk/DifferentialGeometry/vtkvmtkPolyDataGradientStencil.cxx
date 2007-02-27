@@ -20,6 +20,7 @@
 =========================================================================*/
 
 #include "vtkvmtkPolyDataGradientStencil.h"
+#include "vtkPolyData.h"
 #include "vtkvmtkMath.h"
 #include "vtkMath.h"
 #include "vtkObjectFactory.h"
@@ -27,17 +28,18 @@
 #include "vtkvmtkConstants.h"
 
 vtkCxxRevisionMacro(vtkvmtkPolyDataGradientStencil, "$Revision: 1.4 $");
+vtkStandardNewMacro(vtkvmtkPolyDataGradientStencil);
 
 vtkvmtkPolyDataGradientStencil::vtkvmtkPolyDataGradientStencil()
-  {
-  this->Area = 0;
+{
+  this->Area = 0.0;
   this->NumberOfComponents = 3;
-  }
+}
 
 void vtkvmtkPolyDataGradientStencil::ScaleWithArea()
-  {
+{
   this->ScaleWithAreaFactor(1.0);
-  }
+}
 
 void vtkvmtkPolyDataGradientStencil::Gamma(double p0[3], double p1[3], double p2[3], double gamma[3])
 {
@@ -59,7 +61,7 @@ void vtkvmtkPolyDataGradientStencil::Gamma(double p0[3], double p1[3], double p2
 }
 
 void vtkvmtkPolyDataGradientStencil::Build()
-  {
+{
   double point[3], point1[3], point2[3];
   vtkIdType j, firstId, lastId;
 
@@ -130,5 +132,5 @@ void vtkvmtkPolyDataGradientStencil::Build()
 
   this->ComputeArea();
   this->ScaleWithArea();
-  }
+}
 

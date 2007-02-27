@@ -28,7 +28,6 @@
 #include "vtkObject.h"
 #include "vtkvmtkStencil.h"
 #include "vtkPolyData.h"
-//#include "vtkvmtkDifferentialGeometryWin32Header.h"
 #include "vtkvmtkWin32Header.h"
 
 class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkPolyDataManifoldStencil : public vtkvmtkStencil 

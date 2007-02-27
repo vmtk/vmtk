@@ -97,7 +97,7 @@ class vmtkTetGen(pypes.pypeScript):
             ['EntityArrayNamePrefix','entityarrayprefix','str',1,'prefix of entity array names']
             ])
         self.SetOutputMembers([
-            ['Mesh','i','vtkUnstructuredGrid',1,'the output mesh','vmtkmeshwriter'],
+            ['Mesh','o','vtkUnstructuredGrid',1,'the output mesh','vmtkmeshwriter'],
             ['PointMarkerArrayName','pointmarkerarray','str',1,'name of the array where point markers are stored'],
             ['FacetMarkerArrayName','facetmarkerarray','str',1,'name of the array where surface cell markers are stored'],
             ['TetrahedronVolumeArrayName','tetravolumearray','str',1,'name of the array where volumes of tetrahedra are stored'],
