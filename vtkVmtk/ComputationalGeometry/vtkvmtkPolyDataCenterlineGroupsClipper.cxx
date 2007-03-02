@@ -47,7 +47,8 @@ vtkvmtkPolyDataCenterlineGroupsClipper::vtkvmtkPolyDataCenterlineGroupsClipper()
   this->CenterlineGroupIds = NULL;
   this->ClipAllCenterlineGroupIds = 0;
   this->CutoffRadiusFactor = VTK_VMTK_LARGE_DOUBLE;
-  
+  this->ClipValue = 0.0; 
+ 
   this->SetNumberOfOutputPorts(2);
   this->GenerateClippedOutput = 0;
   vtkPolyData *output2 = vtkPolyData::New();
@@ -296,7 +297,7 @@ int vtkvmtkPolyDataCenterlineGroupsClipper::RequestData(
 
     vtkClipPolyData* clipper = vtkClipPolyData::New();
     clipper->SetInput(clippingInput);
-    clipper->SetValue(0.0);
+    clipper->SetValue(this->ClipValue);
     clipper->GenerateClipScalarsOff();
     clipper->SetGenerateClippedOutput(this->GenerateClippedOutput);
     clipper->Update();

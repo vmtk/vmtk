@@ -33,6 +33,8 @@ class vmtkBranchClipper(pypes.pypeScript):
 
         self.RadiusArrayName = ''
         self.CutoffRadiusFactor = 1E16
+        
+        self.ClipValue = 0.0
 	
         self.BlankingArrayName = ''
         self.GroupIdsArrayName = ''
@@ -49,7 +51,8 @@ class vmtkBranchClipper(pypes.pypeScript):
             ['InsideOut','insideout','int',1],
             ['RadiusArrayName','radiusarray','str',1],
 				    ['BlankingArrayName','blankingarray','str',1],
-						['CutoffRadiusFactor','cutoffradiusfactor','float',1]
+						['CutoffRadiusFactor','cutoffradiusfactor','float',1],
+						['ClipValue','clipvalue','float',1]
             ])
         self.SetOutputMembers([
             ['Surface','o','vtkPolyData',1,'','vmtksurfacewriter'],
@@ -72,6 +75,7 @@ class vmtkBranchClipper(pypes.pypeScript):
         clipper.SetCenterlineRadiusArrayName(self.RadiusArrayName)
         clipper.SetBlankingArrayName(self.BlankingArrayName)
         clipper.SetCutoffRadiusFactor(self.CutoffRadiusFactor)
+        clipper.SetClipValue(self.ClipValue)
         if self.GroupIds:
             groupIds = vtk.vtkIdList()
             for groupId in self.GroupIds:

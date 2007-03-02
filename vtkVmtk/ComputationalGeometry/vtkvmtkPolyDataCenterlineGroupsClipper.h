@@ -70,6 +70,9 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataCenterlineGroupsClip
   vtkSetMacro(CutoffRadiusFactor,double);
   vtkGetMacro(CutoffRadiusFactor,double);
 
+  vtkSetMacro(ClipValue,double);
+  vtkGetMacro(ClipValue,double);
+
   protected:
   vtkvmtkPolyDataCenterlineGroupsClipper();
   ~vtkvmtkPolyDataCenterlineGroupsClipper();
@@ -88,6 +91,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataCenterlineGroupsClip
 
   int ClipAllCenterlineGroupIds;
   double CutoffRadiusFactor;
+  double ClipValue;
 
   int GenerateClippedOutput;
 
