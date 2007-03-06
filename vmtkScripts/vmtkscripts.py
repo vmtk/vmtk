@@ -16,6 +16,7 @@ __all__ = [
   'vmtkcenterlinelabeler',
   'vmtkcenterlinemerge',
   'vmtkcenterlineoffsetattributes',
+  'vmtkcenterlineresampling',
   'vmtkcenterlines',
   'vmtkcenterlinesections',
   'vmtkcenterlinesmoothing',

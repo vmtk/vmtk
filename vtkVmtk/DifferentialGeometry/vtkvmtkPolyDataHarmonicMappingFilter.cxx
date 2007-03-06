@@ -46,7 +46,7 @@ vtkvmtkPolyDataHarmonicMappingFilter::vtkvmtkPolyDataHarmonicMappingFilter()
   
   this->HarmonicMappingArrayName = NULL;
   this->ConvergenceTolerance = 1E-6;
-  this->SetAssemblyModeToStencils();
+  this->SetAssemblyModeToFiniteElements();
 }
 
 vtkvmtkPolyDataHarmonicMappingFilter::~vtkvmtkPolyDataHarmonicMappingFilter()

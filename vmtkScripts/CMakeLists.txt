@@ -18,6 +18,7 @@ SET(SCRIPTS_SRCS
   vmtkcenterlinelabeler.py
   vmtkcenterlinemerge.py
   vmtkcenterlineoffsetattributes.py
+  vmtkcenterlineresampling.py
   vmtkcenterlines.py
   vmtkcenterlinesections.py
   vmtkcenterlinesmoothing.py
