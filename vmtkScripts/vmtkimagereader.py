@@ -253,7 +253,7 @@ class vmtkImageReader(pypes.pypeScript):
                 if extension in extensionFormats.keys():
                     self.Format = extensionFormats[extension]
 
-        if self.UseITKIO and self.Format not in ['vtkxml'] and not self.InputDirectoryName:
+        if self.UseITKIO and self.InputFileName and self.Format not in ['vtkxml'] and not self.InputDirectoryName:
             self.ReadITKIO()    
         else:
             if self.Format == 'vtkxml':

@@ -200,7 +200,7 @@ public:
   };
   ~vtkITKImageToImageFilter()
   {
-    std::cerr << "Destructing vtkITKImageToImageFilter" << std::endl;
+//    std::cerr << "Destructing vtkITKImageToImageFilter" << std::endl;
     this->vtkExporter->Delete();
     this->vtkImporter->Delete();
     this->vtkCast->Delete();

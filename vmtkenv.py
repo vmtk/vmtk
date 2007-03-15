@@ -49,10 +49,16 @@ if not os.environ.has_key("VMTKHOME"):
 
     else:
 
-        print "PATH=%s:$PATH" % newEnviron["PATH"]
-        print "LD_LIBRARY_PATH=%s:$LD_LIBRARY_PATH" % newEnviron["LD_LIBRARY_PATH"]
-        print "DYLD_LIBRARY_PATH=%s:$DYLD_LIBRARY_PATH" % newEnviron["DYLD_LIBRARY_PATH"]
-        print "PYTHONPATH=%s:$PYTHONPATH" % newEnviron["PYTHONPATH"]
+        environString = "PATH=%s:$PATH" % newEnviron["PATH"] + '\n'
+        environString += "export PATH" + '\n'
+        environString += "LD_LIBRARY_PATH=%s:$LD_LIBRARY_PATH" % newEnviron["LD_LIBRARY_PATH"] + '\n'
+        environString += "export LD_LIBRARY_PATH" + '\n'
+        environString += "DYLD_LIBRARY_PATH=%s:$DYLD_LIBRARY_PATH" % newEnviron["DYLD_LIBRARY_PATH"] + '\n'
+        environString += "export DYLD_LIBRARY_PATH" + '\n'
+        environString += "PYTHONPATH=%s:$PYTHONPATH" % newEnviron["PYTHONPATH"] + '\n'
+        environString += "export PYTHONPATH"
+
+        print environString
 
 os.system(" ".join(sys.argv[1:]))
 
