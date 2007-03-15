@@ -10,15 +10,15 @@ SET (VTK_VMTK_SEGMENTATION_SRCS
   vtkvmtkGradientMagnitudeImageFilter.cxx
   vtkvmtkGradientMagnitudeRecursiveGaussianImageFilter.cxx
   vtkvmtkGradientMagnitudeRecursiveGaussian2DImageFilter.cxx
-#  vtkvmtkObjectnessMeasureImageFilter.cxx
-#  vtkvmtkObjectnessMeasure2DImageFilter.cxx
+  vtkvmtkObjectnessMeasureImageFilter.cxx
+  vtkvmtkObjectnessMeasure2DImageFilter.cxx
   vtkvmtkRecursiveGaussianImageFilter.cxx
   vtkvmtkRecursiveGaussian2DImageFilter.cxx
   vtkvmtkSigmoidImageFilter.cxx
   vtkvmtkUpwindGradientMagnitudeImageFilter.cxx
   vtkvmtkPolyDataPotentialFit.cxx
 #  vtkvmtkConstrainedLaplacianPolyDataFilter.cxx
-#  vtkvmtkVesselnessMeasureImageFilter.cxx
+  vtkvmtkVesselnessMeasureImageFilter.cxx
   )
 
 ADD_LIBRARY (vtkvmtkSegmentation ${VTK_VMTK_SEGMENTATION_SRCS})

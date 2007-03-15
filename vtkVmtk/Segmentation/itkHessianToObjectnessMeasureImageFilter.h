@@ -152,25 +152,25 @@ public:
  
   void SetEigenValueSignConstraint(unsigned int i, EigenValueSignConstraintType eigenValueSignConstraint)
   {
-    m_EigenValueSignConstraint[i] = eigenValueSignConstraint;
+    m_EigenValueSignConstraintArray[i] = eigenValueSignConstraint;
     this->Modified();
   }
   
   void SetEigenValueSignConstraintToNoConstraint(unsigned int i)
   {
-    m_EigenValueSignConstraint[i] = NoConstraint;
+    m_EigenValueSignConstraintArray[i] = NoConstraint;
     this->Modified();
   }
   
   void SetEigenValueSignConstraintToPositive(unsigned int i)
   {
-    m_EigenValueSignConstraint[i] = Positive;
+    m_EigenValueSignConstraintArray[i] = Positive;
     this->Modified();
   }
   
   void SetEigenValueSignConstraintToNegative(unsigned int i)
   {
-    m_EigenValueSignConstraint[i] = Negative;
+    m_EigenValueSignConstraintArray[i] = Negative;
     this->Modified();
   }
 

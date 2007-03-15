@@ -74,6 +74,18 @@ if ( 1 ) { \
     } \
   }
 
+#define DelegateSetMacro2(name,arg1,arg2) DelegateITKInputMacro2(Set##name,arg1,arg2)
+#define DelegateITKInputMacro2(name,arg1,arg2) \
+if ( 1 ) { \
+  vtkDebugMacro( << this->GetClassName() << " (" << this << "): setting " #name " to " << #arg1 ); \
+  ImageFilterType* tempFilter = dynamic_cast<ImageFilterType*> ( this->m_Filter.GetPointer() ); \
+  if ( tempFilter ) \
+    { \
+    tempFilter->name ( arg1, arg2 ); \
+    this->Modified(); \
+    } \
+  }
+
 #define DelegateGetMacro(name) DelegateITKOutputMacro (Get##name)
 #define DelegateITKOutputMacro(name) \
 if ( 1 ) { \
