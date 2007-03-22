@@ -34,7 +34,7 @@ class vmtkImageReslice(pypes.pypeScript):
         self.OutputOrigin = []
         self.OutputExtent = []
 
-        self.Interpolation = 1
+        self.Interpolation = 'linear'
         self.Cast = 1
 
         self.BackgroundLevel = 0.0
@@ -47,7 +47,7 @@ class vmtkImageReslice(pypes.pypeScript):
             ['OutputSpacing','spacing','float',3,'the output spacing'],
             ['OutputOrigin','origin','float',3,'the output origin'],
             ['OutputExtent','extent','int',6,'the output extent'],
-            ['Interpolation','interpolation','int',1,'toggle linear interpolation during reslice'],
+            ['Interpolation','interpolation','str',1,'interpolation during reslice (nearestneighbor,linear,cubic)'],
             ['Cast','cast','int',1,'toggle cast image to float type'],
             ['BackgroundLevel','background','float',1,'the output image background']
             ])
@@ -78,7 +78,14 @@ class vmtkImageReslice(pypes.pypeScript):
                 resliceFilter.SetOutputOrigin(self.OutputOrigin)
             if self.OutputExtent:
                 resliceFilter.SetOutputExtent(self.OutputExtent)
-        resliceFilter.SetInterpolate(self.Interpolation)
+        if self.Interpolation == 'nearestneighbor':
+            resliceFilter.SetInterpolationModeToNearestNeighbor()
+        elif self.Interpolation == 'linear':
+            resliceFilter.SetInterpolationModeToLinear()
+        elif self.Interpolation == 'cubic':
+            resliceFilter.SetInterpolationModeToCubic()
+        else:
+            self.PrintError('Error: unsupported interpolation mode')
         resliceFilter.SetBackgroundLevel(self.BackgroundLevel)
         resliceFilter.Update()
 

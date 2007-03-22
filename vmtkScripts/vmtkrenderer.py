@@ -35,10 +35,17 @@ class vmtkRenderer(pypes.pypeScript):
         self.WindowSize = [800, 600]
         self.Background = [0.1, 0.1, 0.2]
 
+        self.PointSmoothing = 1
+        self.LineSmoothing = 1
+        self.PolygonSmoothing = 0
+
         self.SetScriptName('vmtkrenderer')
         self.SetScriptDoc('renderer used to make several viewers use the same rendering window')
         self.SetInputMembers([
             ['WindowSize','size','int',2,'size of the rendering window'],
+            ['PointSmoothing','pointsmoothing','int',1,'toggle rendering smooth points'],
+            ['LineSmoothing','linesmoothing','int',1,'toggle rendering smooth lines'],
+            ['PolygonSmoothing','polygonsmoothing','int',1,'toggle rendering smooth polygons'],
             ['Background','background','float',3,'background color of the rendering window']])
         self.SetOutputMembers([
             ['vmtkRenderer','o','vmtkRenderer',1,'the renderer']])
@@ -59,9 +66,9 @@ class vmtkRenderer(pypes.pypeScript):
             self.RenderWindow = vtk.vtkRenderWindow()
             self.RenderWindow.AddRenderer(self.Renderer)
             self.RenderWindow.SetSize(self.WindowSize[0],self.WindowSize[1])
-            self.RenderWindow.PointSmoothingOn()
-            self.RenderWindow.LineSmoothingOn()
-            self.RenderWindow.PolygonSmoothingOn()
+            self.RenderWindow.SetPointSmoothing(self.PointSmoothing)
+            self.RenderWindow.SetLineSmoothing(self.LineSmoothing)
+            self.RenderWindow.SetPolygonSmoothing(self.PolygonSmoothing)
             self.RenderWindowInteractor = vtk.vtkRenderWindowInteractor()
             self.RenderWindow.SetInteractor(self.RenderWindowInteractor)
 
