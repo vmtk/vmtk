@@ -218,7 +218,10 @@ UpwindGradientMagnitudeImageFilter< TInputImage, TOutputImage >
           {
           g = -fdg < bdg ? weights[0] * fdg + weights[1] * bdg : weights[1] * fdg + weights[0] * bdg;
           }
-        a += g * g;
+        if (-fdg > 0.0 || bdg > 0.0)
+          {
+          a += g * g;
+          }
         }
       it.Value() = static_cast<OutputPixelType>(::sqrt(a));
       ++bit;
