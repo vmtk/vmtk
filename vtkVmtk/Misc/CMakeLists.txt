@@ -9,6 +9,7 @@ SET (VTK_VMTK_MISC_SRCS
   vtkvmtkPolyDataKiteRemovalFilter.cxx
   vtkvmtkPolyDataToUnstructuredGridFilter.cxx
   vtkvmtkSimpleCapPolyData.cxx
+  vtkvmtkSmoothCapPolyData.cxx
   vtkvmtkSurfaceDistance.cxx
   vtkvmtkSurfaceProjection.cxx
   vtkvmtkTetGenWrapper.cxx
@@ -17,7 +18,7 @@ SET (VTK_VMTK_MISC_SRCS
 INCLUDE_DIRECTORIES(${TETGEN_SOURCE_DIR})
 LINK_DIRECTORIES(${TETGEN_LIB_DIR})
 
-SET (VTK_VMTK_MISC_TARGET_LINK_LIBRARIES vtkvmtkMisc vtkCommon vtkFiltering vtkGraphics tet)
+SET (VTK_VMTK_MISC_TARGET_LINK_LIBRARIES vtkvmtkMisc vtkCommon vtkFiltering vtkGraphics vtkHybrid tet)
 
 #OPTION(VTK_VMTK_SURFMESH_SUPPORT "Build SurfMesh support." OFF)
 

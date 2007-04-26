@@ -20,6 +20,9 @@ import sys
 
 import pypes
 
+import vmtkrenderer
+import vmtkcenterlineviewer
+
 vmtkbranchclipper = 'vmtkBranchClipper'
 
 class vmtkBranchClipper(pypes.pypeScript):
@@ -42,6 +45,11 @@ class vmtkBranchClipper(pypes.pypeScript):
         self.GroupIds = []
         self.InsideOut = 0
 
+        self.vmtkRenderer = None
+        self.OwnRenderer = 0
+
+        self.Interactive = 0
+
         self.SetScriptName('vmtkbranchclipper')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','vmtksurfacereader'],
@@ -52,12 +60,23 @@ class vmtkBranchClipper(pypes.pypeScript):
             ['RadiusArrayName','radiusarray','str',1],
 				    ['BlankingArrayName','blankingarray','str',1],
 						['CutoffRadiusFactor','cutoffradiusfactor','float',1],
-						['ClipValue','clipvalue','float',1]
+						['ClipValue','clipvalue','float',1],
+						['Interactive','interactive','int',1],
+            ['vmtkRenderer','renderer','vmtkRenderer',1,'external renderer']
             ])
         self.SetOutputMembers([
             ['Surface','o','vtkPolyData',1,'','vmtksurfacewriter'],
             ['Centerlines','ocenterlines','vtkPolyData',1,'','vmtksurfacewriter']
             ])
+
+    def GroupIdsValidator(self,text):
+        import string
+        if not text:
+            return 0
+        for char in text:
+            if char not in string.digits + " ":
+                return 0
+        return 1
 
     def Execute(self):
 
@@ -66,6 +85,26 @@ class vmtkBranchClipper(pypes.pypeScript):
 
         if not self.Centerlines:
             self.PrintError('Error: No input centerlines.')
+
+        if self.Interactive and not self.vmtkRenderer:
+            self.vmtkRenderer = vmtkrenderer.vmtkRenderer()
+            self.vmtkRenderer.Initialize()
+            self.OwnRenderer = 1
+ 
+        if self.Interactive:
+
+            viewer = vmtkcenterlineviewer.vmtkCenterlineViewer()
+            viewer.Centerlines = self.Centerlines
+            viewer.CellDataArrayName = self.GroupIdsArrayName
+            viewer.vmtkRenderer = self.vmtkRenderer
+            viewer.InputText = self.InputText
+            viewer.OutputText = self.OutputText
+            viewer.PrintError = self.PrintError
+            viewer.PringLog = self.PrintLog
+            viewer.Execute()
+           
+            groupIdsString = self.InputText("Please input groupIds to clip:\n",self.GroupIdsValidator)
+            self.GroupIds = [int(groupId) for groupId in groupIdsString.split()]
 
         clipper = vtkvmtk.vtkvmtkPolyDataCenterlineGroupsClipper()
         clipper.SetInput(self.Surface)
@@ -102,6 +141,9 @@ class vmtkBranchClipper(pypes.pypeScript):
         if self.Centerlines.GetSource():
             self.Centerlines.GetSource().UnRegisterAllOutputs()
 
+        if self.OwnRenderer:
+            self.vmtkRenderer.Deallocate()
+ 
 
 if __name__=='__main__':
 

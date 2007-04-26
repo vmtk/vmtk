@@ -34,10 +34,10 @@ class vmtkCenterlineMerge(pypes.pypeScript):
         self.GroupIdsArrayName = ''
         self.BlankingArrayName = ''
 
-        self.Length = 0.0;
+        self.Length = 1.0;
 
         self.SetScriptName('vmtkcenterlinemerge')
-        self.SetScriptDoc('resample input lines with a spline filter')
+        self.SetScriptDoc('merge centerline tracts belonging to the same groups')
         self.SetInputMembers([
             ['Centerlines','i','vtkPolyData',1,'the input centerlines','vmtksurfacereader'],
       	    ['RadiusArrayName','radiusarray','str',1,'name of the array where centerline radius is stored'],

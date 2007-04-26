@@ -39,7 +39,12 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkCapPolyData : public vtkPoly
   void PrintSelf(ostream& os, vtkIndent indent); 
 
   static vtkvmtkCapPolyData *New();
-  
+ 
+  // Description:
+  // Set/Get the ids of the boundaries to cap.
+  vtkSetObjectMacro(BoundaryIds,vtkIdList);
+  vtkGetObjectMacro(BoundaryIds,vtkIdList);
+ 
   // Description:
   // Set/Get the displacement of boundary baricenters along boundary normals relative to the radius.
   vtkSetMacro(Displacement,double);
@@ -60,6 +65,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkCapPolyData : public vtkPoly
 
   virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
 
+  vtkIdList* BoundaryIds;
   double Displacement;
   double InPlaneDisplacement;
   vtkIdList* CapCenterIds;

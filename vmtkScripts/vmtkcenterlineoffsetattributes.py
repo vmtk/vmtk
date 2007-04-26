@@ -20,6 +20,9 @@ import sys
 
 import pypes
 
+import vmtkrenderer
+import vmtkcenterlineviewer
+
 vmtkcenterlineoffsetattributes = 'vmtkCenterlineOffsetAttributes'
 
 class vmtkCenterlineOffsetAttributes(pypes.pypeScript):
@@ -44,6 +47,11 @@ class vmtkCenterlineOffsetAttributes(pypes.pypeScript):
         self.OffsetAbscissasArrayName = 'OffsetAbscissas'
         self.OffsetNormalsArrayName = 'OffsetNormals'
 
+        self.vmtkRenderer = None
+        self.OwnRenderer = 0
+
+        self.Interactive = 0
+
         self.SetScriptName('vmtkcenterlineoffsetattributes')
         self.SetScriptDoc('offset centerline attributes relative to a bifurcation reference system, in such a way that the abscissa of the closest point the the origin is zero, and the centerline normal at that point coincides with the bifurcation reference system normal')
         self.SetInputMembers([
@@ -57,7 +65,9 @@ class vmtkCenterlineOffsetAttributes(pypes.pypeScript):
       	    ['CenterlineIdsArrayName','centerlineidsarray','str',1,'name of the array where centerline ids are stored'],
       	    ['ReferenceSystemsNormalArrayName','referencesystemsnormalarray','str',1,'name of the array where reference system normals are stored'],
       	    ['OffsetAbscissasArrayName','offsetabscissasarray','str',1,'name of the array where offset centerline abscissas have to be stored if ReplaceAttributes is off'],
-      	    ['OffsetNormalsArrayName','offsetnormalsarray','str',1,'name of the array where offset centerline normals have to be stored if ReplaceAttributes is off']
+      	    ['OffsetNormalsArrayName','offsetnormalsarray','str',1,'name of the array where offset centerline normals have to be stored if ReplaceAttributes is off'],
+						['Interactive','interactive','int',1],
+            ['vmtkRenderer','renderer','vmtkRenderer',1,'external renderer']
             ])
         self.SetOutputMembers([
             ['Centerlines','o','vtkPolyData',1,'the output centerlines','vmtksurfacewriter'],
@@ -68,6 +78,15 @@ class vmtkCenterlineOffsetAttributes(pypes.pypeScript):
       	    ['NormalsArrayName','normalsarray','str',1,'name of the array where centerline normals are stored']
             ])
 
+    def GroupIdValidator(self,text):
+        import string
+        if not text:
+            return 0
+        for char in text:
+            if char not in string.digits:
+                return 0
+        return 1
+
     def Execute(self):
 
         if self.Centerlines == None:
@@ -75,6 +94,26 @@ class vmtkCenterlineOffsetAttributes(pypes.pypeScript):
 
         if self.ReferenceSystems == None:
             self.PrintError('Error: No input reference systems.')
+
+        if self.Interactive and not self.vmtkRenderer:
+            self.vmtkRenderer = vmtkrenderer.vmtkRenderer()
+            self.vmtkRenderer.Initialize()
+            self.OwnRenderer = 1
+ 
+        if self.Interactive:
+
+            viewer = vmtkcenterlineviewer.vmtkCenterlineViewer()
+            viewer.Centerlines = self.Centerlines
+            viewer.CellDataArrayName = self.GroupIdsArrayName
+            viewer.vmtkRenderer = self.vmtkRenderer
+            viewer.InputText = self.InputText
+            viewer.OutputText = self.OutputText
+            viewer.PrintError = self.PrintError
+            viewer.PringLog = self.PrintLog
+            viewer.Execute()
+           
+            groupIdString = self.InputText("Please input the reference groupId:\n",self.GroupIdValidator)
+            self.ReferenceGroupId = int(groupIdString)
 
         offsetFilter = vtkvmtk.vtkvmtkCenterlineReferenceSystemAttributesOffset()
         offsetFilter.SetInput(self.Centerlines)
@@ -96,11 +135,15 @@ class vmtkCenterlineOffsetAttributes(pypes.pypeScript):
         
         self.Centerlines = offsetFilter.GetOutput()
 
-        if (self.ReferenceGroupId == -1):
+        if self.ReferenceGroupId == -1:
             self.ReferenceGroupId = offsetFilter.GetReferenceGroupId()
 
         if self.Centerlines.GetSource():
             self.Centerlines.GetSource().UnRegisterAllOutputs()
+
+        if self.OwnRenderer:
+            self.vmtkRenderer.Deallocate()
+ 
 
 if __name__=='__main__':
 

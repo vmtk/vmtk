@@ -37,14 +37,24 @@ vtkStandardNewMacro(vtkvmtkCapPolyData);
 
 vtkvmtkCapPolyData::vtkvmtkCapPolyData()
 {
+  this->BoundaryIds = NULL;
   this->Displacement = 1E-1;
   this->InPlaneDisplacement = 1E-1;
-  this->CapCenterIds = vtkIdList::New();
+  this->CapCenterIds = NULL;
 }
 
 vtkvmtkCapPolyData::~vtkvmtkCapPolyData()
 {
-  this->CapCenterIds->Delete();
+  if (this->BoundaryIds)
+    {
+    this->BoundaryIds->Delete();
+    this->BoundaryIds = NULL;
+    }
+  if (this->CapCenterIds)
+    {
+    this->CapCenterIds->Delete();
+    this->CapCenterIds = NULL;
+    }
 }
 
 int vtkvmtkCapPolyData::RequestData(
@@ -90,12 +100,30 @@ int vtkvmtkCapPolyData::RequestData(
 
   boundaries = boundaryExtractor->GetOutput();
 
+  if (this->CapCenterIds)
+    {
+    this->CapCenterIds->Delete();
+    this->CapCenterIds = NULL;
+    }
+
+  this->CapCenterIds = vtkIdList::New();
   this->CapCenterIds->SetNumberOfIds(boundaries->GetNumberOfCells());
+  for (i=0; i<this->CapCenterIds->GetNumberOfIds(); i++)
+    {
+    this->CapCenterIds->SetId(i,-1);
+    }
 
   double barycenter[3], normal[3], outwardNormal[3], meanRadius;
 
   for (i=0; i<boundaries->GetNumberOfCells(); i++)
     {
+    if (this->BoundaryIds)
+      {
+      if (this->BoundaryIds->IsId(i) == -1)
+        {
+        continue;
+        }
+      }
     boundary = vtkPolyLine::SafeDownCast(boundaries->GetCell(i));
 
     vtkvmtkBoundaryReferenceSystems::ComputeBoundaryBarycenter(boundary->GetPoints(),barycenter);

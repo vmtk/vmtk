@@ -32,16 +32,22 @@ class vmtkSurfaceCapper(pypes.pypeScript):
         self.TriangleOutput = 1
         self.CellMarkerArrayName = ''
         self.Interactive = 1
+        self.Method = 'simple'
+        self.ConstraintFactor = 1.0
+        self.NumberOfRings = 8
 
         self.vmtkRenderer = None
         self.OwnRenderer = 0
 
         self.SetScriptName('vmtksurfacecapper')
-        self.SetScriptDoc('add caps to the holes of a surface, assigning an id to each cap for easy specification of boundary conditions')
+        self.SetScriptDoc('add caps to the holes of a surface, assigning an id to each cap for easy specification of boundary conditions ("simple" method only).')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'the input surface','vmtksurfacereader'],
+            ['Method','method','str',1,'capping method ("simple", "centerpoint", "smooth")'],
             ['TriangleOutput','triangle','int',1,'toggle triangulation of the output'],
             ['CellMarkerArrayName','cellmarkerarray','str',1,'name of the array where the id of the caps are stored'],
+            ['ConstraintFactor','constraint','float',1,'amount of influence of the shape of the surface near the boundary on the shape of the cap ("smooth" method only)'],
+            ['NumberOfRings','rings','int',1,'number of rings composing the cap ("smooth" method only)'],
             ['Interactive','interactive','int',1],
             ['vmtkRenderer','renderer','vmtkRenderer',1,'external renderer']
             ])
@@ -118,14 +124,37 @@ class vmtkSurfaceCapper(pypes.pypeScript):
             for label in labels:
                 boundaryIds.InsertNextId(label)
 
-        capper = vtkvmtk.vtkvmtkSimpleCapPolyData()
-        capper.SetInput(self.Surface)
-        if self.Interactive:
-            capper.SetBoundaryIds(boundaryIds)
-        capper.SetCellMarkerArrayName(self.CellMarkerArrayName)
-        capper.Update()
-
-        self.Surface = capper.GetOutput()
+        if self.Method == 'simple':
+            capper = vtkvmtk.vtkvmtkSimpleCapPolyData()
+            capper.SetInput(self.Surface)
+            if self.Interactive:
+                capper.SetBoundaryIds(boundaryIds)
+            capper.SetCellMarkerArrayName(self.CellMarkerArrayName)
+            capper.Update()
+            self.Surface = capper.GetOutput()
+        elif self.Method == 'centerpoint':
+            capper = vtkvmtk.vtkvmtkCapPolyData()
+            capper.SetInput(self.Surface)
+            if self.Interactive:
+                capper.SetBoundaryIds(boundaryIds)
+            capper.SetDisplacement(0.0)
+            capper.SetInPlaneDisplacement(0.0)
+            capper.Update()
+            self.Surface = capper.GetOutput()
+        elif self.Method == 'smooth':
+            triangle = vtk.vtkTriangleFilter()
+            triangle.SetInput(self.Surface)
+            triangle.PassLinesOff()
+            triangle.PassVertsOff()
+            triangle.Update()
+            capper = vtkvmtk.vtkvmtkSmoothCapPolyData()
+            capper.SetInput(triangle.GetOutput())
+            capper.SetConstraintFactor(self.ConstraintFactor)
+            capper.SetNumberOfRings(self.NumberOfRings)
+            if self.Interactive:
+                capper.SetBoundaryIds(boundaryIds)
+            capper.Update()
+            self.Surface = capper.GetOutput()
 
         if self.TriangleOutput == 1:
             triangle = vtk.vtkTriangleFilter()
