@@ -16,7 +16,7 @@
 
 import sys
 import os.path
-import pypes
+from vmtk import pypes
 
 class PypeWrapper(object):
 
@@ -80,7 +80,7 @@ class PypeWrapper(object):
             moduleName = scriptName
             scriptArguments = scriptNameAndArguments[1]
             try:
-                exec('import '+ moduleName)
+                exec('from vmtk import '+ moduleName)
             except ImportError:
                 print 'No module named ' + moduleName
                 break
@@ -189,7 +189,7 @@ class PypeWrapper(object):
         moduleFile.write('pipe = "%s" %% (%s)\n' % (' '.join(substModulePipeArguments),','.join(['" ".join(%s.split(","))' % member.ExposedName for member in self.AllExposedMembers])))
 
         moduleFile.write('\n')
-        moduleFile.write('import pypes\n')
+        moduleFile.write('from vmtk import pypes\n')
         moduleFile.write('pypes.PypeRun(pipe)\n')
         moduleFile.write('\n')
 

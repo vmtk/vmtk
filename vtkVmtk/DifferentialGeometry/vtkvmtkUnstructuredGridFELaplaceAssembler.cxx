@@ -22,8 +22,6 @@
 #include "vtkvmtkUnstructuredGridFELaplaceAssembler.h"
 #include "vtkvmtkGaussQuadrature.h"
 #include "vtkvmtkFEShapeFunctions.h"
-#include "vtkvmtkSparseMatrixRow.h"
-#include "vtkvmtkNeighborhoods.h"
 #include "vtkCell.h"
 #include "vtkMath.h"
 #include "vtkObjectFactory.h"
@@ -33,33 +31,16 @@ vtkStandardNewMacro(vtkvmtkUnstructuredGridFELaplaceAssembler);
 
 vtkvmtkUnstructuredGridFELaplaceAssembler::vtkvmtkUnstructuredGridFELaplaceAssembler()
 {
-  this->DataSet = NULL;
-  this->Matrix = NULL;
-  this->QuadratureOrder = 1;
 }
 
 vtkvmtkUnstructuredGridFELaplaceAssembler::~vtkvmtkUnstructuredGridFELaplaceAssembler()
 {
-  if (this->DataSet)
-    {
-    this->DataSet->Delete();
-    this->DataSet = NULL;
-    }
-  if (this->Matrix)
-    {
-    this->Matrix->Delete();
-    this->Matrix = NULL;
-    }
 }
 
 void vtkvmtkUnstructuredGridFELaplaceAssembler::Build()
 {
-  vtkvmtkNeighborhoods* neighborhoods = vtkvmtkNeighborhoods::New();
-  neighborhoods->SetNeighborhoodTypeToUnstructuredGridNeighborhood();
-  neighborhoods->SetDataSet(this->DataSet);
-  neighborhoods->Build();
-  this->Matrix->AllocateRowsFromNeighborhoods(neighborhoods);
-  neighborhoods->Delete();
+  int numberOfVariables = 1;
+  this->Initialize(numberOfVariables);
 
   vtkvmtkGaussQuadrature* gaussQuadrature = vtkvmtkGaussQuadrature::New();
   gaussQuadrature->SetOrder(this->QuadratureOrder);
@@ -103,16 +84,8 @@ void vtkvmtkUnstructuredGridFELaplaceAssembler::Build()
           feShapeFunctions->GetDPhi(q,j,dphij);
           double gradphii_gradphij = vtkMath::Dot(dphii,dphij);
           double value = jacobian * quadratureWeight * gradphii_gradphij;
-          if (iId != jId)
-            {
-            double currentValue = row->GetElement(row->GetElementIndex(jId));
-            row->SetElement(row->GetElementIndex(jId),currentValue+value);
-            }
-          else
-            {
-            double currentValue = row->GetDiagonalElement();
-            row->SetDiagonalElement(currentValue+value);
-            }
+          double currentValue = this->Matrix->GetElement(iId,jId);
+          this->Matrix->SetElement(iId,jId,currentValue+value);
           }
         }
       }
@@ -122,21 +95,5 @@ void vtkvmtkUnstructuredGridFELaplaceAssembler::Build()
 
   gaussQuadrature->Delete();
   feShapeFunctions->Delete();
-}
-
-void vtkvmtkUnstructuredGridFELaplaceAssembler::DeepCopy(vtkvmtkUnstructuredGridFELaplaceAssembler *src)
-{
-  this->DataSet->DeepCopy(src->DataSet);
-  this->Matrix->DeepCopy(src->Matrix);
-  this->QuadratureOrder = src->QuadratureOrder;
-}
- 
-void vtkvmtkUnstructuredGridFELaplaceAssembler::ShallowCopy(vtkvmtkUnstructuredGridFELaplaceAssembler *src)
-{
-  this->DataSet = src->DataSet;
-  this->DataSet->Register(this);
-  this->Matrix = src->Matrix;
-  this->Matrix->Register(this);
-  this->QuadratureOrder = src->QuadratureOrder;
 }
 

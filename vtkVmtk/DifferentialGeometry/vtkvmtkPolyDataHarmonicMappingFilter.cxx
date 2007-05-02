@@ -105,6 +105,12 @@ int vtkvmtkPolyDataHarmonicMappingFilter::RequestData(
 
   vtkvmtkSparseMatrix* sparseMatrix = vtkvmtkSparseMatrix::New();
 
+  vtkvmtkDoubleVector* rhsVector = vtkvmtkDoubleVector::New();
+  rhsVector->SetNormTypeToLInf();
+    
+  vtkvmtkDoubleVector* solutionVector = vtkvmtkDoubleVector::New();
+  solutionVector->SetNormTypeToLInf();
+   
   if (this->AssemblyMode == VTK_VMTK_ASSEMBLY_STENCILS)
     {
     vtkvmtkStencils* stencils = vtkvmtkStencils::New();
@@ -115,6 +121,10 @@ int vtkvmtkPolyDataHarmonicMappingFilter::RequestData(
     stencils->Build();
 
     sparseMatrix->CopyRowsFromStencils(stencils);
+    rhsVector->Allocate(numberOfInputPoints);
+    rhsVector->Fill(0.0);
+    solutionVector->Allocate(numberOfInputPoints);
+    solutionVector->Fill(0.0);
 
     stencils->Delete();
     }
@@ -123,26 +133,18 @@ int vtkvmtkPolyDataHarmonicMappingFilter::RequestData(
     vtkvmtkPolyDataFELaplaceAssembler* assembler = vtkvmtkPolyDataFELaplaceAssembler::New();
     assembler->SetDataSet(input);
     assembler->SetMatrix(sparseMatrix);
+    assembler->SetRHSVector(rhsVector);
+    assembler->SetSolutionVector(solutionVector);
     assembler->Build();
-
     assembler->Delete();
     }
-    
-  vtkvmtkDoubleVector* rhsVector = vtkvmtkDoubleVector::New();
-  rhsVector->SetNormTypeToLInf();
-  rhsVector->Allocate(numberOfInputPoints);
-  rhsVector->Fill(0.0);
-    
-  vtkvmtkDoubleVector* solutionVector = vtkvmtkDoubleVector::New();
-  solutionVector->SetNormTypeToLInf();
-  solutionVector->Allocate(numberOfInputPoints);
-  solutionVector->Fill(0.0);
     
   vtkvmtkLinearSystem* linearSystem = vtkvmtkLinearSystem::New();
   linearSystem->SetA(sparseMatrix);
   linearSystem->SetB(rhsVector);
   linearSystem->SetX(solutionVector);
 
+  //TODO: deal with NumberOfVariables > 1
   vtkvmtkDirichletBoundaryConditions* dirichetBoundaryConditions = vtkvmtkDirichletBoundaryConditions::New();
   dirichetBoundaryConditions->SetLinearSystem(linearSystem);
   dirichetBoundaryConditions->SetBoundaryNodes(this->BoundaryPointIds);

@@ -162,35 +162,14 @@ void vtkvmtkSparseMatrixRow::CopyNeighborhood(vtkvmtkNeighborhood* neighborhood)
 {
   vtkIdType i;
 
-  this->NElements = neighborhood->GetNumberOfPoints();
+  int numberOfNeighborhoodPoints = neighborhood->GetNumberOfPoints();
 
-  if (this->ElementIds!=NULL)
-    {
-    delete[] this->ElementIds;
-    this->ElementIds = NULL;
-    }
+  this->SetNumberOfElements(numberOfNeighborhoodPoints);
 
-  this->ElementIds = new vtkIdType[this->NElements];
-
-  for (i=0; i<this->NElements; i++)
+  for (i=0; i<numberOfNeighborhoodPoints; i++)
     {
     this->ElementIds[i] = neighborhood->GetPointId(i);
     }
-
-  if (this->Elements!=NULL)
-    {
-    delete[] this->Elements;
-    this->Elements = NULL;
-    }
-
-  this->Elements = new double[this->NElements];
-
-  for (i=0; i<this->NElements; i++)
-    {
-    this->Elements[i] = 0.0;
-    }
-
-  this->DiagonalElement = 0.0;
 }
 
 void vtkvmtkSparseMatrixRow::DeepCopy(vtkvmtkItem *src)

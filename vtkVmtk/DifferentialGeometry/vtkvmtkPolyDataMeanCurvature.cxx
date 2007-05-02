@@ -77,9 +77,9 @@ void vtkvmtkPolyDataMeanCurvature::ComputePointMeanCurvatureVector(vtkPolyData* 
     {
     input->GetPoint(stencil->GetPointId(j),stencilPoint);
 
-    meanCurvatureVector[0] -= stencil->GetWeight(j) * stencilPoint[0];
-    meanCurvatureVector[1] -= stencil->GetWeight(j) * stencilPoint[1];
-    meanCurvatureVector[2] -= stencil->GetWeight(j) * stencilPoint[2];
+    meanCurvatureVector[0] += stencil->GetWeight(j) * stencilPoint[0];
+    meanCurvatureVector[1] += stencil->GetWeight(j) * stencilPoint[1];
+    meanCurvatureVector[2] += stencil->GetWeight(j) * stencilPoint[2];
     }
 
   meanCurvatureVector[0] += stencil->GetCenterWeight() * point[0];

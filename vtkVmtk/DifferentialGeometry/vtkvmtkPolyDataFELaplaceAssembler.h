@@ -25,38 +25,21 @@
 #ifndef __vtkvmtkPolyDataFELaplaceAssembler_h
 #define __vtkvmtkPolyDataFELaplaceAssembler_h
 
-#include "vtkObject.h"
-#include "vtkPolyData.h"
-#include "vtkvmtkSparseMatrix.h"
+#include "vtkvmtkFEAssembler.h"
 #include "vtkvmtkWin32Header.h"
 
-class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkPolyDataFELaplaceAssembler : public vtkObject
+class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkPolyDataFELaplaceAssembler : public vtkvmtkFEAssembler
 {
 public:
 
   static vtkvmtkPolyDataFELaplaceAssembler* New();
-  vtkTypeRevisionMacro(vtkvmtkPolyDataFELaplaceAssembler,vtkObject);
+  vtkTypeRevisionMacro(vtkvmtkPolyDataFELaplaceAssembler,vtkvmtkFEAssembler);
 
-  vtkSetObjectMacro(DataSet,vtkPolyData);
-  vtkGetObjectMacro(DataSet,vtkPolyData);
-
-  vtkSetObjectMacro(Matrix,vtkvmtkSparseMatrix);
-  vtkGetObjectMacro(Matrix,vtkvmtkSparseMatrix);
-
-  void Build();
-
-  void DeepCopy(vtkvmtkPolyDataFELaplaceAssembler *src);
-
-  void ShallowCopy(vtkvmtkPolyDataFELaplaceAssembler *src);
+  virtual void Build();
 
 protected:
   vtkvmtkPolyDataFELaplaceAssembler();
   ~vtkvmtkPolyDataFELaplaceAssembler();
-
-  vtkPolyData* DataSet;
-  vtkvmtkSparseMatrix* Matrix;
-
-  int QuadratureOrder;
 
 private:
   vtkvmtkPolyDataFELaplaceAssembler(const vtkvmtkPolyDataFELaplaceAssembler&);  // Not implemented.

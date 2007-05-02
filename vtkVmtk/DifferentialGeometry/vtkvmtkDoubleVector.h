@@ -48,8 +48,10 @@ public:
     {this->SetNormType(VTK_VMTK_LINF_NORM);};  
 
   vtkGetMacro(NumberOfElements,vtkIdType);
+  vtkGetMacro(NumberOfElementsPerVariable,vtkIdType);
+  vtkGetMacro(NumberOfVariables,vtkIdType);
 
-  void Allocate(vtkIdType numberOfElements);
+  void Allocate(vtkIdType numberOfElementsPerVariable, vtkIdType numberOfVariables=1);
   void Fill(double value);
   void Assign(vtkvmtkDoubleVector *src);
   void Assign(vtkIdType numberOfElements, const double *array);
@@ -59,6 +61,7 @@ public:
 
   const double* GetArray() {return this->Array;};
   void CopyIntoArrayComponent(vtkDataArray *array, int component);
+  void CopyVariableIntoArrayComponent(vtkDataArray *array, int variable, int component);
 
   double ComputeNorm();
   void Add(vtkvmtkDoubleVector* vectorToAdd);
@@ -73,6 +76,9 @@ protected:
   ~vtkvmtkDoubleVector();
 
   vtkIdType NumberOfElements;
+  vtkIdType NumberOfElementsPerVariable;
+  vtkIdType NumberOfVariables;
+
   int NormType;
 
   double* Array;

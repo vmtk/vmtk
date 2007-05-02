@@ -75,26 +75,72 @@ void vtkvmtkSparseMatrix::CopyRowsFromStencils(vtkvmtkStencils *stencils)
     }
 }
 
-void vtkvmtkSparseMatrix::AllocateRowsFromNeighborhoods(vtkvmtkNeighborhoods *neighborhoods)
+void vtkvmtkSparseMatrix::AllocateRowsFromNeighborhoods(vtkvmtkNeighborhoods *neighborhoods, int numberOfVariables)
 {
-  vtkIdType i;
-  vtkIdType numberOfNeighborhoods;
-  
   if (neighborhoods==NULL)
     {
     vtkErrorMacro(<<"No neighborhoods provided.");
     return;
     }
 
-  numberOfNeighborhoods = neighborhoods->GetNumberOfNeighborhoods();
+  int numberOfNeighborhoods = neighborhoods->GetNumberOfNeighborhoods();
+
+  int numberOfRows = numberOfVariables*numberOfNeighborhoods;
 
   this->Initialize();
-  this->Allocate(numberOfNeighborhoods);
-  this->SetNumberOfRows(numberOfNeighborhoods);
+  this->Allocate(numberOfRows);
+  this->SetNumberOfRows(numberOfRows);
 
-  for (i=0; i<numberOfNeighborhoods; i++)
+  int i;
+  for (i=0; i<numberOfRows; i++)
     {
-    this->GetRow(i)->CopyNeighborhood(neighborhoods->GetNeighborhood(i));
+    vtkvmtkSparseMatrixRow* row = this->GetRow(i);
+    vtkIdType pointId = i % numberOfNeighborhoods;
+    vtkvmtkNeighborhood* neighborhood = neighborhoods->GetNeighborhood(pointId);
+    int numberOfNeighborhoodPoints = neighborhood->GetNumberOfPoints();
+    int numberOfElements = numberOfNeighborhoodPoints + (numberOfVariables-1)*(numberOfNeighborhoodPoints+1);
+    row->SetNumberOfElements(numberOfElements);
+    int j;
+    for (j=0; j<numberOfNeighborhoodPoints; j++)
+      {
+      row->SetElementId(j,neighborhood->GetPointId(j));
+      }
+    int n;
+    for (n=0; n<numberOfVariables-1; n++)
+      {
+      int offset = numberOfNeighborhoodPoints + n*(numberOfNeighborhoodPoints+1);
+      row->SetElementId(offset,pointId);
+      for (j=0; j<numberOfNeighborhoodPoints; j++)
+        {
+        row->SetElementId(offset+1+j,neighborhood->GetPointId(j));
+        }
+      }
+    }
+}
+
+double vtkvmtkSparseMatrix::GetElement(vtkIdType i, vtkIdType j)
+{
+  vtkvmtkSparseMatrixRow* row = this->GetRow(i);
+  if (i != j)
+    {
+    return row->GetElement(row->GetElementIndex(j));
+    }
+  else
+    {
+    return row->GetDiagonalElement();
+    }
+}
+
+void vtkvmtkSparseMatrix::SetElement(vtkIdType i, vtkIdType j, double value)
+{
+  vtkvmtkSparseMatrixRow* row = this->GetRow(i);
+  if (i != j)
+    {
+    return row->SetElement(row->GetElementIndex(j),value);
+    }
+  else
+    {
+    return row->SetDiagonalElement(value);
     }
 }
 

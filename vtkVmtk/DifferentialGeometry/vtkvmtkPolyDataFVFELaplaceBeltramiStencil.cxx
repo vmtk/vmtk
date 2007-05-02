@@ -67,7 +67,8 @@ void vtkvmtkPolyDataFVFELaplaceBeltramiStencil::ComputeArea(vtkPolyData *data, v
 
 void vtkvmtkPolyDataFVFELaplaceBeltramiStencil::ScaleWithArea()
   {
-  this->ScaleWithAreaFactor(1.0);
+//  this->ScaleWithAreaFactor(1.0);
+  this->ScaleWithAreaFactor(1.0/3.0);
   }
 
 

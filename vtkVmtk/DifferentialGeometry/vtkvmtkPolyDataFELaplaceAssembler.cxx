@@ -22,8 +22,6 @@
 #include "vtkvmtkPolyDataFELaplaceAssembler.h"
 #include "vtkvmtkGaussQuadrature.h"
 #include "vtkvmtkFEShapeFunctions.h"
-#include "vtkvmtkSparseMatrixRow.h"
-#include "vtkvmtkNeighborhoods.h"
 #include "vtkCell.h"
 #include "vtkMath.h"
 #include "vtkObjectFactory.h"
@@ -33,33 +31,16 @@ vtkStandardNewMacro(vtkvmtkPolyDataFELaplaceAssembler);
 
 vtkvmtkPolyDataFELaplaceAssembler::vtkvmtkPolyDataFELaplaceAssembler()
 {
-  this->DataSet = NULL;
-  this->Matrix = NULL;
-  this->QuadratureOrder = 1;
 }
 
 vtkvmtkPolyDataFELaplaceAssembler::~vtkvmtkPolyDataFELaplaceAssembler()
 {
-  if (this->DataSet)
-    {
-    this->DataSet->Delete();
-    this->DataSet = NULL;
-    }
-  if (this->Matrix)
-    {
-    this->Matrix->Delete();
-    this->Matrix = NULL;
-    }
 }
 
 void vtkvmtkPolyDataFELaplaceAssembler::Build()
 {
-  vtkvmtkNeighborhoods* neighborhoods = vtkvmtkNeighborhoods::New();
-  neighborhoods->SetNeighborhoodTypeToPolyDataNeighborhood();
-  neighborhoods->SetDataSet(this->DataSet);
-  neighborhoods->Build();
-  this->Matrix->AllocateRowsFromNeighborhoods(neighborhoods);
-  neighborhoods->Delete();
+  int numberOfVariables = 1;
+  this->Initialize(numberOfVariables);
 
   vtkvmtkGaussQuadrature* gaussQuadrature = vtkvmtkGaussQuadrature::New();
   gaussQuadrature->SetOrder(this->QuadratureOrder);
@@ -90,10 +71,10 @@ void vtkvmtkPolyDataFELaplaceAssembler::Build()
       double quadratureWeight = gaussQuadrature->GetQuadratureWeight(q);
       double jacobian = feShapeFunctions->GetJacobian(q);
       double dphii[3], dphij[3];
+      //TODO: loop over DOFs
       for (i=0; i<numberOfCellPoints; i++)
         {
         vtkIdType iId = cell->GetPointId(i);
-        vtkvmtkSparseMatrixRow* row = this->Matrix->GetRow(iId);
         feShapeFunctions->GetDPhi(q,i,dphii);
         for (j=0; j<numberOfCellPoints; j++)
           {
@@ -101,16 +82,8 @@ void vtkvmtkPolyDataFELaplaceAssembler::Build()
           feShapeFunctions->GetDPhi(q,j,dphij);
           double gradphii_gradphij = vtkMath::Dot(dphii,dphij);
           double value = jacobian * quadratureWeight * gradphii_gradphij;
-          if (iId != jId)
-            {
-            double currentValue = row->GetElement(row->GetElementIndex(jId));
-            row->SetElement(row->GetElementIndex(jId),currentValue+value);
-            }
-          else
-            {
-            double currentValue = row->GetDiagonalElement();
-            row->SetDiagonalElement(currentValue+value);
-            }
+          double currentValue = this->Matrix->GetElement(iId,jId);
+          this->Matrix->SetElement(iId,jId,currentValue+value);
           }
         }
       }
@@ -118,21 +91,5 @@ void vtkvmtkPolyDataFELaplaceAssembler::Build()
 
   gaussQuadrature->Delete();
   feShapeFunctions->Delete();
-}
-
-void vtkvmtkPolyDataFELaplaceAssembler::DeepCopy(vtkvmtkPolyDataFELaplaceAssembler *src)
-{
-  this->DataSet->DeepCopy(src->DataSet);
-  this->Matrix->DeepCopy(src->Matrix);
-  this->QuadratureOrder = src->QuadratureOrder;
-}
- 
-void vtkvmtkPolyDataFELaplaceAssembler::ShallowCopy(vtkvmtkPolyDataFELaplaceAssembler *src)
-{
-  this->DataSet = src->DataSet;
-  this->DataSet->Register(this);
-  this->Matrix = src->Matrix;
-  this->Matrix->Register(this);
-  this->QuadratureOrder = src->QuadratureOrder;
 }
 

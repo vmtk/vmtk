@@ -7,6 +7,7 @@ SET (VTK_VMTK_DIFFERENTIALGEOMETRY_SRCS
   vtkvmtkEllipticProblem.cxx
   vtkvmtkEmptyNeighborhood.cxx
   vtkvmtkEmptyStencil.cxx
+  vtkvmtkFEAssembler.cxx
   vtkvmtkFEShapeFunctions.cxx
   vtkvmtkGaussQuadrature.cxx
   vtkvmtkItem.cxx

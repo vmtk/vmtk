@@ -29,22 +29,24 @@ vtkCxxRevisionMacro(vtkvmtkDoubleVector, "$Revision: 1.3 $");
 vtkStandardNewMacro(vtkvmtkDoubleVector);
 
 vtkvmtkDoubleVector::vtkvmtkDoubleVector()
-  {
+{
   this->NormType = VTK_VMTK_L2_NORM;
   this->NumberOfElements = 0;
+  this->NumberOfElementsPerVariable = 0;
+  this->NumberOfVariables = 0;
   this->Array = NULL;
-  }
+}
 
 vtkvmtkDoubleVector::~vtkvmtkDoubleVector()
-  {
+{
   if (this->Array != NULL)
     {
     delete [] this->Array;
     this->Array = NULL;
     }
-  }
+}
 
-void vtkvmtkDoubleVector::Allocate(vtkIdType numberOfElements)
+void vtkvmtkDoubleVector::Allocate(vtkIdType numberOfElementsPerVariable, vtkIdType numberOfVariables)
 {
   if ( this->Array != NULL )
     {
@@ -52,20 +54,22 @@ void vtkvmtkDoubleVector::Allocate(vtkIdType numberOfElements)
     this->Array = NULL;
     }
 
-  this->NumberOfElements = numberOfElements;
-  this->Array = new double[numberOfElements];
+  this->NumberOfElements = numberOfElementsPerVariable * numberOfVariables;
+  this->NumberOfElementsPerVariable = numberOfElementsPerVariable;
+  this->NumberOfVariables = numberOfVariables;
+  this->Array = new double[this->NumberOfElements];
 }
 
 void vtkvmtkDoubleVector::Fill(double value)
-  {
+{
   for (vtkIdType i=0; i<this->NumberOfElements; i++)
     {
     this->Array[i] = value;
     }
-  }
+}
 
 void vtkvmtkDoubleVector::Assign(vtkvmtkDoubleVector *src)
-  {
+{
   if (this->NumberOfElements != src->NumberOfElements)
     {
     vtkErrorMacro(<< "Vectors have different number of elements.");
@@ -73,16 +77,16 @@ void vtkvmtkDoubleVector::Assign(vtkvmtkDoubleVector *src)
 
   this->NumberOfElements = src->NumberOfElements;
   memcpy(this->Array, src->Array, src->NumberOfElements * sizeof(double));
-  }
+}
 
 void vtkvmtkDoubleVector::Assign(vtkIdType numberOfElements, const double *array)
-  {
+{
   this->NumberOfElements = numberOfElements;
   memcpy(this->Array, array, numberOfElements * sizeof(double));
-  }
+}
 
 double vtkvmtkDoubleVector::ComputeNorm()
-  {
+{
   vtkIdType i;
   double norm = 0.0;
   double value;
@@ -104,15 +108,17 @@ double vtkvmtkDoubleVector::ComputeNorm()
       {
       value = this->Array[i];
       if (value>norm)
-	norm = value;
+        {
+        norm = value;
+        }
       }
     }
 
   return norm;
-  }
+}
 
 void vtkvmtkDoubleVector::Add(vtkvmtkDoubleVector* vectorToAdd)
-  {
+{
   if (this->NumberOfElements != vectorToAdd->NumberOfElements)
     {
     vtkErrorMacro(<< "Vector to add does not have the same number of elements.");
@@ -123,10 +129,10 @@ void vtkvmtkDoubleVector::Add(vtkvmtkDoubleVector* vectorToAdd)
     {
     this->Array[i] += vectorToAdd->GetElement(i);
     }
-  }
+}
 
 void vtkvmtkDoubleVector::Subtract(vtkvmtkDoubleVector* vectorToSubtract)
-  {
+{
   if (this->NumberOfElements != vectorToSubtract->NumberOfElements)
     {
     vtkErrorMacro(<< "Vector to add does not have the same number of elements.");
@@ -137,18 +143,18 @@ void vtkvmtkDoubleVector::Subtract(vtkvmtkDoubleVector* vectorToSubtract)
     {
     this->Array[i] -= vectorToSubtract->GetElement(i);
     }
-  }
+}
 
 void vtkvmtkDoubleVector::MultiplyBy(double scalar)
-  {
+{
   for (int i=0; i<this->NumberOfElements; i++)
     {
     this->Array[i] *= scalar;
     }
-  }
+}
 
 double vtkvmtkDoubleVector::Dot(vtkvmtkDoubleVector* vectorToDotWith)
-  {
+{
   double dot;
 
   if (this->NumberOfElements != vectorToDotWith->NumberOfElements)
@@ -164,10 +170,10 @@ double vtkvmtkDoubleVector::Dot(vtkvmtkDoubleVector* vectorToDotWith)
     }
 
   return dot;
-  }
+}
 
 void vtkvmtkDoubleVector::CopyIntoArrayComponent(vtkDataArray *array, int component)
-  {
+{
   vtkIdType i;
 
   if (array==NULL)
@@ -177,7 +183,9 @@ void vtkvmtkDoubleVector::CopyIntoArrayComponent(vtkDataArray *array, int compon
     }
 
   if (component > array->GetNumberOfComponents()-1)
+    {
     array->SetNumberOfComponents(component+1);
+    }
 
   if (this->NumberOfElements>array->GetNumberOfTuples())
     {
@@ -188,12 +196,39 @@ void vtkvmtkDoubleVector::CopyIntoArrayComponent(vtkDataArray *array, int compon
     {
     array->SetComponent(i,component,this->Array[i]);
     }
-  }
+}
+
+void vtkvmtkDoubleVector::CopyVariableIntoArrayComponent(vtkDataArray *array, int variable, int component)
+{
+  vtkIdType i;
+
+  if (array==NULL)
+    {
+    vtkErrorMacro(<<"NULL vtkDoubleArray provided!");
+    return;
+    }
+
+  if (component > array->GetNumberOfComponents()-1)
+    {
+    array->SetNumberOfComponents(component+1);
+    }
+
+  if (this->NumberOfElementsPerVariable > array->GetNumberOfTuples())
+    {
+    array->SetNumberOfTuples(this->NumberOfElementsPerVariable);
+    }
+
+  for (i=0; i<this->NumberOfElementsPerVariable; i++)
+    {
+    array->SetComponent(i,component,this->Array[i+variable*this->NumberOfElementsPerVariable]);
+    }
+}
 
 void vtkvmtkDoubleVector::DeepCopy(vtkvmtkDoubleVector *src)
-  {
+{
   this->NumberOfElements = src->NumberOfElements;
-
+  this->NumberOfElementsPerVariable = src->NumberOfElementsPerVariable;
+  this->NumberOfVariables = src->NumberOfVariables;
   if (this->Array != NULL)
     {
     delete [] this->Array;
@@ -202,4 +237,4 @@ void vtkvmtkDoubleVector::DeepCopy(vtkvmtkDoubleVector *src)
 
   this->Array = new double[src->NumberOfElements];
   memcpy(this->Array, src->Array, src->NumberOfElements * sizeof(double));
-  }
+}

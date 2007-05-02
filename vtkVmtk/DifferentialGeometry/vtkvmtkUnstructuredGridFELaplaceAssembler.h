@@ -25,38 +25,21 @@
 #ifndef __vtkvmtkUnstructuredGridFELaplaceAssembler_h
 #define __vtkvmtkUnstructuredGridFELaplaceAssembler_h
 
-#include "vtkObject.h"
-#include "vtkUnstructuredGrid.h"
-#include "vtkvmtkSparseMatrix.h"
+#include "vtkvmtkFEAssembler.h"
 #include "vtkvmtkWin32Header.h"
 
-class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkUnstructuredGridFELaplaceAssembler : public vtkObject
+class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkUnstructuredGridFELaplaceAssembler : public vtkvmtkFEAssembler
 {
 public:
 
   static vtkvmtkUnstructuredGridFELaplaceAssembler* New();
-  vtkTypeRevisionMacro(vtkvmtkUnstructuredGridFELaplaceAssembler,vtkObject);
+  vtkTypeRevisionMacro(vtkvmtkUnstructuredGridFELaplaceAssembler,vtkvmtkFEAssembler);
 
-  vtkSetObjectMacro(DataSet,vtkUnstructuredGrid);
-  vtkGetObjectMacro(DataSet,vtkUnstructuredGrid);
-
-  vtkSetObjectMacro(Matrix,vtkvmtkSparseMatrix);
-  vtkGetObjectMacro(Matrix,vtkvmtkSparseMatrix);
-
-  void Build();
-
-  void DeepCopy(vtkvmtkUnstructuredGridFELaplaceAssembler *src);
-
-  void ShallowCopy(vtkvmtkUnstructuredGridFELaplaceAssembler *src);
+  virtual void Build();
 
 protected:
   vtkvmtkUnstructuredGridFELaplaceAssembler();
   ~vtkvmtkUnstructuredGridFELaplaceAssembler();
-
-  vtkUnstructuredGrid* DataSet;
-  vtkvmtkSparseMatrix* Matrix;
-
-  int QuadratureOrder;
 
 private:
   vtkvmtkUnstructuredGridFELaplaceAssembler(const vtkvmtkUnstructuredGridFELaplaceAssembler&);  // Not implemented.

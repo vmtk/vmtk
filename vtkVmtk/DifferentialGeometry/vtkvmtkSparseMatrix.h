@@ -52,9 +52,12 @@ public:
   vtkIdType GetNumberOfRows() {return this->GetNumberOfItems();};
 
   void CopyRowsFromStencils(vtkvmtkStencils *stencils);
-  void AllocateRowsFromNeighborhoods(vtkvmtkNeighborhoods *neighborhoods);
+  void AllocateRowsFromNeighborhoods(vtkvmtkNeighborhoods *neighborhoods, int numberOfVariables=1);
 
   void AllocateRow(vtkIdType i) {this->AllocateItem(i,VTK_VMTK_SPARSE_MATRIX_ROW);};
+
+  double GetElement(vtkIdType i, vtkIdType j);
+  void SetElement(vtkIdType i, vtkIdType j, double value);
 
 protected:
   vtkvmtkSparseMatrix();
