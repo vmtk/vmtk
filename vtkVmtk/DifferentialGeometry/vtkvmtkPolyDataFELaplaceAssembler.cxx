@@ -71,7 +71,6 @@ void vtkvmtkPolyDataFELaplaceAssembler::Build()
       double quadratureWeight = gaussQuadrature->GetQuadratureWeight(q);
       double jacobian = feShapeFunctions->GetJacobian(q);
       double dphii[3], dphij[3];
-      //TODO: loop over DOFs
       for (i=0; i<numberOfCellPoints; i++)
         {
         vtkIdType iId = cell->GetPointId(i);

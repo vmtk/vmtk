@@ -63,8 +63,6 @@ void vtkvmtkUnstructuredGridFELaplaceAssembler::Build()
     int numberOfQuadraturePoints = gaussQuadrature->GetNumberOfQuadraturePoints();
     double quadraturePCoords[3], quadraturePoint[3];
     int numberOfCellPoints = cell->GetNumberOfPoints();
-    double* weights = new double[numberOfCellPoints];
-    double* derivs = new double[dimension*numberOfCellPoints];
     int i, j;
     int q;
     for (q=0; q<numberOfQuadraturePoints; q++)
@@ -89,8 +87,6 @@ void vtkvmtkUnstructuredGridFELaplaceAssembler::Build()
           }
         }
       }
-    delete[] weights;
-    delete[] derivs;
     }
 
   gaussQuadrature->Delete();
