@@ -261,10 +261,11 @@ class vmtkImageInitialization(pypes.pypeScript):
             queryString = 'Please place two seeds'
             seeds = self.SeedInput(queryString,2)
 
-            seedIds1 = vtk.vtkIdList()
-            seedIds2 = vtk.vtkIdList()
         else:
             seeds = self.SeedsToPoints(self.Seeds)
+
+        seedIds1 = vtk.vtkIdList()
+        seedIds2 = vtk.vtkIdList()
 
         seedIds1.InsertNextId(self.Image.FindPoint(seeds.GetPoint(0)))
         seedIds2.InsertNextId(self.Image.FindPoint(seeds.GetPoint(1)))

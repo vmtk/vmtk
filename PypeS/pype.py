@@ -251,7 +251,13 @@ def PypeRun(arguments):
   
 
 if __name__=='__main__':
-    pipe = Pype()
-    pipe.Arguments = sys.argv
-    pipe.ParseArguments()
-    pipe.Execute()
+    from vmtk import pypes
+    main = pypes.pypeMain()
+    main.Arguments = sys.argv
+    main.Execute()
+
+#    pipe = Pype()
+#    pipe.Arguments = sys.argv
+#    pipe.ParseArguments()
+#    pipe.Execute()
+
