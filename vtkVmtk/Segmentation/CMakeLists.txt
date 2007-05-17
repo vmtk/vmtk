@@ -10,8 +10,8 @@ SET (VTK_VMTK_SEGMENTATION_SRCS
   vtkvmtkGradientMagnitudeImageFilter.cxx
   vtkvmtkGradientMagnitudeRecursiveGaussianImageFilter.cxx
   vtkvmtkGradientMagnitudeRecursiveGaussian2DImageFilter.cxx
-  vtkvmtkObjectnessMeasureImageFilter.cxx
-  vtkvmtkObjectnessMeasure2DImageFilter.cxx
+#  vtkvmtkObjectnessMeasureImageFilter.cxx
+#  vtkvmtkObjectnessMeasure2DImageFilter.cxx
   vtkvmtkRecursiveGaussianImageFilter.cxx
   vtkvmtkRecursiveGaussian2DImageFilter.cxx
   vtkvmtkSigmoidImageFilter.cxx
@@ -21,15 +21,29 @@ SET (VTK_VMTK_SEGMENTATION_SRCS
   vtkvmtkVesselnessMeasureImageFilter.cxx
   )
 
+IF (NOT VMTK_EXTERNAL_vtkITK)
+SET (VTK_VMTK_SEGMENTATION_SRCS 
+  ${VTK_VMTK_SEGMENTATION_SRCS}
+  vtkvmtkObjectnessMeasureImageFilter.cxx
+  vtkvmtkObjectnessMeasure2DImageFilter.cxx
+  )
+ENDIF (NOT VMTK_EXTERNAL_vtkITK)
+
+IF (NOT VMTK_EXTERNAL_vtkITK)
+  INCLUDE_DIRECTORIES (${vtkITK_SOURCE_DIR})
+  INCLUDE_DIRECTORIES (${vtkITK_BINARY_DIR})
+ELSE (NOT VMTK_EXTERNAL_vtkITK)
+  INCLUDE_DIRECTORIES (${VMTK_vtkITK_SOURCE_DIR})
+  INCLUDE_DIRECTORIES (${VMTK_vtkITK_BINARY_DIR})
+  LINK_DIRECTORIES (${VMTK_vtkITK_LIBRARY_DIR})
+ENDIF (NOT VMTK_EXTERNAL_vtkITK)
+
 ADD_LIBRARY (vtkvmtkSegmentation ${VTK_VMTK_SEGMENTATION_SRCS})
 SET_TARGET_PROPERTIES(vtkvmtkSegmentation PROPERTIES LINKER_LANGUAGE CXX)
 TARGET_LINK_LIBRARIES(vtkvmtkSegmentation vtkvmtkDifferentialGeometry vtkCommon vtkFiltering vtkGraphics vtkImaging vtkITK ITKCommon ITKBasicFilters)
 
 INSTALL_TARGETS(${VTK_VMTK_INSTALL_LIB_DIR} vtkvmtkSegmentation)
 INSTALL_FILES(${VTK_VMTK_INSTALL_INCLUDE_DIR} .h ${VTK_VMTK_SEGMENTATION_SRCS})
-
-INCLUDE_DIRECTORIES (${vtkITK_SOURCE_DIR})
-INCLUDE_DIRECTORIES (${vtkITK_BINARY_DIR})
 
 IF (VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
   VTK_WRAP_PYTHON3(vtkvmtkSegmentationPython VTK_VMTK_SEGMENTATION_PYTHON_SRCS "${VTK_VMTK_SEGMENTATION_SRCS}")

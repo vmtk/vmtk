@@ -17,6 +17,15 @@ CONFIGURE_FILE(
   ${VTK_VMTK_BINARY_DIR}/vtkvmtkConfigure.h
   )                                                                                                  
 
+OPTION(VMTK_EXTERNAL_vtkITK "Use external vtkITK installation" OFF)
+MARK_AS_ADVANCED(VMTK_EXTERNAL_vtkITK)
+
+IF (VMTK_EXTERNAL_vtkITK)
+  SET(VMTK_vtkITK_SOURCE_DIR "${VTK_VMTK_SOURCE_DIR}/vtkVmtk/Utilities/vtkITK" CACHE PATH "Source dir for vtkITK")
+  SET(VMTK_vtkITK_BINARY_DIR "${VTK_VMTK_BINARY_DIR}/vtkVmtk/Utilities/vtkITK" CACHE PATH "Binary dir for vtkITK") 
+  SET(VMTK_vtkITK_LIBRARY_DIR "${VTK_VMTK_BINARY_DIR}/bin" CACHE PATH "Library dir for vtkITK") 
+ENDIF (VMTK_EXTERNAL_vtkITK)
+
 IF(NOT VTK_VMTK_INSTALL_BIN_DIR)
   SET(VTK_VMTK_INSTALL_BIN_DIR ${VTK_VMTK_INSTALL_ROOT}/bin)
 ENDIF(NOT VTK_VMTK_INSTALL_BIN_DIR)
