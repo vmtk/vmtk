@@ -31,6 +31,7 @@ class vmtkSurfaceDistance(pypes.pypeScript):
         self.ReferenceSurface = None
         self.Surface = None
         self.DistanceArrayName = ''
+        self.DistanceVectorsArrayName = ''
         self.SignedDistanceArrayName = ''
 
         self.FlipNormals = 0
@@ -41,6 +42,7 @@ class vmtkSurfaceDistance(pypes.pypeScript):
             ['Surface','i','vtkPolyData',1,'the input surface','vmtksurfacereader'],
             ['ReferenceSurface','r','vtkPolyData',1,'the reference surface','vmtksurfacereader'],
             ['DistanceArrayName','distancearray','str',1,'name of the array where the distance of the input surface to the reference surface has to be stored'],
+            ['DistanceVectorsArrayName','distancevectorsarray','str',1,'name of the array where the distance vectors of the input surface to the reference surface has to be stored'],
             ['SignedDistanceArrayName','signeddistancearray','str',1,'name of the array where the signed distance of the input surface to the reference surface is stored; distance is positive if distance vector and normal to the reference surface have negative dot product, i.e. if the input surface is outer with respect to the reference surface'],
             ['FlipNormals','flipnormals','int',1,'flip normals to the reference surface after computing them']
             ])
@@ -71,6 +73,8 @@ class vmtkSurfaceDistance(pypes.pypeScript):
             surfaceDistance.SetReferenceSurface(self.ReferenceSurface)
             if (self.DistanceArrayName != ''):
                 surfaceDistance.SetDistanceArrayName(self.DistanceArrayName)
+            if (self.DistanceVectorsArrayName != ''):
+                surfaceDistance.SetDistanceVectorsArrayName(self.DistanceVectorsArrayName)
             if (self.SignedDistanceArrayName != ''):
                 surfaceDistance.SetSignedDistanceArrayName(self.SignedDistanceArrayName)
             surfaceDistance.Update()

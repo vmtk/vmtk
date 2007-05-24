@@ -37,6 +37,7 @@ vtkStandardNewMacro(vtkvmtkSurfaceDistance);
 vtkvmtkSurfaceDistance::vtkvmtkSurfaceDistance()
 {
   this->DistanceArrayName = NULL;
+  this->DistanceVectorsArrayName = NULL;
   this->SignedDistanceArrayName = NULL;
   this->ReferenceSurface = NULL;
 }
@@ -53,6 +54,12 @@ vtkvmtkSurfaceDistance::~vtkvmtkSurfaceDistance()
     {
     delete[] this->DistanceArrayName;
     this->DistanceArrayName = NULL;
+    }
+
+  if (this->DistanceVectorsArrayName)
+    {
+    delete[] this->DistanceVectorsArrayName;
+    this->DistanceVectorsArrayName = NULL;
     }
 
   if (this->SignedDistanceArrayName)
@@ -85,8 +92,8 @@ int vtkvmtkSurfaceDistance::RequestData(
   double distanceVector[3];
   double *weights;
   double dot;
-  bool computeDistance, computeSignedDistance;
-  vtkDoubleArray *distanceArray, *signedDistanceArray;
+  bool computeDistance, computeDistanceVectors, computeSignedDistance;
+  vtkDoubleArray *distanceArray, *distanceVectorsArray, *signedDistanceArray;
   vtkDataArray *normals;
   vtkCellLocator *locator;
   vtkGenericCell *genericCell;
@@ -98,13 +105,14 @@ int vtkvmtkSurfaceDistance::RequestData(
     return 1;
     }
 
-  if ((!this->DistanceArrayName)&&(!this->SignedDistanceArrayName))
+  if ((!this->DistanceArrayName)&&(!this->DistanceVectorsArrayName)&&(!this->SignedDistanceArrayName))
     {
     vtkErrorMacro(<<"No array names set!");
     return 1;
     }
 
   distanceArray = vtkDoubleArray::New();
+  distanceVectorsArray = vtkDoubleArray::New();
   signedDistanceArray = vtkDoubleArray::New();
   normals = NULL;
 
@@ -114,6 +122,7 @@ int vtkvmtkSurfaceDistance::RequestData(
   numberOfPoints = input->GetNumberOfPoints();
 
   computeDistance = false;
+  computeDistanceVectors = false;
   computeSignedDistance = false;
 
   if (this->DistanceArrayName)
@@ -122,6 +131,14 @@ int vtkvmtkSurfaceDistance::RequestData(
     distanceArray->SetName(this->DistanceArrayName);
     distanceArray->SetNumberOfComponents(1);
     distanceArray->SetNumberOfTuples(numberOfPoints);
+    }
+
+  if (this->DistanceVectorsArrayName)
+    {
+    computeDistanceVectors = true;
+    distanceVectorsArray->SetName(this->DistanceVectorsArrayName);
+    distanceVectorsArray->SetNumberOfComponents(3);
+    distanceVectorsArray->SetNumberOfTuples(numberOfPoints);
     }
 
   if (this->SignedDistanceArrayName)
@@ -153,6 +170,11 @@ int vtkvmtkSurfaceDistance::RequestData(
     if (computeDistance)
       {
       distanceArray->SetTuple1(i,distance);
+      }
+
+    if (computeDistanceVectors)
+      {
+      distanceVectorsArray->SetTuple(i,distanceVector);
       }
 
     if (computeSignedDistance)
@@ -191,12 +213,18 @@ int vtkvmtkSurfaceDistance::RequestData(
     output->GetPointData()->AddArray(distanceArray);
     }
 
+  if (computeDistanceVectors)
+    {
+    output->GetPointData()->AddArray(distanceVectorsArray);
+    }
+
   if (computeSignedDistance)
     {
     output->GetPointData()->AddArray(signedDistanceArray);
     }
 
   distanceArray->Delete();
+  distanceVectorsArray->Delete();
   signedDistanceArray->Delete();
   locator->Delete();
   genericCell->Delete();

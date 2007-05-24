@@ -50,6 +50,11 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkSurfaceDistance : public vtkPolyDataAlgorithm
   vtkGetStringMacro(SignedDistanceArrayName);
 
   // Description:
+  // Set/Get the name of the array where the computed distance vectors have to be stored.
+  vtkSetStringMacro(DistanceVectorsArrayName);
+  vtkGetStringMacro(DistanceVectorsArrayName);
+
+  // Description:
   // Set/Get the reference surface to compute distance from.
   vtkSetObjectMacro(ReferenceSurface,vtkPolyData);
   vtkGetObjectMacro(ReferenceSurface,vtkPolyData);
@@ -61,6 +66,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkSurfaceDistance : public vtkPolyDataAlgorithm
   virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
 
   char *DistanceArrayName;
+  char *DistanceVectorsArrayName;
   char *SignedDistanceArrayName;
   vtkPolyData *ReferenceSurface;
 
