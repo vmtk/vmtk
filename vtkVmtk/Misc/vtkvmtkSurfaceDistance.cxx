@@ -174,7 +174,7 @@ int vtkvmtkSurfaceDistance::RequestData(
 
     if (computeDistanceVectors)
       {
-      distanceVectorsArray->SetTuple(i,distanceVector);
+      distanceVectorsArray->SetTuple3(i,-distanceVector[0],-distanceVector[1],-distanceVector[2]);
       }
 
     if (computeSignedDistance)

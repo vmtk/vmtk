@@ -58,7 +58,7 @@ class vmtkSurfaceDistance(pypes.pypeScript):
         if self.ReferenceSurface == None:
             self.PrintError('Error: No ReferenceSurface.')
 
-        if (self.SignedDistanceArrayName != ''):
+        if self.SignedDistanceArrayName != '':
             normalsFilter = vtk.vtkPolyDataNormals()
             normalsFilter.SetInput(self.ReferenceSurface)
             normalsFilter.AutoOrientNormalsOn()
@@ -66,16 +66,16 @@ class vmtkSurfaceDistance(pypes.pypeScript):
             normalsFilter.Update()
             self.ReferenceSurface.GetPointData().SetNormals(normalsFilter.GetOutput().GetPointData().GetNormals())
 
-        if (self.DistanceArrayName != '') | (self.SignedDistanceArrayName != ''):
+        if self.DistanceArrayName != '' or self.DistanceVectorsArrayName != '' or self.SignedDistanceArrayName != '':
             self.PrintLog('Computing distance.')
             surfaceDistance = vtkvmtk.vtkvmtkSurfaceDistance()
             surfaceDistance.SetInput(self.Surface)
             surfaceDistance.SetReferenceSurface(self.ReferenceSurface)
-            if (self.DistanceArrayName != ''):
+            if self.DistanceArrayName != '':
                 surfaceDistance.SetDistanceArrayName(self.DistanceArrayName)
-            if (self.DistanceVectorsArrayName != ''):
+            if self.DistanceVectorsArrayName != '':
                 surfaceDistance.SetDistanceVectorsArrayName(self.DistanceVectorsArrayName)
-            if (self.SignedDistanceArrayName != ''):
+            if self.SignedDistanceArrayName != '':
                 surfaceDistance.SetSignedDistanceArrayName(self.SignedDistanceArrayName)
             surfaceDistance.Update()
             self.Surface = surfaceDistance.GetOutput()
