@@ -58,6 +58,7 @@ __all__ = [
   'vmtkrenderer',
   'vmtksurfacecapper',
   'vmtksurfacecelldatatopointdata',
+  'vmtksurfacecenterlineprojection',
   'vmtksurfaceclipper',
   'vmtksurfaceconnectivity',
   'vmtksurfacedecimation',

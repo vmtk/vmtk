@@ -60,6 +60,7 @@ SET(SCRIPTS_SRCS
   vmtkrenderer.py
   vmtksurfacecapper.py
   vmtksurfacecelldatatopointdata.py
+  vmtksurfacecenterlineprojection.py
   vmtksurfaceclipper.py
   vmtksurfaceconnectivity.py
   vmtksurfacedecimation.py

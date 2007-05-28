@@ -30,6 +30,7 @@ SET (VTK_VMTK_COMPUTATIONALGEOMETRY_SRCS
   vtkvmtkPolyDataCenterlineAbscissaMetricFilter.cxx
   vtkvmtkPolyDataCenterlineAngularMetricFilter.cxx
   vtkvmtkPolyDataCenterlineMetricFilter.cxx
+  vtkvmtkPolyDataCenterlineProjection.cxx
   vtkvmtkPolyDataCenterlineSections.cxx
   vtkvmtkPolyDataFlowExtensionsFilter.cxx
   vtkvmtkPolyDataDistanceToCenterlines.cxx
