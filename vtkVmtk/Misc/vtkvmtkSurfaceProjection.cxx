@@ -96,12 +96,17 @@ int vtkvmtkSurfaceProjection::RequestData(
     {
     input->GetPoint(i,point);
     locator->FindClosestPoint(point,closestPoint,genericCell,cellId,subId,distance2);
-    double* weights = new double[genericCell->GetNumberOfPoints()];
-    genericCell->EvaluatePosition(closestPoint,NULL,subId,pcoords,distance2,weights);
-
-    outputPointData->InterpolatePoint(referencePointData,i,genericCell->GetPointIds(),weights);
-
-    delete[] weights;
+    if (this->ReferenceSurface->GetCellType(cellId) != VTK_POLY_LINE)
+      {
+      double* weights = new double[genericCell->GetNumberOfPoints()];
+      genericCell->EvaluatePosition(closestPoint,NULL,subId,pcoords,distance2,weights);
+      outputPointData->InterpolatePoint(referencePointData,i,genericCell->GetPointIds(),weights);
+      delete[] weights;
+      }
+    else
+      {
+      outputPointData->CopyData(referencePointData,genericCell->GetPointId(subId),i);
+      }
     }
 
   locator->Delete();
