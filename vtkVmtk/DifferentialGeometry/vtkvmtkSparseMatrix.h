@@ -58,6 +58,7 @@ public:
 
   double GetElement(vtkIdType i, vtkIdType j);
   void SetElement(vtkIdType i, vtkIdType j, double value);
+  void AddElement(vtkIdType i, vtkIdType j, double value);
 
 protected:
   vtkvmtkSparseMatrix();

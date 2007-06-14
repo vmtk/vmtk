@@ -81,8 +81,7 @@ void vtkvmtkPolyDataFELaplaceAssembler::Build()
           feShapeFunctions->GetDPhi(q,j,dphij);
           double gradphii_gradphij = vtkMath::Dot(dphii,dphij);
           double value = jacobian * quadratureWeight * gradphii_gradphij;
-          double currentValue = this->Matrix->GetElement(iId,jId);
-          this->Matrix->SetElement(iId,jId,currentValue+value);
+          this->Matrix->AddElement(iId,jId,value);
           }
         }
       }

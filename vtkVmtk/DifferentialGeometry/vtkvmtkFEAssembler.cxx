@@ -82,7 +82,7 @@ void vtkvmtkFEAssembler::Initialize(int numberOfVariables)
     }
   neighborhoods->SetDataSet(this->DataSet);
   neighborhoods->Build();
-  this->Matrix->AllocateRowsFromNeighborhoods(neighborhoods);
+  this->Matrix->AllocateRowsFromNeighborhoods(neighborhoods,this->NumberOfVariables);
   neighborhoods->Delete();
 
   this->RHSVector->Allocate(this->DataSet->GetNumberOfPoints(),this->NumberOfVariables);

@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   VMTK
-  Module:    $RCSfile: vtkvmtkPolyDataHarmonicMappingFilter.cxx,v $
+  Module:    $RCSfile: vtkvmtkUnstructuredGridHarmonicMappingFilter.cxx,v $
   Language:  C++
   Date:      $Date: 2006/04/06 16:46:44 $
   Version:   $Revision: 1.7 $
@@ -19,15 +19,13 @@
 
 =========================================================================*/
 
-#include "vtkvmtkPolyDataHarmonicMappingFilter.h"
-#include "vtkPolyData.h"
+#include "vtkvmtkUnstructuredGridHarmonicMappingFilter.h"
+#include "vtkUnstructuredGrid.h"
 #include "vtkPointData.h"
 #include "vtkDoubleArray.h"
 #include "vtkvmtkDoubleVector.h"
-#include "vtkvmtkStencils.h"
-#include "vtkvmtkPolyDataFELaplaceAssembler.h"
+#include "vtkvmtkUnstructuredGridFELaplaceAssembler.h"
 #include "vtkvmtkSparseMatrix.h"
-#include "vtkvmtkSparseMatrixRow.h"
 #include "vtkvmtkLinearSystem.h"
 #include "vtkvmtkLASPACKLinearSystemSolver.h"
 
@@ -36,21 +34,20 @@
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkPolyDataHarmonicMappingFilter, "$Revision: 1.7 $");
-vtkStandardNewMacro(vtkvmtkPolyDataHarmonicMappingFilter);
+vtkCxxRevisionMacro(vtkvmtkUnstructuredGridHarmonicMappingFilter, "$Revision: 1.7 $");
+vtkStandardNewMacro(vtkvmtkUnstructuredGridHarmonicMappingFilter);
 
-vtkvmtkPolyDataHarmonicMappingFilter::vtkvmtkPolyDataHarmonicMappingFilter() 
+vtkvmtkUnstructuredGridHarmonicMappingFilter::vtkvmtkUnstructuredGridHarmonicMappingFilter() 
 {
   this->BoundaryPointIds = NULL;
   this->BoundaryValues = NULL;
   
   this->HarmonicMappingArrayName = NULL;
   this->ConvergenceTolerance = 1E-6;
-  this->SetAssemblyModeToFiniteElements();
-  this->QuadratureOrder = 1;
+  this->QuadratureOrder = 3;
 }
 
-vtkvmtkPolyDataHarmonicMappingFilter::~vtkvmtkPolyDataHarmonicMappingFilter()
+vtkvmtkUnstructuredGridHarmonicMappingFilter::~vtkvmtkUnstructuredGridHarmonicMappingFilter()
 {
   if (this->BoundaryPointIds)
     {
@@ -71,7 +68,7 @@ vtkvmtkPolyDataHarmonicMappingFilter::~vtkvmtkPolyDataHarmonicMappingFilter()
     }
 }
 
-int vtkvmtkPolyDataHarmonicMappingFilter::RequestData(
+int vtkvmtkUnstructuredGridHarmonicMappingFilter::RequestData(
   vtkInformation *vtkNotUsed(request),
   vtkInformationVector **inputVector,
   vtkInformationVector *outputVector)
@@ -79,9 +76,9 @@ int vtkvmtkPolyDataHarmonicMappingFilter::RequestData(
   vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
   vtkInformation *outInfo = outputVector->GetInformationObject(0);
 
-  vtkPolyData *input = vtkPolyData::SafeDownCast(
+  vtkUnstructuredGrid *input = vtkUnstructuredGrid::SafeDownCast(
     inInfo->Get(vtkDataObject::DATA_OBJECT()));
-  vtkPolyData *output = vtkPolyData::SafeDownCast(
+  vtkUnstructuredGrid *output = vtkUnstructuredGrid::SafeDownCast(
     outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
   if (!this->BoundaryPointIds)
@@ -112,41 +109,20 @@ int vtkvmtkPolyDataHarmonicMappingFilter::RequestData(
   vtkvmtkDoubleVector* solutionVector = vtkvmtkDoubleVector::New();
   solutionVector->SetNormTypeToLInf();
    
-  if (this->AssemblyMode == VTK_VMTK_ASSEMBLY_STENCILS)
-    {
-    vtkvmtkStencils* stencils = vtkvmtkStencils::New();
-    stencils->SetStencilTypeToFELaplaceBeltramiStencil();
-    stencils->WeightScalingOff();
-    stencils->NegateWeightsOn();
-    stencils->SetDataSet(input);
-    stencils->Build();
-
-    sparseMatrix->CopyRowsFromStencils(stencils);
-    rhsVector->Allocate(numberOfInputPoints);
-    rhsVector->Fill(0.0);
-    solutionVector->Allocate(numberOfInputPoints);
-    solutionVector->Fill(0.0);
-
-    stencils->Delete();
-    }
-  else if (this->AssemblyMode == VTK_VMTK_ASSEMBLY_FINITEELEMENTS)
-    {
-    vtkvmtkPolyDataFELaplaceAssembler* assembler = vtkvmtkPolyDataFELaplaceAssembler::New();
-    assembler->SetDataSet(input);
-    assembler->SetMatrix(sparseMatrix);
-    assembler->SetRHSVector(rhsVector);
-    assembler->SetSolutionVector(solutionVector);
-    assembler->SetQuadratureOrder(this->QuadratureOrder);
-    assembler->Build();
-    assembler->Delete();
-    }
+  vtkvmtkUnstructuredGridFELaplaceAssembler* assembler = vtkvmtkUnstructuredGridFELaplaceAssembler::New();
+  assembler->SetDataSet(input);
+  assembler->SetMatrix(sparseMatrix);
+  assembler->SetRHSVector(rhsVector);
+  assembler->SetSolutionVector(solutionVector);
+  assembler->SetQuadratureOrder(this->QuadratureOrder);
+  assembler->Build();
+  assembler->Delete();
     
   vtkvmtkLinearSystem* linearSystem = vtkvmtkLinearSystem::New();
   linearSystem->SetA(sparseMatrix);
   linearSystem->SetB(rhsVector);
   linearSystem->SetX(solutionVector);
 
-  //TODO: deal with NumberOfVariables > 1
   vtkvmtkDirichletBoundaryConditions* dirichetBoundaryConditions = vtkvmtkDirichletBoundaryConditions::New();
   dirichetBoundaryConditions->SetLinearSystem(linearSystem);
   dirichetBoundaryConditions->SetBoundaryNodes(this->BoundaryPointIds);

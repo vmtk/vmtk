@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   VMTK
-  Module:    $RCSfile: vtkvmtkPolyDataHarmonicMappingFilter.h,v $
+  Module:    $RCSfile: vtkvmtkUnstructuredGridHarmonicMappingFilter.h,v $
   Language:  C++
   Date:      $Date: 2006/04/06 16:46:44 $
   Version:   $Revision: 1.4 $
@@ -18,24 +18,24 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkPolyDataHarmonicMappingFilter - ..
+// .NAME vtkvmtkUnstructuredGridHarmonicMappingFilter - ..
 // .SECTION Description
 // ..
 
-#ifndef __vtkvmtkPolyDataHarmonicMappingFilter_h
-#define __vtkvmtkPolyDataHarmonicMappingFilter_h
+#ifndef __vtkvmtkUnstructuredGridHarmonicMappingFilter_h
+#define __vtkvmtkUnstructuredGridHarmonicMappingFilter_h
 
 #include "vtkvmtkWin32Header.h"
-#include "vtkPolyDataAlgorithm.h"
+#include "vtkUnstructuredGridAlgorithm.h"
 
 #include "vtkIdList.h"
 #include "vtkDoubleArray.h"
 
-class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkPolyDataHarmonicMappingFilter : public vtkPolyDataAlgorithm
+class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkUnstructuredGridHarmonicMappingFilter : public vtkUnstructuredGridAlgorithm
 {
 public:
-  static vtkvmtkPolyDataHarmonicMappingFilter* New();
-  vtkTypeRevisionMacro(vtkvmtkPolyDataHarmonicMappingFilter,vtkPolyDataAlgorithm);
+  static vtkvmtkUnstructuredGridHarmonicMappingFilter* New();
+  vtkTypeRevisionMacro(vtkvmtkUnstructuredGridHarmonicMappingFilter,vtkUnstructuredGridAlgorithm);
 
   vtkSetObjectMacro(BoundaryPointIds,vtkIdList);
   vtkGetObjectMacro(BoundaryPointIds,vtkIdList);
@@ -49,28 +49,12 @@ public:
   vtkSetMacro(ConvergenceTolerance,double);
   vtkGetMacro(ConvergenceTolerance,double);
 
-  vtkSetMacro(AssemblyMode,int);
-  vtkGetMacro(AssemblyMode,int);
-  void SetAssemblyModeToStencils()
-  { this->SetAssemblyMode(VTK_VMTK_ASSEMBLY_STENCILS); }
-   void SetAssemblyModeToFiniteElements()
-  { this->SetAssemblyMode(VTK_VMTK_ASSEMBLY_FINITEELEMENTS); }
-
   vtkSetMacro(QuadratureOrder,int);
   vtkGetMacro(QuadratureOrder,int);
 
-
-//BTX
-  enum 
-    {
-    VTK_VMTK_ASSEMBLY_STENCILS,
-    VTK_VMTK_ASSEMBLY_FINITEELEMENTS
-    };
-//ETX
-
 protected:
-  vtkvmtkPolyDataHarmonicMappingFilter();
-  ~vtkvmtkPolyDataHarmonicMappingFilter();
+  vtkvmtkUnstructuredGridHarmonicMappingFilter();
+  ~vtkvmtkUnstructuredGridHarmonicMappingFilter();
 
   virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
 
@@ -79,12 +63,11 @@ protected:
 
   char* HarmonicMappingArrayName;
   double ConvergenceTolerance;
-  int AssemblyMode;
   int QuadratureOrder;
 
 private:
-  vtkvmtkPolyDataHarmonicMappingFilter(const vtkvmtkPolyDataHarmonicMappingFilter&);  // Not implemented.
-  void operator=(const vtkvmtkPolyDataHarmonicMappingFilter&);  // Not implemented.
+  vtkvmtkUnstructuredGridHarmonicMappingFilter(const vtkvmtkUnstructuredGridHarmonicMappingFilter&);  // Not implemented.
+  void operator=(const vtkvmtkUnstructuredGridHarmonicMappingFilter&);  // Not implemented.
 };
 
 #endif

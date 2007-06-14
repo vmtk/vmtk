@@ -96,23 +96,43 @@ void vtkvmtkSparseMatrix::AllocateRowsFromNeighborhoods(vtkvmtkNeighborhoods *ne
     {
     vtkvmtkSparseMatrixRow* row = this->GetRow(i);
     vtkIdType pointId = i % numberOfNeighborhoods;
+    vtkIdType variableId = i / numberOfNeighborhoods;
     vtkvmtkNeighborhood* neighborhood = neighborhoods->GetNeighborhood(pointId);
     int numberOfNeighborhoodPoints = neighborhood->GetNumberOfPoints();
     int numberOfElements = numberOfNeighborhoodPoints + (numberOfVariables-1)*(numberOfNeighborhoodPoints+1);
     row->SetNumberOfElements(numberOfElements);
     int j;
-    for (j=0; j<numberOfNeighborhoodPoints; j++)
-      {
-      row->SetElementId(j,neighborhood->GetPointId(j));
-      }
+//    for (j=0; j<numberOfNeighborhoodPoints; j++)
+//      {
+//      row->SetElementId(j,neighborhood->GetPointId(j));
+//      row->SetElement(j,0.0);
+//      }
     int n;
-    for (n=0; n<numberOfVariables-1; n++)
+//    for (n=0; n<numberOfVariables-1; n++)
+//      {
+//      int offset = numberOfNeighborhoodPoints + n*(numberOfNeighborhoodPoints+1);
+//      row->SetElementId(offset,pointId+n*numberOfNeighborhoods);
+//      row->SetElement(offset,0.0);
+//      for (j=0; j<numberOfNeighborhoodPoints; j++)
+//        {
+//        row->SetElementId(offset+1+j,neighborhood->GetPointId(j)+n*numberOfNeighborhoods);
+//        row->SetElement(offset+1+j,0.0);
+//        }
+//      }
+    int index = 0;
+    for (n=0; n<numberOfVariables; n++)
       {
-      int offset = numberOfNeighborhoodPoints + n*(numberOfNeighborhoodPoints+1);
-      row->SetElementId(offset,pointId);
       for (j=0; j<numberOfNeighborhoodPoints; j++)
         {
-        row->SetElementId(offset+1+j,neighborhood->GetPointId(j));
+        row->SetElementId(index,neighborhood->GetPointId(j)+n*numberOfNeighborhoods);
+        row->SetElement(index,0.0);
+        index++;
+        }
+      if (n != variableId)
+        {
+        row->SetElementId(index,pointId+n*numberOfNeighborhoods);
+        row->SetElement(index,0.0);
+        index++;
         }
       }
     }
@@ -142,6 +162,12 @@ void vtkvmtkSparseMatrix::SetElement(vtkIdType i, vtkIdType j, double value)
     {
     return row->SetDiagonalElement(value);
     }
+}
+
+void vtkvmtkSparseMatrix::AddElement(vtkIdType i, vtkIdType j, double value)
+{
+  double currentValue = this->GetElement(i,j);
+  this->SetElement(i,j,currentValue+value);
 }
 
 void vtkvmtkSparseMatrix::Multiply(vtkvmtkDoubleVector* x, vtkvmtkDoubleVector* y)

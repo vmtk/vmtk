@@ -19,9 +19,11 @@ SET (VTK_VMTK_DIFFERENTIALGEOMETRY_SRCS
   vtkvmtkNeighborhoods.cxx
   vtkvmtkPolyDataAreaWeightedUmbrellaStencil.cxx
   vtkvmtkPolyDataCylinderHarmonicMappingFilter.cxx
+  vtkvmtkPolyDataFEGradientAssembler.cxx
   vtkvmtkPolyDataFELaplaceAssembler.cxx
   vtkvmtkPolyDataFELaplaceBeltramiStencil.cxx
   vtkvmtkPolyDataFVFELaplaceBeltramiStencil.cxx
+  vtkvmtkPolyDataGradientFilter.cxx
   vtkvmtkPolyDataGradientStencil.cxx
   vtkvmtkPolyDataHarmonicMappingFilter.cxx
   vtkvmtkPolyDataLaplaceBeltramiStencil.cxx
@@ -37,8 +39,11 @@ SET (VTK_VMTK_DIFFERENTIALGEOMETRY_SRCS
   vtkvmtkSparseMatrixRow.cxx
   vtkvmtkStencil.cxx
   vtkvmtkStencils.cxx
-  vtkvmtkUnstructuredGridNeighborhood.cxx
+  vtkvmtkUnstructuredGridFEGradientAssembler.cxx
   vtkvmtkUnstructuredGridFELaplaceAssembler.cxx
+  vtkvmtkUnstructuredGridGradientFilter.cxx
+  vtkvmtkUnstructuredGridHarmonicMappingFilter.cxx
+  vtkvmtkUnstructuredGridNeighborhood.cxx
   )
 
 INCLUDE_DIRECTORIES(${LASPACK_SOURCE_DIR})

@@ -62,13 +62,17 @@ void vtkvmtkUnstructuredGridNeighborhood::Build()
   vtkIdType cellPointId;
   for (i=0; i<numCellsInStencil; i++)
     {
+    if (ugdata->GetCell(cellIds->GetId(i))->GetCellDimension() != 3)
+      {
+      continue;
+      } 
     ugdata->GetCellPoints(cellIds->GetId(i),ptIds);
     for (j=0; j<ptIds->GetNumberOfIds(); j++)
       {
       cellPointId = ptIds->GetId(j);
       if (cellPointId != pointId)
         {
-        stencilIds->InsertUniqueId(ptIds->GetId(j));
+        stencilIds->InsertUniqueId(cellPointId);
         }
       }
     }

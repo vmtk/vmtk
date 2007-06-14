@@ -58,6 +58,7 @@ public:
 
   double GetElement(vtkIdType i) {return this->Array[i];};
   void SetElement(vtkIdType i, double value) {this->Array[i] = value;};
+  void AddElement(vtkIdType i, double value) {this->Array[i] += value;};
 
   const double* GetArray() {return this->Array;};
   void CopyIntoArrayComponent(vtkDataArray *array, int component);

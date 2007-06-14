@@ -5,6 +5,7 @@ SET (VTK_VMTK_MISC_SRCS
   vtkvmtkLinearToQuadraticSurfaceMeshFilter.cxx
   vtkvmtkMeshProjection.cxx
   vtkvmtkMeshVelocityStatistics.cxx
+  vtkvmtkMeshVorticity.cxx
   vtkvmtkPolyDataBoundaryExtractor.cxx
   vtkvmtkPolyDataKiteRemovalFilter.cxx
   vtkvmtkPolyDataToUnstructuredGridFilter.cxx
@@ -18,7 +19,7 @@ SET (VTK_VMTK_MISC_SRCS
 INCLUDE_DIRECTORIES(${TETGEN_SOURCE_DIR})
 LINK_DIRECTORIES(${TETGEN_LIB_DIR})
 
-SET (VTK_VMTK_MISC_TARGET_LINK_LIBRARIES vtkvmtkMisc vtkCommon vtkFiltering vtkGraphics vtkHybrid tet)
+SET (VTK_VMTK_MISC_TARGET_LINK_LIBRARIES vtkvmtkMisc vtkvmtkDifferentialGeometry vtkCommon vtkFiltering vtkGraphics vtkHybrid tet)
 
 #OPTION(VTK_VMTK_SURFMESH_SUPPORT "Build SurfMesh support." OFF)
 
@@ -42,7 +43,7 @@ IF (VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
   VTK_WRAP_PYTHON3(vtkvmtkMiscPython VTK_VMTK_MISC_PYTHON_SRCS "${VTK_VMTK_MISC_SRCS}")
   ADD_LIBRARY(vtkvmtkMiscPythonD ${VTK_VMTK_MISC_PYTHON_SRCS})
   ADD_LIBRARY(vtkvmtkMiscPython MODULE vtkvmtkMiscPythonInit.cxx)
-  TARGET_LINK_LIBRARIES(vtkvmtkMiscPythonD vtkvmtkMisc vtkCommon vtkCommonPythonD vtkFiltering vtkFilteringPythonD vtkGraphics vtkGraphicsPythonD)
+  TARGET_LINK_LIBRARIES(vtkvmtkMiscPythonD vtkvmtkMisc vtkvmtkDifferentialGeometry vtkvmtkDifferentialGeometryPythonD vtkCommon vtkCommonPythonD vtkFiltering vtkFilteringPythonD vtkGraphics vtkGraphicsPythonD)
   TARGET_LINK_LIBRARIES (vtkvmtkMiscPython vtkvmtkMiscPythonD)
   IF(WIN32 AND NOT CYGWIN)
      SET_TARGET_PROPERTIES(vtkvmtkMiscPython PROPERTIES SUFFIX ".pyd")
