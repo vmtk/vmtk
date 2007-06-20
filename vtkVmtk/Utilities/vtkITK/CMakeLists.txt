@@ -49,12 +49,12 @@ INCLUDE_DIRECTORIES(
 # --------------------------------------------------------------------------
 # Build the library
 
-ADD_LIBRARY (vtkITK ${vtkITK_SRCS})
-SET_TARGET_PROPERTIES(vtkITK PROPERTIES LINKER_LANGUAGE CXX)
-TARGET_LINK_LIBRARIES(vtkITK vtkImaging ITKNumerics ITKBasicFilters ITKIO ITKDICOMParser)
+ADD_LIBRARY (vtkvmtkITK ${vtkITK_SRCS})
+SET_TARGET_PROPERTIES(vtkvmtkITK PROPERTIES LINKER_LANGUAGE CXX)
+TARGET_LINK_LIBRARIES(vtkvmtkITK vtkImaging ITKNumerics ITKBasicFilters ITKIO ITKDICOMParser)
 
-INSTALL_TARGETS(${VTK_VMTK_INSTALL_LIB_DIR} vtkITK)
-INSTALL_FILES(${VTK_VMTK_INSTALL_INCLUDE_DIR} .h ${vtkITK_SRCS} ${VTKITK_EXTRA_INCLUDES})
+INSTALL_TARGETS(${VTK_VMTK_INSTALL_LIB_DIR} vtkvmtkITK)
+INSTALL_FILES(${VTK_VMTK_INSTALL_INCLUDE_DIR} .h ${vtkvmtkITK_SRCS} ${VTKITK_EXTRA_INCLUDES})
 
 
 # --------------------------------------------------------------------------
@@ -64,13 +64,13 @@ INSTALL_FILES(${VTK_VMTK_INSTALL_INCLUDE_DIR} .h ${vtkITK_SRCS} ${VTKITK_EXTRA_I
 #INCLUDE("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
 #VTK_WRAP_TCL3(vtkITK vtkITK_TCL_SRCS "${vtkITK_SRCS}" "")
 IF (VTK_WRAP_PYTHON)
-  VTK_WRAP_PYTHON3(vtkITKPython vtkITKPython_SRCS "${vtkITK_SRCS}")
-  ADD_LIBRARY(vtkITKPythonD ${vtkITKPython_SRCS})
-  ADD_LIBRARY(vtkITKPython MODULE vtkITKPythonInit.cxx)
-  TARGET_LINK_LIBRARIES(vtkITKPythonD vtkITK vtkCommon vtkCommonPythonD vtkFiltering vtkFilteringPythonD)
-  TARGET_LINK_LIBRARIES (vtkITKPython vtkITKPythonD)
-  INSTALL_TARGETS(${VTK_VMTK_INSTALL_LIB_DIR} vtkITKPythonD)
-  INSTALL_TARGETS(${VTK_VMTK_MODULE_INSTALL_LIB_DIR} vtkITKPython)
+  VTK_WRAP_PYTHON3(vtkvmtkITKPython vtkITKPython_SRCS "${vtkITK_SRCS}")
+  ADD_LIBRARY(vtkvmtkITKPythonD ${vtkITKPython_SRCS})
+  ADD_LIBRARY(vtkvmtkITKPython MODULE vtkvmtkITKPythonInit.cxx)
+  TARGET_LINK_LIBRARIES(vtkvmtkITKPythonD vtkvmtkITK vtkCommon vtkCommonPythonD vtkFiltering vtkFilteringPythonD)
+  TARGET_LINK_LIBRARIES (vtkvmtkITKPython vtkvmtkITKPythonD)
+  INSTALL_TARGETS(${VTK_VMTK_INSTALL_LIB_DIR} vtkvmtkITKPythonD)
+  INSTALL_TARGETS(${VTK_VMTK_MODULE_INSTALL_LIB_DIR} vtkvmtkITKPython)
 ENDIF (VTK_WRAP_PYTHON)
 
 # --------------------------------------------------------------------------
