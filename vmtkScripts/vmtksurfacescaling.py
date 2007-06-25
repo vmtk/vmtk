@@ -34,7 +34,7 @@ class vmtkSurfaceScaling(pypes.pypeScript):
         self.SetScriptDoc('scale a surface by an isotropic factor')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
-            ['ScaleFactor','scale','float',1,'','isotropic scaling factor']
+            ['ScaleFactor','scale','float',1,'(0.0,)','isotropic scaling factor']
             ])
         self.SetOutputMembers([
             ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter']

@@ -61,12 +61,12 @@ class vmtkImageReader(pypes.pypeScript):
             ['InputFilePattern','pattern','str',1,'','input file pattern (e.g. %s%04d.png)'],
             ['InputDirectoryName','d','str',1,'','input directory name - dicom only'],
             ['DataExtent','extent','int',6,'','3D extent of the image - raw and png'],
-            ['HeaderSize','headersize','int',1,'','size of the image header - raw only'],
+            ['HeaderSize','headersize','int',1,'(0,)','size of the image header - raw only'],
             ['DataSpacing','spacing','float',3,'','spacing of the image - raw, tiff, png'],
             ['DataOrigin','origin','float',3,'','origin of the image - raw, tiff, png'],
-            ['DataByteOrder','byteorder','str',1,'','byte ordering (littleendian, bigendian) - raw only'],
-            ['DataScalarType','scalartype','str',1,'','scalar type (float, double, int, short, ushort, uchar) - raw only'],
-            ['FileDimensionality','filedimensionality','int',1,'','dimensionality of the file to read - raw only'],
+            ['DataByteOrder','byteorder','str',1,'["littleendian","bigendian"]','byte ordering - raw only'],
+            ['DataScalarType','scalartype','str',1,'["float","double","int","short","ushort","uchar"]','scalar type - raw only'],
+            ['FileDimensionality','filedimensionality','int',1,'(2,3)','dimensionality of the file to read - raw only'],
             ['Flip','flip','bool',3,'','toggle flipping of the corresponding axis'],
             ['AutoOrientDICOMImage','autoorientdicom','bool',1,'','flip a dicom stack in order to have a left-to-right, posterio-to-anterior, inferior-to-superior image; this is based on the \"image orientation (patient)\" field in the dicom header']
             ])

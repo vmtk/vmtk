@@ -46,11 +46,11 @@ class vmtkImageFeatures(pypes.pypeScript):
         self.SetInputMembers([
             ['Image','i','vtkImageData',1,'','the input image','vmtkimagereader'],
             ['FeatureImageType','featureimagetype','str',1,'["vtkgradient","gradient","upwind","fwhm"]'],
-            ['Dimensionality','dimensionality','int',1],
+            ['Dimensionality','dimensionality','int',1,'(2,3,1)'],
             ['SigmoidRemapping','sigmoid','bool',1],
-            ['DerivativeSigma','derivativesigma','float',1],
-            ['UpwindFactor','upwindfactor','float',1],
-            ['FWHMRadius','fwhmradius','int',3],
+            ['DerivativeSigma','derivativesigma','float',1,'(0.0,)'],
+            ['UpwindFactor','upwindfactor','float',1,'(0.0,1.0)'],
+            ['FWHMRadius','fwhmradius','int',3,'(0,)'],
             ['FWHMBackgroundValue','fwhmbackgroundvalue','float',1]
             ])
         self.SetOutputMembers([

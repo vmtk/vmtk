@@ -40,10 +40,10 @@ class vmtkSurfaceSmoothing(pypes.pypeScript):
         self.SetScriptDoc('smooth a surface using Taubin\'s algorithm')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
-            ['NumberOfIterations','iterations','int',1,'','number of iterations (e.g. 25)'],
+            ['NumberOfIterations','iterations','int',1,'(0,)','number of iterations (e.g. 25)'],
             ['Method','method','str',1,'["taubin","laplace"]','smoothing method'],
             ['PassBand','passband','float',1,'','pass band (e.g. 0.1) - taubin only'],
-            ['RelaxationFactor','relaxation','float',1,'','relaxation factor (e.g. 0.01) - laplace only'],
+            ['RelaxationFactor','relaxation','float',1,'(0.0,)','relaxation factor (e.g. 0.01) - laplace only'],
             ['BoundarySmoothing','boundarysmoothing','bool',1,'','toggle allow change of position of boundary points']
             ])
         self.SetOutputMembers([

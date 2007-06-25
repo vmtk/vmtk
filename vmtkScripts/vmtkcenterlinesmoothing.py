@@ -37,8 +37,8 @@ class vmtkCenterlineSmoothing(pypes.pypeScript):
         self.SetScriptDoc('smooth centerlines with a moving average filter')
         self.SetInputMembers([
             ['Centerlines','i','vtkPolyData',1,'','the input centerlines','vmtksurfacereader'],
-      	    ['NumberOfSmoothingIterations','iterations','int',1,''],
-      	    ['SmoothingFactor','factor','float',1,'']
+      	    ['NumberOfSmoothingIterations','iterations','int',1,'(0,)'],
+      	    ['SmoothingFactor','factor','float',1,'(0.0,)']
             ])
         self.SetOutputMembers([
             ['Centerlines','o','vtkPolyData',1,'','the output centerlines','vmtksurfacewriter']

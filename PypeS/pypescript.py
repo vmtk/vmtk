@@ -43,6 +43,16 @@ class pypeMember(object):
             parsedMemberRange = [eval(entry) for entry in self.MemberRange[1:-1].split(',')]
             if value in parsedMemberRange:
                 return True
+        if self.MemberRange[0] == '(' and self.MemberRange[-1] == ')':
+            parsedMemberRange = [entry for entry in self.MemberRange[1:-1].split(',')]
+            if len(parsedMemberRange) < 2:
+                return False
+            inRange = True
+            if parsedMemberRange[0] and value < eval(parsedMemberRange[0]):
+                inRange = False
+            if parsedMemberRange[1] and value > eval(parsedMemberRange[1]):
+                inRange = False
+            return inRange
         return False
 
     def GetRangeEnumeration(self):
@@ -53,6 +63,41 @@ class pypeMember(object):
             return parsedMemberRange
         return []
  
+    def GetRangeValues(self):
+        if not self.MemberRange:
+            return []
+        if self.MemberRange[0] == '(' and self.MemberRange[-1] == ')':
+            parsedMemberRange = []
+            for entry in self.MemberRange[1:-1].split(','):
+                if entry != '':
+                    entry = eval(entry)
+                else:
+                    entry = None
+                parsedMemberRange.append(entry)
+            if len(parsedMemberRange) == 2:
+                parsedMemberRange.append(None)
+            if len(parsedMemberRange) != 3:
+                return []
+            return parsedMemberRange
+        return []
+
+    def GetRangeRepresentation(self):
+        if not self.MemberRange:
+            return []
+        enumeration = self.GetRangeEnumeration()
+        values = self.GetRangeValues()
+        if enumeration:
+            return 'in ' + str(enumeration)
+        if values:
+            representation = ''
+            if values[0] != None:
+                representation += '>= ' + str(values[0])
+            if values[1] != None:
+                if representation:
+                    representation += ' and '
+                representation += '<= ' + str(values[1])
+            return representation
+
 class pypeScript(object):
     
     def __init__(self):
@@ -233,9 +278,9 @@ class pypeScript(object):
                         default = self.__getattribute__(memberName)
                         memberUsageString += '-' + option + ' ' + memberName + ' (' + memberType + ',' + str(memberLength) + ') '
                         if memberRange:
-                            memberUsageString += str(memberRange) + ' '
+                            memberUsageString += memberEntry.GetRangeRepresentation()
                         if default != '':
-                            memberUsageString += 'default=' + str(default)
+                            memberUsageString += '; default=' + str(default)
                     else:
                         memberUsageString += '-' + option + ' ' + memberName + ' (' + memberType + ',' + str(memberLength) + ')'
                     if memberDoc != '':
@@ -358,7 +403,7 @@ class pypeScript(object):
 
             if memberLength != -1:
                 if (len(memberValues) != memberLength) and not memberEntry.ExplicitPipe:
-                    self.PrintError('Error for option '+option+': '+str(len(memberValues))+' entries given, '+str(memberLength)+' expected.\n'+self.GetUsageString())
+                    self.PrintError('Error for option '+option+': '+str(len(memberValues))+' entries given, '+str(memberLength)+' expected.\n\n'+self.GetUsageString())
                     return 0
 
             if len(memberValues) > 0:
@@ -375,18 +420,13 @@ class pypeScript(object):
 
             if memberType is 'bool':
                 if [value for value in memberValues if value not in [0,1]]:
-                    self.PrintError('Error for option '+option+': should be either 0 or 1\n'+self.GetUsageString())
+                    self.PrintError('Error for option '+option+': should be either 0 or 1\n\n'+self.GetUsageString())
                     return 0
 
-            #TODO: memberRange could be one of 1-2, 1.2-2.4, [1,2], [1.2,2.4], ["string1","string2"]
             if memberRange != '':
                 if [value for value in memberValues if not memberEntry.IsInRange(value)]:
-                    self.PrintError('Error for option '+option+': should be in ' + memberRange + '\n'+self.GetUsageString())
+                    self.PrintError('Error for option '+option+': should be ' + memberEntry.GetRangeRepresentation() + '\n\n'+self.GetUsageString())
                     return 0
-#                if '-' in memberRange:
-#                    values = memberRange.split('-')
-#                    if memberType is 'int':
-#                        if not memberValue 
 
             if (memberType != ''):
                 if (memberLength==0):

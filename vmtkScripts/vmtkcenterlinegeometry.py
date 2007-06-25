@@ -52,8 +52,8 @@ class vmtkCenterlineGeometry(pypes.pypeScript):
       	    ['FrenetBinormalArrayName','frenetbinormalarray','str',1,'','name of the array where binormal vectors of the Frenet reference system have to be stored'],
       	    ['LineSmoothing','smoothing','bool',1,''],
       	    ['OutputSmoothedLines','outputsmoothed','bool',1,''],
-      	    ['NumberOfSmoothingIterations','iterations','int',1,''],
-      	    ['SmoothingFactor','factor','float',1,'']
+      	    ['NumberOfSmoothingIterations','iterations','int',1,'(0,)'],
+      	    ['SmoothingFactor','factor','float',1,'(0.0,)']
             ])
         self.SetOutputMembers([
             ['Centerlines','o','vtkPolyData',1,'','the output centerlines','vmtksurfacewriter'],

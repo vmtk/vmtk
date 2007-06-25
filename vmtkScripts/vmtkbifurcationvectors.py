@@ -69,7 +69,7 @@ class vmtkBifurcationVectors(pypes.pypeScript):
       	    ['OutOfPlaneBifurcationVectorAnglesArrayName','outofplaneanglesarray','str',1,''],
       	    ['BifurcationVectorsOrientationArrayName','orientationarray','str',1,''],
       	    ['BifurcationGroupIdsArrayName','bifurcationgroupidsarray','str',1,''],
-            ['NormalizeBifurcationVectors','normalizevectors','int',1,'']
+            ['NormalizeBifurcationVectors','normalizevectors','bool',1,'']
             ])
         self.SetOutputMembers([
             ['BifurcationVectors','o','vtkPolyData',1,'','the output data','vmtksurfacewriter'],

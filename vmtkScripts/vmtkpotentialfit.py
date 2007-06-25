@@ -49,18 +49,18 @@ class vmtkPotentialFit(pypes.pypeScript):
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','','vmtksurfacereader'], 
             ['Image','image','vtkImageData',1,'','','vmtkimagereader'],
-            ['NumberOfIterations','iterations','int',1],
-            ['NumberOfStiffnessSubIterations','stiffnesssubiterations','int',1],
-            ['NumberOfInflationSubIterations','inflationsubiterations','int',1],
-            ['PotentialWeight','potentialweight','float',1],
-            ['StiffnessWeight','stiffnessweight','float',1],
-            ['InflationWeight','inflationweight','float',1],
-            ['Convergence','convergence','float',1],
-            ['MaxTimeStep','maxtimestep','float',1],
-            ['TimeStep','timestep','float',1],
+            ['NumberOfIterations','iterations','int',1,'(0,)'],
+            ['NumberOfStiffnessSubIterations','stiffnesssubiterations','int',1,'(0,)'],
+            ['NumberOfInflationSubIterations','inflationsubiterations','int',1,'(0,)'],
+            ['PotentialWeight','potentialweight','float',1,'(0.0,)'],
+            ['StiffnessWeight','stiffnessweight','float',1,'(0.0,)'],
+            ['InflationWeight','inflationweight','float',1,'(0.0,)'],
+            ['Convergence','convergence','float',1,'(0.0,)'],
+            ['MaxTimeStep','maxtimestep','float',1,'(0.0,)'],
+            ['TimeStep','timestep','float',1,'(0.0,)'],
             ['AdaptiveTimeStep','adaptivetimestep','bool',1],
-            ['Relaxation','relaxation','float',1],
-            ['Dimensionality','dimensionality','int',1]
+            ['Relaxation','relaxation','float',1,'(0.0,)'],
+            ['Dimensionality','dimensionality','int',1,'(2,3)']
             ])
         self.SetOutputMembers([
             ['Surface','o','vtkPolyData',1,'','','vmtksurfacewriter']

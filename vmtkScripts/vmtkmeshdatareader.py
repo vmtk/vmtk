@@ -64,8 +64,8 @@ class vmtkMeshDataReader(pypes.pypeScript):
             ['TetrInFileName','tetrinfile','str',1,'','name of the tetr.in file'],
             ['Compressed','compressed','bool',1,'','toggle reading gzip compressed file'],
             ['UnNormalize','unnormalize','bool',1,'','unnormalize quantities - tetr.* only'],
-            ['MinVariableId','minvarid','int',1,'','read variables starting from the nth column - pointdata only'],
-            ['MaxVariableId','maxvarid','int',1,'','read variables up to the nth column - pointdata only']
+            ['MinVariableId','minvarid','int',1,'(0,)','read variables starting from the nth column - pointdata only'],
+            ['MaxVariableId','maxvarid','int',1,'(0,)','read variables up to the nth column - pointdata only']
             ])
         self.SetOutputMembers([
             ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh','vmtkmeshwriter']

@@ -47,13 +47,13 @@ class vmtkFlowExtensions(pypes.pypeScript):
             ['Surface','i','vtkPolyData',1,'','','vmtksurfacereader'],
             ['Centerlines','centerlines','vtkPolyData',1,'','','vmtksurfacereader'],
             ['AdaptiveExtensionLength','adaptivelength','bool',1],
-            ['ExtensionLength','extensionlength','float',1],
-            ['ExtensionRatio','extensionratio','float',1],
-            ['TransitionRatio','transitionratio','float',1],
-            ['TargetNumberOfBoundaryPoints','boundarypoints','int',1],
+            ['ExtensionLength','extensionlength','float',1,'(0.0,)'],
+            ['ExtensionRatio','extensionratio','float',1,'(0.0,)'],
+            ['TransitionRatio','transitionratio','float',1,'(0.0,)'],
+            ['TargetNumberOfBoundaryPoints','boundarypoints','int',1,'(0,)'],
             ['Interactive','interactive','bool',1],
             ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer'],
-            ['CenterlineNormalEstimationDistanceRatio','normalestimationratio','float',1]
+            ['CenterlineNormalEstimationDistanceRatio','normalestimationratio','float',1,'(0.0,)']
             ])
         self.SetOutputMembers([
             ['Surface','o','vtkPolyData',1,'','','vmtksurfacewriter'],

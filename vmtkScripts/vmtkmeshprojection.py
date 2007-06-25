@@ -37,7 +37,7 @@ class vmtkMeshProjection(pypes.pypeScript):
         self.SetInputMembers([
             ['Mesh','i','vtkUnstructuredGrid',1,'','the input mesh','vmtkmeshreader'],
             ['ReferenceMesh','r','vtkUnstructuredGrid',1,'','the reference mesh','vmtkmeshreader'],
-            ['Tolerance','tolerance','double',1,'','locator tolerance']
+            ['Tolerance','tolerance','double',1,'(0.0,)','locator tolerance']
             ])
         self.SetOutputMembers([
             ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh','vmtkmeshwriter']

@@ -42,7 +42,7 @@ class vmtkMeshWriter(pypes.pypeScript):
             ['Format','f','str',1,'["vtkxml","vtk","xda","fdneut","tecplot","pointdata"]','file format (xda - libmesh ASCII format, fdneut - FIDAP neutral format)'],
             ['GuessFormat','guessformat','bool',1,'','guess file format from extension'],
             ['OutputFileName','ofile','str',1,'','output file name'],
-            ['OutputFileName','o','str',1,'','output file name (deprecated: use -ofile)'],
+            ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh'],
             ['CellEntityIdsArrayName','entityidsarray','str',1,'','name of the array where entity ids are stored']
             ])
         self.SetOutputMembers([])

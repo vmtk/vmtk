@@ -51,7 +51,7 @@ class vmtkSurfaceViewer(pypes.pypeScript):
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
             ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer'],
             ['Display','display','bool',1,'','toggle rendering'],
-            ['Opacity','opacity','float',1,'','obejct opacity in the scene'],
+            ['Opacity','opacity','float',1,'(0.0,1.0)','obejct opacity in the scene'],
             ['ArrayName','array','str',1,'','name of the array where the scalars to be displayed are stored'],
             ['ScalarRange','scalarrange','float',2,'','range of the scalar map'],
             ['Legend','legend','bool',1,'','toggle scalar bar'],
@@ -59,7 +59,7 @@ class vmtkSurfaceViewer(pypes.pypeScript):
             ['FlatInterpolation','flat','bool',1,'','toggle flat or shaded surface display'],
             ['DisplayCellData','celldata','bool',1,'','toggle display of point or cell data'],
             ['Color','color','float',3,'','RGB color of the object in the scene'],
-            ['LineWidth','linewidth','int',1,'','width of line objects in the scene'],
+            ['LineWidth','linewidth','int',1,'(0.0,)','width of line objects in the scene'],
             ['LegendTitle','legendtitle','str',1,'','title of the scalar bar']])
         self.SetOutputMembers([
             ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter']

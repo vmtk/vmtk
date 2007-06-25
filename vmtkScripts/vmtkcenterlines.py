@@ -470,7 +470,7 @@ class vmtkCenterlines(pypes.pypeScript):
             ['RadiusArrayName','radiusarray','str',1,'','name of the array where radius values of maximal inscribed spheres have to be stored'],
             ['AppendEndPoints','endpoints','bool',1,'','toggle append open profile barycenters to centerlines'],
             ['Resampling','resampling','bool',1,'','toggle centerlines resampling'],
-            ['ResamplingStepLength','resamplingstep','float',1,'','distance between points in the resampled line'],
+            ['ResamplingStepLength','resamplingstep','float',1,'(0.0,)','distance between points in the resampled line'],
             ['DelaunayTessellation','delaunaytessellation','vtkUnstructuredGrid',1,'','optional input Delaunay tessellation'],
             ['UseTetGen','usetetgen','bool',1,'','toggle use TetGen to compute Delaunay tessellation'],
             ['TetGenDetectInter','tetgendetectinter','bool',1,'','TetGen option'],

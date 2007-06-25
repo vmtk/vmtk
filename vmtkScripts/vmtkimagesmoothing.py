@@ -37,9 +37,9 @@ class vmtkImageSmoothing(pypes.pypeScript):
         self.SetScriptDoc('smooth an image with a Gaussian kernel')
         self.SetInputMembers([
             ['Image','i','vtkImageData',1,'','the input image','vmtkimagereader'],
-            ['StandardDeviation','sigma','float',1,'','the standard deviation of the Gaussian in real space units'],
-            ['RadiusFactor','radiusfactor','float',1,'','the factor specifing the width of the discrete Gaussian kernel'],
-            ['Dimensionality','dimensionality','int',1,'','the dimensionality of the convolution']
+            ['StandardDeviation','sigma','float',1,'(0.0,)','the standard deviation of the Gaussian in real space units'],
+            ['RadiusFactor','radiusfactor','float',1,'(0.0,)','the factor specifing the width of the discrete Gaussian kernel'],
+            ['Dimensionality','dimensionality','int',1,'(2,3)','the dimensionality of the convolution']
             ])
         self.SetOutputMembers([
             ['Image','o','vtkImageData',1,'','the output image','vmtkimagewriter']

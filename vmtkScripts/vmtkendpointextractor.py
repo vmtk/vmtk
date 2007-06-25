@@ -48,8 +48,8 @@ class vmtkEndpointExtractor(pypes.pypeScript):
             ['CenterlineIdsArrayName','centerlineidsarray','str',1],
             ['RadiusArrayName','radiusarray','str',1],
       	    ['BlankingArrayName','blankingarray','str',1],
-      	    ['NumberOfEndpointSpheres','numberofendpointspheres','int',1],
-      	    ['NumberOfGapSpheres','numberofgapspheres','int',1]
+      	    ['NumberOfEndpointSpheres','numberofendpointspheres','int',1,'(0.0,)'],
+      	    ['NumberOfGapSpheres','numberofgapspheres','int',1,'(0.0,)']
             ])
         self.SetOutputMembers([
             ['Centerlines','o','vtkPolyData',1,'','','vmtksurfacewriter'],

@@ -58,7 +58,7 @@ class vmtkCenterlineOffsetAttributes(pypes.pypeScript):
             ['Centerlines','i','vtkPolyData',1,'','the input split centerlines','vmtksurfacereader'],
             ['ReferenceSystems','referencesystems','vtkPolyData',1,'','bifurcation reference systems','vmtksurfacereader'],
             ['ReferenceGroupId','referencegroupid','int',1,'','group id of the reference system to which attributes have to be offset'],
-            ['ReplaceAttributes','replaceattributes','int',1,'','overwrite the existing attributes'],
+            ['ReplaceAttributes','replaceattributes','bool',1,'','overwrite the existing attributes'],
 	          ['AbscissasArrayName','abscissasarray','str',1,'','name of the array where centerline abscissas are stored'],
       	    ['NormalsArrayName','normalsarray','str',1,'','name of the array where centerline normals are stored'],
       	    ['GroupIdsArrayName','groupidsarray','str',1,'','name of the array where centerline group ids are stored'],

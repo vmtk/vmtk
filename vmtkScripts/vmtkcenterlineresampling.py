@@ -37,7 +37,7 @@ class vmtkCenterlineResampling(pypes.pypeScript):
         self.SetScriptDoc('resample input centerlines with a spline filter')
         self.SetInputMembers([
             ['Centerlines','i','vtkPolyData',1,'','the input centerlines','vmtksurfacereader'],
-            ['Length','length','float',1,'','length of the resampling interval']
+            ['Length','length','float',1,'(0.0,)','length of the resampling interval']
             ])
         self.SetOutputMembers([
             ['Centerlines','o','vtkPolyData',1,'','the output centerlines','vmtksurfacewriter']

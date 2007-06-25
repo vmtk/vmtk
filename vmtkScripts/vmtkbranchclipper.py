@@ -59,7 +59,7 @@ class vmtkBranchClipper(pypes.pypeScript):
             ['InsideOut','insideout','bool',1],
             ['RadiusArrayName','radiusarray','str',1],
 				    ['BlankingArrayName','blankingarray','str',1],
-						['CutoffRadiusFactor','cutoffradiusfactor','float',1],
+						['CutoffRadiusFactor','cutoffradiusfactor','float',1,'(0.0,)'],
 						['ClipValue','clipvalue','float',1],
 						['Interactive','interactive','bool',1],
             ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer']

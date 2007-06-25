@@ -50,9 +50,9 @@ class vmtkBranchPatching(pypes.pypeScript):
         self.SetScriptName('vmtkbranchpatching')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','','vmtksurfacereader'],
-            ['PatchSize','patchsize','float',2],
-            ['LongitudinalPatchSize','longitudinalpatchsize','float',1],
-            ['CircularNumberOfPatches','circularpatches','int',1],
+            ['PatchSize','patchsize','float',2,'(0.0,)'],
+            ['LongitudinalPatchSize','longitudinalpatchsize','float',1,'(0.0,)'],
+            ['CircularNumberOfPatches','circularpatches','int',1,'(0,)'],
             ['CircularPatching','circularpatching','bool',1],
             ['UseConnectivity','connectivity','bool',1],
             ['GroupIdsArrayName','groupidsarray','str',1],

@@ -35,7 +35,7 @@ class vmtkSurfMesh(pypes.pypeScript):
         self.SetScriptDoc('wrapper around surfmesh surface mesh generator by Gordan Stuhne')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
-            ['NodeSpacing','nodespacing','float',1,'','desired node spacing']
+            ['NodeSpacing','nodespacing','float',1,'(0.0,)','desired node spacing']
             ])
         self.SetOutputMembers([
             ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter']

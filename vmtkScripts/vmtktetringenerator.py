@@ -185,7 +185,7 @@ class vmtkTetrInGenerator(pypes.pypeScript):
             ['TimeStepsOnly','timestepsonly','bool',1,'','only generate the $time section of the tetr.in file'],
             ['CellEntityIdsArrayName','entityidsarray','str',1,'','name of the array where entity ids relative to cells are stored'],
             ['NormalizationEntityId','normalizationid','int',1,'','id of the entity relative to which the mesh has to be normalized'],
-            ['NormalizationRadius','normalizationradius','float',1,'','explicit value of the radius relative to which the mesh has to be normalized (to be used when -normalizationid is not used)'],
+            ['NormalizationRadius','normalizationradius','float',1,'(0.0,)','explicit value of the radius relative to which the mesh has to be normalized (to be used when -normalizationid is not used)'],
             ['InletEntityIds','inletids','int',-1,'','id of inlet entities'],
             ['OutletEntityId','outletid','int',1,'','id of the outlet entity'],
             ['WallEntityId','wallid','int',1,'','id of the wall entity'],
@@ -193,11 +193,11 @@ class vmtkTetrInGenerator(pypes.pypeScript):
             ['ReverseInlets','reverseinlets','bool',-1,'','toggle reversal of the nth inlet entity normal'],
             ['StartTime','starttime','float',1,'','simulation normalized start time'],
             ['EndTime','endtime','float',1,'','simulation normalized end time'],
-            ['NumberOfTimeSteps','timesteps','int',1,'','number of time steps between start and end time'],
-            ['NumberOfDumps','dumps','int',1,'','number of solution dumps between start and end time'],
+            ['NumberOfTimeSteps','timesteps','int',1,'(0,)','number of time steps between start and end time'],
+            ['NumberOfDumps','dumps','int',1,'(0,)','number of solution dumps between start and end time'],
             ['DumpFlag','dumpflag','str',1,'','flag identifying solution dump (e.g. 11000 = tetr.pres and tetr.vel)'],
-            ['WriteWNodeSection','wnodesection','int',1,'','append $wnode section to .in file for subsequent wall shear stress computation'],
-            ['WriteWElemSection','welemsection','int',1,'','append $welem section to .in file for subsequent wall shear stress computation']
+            ['WriteWNodeSection','wnodesection','bool',1,'','append $wnode section to .in file for subsequent wall shear stress computation'],
+            ['WriteWElemSection','welemsection','bool',1,'','append $welem section to .in file for subsequent wall shear stress computation']
             ])
         self.SetOutputMembers([])
 

@@ -140,6 +140,16 @@ class PypeWrapper(object):
                 if enumeration:
                     for element in enumeration:
                         self.XMLDescription += 3*ind + '<element>%s</element>\n' % (str(element))
+                values = exposedMember.GetRangeValues()
+                if values:
+                    self.XMLDescription += 3*ind + '<constraints>\n'
+                    if values[0] != None:
+                        self.XMLDescription += 4*ind + '<minimum>%s</minimum>\n' % (str(values[0]))
+                    if values[1] != None:
+                        self.XMLDescription += 4*ind + '<maximum>%s</maximum>\n' % (str(values[1]))
+                    if values[2] != None:
+                        self.XMLDescription += 4*ind + '<step>%s</step>\n' % (str(values[2]))
+                    self.XMLDescription += 3*ind + '</constraints>\n'
                 if exposedMember.ExposedChannel in ['input','output']:
                     self.XMLDescription += 3*ind + '<channel>%s</channel>\n' % (exposedMember.ExposedChannel)
                 self.XMLDescription += 2*ind + '</%s>\n' % (memberXMLTag)

@@ -51,10 +51,10 @@ class vmtkBoundaryLayer(pypes.pypeScript):
             ['WarpVectorsArrayName','warpvectorsarray','str',1,'','name of the array where warp vectors are stored'],
             ['ThicknessArrayName','thicknessarray','str',1,'','name of the array where scalars defining boundary layer thickness are stored'],
             ['Thickness','thickness','float',1,'','value of constant boundary layer thickness'],
-            ['ThicknessRatio','thicknessratio','float',1,'','multiplying factor for boundary layer thickness'],
+            ['ThicknessRatio','thicknessratio','float',1,'(0.0,)','multiplying factor for boundary layer thickness'],
             ['MaximumThickness','maximumthickness','float',1,'','maximum allowed value for boundary layer thickness'],
-            ['NumberOfSubLayers','numberofsublayers','int',1,'','number of sublayers which the boundary layer has to be made of'],
-            ['SubLayerRatio','sublayerratio','float',1,'','ratio between the thickness of two successive boundary layers'],
+            ['NumberOfSubLayers','numberofsublayers','int',1,'(0,)','number of sublayers which the boundary layer has to be made of'],
+            ['SubLayerRatio','sublayerratio','float',1,'(0.0,)','ratio between the thickness of two successive boundary layers'],
             ['UseWarpVectorMagnitudeAsThickness','warpvectormagnitudeasthickness','bool',1,'','compute boundary layer thickness as the norm of warp vectors'],
             ['ConstantThickness','constantthickness','bool',1,'','toggle constant boundary layer thickness'],
             ['IncludeSurfaceCells','includesurfacecells','bool',1,'','include surface cells in output mesh']

@@ -43,7 +43,7 @@ class vmtkCenterlineMerge(pypes.pypeScript):
       	    ['RadiusArrayName','radiusarray','str',1,'','name of the array where centerline radius is stored'],
       	    ['GroupIdsArrayName','groupidsarray','str',1,'','name of the array where centerline group ids are stored'],
       	    ['BlankingArrayName','blankingarray','str',1,'','name of the array where centerline blanking information about branches is stored'],
-            ['Length','length','float',1,'','length of the resampling interval']
+            ['Length','length','float',1,'(0.0,)','length of the resampling interval']
             ])
         self.SetOutputMembers([
             ['Centerlines','o','vtkPolyData',1,'','the output centerlines','vmtksurfacewriter']

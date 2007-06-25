@@ -47,7 +47,7 @@ class vmtkMeshViewer(pypes.pypeScript):
             ['Mesh','i','vtkUnstructuredGrid',1,'','the input mesh','vmtkmeshreader'],
             ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer'],
             ['Display','display','bool',1,'','toggle rendering'],
-            ['Opacity','opacity','float',1,'','object opacity in the scene'],
+            ['Opacity','opacity','float',1,'(0.0,1.0)','object opacity in the scene'],
             ['ArrayName','array','str',1,'','name of the array where the scalars to be displayed are stored'],
             ['ScalarRange','scalarrange','float',2,'','range of the scalar map'],
             ['Legend','legend','bool',1,'','toggle scalar bar'],

@@ -34,7 +34,7 @@ class vmtkSurfaceKiteRemoval(pypes.pypeScript):
         self.SetScriptDoc('remove small kites in a surface mesh to avoid Taubin smoothing artifacts')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
-            ['SizeFactor','sizefactor','float',1,'','ratio between local and global average triangle area']
+            ['SizeFactor','sizefactor','float',1,'(0.0,)','ratio between local and global average triangle area']
             ])
         self.SetOutputMembers([
             ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter']
