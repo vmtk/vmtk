@@ -36,14 +36,14 @@ class vmtkCenterlineAttributes(pypes.pypeScript):
         self.SetScriptName('vmtkcenterlineattributes')
         self.SetScriptDoc('compute centerline attributes like abscissa and parallel transport normals; this is a requried step for mapping')
         self.SetInputMembers([
-            ['Centerlines','i','vtkPolyData',1,'the input surface','vmtksurfacereader'],
-            ['AbscissasArrayName','abscissasarray','str',1,'name of the array where centerline abscissas have to be stored'],
-      	    ['NormalsArrayName','normalsarray','str',1,'name of the array where parallel transport normals to the centerlines have to be stored']
+            ['Centerlines','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
+            ['AbscissasArrayName','abscissasarray','str',1,'','name of the array where centerline abscissas have to be stored'],
+      	    ['NormalsArrayName','normalsarray','str',1,'','name of the array where parallel transport normals to the centerlines have to be stored']
             ])
         self.SetOutputMembers([
-            ['Centerlines','o','vtkPolyData',1,'','vmtksurfacewriter'],
-            ['AbscissasArrayName','abscissasarray','str',1,'name of the array where centerline abscissas are stored'],
-	          ['NormalsArrayName','normalsarray','str',1,'name of the array where parallel transport normals to the centerlines are stored']
+            ['Centerlines','o','vtkPolyData',1,'','','vmtksurfacewriter'],
+            ['AbscissasArrayName','abscissasarray','str',1,'','name of the array where centerline abscissas are stored'],
+	          ['NormalsArrayName','normalsarray','str',1,'','name of the array where parallel transport normals to the centerlines are stored']
             ])
 
     def Execute(self):

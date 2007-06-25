@@ -38,12 +38,12 @@ class vmtkMeshWriter(pypes.pypeScript):
         self.SetScriptName('vmtkmeshwriter')
         self.SetScriptDoc('write a mesh to disk')
         self.SetInputMembers([
-            ['Mesh','i','vtkUnstructuredGrid',1,'the input mesh','vmtkmeshreader'],
-            ['Format','f','str',1,'file format (vtkxml, vtk, xda - libmesh ascii format, fdneut - FIDAP neutral format, tecplot, pointdata)'],
-            ['GuessFormat','guessformat','int',1,'guess file format from extension'],
-            ['OutputFileName','ofile','str',1,'output file name'],
-            ['OutputFileName','o','str',1,'output file name (deprecated: use -ofile)'],
-            ['CellEntityIdsArrayName','entityidsarray','str',1,'name of the array where entity ids are stored']
+            ['Mesh','i','vtkUnstructuredGrid',1,'','the input mesh','vmtkmeshreader'],
+            ['Format','f','str',1,'["vtkxml","vtk","xda","fdneut","tecplot","pointdata"]','file format (xda - libmesh ASCII format, fdneut - FIDAP neutral format)'],
+            ['GuessFormat','guessformat','bool',1,'','guess file format from extension'],
+            ['OutputFileName','ofile','str',1,'','output file name'],
+            ['OutputFileName','o','str',1,'','output file name (deprecated: use -ofile)'],
+            ['CellEntityIdsArrayName','entityidsarray','str',1,'','name of the array where entity ids are stored']
             ])
         self.SetOutputMembers([])
 

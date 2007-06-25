@@ -33,10 +33,10 @@ class vmtkSurfaceCellDataToPointData(pypes.pypeScript):
         self.SetScriptName('vmtksurfacecelldatatopointdata')
         self.SetScriptDoc('convert cell data arrays to point data surface arrays')
         self.SetInputMembers([
-            ['Surface','i','vtkPolyData',1,'the input surface','vmtksurfacereader']
+            ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader']
             ])
         self.SetOutputMembers([
-            ['Surface','o','vtkPolyData',1,'the output surface','vmtksurfacewriter']
+            ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter']
             ])
 
     def Execute(self):

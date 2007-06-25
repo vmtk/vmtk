@@ -35,12 +35,12 @@ class vmtkMeshProjection(pypes.pypeScript):
         self.SetScriptName('vmtkmeshprojection')
         self.SetScriptDoc('interpolates the point data of a reference mesh onto the input mesh')
         self.SetInputMembers([
-            ['Mesh','i','vtkUnstructuredGrid',1,'the input mesh','vmtkmeshreader'],
-            ['ReferenceMesh','r','vtkUnstructuredGrid',1,'the reference mesh','vmtkmeshreader'],
-            ['Tolerance','tolerance','double',1,'locator tolerance']
+            ['Mesh','i','vtkUnstructuredGrid',1,'','the input mesh','vmtkmeshreader'],
+            ['ReferenceMesh','r','vtkUnstructuredGrid',1,'','the reference mesh','vmtkmeshreader'],
+            ['Tolerance','tolerance','double',1,'','locator tolerance']
             ])
         self.SetOutputMembers([
-            ['Mesh','o','vtkUnstructuredGrid',1,'the output mesh','vmtkmeshwriter']
+            ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh','vmtkmeshwriter']
             ])
 
     def Execute(self):

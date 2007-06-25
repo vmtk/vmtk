@@ -33,11 +33,11 @@ class vmtkMeshScaling(pypes.pypeScript):
         self.SetScriptName('vmtkmeshscaling')
         self.SetScriptDoc('scale a mesh by an isotropic factor')
         self.SetInputMembers([
-            ['Mesh','i','vtkUnstructuredGrid',1,'the input mesh','vmtkmeshreader'],
-            ['ScaleFactor','scale','float',1,'isotropic scaling factor']
+            ['Mesh','i','vtkUnstructuredGrid',1,'','the input mesh','vmtkmeshreader'],
+            ['ScaleFactor','scale','float',1,'','isotropic scaling factor']
             ])
         self.SetOutputMembers([
-            ['Mesh','o','vtkUnstructuredGrid',1,'the output mesh','vmtkmeshwriter']
+            ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh','vmtkmeshwriter']
             ])
 
     def Execute(self):

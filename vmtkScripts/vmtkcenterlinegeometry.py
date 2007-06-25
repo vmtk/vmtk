@@ -44,21 +44,21 @@ class vmtkCenterlineGeometry(pypes.pypeScript):
         self.SetScriptName('vmtkcenterlinegeometry')
         self.SetScriptDoc('compute the local geometry of centerlines in terms of curvature and torsion')
         self.SetInputMembers([
-            ['Centerlines','i','vtkPolyData',1,'the input centerlines','vmtksurfacereader'],
-            ['CurvatureArrayName','curvaturearray','str',1,'name of the array where curvature values have to be stored'],
-      	    ['TorsionArrayName','torsionarray','str',1,'name of the array where torsion values have to be stored'],
-            ['FrenetTangentArrayName','frenettangentarray','str',1,'name of the array where tangent vectors of the Frenet reference system have to be stored'],
-      	    ['FrenetNormalArrayName','frenetnormalarray','str',1,'name of the array where normal vectors of the Frenet reference system have to be stored'],
-      	    ['FrenetBinormalArrayName','frenetbinormalarray','str',1,'name of the array where binormal vectors of the Frenet reference system have to be stored'],
-      	    ['LineSmoothing','smoothing','int',1,''],
-      	    ['OutputSmoothedLines','outputsmoothed','int',1,''],
+            ['Centerlines','i','vtkPolyData',1,'','the input centerlines','vmtksurfacereader'],
+            ['CurvatureArrayName','curvaturearray','str',1,'','name of the array where curvature values have to be stored'],
+      	    ['TorsionArrayName','torsionarray','str',1,'','name of the array where torsion values have to be stored'],
+            ['FrenetTangentArrayName','frenettangentarray','str',1,'','name of the array where tangent vectors of the Frenet reference system have to be stored'],
+      	    ['FrenetNormalArrayName','frenetnormalarray','str',1,'','name of the array where normal vectors of the Frenet reference system have to be stored'],
+      	    ['FrenetBinormalArrayName','frenetbinormalarray','str',1,'','name of the array where binormal vectors of the Frenet reference system have to be stored'],
+      	    ['LineSmoothing','smoothing','bool',1,''],
+      	    ['OutputSmoothedLines','outputsmoothed','bool',1,''],
       	    ['NumberOfSmoothingIterations','iterations','int',1,''],
       	    ['SmoothingFactor','factor','float',1,'']
             ])
         self.SetOutputMembers([
-            ['Centerlines','o','vtkPolyData',1,'the output centerlines','vmtksurfacewriter'],
-            ['CurvatureArrayName','curvaturearray','str',1,'name of the array where curvature values are stored'],
-	          ['TorsionArrayName','torsionarray','str',1,'name of the array where torsion values are stored']
+            ['Centerlines','o','vtkPolyData',1,'','the output centerlines','vmtksurfacewriter'],
+            ['CurvatureArrayName','curvaturearray','str',1,'','name of the array where curvature values are stored'],
+	          ['TorsionArrayName','torsionarray','str',1,'','name of the array where torsion values are stored']
             ])
 
     def Execute(self):

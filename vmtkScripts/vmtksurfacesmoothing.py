@@ -39,15 +39,15 @@ class vmtkSurfaceSmoothing(pypes.pypeScript):
         self.SetScriptName('vmtksurfacesmoothing')
         self.SetScriptDoc('smooth a surface using Taubin\'s algorithm')
         self.SetInputMembers([
-            ['Surface','i','vtkPolyData',1,'the input surface','vmtksurfacereader'],
-            ['NumberOfIterations','iterations','int',1,'number of iterations (e.g. 25)'],
-            ['Method','method','str',1,'smoothing method (taubin, laplace)'],
-            ['PassBand','passband','float',1,'pass band (e.g. 0.1) - taubin only'],
-            ['RelaxationFactor','relaxation','float',1,'relaxation factor (e.g. 0.01) - laplace only'],
-            ['BoundarySmoothing','boundarysmoothing','int',1,'toggle allow change of position of boundary points']
+            ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
+            ['NumberOfIterations','iterations','int',1,'','number of iterations (e.g. 25)'],
+            ['Method','method','str',1,'["taubin","laplace"]','smoothing method'],
+            ['PassBand','passband','float',1,'','pass band (e.g. 0.1) - taubin only'],
+            ['RelaxationFactor','relaxation','float',1,'','relaxation factor (e.g. 0.01) - laplace only'],
+            ['BoundarySmoothing','boundarysmoothing','bool',1,'','toggle allow change of position of boundary points']
             ])
         self.SetOutputMembers([
-            ['Surface','o','vtkPolyData',1,'the output surface','vmtksurfacewriter']
+            ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter']
             ])
 
     def Execute(self):

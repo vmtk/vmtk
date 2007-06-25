@@ -37,13 +37,13 @@ class vmtkSurfaceNormals(pypes.pypeScript):
         self.SetScriptName('vmtksurfacenormals')
         self.SetScriptDoc('compute normals to a surface')
         self.SetInputMembers([
-            ['Surface','i','vtkPolyData',1,'the input surface','vmtksurfacereader'],
-            ['NormalsArrayName','normalsarray','str',1,'name of the array where normals have to be stored'],
-            ['AutoOrientNormals','autoorientnormals','int',1,'try to auto orient normals outwards'],
-            ['FlipNormals','flipnormals','int',1,'flip normals after computing them']
+            ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
+            ['NormalsArrayName','normalsarray','str',1,'','name of the array where normals have to be stored'],
+            ['AutoOrientNormals','autoorientnormals','bool',1,'','try to auto orient normals outwards'],
+            ['FlipNormals','flipnormals','bool',1,'','flip normals after computing them']
             ])
         self.SetOutputMembers([
-            ['Surface','o','vtkPolyData',1,'the output surface','vmtksurfacewriter']
+            ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter']
             ])
 
     def Execute(self):

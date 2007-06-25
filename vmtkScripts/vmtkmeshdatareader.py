@@ -55,20 +55,20 @@ class vmtkMeshDataReader(pypes.pypeScript):
         self.SetScriptName('vmtkmeshdatareader')
         self.SetScriptDoc('read data associated with a mesh')
         self.SetInputMembers([
-            ['Mesh','i','vtkUnstructuredGrid',1,'the input mesh','vmtkmeshreader'],
-            ['DataFileDirectory','directory','str',1,'directory where the data files reside'],
-            ['DataFilePrefix','prefix','str',1,'data file name prefix (e.g. foo_)'],
-            ['DataFileName','datafile','str',1,'data file name (e.g. foo.dat) excluding directory - overrides prefix'],
-            ['DataFileType','filetype','str',1,'data file name type (tetr.out, tetr.vel, tetr.wss, tetr.pres, tetr.ini, pointdata)'],
-            ['ArrayNamePrefix','arrayprefix','str',1,'prefix to prepend to array names in output'],
-            ['TetrInFileName','tetrinfile','str',1,'name of the tetr.in file'],
-            ['Compressed','compressed','int',1,'toggle reading gzip compressed file'],
-            ['UnNormalize','unnormalize','int',1,'unnormalize quantities - tetr.* only'],
-            ['MinVariableId','minvarid','int',1,'read variables starting from the nth column - pointdata only'],
-            ['MaxVariableId','maxvarid','int',1,'read variables up to the nth column - pointdata only']
+            ['Mesh','i','vtkUnstructuredGrid',1,'','the input mesh','vmtkmeshreader'],
+            ['DataFileDirectory','directory','str',1,'','directory where the data files reside'],
+            ['DataFilePrefix','prefix','str',1,'','data file name prefix (e.g. foo_)'],
+            ['DataFileName','datafile','str',1,'','data file name (e.g. foo.dat) excluding directory - overrides prefix'],
+            ['DataFileType','filetype','str',1,'','data file name type (tetr.out, tetr.vel, tetr.wss, tetr.pres, tetr.ini, pointdata)'],
+            ['ArrayNamePrefix','arrayprefix','str',1,'','prefix to prepend to array names in output'],
+            ['TetrInFileName','tetrinfile','str',1,'','name of the tetr.in file'],
+            ['Compressed','compressed','bool',1,'','toggle reading gzip compressed file'],
+            ['UnNormalize','unnormalize','bool',1,'','unnormalize quantities - tetr.* only'],
+            ['MinVariableId','minvarid','int',1,'','read variables starting from the nth column - pointdata only'],
+            ['MaxVariableId','maxvarid','int',1,'','read variables up to the nth column - pointdata only']
             ])
         self.SetOutputMembers([
-            ['Mesh','o','vtkUnstructuredGrid',1,'the output mesh','vmtkmeshwriter']
+            ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh','vmtkmeshwriter']
             ])
 
     def ReadTetrInDimensionalParameters(self):

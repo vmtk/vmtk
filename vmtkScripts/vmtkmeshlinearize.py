@@ -32,10 +32,10 @@ class vmtkMeshLinearize(pypes.pypeScript):
         self.SetScriptName('vmtkmeshlinearize')
         self.SetScriptDoc('convert the elements of a mesh to linear')
         self.SetInputMembers([
-            ['Mesh','i','vtkUnstructuredGrid',1,'the input mesh','vmtkmeshreader']
+            ['Mesh','i','vtkUnstructuredGrid',1,'','the input mesh','vmtkmeshreader']
             ])
         self.SetOutputMembers([
-            ['Mesh','o','vtkUnstructuredGrid',1,'the output mesh','vmtkmeshwriter']])
+            ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh','vmtkmeshwriter']])
 
     def Execute(self):
 

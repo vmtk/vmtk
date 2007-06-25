@@ -458,32 +458,32 @@ class vmtkCenterlines(pypes.pypeScript):
         self.SetScriptName('vmtkcenterlines')
         self.SetScriptDoc('compute centerlines from a branching tubular surface (see papers for details); seed points can be interactively selected on the surface, or specified as the barycenters of the open boundaries of the surface; if vmtk is compiled with support for TetGen, TetGen can be employed to compute the Delaunay tessellation of the input points')
         self.SetInputMembers([
-            ['Surface','i','vtkPolyData',1,'the input surface','vmtksurfacereader'],
-            ['SeedSelectorName','seedselector','str',1,'seed point selection method (pickpoint: interactive; openprofiles: choose among barycenters of open profiles of the surface; carotidprofiles: open profiles are automatically selected based on their z-axis coordinate (lower to higher: CCA, ECA, ICA)); idlist: list of surface point ids (specified as argument to -sourceids and -targetids); pointlist: list of surface points (specified as argument to -sourcepoints and -targetpoints)'],
-            ['SourceIds','sourceids','int',-1,'list of source point ids'],
-            ['TargetIds','targetids','int',-1,'list of target point ids'],
-            ['SourcePoints','sourcepoints','float',-1,'list of source point coordinates'],
-            ['TargetPoints','targetpoints','float',-1,'list of target point coordinates'],
-            ['AppendEndPoints','endpoints','int',1,'toggle append open profile barycenters to centerlines'],
-            ['FlipNormals','flipnormals','int',1,'flip normals after outward normal computation; outward oriented normals must be computed for the removal of outer tetrahedra; the algorithm might fail so for weird geometries, so changing this might solve the problem'],
-            ['CapDisplacement','capdisplacement','float',1,'displacement of the center points of caps at open profiles along their normals (avoids the creation of degenerate tetrahedra)'],
-            ['RadiusArrayName','radiusarray','str',1,'name of the array where radius values of maximal inscribed spheres have to be stored'],
-            ['AppendEndPoints','endpoints','int',1,'toggle append open profile barycenters to centerlines'],
-            ['Resampling','resampling','int',1,'toggle centerlines resampling'],
-            ['ResamplingStepLength','resamplingstep','float',1,'distance between points in the resampled line'],
-            ['DelaunayTessellation','delaunaytessellation','vtkUnstructuredGrid',1,'optional input Delaunay tessellation'],
-            ['UseTetGen','usetetgen','int',1,'toggle use TetGen to compute Delaunay tessellation'],
-            ['TetGenDetectInter','tetgendetectinter','int',1,'TetGen option'],
-            ['CostFunction','costfunction','str',1,'specify cost function to be minimized during centerline computation']])
+            ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
+            ['SeedSelectorName','seedselector','str',1,'["pickpoint","openprofiles","carotidprofiles","idlist","pointlist"]','seed point selection method (pickpoint: interactive; openprofiles: choose among barycenters of open profiles of the surface; carotidprofiles: open profiles are automatically selected based on their z-axis coordinate (lower to higher: CCA, ECA, ICA)); idlist: list of surface point ids (specified as argument to -sourceids and -targetids); pointlist: list of surface points (specified as argument to -sourcepoints and -targetpoints)'],
+            ['SourceIds','sourceids','int',-1,'','list of source point ids'],
+            ['TargetIds','targetids','int',-1,'','list of target point ids'],
+            ['SourcePoints','sourcepoints','float',-1,'','list of source point coordinates'],
+            ['TargetPoints','targetpoints','float',-1,'','list of target point coordinates'],
+            ['AppendEndPoints','endpoints','bool',1,'','toggle append open profile barycenters to centerlines'],
+            ['FlipNormals','flipnormals','bool',1,'','flip normals after outward normal computation; outward oriented normals must be computed for the removal of outer tetrahedra; the algorithm might fail so for weird geometries, so changing this might solve the problem'],
+            ['CapDisplacement','capdisplacement','float',1,'','displacement of the center points of caps at open profiles along their normals (avoids the creation of degenerate tetrahedra)'],
+            ['RadiusArrayName','radiusarray','str',1,'','name of the array where radius values of maximal inscribed spheres have to be stored'],
+            ['AppendEndPoints','endpoints','bool',1,'','toggle append open profile barycenters to centerlines'],
+            ['Resampling','resampling','bool',1,'','toggle centerlines resampling'],
+            ['ResamplingStepLength','resamplingstep','float',1,'','distance between points in the resampled line'],
+            ['DelaunayTessellation','delaunaytessellation','vtkUnstructuredGrid',1,'','optional input Delaunay tessellation'],
+            ['UseTetGen','usetetgen','bool',1,'','toggle use TetGen to compute Delaunay tessellation'],
+            ['TetGenDetectInter','tetgendetectinter','bool',1,'','TetGen option'],
+            ['CostFunction','costfunction','str',1,'','specify cost function to be minimized during centerline computation']])
         self.SetOutputMembers([
-            ['Centerlines','o','vtkPolyData',1,'the output centerlines','vmtksurfacewriter'],
-            ['RadiusArrayName','radiusarray','str',1,'name of the array where radius values of maximal inscribed spheres are stored'],
+            ['Centerlines','o','vtkPolyData',1,'','the output centerlines','vmtksurfacewriter'],
+            ['RadiusArrayName','radiusarray','str',1,'','name of the array where radius values of maximal inscribed spheres are stored'],
             ['EikonalSolutionArrayName','eikonalsolutionarray','str',1],
             ['EdgeArrayName','edgearray','str',1],
             ['EdgePCoordArrayName','edgepcoordarray','str',1],
             ['CostFunctionArrayName','costfunctionarray','str',1],
-            ['DelaunayTessellation','delaunaytessellation','vtkUnstructuredGrid',1,'','vmtkmeshwriter'],
-            ['VoronoiDiagram','voronoidiagram','vtkPolyData',1,'','vmtksurfacewriter'],
+            ['DelaunayTessellation','delaunaytessellation','vtkUnstructuredGrid',1,'','','vmtkmeshwriter'],
+            ['VoronoiDiagram','voronoidiagram','vtkPolyData',1,'','','vmtksurfacewriter'],
             ['PoleIds','poleids','vtkIdList',1]])
 
     def Execute(self):

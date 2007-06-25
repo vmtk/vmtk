@@ -42,16 +42,16 @@ class vmtkImageWriter(pypes.pypeScript):
         self.SetScriptName('vmtkimagewriter')
         self.SetScriptDoc('write an image to disk')
         self.SetInputMembers([
-            ['Image','i','vtkImageData',1,'the input image','vmtkimagereader'],
-            ['Format','f','str',1,'file format (vtkxml, vtk, meta image, tiff, png, point data)'],
-            ['GuessFormat','guessformat','int',1,'guess file format from extension'],
-            ['UseITKIO','useitk','int',1,'use ITKIO mechanism'],
-            ['OutputFileName','ofile','str',1,'output file name'],
-            ['OutputFileName','o','str',1,'output file name (deprecated: use -ofile)'],
-            ['OutputRawFileName','rawfile','str',1,'name of the output raw file - meta image only'],
-            ['OutputDirectoryName','d','str',1,'output directory name - png, tiff'],
-            ['PixelRepresentation','r','str',1,'output scalar type (double, float, short)'],
-            ['WindowLevel','windowlevel','float',2,'window and level for mapping graylevels to 0-255 before writing - png, tiff'],
+            ['Image','i','vtkImageData',1,'','the input image','vmtkimagereader'],
+            ['Format','f','str',1,'["vtkxml","vtk","meta","tiff","png","pointdata"]','file format'],
+            ['GuessFormat','guessformat','bool',1,'','guess file format from extension'],
+            ['UseITKIO','useitk','bool',1,'','use ITKIO mechanism'],
+            ['OutputFileName','ofile','str',1,'','output file name'],
+            ['OutputFileName','o','str',1,'','output file name (deprecated: use -ofile)'],
+            ['OutputRawFileName','rawfile','str',1,'','name of the output raw file - meta image only'],
+            ['OutputDirectoryName','d','str',1,'','output directory name - png, tiff'],
+            ['PixelRepresentation','r','str',1,'["double","float","short"]','output scalar type'],
+            ['WindowLevel','windowlevel','float',2,'','window and level for mapping graylevels to 0-255 before writing - png, tiff'],
             ['RasToIjkMatrixCoefficients','matrix','float',16]
             ])
         self.SetOutputMembers([])

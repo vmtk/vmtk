@@ -44,18 +44,18 @@ class vmtkMeshViewer(pypes.pypeScript):
         self.SetScriptName('vmtkmeshviewer')
         self.SetScriptDoc('display a mesh')
         self.SetInputMembers([
-            ['Mesh','i','vtkUnstructuredGrid',1,'the input mesh','vmtkmeshreader'],
-            ['vmtkRenderer','renderer','vmtkRenderer',1,'external renderer'],
-            ['Display','display','int',1,'toggle rendering'],
-            ['Opacity','opacity','float',1,'object opacity in the scene'],
-            ['ArrayName','array','str',1,'name of the array where the scalars to be displayed are stored'],
-            ['ScalarRange','scalarrange','float',2,'range of the scalar map'],
-            ['Legend','legend','int',1,'toggle scalar bar'],
-            ['Grayscale','grayscale','int',1,'toggle color or grayscale'],
-            ['FlatInterpolation','flat','int',1,'toggle flat or shaded surface display']
+            ['Mesh','i','vtkUnstructuredGrid',1,'','the input mesh','vmtkmeshreader'],
+            ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer'],
+            ['Display','display','bool',1,'','toggle rendering'],
+            ['Opacity','opacity','float',1,'','object opacity in the scene'],
+            ['ArrayName','array','str',1,'','name of the array where the scalars to be displayed are stored'],
+            ['ScalarRange','scalarrange','float',2,'','range of the scalar map'],
+            ['Legend','legend','bool',1,'','toggle scalar bar'],
+            ['Grayscale','grayscale','bool',1,'','toggle color or grayscale'],
+            ['FlatInterpolation','flat','bool',1,'','toggle flat or shaded surface display']
             ])
         self.SetOutputMembers([
-            ['Mesh','o','vtkUnstructuredGrid',1,'the output mesh','vmtkmeshwriter']
+            ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh','vmtkmeshwriter']
             ])
 
     def BuildView(self):

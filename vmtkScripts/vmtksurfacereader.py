@@ -35,13 +35,13 @@ class vmtkSurfaceReader(pypes.pypeScript):
         self.SetScriptName('vmtksurfacereader')
         self.SetScriptDoc('read a surface and store it in a vtkPolyData object')
         self.SetInputMembers([
-            ['Format','f','str',1,'file format (vtkxml, vtk, stl, tecplot)'],
-            ['GuessFormat','guessformat','int',1,'guess file format from extension'],
-            ['InputFileName','ifile','str',1,'input file name'],
-            ['InputFileName','i','str',1,'input file name (deprecated: use -ifile)']
+            ['Format','f','str',1,'["vtkxml","vtk","stl","tecplot"]','file format'],
+            ['GuessFormat','guessformat','bool',1,'','guess file format from extension'],
+            ['Surface','i','vtkPolyData',1,'','the input surface'],
+            ['InputFileName','ifile','str',1,'','input file name']
             ])
         self.SetOutputMembers([
-            ['Surface','o','vtkPolyData',1,'the output surface','vmtksurfacewriter']
+            ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter']
             ])
 
     def ReadVTKSurfaceFile(self):

@@ -41,17 +41,17 @@ class vmtkMeshReader(pypes.pypeScript):
         self.SetScriptName('vmtkmeshreader')
         self.SetScriptDoc('read a mesh and stores it in a vtkUnstructuredGrid object')
         self.SetInputMembers([
-            ['Format','f','str',1,'file format (vtkxml, vtk, fdneut - FIDAP neutral format, ngneut - Netgen neutral format, tecplot)'],
-            ['GuessFormat','guessformat','int',1,'guess file format from extension'],
-            ['InputFileName','i','str',1,'input file name (deprecated: use -ifile)'],
-            ['InputFileName','ifile','str',1,'input file name'],
-            ['GhostNodes','ghostnodes','int',1,'store all nodes for 9-noded quads, 7-noded triangles, 27-noded hexahedra, 18-noded wedges; otherwise, store them as 8-noded quads, 6-noded triangles, 20-noded hexahedra, 15-noded wedges - fdneut only'],
-            ['VolumeElementsOnly','volumeelementsonly','int',1,'only read volume elements - fdneut and ngneut'],
-            ['CellEntityIdsArrayName','entityidsarray','str',1,'name of the array where entity ids have to be stored - ngneut only']
+            ['Format','f','str',1,'["vtkxml","vtk","fdneut","ngneut","tecplot"]','file format (fdneut - FIDAP neutral format, ngneut - Netgen neutral format)'],
+            ['GuessFormat','guessformat','bool',1,'','guess file format from extension'],
+            ['Mesh','i','vtkUnstructuredGrid',1,'','the input mesh'],
+            ['InputFileName','ifile','str',1,'','input file name'],
+            ['GhostNodes','ghostnodes','bool',1,'','store all nodes for 9-noded quads, 7-noded triangles, 27-noded hexahedra, 18-noded wedges; otherwise, store them as 8-noded quads, 6-noded triangles, 20-noded hexahedra, 15-noded wedges - fdneut only'],
+            ['VolumeElementsOnly','volumeelementsonly','bool',1,'','only read volume elements - fdneut and ngneut'],
+            ['CellEntityIdsArrayName','entityidsarray','str',1,'','name of the array where entity ids have to be stored - ngneut only']
             ])
         self.SetOutputMembers([
-            ['Mesh','o','vtkUnstructuredGrid',1,'output mesh','vmtkmeshwriter'],
-            ['CellEntityIdsArrayName','entityidsarray','str',1,'name of the array where entity ids have been stored - ngneut only']
+            ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh','vmtkmeshwriter'],
+            ['CellEntityIdsArrayName','entityidsarray','str',1,'','name of the array where entity ids have been stored - ngneut only']
             ])
 
     def ReadVTKMeshFile(self):

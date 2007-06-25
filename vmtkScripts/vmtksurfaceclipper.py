@@ -38,11 +38,11 @@ class vmtkSurfaceClipper(pypes.pypeScript):
         self.SetScriptName('vmtksurfaceclipper')
         self.SetScriptDoc('interactively clip a surface with a box')
         self.SetInputMembers([
-            ['Surface','i','vtkPolyData',1,'the input surface','vmtksurfacereader'],
-            ['vmtkRenderer','renderer','vmtkRenderer',1,'external renderer']
+            ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
+            ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer']
             ])
         self.SetOutputMembers([
-            ['Surface','o','vtkPolyData',1,'the output surface','vmtksurfacewriter']
+            ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter']
             ])
 
     def KeyPressed(self,object,event):

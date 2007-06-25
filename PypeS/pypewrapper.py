@@ -108,12 +108,17 @@ class PypeWrapper(object):
             for exposedMember in exposedMembers:
                 memberXMLTag = ''
                 memberXMLOptions = ''
+                enumeration = exposedMember.GetRangeEnumeration()
                 if exposedMember.MemberType == 'int':
                     memberXMLTag = 'integer'
                 elif exposedMember.MemberType == 'float':
                     memberXMLTag = 'float'
                 elif exposedMember.MemberType == 'str':
                     memberXMLTag = 'string'
+                    if enumeration:
+                        memberXMLTag += '-enumeration'
+                elif exposedMember.MemberType == 'bool':
+                    memberXMLTag = 'boolean'
                 if exposedMember.MemberLength != 1:
                     memberXMLTag += '-vector'
                 if exposedMember.MemberType == 'vtkImageData':
@@ -132,6 +137,9 @@ class PypeWrapper(object):
                     self.XMLDescription += 3*ind + '<description>%s</description>\n' % (exposedMember.MemberDoc)
                 if exposedMember.MemberValue not in [None, [], '']:
                     self.XMLDescription += 3*ind + '<default>%s</default>\n' % (str(exposedMember.MemberValue))
+                if enumeration:
+                    for element in enumeration:
+                        self.XMLDescription += 3*ind + '<element>%s</element>\n' % (str(element))
                 if exposedMember.ExposedChannel in ['input','output']:
                     self.XMLDescription += 3*ind + '<channel>%s</channel>\n' % (exposedMember.ExposedChannel)
                 self.XMLDescription += 2*ind + '</%s>\n' % (memberXMLTag)
@@ -175,16 +183,23 @@ class PypeWrapper(object):
         moduleFile.write('\n')
 
         for exposedMember in self.AllExposedMembers:
-            moduleFile.write('%s = ""\n' % exposedMember.ExposedName) 
-            moduleFile.write('while "--%s" in arguments:\n' % (exposedMember.ExposedName))
-            moduleFile.write(self.Indentation+'index = arguments.index("--%s")\n' % (exposedMember.ExposedName))
-            moduleFile.write(self.Indentation+'if index != len(arguments)-1 and "--" not in arguments[index+1]:\n')
-            moduleFile.write(2*self.Indentation+'if %s:\n' % exposedMember.ExposedName) 
-            moduleFile.write(3*self.Indentation+'%s += ","\n' % exposedMember.ExposedName) 
-            moduleFile.write(2*self.Indentation+'%s += arguments[index+1]\n' % exposedMember.ExposedName) 
-            moduleFile.write(2*self.Indentation+'arguments.remove(arguments[index+1])\n') 
-            moduleFile.write(self.Indentation+'arguments.remove("--%s")\n' % exposedMember.ExposedName) 
-            moduleFile.write('\n')
+            if exposedMember.MemberType is 'bool':
+                moduleFile.write('%s = "0"\n' % exposedMember.ExposedName) 
+                moduleFile.write('if "--%s" in arguments:\n' % (exposedMember.ExposedName))
+                moduleFile.write(self.Indentation+'%s = "1"\n' % (exposedMember.ExposedName))
+                moduleFile.write(self.Indentation+'arguments.remove("--%s")\n' % exposedMember.ExposedName) 
+                moduleFile.write('\n')
+            else:
+                moduleFile.write('%s = ""\n' % exposedMember.ExposedName) 
+                moduleFile.write('while "--%s" in arguments:\n' % (exposedMember.ExposedName))
+                moduleFile.write(self.Indentation+'index = arguments.index("--%s")\n' % (exposedMember.ExposedName))
+                moduleFile.write(self.Indentation+'if index != len(arguments)-1 and "--" not in arguments[index+1]:\n')
+                moduleFile.write(2*self.Indentation+'if %s:\n' % exposedMember.ExposedName) 
+                moduleFile.write(3*self.Indentation+'%s += ","\n' % exposedMember.ExposedName) 
+                moduleFile.write(2*self.Indentation+'%s += arguments[index+1]\n' % exposedMember.ExposedName) 
+                moduleFile.write(2*self.Indentation+'arguments.remove(arguments[index+1])\n') 
+                moduleFile.write(self.Indentation+'arguments.remove("--%s")\n' % exposedMember.ExposedName) 
+                moduleFile.write('\n')
  
         moduleFile.write('pipe = "%s" %% (%s)\n' % (' '.join(substModulePipeArguments),','.join(['" ".join(%s.split(","))' % member.ExposedName for member in self.AllExposedMembers])))
 

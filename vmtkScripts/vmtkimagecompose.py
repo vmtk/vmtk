@@ -34,12 +34,12 @@ class vmtkImageCompose(pypes.pypeScript):
         self.SetScriptName('vmtkimagecompose')
         self.SetScriptDoc('compose an image based on user-specified parameters or on a reference image')
         self.SetInputMembers([
-            ['Image','i','vtkImageData',1,'the input image','vmtkimagereader'],
-            ['Image2','i2','vtkImageData',1,'the second input image','vmtkimagereader'],
-            ['Operation','operation','str',1,'the operation used to compose images (min, max)']
+            ['Image','i','vtkImageData',1,'','the input image','vmtkimagereader'],
+            ['Image2','i2','vtkImageData',1,'','the second input image','vmtkimagereader'],
+            ['Operation','operation','str',1,'["min","max"]','the operation used to compose images']
             ])
         self.SetOutputMembers([
-            ['Image','o','vtkImageData',1,'the output image','vmtkimagewriter']
+            ['Image','o','vtkImageData',1,'','the output image','vmtkimagewriter']
             ])
 
     def Execute(self):

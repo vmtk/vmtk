@@ -47,20 +47,20 @@ class vmtkBoundaryLayer(pypes.pypeScript):
         self.SetScriptName('vmtkboundarylayer')
         self.SetScriptDoc('create a prismatic boundary layer from a surface mesh and a set of vectors defined on the nodes')
         self.SetInputMembers([
-            ['Mesh','i','vtkUnstructuredGrid',1,'the input mesh','vmtkmeshreader'],
-            ['WarpVectorsArrayName','warpvectorsarray','str',1,'name of the array where warp vectors are stored'],
-            ['ThicknessArrayName','thicknessarray','str',1,'name of the array where scalars defining boundary layer thickness are stored'],
-            ['Thickness','thickness','float',1,'value of constant boundary layer thickness'],
-            ['ThicknessRatio','thicknessratio','float',1,'multiplying factor for boundary layer thickness'],
-            ['MaximumThickness','maximumthickness','float',1,'maximum allowed value for boundary layer thickness'],
-            ['NumberOfSubLayers','numberofsublayers','int',1,'number of sublayers which the boundary layer has to be made of'],
-            ['SubLayerRatio','sublayerratio','float',1,'ratio between the thickness of two successive boundary layers'],
-            ['UseWarpVectorMagnitudeAsThickness','warpvectormagnitudeasthickness','int',1,'compute boundary layer thickness as the norm of warp vectors'],
-            ['ConstantThickness','constantthickness','int',1,'toggle constant boundary layer thickness'],
-            ['IncludeSurfaceCells','includesurfacecells','int',1,'include surface cells in output mesh']
+            ['Mesh','i','vtkUnstructuredGrid',1,'','the input mesh','vmtkmeshreader'],
+            ['WarpVectorsArrayName','warpvectorsarray','str',1,'','name of the array where warp vectors are stored'],
+            ['ThicknessArrayName','thicknessarray','str',1,'','name of the array where scalars defining boundary layer thickness are stored'],
+            ['Thickness','thickness','float',1,'','value of constant boundary layer thickness'],
+            ['ThicknessRatio','thicknessratio','float',1,'','multiplying factor for boundary layer thickness'],
+            ['MaximumThickness','maximumthickness','float',1,'','maximum allowed value for boundary layer thickness'],
+            ['NumberOfSubLayers','numberofsublayers','int',1,'','number of sublayers which the boundary layer has to be made of'],
+            ['SubLayerRatio','sublayerratio','float',1,'','ratio between the thickness of two successive boundary layers'],
+            ['UseWarpVectorMagnitudeAsThickness','warpvectormagnitudeasthickness','bool',1,'','compute boundary layer thickness as the norm of warp vectors'],
+            ['ConstantThickness','constantthickness','bool',1,'','toggle constant boundary layer thickness'],
+            ['IncludeSurfaceCells','includesurfacecells','bool',1,'','include surface cells in output mesh']
             ])
         self.SetOutputMembers([
-            ['Mesh','o','vtkUnstructuredGrid',1,'the output mesh','vmtkmeshwriter']
+            ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh','vmtkmeshwriter']
             ])
 
     def Execute(self):

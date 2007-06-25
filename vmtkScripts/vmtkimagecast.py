@@ -36,13 +36,13 @@ class vmtkImageCast(pypes.pypeScript):
         self.SetScriptName('vmtkimagecast')
         self.SetScriptDoc('cast an image to a specified type')
         self.SetInputMembers([
-            ['Image','i','vtkImageData',1,'the input image','vmtkimagereader'],
-            ['OutputType','type','str',1,'the output image type'],
-            ['ShiftScale','shiftscale','int',1,'shift scale values to fit windowlevel'],
-            ['WindowLevel','windowlevel','float',2,'window and level for value mapping']
+            ['Image','i','vtkImageData',1,'','the input image','vmtkimagereader'],
+            ['OutputType','type','str',1,'["float","double","uchar","short"]','the output image type'],
+            ['ShiftScale','shiftscale','int',1,'','shift scale values to fit windowlevel'],
+            ['WindowLevel','windowlevel','float',2,'','window and level for value mapping']
             ])
         self.SetOutputMembers([
-            ['Image','o','vtkImageData',1,'the output image','vmtkimagewriter']
+            ['Image','o','vtkImageData',1,'','the output image','vmtkimagewriter']
             ])
 
     def Execute(self):

@@ -48,9 +48,9 @@ class vmtkImageInitialization(pypes.pypeScript):
 
         self.SetScriptName('vmtkimageinitialization')
         self.SetInputMembers([
-            ['Image','i','vtkImageData',1,'','vmtkimagereader'],
-            ['Method','method','str',1,'the initialization method (collidingfronts, fastmarching, threshold, isosurface)'],
-            ['Interactive','interactive','int',1],
+            ['Image','i','vtkImageData',1,'','','vmtkimagereader'],
+            ['Method','method','str',1,'["collidingfronts","fastmarching","threshold","isosurface"]','the initialization method'],
+            ['Interactive','interactive','bool',1],
             ['IsosurfaceValue','isosurfacevalue','float',1],
             ['UpperThreshold','upperthreshold','float',1],
             ['LowerThreshold','lowerthreshold','float',1],
@@ -59,7 +59,7 @@ class vmtkImageInitialization(pypes.pypeScript):
             ['vmtkRenderer','renderer','vmtkRenderer',1]
             ])
         self.SetOutputMembers([
-            ['Image','o','vtkImageData',1,'','vmtkimagewriter']
+            ['Image','o','vtkImageData',1,'','','vmtkimagewriter']
             ])
 
     def SeedsToPoints(self,seeds):

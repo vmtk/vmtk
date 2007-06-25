@@ -51,9 +51,9 @@ class vmtkBranchMapping(pypes.pypeScript):
         self.SetScriptName('vmtkbranchmapping')
         self.SetScriptDoc('')
         self.SetInputMembers([
-            ['Surface','i','vtkPolyData',1,'','vmtksurfacereader'],
-            ['Centerlines','centerlines','vtkPolyData',1,'','vmtksurfacereader'],
-            ['ReferenceSystems','referencesystems','vtkPolyData',1,'','vmtksurfacereader'],
+            ['Surface','i','vtkPolyData',1,'','','vmtksurfacereader'],
+            ['Centerlines','centerlines','vtkPolyData',1,'','','vmtksurfacereader'],
+            ['ReferenceSystems','referencesystems','vtkPolyData',1,'','','vmtksurfacereader'],
       	    ['AbscissasArrayName','abscissasarray','str',1],
       	    ['NormalsArrayName','normalsarray','str',1],
       	    ['GroupIdsArrayName','groupidsarray','str',1],
@@ -69,7 +69,7 @@ class vmtkBranchMapping(pypes.pypeScript):
       	    ['StretchedMappingArrayName','stretchedmappingarray','str',1]
             ])
         self.SetOutputMembers([
-            ['Surface','o','vtkPolyData',1,'','vmtksurfacewriter'],
+            ['Surface','o','vtkPolyData',1,'','','vmtksurfacewriter'],
             ['HarmonicMappingArrayName','harmonicmappingarray','str',1],
             ['BoundaryMetricArrayName','boundarymetricarray','str',1],
             ['StretchedMappingArrayName','stretchedmappingarray','str',1]

@@ -38,6 +38,7 @@ vtkvmtkMeshVorticity::vtkvmtkMeshVorticity()
 {
   this->VelocityArrayName = NULL;
   this->VorticityArrayName = NULL;
+  this->ComputeIndividualPartialDerivatives = 0;
 }
 
 vtkvmtkMeshVorticity::~vtkvmtkMeshVorticity()
@@ -91,7 +92,7 @@ int vtkvmtkMeshVorticity::RequestData(
   gradientFilter->SetGradientArrayName(gradientArrayName);
   gradientFilter->SetQuadratureOrder(3);
   gradientFilter->SetConvergenceTolerance(1E-8);
-  gradientFilter->ComputeIndividualPartialDerivativesOff();
+  gradientFilter->SetComputeIndividualPartialDerivatives(this->ComputeIndividualPartialDerivatives);
   gradientFilter->Update();
 
   vtkDataArray* velocityGradientArray = gradientFilter->GetOutput()->GetPointData()->GetArray(gradientArrayName);
@@ -110,7 +111,7 @@ int vtkvmtkMeshVorticity::RequestData(
   vorticityArray->SetNumberOfComponents(3);
   vorticityArray->SetNumberOfTuples(numberOfPoints);
 
-  double velocityGradient[8];
+  double velocityGradient[9];
   double vorticity[3];
   
   int i;

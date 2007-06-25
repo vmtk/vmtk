@@ -52,13 +52,13 @@ class vmtkImageVOISelector(pypes.pypeScript):
         self.SetScriptName('vmtkimagevoiselector')
         self.SetScriptDoc('select a cubical volume of interest and get rid of the rest of the image')
         self.SetInputMembers([
-            ['Image','i','vtkImageData',1,'the input image','vmtkimagereader'],
-            ['Interactive','interactive','int',1,'toggle interactivity'],
-            ['BoxBounds','boxbounds','float',6,'bounds of the cubical region of interest'],
-            ['vmtkRenderer','renderer','vmtkRenderer',1,'external renderer']
+            ['Image','i','vtkImageData',1,'','the input image','vmtkimagereader'],
+            ['Interactive','interactive','bool',1,'','toggle interactivity'],
+            ['BoxBounds','boxbounds','float',6,'','bounds of the cubical region of interest'],
+            ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer']
             ])
         self.SetOutputMembers([
-            ['Image','o','vtkImageData',1,'the output image','vmtkimagewriter']
+            ['Image','o','vtkImageData',1,'','the output image','vmtkimagewriter']
             ])
 
     def HideCube(self,object, event):

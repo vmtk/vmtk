@@ -34,11 +34,11 @@ class vmtkMeshToSurface(pypes.pypeScript):
         self.SetScriptName('vmtkmeshtosurface')
         self.SetScriptDoc('convert a mesh to a surface by throwing out volume elements and (optionally) the relative points')
         self.SetInputMembers([
-            ['Mesh','i','vtkUnstructuredGrid',1,'the input mesh','vmtkmeshreader'],
-            ['CleanOutput','cleanoutput','int',1,'toggle cleaning the unused points']
+            ['Mesh','i','vtkUnstructuredGrid',1,'','the input mesh','vmtkmeshreader'],
+            ['CleanOutput','cleanoutput','bool',1,'','toggle cleaning the unused points']
             ])
         self.SetOutputMembers([
-            ['Surface','o','vtkPolyData',1,'the output surface','vmtksurfacewriter']])
+            ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter']])
 
     def Execute(self):
 

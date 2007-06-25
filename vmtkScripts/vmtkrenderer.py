@@ -42,13 +42,13 @@ class vmtkRenderer(pypes.pypeScript):
         self.SetScriptName('vmtkrenderer')
         self.SetScriptDoc('renderer used to make several viewers use the same rendering window')
         self.SetInputMembers([
-            ['WindowSize','size','int',2,'size of the rendering window'],
-            ['PointSmoothing','pointsmoothing','int',1,'toggle rendering smooth points'],
-            ['LineSmoothing','linesmoothing','int',1,'toggle rendering smooth lines'],
-            ['PolygonSmoothing','polygonsmoothing','int',1,'toggle rendering smooth polygons'],
-            ['Background','background','float',3,'background color of the rendering window']])
+            ['WindowSize','size','int',2,'','size of the rendering window'],
+            ['PointSmoothing','pointsmoothing','bool',1,'','toggle rendering smooth points'],
+            ['LineSmoothing','linesmoothing','bool',1,'','toggle rendering smooth lines'],
+            ['PolygonSmoothing','polygonsmoothing','bool',1,'','toggle rendering smooth polygons'],
+            ['Background','background','float',3,'','background color of the rendering window']])
         self.SetOutputMembers([
-            ['vmtkRenderer','o','vmtkRenderer',1,'the renderer']])
+            ['vmtkRenderer','o','vmtkRenderer',1,'','the renderer']])
 
     def Render(self,interactive=1):
 

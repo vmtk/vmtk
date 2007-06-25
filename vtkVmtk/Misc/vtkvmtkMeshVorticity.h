@@ -43,6 +43,10 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkMeshVorticity : public vtkUnstructuredGridAlgo
   vtkSetStringMacro(VorticityArrayName);
   vtkGetStringMacro(VorticityArrayName);
  
+  vtkSetMacro(ComputeIndividualPartialDerivatives,int);
+  vtkGetMacro(ComputeIndividualPartialDerivatives,int);
+  vtkBooleanMacro(ComputeIndividualPartialDerivatives,int);
+
   protected:
   vtkvmtkMeshVorticity();
   ~vtkvmtkMeshVorticity();  
@@ -51,6 +55,8 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkMeshVorticity : public vtkUnstructuredGridAlgo
 
   char* VelocityArrayName;
   char* VorticityArrayName;
+
+  int ComputeIndividualPartialDerivatives;
 
   private:
   vtkvmtkMeshVorticity(const vtkvmtkMeshVorticity&);  // Not implemented.

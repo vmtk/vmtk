@@ -34,12 +34,12 @@ class vmtkPointTransform(pypes.pypeScript):
         self.SetScriptName('vmtkpointtransform')
         self.SetScriptDoc('transform points with a provided matrix')
         self.SetInputMembers([
-            ['Points','i','float',-1,'point coordinates'],
-            ['MatrixCoefficients','matrix','float',16,'coefficients of transform matrix'],
-            ['InvertMatrix','invert','int',1,'invert matrix before applying transformation']
+            ['Points','i','float',-1,'','point coordinates'],
+            ['MatrixCoefficients','matrix','float',16,'','coefficients of transform matrix'],
+            ['InvertMatrix','invert','bool',1,'','invert matrix before applying transformation']
             ])
         self.SetOutputMembers([
-            ['Points','o','float',-1,'output point coordinates']
+            ['Points','o','float',-1,'','output point coordinates']
             ])
 
     def Execute(self):

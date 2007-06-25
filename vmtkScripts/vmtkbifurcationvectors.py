@@ -53,15 +53,15 @@ class vmtkBifurcationVectors(pypes.pypeScript):
         self.SetScriptName('vmtkbifurcationvectors')
         self.SetScriptDoc('.')
         self.SetInputMembers([
-            ['Centerlines','i','vtkPolyData',1,'the input split centerlines','vmtksurfacereader'],
-            ['ReferenceSystems','referencesystems','vtkPolyData',1,'reference systems relative to the split centerlines','vmtksurfacereader'],
-      	    ['RadiusArrayName','radiusarray','str',1,'name of the array where centerline radius values are stored'],
-      	    ['GroupIdsArrayName','groupidsarray','str',1,'name of the array where centerline group ids are stored'],
-      	    ['CenterlineIdsArrayName','centerlineidsarray','str',1,'name of the array where centerline ids are stored'],
-      	    ['TractIdsArrayName','tractidsarray','str',1,'name of the array where centerline tract ids are stored'],
-      	    ['BlankingArrayName','blankingarray','str',1,'name of the array where blanking information about branches is stored'],
-      	    ['ReferenceSystemsNormalArrayName','normalarray','str',1,'name of the array where reference system normal vectors are stored'],
-      	    ['ReferenceSystemsUpNormalArrayName','upnormalarray','str',1,'name of the array where reference system upnormal vectors are stored'],
+            ['Centerlines','i','vtkPolyData',1,'','the input split centerlines','vmtksurfacereader'],
+            ['ReferenceSystems','referencesystems','vtkPolyData',1,'','reference systems relative to the split centerlines','vmtksurfacereader'],
+      	    ['RadiusArrayName','radiusarray','str',1,'','name of the array where centerline radius values are stored'],
+      	    ['GroupIdsArrayName','groupidsarray','str',1,'','name of the array where centerline group ids are stored'],
+      	    ['CenterlineIdsArrayName','centerlineidsarray','str',1,'','name of the array where centerline ids are stored'],
+      	    ['TractIdsArrayName','tractidsarray','str',1,'','name of the array where centerline tract ids are stored'],
+      	    ['BlankingArrayName','blankingarray','str',1,'','name of the array where blanking information about branches is stored'],
+      	    ['ReferenceSystemsNormalArrayName','normalarray','str',1,'','name of the array where reference system normal vectors are stored'],
+      	    ['ReferenceSystemsUpNormalArrayName','upnormalarray','str',1,'','name of the array where reference system upnormal vectors are stored'],
       	    ['BifurcationVectorsArrayName','vectorsarray','str',1,''],
       	    ['InPlaneBifurcationVectorsArrayName','inplanevectorsarray','str',1,''],
       	    ['OutOfPlaneBifurcationVectorsArrayName','outofplanevectorsarray','str',1,''],
@@ -72,7 +72,7 @@ class vmtkBifurcationVectors(pypes.pypeScript):
             ['NormalizeBifurcationVectors','normalizevectors','int',1,'']
             ])
         self.SetOutputMembers([
-            ['BifurcationVectors','o','vtkPolyData',1,'the output data','vmtksurfacewriter'],
+            ['BifurcationVectors','o','vtkPolyData',1,'','the output data','vmtksurfacewriter'],
       	    ['BifurcationVectorsArrayName','vectorsarray','str',1,''],
       	    ['InPlaneBifurcationVectorsArrayName','inplanevectorsarray','str',1,''],
       	    ['OutOfPlaneBifurcationVectorsArrayName','outofplanevectorsarray','str',1,''],

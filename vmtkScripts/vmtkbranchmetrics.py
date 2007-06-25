@@ -48,10 +48,10 @@ class vmtkBranchMetrics(pypes.pypeScript):
         self.SetScriptName('vmtkbranchmetrics')
         self.SetScriptDoc('')
         self.SetInputMembers([
-            ['Surface','i','vtkPolyData',1,'','vmtksurfacereader'],
-            ['Centerlines','centerlines','vtkPolyData',1,'','vmtksurfacereader'],
-      	    ['ComputeAbscissaMetric','abscissametric','int',1],
-      	    ['ComputeAngularMetric','angularmetric','int',1],
+            ['Surface','i','vtkPolyData',1,'','','vmtksurfacereader'],
+            ['Centerlines','centerlines','vtkPolyData',1,'','','vmtksurfacereader'],
+      	    ['ComputeAbscissaMetric','abscissametric','bool',1],
+      	    ['ComputeAngularMetric','angularmetric','bool',1],
       	    ['AbscissasArrayName','abscissasarray','str',1],
       	    ['NormalsArrayName','normalsarray','str',1],
       	    ['GroupIdsArrayName','groupidsarray','str',1],
@@ -63,7 +63,7 @@ class vmtkBranchMetrics(pypes.pypeScript):
       	    ['AbscissaMetricArrayName','abscissametricarray','str',1]
             ])
         self.SetOutputMembers([
-            ['Surface','o','vtkPolyData',1,'','vmtksurfacewriter'],
+            ['Surface','o','vtkPolyData',1,'','','vmtksurfacewriter'],
       	    ['AngularMetricArrayName','angularmetricarray','str',1],
             ['AbscissaMetricArrayName','abscissametricarray','str',1]
             ])

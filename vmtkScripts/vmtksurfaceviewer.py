@@ -48,21 +48,21 @@ class vmtkSurfaceViewer(pypes.pypeScript):
         self.SetScriptName('vmtksurfaceviewer')
         self.SetScriptDoc('display a surface')
         self.SetInputMembers([
-            ['Surface','i','vtkPolyData',1,'the input surface','vmtksurfacereader'],
-            ['vmtkRenderer','renderer','vmtkRenderer',1,'external renderer'],
-            ['Display','display','int',1,'toggle rendering'],
-            ['Opacity','opacity','float',1,'obejct opacity in the scene'],
-            ['ArrayName','array','str',1,'name of the array where the scalars to be displayed are stored'],
-            ['ScalarRange','scalarrange','float',2,'range of the scalar map'],
-            ['Legend','legend','int',1,'toggle scalar bar'],
-            ['Grayscale','grayscale','int',1,'toggle color or grayscale'],
-            ['FlatInterpolation','flat','int',1,'toggle flat or shaded surface display'],
-            ['DisplayCellData','celldata','int',1,'toggle display of point or cell data'],
-            ['Color','color','float',3,'RGB color of the object in the scene'],
-            ['LineWidth','linewidth','int',1,'width of line objects in the scene'],
-            ['LegendTitle','legendtitle','str',1,'title of the scalar bar']])
+            ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
+            ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer'],
+            ['Display','display','bool',1,'','toggle rendering'],
+            ['Opacity','opacity','float',1,'','obejct opacity in the scene'],
+            ['ArrayName','array','str',1,'','name of the array where the scalars to be displayed are stored'],
+            ['ScalarRange','scalarrange','float',2,'','range of the scalar map'],
+            ['Legend','legend','bool',1,'','toggle scalar bar'],
+            ['Grayscale','grayscale','bool',1,'','toggle color or grayscale'],
+            ['FlatInterpolation','flat','bool',1,'','toggle flat or shaded surface display'],
+            ['DisplayCellData','celldata','bool',1,'','toggle display of point or cell data'],
+            ['Color','color','float',3,'','RGB color of the object in the scene'],
+            ['LineWidth','linewidth','int',1,'','width of line objects in the scene'],
+            ['LegendTitle','legendtitle','str',1,'','title of the scalar bar']])
         self.SetOutputMembers([
-            ['Surface','o','vtkPolyData',1,'the output surface','vmtksurfacewriter']
+            ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter']
             ])
 
     def BuildView(self):

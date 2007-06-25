@@ -49,12 +49,12 @@ class vmtkBranchPatching(pypes.pypeScript):
 
         self.SetScriptName('vmtkbranchpatching')
         self.SetInputMembers([
-            ['Surface','i','vtkPolyData',1,'','vmtksurfacereader'],
+            ['Surface','i','vtkPolyData',1,'','','vmtksurfacereader'],
             ['PatchSize','patchsize','float',2],
             ['LongitudinalPatchSize','longitudinalpatchsize','float',1],
             ['CircularNumberOfPatches','circularpatches','int',1],
-            ['CircularPatching','circularpatching','int',1],
-            ['UseConnectivity','connectivity','int',1],
+            ['CircularPatching','circularpatching','bool',1],
+            ['UseConnectivity','connectivity','bool',1],
             ['GroupIdsArrayName','groupidsarray','str',1],
             ['LongitudinalMappingArrayName','longitudinalmappingarray','str',1],
             ['CircularMappingArrayName','circularmappingarray','str',1],
@@ -63,8 +63,8 @@ class vmtkBranchPatching(pypes.pypeScript):
             ['PatchAreaArrayName','patchareaarray','str',1]
             ])
         self.SetOutputMembers([
-            ['Surface','o','vtkPolyData',1,'','vmtksurfacewriter'],
-            ['PatchedData','patcheddata','vtkImageData',1,'','vmtkimagewriter'],
+            ['Surface','o','vtkPolyData',1,'','','vmtksurfacewriter'],
+            ['PatchedData','patcheddata','vtkImageData',1,'','','vmtkimagewriter'],
             ['PatchSize','patchsize','float',2],
             ['LongitudinalPatchNumberArrayName','longitudinalpatchnumberarray','str',1],
             ['CircularPatchNumberArrayName','circularpatchnumberarray','str',1],

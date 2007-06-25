@@ -42,17 +42,17 @@ class vmtkSurfaceCapper(pypes.pypeScript):
         self.SetScriptName('vmtksurfacecapper')
         self.SetScriptDoc('add caps to the holes of a surface, assigning an id to each cap for easy specification of boundary conditions ("simple" method only).')
         self.SetInputMembers([
-            ['Surface','i','vtkPolyData',1,'the input surface','vmtksurfacereader'],
-            ['Method','method','str',1,'capping method ("simple", "centerpoint", "smooth")'],
-            ['TriangleOutput','triangle','int',1,'toggle triangulation of the output'],
-            ['CellMarkerArrayName','cellmarkerarray','str',1,'name of the array where the id of the caps are stored'],
-            ['ConstraintFactor','constraint','float',1,'amount of influence of the shape of the surface near the boundary on the shape of the cap ("smooth" method only)'],
-            ['NumberOfRings','rings','int',1,'number of rings composing the cap ("smooth" method only)'],
-            ['Interactive','interactive','int',1],
-            ['vmtkRenderer','renderer','vmtkRenderer',1,'external renderer']
+            ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
+            ['Method','method','str',1,'["simple","centerpoint","smooth"]','capping method'],
+            ['TriangleOutput','triangle','bool',1,'','toggle triangulation of the output'],
+            ['CellMarkerArrayName','cellmarkerarray','str',1,'','name of the array where the id of the caps are stored'],
+            ['ConstraintFactor','constraint','float',1,'','amount of influence of the shape of the surface near the boundary on the shape of the cap ("smooth" method only)'],
+            ['NumberOfRings','rings','int',1,'','number of rings composing the cap ("smooth" method only)'],
+            ['Interactive','interactive','bool',1],
+            ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer']
             ])
         self.SetOutputMembers([
-            ['Surface','o','vtkPolyData',1,'the output surface','vmtksurfacewriter']])
+            ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter']])
 
     def LabelValidator(self,text):
         import string

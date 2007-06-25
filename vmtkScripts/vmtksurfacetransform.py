@@ -34,12 +34,12 @@ class vmtkSurfaceTransform(pypes.pypeScript):
         self.SetScriptName('vmtksurfacetransform')
         self.SetScriptDoc('transform a surface with a provided matrix')
         self.SetInputMembers([
-            ['Surface','i','vtkPolyData',1,'the input surface','vmtksurfacereader'],
-            ['MatrixCoefficients','matrix','float',16,'coefficients of transform matrix'],
-            ['InvertMatrix','invert','int',1,'invert matrix before applying transformation']
+            ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
+            ['MatrixCoefficients','matrix','float',16,'','coefficients of transform matrix'],
+            ['InvertMatrix','invert','bool',1,'','invert matrix before applying transformation']
             ])
         self.SetOutputMembers([
-            ['Surface','o','vtkPolyData',1,'the output surface','vmtksurfacewriter']
+            ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter']
             ])
 
     def Execute(self):

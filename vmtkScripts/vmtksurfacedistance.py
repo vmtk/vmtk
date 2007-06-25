@@ -39,15 +39,15 @@ class vmtkSurfaceDistance(pypes.pypeScript):
         self.SetScriptName('vmtksurfacedistance')
         self.SetScriptDoc('compute the pointwise minimum distance of the input surface from a reference surface')
         self.SetInputMembers([
-            ['Surface','i','vtkPolyData',1,'the input surface','vmtksurfacereader'],
-            ['ReferenceSurface','r','vtkPolyData',1,'the reference surface','vmtksurfacereader'],
-            ['DistanceArrayName','distancearray','str',1,'name of the array where the distance of the input surface to the reference surface has to be stored'],
-            ['DistanceVectorsArrayName','distancevectorsarray','str',1,'name of the array where the distance vectors of the input surface to the reference surface has to be stored'],
-            ['SignedDistanceArrayName','signeddistancearray','str',1,'name of the array where the signed distance of the input surface to the reference surface is stored; distance is positive if distance vector and normal to the reference surface have negative dot product, i.e. if the input surface is outer with respect to the reference surface'],
-            ['FlipNormals','flipnormals','int',1,'flip normals to the reference surface after computing them']
+            ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
+            ['ReferenceSurface','r','vtkPolyData',1,'','the reference surface','vmtksurfacereader'],
+            ['DistanceArrayName','distancearray','str',1,'','name of the array where the distance of the input surface to the reference surface has to be stored'],
+            ['DistanceVectorsArrayName','distancevectorsarray','str',1,'','name of the array where the distance vectors of the input surface to the reference surface has to be stored'],
+            ['SignedDistanceArrayName','signeddistancearray','str',1,'','name of the array where the signed distance of the input surface to the reference surface is stored; distance is positive if distance vector and normal to the reference surface have negative dot product, i.e. if the input surface is outer with respect to the reference surface'],
+            ['FlipNormals','flipnormals','bool',1,'','flip normals to the reference surface after computing them']
             ])
         self.SetOutputMembers([
-            ['Surface','o','vtkPolyData',1,'the output surface','vmtksurfacewriter']
+            ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter']
             ])
 
     def Execute(self):

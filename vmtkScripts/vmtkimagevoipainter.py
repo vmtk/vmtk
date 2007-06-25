@@ -53,14 +53,14 @@ class vmtkImageVOIPainter(pypes.pypeScript):
         self.SetScriptName('vmtkimagevoipainter')
         self.SetScriptDoc('fill a cubical region of an image with a given gray level')
         self.SetInputMembers([
-            ['Image','i','vtkImageData',1,'the input image','vmtkimagereader'],
-            ['Interactive','interactive','int',1,'toggle interactivity'],
-            ['BoxBounds','boxbounds','float',6,'bounds of the cubical region for non-interactive mode'],
-            ['PaintValue','paintvalue','float',1,'graylevel to fill the region with'],
-            ['vmtkRenderer','renderer','vmtkRenderer',1,'external renderer']
+            ['Image','i','vtkImageData',1,'','the input image','vmtkimagereader'],
+            ['Interactive','interactive','bool',1,'','toggle interactivity'],
+            ['BoxBounds','boxbounds','float',6,'','bounds of the cubical region for non-interactive mode'],
+            ['PaintValue','paintvalue','float',1,'','graylevel to fill the region with'],
+            ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer']
             ])
         self.SetOutputMembers([
-            ['Image','o','vtkImageData',1,'the output image','vmtkimagewriter']
+            ['Image','o','vtkImageData',1,'','the output image','vmtkimagewriter']
             ])
 
     def HideCube(self,object, event):

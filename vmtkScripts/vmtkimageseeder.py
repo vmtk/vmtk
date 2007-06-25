@@ -48,15 +48,15 @@ class vmtkImageSeeder(pypes.pypeScript):
         self.SetScriptName('vmtkimageseeder')
         self.SetScriptDoc('interactively place seeds in a 3D image')
         self.SetInputMembers([
-            ['Image','i','vtkImageData',1,'the input image','vmtkimagereader'],
-            ['ArrayName','array','str',1,'name of the array to display'],
-            ['vmtkRenderer','renderer','vmtkRenderer',1,'external renderer'],
-            ['Display','display','int',1,'toggle rendering'],
-            ['TextureInterpolation','textureinterpolation','int',1,'toggle interpolation of graylevels on image planes']
+            ['Image','i','vtkImageData',1,'','the input image','vmtkimagereader'],
+            ['ArrayName','array','str',1,'','name of the array to display'],
+            ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer'],
+            ['Display','display','bool',1,'','toggle rendering'],
+            ['TextureInterpolation','textureinterpolation','bool',1,'','toggle interpolation of graylevels on image planes']
             ])
         self.SetOutputMembers([
-            ['Image','o','vtkImageData',1,'the output image','vmtkimagewriter'],
-            ['Seeds','seeds','vtkPolyData',1,'the placed seeds','vmtksurfacewriter']
+            ['Image','o','vtkImageData',1,'','the output image','vmtkimagewriter'],
+            ['Seeds','seeds','vtkPolyData',1,'','the placed seeds','vmtksurfacewriter']
             ])
 
     def AddSeed(self, obj, event):

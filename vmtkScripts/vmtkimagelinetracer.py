@@ -47,13 +47,13 @@ class vmtkImageLineTracer(pypes.pypeScript):
         self.SetScriptName('vmtkimagelinetracer')
         self.SetScriptDoc('interactively trace lines on 3D images; press n and p to move to the next and previous slice, respectively')
         self.SetInputMembers([
-            ['Image','i','vtkImageData',1,'the input image','vmtkimagereader'],
-            ['vmtkRenderer','renderer','vmtkRenderer',1,'external renderer'],
-            ['Axis','axis','int',1,'id of the drawing plane normal'],
-            ['AutoClose','autoclose','int',1,'toggle auto close line']
+            ['Image','i','vtkImageData',1,'','the input image','vmtkimagereader'],
+            ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer'],
+            ['Axis','axis','int',1,'','id of the drawing plane normal'],
+            ['AutoClose','autoclose','bool',1,'','toggle auto close line']
             ])
         self.SetOutputMembers([
-            ['Line','line','vtkPolyData',1,'the output line','vmtksurfacewriter']
+            ['Line','line','vtkPolyData',1,'','the output line','vmtksurfacewriter']
             ])
 
     def Keypress(self,obj,event):

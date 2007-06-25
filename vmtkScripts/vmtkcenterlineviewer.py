@@ -40,13 +40,13 @@ class vmtkCenterlineViewer(pypes.pypeScript):
         self.SetScriptName('vmtkcenterlineviewer')
         self.SetScriptDoc('')
         self.SetInputMembers([
-            ['Centerlines','i','vtkPolyData',1,'the input surface','vmtksurfacereader'],
+            ['Centerlines','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
             ['PointDataArrayName','pointarray','str',1,''],
             ['CellDataArrayName','cellarray','str',1,''],
-            ['Legend','legend','int',1,''],
-            ['vmtkRenderer','renderer','vmtkRenderer',1,'external renderer']])
+            ['Legend','legend','bool',1,''],
+            ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer']])
         self.SetOutputMembers([
-            ['Centerlines','o','vtkPolyData',1,'the output centerlines','vmtksurfacewriter']])
+            ['Centerlines','o','vtkPolyData',1,'','the output centerlines','vmtksurfacewriter']])
 
     def Execute(self):
  

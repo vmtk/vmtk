@@ -39,14 +39,14 @@ class vmtkCenterlineMerge(pypes.pypeScript):
         self.SetScriptName('vmtkcenterlinemerge')
         self.SetScriptDoc('merge centerline tracts belonging to the same groups')
         self.SetInputMembers([
-            ['Centerlines','i','vtkPolyData',1,'the input centerlines','vmtksurfacereader'],
-      	    ['RadiusArrayName','radiusarray','str',1,'name of the array where centerline radius is stored'],
-      	    ['GroupIdsArrayName','groupidsarray','str',1,'name of the array where centerline group ids are stored'],
-      	    ['BlankingArrayName','blankingarray','str',1,'name of the array where centerline blanking information about branches is stored'],
-            ['Length','length','float',1,'length of the resampling interval']
+            ['Centerlines','i','vtkPolyData',1,'','the input centerlines','vmtksurfacereader'],
+      	    ['RadiusArrayName','radiusarray','str',1,'','name of the array where centerline radius is stored'],
+      	    ['GroupIdsArrayName','groupidsarray','str',1,'','name of the array where centerline group ids are stored'],
+      	    ['BlankingArrayName','blankingarray','str',1,'','name of the array where centerline blanking information about branches is stored'],
+            ['Length','length','float',1,'','length of the resampling interval']
             ])
         self.SetOutputMembers([
-            ['Centerlines','o','vtkPolyData',1,'the output centerlines','vmtksurfacewriter']
+            ['Centerlines','o','vtkPolyData',1,'','the output centerlines','vmtksurfacewriter']
             ])
 
     def Execute(self):

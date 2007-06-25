@@ -44,17 +44,17 @@ class vmtkImageFeatures(pypes.pypeScript):
         self.SetScriptName('vmtkimagefeatures')
         self.SetScriptDoc('compute a feature image for use in segmentation')
         self.SetInputMembers([
-            ['Image','i','vtkImageData',1,'the input image','vmtkimagereader'],
-            ['FeatureImageType','featureimagetype','str',1],
+            ['Image','i','vtkImageData',1,'','the input image','vmtkimagereader'],
+            ['FeatureImageType','featureimagetype','str',1,'["vtkgradient","gradient","upwind","fwhm"]'],
             ['Dimensionality','dimensionality','int',1],
-            ['SigmoidRemapping','sigmoid','int',1],
+            ['SigmoidRemapping','sigmoid','bool',1],
             ['DerivativeSigma','derivativesigma','float',1],
             ['UpwindFactor','upwindfactor','float',1],
             ['FWHMRadius','fwhmradius','int',3],
             ['FWHMBackgroundValue','fwhmbackgroundvalue','float',1]
             ])
         self.SetOutputMembers([
-            ['Image','o','vtkImageData',1,'the output image','vmtkimagewriter']
+            ['Image','o','vtkImageData',1,'','the output image','vmtkimagewriter']
             ])
     
     def BuildVTKGradientBasedFeatureImage(self):

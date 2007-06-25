@@ -35,12 +35,12 @@ class vmtkSurfaceDecimation(pypes.pypeScript):
         self.SetScriptName('vmtksurfacedecimation')
         self.SetScriptDoc('reduce the number of triangles in a surface')
         self.SetInputMembers([
-            ['Surface','i','vtkPolyData',1,'the input surface','vmtksurfacereader'],
-            ['TargetReduction','reduction','float',1,'desired number of triangles relative to input number of triangles'],
-            ['BoundaryVertexDeletion','boundarydeletion','int',1,'toggle allow boundary point deletion']
+            ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
+            ['TargetReduction','reduction','float',1,'','desired number of triangles relative to input number of triangles'],
+            ['BoundaryVertexDeletion','boundarydeletion','bool',1,'','toggle allow boundary point deletion']
             ])
         self.SetOutputMembers([
-            ['Surface','o','vtkPolyData',1,'the output surface','vmtksurfacewriter']
+            ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter']
             ])
 
     def Execute(self):

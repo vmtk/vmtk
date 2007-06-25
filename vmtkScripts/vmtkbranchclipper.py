@@ -52,21 +52,21 @@ class vmtkBranchClipper(pypes.pypeScript):
 
         self.SetScriptName('vmtkbranchclipper')
         self.SetInputMembers([
-            ['Surface','i','vtkPolyData',1,'','vmtksurfacereader'],
-            ['Centerlines','centerlines','vtkPolyData',1,'','vmtksurfacereader'],
+            ['Surface','i','vtkPolyData',1,'','','vmtksurfacereader'],
+            ['Centerlines','centerlines','vtkPolyData',1,'','','vmtksurfacereader'],
             ['GroupIdsArrayName','groupidsarray','str',1],
             ['GroupIds','groupids','int',-1],
-            ['InsideOut','insideout','int',1],
+            ['InsideOut','insideout','bool',1],
             ['RadiusArrayName','radiusarray','str',1],
 				    ['BlankingArrayName','blankingarray','str',1],
 						['CutoffRadiusFactor','cutoffradiusfactor','float',1],
 						['ClipValue','clipvalue','float',1],
-						['Interactive','interactive','int',1],
-            ['vmtkRenderer','renderer','vmtkRenderer',1,'external renderer']
+						['Interactive','interactive','bool',1],
+            ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer']
             ])
         self.SetOutputMembers([
-            ['Surface','o','vtkPolyData',1,'','vmtksurfacewriter'],
-            ['Centerlines','ocenterlines','vtkPolyData',1,'','vmtksurfacewriter']
+            ['Surface','o','vtkPolyData',1,'','','vmtksurfacewriter'],
+            ['Centerlines','ocenterlines','vtkPolyData',1,'','','vmtksurfacewriter']
             ])
 
     def GroupIdsValidator(self,text):

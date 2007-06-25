@@ -55,27 +55,27 @@ class vmtkCenterlineOffsetAttributes(pypes.pypeScript):
         self.SetScriptName('vmtkcenterlineoffsetattributes')
         self.SetScriptDoc('offset centerline attributes relative to a bifurcation reference system, in such a way that the abscissa of the closest point the the origin is zero, and the centerline normal at that point coincides with the bifurcation reference system normal')
         self.SetInputMembers([
-            ['Centerlines','i','vtkPolyData',1,'the input split centerlines','vmtksurfacereader'],
-            ['ReferenceSystems','referencesystems','vtkPolyData',1,'bifurcation reference systems','vmtksurfacereader'],
-            ['ReferenceGroupId','referencegroupid','int',1,'group id of the reference system to which attributes have to be offset'],
-            ['ReplaceAttributes','replaceattributes','int',1,'overwrite the existing attributes'],
-	          ['AbscissasArrayName','abscissasarray','str',1,'name of the array where centerline abscissas are stored'],
-      	    ['NormalsArrayName','normalsarray','str',1,'name of the array where centerline normals are stored'],
-      	    ['GroupIdsArrayName','groupidsarray','str',1,'name of the array where centerline group ids are stored'],
-      	    ['CenterlineIdsArrayName','centerlineidsarray','str',1,'name of the array where centerline ids are stored'],
-      	    ['ReferenceSystemsNormalArrayName','referencesystemsnormalarray','str',1,'name of the array where reference system normals are stored'],
-      	    ['OffsetAbscissasArrayName','offsetabscissasarray','str',1,'name of the array where offset centerline abscissas have to be stored if ReplaceAttributes is off'],
-      	    ['OffsetNormalsArrayName','offsetnormalsarray','str',1,'name of the array where offset centerline normals have to be stored if ReplaceAttributes is off'],
-						['Interactive','interactive','int',1],
-            ['vmtkRenderer','renderer','vmtkRenderer',1,'external renderer']
+            ['Centerlines','i','vtkPolyData',1,'','the input split centerlines','vmtksurfacereader'],
+            ['ReferenceSystems','referencesystems','vtkPolyData',1,'','bifurcation reference systems','vmtksurfacereader'],
+            ['ReferenceGroupId','referencegroupid','int',1,'','group id of the reference system to which attributes have to be offset'],
+            ['ReplaceAttributes','replaceattributes','int',1,'','overwrite the existing attributes'],
+	          ['AbscissasArrayName','abscissasarray','str',1,'','name of the array where centerline abscissas are stored'],
+      	    ['NormalsArrayName','normalsarray','str',1,'','name of the array where centerline normals are stored'],
+      	    ['GroupIdsArrayName','groupidsarray','str',1,'','name of the array where centerline group ids are stored'],
+      	    ['CenterlineIdsArrayName','centerlineidsarray','str',1,'','name of the array where centerline ids are stored'],
+      	    ['ReferenceSystemsNormalArrayName','referencesystemsnormalarray','str',1,'','name of the array where reference system normals are stored'],
+      	    ['OffsetAbscissasArrayName','offsetabscissasarray','str',1,'','name of the array where offset centerline abscissas have to be stored if ReplaceAttributes is off'],
+      	    ['OffsetNormalsArrayName','offsetnormalsarray','str',1,'','name of the array where offset centerline normals have to be stored if ReplaceAttributes is off'],
+						['Interactive','interactive','bool',1],
+            ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer']
             ])
         self.SetOutputMembers([
-            ['Centerlines','o','vtkPolyData',1,'the output centerlines','vmtksurfacewriter'],
-            ['ReferenceGroupId','referencegroupid','int',1,'group id of the reference system to which attributes are offset'],
-      	    ['OffsetAbscissasArrayName','offsetabscissasarray','str',1,'name of the array where offset centerline abscissas are stored if ReplaceAttributes is off'],
-      	    ['OffsetNormalsArrayName','offsetnormalsarray','str',1,'name of the array where offset centerline normals are stored if ReplaceAttributes is off'],
-      	    ['AbscissasArrayName','abscissasarray','str',1,'name of the array where centerline abscissas are stored'],
-      	    ['NormalsArrayName','normalsarray','str',1,'name of the array where centerline normals are stored']
+            ['Centerlines','o','vtkPolyData',1,'','the output centerlines','vmtksurfacewriter'],
+            ['ReferenceGroupId','referencegroupid','int',1,'','group id of the reference system to which attributes are offset'],
+      	    ['OffsetAbscissasArrayName','offsetabscissasarray','str',1,'','name of the array where offset centerline abscissas are stored if ReplaceAttributes is off'],
+      	    ['OffsetNormalsArrayName','offsetnormalsarray','str',1,'','name of the array where offset centerline normals are stored if ReplaceAttributes is off'],
+      	    ['AbscissasArrayName','abscissasarray','str',1,'','name of the array where centerline abscissas are stored'],
+      	    ['NormalsArrayName','normalsarray','str',1,'','name of the array where centerline normals are stored']
             ])
 
     def GroupIdValidator(self,text):

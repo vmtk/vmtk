@@ -52,26 +52,26 @@ class vmtkImageReader(pypes.pypeScript):
         self.SetScriptName('vmtkimagereader')
         self.SetScriptDoc('read an image and stores it in a vtkImageData object')
         self.SetInputMembers([
-            ['Format','f','str',1,'file format (vtkxml, vtk, dicom, raw, meta image, tiff, png)'],
-            ['GuessFormat','guessformat','int',1,'guess file format from extension'],
-            ['UseITKIO','useitk','int',1,'use ITKIO mechanism'],
-            ['InputFileName','i','str',1,'input file name (deprecated: use -ifile)'],
-            ['InputFileName','ifile','str',1,'input file name'],
-            ['InputFilePrefix','prefix','str',1,'input file prefix (e.g. foo_)'],
-            ['InputFilePattern','pattern','str',1,'input file pattern (e.g. %s%04d.png)'],
-            ['InputDirectoryName','d','str',1,'input directory name - dicom only'],
-            ['DataExtent','extent','int',6,'3D extent of the image - raw and png'],
-            ['HeaderSize','headersize','int',1,'size of the image header - raw only'],
-            ['DataSpacing','spacing','float',3,'spacing of the image - raw, tiff, png'],
-            ['DataOrigin','origin','float',3,'origin of the image - raw, tiff, png'],
-            ['DataByteOrder','byteorder','str',1,'byte ordering (littleendian, bigendian) - raw only'],
-            ['DataScalarType','scalartype','str',1,'scalar type (float, double, int, short, ushort, uchar) - raw only'],
-            ['FileDimensionality','filedimensionality','int',1,'dimensionality of the file to read - raw only'],
-            ['Flip','flip','int',3,'toggle flipping of the corresponding axis'],
-            ['AutoOrientDICOMImage','autoorientdicom','int',1,'flip a dicom stack in order to have a left-to-right, posterio-to-anterior, inferior-to-superior image; this is based on the \"image orientation (patient)\" field in the dicom header']
+            ['Format','f','str',1,'["vtkxml","vtk","dicom","raw","meta","tiff","png"]','file format'],
+            ['GuessFormat','guessformat','bool',1,'','guess file format from extension'],
+            ['UseITKIO','useitk','bool',1,'','use ITKIO mechanism'],
+            ['Image','i','vtkImageData',1,'','the input image'],
+            ['InputFileName','ifile','str',1,'','input file name'],
+            ['InputFilePrefix','prefix','str',1,'','input file prefix (e.g. foo_)'],
+            ['InputFilePattern','pattern','str',1,'','input file pattern (e.g. %s%04d.png)'],
+            ['InputDirectoryName','d','str',1,'','input directory name - dicom only'],
+            ['DataExtent','extent','int',6,'','3D extent of the image - raw and png'],
+            ['HeaderSize','headersize','int',1,'','size of the image header - raw only'],
+            ['DataSpacing','spacing','float',3,'','spacing of the image - raw, tiff, png'],
+            ['DataOrigin','origin','float',3,'','origin of the image - raw, tiff, png'],
+            ['DataByteOrder','byteorder','str',1,'','byte ordering (littleendian, bigendian) - raw only'],
+            ['DataScalarType','scalartype','str',1,'','scalar type (float, double, int, short, ushort, uchar) - raw only'],
+            ['FileDimensionality','filedimensionality','int',1,'','dimensionality of the file to read - raw only'],
+            ['Flip','flip','bool',3,'','toggle flipping of the corresponding axis'],
+            ['AutoOrientDICOMImage','autoorientdicom','bool',1,'','flip a dicom stack in order to have a left-to-right, posterio-to-anterior, inferior-to-superior image; this is based on the \"image orientation (patient)\" field in the dicom header']
             ])
         self.SetOutputMembers([
-            ['Image','o','vtkImageData',1,'the output image','vmtkimagewriter'],
+            ['Image','o','vtkImageData',1,'','the output image','vmtkimagewriter'],
             ['RasToIjkMatrixCoefficients','rastoijkmatrix','float',16],
             ['RasToLocalMatrixCoefficients','rastolocalmatrix','float',16]
             ])

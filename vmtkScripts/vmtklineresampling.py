@@ -34,11 +34,11 @@ class vmtkLineResampling(pypes.pypeScript):
         self.SetScriptName('vmtklineresampling')
         self.SetScriptDoc('resample input lines with a spline filter')
         self.SetInputMembers([
-            ['Surface','i','vtkPolyData',1,'the input surface containing vtkPolyLine cells','vmtksurfacereader'],
-            ['Length','length','float',1,'length of the resampling interval']
+            ['Surface','i','vtkPolyData',1,'','the input surface containing vtkPolyLine cells','vmtksurfacereader'],
+            ['Length','length','float',1,'','length of the resampling interval']
             ])
         self.SetOutputMembers([
-            ['Surface','o','vtkPolyData',1,'the output surface containing the resampled vtkPolyLine cells','vmtksurfacewriter']
+            ['Surface','o','vtkPolyData',1,'','the output surface containing the resampled vtkPolyLine cells','vmtksurfacewriter']
             ])
 
     def Execute(self):

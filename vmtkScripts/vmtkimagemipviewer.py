@@ -44,16 +44,16 @@ class vmtkImageMIPViewer(pypes.pypeScript):
         self.SetScriptName('vmtkimagemipviewer')
         self.SetScriptDoc('display a 3D image')
         self.SetInputMembers([
-            ['Image','i','vtkImageData',1,'the input image','vmtkimagereader'],
-            ['ArrayName','array','str',1,'name of the array to display'],
-            ['vmtkRenderer','renderer','vmtkRenderer',1,'external renderer'],
-            ['SampleDistance','sampledistance','float',1,'the distance at sample projections are generated'],
-            ['AutoSampleDistance','autosampledistance','int',1,'toggle automatic sample distance'],
-            ['WindowLevel','windowlevel','float',2,'the window/level for generating the rendering'],
-            ['Display','display','int',1,'toggle rendering']
+            ['Image','i','vtkImageData',1,'','the input image','vmtkimagereader'],
+            ['ArrayName','array','str',1,'','name of the array to display'],
+            ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer'],
+            ['SampleDistance','sampledistance','float',1,'','the distance at sample projections are generated'],
+            ['AutoSampleDistance','autosampledistance','bool',1,'','toggle automatic sample distance'],
+            ['WindowLevel','windowlevel','float',2,'','the window/level for generating the rendering'],
+            ['Display','display','bool',1,'','toggle rendering']
             ])
         self.SetOutputMembers([
-            ['Image','o','vtkImageData',1,'the output image','vmtkimagewriter']
+            ['Image','o','vtkImageData',1,'','the output image','vmtkimagewriter']
             ])
 
     def BuildView(self):

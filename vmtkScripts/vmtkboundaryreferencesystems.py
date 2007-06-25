@@ -37,20 +37,20 @@ class vmtkBoundaryReferenceSystems(pypes.pypeScript):
       	self.Point2ArrayName = 'Point2'
 
         self.SetScriptName('vmtkboundaryreferencesystems')
-        self.SetScriptDoc('compute the reference systems relative to each open boundary of a model; a typical use is the specification of boundary conditions for CFD svmtklations; reference systems are given both as origin and normal, and as origin, a first point defining the x axis with the origin and a second point defining the xy plane with the former two')
+        self.SetScriptDoc('compute the reference systems relative to each open boundary of a model; a typical use is the specification of boundary conditions for CFD simulations; reference systems are given both as origin and normal, and as origin, a first point defining the x axis with the origin and a second point defining the xy plane with the former two')
         self.SetInputMembers([
-            ['Surface','i','vtkPolyData',1,'the input surface','vmtksurfacereader'],
-            ['BoundaryRadiusArrayName','boundaryradiusarray','str',1,'name of the array where the mean radius of each boundary has to be stored'],
-            ['BoundaryNormalsArrayName','boundarynormalsarray','str',1,'name of the array where outward pointing normals to each boundary have to be stored'],
-            ['Point1ArrayName','point1array','str',1,'name of the array where the coordinates of a point of each boundary have to be stored'],
-            ['Point2ArrayName','point2array','str',1,'name of the array where the coordinates of a second point of each boundary have to be stored']
+            ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
+            ['BoundaryRadiusArrayName','boundaryradiusarray','str',1,'','name of the array where the mean radius of each boundary has to be stored'],
+            ['BoundaryNormalsArrayName','boundarynormalsarray','str',1,'','name of the array where outward pointing normals to each boundary have to be stored'],
+            ['Point1ArrayName','point1array','str',1,'','name of the array where the coordinates of a point of each boundary have to be stored'],
+            ['Point2ArrayName','point2array','str',1,'','name of the array where the coordinates of a second point of each boundary have to be stored']
             ])
         self.SetOutputMembers([
-            ['ReferenceSystems','o','vtkPolyData',1,'the output reference systems, given as points coinciding with the origins','vmtksurfacewriter'],
-            ['BoundaryRadiusArrayName','boundaryradiusarray','str',1,'name of the array where the mean radius of each boundary has to be stored'],
-            ['BoundaryNormalsArrayName','boundarynormalsarray','str',1,'name of the array where outward pointing normals to each boundary are stored'],
-            ['Point1ArrayName','point1array','str',1,'name of the array where the coordinates of a point of each boundary are stored'],
-            ['Point2ArrayName','point2array','str',1,'name of the array where the coordinates of a second point of each boundary are stored']
+            ['ReferenceSystems','o','vtkPolyData',1,'','the output reference systems, given as points coinciding with the origins','vmtksurfacewriter'],
+            ['BoundaryRadiusArrayName','boundaryradiusarray','str',1,'','name of the array where the mean radius of each boundary has to be stored'],
+            ['BoundaryNormalsArrayName','boundarynormalsarray','str',1,'','name of the array where outward pointing normals to each boundary are stored'],
+            ['Point1ArrayName','point1array','str',1,'','name of the array where the coordinates of a point of each boundary are stored'],
+            ['Point2ArrayName','point2array','str',1,'','name of the array where the coordinates of a second point of each boundary are stored']
            ])
 
     def Execute(self):

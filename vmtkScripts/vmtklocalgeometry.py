@@ -61,23 +61,23 @@ class vmtkLocalGeometry(pypes.pypeScript):
         
         self.SetScriptName('vmtklocalgeometry')
         self.SetInputMembers([
-            ['Surface','i','vtkPolyData',1,'','vmtksurfacereader'],
-            ['Centerlines','centerlines','vtkPolyData',1,'','vmtksurfacereader'],
-            ['VoronoiDiagram','voronoidiagram','vtkPolyData',1,'','vmtksurfacereader'],
+            ['Surface','i','vtkPolyData',1,'','','vmtksurfacereader'],
+            ['Centerlines','centerlines','vtkPolyData',1,'','','vmtksurfacereader'],
+            ['VoronoiDiagram','voronoidiagram','vtkPolyData',1,'','','vmtksurfacereader'],
             ['PoleIds','poleids','vtkIdList',1],
             ['EdgeArrayName','edgearray','str',1],
             ['VoronoiGeodesicDistanceArrayName','voronoigeodesicdistancearray','str',1],
             ['VoronoiPoleCenterlineVectorsArrayName','voronoipolecenterlinevectorsarray','str',1],
             ['VoronoiCellIdsArrayName','voronoicellidsarray','str',1],
             ['VoronoiPCoordsArrayName','voronoipcoordsarray','str',1],
-            ['ComputePoleVectors','computepolevectors','int',1],
-            ['ComputeGeodesicDistance','computegeodesicdistance','int',1],
-            ['ComputeNormalizedTangencyDeviation','computentd','int',1],
-            ['ComputeEuclideanDistance','computeeuclideandistance','int',1],
-            ['ComputeCenterlineVectors','computecenterlinevectors','int',1],
-            ['ComputeCellIds','computecellids','int',1],
-            ['ComputePCoords','computepcoords','int',1],
-            ['AdjustBoundaryValues','adjustboundaryvalues','int',1],
+            ['ComputePoleVectors','computepolevectors','bool',1],
+            ['ComputeGeodesicDistance','computegeodesicdistance','bool',1],
+            ['ComputeNormalizedTangencyDeviation','computentd','bool',1],
+            ['ComputeEuclideanDistance','computeeuclideandistance','bool',1],
+            ['ComputeCenterlineVectors','computecenterlinevectors','bool',1],
+            ['ComputeCellIds','computecellids','bool',1],
+            ['ComputePCoords','computepcoords','bool',1],
+            ['AdjustBoundaryValues','adjustboundaryvalues','bool',1],
             ['PoleVectorsArrayName','polevectorsarray','str',1],
             ['GeodesicDistanceArrayName','geodesicdistancearray','str',1],
             ['NormalizedTangencyDeviationArrayName','ntdarray','str',1],
@@ -87,7 +87,7 @@ class vmtkLocalGeometry(pypes.pypeScript):
             ['PCoordsArrayName','pcoordsarray','str',1]
             ])
         self.SetOutputMembers([
-            ['Surface','o','vtkPolyData',1,'','vmtksurfacewriter'],
+            ['Surface','o','vtkPolyData',1,'','','vmtksurfacewriter'],
             ['PoleVectorsArrayName','polevectorsarray','str',1],
             ['GeodesicDistanceArrayName','geodesicdistancearray','str',1],
             ['NormalizedTangencyDeviationArrayName','ntdarray','str',1],

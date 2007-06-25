@@ -39,7 +39,7 @@ class vmtkBranchExtractor(pypes.pypeScript):
 
         self.SetScriptName('vmtkbranchextractor')
         self.SetInputMembers([
-            ['Centerlines','i','vtkPolyData',1,'','vmtksurfacereader'],
+            ['Centerlines','i','vtkPolyData',1,'','','vmtksurfacereader'],
             ['RadiusArrayName','radiusarray','str',1],
             ['GroupIdsArrayName','groupidsarray','str',1],
             ['CenterlineIdsArrayName','centerlineidsarray','str',1],
@@ -47,7 +47,7 @@ class vmtkBranchExtractor(pypes.pypeScript):
 				    ['BlankingArrayName','blankingarray','str',1],
             ])
         self.SetOutputMembers([
-            ['Centerlines','o','vtkPolyData',1,'','vmtksurfacewriter'],
+            ['Centerlines','o','vtkPolyData',1,'','','vmtksurfacewriter'],
             ['GroupIdsArrayName','groupidsarray','str',1],
             ['CenterlineIdsArrayName','centerlineidsarray','str',1],
             ['TractIdsArrayName','tractidsarray','str',1],

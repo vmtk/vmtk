@@ -36,13 +36,13 @@ class vmtkMarchingCubes(pypes.pypeScript):
         self.SetScriptName('vmtkmarchingcubes')
         self.SetScriptDoc('generate an isosurface of given level from a 3D image')
         self.SetInputMembers([
-            ['Image','i','vtkImageData',1,'the input image','vmtkimagereader'],
-            ['ArrayName','array','str',1,'name of the array to work with'],
-            ['Level','l','float',1,'graylevel to generate the isosurface at'],
-            ['Connectivity','c','int',1,'only output the largest connected region of the isosurface']
+            ['Image','i','vtkImageData',1,'','the input image','vmtkimagereader'],
+            ['ArrayName','array','str',1,'','name of the array to work with'],
+            ['Level','l','float',1,'','graylevel to generate the isosurface at'],
+            ['Connectivity','connectivity','bool',1,'','only output the largest connected region of the isosurface']
             ])
         self.SetOutputMembers([
-            ['Surface','o','vtkPolyData',1,'the output surface','vmtksurfacewriter']
+            ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter']
             ])
 
     def Execute(self):

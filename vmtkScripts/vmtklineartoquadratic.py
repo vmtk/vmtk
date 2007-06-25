@@ -35,12 +35,12 @@ class vmtkLinearToQuadratic(pypes.pypeScript):
         self.SetScriptName('vmtklineartoquadratic')
         self.SetScriptDoc('convert the elements of a mesh from linear to quadratic')
         self.SetInputMembers([
-            ['Mesh','i','vtkUnstructuredGrid',1,'the input mesh','vmtkmeshreader'],
-            ['Mode','mode','str',1,'kind of elements to work with (volume, surface)'],
-            ['SubdivisionMethod','subdivisionmethod','str',1,'subdivision method for surface elements (linear, butterfly)']
+            ['Mesh','i','vtkUnstructuredGrid',1,'','the input mesh','vmtkmeshreader'],
+            ['Mode','mode','str',1,'["volume","surface"]','kind of elements to work with'],
+            ['SubdivisionMethod','subdivisionmethod','str',1,'["linear","butterfly"]','subdivision method for surface elements']
             ])
         self.SetOutputMembers([
-            ['Mesh','o','vtkUnstructuredGrid',1,'the output mesh','vmtkmeshwriter']])
+            ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh','vmtkmeshwriter']])
 
     def Execute(self):
 

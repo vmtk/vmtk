@@ -44,13 +44,13 @@ class vmtkCenterlineLabeler(pypes.pypeScript):
         self.SetScriptName('vmtkcenterlinelabeler')
         self.SetScriptDoc('')
         self.SetInputMembers([
-            ['Centerlines','i','vtkPolyData',1,'the input surface','vmtksurfacereader'],
+            ['Centerlines','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
             ['GroupIdsArrayName','groupidsarray','str',1,''],
             ['LabelIdsArrayName','labelidsarray','str',1,''],
             ['Labeling','labeling','int',-1,''],
-            ['vmtkRenderer','renderer','vmtkRenderer',1,'external renderer']])
+            ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer']])
         self.SetOutputMembers([
-            ['Centerlines','o','vtkPolyData',1,'the output centerlines','vmtksurfacewriter'],
+            ['Centerlines','o','vtkPolyData',1,'','the output centerlines','vmtksurfacewriter'],
             ['LabelIdsArrayName','labelidsarray','str',1,'']])
 
     def LabelValidator(self,text):

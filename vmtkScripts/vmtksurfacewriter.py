@@ -36,12 +36,12 @@ class vmtkSurfaceWriter(pypes.pypeScript):
         self.SetScriptName('vmtksurfacewriter')
         self.SetScriptDoc('write surface to disk')
         self.SetInputMembers([
-            ['Surface','i','vtkPolyData',1,'the input surface','vmtksurfacereader'],
-            ['Format','f','str',1,'file format (vtkxml, vtk, stl, tecplot, pointdata)'],
-            ['GuessFormat','guessformat','int',1,'guess file format from extension'],
-            ['CellData','celldata','int',1,'write CellData when using pointdata format'],
-            ['OutputFileName','ofile','str',1,'output file name'],
-            ['OutputFileName','o','str',1,'output file name (deprecated: use -ofile)']
+            ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
+            ['Format','f','str',1,'["vtkxml","vtk","stl","pointdata","tecplot"]','file format'],
+            ['GuessFormat','guessformat','bool',1,'','guess file format from extension'],
+            ['CellData','celldata','bool',1,'','write CellData when using pointdata format'],
+            ['OutputFileName','ofile','str',1,'','output file name'],
+            ['OutputFileName','o','str',1,'','output file name (deprecated: use -ofile)']
             ])
         self.SetOutputMembers([])
 

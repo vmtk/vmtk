@@ -47,8 +47,8 @@ class vmtkPotentialFit(pypes.pypeScript):
 
         self.SetScriptName('vmtkpotentialfit')
         self.SetInputMembers([
-            ['Surface','i','vtkPolyData',1,'','vmtksurfacereader'], 
-            ['Image','image','vtkImageData',1,'','vmtkimagereader'],
+            ['Surface','i','vtkPolyData',1,'','','vmtksurfacereader'], 
+            ['Image','image','vtkImageData',1,'','','vmtkimagereader'],
             ['NumberOfIterations','iterations','int',1],
             ['NumberOfStiffnessSubIterations','stiffnesssubiterations','int',1],
             ['NumberOfInflationSubIterations','inflationsubiterations','int',1],
@@ -58,12 +58,12 @@ class vmtkPotentialFit(pypes.pypeScript):
             ['Convergence','convergence','float',1],
             ['MaxTimeStep','maxtimestep','float',1],
             ['TimeStep','timestep','float',1],
-            ['AdaptiveTimeStep','adaptivetimestep','int',1],
+            ['AdaptiveTimeStep','adaptivetimestep','bool',1],
             ['Relaxation','relaxation','float',1],
             ['Dimensionality','dimensionality','int',1]
             ])
         self.SetOutputMembers([
-            ['Surface','o','vtkPolyData',1,'','vmtksurfacewriter']
+            ['Surface','o','vtkPolyData',1,'','','vmtksurfacewriter']
             ])
 
     def Execute(self):

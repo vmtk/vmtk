@@ -40,17 +40,17 @@ class vmtkBifurcationReferenceSystems(pypes.pypeScript):
         self.SetScriptName('vmtkbifurcationreferencesystems')
         self.SetScriptDoc('compute reference systems for each bifurcation of a tree. The script takes in input the centerlines already split into branches.')
         self.SetInputMembers([
-            ['Centerlines','i','vtkPolyData',1,'the input split centerlines','vmtksurfacereader'],
-            ['RadiusArrayName','radiusarray','str',1,'the name of the array where centerline radius values are stored'],
-	          ['BlankingArrayName','blankingarray','str',1,'the name of the array where centerline blanking information about branches is stored'],
-            ['GroupIdsArrayName','groupidsarray','str',1,'the name of the array where centerline group ids are stored'],
-            ['ReferenceSystemsNormalArrayName','normalarray','str',1,'the name of the array where reference system plane normals have to be stored'],
-            ['ReferenceSystemsUpNormalArrayName','upnormalarray','str',1,'the name of the array where reference system upnormals have to be stored']
+            ['Centerlines','i','vtkPolyData',1,'','the input split centerlines','vmtksurfacereader'],
+            ['RadiusArrayName','radiusarray','str',1,'','the name of the array where centerline radius values are stored'],
+	          ['BlankingArrayName','blankingarray','str',1,'','the name of the array where centerline blanking information about branches is stored'],
+            ['GroupIdsArrayName','groupidsarray','str',1,'','the name of the array where centerline group ids are stored'],
+            ['ReferenceSystemsNormalArrayName','normalarray','str',1,'','the name of the array where reference system plane normals have to be stored'],
+            ['ReferenceSystemsUpNormalArrayName','upnormalarray','str',1,'','the name of the array where reference system upnormals have to be stored']
             ])
         self.SetOutputMembers([
-            ['ReferenceSystems','o','vtkPolyData',1,'the output reference systems, given as points coinciding with the origins','vmtksurfacewriter'],
-            ['ReferenceSystemsNormalArrayName','normalarray','str',1,'the name of the array where reference system plane normals are stored'],
-            ['ReferenceSystemsUpNormalArrayName','upnormalarray','str',1,'the name of the array where reference system upnormals are stored']
+            ['ReferenceSystems','o','vtkPolyData',1,'','the output reference systems, given as points coinciding with the origins','vmtksurfacewriter'],
+            ['ReferenceSystemsNormalArrayName','normalarray','str',1,'','the name of the array where reference system plane normals are stored'],
+            ['ReferenceSystemsUpNormalArrayName','upnormalarray','str',1,'','the name of the array where reference system upnormals are stored']
            ])
 
     def Execute(self):

@@ -34,11 +34,11 @@ class vmtkSurfaceProjection(pypes.pypeScript):
         self.SetScriptName('vmtksurfaceprojection')
         self.SetScriptDoc('interpolates the point data of a reference surface onto the input surface based on minimum distance criterion')
         self.SetInputMembers([
-            ['Surface','i','vtkPolyData',1,'the input surface','vmtksurfacereader'],
-            ['ReferenceSurface','r','vtkPolyData',1,'the reference surface','vmtksurfacereader']
+            ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
+            ['ReferenceSurface','r','vtkPolyData',1,'','the reference surface','vmtksurfacereader']
             ])
         self.SetOutputMembers([
-            ['Surface','o','vtkPolyData',1,'the output surface','vmtksurfacewriter']
+            ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter']
             ])
 
     def Execute(self):

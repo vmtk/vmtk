@@ -42,17 +42,17 @@ class vmtkImageReslice(pypes.pypeScript):
         self.SetScriptName('vmtkimagereslice')
         self.SetScriptDoc('reslice an image based on user-specified parameters or on a reference image')
         self.SetInputMembers([
-            ['Image','i','vtkImageData',1,'the input image','vmtkimagereader'],
-            ['ReferenceImage','r','vtkImageData',1,'the reference image','vmtkimagereader'],
-            ['OutputSpacing','spacing','float',3,'the output spacing'],
-            ['OutputOrigin','origin','float',3,'the output origin'],
-            ['OutputExtent','extent','int',6,'the output extent'],
-            ['Interpolation','interpolation','str',1,'interpolation during reslice (nearestneighbor,linear,cubic)'],
-            ['Cast','cast','int',1,'toggle cast image to float type'],
-            ['BackgroundLevel','background','float',1,'the output image background']
+            ['Image','i','vtkImageData',1,'','the input image','vmtkimagereader'],
+            ['ReferenceImage','r','vtkImageData',1,'','the reference image','vmtkimagereader'],
+            ['OutputSpacing','spacing','float',3,'','the output spacing'],
+            ['OutputOrigin','origin','float',3,'','the output origin'],
+            ['OutputExtent','extent','int',6,'','the output extent'],
+            ['Interpolation','interpolation','str',1,'["nearestneighbor","linear","cubic"]','interpolation during reslice'],
+            ['Cast','cast','bool',1,'','toggle cast image to float type'],
+            ['BackgroundLevel','background','float',1,'','the output image background']
             ])
         self.SetOutputMembers([
-            ['Image','o','vtkImageData',1,'the output image','vmtkimagewriter']
+            ['Image','o','vtkImageData',1,'','the output image','vmtkimagewriter']
             ])
 
     def Execute(self):

@@ -38,11 +38,11 @@ class vmtkMeshClipper(pypes.pypeScript):
         self.SetScriptName('vmtkmeshclipper')
         self.SetScriptDoc('interactively clip a mesh with a box')
         self.SetInputMembers([
-            ['Mesh','i','vtkUnstructuredGrid',1,'the input mesh','vmtkmeshreader'],
-            ['vmtkRenderer','renderer','vmtkRenderer',1,'external renderer']
+            ['Mesh','i','vtkUnstructuredGrid',1,'','the input mesh','vmtkmeshreader'],
+            ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer']
             ])
         self.SetOutputMembers([
-            ['Mesh','o','vtkUnstructuredGrid',1,'the output mesh','vmtkmeshwriter']
+            ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh','vmtkmeshwriter']
             ])
 
     def KeyPressed(self,object,event):

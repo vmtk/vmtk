@@ -37,15 +37,15 @@ class vmtkDistanceToCenterlines(pypes.pypeScript):
         
         self.SetScriptName('vmtkdistancetocenterlines')
         self.SetInputMembers([
-            ['Surface','i','vtkPolyData',1,'','vmtksurfacereader'],
-            ['Centerlines','centerlines','vtkPolyData',1,'','vmtksurfacereader'],
-            ['UseRadiusInformation','useradius','int',1],
-            ['EvaluateTubeFunction','tubefunction','int',1],
+            ['Surface','i','vtkPolyData',1,'','','vmtksurfacereader'],
+            ['Centerlines','centerlines','vtkPolyData',1,'','','vmtksurfacereader'],
+            ['UseRadiusInformation','useradius','bool',1],
+            ['EvaluateTubeFunction','tubefunction','bool',1],
             ['DistanceToCenterlinesArrayName','distancetocenterlinesarray','str',1],
             ['CenterlineRadiusArrayName','radiusarray','str',1]
             ])
         self.SetOutputMembers([
-            ['Surface','o','vtkPolyData',1,'','vmtksurfacewriter']
+            ['Surface','o','vtkPolyData',1,'','','vmtksurfacewriter']
             ])
 
     def Execute(self):

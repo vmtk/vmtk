@@ -35,12 +35,12 @@ class vmtkSurfaceSubdivision(pypes.pypeScript):
         self.SetScriptName('vmtksurfacesubdivision')
         self.SetScriptDoc('subdivide a triangulated surface')
         self.SetInputMembers([
-            ['Surface','i','vtkPolyData',1,'the input surface','vmtksurfacereader'],
-            ['NumberOfSubdivisions','subdivisions','int',1,'number of triangle subdivisions'],
-            ['Method','method','str',1,'subdivision method (linear, butterfly, loop)']
+            ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
+            ['NumberOfSubdivisions','subdivisions','int',1,'','number of triangle subdivisions'],
+            ['Method','method','str',1,'["linear","butterfly","loop"]','subdivision method']
             ])
         self.SetOutputMembers([
-            ['Surface','o','vtkPolyData',1,'the output surface','vmtksurfacewriter']
+            ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter']
             ])
 
     def Execute(self):

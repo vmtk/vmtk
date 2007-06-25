@@ -226,6 +226,9 @@ class Pype(object):
             execute = scriptObject.ParseArguments()
             if not execute:
                 return
+            if scriptObject.Disabled:
+                self.PrintLog('\n' + scriptObject.ScriptName + ' is disabled. Bypassing it.')
+                continue
             self.ExplicitPipeScriptObject(scriptObject)
             self.PipeScriptObject(scriptObject)
             scriptObject.PrintInputMembers()

@@ -70,16 +70,16 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
 
         self.SetScriptName('vmtklevelsetsegmentation')
         self.SetInputMembers([
-            ['Image','i','vtkImageData',1,'','vmtkimagereader'],
-            ['FeatureImage','featureimage','vtkImageData',1,'','vmtkimagereader'],
-            ['InitialLevelSets','initiallevelsets','vtkImageData',1,'','vmtkimagereader'],
-            ['LevelSets','levelsets','vtkImageData',1,'','vmtkimagereader'],
-            ['FeatureImageType','featureimagetype','str',1],
-            ['SigmoidRemapping','sigmoid','int',1],
+            ['Image','i','vtkImageData',1,'','','vmtkimagereader'],
+            ['FeatureImage','featureimage','vtkImageData',1,'','','vmtkimagereader'],
+            ['InitialLevelSets','initiallevelsets','vtkImageData',1,'','','vmtkimagereader'],
+            ['LevelSets','levelsets','vtkImageData',1,'','','vmtkimagereader'],
+            ['FeatureImageType','featureimagetype','str',1,["vtkgradient","gradient","upwind","fwhm"]],
+            ['SigmoidRemapping','sigmoid','bool',1],
             ['IsoSurfaceValue','isosurfacevalue','float',1],
             ['DerivativeSigma','derivativesigma','float',1],
             ['FeatureDerivativeSigma','featurederivativesigma','float',1],
-            ['ResampleImage','resampleimage','int',1],
+            ['ResampleImage','resampleimage','bool',1],
             ['ResampleSpacing','resamplespacing','float',1],
             ['UpwindFactor','upwindfactor','float',1],
             ['FWHMRadius','fwhmradius','float',3],
@@ -91,8 +91,8 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
             ['vmtkRenderer','renderer','vmtkRenderer',1]
             ])
         self.SetOutputMembers([
-            ['LevelSets','o','vtkImageData',1,'','vmtkimagewriter'],
-            ['FeatureImage','featureimage','vtkImageData',1,'','vmtkimagewriter']
+            ['LevelSets','o','vtkImageData',1,'','','vmtkimagewriter'],
+            ['FeatureImage','featureimage','vtkImageData',1,'','','vmtkimagewriter']
             ])
 
     def SeedInput(self,queryString,numberOfSeeds):

@@ -37,13 +37,13 @@ class vmtkSurfaceConnectivity(pypes.pypeScript):
         self.SetScriptName('vmtksurfaceconnectivity')
         self.SetScriptDoc('extract the largest connected region or the scalar-connected region from a surface')
         self.SetInputMembers([
-            ['Surface','i','vtkPolyData',1,'the input surface','vmtksurfacereader'],
-            ['CleanOutput','cleanoutput','int',1,'clean the unused points in the output'],
-            ['GroupIdsArrayName','groupidsarray','str',1,'name of the array containing the connectivity scalar'],
-            ['GroupId','groupid','int',1,'value of the connectivity scalar']
+            ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
+            ['CleanOutput','cleanoutput','bool',1,'','clean the unused points in the output'],
+            ['GroupIdsArrayName','groupidsarray','str',1,'','name of the array containing the connectivity scalar'],
+            ['GroupId','groupid','int',1,'','value of the connectivity scalar']
             ])
         self.SetOutputMembers([
-            ['Surface','o','vtkPolyData',1,'the output surface','vmtksurfacewriter']
+            ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter']
             ])
 
     def Execute(self):
