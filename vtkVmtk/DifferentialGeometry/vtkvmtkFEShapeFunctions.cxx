@@ -37,6 +37,8 @@
 #include "vtkPoints.h"
 #include "vtkMath.h"
 
+//#define VTKVMTKFESHAPEFUNCTIONS_NEGATIVE_JACOBIAN_WARNING
+
 vtkStandardNewMacro(vtkvmtkFEShapeFunctions);
 vtkCxxRevisionMacro(vtkvmtkFEShapeFunctions, "$Revision: 1.2 $");
 
@@ -170,7 +172,9 @@ void vtkvmtkFEShapeFunctions::ComputeInverseJacobianMatrix2D(vtkCell* cell, doub
 
   if (jacobianSquared < 0.0)
   {
-//    vtkWarningMacro("Warning: negative determinant of squared Jacobian, taking absolute value.");
+#ifdef VTKVMTKFESHAPEFUNCTIONS_NEGATIVE_JACOBIAN_WARNING 
+    vtkWarningMacro("Warning: negative determinant of squared Jacobian, taking absolute value.");
+#endif
     jacobianSquared = fabs(jacobianSquared);
   }
 
@@ -357,7 +361,9 @@ double vtkvmtkFEShapeFunctions::ComputeJacobian(vtkCell* cell, double* pcoords)
 
     if (jacobianSquared < 0.0)
     {
-//      vtkWarningMacro("Warning: negative determinant of squared Jacobian, taking absolute value.");
+#ifdef VTKVMTKFESHAPEFUNCTIONS_NEGATIVE_JACOBIAN_WARNING 
+      vtkWarningMacro("Warning: negative determinant of squared Jacobian, taking absolute value.");
+#endif
       jacobianSquared = fabs(jacobianSquared);
     }
 
@@ -395,7 +401,9 @@ double vtkvmtkFEShapeFunctions::ComputeJacobian(vtkCell* cell, double* pcoords)
 
     if (jacobian < 0.0)
     {
-//      vtkWarningMacro("Warning: negative Jacobian, taking absolute value.");
+#ifdef VTKVMTKFESHAPEFUNCTIONS_NEGATIVE_JACOBIAN_WARNING 
+      vtkWarningMacro("Warning: negative Jacobian, taking absolute value.");
+#endif
       jacobian = fabs(jacobian);
     }
   }
