@@ -96,6 +96,7 @@ protected:
   int Order;
   int QuadratureType;
   vtkIdType CellType;
+  int PreviousOrder;
 
 private:  
   vtkvmtkGaussQuadrature(const vtkvmtkGaussQuadrature&);  // Not implemented.

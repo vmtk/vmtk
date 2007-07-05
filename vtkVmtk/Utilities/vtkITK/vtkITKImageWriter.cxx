@@ -7,7 +7,7 @@
 
   Program:   vtkITK
   Module:    $HeadURL: http://www.na-mic.org/svn/Slicer3/trunk/Libs/vtkITK/vtkITKImageWriter.cxx $
-  Date:      $Date: 2006-12-21 13:21:52 +0100 (Thu, 21 Dec 2006) $
+  Date:      $Date: 2006-12-21 07:21:52 -0500 (Thu, 21 Dec 2006) $
   Version:   $Revision: 1900 $
 
 ==========================================================================*/
@@ -25,7 +25,7 @@
 
 vtkStandardNewMacro(vtkITKImageWriter);
 vtkCxxRevisionMacro(vtkITKImageWriter, "$Revision: 1900 $")
-
+#if 0
 // helper function
 template <class  TPixelType>
 void ITKWriteVTKImage(vtkITKImageWriter *self, vtkImageData *inputImage, char *fileName, 
@@ -66,6 +66,7 @@ void ITKWriteVTKImage(vtkITKImageWriter *self, vtkImageData *inputImage, char *f
       ijkToRasMatrix->SetElement(i, j, ijkToRasMatrix->GetElement(i,j)/mag[i]);
     }
   }
+  
   
   // ITK image direction are in LPS space
   // convert from ijkToRas to ijkToLps
@@ -137,7 +138,148 @@ void ITKWriteVTKImage(vtkITKImageWriter *self, vtkImageData *inputImage, char *f
   vtkExporter->Delete();
   vtkFlip->Delete();
 }
+#endif
 
+template <class  TPixelType>
+void ITKWriteVTKImage(vtkITKImageWriter *self, vtkImageData *inputImage, char *fileName, 
+                      vtkMatrix4x4* rasToIjkMatrix, TPixelType dummy) {
+
+  typedef  itk::Image<TPixelType, 3> ImageType;
+
+  double mag[3];
+  typename ImageType::DirectionType direction;
+  typename ImageType::PointType origin;
+  direction.SetIdentity();
+ 
+  if (rasToIjkMatrix)
+    {
+    vtkMatrix4x4 *ijkToRasMatrix = vtkMatrix4x4::New();
+    vtkMatrix4x4::Invert(rasToIjkMatrix, ijkToRasMatrix);
+  
+    ijkToRasMatrix->Transpose();
+  
+    int i;
+    for (i=0; i<3; i++) {
+      // normalize vectors
+      mag[i] = 0;
+      for (int j=0; j<3; j++) {
+        mag[i] += ijkToRasMatrix->GetElement(i,j)* ijkToRasMatrix->GetElement(i,j);
+      }
+      if (mag[i] == 0.0) {
+        mag[i] = 1;
+      }
+      mag[i] = sqrt(mag[i]);
+      //if (i == 1) { // Y flip
+        //mag[i] = -mag[i];
+      //}
+    }
+  
+    for ( i=0; i<3; i++) {
+      int j;
+      for (j=0; j<3; j++) {
+        ijkToRasMatrix->SetElement(i, j, ijkToRasMatrix->GetElement(i,j)/mag[i]);
+      }
+    }
+    
+    // ITK image direction are in LPS space
+    // convert from ijkToRas to ijkToLps
+    vtkMatrix4x4* rasToLpsMatrix = vtkMatrix4x4::New();
+    rasToLpsMatrix->Identity();
+    rasToLpsMatrix->SetElement(0,0,-1);
+    rasToLpsMatrix->SetElement(1,1,-1);
+  
+    vtkMatrix4x4* ijkToLpsMatrix = vtkMatrix4x4::New();
+    vtkMatrix4x4::Multiply4x4(ijkToRasMatrix, rasToLpsMatrix, ijkToLpsMatrix);
+  
+    for ( i=0; i<3; i++) {
+      origin[i] =  ijkToRasMatrix->GetElement(3,i);
+      int j;
+      for (j=0; j<3; j++) {
+        direction[j][i] =  ijkToLpsMatrix->GetElement(i,j);
+      }
+    }
+  
+    rasToLpsMatrix->Delete();
+    ijkToRasMatrix->Delete();
+    ijkToLpsMatrix->Delete();
+
+    origin[0] *= -1;
+    origin[1] *= -1;
+    }
+  else
+    {
+    // ITK image direction are in LPS space
+    vtkMatrix4x4* rasToLpsMatrix = vtkMatrix4x4::New();
+    rasToLpsMatrix->Identity();
+    rasToLpsMatrix->SetElement(0,0,-1);
+    rasToLpsMatrix->SetElement(1,1,-1);
+    
+    int i; 
+    for ( i=0; i<3; i++) {
+      int j;
+      for (j=0; j<3; j++) {
+        direction[j][i] =  rasToLpsMatrix->GetElement(i,j);
+      }
+    }
+  
+    rasToLpsMatrix->Delete();
+
+    double inputOrigin[3];
+    inputImage->GetOrigin(inputOrigin); 
+
+    origin[0] = -1.0 * inputOrigin[0];
+    origin[1] = -1.0 * inputOrigin[1];
+    origin[2] = inputOrigin[2];
+    }
+
+  // itk import for input itk images
+  typedef typename itk::VTKImageImport<ImageType> ImageImportType;
+  typename ImageImportType::Pointer itkImporter = ImageImportType::New();
+
+  // vtk export for  vtk image
+  vtkImageExport* vtkExporter = vtkImageExport::New();  
+
+  // writer 
+  typedef typename itk::ImageFileWriter<ImageType> ImageWriterType;      
+  typename ImageWriterType::Pointer   itkImageWriter =  ImageWriterType::New();
+
+  if ( self->GetUseCompression() ) 
+    {
+    itkImageWriter->UseCompressionOn();
+    }
+    else
+    {
+    itkImageWriter->UseCompressionOff();
+    }
+
+  // set pipeline for the image
+  vtkExporter->SetInput ( inputImage );
+
+  itkImporter = ImageImportType::New();
+  ConnectPipelines(vtkExporter, itkImporter);
+
+  // write image
+  itkImageWriter->SetInput(itkImporter->GetOutput());
+  if (rasToIjkMatrix)
+    {
+    itkImporter->GetOutput()->SetDirection(direction);
+    itkImporter->GetOutput()->Update();
+    itkImporter->GetOutput()->SetOrigin(origin);
+    itkImporter->GetOutput()->SetSpacing(mag);
+    }
+  else
+    {
+    itkImporter->GetOutput()->SetDirection(direction);
+    itkImporter->GetOutput()->Update();
+    itkImporter->GetOutput()->SetOrigin(origin);
+    }
+  itkImporter->Update();
+  itkImageWriter->SetFileName( fileName );
+  itkImageWriter->Update();
+
+  // clean up
+  vtkExporter->Delete();
+}
 
 //----------------------------------------------------------------------------
 vtkITKImageWriter::vtkITKImageWriter()
@@ -156,10 +298,6 @@ vtkITKImageWriter::~vtkITKImageWriter()
     delete [] this->FileName;
     this->FileName = NULL;
   }
-  if (this->RasToIJKMatrix)
-    {
-    this->RasToIJKMatrix->Delete();
-    }
 }
 
 
@@ -221,12 +359,6 @@ void vtkITKImageWriter::Write()
     vtkErrorMacro(<<"vtkITKImageWriter: Please specify a FileName");
     return;
   }
-
-  if (!this->RasToIJKMatrix) 
-    {
-    this->RasToIJKMatrix = vtkMatrix4x4::New();
-    this->RasToIJKMatrix->Identity(); 
-    }
 
   this->GetInput()->UpdateInformation();
   this->GetInput()->SetUpdateExtent(this->GetInput()->GetWholeExtent());

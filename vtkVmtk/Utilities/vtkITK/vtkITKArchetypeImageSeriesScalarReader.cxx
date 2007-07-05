@@ -7,8 +7,8 @@
 
   Program:   vtkITK
   Module:    $HeadURL: http://www.na-mic.org/svn/Slicer3/trunk/Libs/vtkITK/vtkITKArchetypeImageSeriesScalarReader.cxx $
-  Date:      $Date: 2006-12-21 13:21:52 +0100 (Thu, 21 Dec 2006) $
-  Version:   $Revision: 1900 $
+  Date:      $Date: 2007-01-19 13:21:56 -0500 (Fri, 19 Jan 2007) $
+  Version:   $Revision: 2267 $
 
 ==========================================================================*/
 
@@ -18,6 +18,7 @@
 #include "vtkObjectFactory.h"
 #include "vtkPointData.h"
 #include "vtkDataArray.h"
+#include <vtkCommand.h>
 
 #include "itkArchetypeSeriesFileNames.h"
 #include "itkImage.h"
@@ -31,8 +32,9 @@
 #include "itkGDCMImageIO.h"
 #include <itksys/SystemTools.hxx>
 
-vtkCxxRevisionMacro(vtkITKArchetypeImageSeriesScalarReader, "$Revision: 1900 $");
+vtkCxxRevisionMacro(vtkITKArchetypeImageSeriesScalarReader, "$Revision: 2267 $");
 vtkStandardNewMacro(vtkITKArchetypeImageSeriesScalarReader);
+
 
 //----------------------------------------------------------------------------
 vtkITKArchetypeImageSeriesScalarReader::vtkITKArchetypeImageSeriesScalarReader()
@@ -70,7 +72,7 @@ void vtkITKArchetypeImageSeriesScalarReader::ExecuteData(vtkDataObject *output)
   data->AllocateScalars();
   data->SetExtent(data->GetWholeExtent());
 
-  /// SCALR MACRO
+  /// SCALAR MACRO
 #define vtkITKExecuteDataFromSeries(typeN, type) \
     case typeN: \
     {\
@@ -78,7 +80,11 @@ void vtkITKArchetypeImageSeriesScalarReader::ExecuteData(vtkDataObject *output)
       typedef itk::ImageSource<image##typeN> FilterType; \
       FilterType::Pointer filter; \
       itk::ImageSeriesReader<image##typeN>::Pointer reader##typeN = \
-            itk::ImageSeriesReader<image##typeN>::New(); \
+          itk::ImageSeriesReader<image##typeN>::New(); \
+          itk::CStyleCommand::Pointer pcl=itk::CStyleCommand::New(); \
+          pcl->SetCallback((itk::CStyleCommand::FunctionPointer)&ReadProgressCallback); \
+          pcl->SetClientData(this); \
+          reader##typeN->AddObserver(itk::ProgressEvent(),pcl); \
       reader##typeN->SetFileNames(this->FileNames); \
       reader##typeN->ReleaseDataFlagOn(); \
       if (this->UseNativeCoordinateOrientation) \
@@ -188,4 +194,12 @@ void vtkITKArchetypeImageSeriesScalarReader::ExecuteData(vtkDataObject *output)
         vtkErrorMacro(<<"UpdateFromSeries: Unsupported number of components: 1 != " << this->GetNumberOfComponents());
       }
     }
+}
+
+
+void vtkITKArchetypeImageSeriesScalarReader::ReadProgressCallback(itk::ProcessObject* obj,const itk::ProgressEvent&,void* data)
+{
+  vtkITKArchetypeImageSeriesScalarReader* me=reinterpret_cast<vtkITKArchetypeImageSeriesScalarReader*>(data);
+  me->Progress=obj->GetProgress();
+  me->InvokeEvent(vtkCommand::ProgressEvent,&me->Progress);
 }

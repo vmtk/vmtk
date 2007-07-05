@@ -183,6 +183,13 @@ class vmtkMeshWriter(pypes.pypeScript):
                             'tec':'tecplot',
                             'dat':'pointdata'}
 
+        if self.OutputFileName == 'BROWSER':
+            import tkFileDialog
+            initialDir = '.'
+            self.OutputFileName = tkFileDialog.asksaveasfilename(title="Output mesh",initialdir=initialDir)
+            if not self.OutputFileName:
+                self.PrintError('Error: no OutputFileName.')
+
         if self.GuessFormat and self.OutputFileName and not self.Format:
             import os.path
             extension = os.path.splitext(self.OutputFileName)[1]

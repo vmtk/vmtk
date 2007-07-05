@@ -30,6 +30,7 @@ class vmtkImageWriter(pypes.pypeScript):
         self.Format = ''
         self.GuessFormat = 1
         self.UseITKIO = 1
+        self.ApplyTransform = 0
         self.OutputFileName = ''
         self.OutputRawFileName = ''
         self.OutputDirectoryName = ''
@@ -46,6 +47,7 @@ class vmtkImageWriter(pypes.pypeScript):
             ['Format','f','str',1,'["vtkxml","vtk","meta","tiff","png","pointdata"]','file format'],
             ['GuessFormat','guessformat','bool',1,'','guess file format from extension'],
             ['UseITKIO','useitk','bool',1,'','use ITKIO mechanism'],
+            ['ApplyTransform','transform','bool',1,'','apply transform on writing - ITKIO only'],
             ['OutputFileName','ofile','str',1,'','output file name'],
             ['OutputFileName','o','str',1,'','output file name (deprecated: use -ofile)'],
             ['OutputRawFileName','rawfile','str',1,'','name of the output raw file - meta image only'],
@@ -179,7 +181,7 @@ class vmtkImageWriter(pypes.pypeScript):
         writer = vtkvmtk.vtkITKImageWriter()
         writer.SetInput(self.Image)
         writer.SetFileName(self.OutputFileName)
-        if self.RasToIjkMatrixCoefficients:
+        if self.ApplyTransform and self.RasToIjkMatrixCoefficients:
             matrix = vtk.vtkMatrix4x4()
             matrix.DeepCopy(self.RasToIjkMatrixCoefficients)
             writer.SetRasToIJKMatrix(matrix)
@@ -200,6 +202,20 @@ class vmtkImageWriter(pypes.pypeScript):
                             'tif':'tiff',
                             'png':'png',
                             'dat':'pointdata'}
+
+        if self.OutputFileName == 'BROWSER':
+            import tkFileDialog
+            initialDir = '.'
+            self.OutputFileName = tkFileDialog.asksaveasfilename(title="Output image",initialdir=initialDir)
+            if not self.OutputFileName:
+                self.PrintError('Error: no OutputFileName.')
+
+        if self.OutputDirectoryName == 'BROWSER':
+            import tkFileDialog
+            initialDir = '.'
+            self.OutputDirectoryName = tkFileDialog.askdirectory(title="Output directory",initialdir=initialDir)
+            if not self.OutputDirectoryName:
+                self.PrintError('Error: no OutputDirectoryName.')
 
         if self.GuessFormat and self.OutputFileName and not self.Format:
             import os.path

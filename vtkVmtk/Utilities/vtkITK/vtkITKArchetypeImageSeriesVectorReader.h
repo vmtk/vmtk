@@ -7,8 +7,8 @@
 
   Program:   vtkITK
   Module:    $HeadURL: http://www.na-mic.org/svn/Slicer3/trunk/Libs/vtkITK/vtkITKArchetypeImageSeriesVectorReader.h $
-  Date:      $Date: 2006-12-21 13:21:52 +0100 (Thu, 21 Dec 2006) $
-  Version:   $Revision: 1900 $
+  Date:      $Date: 2007-01-19 13:21:56 -0500 (Fri, 19 Jan 2007) $
+  Version:   $Revision: 2267 $
 
 ==========================================================================*/
 
@@ -16,6 +16,8 @@
 #define __vtkITKArchetypeImageSeriesVectorReader_h
 
 #include "vtkITKArchetypeImageSeriesReader.h"
+
+#include "itkImageFileReader.h"
 
 class VTK_ITK_EXPORT vtkITKArchetypeImageSeriesVectorReader : public vtkITKArchetypeImageSeriesReader
 {
@@ -29,7 +31,9 @@ class VTK_ITK_EXPORT vtkITKArchetypeImageSeriesVectorReader : public vtkITKArche
   ~vtkITKArchetypeImageSeriesVectorReader();
 
   void ExecuteData(vtkDataObject *data);
-
+//BTX
+  static void ReadProgressCallback(itk::ProcessObject* obj,const itk::ProgressEvent&, void* data);
+//ETX
   // private:
 };
 

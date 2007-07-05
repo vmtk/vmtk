@@ -172,6 +172,13 @@ class vmtkSurfaceReader(pypes.pypeScript):
                             'tec':'tecplot',
                             'dat':'tecplot'}
 
+        if self.InputFileName == 'BROWSER':
+            import tkFileDialog
+            initialDir = '.'
+            self.InputFileName = tkFileDialog.askopenfilename(title="Input surface",initialdir=initialDir)
+            if not self.InputFileName:
+                self.PrintError('Error: no InputFileName.')
+
         if self.GuessFormat and self.InputFileName and not self.Format:
             import os.path
             extension = os.path.splitext(self.InputFileName)[1]

@@ -49,7 +49,7 @@ class vmtkImageInitialization(pypes.pypeScript):
         self.SetScriptName('vmtkimageinitialization')
         self.SetInputMembers([
             ['Image','i','vtkImageData',1,'','','vmtkimagereader'],
-            ['Method','method','str',1,'["collidingfronts","fastmarching","threshold","isosurface"]','the initialization method'],
+            ['Method','method','str',1,'["collidingfronts","fastmarching","voxels","threshold","isosurface"]','the initialization method'],
             ['Interactive','interactive','bool',1],
             ['IsosurfaceValue','isosurfacevalue','float',1],
             ['UpperThreshold','upperthreshold','float',1],
@@ -59,7 +59,8 @@ class vmtkImageInitialization(pypes.pypeScript):
             ['vmtkRenderer','renderer','vmtkRenderer',1]
             ])
         self.SetOutputMembers([
-            ['Image','o','vtkImageData',1,'','','vmtkimagewriter']
+            ['Image','o','vtkImageData',1,'','','vmtkimagewriter'],
+            ['IsosurfaceValue','oisosurfacevalue','float',1]
             ])
 
     def SeedsToPoints(self,seeds):
@@ -171,6 +172,35 @@ class vmtkImageInitialization(pypes.pypeScript):
         self.Image = thresholdedImage
         self.IsosurfaceValue = 0.0
 
+    def VoxelsInitialize(self):
+
+        self.PrintLog('Voxel initialization.')
+
+        if self.Interactive:
+            queryString = 'Please place seeds'
+            sourceSeeds = self.SeedInput(queryString,0)
+        else:
+            sourceSeeds = self.SeedsToPoints(self.Seeds)
+
+        sourceSeedIds = vtk.vtkIdList()
+        for i in range(sourceSeeds.GetNumberOfPoints()):
+            sourceSeedIds.InsertNextId(self.Image.FindPoint(sourceSeeds.GetPoint(i)))
+
+        initializedImage = vtk.vtkImageData()
+        initializedImage.DeepCopy(self.Image)
+
+        imageScalars = initializedImage.GetPointData().GetScalars()
+
+        imageScalars.FillComponent(0,1.0)
+
+        for i in range(sourceSeedIds.GetNumberOfIds()):
+            id = sourceSeedIds.GetId(i)
+            if id < 0:
+                continue
+            imageScalars.SetComponent(id,0,-1.0)
+
+        self.Image = initializedImage
+
     def FastMarchingInitialize(self):
 
         self.PrintLog('Fast marching initialization.')
@@ -225,13 +255,14 @@ class vmtkImageInitialization(pypes.pypeScript):
         shiftScale = vtk.vtkImageShiftScale()
         shiftScale.SetInput(thresholdedImage)
         shiftScale.SetShift(-scalarRange[0])
-        shiftScale.SetScale(1/(scalarRange[1]-scalarRange[0]))
+        shiftScale.SetScale(1./float(scalarRange[1]-scalarRange[0]))
         shiftScale.Update()
         
         speedImage = shiftScale.GetOutput()
-
+        
         fastMarching = vtkvmtk.vtkvmtkFastMarchingUpwindGradientImageFilter()
-        fastMarching.SetInput(speedImage)
+#        fastMarching.SetInput(speedImage)
+        fastMarching.SetInput(thresholdedImage)
         fastMarching.SetSeeds(sourceSeedIds)
         fastMarching.SetTargets(targetSeedIds)
         fastMarching.GenerateGradientImageOff()
@@ -240,8 +271,8 @@ class vmtkImageInitialization(pypes.pypeScript):
 ##         fastMarching.SetTargetReachedModeToAllTargets()
         fastMarching.Update()
 
-        self.Image = vtk.vtkImageData()
-        self.Image.DeepCopy(collidingFronts.GetOutput())
+#        self.Image = vtk.vtkImageData()
+        self.Image.DeepCopy(fastMarching.GetOutput())
         self.Image.Update()
 
         self.IsosurfaceValue = fastMarching.GetTargetValue()
@@ -301,7 +332,8 @@ class vmtkImageInitialization(pypes.pypeScript):
         speedImage = shiftScale.GetOutput()
 
         collidingFronts = vtkvmtk.vtkvmtkCollidingFrontsImageFilter()
-        collidingFronts.SetInput(speedImage)
+#        collidingFronts.SetInput(speedImage)
+        collidingFronts.SetInput(thresholdedImage)
         collidingFronts.SetSeeds1(seedIds1)
         collidingFronts.SetSeeds2(seedIds2)
         collidingFronts.ApplyConnectivityOn()
@@ -317,13 +349,25 @@ class vmtkImageInitialization(pypes.pypeScript):
           
         if self.Image == None:
             self.PrintError('Error: no Image.')
-        
+
+        if self.UpperThreshold > 1E19:
+            self.UpperThreshold = None  
+        if self.LowerThreshold < -1E19:
+            self.LowerThreshold = None       
+
         initializationMethods = {
                                 'collidingfronts': self.CollidingFrontsInitialize,
                                 'fastmarching': self.FastMarchingInitialize,
+                                'voxels': self.VoxelsInitialize,
                                 'threshold': self.ThresholdInitialize,
                                 'isosurface': self.IsosurfaceInitialize
                                 }
+
+        cast = vtk.vtkImageCast()
+        cast.SetInput(self.Image)
+        cast.SetOutputScalarTypeToFloat()
+        cast.Update()
+        self.Image = cast.GetOutput()
 
         if self.Interactive:
 

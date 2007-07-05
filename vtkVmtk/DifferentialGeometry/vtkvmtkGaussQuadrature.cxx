@@ -45,6 +45,7 @@ vtkvmtkGaussQuadrature::vtkvmtkGaussQuadrature()
   this->QuadratureWeights = NULL;
 
   this->Order = 1;
+  this->PreviousOrder = 0;
  
   this->CellType = VTK_EMPTY_CELL;
 }
@@ -66,12 +67,13 @@ vtkvmtkGaussQuadrature::~vtkvmtkGaussQuadrature()
 
 void vtkvmtkGaussQuadrature::Initialize(vtkIdType cellType)
 {
-  if (cellType == this->CellType)
+  if ((cellType == this->CellType) && (this->Order == this->PreviousOrder))
   {
     return;
   }
 
   this->CellType = cellType;
+  this->PreviousOrder = this->Order;
   
   if (this->QuadraturePoints)
   {

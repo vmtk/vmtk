@@ -7,8 +7,8 @@
 
   Program:   vtkITK
   Module:    $HeadURL: http://www.na-mic.org/svn/Slicer3/trunk/Libs/vtkITK/vtkITKArchetypeImageSeriesVectorReader.cxx $
-  Date:      $Date: 2006-12-21 13:21:52 +0100 (Thu, 21 Dec 2006) $
-  Version:   $Revision: 1900 $
+  Date:      $Date: 2007-05-22 11:33:40 -0400 (Tue, 22 May 2007) $
+  Version:   $Revision: 3420 $
 
 ==========================================================================*/
 
@@ -18,6 +18,7 @@
 #include "vtkObjectFactory.h"
 #include "vtkPointData.h"
 #include "vtkDataArray.h"
+#include <vtkCommand.h>
 
 #include "itkArchetypeSeriesFileNames.h"
 #include "itkImage.h"
@@ -32,7 +33,7 @@
 #include <itksys/SystemTools.hxx>
 
 vtkStandardNewMacro(vtkITKArchetypeImageSeriesVectorReader);
-vtkCxxRevisionMacro(vtkITKArchetypeImageSeriesVectorReader, "$Revision: 1900 $");
+vtkCxxRevisionMacro(vtkITKArchetypeImageSeriesVectorReader, "$Revision: 3420 $");
 
 //----------------------------------------------------------------------------
 vtkITKArchetypeImageSeriesVectorReader::vtkITKArchetypeImageSeriesVectorReader()
@@ -63,7 +64,7 @@ void vtkITKArchetypeImageSeriesVectorReader::ExecuteData(vtkDataObject *output)
     }
 
   vtkImageData *data = vtkImageData::SafeDownCast(output);
-  data->UpdateInformation();
+  //data->UpdateInformation();
   data->SetExtent(0,0,0,0,0,0);
   data->AllocateScalars();
   data->SetExtent(data->GetWholeExtent());
@@ -77,7 +78,10 @@ void vtkITKArchetypeImageSeriesVectorReader::ExecuteData(vtkDataObject *output)
       typedef itk::ImageSource<image##typeN> FilterType; \
       FilterType::Pointer filter; \
       itk::ImageSeriesReader<image##typeN>::Pointer reader##typeN = \
-            itk::ImageSeriesReader<image##typeN>::New(); \
+        itk::ImageSeriesReader<image##typeN>::New(); \
+        itk::CStyleCommand::Pointer pcl=itk::CStyleCommand::New(); \
+        pcl->SetCallback((itk::CStyleCommand::FunctionPointer)&ReadProgressCallback); \
+      pcl->SetClientData(this); \
       reader##typeN->SetFileNames(this->FileNames); \
       reader##typeN->ReleaseDataFlagOn(); \
       if (this->UseNativeCoordinateOrientation) \
@@ -160,7 +164,7 @@ void vtkITKArchetypeImageSeriesVectorReader::ExecuteData(vtkDataObject *output)
     }
       else 
     {
-      vtkErrorMacro(<< "UpdateFromFile: Unsupported Number Of Components: 3 != " << this->GetNumberOfComponents());
+      vtkDebugMacro(<< "UpdateFromFile: Unsupported Number Of Components: 3 != " << this->GetNumberOfComponents());
     }
     }
   else
@@ -185,7 +189,15 @@ void vtkITKArchetypeImageSeriesVectorReader::ExecuteData(vtkDataObject *output)
       }
       else 
     {
-          vtkErrorMacro(<< "UpdateFromFile: Unsupported Number Of Components: 3 != " << this->GetNumberOfComponents());
+          vtkDebugMacro(<< "UpdateFromFile: Unsupported Number Of Components: 3 != " << this->GetNumberOfComponents());
     }
     }
+}
+
+
+void vtkITKArchetypeImageSeriesVectorReader::ReadProgressCallback(itk::ProcessObject* obj,const itk::ProgressEvent&,void* data)
+{
+  vtkITKArchetypeImageSeriesVectorReader* me=reinterpret_cast<vtkITKArchetypeImageSeriesVectorReader*>(data);
+  me->Progress=obj->GetProgress();
+  me->InvokeEvent(vtkCommand::ProgressEvent,&me->Progress);
 }

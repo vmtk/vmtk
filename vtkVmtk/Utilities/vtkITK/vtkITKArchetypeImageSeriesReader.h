@@ -7,8 +7,8 @@
 
   Program:   vtkITK
   Module:    $HeadURL: http://www.na-mic.org/svn/Slicer3/trunk/Libs/vtkITK/vtkITKArchetypeImageSeriesReader.h $
-  Date:      $Date: 2006-12-21 13:21:52 +0100 (Thu, 21 Dec 2006) $
-  Version:   $Revision: 1900 $
+  Date:      $Date: 2007-03-03 16:22:29 -0500 (Sat, 03 Mar 2007) $
+  Version:   $Revision: 2733 $
 
 ==========================================================================*/
 
@@ -205,6 +205,14 @@ public:
   // Description:
   // Returns an IJK to RAS transformation matrix
   vtkMatrix4x4* GetRasToIjkMatrix();
+
+  // Description:
+  // ITK internally does not register all of the IO types that get built
+  // (possibly due to lingering bugs?) but many slicer users have
+  // GE5 (Signa - magic number: IMGF) files that they need to work
+  // with so we register the factory explictly here
+  //
+  void RegisterExtraBuiltInFactories();
 
 protected:
   vtkITKArchetypeImageSeriesReader();

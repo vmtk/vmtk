@@ -30,6 +30,7 @@ class vmtkImageReader(pypes.pypeScript):
         self.Format = ''
         self.GuessFormat = 1
         self.UseITKIO = 1
+        self.ApplyTransform = 0
         self.InputFileName = ''
         self.InputFilePrefix = ''
         self.InputFilePattern = ''
@@ -55,6 +56,7 @@ class vmtkImageReader(pypes.pypeScript):
             ['Format','f','str',1,'["vtkxml","vtk","dicom","raw","meta","tiff","png"]','file format'],
             ['GuessFormat','guessformat','bool',1,'','guess file format from extension'],
             ['UseITKIO','useitk','bool',1,'','use ITKIO mechanism'],
+            ['ApplyTransform','transform','bool',1,'','apply transform on reading - ITKIO only'],
             ['Image','i','vtkImageData',1,'','the input image'],
             ['InputFileName','ifile','str',1,'','input file name'],
             ['InputFilePrefix','prefix','str',1,'','input file prefix (e.g. foo_)'],
@@ -214,24 +216,18 @@ class vmtkImageReader(pypes.pypeScript):
             matrix.GetElement(1,0), matrix.GetElement(1,1), matrix.GetElement(1,2), matrix.GetElement(1,3),
             matrix.GetElement(2,0), matrix.GetElement(2,1), matrix.GetElement(2,2), matrix.GetElement(2,3),
             matrix.GetElement(3,0), matrix.GetElement(3,1), matrix.GetElement(3,2), matrix.GetElement(3,3)]
-        row0 = [matrix.GetElement(0,0), matrix.GetElement(0,1), matrix.GetElement(0,2)]
-        row1 = [matrix.GetElement(1,0), matrix.GetElement(1,1), matrix.GetElement(1,2)]
-        row2 = [matrix.GetElement(2,0), matrix.GetElement(2,1), matrix.GetElement(2,2)]
-        vtk.vtkMath.Normalize(row0)
-        vtk.vtkMath.Normalize(row1)
-        vtk.vtkMath.Normalize(row2)
-
-        self.RasToLocalMatrixCoefficients = [
-            row0[0], row0[1], row0[2], 0.0,
-            row1[0], row1[1], row1[2], 0.0,
-            row2[0], row2[1], row2[2], 0.0,
-            0.0,     0.0,     0.0,     1.0]
-        
-        origin = self.Image.GetOrigin()
-        matrix = vtk.vtkMatrix4x4()
-        matrix.DeepCopy(self.RasToLocalMatrixCoefficients)
-        localOrigin = matrix.MultiplyPoint([origin[0],origin[1],origin[2],0.0])
-        self.Image.SetOrigin(localOrigin[0],localOrigin[1],localOrigin[2])
+#        matrix = reader.GetRasToLocalMatrix()
+#        self.RasToLocalMatrixCoefficients = [
+#            matrix.GetElement(0,0), matrix.GetElement(0,1), matrix.GetElement(0,2), matrix.GetElement(0,3),
+#            matrix.GetElement(1,0), matrix.GetElement(1,1), matrix.GetElement(1,2), matrix.GetElement(1,3),
+#            matrix.GetElement(2,0), matrix.GetElement(2,1), matrix.GetElement(2,2), matrix.GetElement(2,3),
+#            matrix.GetElement(3,0), matrix.GetElement(3,1), matrix.GetElement(3,2), matrix.GetElement(3,3)]
+        if self.ApplyTransform:
+            origin = self.Image.GetOrigin()
+            matrix = vtk.vtkMatrix4x4()
+            matrix.DeepCopy(self.RasToItkMatrixCoefficients)
+            localOrigin = matrix.MultiplyPoint([origin[0],origin[1],origin[2],0.0])
+            self.Image.SetOrigin(localOrigin[0],localOrigin[1],localOrigin[2])
 
     def Execute(self):
 
@@ -244,6 +240,20 @@ class vmtkImageReader(pypes.pypeScript):
                             'mha':'meta',
                             'tif':'tiff',
                             'png':'png'}
+
+        if self.InputFileName == 'BROWSER':
+            import tkFileDialog
+            initialDir = '.'
+            self.InputFileName = tkFileDialog.askopenfilename(title="Input image",initialdir=initialDir)
+            if not self.InputFileName:
+                self.PrintError('Error: no InputFileName.')
+
+        if self.InputDirectoryName == 'BROWSER':
+            import tkFileDialog
+            initialDir = '.'
+            self.InputDirectoryName = tkFileDialog.askdirectory(title="Input directory",initialdir=initialDir)
+            if not self.InputDirectoryName:
+                self.PrintError('Error: no InputDirectoryName.')
 
         if self.GuessFormat and self.InputFileName and not self.Format:
             import os.path

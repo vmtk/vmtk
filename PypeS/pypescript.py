@@ -276,15 +276,15 @@ class pypeScript(object):
                         memberUsageString += '-' + option + ' ' + memberName
                     elif memberType in self.BuiltinOptionTypes + ["bool"]:
                         default = self.__getattribute__(memberName)
-                        memberUsageString += '-' + option + ' ' + memberName + ' (' + memberType + ',' + str(memberLength) + ') '
+                        memberUsageString += '-' + option + ' ' + memberName + ' (' + memberType + ',' + str(memberLength) + ')'
                         if memberRange:
-                            memberUsageString += memberEntry.GetRangeRepresentation()
+                            memberUsageString += " " + memberEntry.GetRangeRepresentation()
                         if default != '':
                             memberUsageString += '; default=' + str(default)
                     else:
                         memberUsageString += '-' + option + ' ' + memberName + ' (' + memberType + ',' + str(memberLength) + ')'
                     if memberDoc != '':
-                        memberUsageString += ' : ' + memberDoc
+                        memberUsageString += ': ' + memberDoc
                 if useTextWrap:
                     usageString += '\n' + textwrapper.fill(memberUsageString)
                 else:

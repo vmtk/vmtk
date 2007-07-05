@@ -7,7 +7,7 @@
 
   Program:   vtkITK
   Module:    $HeadURL: http://www.na-mic.org/svn/Slicer3/trunk/Libs/vtkITK/vtkITKImageWriter.h $
-  Date:      $Date: 2006-12-21 13:21:52 +0100 (Thu, 21 Dec 2006) $
+  Date:      $Date: 2006-12-21 07:21:52 -0500 (Thu, 21 Dec 2006) $
   Version:   $Revision: 1900 $
 
 ==========================================================================*/
@@ -60,7 +60,9 @@ public:
   void Write();
 
   // Set orienation matrix
-  vtkSetObjectMacro(RasToIJKMatrix,vtkMatrix4x4);
+  void SetRasToIJKMatrix( vtkMatrix4x4* mat) {
+    RasToIJKMatrix = mat;
+  }
 
 protected:
   vtkITKImageWriter();
