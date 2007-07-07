@@ -95,6 +95,16 @@ void vtkvmtkCenterlineEndpointExtractor::ComputeCenterlineSplitting(vtkPolyData*
     {
     vtkvmtkCenterlineSphereDistance::FindNTouchingSphereCenter(input,this->RadiusArrayName,cellId,lastSubId,lastPCoord,this->NumberOfEndpointSpheres,this->SubIds[1],this->PCoords[1],true);
     vtkvmtkCenterlineSphereDistance::FindNTouchingSphereCenter(input,this->RadiusArrayName,cellId,this->SubIds[1],this->PCoords[1],this->NumberOfGapSpheres,this->SubIds[0],this->PCoords[0],true);
+    if (this->SubIds[0] == -1)
+      {
+      this->SubIds[0] = 0;
+      this->PCoords[0] = 0.0;
+      }
+    if (this->SubIds[1] == -1)
+      {
+      this->SubIds[1] = 0;
+      this->PCoords[1] = 0.0;
+      }
     }
   else
     {

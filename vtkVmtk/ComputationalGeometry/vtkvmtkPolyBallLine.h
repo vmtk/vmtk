@@ -60,6 +60,11 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyBallLine : public vtkImp
   vtkGetObjectMacro(InputCellIds,vtkIdList);
 
   // Description:
+  // Set / get a single input cell id used for the function.
+  vtkSetMacro(InputCellId,vtkIdType);
+  vtkGetMacro(InputCellId,vtkIdType);
+
+  // Description:
   // Set / get poly ball radius array name.
   vtkSetStringMacro(PolyBallRadiusArrayName);
   vtkGetStringMacro(PolyBallRadiusArrayName);
@@ -84,6 +89,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyBallLine : public vtkImp
 
   vtkPolyData* Input;
   vtkIdList* InputCellIds;
+  vtkIdType InputCellId;
 
   char* PolyBallRadiusArrayName;
   vtkIdType LastPolyBallCellId;

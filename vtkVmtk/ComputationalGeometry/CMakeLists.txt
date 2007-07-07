@@ -10,6 +10,7 @@ SET (VTK_VMTK_COMPUTATIONALGEOMETRY_SRCS
   vtkvmtkCenterlineReferenceSystemAttributesOffset.cxx
   vtkvmtkCenterlineSmoothing.cxx
   vtkvmtkCenterlineSphereDistance.cxx
+  vtkvmtkCenterlineSplitExtractor.cxx
   vtkvmtkCenterlineSplittingAndGroupingFilter.cxx
   vtkvmtkCenterlineUtilities.cxx
   vtkvmtkBoundaryReferenceSystems.cxx

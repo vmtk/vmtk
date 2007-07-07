@@ -53,6 +53,7 @@ __all__ = [
   'vmtkmeshtosurface',
   'vmtkmeshviewer',
   'vmtkmeshwriter',
+  'vmtkpointsplitextractor',
   'vmtkpointtransform',
   'vmtkpotentialfit',
   'vmtkrenderer',

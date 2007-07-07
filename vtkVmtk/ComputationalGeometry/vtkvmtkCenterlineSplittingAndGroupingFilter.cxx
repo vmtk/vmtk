@@ -169,7 +169,7 @@ int vtkvmtkCenterlineSplittingAndGroupingFilter::RequestData(
     appendCenterlinesFilter->AddInput(splitCenterline);
     splitCenterline->Delete();
     }
-
+  
   appendCenterlinesFilter->Update();
 
   vtkPolyData* centerlineTracts = vtkPolyData::New();
@@ -192,7 +192,6 @@ int vtkvmtkCenterlineSplittingAndGroupingFilter::RequestData(
 void vtkvmtkCenterlineSplittingAndGroupingFilter::MergeTracts(vtkPolyData* centerlineTracts)
 {
   int numberOfCenterlineCells = centerlineTracts->GetNumberOfCells();
-
   vtkPolyData* mergedCenterlineTracts = vtkPolyData::New();
   vtkPoints* mergedCenterlineTractsPoints = vtkPoints::New();
   mergedCenterlineTractsPoints->DeepCopy(centerlineTracts->GetPoints());
@@ -203,7 +202,6 @@ void vtkvmtkCenterlineSplittingAndGroupingFilter::MergeTracts(vtkPolyData* cente
   vtkCellArray* mergedCellArray = vtkCellArray::New();
 
   vtkIntArray* groupIdsArray = vtkIntArray::SafeDownCast(centerlineTracts->GetCellData()->GetArray(this->GroupIdsArrayName));
-  
   vtkIdList* centerlineCellIds = vtkIdList::New();
   int i;
   for (i=0; i<numberOfCenterlineCells; i++)
@@ -232,7 +230,7 @@ void vtkvmtkCenterlineSplittingAndGroupingFilter::MergeTracts(vtkPolyData* cente
           }   
         } 
       }
-
+    
     // at this point we have to merge based on the repeated groupIds (which are now adjacent)
     vtkIdList* tractCellPointIds = vtkIdList::New();
     vtkIdList* mergedCellPointIds = vtkIdList::New();
@@ -515,8 +513,38 @@ void vtkvmtkCenterlineSplittingAndGroupingFilter::SplitCenterline(vtkPolyData* i
   blankingArray->SetNumberOfComponents(1);
   blankingArray->SetName(this->BlankingArrayName);
 
-  int numberOfSplitCenterlinePoints = 0;
   int i;
+  if (numberOfSplittingPoints == 0)
+    {
+    splitCenterlinePoints->DeepCopy(centerline->GetPoints());
+    splitCenterlineCellArray->InsertNextCell(numberOfCenterlinePoints);
+    splitCenterlinePD->CopyAllocate(inputPD,numberOfCenterlinePoints);
+    for (i=0; i<numberOfCenterlinePoints; i++)
+      {
+      splitCenterlinePD->CopyData(inputPD,centerline->GetPointId(i),i);
+      splitCenterlineCellArray->InsertCellPoint(i);
+      } 
+    centerlineIdsArray->InsertNextValue(cellId);
+    tractIdsArray->InsertNextValue(0);
+    blankingArray->InsertNextValue(0);
+
+    splitCenterline->SetPoints(splitCenterlinePoints);
+    splitCenterline->SetLines(splitCenterlineCellArray);
+    splitCenterline->GetCellData()->CopyAllocate(input->GetCellData(),1);
+    splitCenterline->GetCellData()->CopyData(input->GetCellData(),cellId,0);
+    splitCenterline->GetCellData()->AddArray(centerlineIdsArray);
+    splitCenterline->GetCellData()->AddArray(tractIdsArray);
+    splitCenterline->GetCellData()->AddArray(blankingArray);
+
+    splitCenterlinePoints->Delete();
+    splitCenterlineCellArray->Delete();
+    splitCenterlineCellPointIds->Delete();
+    centerlineIdsArray->Delete();
+    blankingArray->Delete();
+    return;
+    }
+
+  int numberOfSplitCenterlinePoints = 0;
   for (i=0; i<=numberOfSplittingPoints; i++)
     {
     if (tractBlanking[i] == 1)
@@ -553,6 +581,7 @@ void vtkvmtkCenterlineSplittingAndGroupingFilter::SplitCenterline(vtkPolyData* i
     }
 
   splitCenterlinePD->InterpolateAllocate(inputPD,numberOfSplitCenterlinePoints);
+  splitCenterline->GetCellData()->CopyAllocate(input->GetCellData(),numberOfSplittingPoints+1);
 
   for (i=0; i<=numberOfSplittingPoints; i++)
     {
@@ -618,12 +647,11 @@ void vtkvmtkCenterlineSplittingAndGroupingFilter::SplitCenterline(vtkPolyData* i
     centerlineIdsArray->InsertNextValue(cellId);
     tractIdsArray->InsertNextValue(i);
     blankingArray->InsertNextValue(tractBlanking[i]);
+    splitCenterline->GetCellData()->CopyData(input->GetCellData(),cellId,i);
     }
 
   splitCenterline->SetPoints(splitCenterlinePoints);
   splitCenterline->SetLines(splitCenterlineCellArray);
-  splitCenterline->GetCellData()->CopyAllocate(input->GetCellData(),1);
-  splitCenterline->GetCellData()->CopyData(input->GetCellData(),cellId,0);
   splitCenterline->GetCellData()->AddArray(centerlineIdsArray);
   splitCenterline->GetCellData()->AddArray(tractIdsArray);
   splitCenterline->GetCellData()->AddArray(blankingArray);

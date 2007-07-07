@@ -31,6 +31,7 @@ vtkvmtkPolyBallLine::vtkvmtkPolyBallLine()
 {
   this->Input = NULL;
   this->InputCellIds = NULL;
+  this->InputCellId = -1;
   this->PolyBallRadiusArrayName = NULL;
   this->LastPolyBallCellId = -1;
   this->LastPolyBallCellSubId = -1;
@@ -131,6 +132,10 @@ double vtkvmtkPolyBallLine::EvaluateFunction(double x[3])
   if (this->InputCellIds)
     {
     cellIds->DeepCopy(this->InputCellIds);
+    }
+  else if (this->InputCellId != -1)
+    {
+    cellIds->InsertNextId(this->InputCellId);
     }
   else
     {

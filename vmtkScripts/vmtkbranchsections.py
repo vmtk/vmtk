@@ -72,7 +72,7 @@ class vmtkBranchSections(pypes.pypeScript):
       	    ['BranchSectionGroupIdsArrayName','branchsectiongroupids','str',1,'','name of the array where the group id to which each section belongs are stored'],
       	    ['BranchSectionAreaArrayName','branchsectionarea','str',1,'','name of the array where the area of bifurcation sections are stored'],
       	    ['BranchSectionMinSizeArrayName','branchsectionminsize','str',1,'','name of the array where the minimum diameter of each section are stored'],
-      	    ['BranchSectionMaxSizeArrayName','branchsectionmaxsize','str',1,'name of the array where the minimum diameter of each bifurcation sections has to be stored'],
+      	    ['BranchSectionMaxSizeArrayName','branchsectionmaxsize','str',1,'','name of the array where the minimum diameter of each bifurcation sections has to be stored'],
       	    ['BranchSectionShapeArrayName','branchsectionshape','str',1,'','name of the array where the shape index, i.e. the ratio between minimum and maximum diameter, of each bifurcation section are stored'],
       	    ['BranchSectionClosedArrayName','branchsectionclosed','str',1,'','name of the array containing 1 if a section is closed and 0 otherwise'],
       	    ['BranchSectionDistanceSpheresArrayName','branchsectiondistancespheres','str',1,'','name of the array containing the number of distance spheres the section is taken at']

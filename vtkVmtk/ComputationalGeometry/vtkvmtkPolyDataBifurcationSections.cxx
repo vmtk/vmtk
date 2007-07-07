@@ -54,6 +54,7 @@ vtkvmtkPolyDataBifurcationSections::vtkvmtkPolyDataBifurcationSections()
 
   this->BifurcationSectionGroupIdsArrayName = NULL;
   this->BifurcationSectionBifurcationGroupIdsArrayName = NULL;
+  this->BifurcationSectionPointArrayName = NULL;
   this->BifurcationSectionAreaArrayName = NULL;
   this->BifurcationSectionMinSizeArrayName = NULL;
   this->BifurcationSectionMaxSizeArrayName = NULL;
@@ -119,6 +120,12 @@ vtkvmtkPolyDataBifurcationSections::~vtkvmtkPolyDataBifurcationSections()
     {
     delete[] this->BifurcationSectionBifurcationGroupIdsArrayName;
     this->BifurcationSectionBifurcationGroupIdsArrayName = NULL;
+    }
+
+  if (this->BifurcationSectionPointArrayName)
+    {
+    delete[] this->BifurcationSectionPointArrayName;
+    this->BifurcationSectionPointArrayName = NULL;
     }
 
   if (this->BifurcationSectionAreaArrayName)
@@ -279,6 +286,12 @@ int vtkvmtkPolyDataBifurcationSections::RequestData(
     return 1;
     }
 
+  if (!this->BifurcationSectionPointArrayName)
+    {
+    vtkErrorMacro(<<"BifurcationSectionPointArrayName not specified");
+    return 1;
+    }
+
   if (!this->BifurcationSectionAreaArrayName)
     {
     vtkErrorMacro(<<"BifurcationSectionAreaArrayName not specified");
@@ -327,6 +340,10 @@ int vtkvmtkPolyDataBifurcationSections::RequestData(
   vtkIntArray* bifurcationSectionBifurcationGroupIdsArray = vtkIntArray::New();
   bifurcationSectionBifurcationGroupIdsArray->SetName(this->BifurcationSectionBifurcationGroupIdsArrayName);
 
+  vtkDoubleArray* bifurcationSectionPointArray = vtkDoubleArray::New();
+  bifurcationSectionPointArray->SetName(this->BifurcationSectionPointArrayName);
+  bifurcationSectionPointArray->SetNumberOfComponents(3);
+
   vtkDoubleArray* bifurcationSectionAreaArray = vtkDoubleArray::New();
   bifurcationSectionAreaArray->SetName(this->BifurcationSectionAreaArrayName);
 
@@ -350,6 +367,7 @@ int vtkvmtkPolyDataBifurcationSections::RequestData(
 
   output->GetCellData()->AddArray(bifurcationSectionGroupIdsArray);
   output->GetCellData()->AddArray(bifurcationSectionBifurcationGroupIdsArray);
+  output->GetCellData()->AddArray(bifurcationSectionPointArray);
   output->GetCellData()->AddArray(bifurcationSectionAreaArray);
   output->GetCellData()->AddArray(bifurcationSectionMinSizeArray);
   output->GetCellData()->AddArray(bifurcationSectionMaxSizeArray);
@@ -393,6 +411,7 @@ int vtkvmtkPolyDataBifurcationSections::RequestData(
   
   bifurcationSectionGroupIdsArray->Delete();
   bifurcationSectionBifurcationGroupIdsArray->Delete();
+  bifurcationSectionPointArray->Delete();
   bifurcationSectionAreaArray->Delete();
   bifurcationSectionShapeArray->Delete();
   bifurcationSectionMinSizeArray->Delete();
@@ -409,6 +428,7 @@ void vtkvmtkPolyDataBifurcationSections::ComputeBifurcationSections(vtkPolyData*
   vtkDataArray* radiusArray = this->Centerlines->GetPointData()->GetArray(this->CenterlineRadiusArrayName);
   vtkPoints* outputPoints = output->GetPoints();
   vtkCellArray* outputPolys = output->GetPolys();
+  vtkDoubleArray* bifurcationSectionPointArray = vtkDoubleArray::SafeDownCast(output->GetCellData()->GetArray(this->BifurcationSectionPointArrayName));
   vtkDoubleArray* bifurcationSectionAreaArray = vtkDoubleArray::SafeDownCast(output->GetCellData()->GetArray(this->BifurcationSectionAreaArrayName));
   vtkDoubleArray* bifurcationSectionMinSizeArray = vtkDoubleArray::SafeDownCast(output->GetCellData()->GetArray(this->BifurcationSectionMinSizeArrayName));
   vtkDoubleArray* bifurcationSectionMaxSizeArray = vtkDoubleArray::SafeDownCast(output->GetCellData()->GetArray(this->BifurcationSectionMaxSizeArrayName));
@@ -569,6 +589,7 @@ void vtkvmtkPolyDataBifurcationSections::ComputeBifurcationSections(vtkPolyData*
 
     bifurcationSectionGroupIdsArray->InsertNextValue(bifurcationSectionGroupId);
     bifurcationSectionBifurcationGroupIdsArray->InsertNextValue(bifurcationGroupId);
+    bifurcationSectionPointArray->InsertNextTuple(averagePoint);
     bifurcationSectionAreaArray->InsertNextValue(area);
     bifurcationSectionMinSizeArray->InsertNextValue(sizeRange[0]);
     bifurcationSectionMaxSizeArray->InsertNextValue(sizeRange[1]);
