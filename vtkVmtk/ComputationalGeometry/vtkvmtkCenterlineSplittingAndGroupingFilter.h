@@ -50,6 +50,15 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkCenterlineSplittingAndGroupi
   vtkSetStringMacro(TractIdsArrayName);
   vtkGetStringMacro(TractIdsArrayName);
 
+  vtkSetMacro(GroupingMode,int);
+  vtkGetMacro(GroupingMode,int);
+  void SetGroupingModeToFirstPoint()
+  { this->SetGroupingMode(FIRSTPOINT); }
+  void SetGroupingModeToLastPoint()
+  { this->SetGroupingMode(LASTPOINT); }
+  void SetGroupingModeToPointInTube()
+  { this->SetGroupingMode(POINTINTUBE); }
+
   protected:
   vtkvmtkCenterlineSplittingAndGroupingFilter();
   ~vtkvmtkCenterlineSplittingAndGroupingFilter();  
@@ -59,12 +68,23 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkCenterlineSplittingAndGroupi
   virtual void ComputeCenterlineSplitting(vtkPolyData* input, vtkIdType cellId) = 0;
 
   virtual void GroupTracts(vtkPolyData* input, vtkPolyData* centerlineTracts);
+  
+  void CoincidentExtremePointGroupTracts(vtkPolyData* input, vtkPolyData* centerlineTracts, bool first = true);
+  void PointInTubeGroupTracts(vtkPolyData* input, vtkPolyData* centerlineTracts);
 
   virtual void MergeTracts(vtkPolyData* centerlineTracts);
 
   void SplitCenterline(vtkPolyData* input, vtkIdType cellId, int numberOfSplittingPoints, const vtkIdType* subIds, const double* pcoords, const int* tractBlanking, vtkPolyData* splitCenterline);
 
   void MakeGroupIdsAdjacent(vtkPolyData* centerlineTracts);
+
+//BTX
+  enum {
+    FIRSTPOINT,
+    LASTPOINT,
+    POINTINTUBE
+  };
+//ETX
 
   char* RadiusArrayName;
   char* GroupIdsArrayName;
@@ -76,6 +96,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkCenterlineSplittingAndGroupi
   vtkIdType* SubIds;
   double* PCoords;
   int* TractBlanking;
+  int GroupingMode;
 
   private:
   vtkvmtkCenterlineSplittingAndGroupingFilter(const vtkvmtkCenterlineSplittingAndGroupingFilter&);  // Not implemented.

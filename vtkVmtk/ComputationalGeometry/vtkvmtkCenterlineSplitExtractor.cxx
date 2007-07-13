@@ -40,6 +40,8 @@ vtkvmtkCenterlineSplitExtractor::vtkvmtkCenterlineSplitExtractor()
   this->Tolerance = 1E-4;
 
   this->GapLength = 1.0;
+
+  this->GroupingMode = FIRSTPOINT;
 }
 
 vtkvmtkCenterlineSplitExtractor::~vtkvmtkCenterlineSplitExtractor()
