@@ -41,7 +41,9 @@ SET (VTK_VMTK_DIFFERENTIALGEOMETRY_SRCS
   vtkvmtkStencils.cxx
   vtkvmtkUnstructuredGridFEGradientAssembler.cxx
   vtkvmtkUnstructuredGridFELaplaceAssembler.cxx
+  vtkvmtkUnstructuredGridFEVorticityAssembler.cxx
   vtkvmtkUnstructuredGridGradientFilter.cxx
+  vtkvmtkUnstructuredGridVorticityFilter.cxx
   vtkvmtkUnstructuredGridHarmonicMappingFilter.cxx
   vtkvmtkUnstructuredGridNeighborhood.cxx
   )
