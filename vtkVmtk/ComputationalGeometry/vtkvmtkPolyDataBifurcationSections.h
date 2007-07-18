@@ -62,6 +62,9 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataBifurcationSections 
   vtkSetStringMacro(BifurcationSectionPointArrayName);
   vtkGetStringMacro(BifurcationSectionPointArrayName);
 
+  vtkSetStringMacro(BifurcationSectionNormalArrayName);
+  vtkGetStringMacro(BifurcationSectionNormalArrayName);
+
   vtkSetStringMacro(BifurcationSectionAreaArrayName);
   vtkGetStringMacro(BifurcationSectionAreaArrayName);
 
@@ -114,6 +117,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataBifurcationSections 
   char* BifurcationSectionOrientationArrayName;
   char* BifurcationSectionDistanceSpheresArrayName;
   char* BifurcationSectionPointArrayName;
+  char* BifurcationSectionNormalArrayName;
   char* BifurcationSectionAreaArrayName;
   char* BifurcationSectionMinSizeArrayName;
   char* BifurcationSectionMaxSizeArrayName;

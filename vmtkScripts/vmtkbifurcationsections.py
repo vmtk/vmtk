@@ -43,10 +43,13 @@ class vmtkBifurcationSections(pypes.pypeScript):
         self.OutputSectionPointGroupId = None
         self.OutputSectionPointBifurcationGroupId = None
         self.OutputSectionPoint = []
+        self.OutputSectionNormal = []
+        self.OutputSectionArea = 0.0
 
         self.BifurcationSectionGroupIdsArrayName = 'BifurcationSectionGroupIds'
         self.BifurcationSectionBifurcationGroupIdsArrayName = 'BifurcationSectionBifurcationGroupIds'
         self.BifurcationSectionPointArrayName = 'BifurcationSectionPoint'
+        self.BifurcationSectionNormalArrayName = 'BifurcationSectionNormal'
         self.BifurcationSectionAreaArrayName = 'BifurcationSectionArea'
         self.BifurcationSectionMinSizeArrayName = 'BifurcationSectionMinSize'
         self.BifurcationSectionMaxSizeArrayName = 'BifurcationSectionMaxSize'
@@ -69,6 +72,7 @@ class vmtkBifurcationSections(pypes.pypeScript):
       	    ['BifurcationSectionGroupIdsArrayName','bifurcationsectiongroupids','str',1,'','name of the array where the group id to which each section belongs has to be stored'],
       	    ['BifurcationSectionBifurcationGroupIdsArrayName','bifurcationsectionbifurcationgroupids','str',1,'','name of the array where the bifurcation group id to which each section belongs has to be stored'],
       	    ['BifurcationSectionPointArrayName','bifurcationsectionpoint','str',1,'','name of the array where the point at which bifurcation sections are defined have to be stored'],
+      	    ['BifurcationSectionNormalArrayName','bifurcationsectionnormal','str',1,'','name of the array where the bifurcation section normals have to be stored'],
       	    ['BifurcationSectionAreaArrayName','bifurcationsectionarea','str',1,'','name of the array where the area of bifurcation sections have to be stored'],
       	    ['BifurcationSectionMinSizeArrayName','bifurcationsectionminsize','str',1,'','name of the array where the minimum diameter of each section has to be stored'],
       	    ['BifurcationSectionMaxSizeArrayName','bifurcationsectionmaxsize','str',1,'','name of the array where the maximum diameter of each bifurcation sections has to be stored'],
@@ -84,6 +88,7 @@ class vmtkBifurcationSections(pypes.pypeScript):
       	    ['BifurcationSectionGroupIdsArrayName','bifurcationsectiongroupids','str',1,'','name of the array where the group id to which each section belongs are stored'],
       	    ['BifurcationSectionBifurcationGroupIdsArrayName','bifurcationsectionbifurcationgroupids','str',1,'','name of the array where the bifurcation group id to which each section belongs has to be stored'],
       	    ['BifurcationSectionPointArrayName','bifurcationsectionpoint','str',1,'','name of the array where the point at which bifurcation sections are defined are stored'],
+      	    ['BifurcationSectionNormalArrayName','bifurcationsectionnormal','str',1,'','name of the array where bifurcation section normals are stored'],
       	    ['BifurcationSectionAreaArrayName','bifurcationsectionarea','str',1,'','name of the array where the area of bifurcation sections are stored'],
       	    ['BifurcationSectionMinSizeArrayName','bifurcationsectionminsize','str',1,'','name of the array where the minimum diameter of each section are stored'],
       	    ['BifurcationSectionMaxSizeArrayName','bifurcationsectionmaxsize','str',1,'','name of the array where the minimum diameter of each bifurcation sections has to be stored'],
@@ -91,7 +96,9 @@ class vmtkBifurcationSections(pypes.pypeScript):
       	    ['BifurcationSectionClosedArrayName','bifurcationsectionclosed','str',1,'','name of the array containing 1 if a section is closed and 0 otherwise'],
       	    ['BifurcationSectionOrientationArrayName','bifurcationsectionorientation','str',1,'','name of the array containing 0 if a section is upstream and 0 downstream its bifurcation'],
       	    ['BifurcationSectionDistanceSpheresArrayName','bifurcationsectiondistancespheres','str',1,'','name of the array containing the number of spheres away from the bifurcation the section is located at'],
-      	    ['OutputSectionPoint','sectionpoint','float',3]
+      	    ['OutputSectionPoint','sectionpoint','float',3],
+      	    ['OutputSectionNormal','sectionnormal','float',3],
+      	    ['OutputSectionArea','sectionarea','float',1]
             ])
 
     def Execute(self):
@@ -106,7 +113,7 @@ class vmtkBifurcationSections(pypes.pypeScript):
         bifurcationSections.SetInput(self.Surface)
         bifurcationSections.SetGroupIdsArrayName(self.GroupIdsArrayName)
         bifurcationSections.SetCenterlines(self.Centerlines)
-	bifurcationSections.SetNumberOfDistanceSpheres(self.NumberOfDistanceSpheres)
+        bifurcationSections.SetNumberOfDistanceSpheres(self.NumberOfDistanceSpheres)
         bifurcationSections.SetCenterlineRadiusArrayName(self.RadiusArrayName)
         bifurcationSections.SetCenterlineGroupIdsArrayName(self.GroupIdsArrayName)
         bifurcationSections.SetCenterlineIdsArrayName(self.CenterlineIdsArrayName)
@@ -115,6 +122,7 @@ class vmtkBifurcationSections(pypes.pypeScript):
         bifurcationSections.SetBifurcationSectionGroupIdsArrayName(self.BifurcationSectionGroupIdsArrayName)
         bifurcationSections.SetBifurcationSectionBifurcationGroupIdsArrayName(self.BifurcationSectionBifurcationGroupIdsArrayName)
         bifurcationSections.SetBifurcationSectionPointArrayName(self.BifurcationSectionPointArrayName)
+        bifurcationSections.SetBifurcationSectionNormalArrayName(self.BifurcationSectionNormalArrayName)
         bifurcationSections.SetBifurcationSectionAreaArrayName(self.BifurcationSectionAreaArrayName)
         bifurcationSections.SetBifurcationSectionMinSizeArrayName(self.BifurcationSectionMinSizeArrayName)
         bifurcationSections.SetBifurcationSectionMaxSizeArrayName(self.BifurcationSectionMaxSizeArrayName)
@@ -132,6 +140,11 @@ class vmtkBifurcationSections(pypes.pypeScript):
             for i in range(self.BifurcationSections.GetNumberOfCells()):
                 if int(groupIds.GetTuple1(i)) == self.OutputSectionPointGroupId and int(bifurcationGroupIds.GetTuple1(i)) == self.OutputSectionPointBifurcationGroupId:
                     self.OutputSectionPoint = self.BifurcationSections.GetCellData().GetArray(self.BifurcationSectionPointArrayName).GetTuple3(i)
+                    self.OutputSectionNormal = self.BifurcationSections.GetCellData().GetArray(self.BifurcationSectionNormalArrayName).GetTuple3(i)
+                    self.OutputSectionArea = self.BifurcationSections.GetCellData().GetArray(self.BifurcationSectionAreaArrayName).GetTuple1(i)
+                    self.PrintLog('SectionPoint: '+str(self.OutputSectionPoint))
+                    self.PrintLog('SectionNormal: '+str(self.OutputSectionNormal))
+                    self.PrintLog('SectionArea: '+str(self.OutputSectionArea))
 
 
 if __name__=='__main__':
