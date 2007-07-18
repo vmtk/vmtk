@@ -41,7 +41,7 @@ class vmtkBifurcationSections(pypes.pypeScript):
         self.BlankingArrayName = ''
 
         self.OutputSectionPointGroupId = None
-        self.OutputBifurcationSectionPointGroupId = None
+        self.OutputSectionPointBifurcationGroupId = None
         self.OutputSectionPoint = []
 
         self.BifurcationSectionGroupIdsArrayName = 'BifurcationSectionGroupIds'
@@ -77,7 +77,7 @@ class vmtkBifurcationSections(pypes.pypeScript):
       	    ['BifurcationSectionOrientationArrayName','bifurcationsectionorientation','str',1,'','name of the array containing 0 if a section is upstream and 0 downstream its bifurcation'],
       	    ['BifurcationSectionDistanceSpheresArrayName','bifurcationsectiondistancespheres','str',1,'','name of the array containing the number of spheres away from the bifurcation the section is located at'],
       	    ['OutputSectionPointGroupId','sectionpointgroupid','int',1,'(0,)'],
-      	    ['OutputBifurcationSectionPointGroupId','sectionpointbifurcationgroupid','int',1,'(0,)']
+      	    ['OutputSectionPointBifurcationGroupId','sectionpointbifurcationgroupid','int',1,'(0,)']
             ])
         self.SetOutputMembers([
             ['BifurcationSections','o','vtkPolyData',1,'','the output sections','vmtksurfacewriter'],
