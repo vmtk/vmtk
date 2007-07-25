@@ -142,9 +142,8 @@ int vtkvmtkUnstructuredGridGradientFilter::RequestData(
       solutionVector->CopyVariableIntoArrayComponent(gradientArray,0,3*i+0);
       solutionVector->CopyVariableIntoArrayComponent(gradientArray,1,3*i+1);
       solutionVector->CopyVariableIntoArrayComponent(gradientArray,2,3*i+2);
-     
-      sparseMatrix->Delete();
-      rhsVector->Delete();
+      
+      assembler->Delete(); 
       linearSystem->Delete();
       solver->Delete();
       }
@@ -164,7 +163,6 @@ int vtkvmtkUnstructuredGridGradientFilter::RequestData(
         assembler->SetAssemblyModeToPartialDerivative();
         assembler->SetDirection(j);
         assembler->Build();
-        assembler->Delete();
           
         vtkvmtkLinearSystem* linearSystem = vtkvmtkLinearSystem::New();
         linearSystem->SetA(sparseMatrix);
@@ -181,14 +179,15 @@ int vtkvmtkUnstructuredGridGradientFilter::RequestData(
       
         solutionVector->CopyIntoArrayComponent(gradientArray,3*i+j);
        
-        sparseMatrix->Delete();
-        rhsVector->Delete();
+        assembler->Delete();
         linearSystem->Delete();
         solver->Delete();
         }
       }
 
     solutionVector->Delete();
+    rhsVector->Delete();
+    sparseMatrix->Delete();
     }
 
   output->DeepCopy(input);  

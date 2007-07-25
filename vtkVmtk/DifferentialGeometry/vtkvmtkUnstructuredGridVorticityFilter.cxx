@@ -129,38 +129,45 @@ int vtkvmtkUnstructuredGridVorticityFilter::RequestData(
     
   vtkvmtkDoubleVector* solutionVector = vtkvmtkDoubleVector::New();
   solutionVector->SetNormTypeToLInf();
-   
-  vtkvmtkUnstructuredGridFEVorticityAssembler* assembler = vtkvmtkUnstructuredGridFEVorticityAssembler::New();
-  assembler->SetDataSet(input);
-  assembler->SetVelocityArrayName(this->VelocityArrayName);
-  assembler->SetMatrix(sparseMatrix);
-  assembler->SetRHSVector(rhsVector);
-  assembler->SetSolutionVector(solutionVector);
-  assembler->SetQuadratureOrder(this->QuadratureOrder);
-  assembler->Build();
-  assembler->Delete();
+  
+  int i;
+  for (i=0; i<3; i++)
+    {
+    vtkvmtkUnstructuredGridFEVorticityAssembler* assembler = vtkvmtkUnstructuredGridFEVorticityAssembler::New();
+    assembler->SetDataSet(input);
+    assembler->SetVelocityArrayName(this->VelocityArrayName);
+    assembler->SetMatrix(sparseMatrix);
+    assembler->SetRHSVector(rhsVector);
+    assembler->SetSolutionVector(solutionVector);
+    assembler->SetQuadratureOrder(this->QuadratureOrder);
+    assembler->SetDirection(i);
+    assembler->Build();
     
-  vtkvmtkLinearSystem* linearSystem = vtkvmtkLinearSystem::New();
-  linearSystem->SetA(sparseMatrix);
-  linearSystem->SetB(rhsVector);
-  linearSystem->SetX(solutionVector);
-  
-  vtkvmtkLASPACKLinearSystemSolver* solver = vtkvmtkLASPACKLinearSystemSolver::New();
-  solver->SetLinearSystem(linearSystem);
-  solver->SetConvergenceTolerance(this->ConvergenceTolerance);
-  solver->SetMaximumNumberOfIterations(numberOfInputPoints);
-  solver->SetSolverType(vtkvmtkLASPACKLinearSystemSolver::VTK_VMTK_LASPACK_SOLVER_CG);
-  solver->SetPreconditionerType(vtkvmtkLASPACKLinearSystemSolver::VTK_VMTK_LASPACK_PRECONDITIONER_JACOBI);
-  solver->Solve();
-  
-  solutionVector->CopyVariableIntoArrayComponent(vorticityArray,0,0);
-  solutionVector->CopyVariableIntoArrayComponent(vorticityArray,1,1);
-  solutionVector->CopyVariableIntoArrayComponent(vorticityArray,2,2);
-  
+    vtkvmtkLinearSystem* linearSystem = vtkvmtkLinearSystem::New();
+    linearSystem->SetA(sparseMatrix);
+    linearSystem->SetB(rhsVector);
+    linearSystem->SetX(solutionVector);
+    
+    vtkvmtkLASPACKLinearSystemSolver* solver = vtkvmtkLASPACKLinearSystemSolver::New();
+    solver->SetLinearSystem(linearSystem);
+    solver->SetConvergenceTolerance(this->ConvergenceTolerance);
+    solver->SetMaximumNumberOfIterations(numberOfInputPoints);
+    solver->SetSolverType(vtkvmtkLASPACKLinearSystemSolver::VTK_VMTK_LASPACK_SOLVER_CG);
+    solver->SetPreconditionerType(vtkvmtkLASPACKLinearSystemSolver::VTK_VMTK_LASPACK_PRECONDITIONER_JACOBI);
+    solver->Solve();
+    
+//    solutionVector->CopyVariableIntoArrayComponent(vorticityArray,0,0);
+//    solutionVector->CopyVariableIntoArrayComponent(vorticityArray,1,1);
+//    solutionVector->CopyVariableIntoArrayComponent(vorticityArray,2,2);
+    solutionVector->CopyIntoArrayComponent(vorticityArray,i);
+ 
+    assembler->Delete(); 
+    linearSystem->Delete();
+    solver->Delete();
+    }
+
   sparseMatrix->Delete();
   rhsVector->Delete();
-  linearSystem->Delete();
-  solver->Delete();
 
   solutionVector->Delete();
 

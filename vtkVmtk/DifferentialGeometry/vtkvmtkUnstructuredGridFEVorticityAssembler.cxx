@@ -34,6 +34,7 @@ vtkStandardNewMacro(vtkvmtkUnstructuredGridFEVorticityAssembler);
 vtkvmtkUnstructuredGridFEVorticityAssembler::vtkvmtkUnstructuredGridFEVorticityAssembler()
 {
   this->VelocityArrayName = NULL;
+  this->Direction = 0;
 }
 
 vtkvmtkUnstructuredGridFEVorticityAssembler::~vtkvmtkUnstructuredGridFEVorticityAssembler()
@@ -67,7 +68,8 @@ void vtkvmtkUnstructuredGridFEVorticityAssembler::Build()
     return;
     }
   
-  int numberOfVariables = 3;
+//  int numberOfVariables = 3;
+  int numberOfVariables = 1;
   this->Initialize(numberOfVariables);
 
   vtkvmtkGaussQuadrature* gaussQuadrature = vtkvmtkGaussQuadrature::New();
@@ -102,35 +104,51 @@ void vtkvmtkUnstructuredGridFEVorticityAssembler::Build()
       double phii, phij;
       double dphii[3], dphij[3];
       double velocityValue[3];
-      double vorticityValue[3];
-      vorticityValue[0] = vorticityValue[1] = vorticityValue[2] = 0.0;
+//      double vorticityValue[3];
+//      vorticityValue[0] = vorticityValue[1] = vorticityValue[2] = 0.0;
+      double vorticityComponent = 0.0;
       for (i=0; i<numberOfCellPoints; i++)
         {
         vtkIdType iId = cell->GetPointId(i);
         feShapeFunctions->GetDPhi(q,i,dphii);
         velocityArray->GetTuple(iId,velocityValue);
-        vorticityValue[0] += velocityValue[2] * dphii[1] - velocityValue[1] * dphii[2];
-        vorticityValue[1] += velocityValue[0] * dphii[2] - velocityValue[2] * dphii[0];
-        vorticityValue[2] += velocityValue[1] * dphii[0] - velocityValue[0] * dphii[1];
+//        vorticityValue[0] += velocityValue[2] * dphii[1] - velocityValue[1] * dphii[2];
+//        vorticityValue[1] += velocityValue[0] * dphii[2] - velocityValue[2] * dphii[0];
+//        vorticityValue[2] += velocityValue[1] * dphii[0] - velocityValue[0] * dphii[1];
+        if (this->Direction == 0)
+          {
+          vorticityComponent += velocityValue[2] * dphii[1] - velocityValue[1] * dphii[2];
+          }
+        else if (this->Direction == 1)
+          {
+          vorticityComponent += velocityValue[0] * dphii[2] - velocityValue[2] * dphii[0];
+          }
+        else if (this->Direction == 2)
+          {
+          vorticityComponent += velocityValue[1] * dphii[0] - velocityValue[0] * dphii[1];
+          }
         }
       for (i=0; i<numberOfCellPoints; i++)
         {
         vtkIdType iId = cell->GetPointId(i);
         phii = feShapeFunctions->GetPhi(q,i);
-        double value0 = jacobian * quadratureWeight * vorticityValue[0] * phii;
-        double value1 = jacobian * quadratureWeight * vorticityValue[1] * phii;
-        double value2 = jacobian * quadratureWeight * vorticityValue[2] * phii;
-        this->RHSVector->AddElement(iId,value0);
-        this->RHSVector->AddElement(iId+numberOfPoints,value1);
-        this->RHSVector->AddElement(iId+2*numberOfPoints,value2);
+//        double value0 = jacobian * quadratureWeight * vorticityValue[0] * phii;
+//        double value1 = jacobian * quadratureWeight * vorticityValue[1] * phii;
+//        double value2 = jacobian * quadratureWeight * vorticityValue[2] * phii;
+        double value = jacobian * quadratureWeight * vorticityComponent * phii;
+//        this->RHSVector->AddElement(iId,value0);
+//        this->RHSVector->AddElement(iId+numberOfPoints,value1);
+//        this->RHSVector->AddElement(iId+2*numberOfPoints,value2);
+        this->RHSVector->AddElement(iId,value);
         for (j=0; j<numberOfCellPoints; j++)
           {
           vtkIdType jId = cell->GetPointId(j);
           phij = feShapeFunctions->GetPhi(q,j);
           double value = jacobian * quadratureWeight * phii * phij;
+//          this->Matrix->AddElement(iId,jId,value);
+//          this->Matrix->AddElement(iId+numberOfPoints,jId+numberOfPoints,value);
+//          this->Matrix->AddElement(iId+2*numberOfPoints,jId+2*numberOfPoints,value);
           this->Matrix->AddElement(iId,jId,value);
-          this->Matrix->AddElement(iId+numberOfPoints,jId+numberOfPoints,value);
-          this->Matrix->AddElement(iId+2*numberOfPoints,jId+2*numberOfPoints,value);
           }
         }
       }

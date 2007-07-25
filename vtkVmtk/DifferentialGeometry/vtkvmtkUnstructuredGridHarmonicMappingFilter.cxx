@@ -116,8 +116,7 @@ int vtkvmtkUnstructuredGridHarmonicMappingFilter::RequestData(
   assembler->SetSolutionVector(solutionVector);
   assembler->SetQuadratureOrder(this->QuadratureOrder);
   assembler->Build();
-  assembler->Delete();
-    
+ 
   vtkvmtkLinearSystem* linearSystem = vtkvmtkLinearSystem::New();
   linearSystem->SetA(sparseMatrix);
   linearSystem->SetB(rhsVector);
@@ -148,6 +147,7 @@ int vtkvmtkUnstructuredGridHarmonicMappingFilter::RequestData(
 
   output->GetPointData()->AddArray(harmonicMappingArray);
 
+  assembler->Delete();
   solver->Delete();
   harmonicMappingArray->Delete();
   sparseMatrix->Delete();

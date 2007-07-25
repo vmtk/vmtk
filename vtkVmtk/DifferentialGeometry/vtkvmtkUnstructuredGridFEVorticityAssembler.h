@@ -40,11 +40,15 @@ public:
   vtkSetStringMacro(VelocityArrayName);
   vtkGetStringMacro(VelocityArrayName);
 
+  vtkSetMacro(Direction,int);
+  vtkGetMacro(Direction,int);
+
 protected:
   vtkvmtkUnstructuredGridFEVorticityAssembler();
   ~vtkvmtkUnstructuredGridFEVorticityAssembler();
 
   char* VelocityArrayName;
+  int Direction;
 
 private:
   vtkvmtkUnstructuredGridFEVorticityAssembler(const vtkvmtkUnstructuredGridFEVorticityAssembler&);  // Not implemented.
