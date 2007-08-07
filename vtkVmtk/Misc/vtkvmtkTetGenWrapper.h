@@ -26,7 +26,7 @@ Version:   $Revision: 1.7 $
 #define __vtkvmtkTetGenWrapper_h
 
 #include "vtkUnstructuredGridAlgorithm.h"
-#include "vtkPointSet.h"
+//#include "vtkPointSet.h"
 #include "vtkvmtkWin32Header.h"
 
 class VTK_VMTK_MISC_EXPORT vtkvmtkTetGenWrapper : public vtkUnstructuredGridAlgorithm
@@ -43,6 +43,10 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkTetGenWrapper : public vtkUnstructuredGridAlgo
   vtkSetMacro(Refine,int);
   vtkGetMacro(Refine,int);
   vtkBooleanMacro(Refine,int);
+
+  vtkSetMacro(Coarsen,int);
+  vtkGetMacro(Coarsen,int);
+  vtkBooleanMacro(Coarsen,int);
 
   vtkSetMacro(NoBoundarySplit,int);
   vtkGetMacro(NoBoundarySplit,int);
@@ -116,8 +120,8 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkTetGenWrapper : public vtkUnstructuredGridAlgo
   vtkSetStringMacro(TetrahedronVolumeArrayName);
   vtkGetStringMacro(TetrahedronVolumeArrayName);
 
-  vtkSetObjectMacro(AdditionalPoints,vtkPointSet);
-  vtkGetObjectMacro(AdditionalPoints,vtkPointSet);
+//  vtkSetObjectMacro(AdditionalPoints,vtkPointSet);
+//  vtkGetObjectMacro(AdditionalPoints,vtkPointSet);
 
   vtkSetMacro(OutputSurfaceElements,int);
   vtkGetMacro(OutputSurfaceElements,int);
@@ -142,6 +146,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkTetGenWrapper : public vtkUnstructuredGridAlgo
 
   int PLC;
   int Refine;
+  int Coarsen;
   int NoBoundarySplit;
   int Quality;
   double MinRatio;
@@ -160,7 +165,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkTetGenWrapper : public vtkUnstructuredGridAlgo
   int DoCheck;
   int Verbose;
 
-  vtkPointSet* AdditionalPoints;
+//  vtkPointSet* AdditionalPoints;
 
   char* PointMarkerArrayName;
   char* FacetMarkerArrayName;

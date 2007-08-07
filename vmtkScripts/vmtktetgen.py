@@ -33,6 +33,7 @@ class vmtkTetGen(pypes.pypeScript):
 
         self.PLC = 0
         self.Refine = 0
+        self.Coarsen = 0
         self.NoBoundarySplit = 0
         self.Quality = 0
         self.MinRatio = 1.414
@@ -41,7 +42,7 @@ class vmtkTetGen(pypes.pypeScript):
         self.MaxVolume = 1E-1
         self.RemoveSliver = 0
         self.MaxDihedral = 175.0
-        self.InsertAddPoints = 0
+#        self.InsertAddPoints = 0
         self.RegionAttrib = 0
         self.Epsilon = 1E-8
         self.NoMerge = 0
@@ -55,7 +56,7 @@ class vmtkTetGen(pypes.pypeScript):
         self.FacetMarkerArrayName = 'FacetMarkerArray'
         self.TetrahedronVolumeArrayName = 'TetrahedronVolumeArray'
         
-        self.AdditionalPoints = None
+#        self.AdditionalPoints = None
         
         self.OutputSurfaceElements = 1
         self.OutputVolumeElements = 1
@@ -70,6 +71,7 @@ class vmtkTetGen(pypes.pypeScript):
             ['GenerateCaps','caps','bool',1,'','close surface holes with caps before meshing'],
             ['PLC','plc','int',1,'','see TetGen documentation'],
             ['Refine','refine','int',1,'','see TetGen documentation'],
+            ['Coarsen','coarsen','int',1,'','see TetGen documentation'],
             ['NoBoundarySplit','noboundarysplit','int',1,'','see TetGen documentation'],
             ['Quality','quality','int',1,'','see TetGen documentation'],
             ['MinRatio','minratio','float',1,'','see TetGen documentation'],
@@ -78,7 +80,6 @@ class vmtkTetGen(pypes.pypeScript):
             ['MaxVolume','maxvolume','float',1,'','see TetGen documentation'],
             ['RemoveSliver','removesliver','int',1,'','see TetGen documentation'],
             ['MaxDihedral','maxdihedral','float',1,'','see TetGen documentation'],
-            ['InsertAddPoints','insertaddpoints','int',1,'','see TetGen documentation'],
             ['RegionAttrib','regionattrib','int',1,'','see TetGen documentation'],
             ['Epsilon','epsilon','float',1,'','see TetGen documentation'],
             ['NoMerge','nomerge','int',1,'','see TetGen documentation'],
@@ -90,12 +91,14 @@ class vmtkTetGen(pypes.pypeScript):
             ['PointMarkerArrayName','pointmarkerarray','str',1,'','name of the array where point markers are stored'],
             ['FacetMarkerArrayName','facetmarkerarray','str',1,'','name of the array where surface cell markers are stored'],
             ['TetrahedronVolumeArrayName','tetravolumearray','str',1,'','name of the array where volumes of tetrahedra are stored'],
-            ['AdditionalPoints','addpoints','vtkUnstructuredGrid',1,'','dataset containing additional points output by TetGen'],
             ['OutputSurfaceElements','surfaceelements','int',1,'','toggle output surface elements'], 
             ['OutputVolumeElements','volumeelements','int',1,'','toggle output volume elements'],
             ['GenerateEntityArrays','entityarrays','int',1,'','toggle generate arrays with entity information (one point data array for each entity containing a boolean)'],
             ['EntityArrayNamePrefix','entityarrayprefix','str',1,'','prefix of entity array names']
             ])
+#            ['InsertAddPoints','insertaddpoints','int',1,'','see TetGen documentation'],
+#            ['AdditionalPoints','addpoints','vtkUnstructuredGrid',1,'','dataset containing additional points output by TetGen'],
+
         self.SetOutputMembers([
             ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh','vmtkmeshwriter'],
             ['PointMarkerArrayName','pointmarkerarray','str',1,'','name of the array where point markers are stored'],
@@ -129,6 +132,7 @@ class vmtkTetGen(pypes.pypeScript):
         tetgen.SetFacetMarkerArrayName(self.FacetMarkerArrayName)
         tetgen.SetPLC(self.PLC)
         tetgen.SetRefine(self.Refine)
+        tetgen.SetCoarsen(self.Coarsen)
         tetgen.SetNoBoundarySplit(self.NoBoundarySplit)
         tetgen.SetQuality(self.Quality)
         tetgen.SetMinRatio(self.MinRatio)
@@ -137,7 +141,7 @@ class vmtkTetGen(pypes.pypeScript):
         tetgen.SetMaxVolume(self.MaxVolume)
         tetgen.SetRemoveSliver(self.RemoveSliver)
         tetgen.SetMaxDihedral(self.MaxDihedral)
-        tetgen.SetInsertAddPoints(self.InsertAddPoints)
+#        tetgen.SetInsertAddPoints(self.InsertAddPoints)
         tetgen.SetRegionAttrib(self.RegionAttrib)
         tetgen.SetEpsilon(self.Epsilon)
         tetgen.SetNoMerge(self.NoMerge)
@@ -149,7 +153,7 @@ class vmtkTetGen(pypes.pypeScript):
         tetgen.SetPointMarkerArrayName(self.PointMarkerArrayName)
         tetgen.SetFacetMarkerArrayName(self.FacetMarkerArrayName)
         tetgen.SetTetrahedronVolumeArrayName(self.TetrahedronVolumeArrayName)
-        tetgen.SetAdditionalPoints(self.AdditionalPoints)
+#        tetgen.SetAdditionalPoints(self.AdditionalPoints)
         tetgen.SetOutputSurfaceElements(self.OutputSurfaceElements)
         tetgen.SetOutputVolumeElements(self.OutputVolumeElements)
         tetgen.SetGenerateEntityArrays(self.GenerateEntityArrays)

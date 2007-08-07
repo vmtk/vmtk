@@ -39,6 +39,7 @@ vtkvmtkTetGenWrapper::vtkvmtkTetGenWrapper()
 {
   this->PLC = 0;                // -p switch, 0
   this->Refine = 0;             // -r switch, 0
+  this->Coarsen = 0;             // -R switch, 0
   this->Quality = 0;            // -q switch, 0
   this->NoBoundarySplit = 0;    // -Y switch, 0
   this->MinRatio = 2.0;         //    number after -q, 2.0
@@ -47,7 +48,7 @@ vtkvmtkTetGenWrapper::vtkvmtkTetGenWrapper()
   this->MaxVolume = -1.0;       //    number after -a, -1.0
   this->RemoveSliver = 0;       // -s switch, 0
   this->MaxDihedral = 0.0;      //    number after -s, 0.0
-  this->InsertAddPoints = 0;    // -i switch, 0
+//  this->InsertAddPoints = 0;    // -i switch, 0
   this->RegionAttrib = 0;       // -A switch, 0
   this->Epsilon = 1.0e-8;       // number after -T switch, 1.0e-8
   this->NoMerge = 0;            // -M switch, 0
@@ -58,7 +59,7 @@ vtkvmtkTetGenWrapper::vtkvmtkTetGenWrapper()
   
   this->Verbose = 0;
 
-  this->AdditionalPoints = NULL;
+//  this->AdditionalPoints = NULL;
 
   this->PointMarkerArrayName = new char[512];
   strcpy(this->PointMarkerArrayName,"PointMarkerArray");
@@ -77,10 +78,10 @@ vtkvmtkTetGenWrapper::vtkvmtkTetGenWrapper()
 
 vtkvmtkTetGenWrapper::~vtkvmtkTetGenWrapper()
 {
-  if (this->AdditionalPoints)
-    {
-    this->AdditionalPoints->Delete();
-    }
+//  if (this->AdditionalPoints)
+//    {
+//    this->AdditionalPoints->Delete();
+//    }
 
   if (this->PointMarkerArrayName)
     {
@@ -146,6 +147,11 @@ int vtkvmtkTetGenWrapper::RequestData(
     tetgenOptionString += "r";  
     }
 
+  if (this->Coarsen)
+    {
+    tetgenOptionString += "R";
+    }
+
   if (this->Quality)
     {
     tetgenOptionString += "q";  
@@ -153,7 +159,7 @@ int vtkvmtkTetGenWrapper::RequestData(
     tetgenOptionString += buffer;
     }
 
-  if (this->Quality)
+  if (this->NoBoundarySplit)
     {
     tetgenOptionString += "Y";  
     }
@@ -191,14 +197,14 @@ int vtkvmtkTetGenWrapper::RequestData(
     tetgenOptionString += "A";
     }
 
-  if (this->InsertAddPoints)
-    {
-    tetgenOptionString += "i";
-    }
+//  if (this->InsertAddPoints)
+//    {
+//    tetgenOptionString += "i";
+//    }
 
   if (this->NoMerge)
     {
-    tetgenOptionString += "i";
+    tetgenOptionString += "M";
     }
 
   if (this->DetectInter)
@@ -269,7 +275,7 @@ int vtkvmtkTetGenWrapper::RequestData(
       }
     }
 
-  if (this->InsertAddPoints)
+/*  if (this->InsertAddPoints)
     {
     if (!this->AdditionalPoints)
       {
@@ -286,7 +292,7 @@ int vtkvmtkTetGenWrapper::RequestData(
       in_tetgenio.addpointlist[meshDimensionality * i + 2] = point[2];
       }
     }
-
+*/
   vtkIdList* facetCellIds = vtkIdList::New();
   vtkIdList* tetraCellIds = vtkIdList::New();
 
@@ -426,7 +432,7 @@ int vtkvmtkTetGenWrapper::RequestData(
 
   char tetgenOptions[512];
   strcpy(tetgenOptions,tetgenOptionString.c_str());
-
+  cout<<tetgenOptions<<endl;
   tetrahedralize(tetgenOptions,&in_tetgenio,&out_tetgenio);
 
 //   out_tetgenio.save_nodes("foo");
