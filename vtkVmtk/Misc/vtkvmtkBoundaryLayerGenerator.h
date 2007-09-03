@@ -63,8 +63,8 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkBoundaryLayerGenerator : public vtkUnstructure
   vtkGetMacro(LayerThicknessRatio,double);
   vtkSetMacro(LayerThicknessRatio,double);
 
-  vtkGetMacro(MaxvmtkmLayerThickness,double);
-  vtkSetMacro(MaxvmtkmLayerThickness,double);
+  vtkGetMacro(MaximumLayerThickness,double);
+  vtkSetMacro(MaximumLayerThickness,double);
 
   vtkGetMacro(NumberOfSubLayers,int);
   vtkSetMacro(NumberOfSubLayers,int);
@@ -91,7 +91,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkBoundaryLayerGenerator : public vtkUnstructure
 
   double LayerThickness;
   double LayerThicknessRatio;
-  double MaxvmtkmLayerThickness;
+  double MaximumLayerThickness;
 
   int NumberOfSubLayers;
   double SubLayerRatio;

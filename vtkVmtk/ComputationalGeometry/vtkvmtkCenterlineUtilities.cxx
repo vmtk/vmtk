@@ -27,8 +27,10 @@ Version:   $Revision: 1.5 $
 #include "vtkPolyLine.h"
 #include "vtkMath.h"
 #include "vtkvmtkConstants.h"
+#include "vtkObjectFactory.h"
 
 vtkCxxRevisionMacro(vtkvmtkCenterlineUtilities, "$Revision: 1.5 $");
+vtkStandardNewMacro(vtkvmtkCenterlineUtilities);
 
 vtkIdType vtkvmtkCenterlineUtilities::GetMaxGroupId(vtkPolyData* centerlines, const char* groupIdsArrayName)
 {

@@ -22,8 +22,10 @@ Version:   $Revision: 1.1 $
 #include "vtkvmtkReferenceSystemUtilities.h"
 #include "vtkPolyData.h"
 #include "vtkPointData.h"
+#include "vtkObjectFactory.h"
 
 vtkCxxRevisionMacro(vtkvmtkReferenceSystemUtilities, "$Revision: 1.1 $");
+vtkStandardNewMacro(vtkvmtkReferenceSystemUtilities);
 
 vtkIdType vtkvmtkReferenceSystemUtilities::GetReferenceSystemPointId(vtkPolyData* referenceSystems, const char* groupIdsArrayName, vtkIdType groupId)
 {

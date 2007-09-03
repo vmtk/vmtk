@@ -48,6 +48,12 @@ SET (VTK_VMTK_COMPUTATIONALGEOMETRY_SRCS
   vtkvmtkVoronoiDiagram3D.cxx
   )
 
+SET_SOURCE_FILES_PROPERTIES (
+  vtkvmtkCenterlineSplittingAndGroupingFilter.cxx
+  vtkvmtkPolyDataCenterlineMetricFilter.cxx
+  ABSTRACT
+)
+
 ADD_LIBRARY (vtkvmtkComputationalGeometry ${VTK_VMTK_COMPUTATIONALGEOMETRY_SRCS})
 TARGET_LINK_LIBRARIES(vtkvmtkComputationalGeometry vtkvmtkCommon vtkCommon vtkFiltering vtkGraphics vtkHybrid)
 
@@ -66,3 +72,11 @@ IF (VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
   INSTALL_TARGETS(${VTK_VMTK_INSTALL_LIB_DIR} vtkvmtkComputationalGeometryPythonD)
   INSTALL_TARGETS(${VTK_VMTK_MODULE_INSTALL_LIB_DIR} vtkvmtkComputationalGeometryPython)
 ENDIF (VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
+
+IF (VTK_WRAP_TCL AND VTK_VMTK_WRAP_TCL)
+  SET(VTK_WRAP_HINTS ${VTK_VMTK_SOURCE_DIR}/Wrapping/Tcl/hints)
+  VTK_WRAP_TCL3(vtkvmtkComputationalGeometryTCL VTK_VMTK_COMPUTATIONALGEOMETRY_TCL_SRCS "${VTK_VMTK_COMPUTATIONALGEOMETRY_SRCS}" "")
+  ADD_LIBRARY(vtkvmtkComputationalGeometryTCL ${VTK_VMTK_COMPUTATIONALGEOMETRY_TCL_SRCS})
+  TARGET_LINK_LIBRARIES(vtkvmtkComputationalGeometryTCL vtkvmtkComputationalGeometry vtkvmtkCommon vtkvmtkCommonTCL vtkCommon vtkCommonTCL vtkFiltering vtkFilteringTCL vtkGraphics vtkGraphicsTCL vtkHybrid vtkHybridTCL)
+  INSTALL_TARGETS(${VTK_VMTK_INSTALL_LIB_DIR} vtkvmtkComputationalGeometryTCL)
+ENDIF (VTK_WRAP_TCL AND VTK_VMTK_WRAP_TCL)

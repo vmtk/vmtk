@@ -36,6 +36,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataBranchUtilities : pu
 {
 public: 
   vtkTypeRevisionMacro(vtkvmtkPolyDataBranchUtilities,vtkObject);
+  static vtkvmtkPolyDataBranchUtilities* New();
 
   static void GetGroupsIdList(vtkPolyData* surface, const char* groupIdsArrayName, vtkIdList* groupIds);
   static void ExtractGroup(vtkPolyData* surface, const char* groupIdsArrayName, vtkIdType groupId, bool cleanGroupSurface, vtkPolyData* groupSurface);

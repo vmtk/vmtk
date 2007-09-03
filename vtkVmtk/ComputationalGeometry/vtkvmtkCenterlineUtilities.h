@@ -36,6 +36,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkCenterlineUtilities : public
 {
 public: 
   vtkTypeRevisionMacro(vtkvmtkCenterlineUtilities,vtkObject);
+  static vtkvmtkCenterlineUtilities* New(); 
 
   static vtkIdType GetMaxGroupId(vtkPolyData* centerlines, const char* groupIdsArrayName);
   

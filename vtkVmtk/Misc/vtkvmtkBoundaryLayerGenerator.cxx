@@ -47,7 +47,7 @@ vtkvmtkBoundaryLayerGenerator::vtkvmtkBoundaryLayerGenerator()
 
   this->LayerThickness = 1.0;
   this->LayerThicknessRatio = 1.0; // ratio with respect to the LayerThickness (both constant and local)
-  this->MaxvmtkmLayerThickness = VTK_VMTK_LARGE_DOUBLE;
+  this->MaximumLayerThickness = VTK_VMTK_LARGE_DOUBLE;
   this->NumberOfSubLayers = 1;
   this->SubLayerRatio = 1.0; // thickness ratio between successive sublayers (moving from the surface)
 
@@ -386,9 +386,9 @@ void vtkvmtkBoundaryLayerGenerator::WarpPoints(vtkPoints* inputPoints, vtkPoints
 
     layerThickness *= this->LayerThicknessRatio;
 
-    if (layerThickness > this->MaxvmtkmLayerThickness)
+    if (layerThickness > this->MaximumLayerThickness)
       {
-      layerThickness = this->MaxvmtkmLayerThickness;
+      layerThickness = this->MaximumLayerThickness;
       }
 
     vtkMath::Normalize(warpVector);

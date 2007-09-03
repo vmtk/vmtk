@@ -37,6 +37,7 @@ Version:   $Revision: 1.7 $
 
 
 vtkCxxRevisionMacro(vtkvmtkCenterlineSphereDistance, "$Revision: 1.7 $");
+vtkStandardNewMacro(vtkvmtkCenterlineSphereDistance);
 
 
 void vtkvmtkCenterlineSphereDistance::FindNTouchingSphereCenter(vtkPolyData* centerlines, const char* radiusArrayName, vtkIdType cellId, vtkIdType subId, double pcoord, int numberOfTouchingSpheres, vtkIdType& touchingSubId, double& touchingPCoord, bool forward)

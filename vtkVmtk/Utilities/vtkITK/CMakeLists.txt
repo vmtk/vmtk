@@ -19,16 +19,16 @@ SET(vtkITK_SRCS
     vtkITKArchetypeImageSeriesScalarReader.cxx
     vtkITKArchetypeImageSeriesVectorReader.cxx
     vtkITKImageWriter.cxx
-    vtkITKImageToImageFilter.cxx
-    vtkITKImageToImageFilter2DFF.cxx
-    vtkITKImageToImageFilterFF.cxx
+    vtkITKImageToImageFilter.h
+    vtkITKImageToImageFilter2DFF.h
+    vtkITKImageToImageFilterFF.h
 )
 
 # Abstract/pure virtual classes
 
-#SET_SOURCE_FILES_PROPERTIES(
+#SET_SOURCE_FILES_PROPERTIES (
 #  ABSTRACT
-#  )
+#)
 
 # Helper classes
 
@@ -76,6 +76,15 @@ IF (VTK_WRAP_PYTHON)
   INSTALL_TARGETS(${VTK_VMTK_MODULE_INSTALL_LIB_DIR} vtkvmtkITKPython)
 ENDIF (VTK_WRAP_PYTHON)
 
+IF (VTK_WRAP_TCL AND VTK_VMTK_WRAP_TCL)
+#  INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
+#  INCLUDE("${VTK_CMAKE_DIR}/vtkWrapTcl.cmake")
+  SET(VTK_WRAP_HINTS ${VTK_VMTK_SOURCE_DIR}/Wrapping/Tcl/hints)
+  VTK_WRAP_TCL3(vtkvmtkITKTCL vtkITKTCL_SRCS "${vtkITK_SRCS}" "")
+  ADD_LIBRARY(vtkvmtkITKTCL ${vtkITKTCL_SRCS})
+  TARGET_LINK_LIBRARIES(vtkvmtkITKTCL vtkvmtkITK vtkCommon vtkCommonTCL vtkFiltering vtkFilteringTCL vtkImaging vtkImagingTCL)
+  INSTALL_TARGETS(${VTK_VMTK_INSTALL_LIB_DIR} vtkvmtkITKTCL)
+ENDIF (VTK_WRAP_TCL AND VTK_VMTK_WRAP_TCL)
 # --------------------------------------------------------------------------
 # Build the library
 

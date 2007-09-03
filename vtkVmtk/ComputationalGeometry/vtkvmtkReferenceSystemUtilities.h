@@ -35,6 +35,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkReferenceSystemUtilities : p
 {
 public: 
   vtkTypeRevisionMacro(vtkvmtkReferenceSystemUtilities,vtkObject);
+  static vtkvmtkReferenceSystemUtilities* New();
 
   static vtkIdType GetReferenceSystemPointId(vtkPolyData* referenceSystems, const char* groupIdsArrayName, vtkIdType groupId);
   
