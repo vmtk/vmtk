@@ -198,6 +198,7 @@ class PypeWrapper(object):
                 moduleFile.write('if "--%s" in arguments:\n' % (exposedMember.ExposedName))
                 moduleFile.write(self.Indentation+'%s = "1"\n' % (exposedMember.ExposedName))
                 moduleFile.write(self.Indentation+'arguments.remove("--%s")\n' % exposedMember.ExposedName) 
+                moduleFile.write('%s = " ".join(%s.split(","))\n' % (exposedMember.ExposedName, exposedMember.ExposedName))
                 moduleFile.write('\n')
             else:
                 moduleFile.write('%s = ""\n' % exposedMember.ExposedName) 
@@ -209,9 +210,10 @@ class PypeWrapper(object):
                 moduleFile.write(2*self.Indentation+'%s += arguments[index+1]\n' % exposedMember.ExposedName) 
                 moduleFile.write(2*self.Indentation+'arguments.remove(arguments[index+1])\n') 
                 moduleFile.write(self.Indentation+'arguments.remove("--%s")\n' % exposedMember.ExposedName) 
+                moduleFile.write('%s = " ".join(%s.split(","))\n' % (exposedMember.ExposedName, exposedMember.ExposedName))
                 moduleFile.write('\n')
  
-        moduleFile.write('pipe = "%s" %% (%s)\n' % (' '.join(substModulePipeArguments),','.join(['" ".join(%s.split(","))' % member.ExposedName for member in self.AllExposedMembers])))
+        moduleFile.write('pipe = "%s" %% (%s)\n' % (' '.join(substModulePipeArguments),','.join([member.ExposedName for member in self.AllExposedMembers])))
 
         moduleFile.write('\n')
         moduleFile.write('from vmtk import pypes\n')

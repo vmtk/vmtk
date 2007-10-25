@@ -26,14 +26,14 @@ vtkCxxRevisionMacro(vtkvmtkLinearSystem, "$Revision: 1.3 $");
 vtkStandardNewMacro(vtkvmtkLinearSystem);
 
 vtkvmtkLinearSystem::vtkvmtkLinearSystem()
-  {
+{
   this->A = NULL;
   this->X = NULL;
   this->B = NULL;
-  }
+}
 
 vtkvmtkLinearSystem::~vtkvmtkLinearSystem()
-  {
+{
   if (this->A)
     {
     this->A->Delete();
@@ -51,10 +51,10 @@ vtkvmtkLinearSystem::~vtkvmtkLinearSystem()
     this->B->Delete();
     this->B = NULL;
     }
-  }
+}
 
 int vtkvmtkLinearSystem::CheckSystem()
-  {
+{
   if (this->A==NULL)
     {
     vtkErrorMacro(<< "System matrix (A) not set!");
@@ -69,7 +69,7 @@ int vtkvmtkLinearSystem::CheckSystem()
 
   if (this->B==NULL)
     {
-    vtkErrorMacro(<< "Right-hand side vecto (b) not set!");
+    vtkErrorMacro(<< "Right-hand side vector (b) not set!");
     return -1;
     }
 
@@ -80,4 +80,5 @@ int vtkvmtkLinearSystem::CheckSystem()
     }
   
   return 0;
-  }
+}
+

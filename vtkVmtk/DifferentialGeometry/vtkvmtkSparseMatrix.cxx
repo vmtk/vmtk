@@ -29,27 +29,56 @@ vtkStandardNewMacro(vtkvmtkSparseMatrix);
 
 vtkvmtkSparseMatrix::vtkvmtkSparseMatrix()
 {
-  this->ItemType = VTK_VMTK_SPARSE_MATRIX_ROW;
+  this->NumberOfRows = 0;
+  this->Array = NULL;
 }
 
-vtkvmtkItem* vtkvmtkSparseMatrix::InstantiateNewItem(int itemType)
+vtkvmtkSparseMatrix::~vtkvmtkSparseMatrix()
 {
-  vtkvmtkSparseMatrixRow* newRow;
-
-  switch(itemType)
+  if (this->Array)
     {
-    case VTK_VMTK_SPARSE_MATRIX_ROW:
-      newRow = vtkvmtkSparseMatrixRow::New();
-      break;
-    default:
-      vtkErrorMacro(<<"Invalid row type");
-      return NULL;
+    for (int i=0; i<this->NumberOfRows; i++)
+      {
+      this->Array[i]->Delete();
+      }
+    delete[] this->Array;
+    this->Array = NULL;
+    }
+}
+
+void vtkvmtkSparseMatrix::Initialize()
+{
+  if (this->Array)
+    {
+    for (int i=0; i<this->NumberOfRows; i++)
+      {
+      this->Array[i]->Delete();
+      }
+    delete[] this->Array;
+    this->Array = NULL;
+    }
+  this->NumberOfRows = 0;
+}
+
+void vtkvmtkSparseMatrix::SetNumberOfRows(vtkIdType numberOfRows)
+{
+  //deallocate previous rows, allocate new ones
+  if (this->Array)
+    {
+    for (int i=0; i<this->NumberOfRows; i++)
+      {
+      this->Array[i]->Delete();
+      }
+    delete[] this->Array;
+    this->Array = NULL;
     }
 
-  newRow->Register(this);
-  newRow->Delete();
-
-  return newRow;
+  this->NumberOfRows = numberOfRows;
+  this->Array = new vtkvmtkSparseMatrixRow*[numberOfRows];
+  for (int i=0; i<this->NumberOfRows; i++)
+    {
+    this->Array[i] = vtkvmtkSparseMatrixRow::New();
+    }
 }
 
 void vtkvmtkSparseMatrix::CopyRowsFromStencils(vtkvmtkStencils *stencils)
@@ -66,7 +95,6 @@ void vtkvmtkSparseMatrix::CopyRowsFromStencils(vtkvmtkStencils *stencils)
   numberOfStencils = stencils->GetNumberOfStencils();
 
   this->Initialize();
-  this->Allocate(numberOfStencils);
   this->SetNumberOfRows(numberOfStencils);
 
   for (i=0; i<numberOfStencils; i++)
@@ -88,7 +116,6 @@ void vtkvmtkSparseMatrix::AllocateRowsFromNeighborhoods(vtkvmtkNeighborhoods *ne
   int numberOfRows = numberOfVariables*numberOfNeighborhoods;
 
   this->Initialize();
-  this->Allocate(numberOfRows);
   this->SetNumberOfRows(numberOfRows);
 
   int i;
@@ -142,26 +169,26 @@ double vtkvmtkSparseMatrix::GetElement(vtkIdType i, vtkIdType j)
 {
   vtkvmtkSparseMatrixRow* row = this->GetRow(i);
   if (i != j)
-    {
+  {
     return row->GetElement(row->GetElementIndex(j));
-    }
+  }
   else
-    {
+  {
     return row->GetDiagonalElement();
-    }
+  }
 }
 
 void vtkvmtkSparseMatrix::SetElement(vtkIdType i, vtkIdType j, double value)
 {
   vtkvmtkSparseMatrixRow* row = this->GetRow(i);
   if (i != j)
-    {
+  {
     return row->SetElement(row->GetElementIndex(j),value);
-    }
+  }
   else
-    {
+  {
     return row->SetDiagonalElement(value);
-    }
+  }
 }
 
 void vtkvmtkSparseMatrix::AddElement(vtkIdType i, vtkIdType j, double value)
@@ -177,26 +204,32 @@ void vtkvmtkSparseMatrix::Multiply(vtkvmtkDoubleVector* x, vtkvmtkDoubleVector* 
 
   numberOfRows = this->GetNumberOfRows();
   for (i=0; i<numberOfRows; i++)
-    {
+  {
     yValue = 0.0;
     numberOfRowElements = this->GetRow(i)->GetNumberOfElements();
     for (j=0; j<numberOfRowElements; j++)
-      {
+    {
       xValue = x->GetElement(this->GetRow(i)->GetElementId(j));
       yValue += this->GetRow(i)->GetElement(j) * xValue;
-      }
+    }
     xValue = x->GetElement(i);
     yValue += this->GetRow(i)->GetDiagonalElement() * xValue;
 
     if (fabs(yValue)<VTK_VMTK_PIVOTING_TOL)
+      {
       yValue = 0.0;
+      }
     else if (yValue>VTK_VMTK_LARGE_DOUBLE)
+      {
       yValue = VTK_VMTK_LARGE_DOUBLE;
+      }
     else if (yValue<-VTK_VMTK_LARGE_DOUBLE)
+      {
       yValue = -VTK_VMTK_LARGE_DOUBLE;
+      }
 
     y->SetElement(i,yValue);
-    }
+  }
 }
 
 void vtkvmtkSparseMatrix::TransposeMultiply(vtkvmtkDoubleVector* x, vtkvmtkDoubleVector* y)
@@ -224,12 +257,29 @@ void vtkvmtkSparseMatrix::TransposeMultiply(vtkvmtkDoubleVector* x, vtkvmtkDoubl
     yValue += this->GetRow(i)->GetDiagonalElement() * xValue; 
 
     if (fabs(yValue)<VTK_VMTK_PIVOTING_TOL)
+      {
       yValue = 0.0;
+      }
     else if (yValue>VTK_VMTK_LARGE_DOUBLE)
+      {
       yValue = VTK_VMTK_LARGE_DOUBLE;
+      }
     else if (yValue<-VTK_VMTK_LARGE_DOUBLE)
+      {
       yValue = -VTK_VMTK_LARGE_DOUBLE;
+      }
 
     y->SetElement(i,yValue);
-   }
+    }
 }
+
+void vtkvmtkSparseMatrix::DeepCopy(vtkvmtkSparseMatrix *src)
+{   
+  this->SetNumberOfRows(src->NumberOfRows);
+
+  for (int i=0; i<this->NumberOfRows; i++)
+    {
+    this->Array[i]->DeepCopy(src->GetRow(i));
+    }
+}
+

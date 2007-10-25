@@ -172,17 +172,8 @@ void vtkvmtkSparseMatrixRow::CopyNeighborhood(vtkvmtkNeighborhood* neighborhood)
     }
 }
 
-void vtkvmtkSparseMatrixRow::DeepCopy(vtkvmtkItem *src)
+void vtkvmtkSparseMatrixRow::DeepCopy(vtkvmtkSparseMatrixRow *src)
 {
-  this->Superclass::DeepCopy(src);
-
-  vtkvmtkSparseMatrixRow* rowSrc = vtkvmtkSparseMatrixRow::SafeDownCast(src);
-
-  if (rowSrc==NULL)
-    {
-    vtkErrorMacro(<<"Trying to deep copy a non-row item");
-    }
-
   if (this->ElementIds != NULL)
     {
     delete[] this->ElementIds;
@@ -195,16 +186,16 @@ void vtkvmtkSparseMatrixRow::DeepCopy(vtkvmtkItem *src)
     this->Elements = NULL;
     }
 
-  this->NElements = rowSrc->NElements;
+  this->NElements = src->NElements;
 
-  if (rowSrc->NElements>0)
+  if (src->NElements > 0)
     {
-    this->ElementIds = new vtkIdType[rowSrc->NElements];
-    memcpy(this->ElementIds, rowSrc->ElementIds, this->NElements * sizeof(vtkIdType));
-    this->Elements = new double[rowSrc->NElements];
-    memcpy(this->Elements, rowSrc->Elements, this->NElements * sizeof(double));
+    this->ElementIds = new vtkIdType[src->NElements];
+    memcpy(this->ElementIds, src->ElementIds, this->NElements * sizeof(vtkIdType));
+    this->Elements = new double[src->NElements];
+    memcpy(this->Elements, src->Elements, this->NElements * sizeof(double));
     }
 
-  this->DiagonalElement = rowSrc->DiagonalElement;
+  this->DiagonalElement = src->DiagonalElement;
 }
 

@@ -26,34 +26,31 @@
 #define __vtkvmtkSparseMatrixRow_h
 
 #include "vtkObject.h"
-#include "vtkvmtkItem.h"
 #include "vtkvmtkStencil.h"
 #include "vtkvmtkNeighborhood.h"
 #include "vtkvmtkConstants.h"
 #include "vtkvmtkWin32Header.h"
 
-class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkSparseMatrixRow : public vtkvmtkItem 
+class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkSparseMatrixRow : public vtkObject 
 {
 public:
 
   static vtkvmtkSparseMatrixRow *New();
-  vtkTypeRevisionMacro(vtkvmtkSparseMatrixRow,vtkvmtkItem);
+  vtkTypeRevisionMacro(vtkvmtkSparseMatrixRow,vtkObject);
 
-  vtkIdType GetElementId(vtkIdType i) {return this->ElementIds[i];};
-  void SetElementId(vtkIdType i, vtkIdType id) {this->ElementIds[i] = id;};
+  vtkIdType GetElementId(vtkIdType i) { return this->ElementIds[i]; }
+  void SetElementId(vtkIdType i, vtkIdType id) { this->ElementIds[i] = id; }
 
-  double GetElement(vtkIdType i) {return this->Elements[i];};
-  void SetElement(vtkIdType i, double element) {this->Elements[i] = element;};
+  double GetElement(vtkIdType i) { return this->Elements[i]; }
+  void SetElement(vtkIdType i, double element) { this->Elements[i] = element; }
 
   vtkIdType GetElementIndex(vtkIdType id);
 
-  vtkIdType GetNumberOfElements() {return this->NElements;};
+  vtkIdType GetNumberOfElements() { return this->NElements; }
   void SetNumberOfElements(vtkIdType numberOfElements);
 
   vtkSetMacro(DiagonalElement,double);
   vtkGetMacro(DiagonalElement,double);
-
-  virtual vtkIdType GetItemType() {return VTK_VMTK_SPARSE_MATRIX_ROW;};
 
   void Initialize();
 
@@ -63,7 +60,7 @@ public:
   // Description:
   // Standard DeepCopy method.  Since this object contains no reference
   // to other objects, there is no ShallowCopy.
-  virtual void DeepCopy(vtkvmtkItem *src);
+  void DeepCopy(vtkvmtkSparseMatrixRow *src);
 
 protected:
   vtkvmtkSparseMatrixRow();

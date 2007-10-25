@@ -26,7 +26,6 @@
 #define __vtkvmtkSparseMatrix_h
 
 #include "vtkObject.h"
-#include "vtkvmtkItems.h"
 #include "vtkvmtkSparseMatrixRow.h"
 #include "vtkvmtkNeighborhoods.h"
 #include "vtkvmtkStencils.h"
@@ -34,37 +33,40 @@
 #include "vtkDataSet.h"
 #include "vtkvmtkWin32Header.h"
 
-class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkSparseMatrix : public vtkvmtkItems
+class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkSparseMatrix : public vtkObject
 {
 public:
 
   static vtkvmtkSparseMatrix* New();
-  vtkTypeRevisionMacro(vtkvmtkSparseMatrix,vtkvmtkItems);
+  vtkTypeRevisionMacro(vtkvmtkSparseMatrix,vtkObject);
 
   void Multiply(vtkvmtkDoubleVector* x, vtkvmtkDoubleVector* y);
   void TransposeMultiply(vtkvmtkDoubleVector* x, vtkvmtkDoubleVector* y);
 
   // Description:
   // Get a row given a row id.
-  vtkvmtkSparseMatrixRow* GetRow(vtkIdType i) {return (vtkvmtkSparseMatrixRow*)this->Array[i];};
+  vtkvmtkSparseMatrixRow* GetRow(vtkIdType i) { return this->Array[i]; }
 
-  void SetNumberOfRows(vtkIdType numberOfRows) { this->SetNumberOfItems(numberOfRows);};
-  vtkIdType GetNumberOfRows() {return this->GetNumberOfItems();};
+  vtkGetMacro(NumberOfRows,vtkIdType);
 
   void CopyRowsFromStencils(vtkvmtkStencils *stencils);
   void AllocateRowsFromNeighborhoods(vtkvmtkNeighborhoods *neighborhoods, int numberOfVariables=1);
-
-  void AllocateRow(vtkIdType i) {this->AllocateItem(i,VTK_VMTK_SPARSE_MATRIX_ROW);};
+  
+  void Initialize();
+  void SetNumberOfRows(vtkIdType numberOfRows);
 
   double GetElement(vtkIdType i, vtkIdType j);
   void SetElement(vtkIdType i, vtkIdType j, double value);
   void AddElement(vtkIdType i, vtkIdType j, double value);
 
+  void DeepCopy(vtkvmtkSparseMatrix *src);
+
 protected:
   vtkvmtkSparseMatrix();
-  ~vtkvmtkSparseMatrix() {};
+  ~vtkvmtkSparseMatrix();
 
-  virtual vtkvmtkItem* InstantiateNewItem(int itemType);
+  vtkvmtkSparseMatrixRow** Array;
+  vtkIdType NumberOfRows;
 
 private:
   vtkvmtkSparseMatrix(const vtkvmtkSparseMatrix&);  // Not implemented.
