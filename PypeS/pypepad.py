@@ -240,13 +240,13 @@ class PypeTkPad(object):
             self.OutputText('Enter your vmtk Pype above and Run.\n')
         
     def InsertScriptName(self,scriptname):
-        self.text_input.insert(CURRENT,scriptname+' ')
+        self.text_input.insert(INSERT,scriptname+' ')
         
     def InsertFileName(self):
         openfilename = tkFileDialog.askopenfilename()
         if not openfilename:
             return
-        self.text_input.insert(CURRENT,openfilename+' ')
+        self.text_input.insert(INSERT,openfilename+' ')
     
     def QuitHandler(self,event):
         self.QuitCommand()
