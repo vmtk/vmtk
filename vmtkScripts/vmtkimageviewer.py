@@ -40,6 +40,7 @@ class vmtkImageViewer(pypes.pypeScript):
         self.PlaneWidgetZ = None
 
         self.TextureInterpolation = 0
+        self.WindowLevel = [0.0, 0.0]
 
         self.SetScriptName('vmtkimageviewer')
         self.SetScriptDoc('display a 3D image')
@@ -47,6 +48,7 @@ class vmtkImageViewer(pypes.pypeScript):
             ['Image','i','vtkImageData',1,'','the input image','vmtkimagereader'],
             ['ArrayName','array','str',1,'','name of the array to display'],
             ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer'],
+            ['WindowLevel','windowlevel','float',2,'','the window/level for displaying the image'],
             ['Display','display','bool',1,'','toggle rendering'],
             ['TextureInterpolation','textureinterpolation','bool',1,'','toggle interpolation of graylevels on image planes']
             ])
@@ -88,6 +90,8 @@ class vmtkImageViewer(pypes.pypeScript):
         self.PlaneWidgetX.SetPicker(self.Picker)
         self.PlaneWidgetX.KeyPressActivationOff()
         self.PlaneWidgetX.SetInteractor(self.vmtkRenderer.RenderWindowInteractor)
+        if self.WindowLevel[0] != 0.0:
+            self.PlaneWidgetX.SetWindowLevel(self.WindowLevel[0],self.WindowLevel[1])
         self.PlaneWidgetX.On()
 
         self.PlaneWidgetY.SetResliceInterpolateToNearestNeighbour()
@@ -100,6 +104,8 @@ class vmtkImageViewer(pypes.pypeScript):
         self.PlaneWidgetY.KeyPressActivationOff()
         self.PlaneWidgetY.SetLookupTable(self.PlaneWidgetX.GetLookupTable())
         self.PlaneWidgetY.SetInteractor(self.vmtkRenderer.RenderWindowInteractor)
+        if self.WindowLevel[0] != 0.0:
+            self.PlaneWidgetY.SetWindowLevel(self.WindowLevel[0],self.WindowLevel[1])
         self.PlaneWidgetY.On()
 
         self.PlaneWidgetZ.SetResliceInterpolateToNearestNeighbour()
@@ -112,6 +118,8 @@ class vmtkImageViewer(pypes.pypeScript):
         self.PlaneWidgetZ.KeyPressActivationOff()
         self.PlaneWidgetZ.SetLookupTable(self.PlaneWidgetX.GetLookupTable())
         self.PlaneWidgetZ.SetInteractor(self.vmtkRenderer.RenderWindowInteractor)
+        if self.WindowLevel[0] != 0.0:
+            self.PlaneWidgetZ.SetWindowLevel(self.WindowLevel[0],self.WindowLevel[1])
         self.PlaneWidgetZ.On()
 
         if (self.Display == 1):

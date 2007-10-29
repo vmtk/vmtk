@@ -103,6 +103,7 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
 
             self.OutputText(queryString+' (click on the image while pressing Ctrl).\n')
             self.ImageSeeder.InitializeSeeds()
+            self.vmtkRenderer.Renderer.RemoveActor(self.SurfaceViewer.Actor)
             self.vmtkRenderer.Render()
 
             if numberOfSeeds > 0:
@@ -325,8 +326,6 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
         self.LevelSetsInput.Update()
 
         self.IsoSurfaceValue = 10.0 * collidingFronts.GetNegativeEpsilon()
-
-        return 1
 
     def PrintProgress(self,obj,event):
         self.OutputProgress(obj.GetProgress(),10)
