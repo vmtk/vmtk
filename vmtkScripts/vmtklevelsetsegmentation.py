@@ -92,7 +92,7 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
             ])
         self.SetOutputMembers([
             ['LevelSets','o','vtkImageData',1,'','','vmtkimagewriter'],
-            ['FeatureImage','featureimage','vtkImageData',1,'','','vmtkimagewriter']
+            ['FeatureImage','ofeatureimage','vtkImageData',1,'','','vmtkimagewriter']
             ])
 
     def SeedInput(self,queryString,numberOfSeeds):
@@ -103,7 +103,7 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
 
             self.OutputText(queryString+' (click on the image while pressing Ctrl).\n')
             self.ImageSeeder.InitializeSeeds()
-            self.vmtkRenderer.Renderer.RemoveActor(self.SurfaceViewer.Actor)
+#            self.vmtkRenderer.Renderer.RemoveActor(self.SurfaceViewer.Actor)
             self.vmtkRenderer.Render()
 
             if numberOfSeeds > 0:

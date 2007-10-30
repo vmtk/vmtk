@@ -39,7 +39,7 @@ class vmtkImageViewer(pypes.pypeScript):
         self.PlaneWidgetY = None
         self.PlaneWidgetZ = None
 
-        self.TextureInterpolation = 0
+        self.TextureInterpolation = 1
         self.WindowLevel = [0.0, 0.0]
 
         self.SetScriptName('vmtkimageviewer')
