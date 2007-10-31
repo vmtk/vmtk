@@ -48,8 +48,14 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataFlowExtensionsFilter
   vtkSetMacro(ExtensionLength,double);
   vtkGetMacro(ExtensionLength,double);
 
+  vtkSetMacro(ExtensionRadius,double);
+  vtkGetMacro(ExtensionRadius,double);
+
   vtkSetMacro(TransitionRatio,double);
   vtkGetMacro(TransitionRatio,double);
+
+  vtkSetMacro(Sigma,double);
+  vtkGetMacro(Sigma,double);
 
   vtkSetMacro(CenterlineNormalEstimationDistanceRatio,double);
   vtkGetMacro(CenterlineNormalEstimationDistanceRatio,double);
@@ -58,11 +64,29 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataFlowExtensionsFilter
   vtkGetMacro(AdaptiveExtensionLength,int);
   vtkBooleanMacro(AdaptiveExtensionLength,int);
 
+  vtkSetMacro(AdaptiveExtensionRadius,int);
+  vtkGetMacro(AdaptiveExtensionRadius,int);
+  vtkBooleanMacro(AdaptiveExtensionRadius,int);
+
   vtkSetMacro(NumberOfBoundaryPoints,int);
   vtkGetMacro(NumberOfBoundaryPoints,int);
 
   vtkSetObjectMacro(BoundaryIds,vtkIdList);
   vtkGetObjectMacro(BoundaryIds,vtkIdList);
+
+  vtkSetMacro(ExtensionMode,int);
+  vtkGetMacro(ExtensionMode,int);
+  void SetExtensionModeToUseNormalToBoundary()
+  { this->SetExtensionMode(USE_NORMAL_TO_BOUNDARY); }
+  void SetExtensionModeToUseCenterlineDirection()
+  { this->SetExtensionMode(USE_CENTERLINE_DIRECTION); }
+
+//BTX
+  enum {
+    USE_NORMAL_TO_BOUNDARY = 0,
+    USE_CENTERLINE_DIRECTION
+  };
+//ETX
 
   protected:
   vtkvmtkPolyDataFlowExtensionsFilter();
@@ -74,14 +98,19 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataFlowExtensionsFilter
 
   double ExtensionRatio;
   double ExtensionLength;
+  double ExtensionRadius;
 
   double TransitionRatio;
+  double Sigma;
 
   double CenterlineNormalEstimationDistanceRatio;
 
   int AdaptiveExtensionLength;
+  int AdaptiveExtensionRadius;
 
   int NumberOfBoundaryPoints;
+
+  int ExtensionMode;
 
   vtkIdList* BoundaryIds;
 

@@ -80,6 +80,7 @@ class vmtkSurfaceCapper(pypes.pypeScript):
             boundaryExtractor = vtkvmtk.vtkvmtkPolyDataBoundaryExtractor()
             boundaryExtractor.SetInput(self.Surface)
             boundaryExtractor.Update()
+
             boundaries = boundaryExtractor.GetOutput()
             numberOfBoundaries = boundaries.GetNumberOfCells()
             seedPoints = vtk.vtkPoints()

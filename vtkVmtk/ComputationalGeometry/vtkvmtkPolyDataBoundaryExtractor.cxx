@@ -146,7 +146,9 @@ int vtkvmtkPolyDataBoundaryExtractor::RequestData(
       }
         
     if (!foundAny)
+      {
       done = true;
+      }
     }
 
   output->SetPoints(newPoints);

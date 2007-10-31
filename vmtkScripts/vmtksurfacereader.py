@@ -89,6 +89,12 @@ class vmtkSurfaceReader(pypes.pypeScript):
             lineEid = line.find('E=')
             lineE = line[lineEid : lineEid+line[lineEid:].find(',') ].split('=')[1]
             numberOfElements = int(lineE)
+            elementType = 'TRIANGLE'
+            if line.find('ET=') != -1:
+                if 'TRIANGLE' in line:
+                    elementType = 'TRIANGLE'
+                elif 'QUADRILATERAL' in line:
+                    elementType = 'QUADRILATERAL'
         self.PrintLog("Reading " + str(numberOfNodes)+" nodes.")
         points = vtk.vtkPoints()
         cells = vtk.vtkCellArray()
@@ -121,6 +127,9 @@ class vmtkSurfaceReader(pypes.pypeScript):
             dataCounter += 1
             cellIds.InsertNextId(int(data[dataCounter])-1)
             dataCounter += 1
+            if elementType == "QUADRILATERAL":
+                cellIds.InsertNextId(int(data[dataCounter])-1)
+                dataCounter += 1
             cells.InsertNextCell(cellIds)
 ##         self.PrintLog('Reading Tecplot surface file.')
 ##         f=open(self.InputFileName, 'r')

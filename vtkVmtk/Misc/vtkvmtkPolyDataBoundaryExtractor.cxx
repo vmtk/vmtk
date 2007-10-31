@@ -100,7 +100,7 @@ int vtkvmtkPolyDataBoundaryExtractor::RequestData(
   foundNeighbor = false;
   done = false;
   currentId = -1;
-  
+
   while (!done)
     {
     foundAny = false;
@@ -152,7 +152,10 @@ int vtkvmtkPolyDataBoundaryExtractor::RequestData(
       }
         
     if (!foundAny)
+      {
       done = true;
+      }
+    cout<<currentId<<endl;
     }
 
   output->SetPoints(newPoints);

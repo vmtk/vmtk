@@ -32,12 +32,16 @@ class vmtkFlowExtensions(pypes.pypeScript):
         self.Centerlines = None
 
         self.AdaptiveExtensionLength = 0
+        self.AdaptiveExtensionRadius = 1
         self.ExtensionLength = 1.0
         self.ExtensionRatio = 10.0
+        self.ExtensionRadius = 1.0
         self.TransitionRatio = 0.25
         self.TargetNumberOfBoundaryPoints = 50
         self.CenterlineNormalEstimationDistanceRatio = 1.0
+        self.ExtensionMode = "centerlinedirection"
         self.Interactive = 1
+        self.Sigma = 1.0
 
         self.vmtkRenderer = None
         self.OwnRenderer = 0
@@ -46,9 +50,13 @@ class vmtkFlowExtensions(pypes.pypeScript):
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','','vmtksurfacereader'],
             ['Centerlines','centerlines','vtkPolyData',1,'','','vmtksurfacereader'],
+            ['ExtensionMode','extensionmode','str',1,'["centerlinedirection","boundarynormal"]','method for computing the normal for extension'],
+            ['Sigma','sigma','float',1,'(0.0,)','thin plate spline stiffness'],
             ['AdaptiveExtensionLength','adaptivelength','bool',1],
+            ['AdaptiveExtensionRadius','adaptiveradius','bool',1],
             ['ExtensionLength','extensionlength','float',1,'(0.0,)'],
             ['ExtensionRatio','extensionratio','float',1,'(0.0,)'],
+            ['ExtensionRadius','extensionradius','float',1,'(0.0,)'],
             ['TransitionRatio','transitionratio','float',1,'(0.0,)'],
             ['TargetNumberOfBoundaryPoints','boundarypoints','int',1,'(0,)'],
             ['Interactive','interactive','bool',1],
@@ -74,7 +82,7 @@ class vmtkFlowExtensions(pypes.pypeScript):
         if self.Surface == None:
             self.PrintError('Error: No input surface.')
 
-        if self.Centerlines == None:
+        if self.ExtensionMode == "centerlinedirection" and self.Centerlines == None:
             self.PrintError('Error: No input centerlines.')
 
         boundaryIds = vtk.vtkIdList()
@@ -136,12 +144,19 @@ class vmtkFlowExtensions(pypes.pypeScript):
         flowExtensionsFilter = vtkvmtk.vtkvmtkPolyDataFlowExtensionsFilter()
         flowExtensionsFilter.SetInput(self.Surface)
         flowExtensionsFilter.SetCenterlines(self.Centerlines)
+        flowExtensionsFilter.SetSigma(self.Sigma)
         flowExtensionsFilter.SetAdaptiveExtensionLength(self.AdaptiveExtensionLength)
+        flowExtensionsFilter.SetAdaptiveExtensionRadius(self.AdaptiveExtensionRadius)
         flowExtensionsFilter.SetExtensionLength(self.ExtensionLength)
         flowExtensionsFilter.SetExtensionRatio(self.ExtensionRatio)
+        flowExtensionsFilter.SetExtensionRadius(self.ExtensionRadius)
         flowExtensionsFilter.SetTransitionRatio(self.TransitionRatio)
         flowExtensionsFilter.SetCenterlineNormalEstimationDistanceRatio(self.CenterlineNormalEstimationDistanceRatio)
         flowExtensionsFilter.SetNumberOfBoundaryPoints(self.TargetNumberOfBoundaryPoints)
+        if self.ExtensionMode == "centerlinedirection":
+            flowExtensionsFilter.SetExtensionModeToUseCenterlineDirection()
+        elif self.ExtensionMode == "boundarynormal":
+            flowExtensionsFilter.SetExtensionModeToUseNormalToBoundary()
         if self.Interactive:
             flowExtensionsFilter.SetBoundaryIds(boundaryIds)
         flowExtensionsFilter.Update()
