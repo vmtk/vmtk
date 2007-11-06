@@ -3,6 +3,7 @@ SET (VTK_VMTK_SEGMENTATION_SRCS
   vtkvmtkDanielssonDistanceMapImageFilter.cxx
   vtkvmtkCollidingFrontsImageFilter.cxx
   vtkvmtkCurvesLevelSetImageFilter.cxx
+  vtkvmtkFastMarchingDirectionalFreezeImageFilter.cxx
   vtkvmtkFastMarchingUpwindGradientImageFilter.cxx
   vtkvmtkFWHMFeatureImageFilter.cxx
   vtkvmtkGeodesicActiveContourLevelSetImageFilter.cxx

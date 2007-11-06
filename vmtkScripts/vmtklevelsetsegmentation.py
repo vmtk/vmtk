@@ -56,6 +56,7 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
 
         self.SigmoidRemapping = 0
 
+        self.LevelSetsType = 'geodesic'
         self.FeatureImageType = 'gradient'
         
         self.UpwindFactor = 1.0
@@ -74,6 +75,7 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
             ['FeatureImage','featureimage','vtkImageData',1,'','','vmtkimagereader'],
             ['InitialLevelSets','initiallevelsets','vtkImageData',1,'','','vmtkimagereader'],
             ['LevelSets','levelsets','vtkImageData',1,'','','vmtkimagereader'],
+            ['LevelSetsType','levelsetstype','str',1,'["geodesic","curves"]'],
             ['FeatureImageType','featureimagetype','str',1,'["vtkgradient","gradient","upwind","fwhm"]'],
             ['SigmoidRemapping','sigmoid','bool',1],
             ['IsoSurfaceValue','isosurfacevalue','float',1],
@@ -250,6 +252,7 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
         speedImage = shiftScale.GetOutput()
 
         fastMarching = vtkvmtk.vtkvmtkFastMarchingUpwindGradientImageFilter()
+#        fastMarching = vtkvmtk.vtkvmtkFastMarchingDirectionalFreezeImageFilter()
         fastMarching.SetInput(speedImage)
         fastMarching.SetSeeds(sourceSeedIds)
         fastMarching.SetTargets(targetSeedIds)
@@ -332,8 +335,12 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
 
     def LevelSetEvolution(self):
 
-        levelSets = vtkvmtk.vtkvmtkGeodesicActiveContourLevelSetImageFilter()
-##        levelSets = vtkvmtk.vtkvmtkCurvesLevelSetImageFilter()
+        if self.LevelSetsType == "geodesic":
+            levelSets = vtkvmtk.vtkvmtkGeodesicActiveContourLevelSetImageFilter()
+        elif self.LevelSetsType == "curves":
+            levelSets = vtkvmtk.vtkvmtkCurvesLevelSetImageFilter()
+        else:
+            self.PrintError('Unsupported LevelSetsType')
         levelSets.SetDerivativeSigma(self.FeatureDerivativeSigma)
         levelSets.SetInput(self.LevelSetsInput)
         levelSets.SetFeatureImage(self.FeatureImage)

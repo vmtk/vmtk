@@ -33,6 +33,7 @@ class vmtkSurfaceNormals(pypes.pypeScript):
 
         self.AutoOrientNormals = 1
         self.FlipNormals = 0
+        self.Consistency = 1
 
         self.SetScriptName('vmtksurfacenormals')
         self.SetScriptDoc('compute normals to a surface')
@@ -40,6 +41,7 @@ class vmtkSurfaceNormals(pypes.pypeScript):
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
             ['NormalsArrayName','normalsarray','str',1,'','name of the array where normals have to be stored'],
             ['AutoOrientNormals','autoorientnormals','bool',1,'','try to auto orient normals outwards'],
+            ['Consistency','consistency','bool',1,'','try to orient normals so that neighboring points have similar orientations'],
             ['FlipNormals','flipnormals','bool',1,'','flip normals after computing them']
             ])
         self.SetOutputMembers([
@@ -55,8 +57,8 @@ class vmtkSurfaceNormals(pypes.pypeScript):
         normalsFilter.SetInput(self.Surface)
         normalsFilter.SetAutoOrientNormals(self.AutoOrientNormals)
         normalsFilter.SetFlipNormals(self.FlipNormals)
+        normalsFilter.SetConsistency(self.Consistency)
       	normalsFilter.SplittingOff()
-        normalsFilter.ConsistencyOn()
         normalsFilter.Update()
 
         self.Surface = normalsFilter.GetOutput()
