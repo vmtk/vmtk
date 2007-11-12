@@ -33,7 +33,9 @@ SET (VTK_VMTK_DIFFERENTIALGEOMETRY_SRCS
   vtkvmtkPolyDataMeanCurvature.cxx
   vtkvmtkPolyDataMultipleCylinderHarmonicMappingFilter.cxx
   vtkvmtkPolyDataNeighborhood.cxx
+  vtkvmtkPolyDataRigidSurfaceModelling.cxx
   vtkvmtkPolyDataStencilFlowFilter.cxx
+  vtkvmtkPolyDataSurfaceRemeshing.cxx
   vtkvmtkPolyDataUmbrellaStencil.cxx
   vtkvmtkSparseMatrix.cxx
   vtkvmtkSparseMatrixRow.cxx
