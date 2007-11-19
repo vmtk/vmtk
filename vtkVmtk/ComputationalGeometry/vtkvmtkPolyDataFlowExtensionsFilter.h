@@ -86,6 +86,12 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataFlowExtensionsFilter
     USE_NORMAL_TO_BOUNDARY = 0,
     USE_CENTERLINE_DIRECTION
   };
+
+  enum {
+    LINEAR = 0,
+    THIN_PLATE
+  };
+
 //ETX
 
   protected:

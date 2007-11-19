@@ -69,6 +69,17 @@ vtkvmtkPolyDataFlowExtensionsFilter::~vtkvmtkPolyDataFlowExtensionsFilter()
     }
 }
 
+double vtkRBFr3(double r)
+{
+  return r*r*r;
+} 
+
+double vtkRBFDRr3(double r, double &dUdr)
+{
+  dUdr = 3*r*r;
+  return r*r*r;
+}
+
 int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
   vtkInformation *vtkNotUsed(request),
   vtkInformationVector **inputVector,
@@ -338,7 +349,10 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
     double currentLength = 0.0;
 
     vtkThinPlateSplineTransform* thinPlateSplineTransform = vtkThinPlateSplineTransform::New();
-    thinPlateSplineTransform->SetBasisToR2LogR();
+//    thinPlateSplineTransform->SetBasisToR2LogR();
+//    thinPlateSplineTransform->SetBasisToR();
+    thinPlateSplineTransform->SetBasisFunction(&vtkRBFr3);
+    thinPlateSplineTransform->SetBasisDerivative(&vtkRBFDRr3);
     thinPlateSplineTransform->SetSigma(this->Sigma);
     
     vtkPoints* sourceLandmarks = vtkPoints::New();
@@ -425,17 +439,6 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
         outputPoints->GetPoint(previousBoundaryIds->GetId(prevj),previousPoint);
 
         currentDistance += sqrt(vtkMath::Distance2BetweenPoints(point,previousPoint));
-#if 0
-        if ((currentDistance < layerTargetDistanceBetweenPoints) && (j>0))
-          {
-          vtkIdType pts[3];
-          pts[0] = previousBoundaryIds->GetId(j);
-          pts[1] = newBoundaryIds->GetId(newBoundaryIds->GetNumberOfIds()-1);
-          pts[2] = previousBoundaryIds->GetId(prevj);
-          outputPolys->InsertNextCell(3,pts);
-          continue;
-          }
-#endif
         for (k=0; k<3; k++)
           {
           barycenterToPoint[k] = point[k] - barycenter[k];
@@ -447,32 +450,6 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
           projectedBarycenterToPoint[k] = barycenterToPoint[k] - outOfPlaneDistance*flowExtensionNormal[k];
           }
         projectedDistanceToBarycenter = vtkMath::Norm(projectedBarycenterToPoint);
-#if 0        
-        if (factor<1.0)
-          {
-          for (k=0; k<3; k++)
-            {            
-            extensionPoint[k] = point[k];
-            // tend to circular
-            extensionPoint[k] += projectedBarycenterToPoint[k] * (projectedTargetRadius/projectedDistanceToBarycenter - 1.0) * pow(factor,factorDegree);
-            // tend to flat
-            extensionPoint[k] += (maxOutOfPlaneDistance - outOfPlaneDistance) * flowExtensionNormal[k] * pow(factor,factorDegree);
-            // move outwards
-            extensionPoint[k] += layerTargetDistanceBetweenPoints * flowExtensionNormal[k];            
-            }
-          }
-        else
-          {
-          vtkMath::Normalize(projectedBarycenterToPoint);
-          for (k=0; k<3; k++)
-            {
-            extensionPoint[k] = barycenter[k];
-            extensionPoint[k] += projectedBarycenterToPoint[k] * projectedTargetRadius;
-            extensionPoint[k] += maxOutOfPlaneDistance * flowExtensionNormal[k];
-            extensionPoint[k] += layerTargetDistanceBetweenPoints * flowExtensionNormal[k];
-            }
-          }
-#endif
        
         vtkMath::Normalize(projectedBarycenterToPoint);
         for (k=0; k<3; k++)
