@@ -94,7 +94,8 @@ int vtkvmtkPolyDataBoundaryExtractor::RequestData(
   foundNeighbor = false;
   done = false;
   currentId = -1;
-  
+  int loopCount = 0;
+  bool isBoundaryEdge;
   while (!done)
     {
     foundAny = false;
@@ -106,7 +107,17 @@ int vtkvmtkPolyDataBoundaryExtractor::RequestData(
       if (id!=-1)
         {
         foundAny = true;
-        if ((currentId==-1)||(input->IsEdge(currentId,id)))
+        isBoundaryEdge = false;
+        if (input->IsEdge(currentId,id))
+          {
+          cellEdgeNeighbors->Initialize();
+          input->GetCellEdgeNeighbors(-1,currentId,id,cellEdgeNeighbors);
+          if (cellEdgeNeighbors->GetNumberOfIds() == 1)
+            {
+            isBoundaryEdge = true;
+            }
+          }
+        if ((currentId==-1) || isBoundaryEdge)
           {
           foundNeighbor = true;
           }
@@ -120,8 +131,8 @@ int vtkvmtkPolyDataBoundaryExtractor::RequestData(
           }
         }
       }
-        
-    if ( (((!foundNeighbor)&&(foundAny))||(!foundAny)) && (boundary->GetNumberOfIds() > 2) )
+
+    if ( (((!foundNeighbor)&&(foundAny))||(!foundAny)) && (boundary->GetNumberOfIds() > 2))
       {
       newCell->Initialize();
       newCell->SetNumberOfIds(boundary->GetNumberOfIds());
@@ -147,6 +158,21 @@ int vtkvmtkPolyDataBoundaryExtractor::RequestData(
         
     if (!foundAny)
       {
+      done = true;
+      }
+
+    loopCount++;
+    if (loopCount > 2*boundaryIds->GetNumberOfIds())
+      {
+      int missing = 0;
+      for (int n=0; n<boundaryIds->GetNumberOfIds(); n++)
+        {
+        if (boundaryIds->GetId(n) != -1)
+          {
+          missing++;
+          }
+        }
+      vtkErrorMacro(<<"Can't find adjacent point. Bailing out."); 
       done = true;
       }
     }
