@@ -6,7 +6,7 @@ SET (VTK_VMTK_MISC_SRCS
   vtkvmtkMeshProjection.cxx
   vtkvmtkMeshVelocityStatistics.cxx
   vtkvmtkMeshVorticity.cxx
-  vtkvmtkPolyDataBoundaryExtractor.cxx
+#  vtkvmtkPolyDataBoundaryExtractor.cxx
   vtkvmtkPolyDataKiteRemovalFilter.cxx
   vtkvmtkPolyDataToUnstructuredGridFilter.cxx
   vtkvmtkSimpleCapPolyData.cxx
