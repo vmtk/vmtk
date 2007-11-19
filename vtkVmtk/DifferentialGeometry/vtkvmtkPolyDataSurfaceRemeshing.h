@@ -39,11 +39,45 @@ public:
   vtkTypeRevisionMacro(vtkvmtkPolyDataSurfaceRemeshing,vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent); 
 
+  vtkSetMacro(AspectRatioThreshold,double);
+  vtkGetMacro(AspectRatioThreshold,double);
+
+  vtkSetMacro(InternalAngleTolerance,double);
+  vtkGetMacro(InternalAngleTolerance,double);
+
+  vtkSetMacro(NormalAngleTolerance,double);
+  vtkGetMacro(NormalAngleTolerance,double);
+
+  vtkSetMacro(Relaxation,double);
+  vtkGetMacro(Relaxation,double);
+
+  vtkSetMacro(TargetArea,double);
+  vtkGetMacro(TargetArea,double);
+
+  vtkSetMacro(TargetAreaFactor,double);
+  vtkGetMacro(TargetAreaFactor,double);
+
+  vtkSetMacro(NumberOfIterations,int);
+  vtkGetMacro(NumberOfIterations,int);
+
+  vtkSetMacro(NumberOfConnectivityOptimizationIterations,int);
+  vtkGetMacro(NumberOfConnectivityOptimizationIterations,int);
+
+  vtkSetStringMacro(TargetAreaArrayName);
+  vtkGetStringMacro(TargetAreaArrayName);
+
+  vtkSetMacro(ElementSizeMode,int);
+  vtkGetMacro(ElementSizeMode,int);
+  void SetElementSizeModeToTargetArea()
+  { this->SetElementSizeMode(TARGET_AREA); }
+  void SetElementSizeModeToTargetAreaArray()
+  { this->SetElementSizeMode(TARGET_AREA_ARRAY); }
+
   //BTX
   enum {
     SUCCESS = 0,
-    NOT_EDGE,
     EDGE_ON_BOUNDARY,
+    NOT_EDGE,
     NON_MANIFOLD,
     NOT_TRIANGLES,
     DEGENERATE_TRIANGLES
@@ -52,6 +86,11 @@ public:
   enum {
     DO_CHANGE,
     DO_NOTHING
+  };
+
+  enum {
+    TARGET_AREA,
+    TARGET_AREA_ARRAY
   };
   //ETX
 
@@ -67,11 +106,11 @@ protected:
   int EdgeSplitIteration();
   void PointRelocationIteration();
 
-  int TestFlipEdgeValidity(vtkIdType pt1, vtkIdType pt2, vtkIdType cell1, vtkIdType cell2, vtkIdType pt3, vtkIdType pt4, double normalAngleTolerance);
-  int TestConnectivityFlipEdge(vtkIdType pt1, vtkIdType pt2, double normalAngleTolerance);
-  int TestDelaunayFlipEdge(vtkIdType pt1, vtkIdType pt2, double internalAngleTolerance, double normalAngleTolerance);
-  int TestAspectRatioCollapseEdge(vtkIdType cellId, double aspectRatioThreshold, double maxArea, vtkIdType& pt1, vtkIdType& pt2);
-  int TestAreaSplitEdge(vtkIdType cellId, double maxArea, vtkIdType& pt1, vtkIdType& pt2);
+  int TestFlipEdgeValidity(vtkIdType pt1, vtkIdType pt2, vtkIdType cell1, vtkIdType cell2, vtkIdType pt3, vtkIdType pt4);
+  int TestConnectivityFlipEdge(vtkIdType pt1, vtkIdType pt2);
+  int TestDelaunayFlipEdge(vtkIdType pt1, vtkIdType pt2);
+  int TestAspectRatioCollapseEdge(vtkIdType cellId, vtkIdType& pt1, vtkIdType& pt2);
+  int TestAreaSplitEdge(vtkIdType cellId, vtkIdType& pt1, vtkIdType& pt2);
 
   int GetEdgeCellsAndOppositeEdge(vtkIdType pt1, vtkIdType pt2, vtkIdType& cell1, vtkIdType& cell2, vtkIdType& pt3, vtkIdType& pt4);
 
@@ -82,16 +121,30 @@ protected:
   int SplitTriangle(vtkIdType cellId);
   int CollapseTriangle(vtkIdType cellId);
 
-  void RelocatePoint(vtkIdType pointId, double relaxation);
+  void RelocatePoint(vtkIdType pointId);
+
+  int IsPointOnBoundary(vtkIdType pointId);
+
+  int GetNumberOfBoundaryEdges(vtkIdType cellId);
+
+  double ComputeTriangleTargetArea(vtkIdType cellId);
 
   vtkPolyData* Mesh;
+  vtkPolyData* InputBoundary;
   vtkCellLocator* Locator;
+  vtkCellLocator* BoundaryLocator;
 
   double AspectRatioThreshold;
-  double MaxArea;
   double InternalAngleTolerance;
   double NormalAngleTolerance;
   double Relaxation;
+  int NumberOfConnectivityOptimizationIterations;
+  int NumberOfIterations;
+
+  int ElementSizeMode;
+  double TargetArea;
+  double TargetAreaFactor;
+  char* TargetAreaArrayName;
 
 private:
   vtkvmtkPolyDataSurfaceRemeshing(const vtkvmtkPolyDataSurfaceRemeshing&);  // Not implemented.
