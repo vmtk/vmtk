@@ -118,6 +118,8 @@ void vtkvmtkPolyDataManifoldStencil::Build()
   this->PointIds = new vtkIdType[this->NPoints];
   memcpy(this->PointIds,manifoldNeighborhood->GetPointer(0),this->NPoints*sizeof(vtkIdType));
 
+  this->IsBoundary = manifoldNeighborhood->GetIsBoundary();
+
   if (this->Weights!=NULL)
     {
     delete[] this->Weights;

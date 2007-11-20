@@ -68,6 +68,16 @@ class vmtkSurfaceCapper(pypes.pypeScript):
         if self.Surface == None:
             self.PrintError('Error: No input surface.')
 
+#        cleaner = vtk.vtkCleanPolyData()
+#        cleaner.SetInput(self.Surface)
+#        cleaner.Update()
+#
+#        triangleFilter = vtk.vtkTriangleFilter()
+#        triangleFilter.SetInput(cleaner.GetOutput())
+#        triangleFilter.Update()
+#
+#        self.Surface = triangleFilter.GetOutput()
+
         boundaryIds = vtk.vtkIdList()
 
         if self.Interactive:
