@@ -19,6 +19,7 @@ SET (VTK_VMTK_DIFFERENTIALGEOMETRY_SRCS
   vtkvmtkNeighborhoods.cxx
   vtkvmtkPolyDataAreaWeightedUmbrellaStencil.cxx
   vtkvmtkPolyDataCylinderHarmonicMappingFilter.cxx
+  vtkvmtkPolyDataDiscreteElasticaFilter.cxx
   vtkvmtkPolyDataFEGradientAssembler.cxx
   vtkvmtkPolyDataFELaplaceAssembler.cxx
   vtkvmtkPolyDataFELaplaceBeltramiStencil.cxx
