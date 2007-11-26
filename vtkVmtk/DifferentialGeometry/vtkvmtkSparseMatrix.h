@@ -48,9 +48,9 @@ public:
   vtkvmtkSparseMatrixRow* GetRow(vtkIdType i) { return this->Array[i]; }
 
   vtkGetMacro(NumberOfRows,vtkIdType);
-
   void CopyRowsFromStencils(vtkvmtkStencils *stencils);
   void AllocateRowsFromNeighborhoods(vtkvmtkNeighborhoods *neighborhoods, int numberOfVariables=1);
+  void AllocateRowsFromDataSet(vtkDataSet *dataSet, int numberOfVariables=1);
   
   void Initialize();
   void SetNumberOfRows(vtkIdType numberOfRows);

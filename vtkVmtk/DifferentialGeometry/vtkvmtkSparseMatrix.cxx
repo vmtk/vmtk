@@ -20,6 +20,8 @@
 =========================================================================*/
 
 #include "vtkvmtkSparseMatrix.h"
+#include "vtkvmtkUnstructuredGridNeighborhood.h"
+#include "vtkvmtkPolyDataNeighborhood.h"
 #include "vtkvmtkDoubleVector.h"
 #include "vtkvmtkConstants.h"
 #include "vtkObjectFactory.h"
@@ -128,28 +130,10 @@ void vtkvmtkSparseMatrix::AllocateRowsFromNeighborhoods(vtkvmtkNeighborhoods *ne
     int numberOfNeighborhoodPoints = neighborhood->GetNumberOfPoints();
     int numberOfElements = numberOfNeighborhoodPoints + (numberOfVariables-1)*(numberOfNeighborhoodPoints+1);
     row->SetNumberOfElements(numberOfElements);
-    int j;
-//    for (j=0; j<numberOfNeighborhoodPoints; j++)
-//      {
-//      row->SetElementId(j,neighborhood->GetPointId(j));
-//      row->SetElement(j,0.0);
-//      }
-    int n;
-//    for (n=0; n<numberOfVariables-1; n++)
-//      {
-//      int offset = numberOfNeighborhoodPoints + n*(numberOfNeighborhoodPoints+1);
-//      row->SetElementId(offset,pointId+n*numberOfNeighborhoods);
-//      row->SetElement(offset,0.0);
-//      for (j=0; j<numberOfNeighborhoodPoints; j++)
-//        {
-//        row->SetElementId(offset+1+j,neighborhood->GetPointId(j)+n*numberOfNeighborhoods);
-//        row->SetElement(offset+1+j,0.0);
-//        }
-//      }
     int index = 0;
-    for (n=0; n<numberOfVariables; n++)
+    for (int n=0; n<numberOfVariables; n++)
       {
-      for (j=0; j<numberOfNeighborhoodPoints; j++)
+      for (int j=0; j<numberOfNeighborhoodPoints; j++)
         {
         row->SetElementId(index,neighborhood->GetPointId(j)+n*numberOfNeighborhoods);
         row->SetElement(index,0.0);
@@ -163,6 +147,69 @@ void vtkvmtkSparseMatrix::AllocateRowsFromNeighborhoods(vtkvmtkNeighborhoods *ne
         }
       }
     }
+}
+
+void vtkvmtkSparseMatrix::AllocateRowsFromDataSet(vtkDataSet* dataSet, int numberOfVariables)
+{
+  if (dataSet==NULL)
+    {
+    vtkErrorMacro(<<"No dataSet provided.");
+    return;
+    }
+
+  vtkvmtkNeighborhood* neighborhood;
+  if (vtkPolyData::SafeDownCast(dataSet))
+    {
+    neighborhood = vtkvmtkPolyDataNeighborhood::New();
+    }
+  else if (vtkUnstructuredGrid::SafeDownCast(dataSet))
+    {
+    neighborhood = vtkvmtkUnstructuredGridNeighborhood::New();
+    }
+  else
+    {
+    vtkErrorMacro("DataSet not vtkPolyData or vtkUnstructuredGrid");
+    return;
+    }
+
+  neighborhood->SetDataSet(dataSet);
+
+  int numberOfNeighborhoods = dataSet->GetNumberOfPoints();
+
+  int numberOfRows = numberOfVariables*numberOfNeighborhoods;
+
+  this->Initialize();
+  this->SetNumberOfRows(numberOfRows);
+
+  int i;
+  for (i=0; i<numberOfRows; i++)
+    {
+    vtkvmtkSparseMatrixRow* row = this->GetRow(i);
+    vtkIdType pointId = i % numberOfNeighborhoods;
+    vtkIdType variableId = i / numberOfNeighborhoods;
+    neighborhood->SetDataSetPointId(pointId);
+    neighborhood->Build();
+    int numberOfNeighborhoodPoints = neighborhood->GetNumberOfPoints();
+    int numberOfElements = numberOfNeighborhoodPoints + (numberOfVariables-1)*(numberOfNeighborhoodPoints+1);
+    row->SetNumberOfElements(numberOfElements);
+    int index = 0;
+    for (int n=0; n<numberOfVariables; n++)
+      {
+      for (int j=0; j<numberOfNeighborhoodPoints; j++)
+        {
+        row->SetElementId(index,neighborhood->GetPointId(j)+n*numberOfNeighborhoods);
+        row->SetElement(index,0.0);
+        index++;
+        }
+      if (n != variableId)
+        {
+        row->SetElementId(index,pointId+n*numberOfNeighborhoods);
+        row->SetElement(index,0.0);
+        index++;
+        }
+      }
+    }
+  neighborhood->Delete();
 }
 
 double vtkvmtkSparseMatrix::GetElement(vtkIdType i, vtkIdType j)

@@ -23,8 +23,6 @@
 #include "vtkvmtkGaussQuadrature.h"
 #include "vtkvmtkFEShapeFunctions.h"
 #include "vtkObjectFactory.h"
-#include "vtkPolyData.h"
-#include "vtkUnstructuredGrid.h"
 
 vtkCxxRevisionMacro(vtkvmtkFEAssembler, "$Revision: 1.3 $");
 
@@ -66,24 +64,7 @@ void vtkvmtkFEAssembler::Initialize(int numberOfVariables)
 {
   this->NumberOfVariables = numberOfVariables;
 
-  vtkvmtkNeighborhoods* neighborhoods = vtkvmtkNeighborhoods::New();
-  if (vtkPolyData::SafeDownCast(this->DataSet))
-    {
-    neighborhoods->SetNeighborhoodTypeToPolyDataNeighborhood();
-    }
-  else if (vtkUnstructuredGrid::SafeDownCast(this->DataSet))
-    {
-    neighborhoods->SetNeighborhoodTypeToUnstructuredGridNeighborhood();
-    }
-  else
-    {
-    vtkErrorMacro("DataSet not vtkPolyData or vtkUnstructuredGrid");
-    return;
-    }
-  neighborhoods->SetDataSet(this->DataSet);
-  neighborhoods->Build();
-  this->Matrix->AllocateRowsFromNeighborhoods(neighborhoods,this->NumberOfVariables);
-  neighborhoods->Delete();
+  this->Matrix->AllocateRowsFromDataSet(this->DataSet,this->NumberOfVariables);
 
   this->RHSVector->Allocate(this->DataSet->GetNumberOfPoints(),this->NumberOfVariables);
   this->RHSVector->Fill(0.0);
