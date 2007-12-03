@@ -29,6 +29,7 @@ Version:   $Revision: 1.12 $
 #include "vtkPolyLine.h"
 #include "vtkPointData.h"
 #include "vtkDoubleArray.h"
+#include "vtkIntArray.h"
 #include "vtkMath.h"
 #include "vtkCellArray.h"
 #include "vtkInformation.h"
@@ -68,6 +69,463 @@ vtkvmtkPolyDataFlowExtensionsFilter::~vtkvmtkPolyDataFlowExtensionsFilter()
     this->BoundaryIds = NULL;
     }
 }
+//#define EXPERIMENTAL_FLOWEXTENSIONS
+#ifdef EXPERIMENTAL_FLOWEXTENSIONS
+int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
+  vtkInformation *vtkNotUsed(request),
+  vtkInformationVector **inputVector,
+  vtkInformationVector *outputVector)
+{
+  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
+  vtkInformation *outInfo = outputVector->GetInformationObject(0);
+
+  vtkPolyData *input = vtkPolyData::SafeDownCast(
+    inInfo->Get(vtkDataObject::DATA_OBJECT()));
+  vtkPolyData *output = vtkPolyData::SafeDownCast(
+    outInfo->Get(vtkDataObject::DATA_OBJECT()));
+
+  if (this->ExtensionMode == USE_CENTERLINE_DIRECTION)
+    {
+    if (!this->Centerlines)
+      {
+      vtkErrorMacro(<< "Centerlines not set.");
+      return 1;
+      }
+    }
+
+  vtkPoints* outputPoints = vtkPoints::New();
+  vtkCellArray* outputPolys = vtkCellArray::New();
+
+  outputPoints->DeepCopy(input->GetPoints());
+  outputPolys->DeepCopy(input->GetPolys());
+
+  vtkvmtkPolyDataBoundaryExtractor* boundaryExtractor = vtkvmtkPolyDataBoundaryExtractor::New();
+  boundaryExtractor->SetInput(input);
+  boundaryExtractor->Update();
+
+  vtkPolyData* boundaries = boundaryExtractor->GetOutput();
+
+  vtkPolyData* centerlines = vtkPolyData::New();
+  vtkvmtkPolyBallLine* tube = vtkvmtkPolyBallLine::New();
+  vtkDoubleArray* zeroRadiusArray = vtkDoubleArray::New();
+
+  vtkIntArray* clampArray = vtkIntArray::New();
+  clampArray->SetName("Clamp");
+  clampArray->SetNumberOfTuples(outputPoints->GetNumberOfPoints());
+  clampArray->FillComponent(0,1.0);
+
+  if (this->ExtensionMode == USE_CENTERLINE_DIRECTION)
+    {
+    centerlines->DeepCopy(this->Centerlines);
+
+    const char zeroRadiusArrayName[] = "ZeroRadiusArray";
+
+    zeroRadiusArray->SetName(zeroRadiusArrayName);
+    zeroRadiusArray->SetNumberOfTuples(centerlines->GetNumberOfPoints());
+    zeroRadiusArray->FillComponent(0,0.0);
+    
+    centerlines->GetPointData()->AddArray(zeroRadiusArray);
+  
+    tube->SetInput(centerlines);
+    tube->SetPolyBallRadiusArrayName(zeroRadiusArrayName);
+    }
+
+  input->BuildCells();
+  input->BuildLinks();
+
+  int i, k;
+  for (i=0; i<boundaries->GetNumberOfCells(); i++)
+    {
+    if (this->BoundaryIds)
+      {
+      if (this->BoundaryIds->IsId(i) == -1)
+        {
+        continue;
+        }
+      }
+    
+    vtkPolyLine* boundary = vtkPolyLine::SafeDownCast(boundaries->GetCell(i));
+
+    if (!boundary)
+      {
+      vtkErrorMacro(<<"Boundary not a vtkPolyLine");
+      continue;
+      }
+
+    int numberOfBoundaryPoints = boundary->GetNumberOfPoints();
+
+    vtkIdList* boundaryIds = vtkIdList::New();
+    int j;
+    for (j=0; j<numberOfBoundaryPoints; j++)
+      {
+      boundaryIds->InsertNextId(static_cast<vtkIdType>(vtkMath::Round(boundaries->GetPointData()->GetScalars()->GetComponent(boundary->GetPointId(j),0))));
+      }
+    
+    double barycenter[3];
+    double normal[3], outwardNormal[3];
+    double meanRadius, targetRadius;
+
+    vtkvmtkBoundaryReferenceSystems::ComputeBoundaryBarycenter(boundary->GetPoints(),barycenter);
+    meanRadius = vtkvmtkBoundaryReferenceSystems::ComputeBoundaryMeanRadius(boundary->GetPoints(),barycenter);
+    vtkvmtkBoundaryReferenceSystems::ComputeBoundaryNormal(boundary->GetPoints(),barycenter,normal);
+    vtkvmtkBoundaryReferenceSystems::OrientBoundaryNormalOutwards(input,boundaries,i,normal,outwardNormal);
+
+    int boundaryDirection = 1;
+    if (vtkMath::Dot(normal,outwardNormal) > 0.0)
+      {
+      boundaryDirection = -1;
+      }
+
+    double flowExtensionNormal[3];
+    flowExtensionNormal[0] = flowExtensionNormal[1] = flowExtensionNormal[2] = 0.0;  
+ 
+    if (this->ExtensionMode == USE_CENTERLINE_DIRECTION)
+      {
+      tube->EvaluateFunction(barycenter);
+  
+      double centerlinePoint[3];
+      vtkIdType cellId, subId;
+      double pcoord;
+      tube->GetLastPolyBallCenter(centerlinePoint);
+      cellId = tube->GetLastPolyBallCellId();
+      subId = tube->GetLastPolyBallCellSubId();
+      pcoord = tube->GetLastPolyBallCellPCoord();
+  
+      vtkCell* centerline = centerlines->GetCell(cellId);
+  
+      vtkIdType pointId0, pointId1;
+      double abscissa;
+  
+      double point0[3], point1[3];
+  
+      pointId0 = 0;
+      abscissa = sqrt(vtkMath::Distance2BetweenPoints(centerlinePoint,centerline->GetPoints()->GetPoint(subId)));
+      for (j=subId-1; j>=0; j--)
+        {
+        centerline->GetPoints()->GetPoint(j,point0);
+        centerline->GetPoints()->GetPoint(j+1,point1);
+        abscissa += sqrt(vtkMath::Distance2BetweenPoints(point0,point1));
+        if (abscissa > meanRadius * this->CenterlineNormalEstimationDistanceRatio)
+          {
+          pointId0 = j;
+          break;
+          }
+        }
+  
+      pointId1 = centerline->GetNumberOfPoints()-1;
+      abscissa = sqrt(vtkMath::Distance2BetweenPoints(centerlinePoint,centerline->GetPoints()->GetPoint(subId+1)));
+      for (j=subId+1; j<centerline->GetNumberOfPoints()-2; j++)
+        {
+        centerline->GetPoints()->GetPoint(j,point0);
+        centerline->GetPoints()->GetPoint(j+1,point1);
+        abscissa += sqrt(vtkMath::Distance2BetweenPoints(point0,point1));
+        if (abscissa > meanRadius * this->CenterlineNormalEstimationDistanceRatio)
+          {
+          pointId1 = j+1;
+          break;
+          }
+        }
+  
+      // TODO: use an approximating spline or smooth centerline points to better catch the trend in computing centerlineNormal
+  
+      double centerlineNormal[3];
+  
+      centerline->GetPoints()->GetPoint(pointId0,point0);
+      centerline->GetPoints()->GetPoint(pointId1,point1);
+  
+      double toleranceFactor = 1E-4;
+  
+      for (k=0; k<3; k++)
+        {
+        centerlineNormal[k] = 0.0;
+        }
+      if (sqrt(vtkMath::Distance2BetweenPoints(point1,centerlinePoint)) > toleranceFactor*meanRadius)
+        {
+        for (k=0; k<3; k++)
+          {
+          centerlineNormal[k] += point1[k] - centerlinePoint[k];
+          }
+        } 
+      if (sqrt(vtkMath::Distance2BetweenPoints(centerlinePoint,point0)) > toleranceFactor*meanRadius)
+        {
+        for (k=0; k<3; k++)
+          {
+          centerlineNormal[k] += centerlinePoint[k] - point0[k];
+          }
+        }
+  
+      vtkMath::Normalize(centerlineNormal);
+  
+      for (k=0; k<3; k++)
+        {
+        flowExtensionNormal[k] = centerlineNormal[k];
+        }
+  
+      if (vtkMath::Dot(outwardNormal,centerlineNormal) < 0.0)
+        {
+        for (k=0; k<3; k++)
+          {
+          flowExtensionNormal[k] *= -1.0;
+          }
+        }
+      }
+    else if (this->ExtensionMode == USE_NORMAL_TO_BOUNDARY)
+      {
+      for (k=0; k<3; k++)
+        {
+        flowExtensionNormal[k] = outwardNormal[k];
+        }
+      }
+    else
+      {
+      vtkErrorMacro(<< "Invalid ExtensionMode.");
+      return 1;
+      }
+
+    double extensionLength;
+
+    if (this->AdaptiveExtensionLength)
+      {
+      extensionLength = meanRadius * this->ExtensionRatio;
+      }
+    else
+      {
+      extensionLength = this->ExtensionLength;
+      }
+
+    double point[3], extensionPoint[3];
+    double barycenterToPoint[3];
+    double distanceToBarycenter, outOfPlaneDistance, projectedDistanceToBarycenter;
+    double projectedBarycenterToPoint[3];
+    double projectedTargetRadius = 0.0;
+    double maxOutOfPlaneDistance = 0.0;
+    for (j=0; j<numberOfBoundaryPoints; j++)
+      {
+      boundary->GetPoints()->GetPoint(j,point);
+      for (k=0; k<3; k++)
+        {
+        barycenterToPoint[k] = point[k] - barycenter[k];
+        }
+      outOfPlaneDistance = vtkMath::Dot(barycenterToPoint,flowExtensionNormal);
+      for (k=0; k<3; k++)
+        {
+        projectedBarycenterToPoint[k] = barycenterToPoint[k] - outOfPlaneDistance*flowExtensionNormal[k];
+        }
+      projectedTargetRadius += vtkMath::Norm(projectedBarycenterToPoint);
+      if (outOfPlaneDistance > maxOutOfPlaneDistance)
+        {
+        maxOutOfPlaneDistance = outOfPlaneDistance;
+        }
+      }
+    projectedTargetRadius /= numberOfBoundaryPoints;
+
+    if (this->AdaptiveExtensionRadius)
+      {
+      targetRadius = meanRadius;
+      }
+    else
+      {
+      targetRadius = this->ExtensionRadius;
+      projectedTargetRadius = this->ExtensionRadius;
+      }
+
+    vtkIdList* newBoundaryIds = vtkIdList::New();
+    vtkIdList* previousBoundaryIds = vtkIdList::New();
+    vtkIdType pointId;
+
+    double advancementRatio, factor;
+
+    previousBoundaryIds->DeepCopy(boundaryIds);
+
+    // TODO: use area, not meanRadius as targetRadius
+
+    double targetDistanceBetweenPoints = 2.0 * sin (vtkMath::Pi() / this->NumberOfBoundaryPoints) * projectedTargetRadius;
+    double initialDistanceBetweenPoints = 2.0 * sin (vtkMath::Pi() / numberOfBoundaryPoints) * projectedTargetRadius;
+
+    double currentLength = 0.0;
+
+    if (boundaryDirection == -1)
+      {
+      previousBoundaryIds->Initialize();
+      for (j=0; j<numberOfBoundaryPoints; j++)
+        {
+        previousBoundaryIds->InsertNextId(boundaryIds->GetId(numberOfBoundaryPoints-j-1));
+        }
+      }
+    
+    while (true)
+      {
+      newBoundaryIds->Initialize();
+
+      advancementRatio = currentLength / extensionLength; // TODO based on length
+
+      if (advancementRatio > 1.0)
+        {
+        break;
+        }
+
+      factor = advancementRatio / this->TransitionRatio;
+      factor = factor > 1.0 ?  1.0 : factor;
+
+      double layerTargetDistanceBetweenPoints = targetDistanceBetweenPoints * factor + initialDistanceBetweenPoints * (1.0 - factor);
+
+      for (k=0; k<3; k++)
+        {
+        barycenter[k] += layerTargetDistanceBetweenPoints * flowExtensionNormal[k];
+        }
+
+      currentLength += layerTargetDistanceBetweenPoints;
+
+      double currentDistance = 0.0;
+
+      int numberOfPreviousBoundaryPoints = previousBoundaryIds->GetNumberOfIds();
+
+      for (j=0; j<numberOfPreviousBoundaryPoints; j++)
+        {
+        vtkIdType prevj = (numberOfPreviousBoundaryPoints+j-1) % numberOfPreviousBoundaryPoints;
+
+        outputPoints->GetPoint(previousBoundaryIds->GetId(j),point);
+        double previousPoint[3];
+        outputPoints->GetPoint(previousBoundaryIds->GetId(prevj),previousPoint);
+
+        currentDistance += sqrt(vtkMath::Distance2BetweenPoints(point,previousPoint));
+        for (k=0; k<3; k++)
+          {
+          barycenterToPoint[k] = point[k] - barycenter[k];
+          }
+        distanceToBarycenter = vtkMath::Norm(barycenterToPoint);
+        outOfPlaneDistance = vtkMath::Dot(barycenterToPoint,flowExtensionNormal);
+        for (k=0; k<3; k++)
+          {
+          projectedBarycenterToPoint[k] = barycenterToPoint[k] - outOfPlaneDistance*flowExtensionNormal[k];
+          }
+        projectedDistanceToBarycenter = vtkMath::Norm(projectedBarycenterToPoint);
+       
+        vtkMath::Normalize(projectedBarycenterToPoint);
+        for (k=0; k<3; k++)
+          {
+          extensionPoint[k] = barycenter[k];
+          extensionPoint[k] += projectedBarycenterToPoint[k] * projectedTargetRadius;
+          extensionPoint[k] += maxOutOfPlaneDistance * flowExtensionNormal[k];
+          extensionPoint[k] += layerTargetDistanceBetweenPoints * flowExtensionNormal[k];
+          }
+       
+        int clamp = 1;
+        if (advancementRatio < this->TransitionRatio)
+          {
+//          thinPlateSplineTransform->TransformPoint(extensionPoint,extensionPoint);
+            clamp = 0;
+          }
+          
+        pointId = outputPoints->InsertNextPoint(extensionPoint);
+        clampArray->InsertNextValue(clamp);
+        newBoundaryIds->InsertNextId(pointId);
+
+        if (j==0)
+          {
+          currentDistance = 0.0;
+          continue;
+          }
+
+        vtkIdType pts[3];
+
+        pts[0] = newBoundaryIds->GetId(newBoundaryIds->GetNumberOfIds()-1);
+        pts[1] = newBoundaryIds->GetId(newBoundaryIds->GetNumberOfIds()-2);
+        pts[2] = previousBoundaryIds->GetId(prevj);
+        outputPolys->InsertNextCell(3,pts);
+
+        pts[0] = previousBoundaryIds->GetId(j);
+        pts[1] = newBoundaryIds->GetId(newBoundaryIds->GetNumberOfIds()-1);
+        pts[2] = previousBoundaryIds->GetId(prevj);
+        outputPolys->InsertNextCell(3,pts);
+
+        currentDistance = 0.0;
+        }
+
+      vtkIdType pts[3];
+
+      pts[0] = newBoundaryIds->GetId(0);
+      pts[1] = newBoundaryIds->GetId(newBoundaryIds->GetNumberOfIds()-1);
+      pts[2] = previousBoundaryIds->GetId(previousBoundaryIds->GetNumberOfIds()-1);
+      outputPolys->InsertNextCell(3,pts);
+
+      pts[0] = previousBoundaryIds->GetId(0);
+      pts[1] = newBoundaryIds->GetId(0);
+      pts[2] = previousBoundaryIds->GetId(previousBoundaryIds->GetNumberOfIds()-1);
+      outputPolys->InsertNextCell(3,pts);
+
+      previousBoundaryIds->DeepCopy(newBoundaryIds);
+
+      vtkTransform* transform = vtkTransform::New();
+      int numberOfNewBoundaryIds = newBoundaryIds->GetNumberOfIds();
+      if (advancementRatio > this->TransitionRatio)
+        {
+        double angleFactor = advancementRatio - this->TransitionRatio; 
+        double rotationCenter[3];
+        for (k=0; k<3; k++)
+          {
+          rotationCenter[k] = barycenter[k];
+          rotationCenter[k] += maxOutOfPlaneDistance * flowExtensionNormal[k];
+          rotationCenter[k] += layerTargetDistanceBetweenPoints * flowExtensionNormal[k];
+          }
+        double baseRadialNormal[3];
+        outputPoints->GetPoint(newBoundaryIds->GetId(0),point);
+        for (k=0; k<3; k++)
+          {
+          baseRadialNormal[k] = point[k] - rotationCenter[k];
+          }
+        vtkMath::Normalize(baseRadialNormal);
+        for (j=0; j<numberOfNewBoundaryIds; j++)
+          {
+          vtkIdType id = newBoundaryIds->GetId(j);
+          outputPoints->GetPoint(id,point);
+          transform->Identity();
+          double radialNormal[3];
+          for (k=0; k<3; k++)
+            {
+            radialNormal[k] = point[k] - rotationCenter[k];
+            }
+          vtkMath::Normalize(radialNormal);
+          double cross[3];
+          vtkMath::Cross(flowExtensionNormal,baseRadialNormal,cross);
+          double dot = vtkMath::Dot(radialNormal,cross);
+          double actualAngle = vtkvmtkMath::AngleBetweenNormals(radialNormal,baseRadialNormal) * 180.0 / vtkMath::Pi();
+          if (dot < 0.0 && actualAngle > 0.0)
+            {
+            actualAngle = 360.0 - actualAngle;
+            }
+          double targetAngle = double(j) / numberOfNewBoundaryIds * 360.0;
+          double angle = angleFactor * (targetAngle - actualAngle);
+          transform->Translate(rotationCenter);
+          transform->RotateWXYZ(angle,flowExtensionNormal);
+          transform->Translate(-rotationCenter[0],-rotationCenter[1],-rotationCenter[2]);
+          outputPoints->SetPoint(id,transform->TransformPoint(point));
+          }
+        }
+      transform->Delete();
+      }
+
+    newBoundaryIds->Delete();
+    previousBoundaryIds->Delete();
+    boundaryIds->Delete();
+    }
+
+  output->SetPoints(outputPoints);
+  output->SetPolys(outputPolys);
+  output->GetPointData()->AddArray(clampArray);
+
+  outputPoints->Delete();
+  outputPolys->Delete();
+
+  tube->Delete();
+  zeroRadiusArray->Delete();
+  boundaryExtractor->Delete();
+  clampArray->Delete();
+
+  return 1;
+}
+
+#else
 
 double vtkRBFr3(double r)
 {
@@ -572,7 +1030,7 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
 
   return 1;
 }
-
+#endif
 void vtkvmtkPolyDataFlowExtensionsFilter::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
