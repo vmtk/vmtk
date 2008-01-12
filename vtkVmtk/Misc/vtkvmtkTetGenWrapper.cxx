@@ -48,7 +48,6 @@ vtkvmtkTetGenWrapper::vtkvmtkTetGenWrapper()
   this->MaxVolume = -1.0;       //    number after -a, -1.0
   this->RemoveSliver = 0;       // -s switch, 0
   this->MaxDihedral = 0.0;      //    number after -s, 0.0
-//  this->InsertAddPoints = 0;    // -i switch, 0
   this->RegionAttrib = 0;       // -A switch, 0
   this->Epsilon = 1.0e-8;       // number after -T switch, 1.0e-8
   this->NoMerge = 0;            // -M switch, 0
@@ -59,52 +58,26 @@ vtkvmtkTetGenWrapper::vtkvmtkTetGenWrapper()
   
   this->Verbose = 0;
 
-//  this->AdditionalPoints = NULL;
-
-  this->PointMarkerArrayName = new char[512];
-  strcpy(this->PointMarkerArrayName,"PointMarkerArray");
-  this->FacetMarkerArrayName = new char[512];
-  strcpy(this->FacetMarkerArrayName,"FacetMarkerArray");
+  this->CellEntityIdsArrayName = NULL;
 
   this->TetrahedronVolumeArrayName = NULL;
 
   this->OutputSurfaceElements = 1;
   this->OutputVolumeElements = 1;
-
-  this->GenerateEntityArrays = 1;
-
-  this->EntityArrayNamePrefix = NULL;
 }
 
 vtkvmtkTetGenWrapper::~vtkvmtkTetGenWrapper()
 {
-//  if (this->AdditionalPoints)
-//    {
-//    this->AdditionalPoints->Delete();
-//    }
-
-  if (this->PointMarkerArrayName)
+  if (this->CellEntityIdsArrayName)
     {
-    delete[] this->PointMarkerArrayName;
-    this->PointMarkerArrayName = NULL;
+    delete[] this->CellEntityIdsArrayName;
+    this->CellEntityIdsArrayName = NULL;
     }
 
-  if (this->FacetMarkerArrayName)
-    {
-    delete[] this->FacetMarkerArrayName;
-    this->FacetMarkerArrayName = NULL;
-    }
-
-  if (this->TetrahedronVolumeArrayName)
+ if (this->TetrahedronVolumeArrayName)
     {
     delete[] this->TetrahedronVolumeArrayName;
     this->TetrahedronVolumeArrayName = NULL;
-    }
-
-  if (this->EntityArrayNamePrefix)
-    {
-    delete[] this->EntityArrayNamePrefix;
-    this->EntityArrayNamePrefix = NULL;
     }
 }
 
@@ -124,12 +97,6 @@ int vtkvmtkTetGenWrapper::RequestData(
   if (this->VarVolume && !this->TetrahedronVolumeArrayName)
     {
     vtkErrorMacro(<<"VarVolumeOn but TetrahedronVolumeArrayName not specified");
-    return 1;
-    }
-
-  if (this->GenerateEntityArrays && !this->EntityArrayNamePrefix)
-    {
-    vtkErrorMacro(<<"GenerateEntityArraysOn but EntityArrayNamePrefix not specified");
     return 1;
     }
 
@@ -197,11 +164,6 @@ int vtkvmtkTetGenWrapper::RequestData(
     tetgenOptionString += "A";
     }
 
-//  if (this->InsertAddPoints)
-//    {
-//    tetgenOptionString += "i";
-//    }
-
   if (this->NoMerge)
     {
     tetgenOptionString += "M";
@@ -221,7 +183,6 @@ int vtkvmtkTetGenWrapper::RequestData(
     {
     tetgenOptionString += "c";
     }
-  
 
   tetgenOptionString += "z";  
 // tetgenOptionString += "Y";  
@@ -252,9 +213,7 @@ int vtkvmtkTetGenWrapper::RequestData(
 
   in_tetgenio.numberofpoints = numberOfPoints;
   in_tetgenio.pointlist = new REAL[meshDimensionality * numberOfPoints];
-  in_tetgenio.pointmarkerlist = new int[numberOfPoints];
-
-  vtkDataArray* pointMarkerArray = input->GetPointData()->GetArray(this->PointMarkerArrayName);
+//  in_tetgenio.pointmarkerlist = new int[numberOfPoints];
 
   double point[3];
   int i;
@@ -264,7 +223,7 @@ int vtkvmtkTetGenWrapper::RequestData(
     in_tetgenio.pointlist[meshDimensionality * i + 0] = point[0];
     in_tetgenio.pointlist[meshDimensionality * i + 1] = point[1];
     in_tetgenio.pointlist[meshDimensionality * i + 2] = point[2];
-
+#if 0
     if (pointMarkerArray)
       {
       in_tetgenio.pointmarkerlist[i] = static_cast<int>(pointMarkerArray->GetComponent(i,0));
@@ -273,26 +232,9 @@ int vtkvmtkTetGenWrapper::RequestData(
       {
       in_tetgenio.pointmarkerlist[i] = 0;
       }
+#endif
     }
 
-/*  if (this->InsertAddPoints)
-    {
-    if (!this->AdditionalPoints)
-      {
-      vtkErrorMacro(<<"No AdditionalPoints specified.");
-      }
-    int numberOfAddPoints = this->AdditionalPoints->GetNumberOfPoints();
-    in_tetgenio.numberofaddpoints = numberOfAddPoints;
-    in_tetgenio.addpointlist = new REAL[meshDimensionality * numberOfAddPoints];
-    for (i=0; i<numberOfAddPoints; i++)
-      {
-      this->AdditionalPoints->GetPoint(i,point);
-      in_tetgenio.addpointlist[meshDimensionality * i + 0] = point[0];
-      in_tetgenio.addpointlist[meshDimensionality * i + 1] = point[1];
-      in_tetgenio.addpointlist[meshDimensionality * i + 2] = point[2];
-      }
-    }
-*/
   vtkIdList* facetCellIds = vtkIdList::New();
   vtkIdList* tetraCellIds = vtkIdList::New();
 
@@ -344,7 +286,7 @@ int vtkvmtkTetGenWrapper::RequestData(
     in_tetgenio.facetlist = new tetgenio::facet[numberOfFacets];
     in_tetgenio.facetmarkerlist = new int[numberOfFacets];
 
-    vtkDataArray* facetMarkerArray = input->GetCellData()->GetArray(this->FacetMarkerArrayName);
+    vtkDataArray* facetMarkerArray = input->GetCellData()->GetArray(this->CellEntityIdsArrayName);
 
     for (i=0; i<numberOfFacets; i++)
       {
@@ -435,10 +377,6 @@ int vtkvmtkTetGenWrapper::RequestData(
   cout<<tetgenOptions<<endl;
   tetrahedralize(tetgenOptions,&in_tetgenio,&out_tetgenio);
 
-//   out_tetgenio.save_nodes("foo");
-//   out_tetgenio.save_elements("foo");
-//   out_tetgenio.save_faces("foo");
-
   //TODO
 //  out_tetgenio.edgelist; //int* 
 //  out_tetgenio.edgemarkerlist; //int* 
@@ -448,11 +386,6 @@ int vtkvmtkTetGenWrapper::RequestData(
 
   vtkPoints* outputPoints = vtkPoints::New();
 
-  vtkIntArray* outputPointMarkerArray = vtkIntArray::New();
-  outputPointMarkerArray->SetNumberOfTuples(out_tetgenio.numberofpoints);
-  outputPointMarkerArray->SetName(this->PointMarkerArrayName);
-  outputPointMarkerArray->FillComponent(0,0.0);
-
   outputPoints->SetNumberOfPoints(out_tetgenio.numberofpoints);
   for (i=0; i<out_tetgenio.numberofpoints; i++)
     {
@@ -460,7 +393,6 @@ int vtkvmtkTetGenWrapper::RequestData(
     point[1] = out_tetgenio.pointlist[meshDimensionality * i + 1];
     point[2] = out_tetgenio.pointlist[meshDimensionality * i + 2];
     outputPoints->SetPoint(i,point);
-    outputPointMarkerArray->SetValue(i,out_tetgenio.pointmarkerlist[i]);
     }
 
   output->SetPoints(outputPoints);
@@ -483,11 +415,40 @@ int vtkvmtkTetGenWrapper::RequestData(
 
   vtkIntArray* outputCellMarkerArray = vtkIntArray::New();
   outputCellMarkerArray->SetNumberOfTuples(numberOfOutputCells);
-  outputCellMarkerArray->SetName(this->FacetMarkerArrayName);
+  outputCellMarkerArray->SetName(this->CellEntityIdsArrayName);
   outputCellMarkerArray->FillComponent(0,0.0);
 
   int cellIdOffset = 0;
- 
+
+#if 1 
+  if (this->OutputVolumeElements)
+    {
+    int outputCellType;
+    switch (this->Order)
+      {
+      case 1:
+        outputCellType = VTK_TETRA;
+        break;
+      case 2:
+        outputCellType = VTK_QUADRATIC_TETRA;
+        break;
+      default:
+        outputCellType = VTK_TETRA;
+      }
+    
+    for (i=0; i<out_tetgenio.numberoftetrahedra; i++)
+      {
+      outputCellArray->InsertNextCell(out_tetgenio.numberofcorners);
+      for (int j=0; j<out_tetgenio.numberofcorners; j++)
+        {
+        outputCellArray->InsertCellPoint(out_tetgenio.tetrahedronlist[i*out_tetgenio.numberofcorners + j]);
+        }
+      outputCellTypes[cellIdOffset+i] = outputCellType;
+      }
+
+    cellIdOffset = out_tetgenio.numberoftetrahedra;
+    }
+
   if (this->OutputSurfaceElements)
     {
     int outputCellType = VTK_TRIANGLE;
@@ -500,8 +461,27 @@ int vtkvmtkTetGenWrapper::RequestData(
         {
         outputCellArray->InsertCellPoint(out_tetgenio.trifacelist[i*numberOfTrifaceCorners + j]);
         }
-      outputCellTypes[i] = outputCellType;
-      outputCellMarkerArray->SetValue(i,out_tetgenio.trifacemarkerlist[i]);
+      outputCellTypes[cellIdOffset+i] = outputCellType;
+      outputCellMarkerArray->SetValue(cellIdOffset+i,out_tetgenio.trifacemarkerlist[i]);
+      }
+
+    cellIdOffset = out_tetgenio.numberoftrifaces;
+    }
+#else
+  if (this->OutputSurfaceElements)
+    {
+    int outputCellType = VTK_TRIANGLE;
+    int numberOfTrifaceCorners = 3;
+
+    for (i=0; i<out_tetgenio.numberoftrifaces; i++)
+      {
+      outputCellArray->InsertNextCell(numberOfTrifaceCorners);
+      for (int j=0; j<numberOfTrifaceCorners; j++)
+        {
+        outputCellArray->InsertCellPoint(out_tetgenio.trifacelist[i*numberOfTrifaceCorners + j]);
+        }
+      outputCellTypes[cellIdOffset+i] = outputCellType;
+      outputCellMarkerArray->SetValue(cellIdOffset+i,out_tetgenio.trifacemarkerlist[i]+1);
       }
 
     cellIdOffset = out_tetgenio.numberoftrifaces;
@@ -529,62 +509,21 @@ int vtkvmtkTetGenWrapper::RequestData(
         {
         outputCellArray->InsertCellPoint(out_tetgenio.tetrahedronlist[i*out_tetgenio.numberofcorners + j]);
         }
-      outputCellTypes[cellIdOffset + i] = outputCellType;
+      outputCellTypes[cellIdOffset+i] = outputCellType;
       }
+
+    cellIdOffset = out_tetgenio.numberoftetrahedra;
     }
+#endif
 
   output->SetCells(outputCellTypes,outputCellArray);
-  output->GetPointData()->AddArray(outputPointMarkerArray);
 
-  if (this->OutputSurfaceElements)
-    {
-    output->GetCellData()->AddArray(outputCellMarkerArray);
-    }
+  output->GetCellData()->AddArray(outputCellMarkerArray);
 
-  //TODO: include regions and regional attributes in output volume cell arrays
-
-  if (this->GenerateEntityArrays)
-    {
-    int numberOfTrifaceCorners = 3;
-
-    int maxTrifaceMarker = 0;
-    for (i=0; i<out_tetgenio.numberoftrifaces; i++)
-      {
-      if (out_tetgenio.trifacemarkerlist[i] > maxTrifaceMarker)
-        {
-        maxTrifaceMarker = out_tetgenio.trifacemarkerlist[i];
-        }
-      }
-
-    for (int n=0; n<=maxTrifaceMarker; n++)
-      {
-      char entityArrayName[512];
-      sprintf(entityArrayName,"%s%d",this->EntityArrayNamePrefix,n);
-      vtkIntArray* entityArray = vtkIntArray::New();
-      entityArray->SetName(entityArrayName);
-      entityArray->SetNumberOfTuples(out_tetgenio.numberofpoints);
-      entityArray->FillComponent(0,0.0);
-      for (i=0; i<out_tetgenio.numberoftrifaces; i++)
-        {
-        if (out_tetgenio.trifacemarkerlist[i] != n)
-          {
-          continue;
-          }
-        for (int j=0; j<numberOfTrifaceCorners; j++)
-          {
-          entityArray->SetValue(out_tetgenio.trifacelist[i*numberOfTrifaceCorners + j],1);
-          }
-        }
-      output->GetPointData()->AddArray(entityArray);
-      entityArray->Delete();
-      }
-    }
-  
   outputPoints->Delete();
   outputCellArray->Delete();
   delete[] outputCellTypes;
 
-  outputPointMarkerArray->Delete();
   outputCellMarkerArray->Delete();
 
   return 1;

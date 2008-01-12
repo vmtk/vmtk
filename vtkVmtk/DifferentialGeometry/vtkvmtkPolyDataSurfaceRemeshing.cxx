@@ -22,12 +22,15 @@
 #include "vtkvmtkPolyDataSurfaceRemeshing.h"
 #include "vtkvmtkPolyDataUmbrellaStencil.h"
 #include "vtkvmtkPolyDataBoundaryExtractor.h"
+#include "vtkPolyDataNormals.h"
 #include "vtkIdList.h"
+#include "vtkIdTypeArray.h"
 #include "vtkCellArray.h"
 #include "vtkMeshQuality.h"
 #include "vtkCellLocator.h"
 #include "vtkTriangle.h"
 #include "vtkPointData.h"
+#include "vtkCellData.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
@@ -37,21 +40,28 @@ vtkStandardNewMacro(vtkvmtkPolyDataSurfaceRemeshing);
 
 vtkvmtkPolyDataSurfaceRemeshing::vtkvmtkPolyDataSurfaceRemeshing()
 {
-  this->AspectRatioThreshold = 1.3;
+  this->AspectRatioThreshold = 1.2;
   this->InternalAngleTolerance = 0.0;
   this->NormalAngleTolerance = 0.2;
+  this->CollapseAngleThreshold = 0.5;
   this->Relaxation = 0.5;
   this->TargetArea = 1.0;
   this->TargetAreaFactor = 1.0;
+  this->MinimumAreaFactor = 0.5;
   this->TargetAreaArrayName = NULL;
   this->NumberOfConnectivityOptimizationIterations = 20;
   this->NumberOfIterations = 10;
   this->ElementSizeMode = TARGET_AREA;
+  this->PreserveBoundaryEdges = 0;
+  this->CellEntityIdsArrayName = NULL;
+  this->CellEntityIdsArray = NULL;
 
   this->Mesh = NULL;
   this->InputBoundary = NULL;
+  this->InputEntityBoundary = NULL;
   this->Locator = NULL;
   this->BoundaryLocator = NULL;
+  this->EntityBoundaryLocator = NULL;
 }
 
 vtkvmtkPolyDataSurfaceRemeshing::~vtkvmtkPolyDataSurfaceRemeshing()
@@ -68,6 +78,12 @@ vtkvmtkPolyDataSurfaceRemeshing::~vtkvmtkPolyDataSurfaceRemeshing()
     this->InputBoundary = NULL;
     }
 
+  if (this->InputEntityBoundary)
+    {
+    this->InputEntityBoundary->Delete();
+    this->InputEntityBoundary = NULL;
+    }
+
   if (this->Locator)
     {
     this->Locator->Delete();
@@ -80,10 +96,22 @@ vtkvmtkPolyDataSurfaceRemeshing::~vtkvmtkPolyDataSurfaceRemeshing()
     this->BoundaryLocator = NULL;
     }
 
+  if (this->EntityBoundaryLocator)
+    {
+    this->EntityBoundaryLocator->Delete();
+    this->EntityBoundaryLocator = NULL;
+    }
+
   if (this->TargetAreaArrayName)
     {
     delete[] this->TargetAreaArrayName;
     this->TargetAreaArrayName = NULL;
+    }
+
+  if (this->CellEntityIdsArrayName)
+    {
+    delete[] this->CellEntityIdsArrayName;
+    this->CellEntityIdsArrayName = NULL;
     }
 }
 
@@ -115,24 +143,78 @@ int vtkvmtkPolyDataSurfaceRemeshing::RequestData(
       }
     }
 
+  if (this->CellEntityIdsArray)
+    {
+    this->CellEntityIdsArray->Delete();
+    this->CellEntityIdsArray = NULL;
+    }
+    
+  this->CellEntityIdsArray = vtkIdTypeArray::New();
+  if (this->CellEntityIdsArrayName)
+    {
+    vtkDataArray* cellEntityIdsArray = input->GetCellData()->GetArray(this->CellEntityIdsArrayName);
+    if (!cellEntityIdsArray)
+      {
+      vtkErrorMacro(<<"CellEntityIdsArray with name specified does not exist");
+      return 1;
+      }
+    this->CellEntityIdsArray->DeepCopy(cellEntityIdsArray);
+    }
+  else
+    {
+    this->CellEntityIdsArray->SetNumberOfValues(input->GetNumberOfPoints());
+    this->CellEntityIdsArray->FillComponent(0,0.0);
+    }
+
   if (this->Mesh)
     {
     this->Mesh->Delete();
     this->Mesh = NULL;
     }
 
+  vtkPolyDataNormals* normals = vtkPolyDataNormals::New();
+  normals->SetInput(input);
+  normals->ComputePointNormalsOff();
+  normals->ComputeCellNormalsOn();
+  normals->AutoOrientNormalsOn();
+  normals->ConsistencyOn();
+  normals->SplittingOff();
+  normals->Update();
+
+  vtkDataArray* cellNormals = normals->GetOutput()->GetCellData()->GetNormals();
+
   this->Mesh = vtkPolyData::New();
   vtkPoints* workingPoints = vtkPoints::New();
   vtkCellArray* workingCells = vtkCellArray::New();
   workingPoints->DeepCopy(input->GetPoints());
   
+  double point1[3], point2[3], point3[3];
+  double cellNormal[3], orientedCellNormal[3];
   for (int i=0; i<input->GetNumberOfCells(); i++)
     {
     if (input->GetCellType(i) != VTK_TRIANGLE)
       {
       continue;
       }
-    workingCells->InsertNextCell(input->GetCell(i));
+    vtkCell* cell = input->GetCell(i);
+    cell->GetPoints()->GetPoint(0,point1);
+    cell->GetPoints()->GetPoint(1,point2);
+    cell->GetPoints()->GetPoint(2,point3);
+    vtkTriangle::ComputeNormal(point1,point2,point3,cellNormal); 
+    cellNormals->GetTuple(i,orientedCellNormal);
+    workingCells->InsertNextCell(3);
+    if (vtkMath::Dot(cellNormal,orientedCellNormal) > 0.0)
+      {
+      workingCells->InsertCellPoint(cell->GetPointId(0));
+      workingCells->InsertCellPoint(cell->GetPointId(1));
+      workingCells->InsertCellPoint(cell->GetPointId(2));
+      }
+    else
+      {
+      workingCells->InsertCellPoint(cell->GetPointId(1));
+      workingCells->InsertCellPoint(cell->GetPointId(0));
+      workingCells->InsertCellPoint(cell->GetPointId(2));
+      }
     }
 
   this->Mesh->SetPoints(workingPoints);
@@ -140,6 +222,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::RequestData(
 
   workingPoints->Delete();
   workingCells->Delete(); 
+  normals->Delete();
 
   this->Mesh->BuildCells();
   this->Mesh->BuildLinks();
@@ -175,11 +258,34 @@ int vtkvmtkPolyDataSurfaceRemeshing::RequestData(
     this->BoundaryLocator = NULL;
     }
 
-  this->BoundaryLocator = vtkCellLocator::New();
-  this->BoundaryLocator->SetDataSet(this->InputBoundary);
-  this->BoundaryLocator->BuildLocator();
+  if (this->InputBoundary->GetNumberOfCells() > 0)
+    {
+    this->BoundaryLocator = vtkCellLocator::New();
+    this->BoundaryLocator->SetDataSet(this->InputBoundary);
+    this->BoundaryLocator->BuildLocator();
+    }
 
-  //TODO: handle feature edges (treat collapse like boundary, avoid flipping, project on feature edges)
+  if (this->InputEntityBoundary)
+    {
+    this->InputEntityBoundary->Delete();
+    this->InputEntityBoundary = NULL;
+    }
+
+  this->InputEntityBoundary = vtkPolyData::New();
+  this->BuildEntityBoundary(this->Mesh,this->InputEntityBoundary);
+
+  if (this->EntityBoundaryLocator)
+    {
+    this->EntityBoundaryLocator->Delete();
+    this->EntityBoundaryLocator = NULL;
+    }
+
+  if (this->InputEntityBoundary->GetNumberOfCells() > 0)
+    {
+    this->EntityBoundaryLocator = vtkCellLocator::New();
+    this->EntityBoundaryLocator->SetDataSet(this->InputEntityBoundary);
+    this->EntityBoundaryLocator->BuildLocator();
+    }
 
   for (int n=0; n<this->NumberOfIterations; n++)
     {
@@ -199,6 +305,8 @@ int vtkvmtkPolyDataSurfaceRemeshing::RequestData(
   
   vtkPoints* newPoints = vtkPoints::New();
   vtkCellArray* newCells = vtkCellArray::New();
+  vtkIdTypeArray* newCellEntityIdsArray = vtkIdTypeArray::New();
+  newCellEntityIdsArray->SetName(this->CellEntityIdsArrayName);
 
   newPoints->DeepCopy(this->Mesh->GetPoints());
 
@@ -214,15 +322,67 @@ int vtkvmtkPolyDataSurfaceRemeshing::RequestData(
       continue;
       }
     newCells->InsertNextCell(this->Mesh->GetCell(i));
+    newCellEntityIdsArray->InsertNextValue(this->CellEntityIdsArray->GetValue(i));
     }
 
   output->SetPoints(newPoints);
   output->SetPolys(newCells);
+  output->GetCellData()->AddArray(newCellEntityIdsArray);
  
   newPoints->Delete();
   newCells->Delete();
+  newCellEntityIdsArray->Delete();
 
   return 1;
+}
+
+void vtkvmtkPolyDataSurfaceRemeshing::BuildEntityBoundary(vtkPolyData* input, vtkPolyData* entityBoundary)
+{
+  vtkPoints* entityBoundaryPoints = vtkPoints::New();
+  vtkCellArray* entityBoundaryCells = vtkCellArray::New();
+  vtkIdList* cellIds = vtkIdList::New();
+  vtkIdType numberOfCells = input->GetNumberOfCells();
+  vtkIdType npts, *pts;
+  for (int i=0; i<numberOfCells; i++)
+    {
+    if (input->GetCellType(i) != VTK_TRIANGLE)
+      {
+      continue;
+      }
+    input->GetCellPoints(i,npts,pts);
+    vtkIdType cellEntityId = this->CellEntityIdsArray->GetValue(i);
+    for (int j=0; j<npts; j++)
+      {
+      cellIds->Initialize();
+      vtkIdType pt1 = pts[j];
+      vtkIdType pt2 = pts[(j+1)%npts];
+      input->GetCellEdgeNeighbors(i,pt1,pt2,cellIds);
+      bool entityBoundaryEdge = false;
+      for (int k=0; k<cellIds->GetNumberOfIds(); k++)
+        {
+        if (this->CellEntityIdsArray->GetValue(cellIds->GetId(k)) != cellEntityId)
+          {
+          entityBoundaryEdge = true;
+          break;
+          }
+        }
+      if (entityBoundaryEdge)
+        {
+        vtkIdType pt1Id = entityBoundaryPoints->InsertNextPoint(input->GetPoint(pt1));
+        vtkIdType pt2Id = entityBoundaryPoints->InsertNextPoint(input->GetPoint(pt2));
+        entityBoundaryCells->InsertNextCell(2);
+        entityBoundaryCells->InsertCellPoint(pt1Id);
+        entityBoundaryCells->InsertCellPoint(pt2Id);
+        }
+      }
+    }
+
+  entityBoundary->SetPoints(entityBoundaryPoints);
+  entityBoundary->SetLines(entityBoundaryCells);
+
+  cellIds->Delete();
+  entityBoundaryPoints->Delete();
+  entityBoundaryCells->Delete();
 }
 
 int vtkvmtkPolyDataSurfaceRemeshing::GetNumberOfBoundaryEdges(vtkIdType cellId)
@@ -391,6 +551,41 @@ void vtkvmtkPolyDataSurfaceRemeshing::PointRelocationIteration()
     } 
 }
 
+int vtkvmtkPolyDataSurfaceRemeshing::IsPointOnEntityBoundary(vtkIdType pointId)
+{
+  vtkIdList* ptCells = vtkIdList::New();
+  this->Mesh->GetPointCells(pointId,ptCells);
+  vtkIdType nptCells = ptCells->GetNumberOfIds();
+  vtkIdType neighborhoodCellEntityId = -1;
+  bool uniformCellEntityIds = true;
+  for (int i=0; i<nptCells; i++)
+    {
+    vtkIdType cellEntityId = this->CellEntityIdsArray->GetValue(ptCells->GetId(i)); 
+    if (cellEntityId == -1)
+      {
+      continue;
+      }
+    if (neighborhoodCellEntityId == -1)
+      {
+      neighborhoodCellEntityId = cellEntityId;
+      continue;
+      }
+    if (neighborhoodCellEntityId == cellEntityId)
+      {
+      continue;
+      }
+    uniformCellEntityIds = false;
+    break;
+    }
+
+  if (!uniformCellEntityIds)
+    {
+    return 1;
+    }
+
+  return 0;
+}
+
 void vtkvmtkPolyDataSurfaceRemeshing::RelocatePoint(vtkIdType pointId)
 {
   vtkvmtkPolyDataUmbrellaStencil* stencil = vtkvmtkPolyDataUmbrellaStencil::New();
@@ -426,8 +621,14 @@ void vtkvmtkPolyDataSurfaceRemeshing::RelocatePoint(vtkIdType pointId)
     vtkIdType cellId;
     int subId;
     double dist2;
-    this->Locator->FindClosestPoint(relocatedPoint,projectedRelocatedPoint,cellId,subId,dist2);
-  
+    if (this->IsPointOnEntityBoundary(pointId))
+      {
+      this->EntityBoundaryLocator->FindClosestPoint(relocatedPoint,projectedRelocatedPoint,cellId,subId,dist2);
+      }
+    else
+      {
+      this->Locator->FindClosestPoint(relocatedPoint,projectedRelocatedPoint,cellId,subId,dist2);
+      }
     this->Mesh->GetPoints()->SetPoint(pointId,projectedRelocatedPoint);
     }
   else
@@ -460,7 +661,17 @@ void vtkvmtkPolyDataSurfaceRemeshing::RelocatePoint(vtkIdType pointId)
     vtkIdType cellId;
     int subId;
     double dist2;
-    this->BoundaryLocator->FindClosestPoint(relocatedPoint,projectedRelocatedPoint,cellId,subId,dist2);
+    if (this->BoundaryLocator)
+      {
+      this->BoundaryLocator->FindClosestPoint(relocatedPoint,projectedRelocatedPoint,cellId,subId,dist2);
+      }
+    else
+      {
+      vtkErrorMacro(<<"Something's wrong: point on boundary but no BoundaryLocator is allocated.");
+      projectedRelocatedPoint[0] = relocatedPoint[0];
+      projectedRelocatedPoint[1] = relocatedPoint[1];
+      projectedRelocatedPoint[2] = relocatedPoint[2];
+      }
   
     this->Mesh->GetPoints()->SetPoint(pointId,projectedRelocatedPoint);
     }
@@ -573,6 +784,11 @@ int vtkvmtkPolyDataSurfaceRemeshing::GetEdgeCellsAndOppositeEdge(vtkIdType pt1, 
     cell2 = tmp;
     }
 
+  if (this->CellEntityIdsArray->GetValue(cell1) != this->CellEntityIdsArray->GetValue(cell2))
+    {
+    return EDGE_BETWEEN_ENTITIES;
+    }
+
   return SUCCESS;
 }
 
@@ -588,6 +804,8 @@ int vtkvmtkPolyDataSurfaceRemeshing::SplitTriangle(vtkIdType cellId)
   vtkIdType pt1 = pts[0];
   vtkIdType pt2 = pts[1];
   vtkIdType pt3 = pts[2];
+
+  vtkIdType cellEntityId = this->CellEntityIdsArray->GetValue(cellId);
 
   double point1[3], point2[3], point3[3], newPoint[3];
   this->Mesh->GetPoint(pt1,point1);
@@ -612,18 +830,20 @@ int vtkvmtkPolyDataSurfaceRemeshing::SplitTriangle(vtkIdType cellId)
   tri[1] = pt3;
   tri[2] = newpt;
   vtkIdType cell1 = this->Mesh->InsertNextLinkedCell(VTK_TRIANGLE,3,tri);
+  this->CellEntityIdsArray->InsertValue(cell1,cellEntityId);
 
   tri[0] = pt3;
   tri[1] = pt1;
   tri[2] = newpt;
   vtkIdType cell2 = this->Mesh->InsertNextLinkedCell(VTK_TRIANGLE,3,tri);
+  this->CellEntityIdsArray->InsertValue(cell2,cellEntityId);
 
   return SUCCESS;
 }
 
 int vtkvmtkPolyDataSurfaceRemeshing::CollapseTriangle(vtkIdType cellId)
 {
-  cout<<"Not implemented!"<<endl;
+  vtkErrorMacro(<<"CollapseTriangle not yet implemented.");
   return -1;
 }
 
@@ -632,7 +852,24 @@ int vtkvmtkPolyDataSurfaceRemeshing::SplitEdge(vtkIdType pt1, vtkIdType pt2)
   vtkIdType cell1, cell2, pt3, pt4;
   int success = vtkvmtkPolyDataSurfaceRemeshing::GetEdgeCellsAndOppositeEdge(pt1,pt2,cell1,cell2,pt3,pt4);
 
-  if (success != SUCCESS && success != EDGE_ON_BOUNDARY)
+  bool proceed = false;
+
+  if (success == SUCCESS)
+    {
+    proceed = true;
+    }
+
+  if (!this->PreserveBoundaryEdges && success == EDGE_ON_BOUNDARY)
+    {
+    proceed = true;
+    }
+
+  if (success == EDGE_BETWEEN_ENTITIES)
+    {
+    proceed = true;
+    }
+
+  if (!proceed)
     {
     return success;
     }
@@ -653,7 +890,14 @@ int vtkvmtkPolyDataSurfaceRemeshing::SplitEdge(vtkIdType pt1, vtkIdType pt2)
     int subId;
     double dist2;
 
-    this->Locator->FindClosestPoint(newPoint,projectedNewPoint,cellId,subId,dist2);
+    if (success == EDGE_BETWEEN_ENTITIES)
+      {
+      this->EntityBoundaryLocator->FindClosestPoint(newPoint,projectedNewPoint,cellId,subId,dist2);
+      }
+    else
+      {
+      this->Locator->FindClosestPoint(newPoint,projectedNewPoint,cellId,subId,dist2);
+      }
     vtkIdType newpt = this->Mesh->InsertNextLinkedPoint(projectedNewPoint,2);
   
     this->Mesh->ReplaceCellPoint(cell1,pt2,newpt);
@@ -670,10 +914,13 @@ int vtkvmtkPolyDataSurfaceRemeshing::SplitEdge(vtkIdType pt1, vtkIdType pt2)
     tri[1] = newpt;
     tri[2] = pt2;
     vtkIdType cell3 = this->Mesh->InsertNextLinkedCell(VTK_TRIANGLE,3,tri);
+    this->CellEntityIdsArray->InsertValue(cell3,this->CellEntityIdsArray->GetValue(cell1));
+
     tri[0] = pt2;
     tri[1] = newpt;
     tri[2] = pt4;
     vtkIdType cell4 = this->Mesh->InsertNextLinkedCell(VTK_TRIANGLE,3,tri);
+    this->CellEntityIdsArray->InsertValue(cell4,this->CellEntityIdsArray->GetValue(cell2));
     }
   else
     {
@@ -682,7 +929,17 @@ int vtkvmtkPolyDataSurfaceRemeshing::SplitEdge(vtkIdType pt1, vtkIdType pt2)
     int subId;
     double dist2;
 
-    this->BoundaryLocator->FindClosestPoint(newPoint,projectedNewPoint,cellId,subId,dist2);
+    if (this->BoundaryLocator)
+      {
+      this->BoundaryLocator->FindClosestPoint(newPoint,projectedNewPoint,cellId,subId,dist2);
+      }
+    else
+      {
+      vtkErrorMacro(<<"Something's wrong: point on boundary but no BoundaryLocator is allocated.");
+      projectedNewPoint[0] = newPoint[0];
+      projectedNewPoint[1] = newPoint[1];
+      projectedNewPoint[2] = newPoint[2];
+      }
     vtkIdType newpt = this->Mesh->InsertNextLinkedPoint(projectedNewPoint,2);
   
     this->Mesh->ReplaceCellPoint(cell1,pt2,newpt);
@@ -694,6 +951,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::SplitEdge(vtkIdType pt1, vtkIdType pt2)
     tri[1] = newpt;
     tri[2] = pt2;
     vtkIdType cell3 = this->Mesh->InsertNextLinkedCell(VTK_TRIANGLE,3,tri);
+    this->CellEntityIdsArray->InsertValue(cell3,this->CellEntityIdsArray->GetValue(cell1));
     }
  
   return SUCCESS;
@@ -704,13 +962,31 @@ int vtkvmtkPolyDataSurfaceRemeshing::CollapseEdge(vtkIdType pt1, vtkIdType pt2)
   vtkIdType cell1, cell2, pt3, pt4;
   int success = vtkvmtkPolyDataSurfaceRemeshing::GetEdgeCellsAndOppositeEdge(pt1,pt2,cell1,cell2,pt3,pt4);
 
-  if (success != SUCCESS && success != EDGE_ON_BOUNDARY)
+  bool proceed = false;
+
+  if (success == SUCCESS)
+    {
+    proceed = true;
+    }
+
+  if (!this->PreserveBoundaryEdges && success == EDGE_ON_BOUNDARY)
+    {
+    proceed = true;
+    }
+
+  if (success == EDGE_BETWEEN_ENTITIES)
+    {
+    proceed = true;
+    }
+
+  if (!proceed)
     {
     return success;
     }
 
   if (success != EDGE_ON_BOUNDARY)
     {
+    bool swappedForBoundary = false;
     int pt1OnBoundary = this->IsPointOnBoundary(pt1);
     int pt2OnBoundary = this->IsPointOnBoundary(pt2);
     if (!pt1OnBoundary && pt2OnBoundary)
@@ -718,8 +994,22 @@ int vtkvmtkPolyDataSurfaceRemeshing::CollapseEdge(vtkIdType pt1, vtkIdType pt2)
       vtkIdType tmp = pt1;
       pt1 = pt2;
       pt2 = tmp;
+      swappedForBoundary = true;
       }
-  
+ 
+    int pt1OnEntityBoundary = this->IsPointOnEntityBoundary(pt1);
+    int pt2OnEntityBoundary = this->IsPointOnEntityBoundary(pt2);
+    if (!pt1OnEntityBoundary && pt2OnEntityBoundary)
+      {
+      if (swappedForBoundary)
+        {
+        return EDGE_LOCKED;
+        }
+      vtkIdType tmp = pt1;
+      pt1 = pt2;
+      pt2 = tmp;
+      }
+ 
     vtkIdList* pt2Cells = vtkIdList::New();
     this->Mesh->GetPointCells(pt2,pt2Cells);
     vtkIdType npt2Cells = pt2Cells->GetNumberOfIds();
@@ -730,7 +1020,9 @@ int vtkvmtkPolyDataSurfaceRemeshing::CollapseEdge(vtkIdType pt1, vtkIdType pt2)
     this->Mesh->RemoveReferenceToCell(pt4,cell2);
     this->Mesh->DeletePoint(pt2);
     this->Mesh->DeleteCell(cell1); 
+    this->CellEntityIdsArray->InsertValue(cell1,-1);
     this->Mesh->DeleteCell(cell2); 
+    this->CellEntityIdsArray->InsertValue(cell2,-1);
   
     this->Mesh->ResizeCellList(pt1,npt2Cells-2);
   
@@ -757,6 +1049,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::CollapseEdge(vtkIdType pt1, vtkIdType pt2)
     this->Mesh->RemoveReferenceToCell(pt3,cell1);
     this->Mesh->DeletePoint(pt2);
     this->Mesh->DeleteCell(cell1); 
+    this->CellEntityIdsArray->InsertValue(cell1,-1);
   
     this->Mesh->ResizeCellList(pt1,npt2Cells-1);
   
@@ -790,17 +1083,23 @@ int vtkvmtkPolyDataSurfaceRemeshing::FlipEdge(vtkIdType pt1, vtkIdType pt2)
   this->Mesh->RemoveCellReference(cell1);
   this->Mesh->RemoveCellReference(cell2);
   this->Mesh->DeleteCell(cell1); 
+  vtkIdType cell1EntityId = this->CellEntityIdsArray->GetValue(cell1);
+  this->CellEntityIdsArray->InsertValue(cell1,-1);
   this->Mesh->DeleteCell(cell2); 
+  vtkIdType cell2EntityId = this->CellEntityIdsArray->GetValue(cell2);
+  this->CellEntityIdsArray->InsertValue(cell2,-1);
 
   vtkIdType tri[3];
   tri[0] = pt3;
   tri[1] = pt1;
   tri[2] = pt4;
   vtkIdType cell1b = this->Mesh->InsertNextLinkedCell(VTK_TRIANGLE,3,tri);
+  this->CellEntityIdsArray->InsertValue(cell1b,cell1EntityId);
   tri[0] = pt2;
   tri[1] = pt3;
   tri[2] = pt4;
   vtkIdType cell2b = this->Mesh->InsertNextLinkedCell(VTK_TRIANGLE,3,tri);
+  this->CellEntityIdsArray->InsertValue(cell2b,cell2EntityId);
 
   vtkIdType pt3b, pt4b;
   if (vtkvmtkPolyDataSurfaceRemeshing::GetEdgeCellsAndOppositeEdge(pt3,pt4,cell1,cell2,pt3b,pt4b) != SUCCESS)
@@ -808,15 +1107,19 @@ int vtkvmtkPolyDataSurfaceRemeshing::FlipEdge(vtkIdType pt1, vtkIdType pt2)
     this->Mesh->RemoveCellReference(cell1b);
     this->Mesh->RemoveCellReference(cell2b);
     this->Mesh->DeleteCell(cell1b);
+    this->CellEntityIdsArray->InsertValue(cell1b,-1);
     this->Mesh->DeleteCell(cell2b);
+    this->CellEntityIdsArray->InsertValue(cell2b,-1);
     tri[0] = pt1;
     tri[1] = pt2;
     tri[2] = pt3;
-    this->Mesh->InsertNextLinkedCell(VTK_TRIANGLE,3,tri);
+    vtkIdType cell1c = this->Mesh->InsertNextLinkedCell(VTK_TRIANGLE,3,tri);
+    this->CellEntityIdsArray->InsertValue(cell1c,cell1EntityId);
     tri[0] = pt1;
     tri[1] = pt4;
     tri[2] = pt2;
-    this->Mesh->InsertNextLinkedCell(VTK_TRIANGLE,3,tri);
+    vtkIdType cell2c = this->Mesh->InsertNextLinkedCell(VTK_TRIANGLE,3,tri);
+    this->CellEntityIdsArray->InsertValue(cell2c,cell2EntityId);
     }
 
   return SUCCESS;
@@ -882,7 +1185,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::TestConnectivityFlipEdge(vtkIdType pt1, vtk
     return DO_NOTHING;
     }
 
-  if (this->TestFlipEdgeValidity(pt1,pt2,cell1,cell2,pt3,pt4)==DO_NOTHING)
+  if (this->TestFlipEdgeValidity(pt1,pt2,cell1,cell2,pt3,pt4) == DO_NOTHING)
     {
     return DO_NOTHING;
     }
@@ -917,7 +1220,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::TestDelaunayFlipEdge(vtkIdType pt1, vtkIdTy
     return DO_NOTHING;
     }
 
-  if (this->TestFlipEdgeValidity(pt1,pt2,cell1,cell2,pt3,pt4)==DO_NOTHING)
+  if (this->TestFlipEdgeValidity(pt1,pt2,cell1,cell2,pt3,pt4) == DO_NOTHING)
     {
     return DO_NOTHING;
     }
@@ -1053,7 +1356,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::TestAspectRatioCollapseEdge(vtkIdType cellI
   
   double frobeniusAspectRatio = (side1Squared + side2Squared + side3Squared) / (4.0 * sqrt(3.0) * area);
 
-  if (frobeniusAspectRatio < this->AspectRatioThreshold)
+  if (frobeniusAspectRatio < this->AspectRatioThreshold && area > targetArea * this->MinimumAreaFactor)
     {
     return DO_NOTHING;
     }
@@ -1077,15 +1380,36 @@ int vtkvmtkPolyDataSurfaceRemeshing::TestAspectRatioCollapseEdge(vtkIdType cellI
   vtkIdType cell1, cell2, pt3, pt4;
   int success = vtkvmtkPolyDataSurfaceRemeshing::GetEdgeCellsAndOppositeEdge(pt1,pt2,cell1,cell2,pt3,pt4);
 
-  if (success != SUCCESS && success != EDGE_ON_BOUNDARY)
+  bool proceed = false;
+
+  if (success == SUCCESS)
+    {
+    proceed = true;
+    }
+
+  if (!this->PreserveBoundaryEdges && success == EDGE_ON_BOUNDARY)
+    {
+    proceed = true;
+    }
+
+  if (success == EDGE_BETWEEN_ENTITIES)
+    {
+    proceed = true;
+    }
+
+  if (!proceed)
     {
     return DO_NOTHING;
     }
 
   unsigned short ncells3, ncells4;
+  ncells3 = ncells4 = 0;
   vtkIdType *cells;
   this->Mesh->GetPointCells(pt3,ncells3,cells);
-  this->Mesh->GetPointCells(pt4,ncells4,cells);
+  if (success != EDGE_ON_BOUNDARY)
+    {
+    this->Mesh->GetPointCells(pt4,ncells4,cells);
+    }
   if (ncells3==3 || ncells4==3)
     {
     return DO_NOTHING;
@@ -1123,7 +1447,12 @@ int vtkvmtkPolyDataSurfaceRemeshing::TestAspectRatioCollapseEdge(vtkIdType cellI
     this->Mesh->GetPoint(tri[2],point3);
     vtkTriangle::ComputeNormal(point1,point2,point3,normal2);
 
-    if (vtkMath::Dot(normal1,normal2)<0.0)
+    if (vtkMath::Dot(normal1,normal2) < 0.0)
+      {
+      return DO_NOTHING;
+      }
+
+    if (acos(vtkMath::Dot(normal1,normal2)) > this->CollapseAngleThreshold)
       {
       return DO_NOTHING;
       }
@@ -1177,6 +1506,31 @@ int vtkvmtkPolyDataSurfaceRemeshing::TestAreaSplitEdge(vtkIdType cellId, vtkIdTy
     {
     pt1 = tri[2];
     pt2 = tri[0];
+    }
+
+  vtkIdType cell1, cell2, pt3, pt4;
+  int success = vtkvmtkPolyDataSurfaceRemeshing::GetEdgeCellsAndOppositeEdge(pt1,pt2,cell1,cell2,pt3,pt4);
+
+  bool proceed = false;
+
+  if (success == SUCCESS)
+    {
+    proceed = true;
+    }
+
+  if (!this->PreserveBoundaryEdges && success == EDGE_ON_BOUNDARY)
+    {
+    proceed = true;
+    }
+
+  if (success == EDGE_BETWEEN_ENTITIES)
+    {
+    proceed = true;
+    }
+
+  if (!proceed)
+    {
+    return DO_NOTHING;
     }
 
   return DO_CHANGE;

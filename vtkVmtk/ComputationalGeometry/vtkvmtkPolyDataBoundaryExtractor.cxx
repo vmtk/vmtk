@@ -90,12 +90,31 @@ int vtkvmtkPolyDataBoundaryExtractor::RequestData(
       }
     }
 
+  if (boundaryIds->GetNumberOfIds() == 0)
+    {
+    output->SetPoints(newPoints);
+    output->SetLines(newLines);
+    output->GetPointData()->SetScalars(newScalars);
+  
+    newPoints->Delete();
+    newLines->Delete();
+    newScalars->Delete();
+  
+    boundary->Delete();
+    boundaryIds->Delete();
+    cellEdgeNeighbors->Delete();
+    newCell->Delete();
+
+    return 1;
+    }
+
   foundAny = false;
   foundNeighbor = false;
   done = false;
   currentId = -1;
   int loopCount = 0;
   bool isBoundaryEdge;
+
   while (!done)
     {
     foundAny = false;

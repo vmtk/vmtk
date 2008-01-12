@@ -77,10 +77,6 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkTetGenWrapper : public vtkUnstructuredGridAlgo
   vtkSetMacro(MaxDihedral,double);
   vtkGetMacro(MaxDihedral,double);
 
-  vtkSetMacro(InsertAddPoints,int);
-  vtkGetMacro(InsertAddPoints,int);
-  vtkBooleanMacro(InsertAddPoints,int);
-
   vtkSetMacro(RegionAttrib,int);
   vtkGetMacro(RegionAttrib,int);
   vtkBooleanMacro(RegionAttrib,int);
@@ -111,17 +107,11 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkTetGenWrapper : public vtkUnstructuredGridAlgo
   vtkGetMacro(Verbose,int);
   vtkBooleanMacro(Verbose,int);
 
-  vtkSetStringMacro(PointMarkerArrayName);
-  vtkGetStringMacro(PointMarkerArrayName);
-
-  vtkSetStringMacro(FacetMarkerArrayName);
-  vtkGetStringMacro(FacetMarkerArrayName);
+  vtkSetStringMacro(CellEntityIdsArrayName);
+  vtkGetStringMacro(CellEntityIdsArrayName);
 
   vtkSetStringMacro(TetrahedronVolumeArrayName);
   vtkGetStringMacro(TetrahedronVolumeArrayName);
-
-//  vtkSetObjectMacro(AdditionalPoints,vtkPointSet);
-//  vtkGetObjectMacro(AdditionalPoints,vtkPointSet);
 
   vtkSetMacro(OutputSurfaceElements,int);
   vtkGetMacro(OutputSurfaceElements,int);
@@ -130,13 +120,6 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkTetGenWrapper : public vtkUnstructuredGridAlgo
   vtkSetMacro(OutputVolumeElements,int);
   vtkGetMacro(OutputVolumeElements,int);
   vtkBooleanMacro(OutputVolumeElements,int);
-
-  vtkSetMacro(GenerateEntityArrays,int);
-  vtkGetMacro(GenerateEntityArrays,int);
-  vtkBooleanMacro(GenerateEntityArrays,int);
-
-  vtkSetStringMacro(EntityArrayNamePrefix);
-  vtkGetStringMacro(EntityArrayNamePrefix);
 
   protected:
   vtkvmtkTetGenWrapper();
@@ -155,7 +138,6 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkTetGenWrapper : public vtkUnstructuredGridAlgo
   double MaxVolume;
   int RemoveSliver;
   double MaxDihedral;
-  int InsertAddPoints;
   int RegionAttrib;
   double Epsilon;
   int NoMerge;
@@ -165,18 +147,11 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkTetGenWrapper : public vtkUnstructuredGridAlgo
   int DoCheck;
   int Verbose;
 
-//  vtkPointSet* AdditionalPoints;
-
-  char* PointMarkerArrayName;
-  char* FacetMarkerArrayName;
+  char* CellEntityIdsArrayName;
   char* TetrahedronVolumeArrayName;
 
   int OutputSurfaceElements;
   int OutputVolumeElements;
-
-  int GenerateEntityArrays;
-
-  char* EntityArrayNamePrefix;
 
   private:
   vtkvmtkTetGenWrapper(const vtkvmtkTetGenWrapper&);  // Not implemented.

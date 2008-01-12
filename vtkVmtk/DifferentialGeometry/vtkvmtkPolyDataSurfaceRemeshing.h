@@ -30,6 +30,7 @@
 #include "vtkvmtkWin32Header.h"
 
 class vtkCellLocator;
+class vtkIdTypeArray;
 
 class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkPolyDataSurfaceRemeshing : public vtkPolyDataAlgorithm
 {
@@ -48,6 +49,9 @@ public:
   vtkSetMacro(NormalAngleTolerance,double);
   vtkGetMacro(NormalAngleTolerance,double);
 
+  vtkSetMacro(CollapseAngleThreshold,double);
+  vtkGetMacro(CollapseAngleThreshold,double);
+
   vtkSetMacro(Relaxation,double);
   vtkGetMacro(Relaxation,double);
 
@@ -56,6 +60,9 @@ public:
 
   vtkSetMacro(TargetAreaFactor,double);
   vtkGetMacro(TargetAreaFactor,double);
+
+  vtkSetMacro(MinimumAreaFactor,double);
+  vtkGetMacro(MinimumAreaFactor,double);
 
   vtkSetMacro(NumberOfIterations,int);
   vtkGetMacro(NumberOfIterations,int);
@@ -73,10 +80,19 @@ public:
   void SetElementSizeModeToTargetAreaArray()
   { this->SetElementSizeMode(TARGET_AREA_ARRAY); }
 
+  vtkSetMacro(PreserveBoundaryEdges,int);
+  vtkGetMacro(PreserveBoundaryEdges,int);
+  vtkBooleanMacro(PreserveBoundaryEdges,int);
+
+  vtkSetStringMacro(CellEntityIdsArrayName);
+  vtkGetStringMacro(CellEntityIdsArrayName);
+
   //BTX
   enum {
     SUCCESS = 0,
     EDGE_ON_BOUNDARY,
+    EDGE_BETWEEN_ENTITIES,
+    EDGE_LOCKED,
     NOT_EDGE,
     NON_MANIFOLD,
     NOT_TRIANGLES,
@@ -100,6 +116,8 @@ protected:
 
   virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
 
+  void BuildEntityBoundary(vtkPolyData* input, vtkPolyData* entityBoundary);
+
   int EdgeFlipConnectivityOptimizationIteration();
   int EdgeFlipIteration();
   int EdgeCollapseIteration();
@@ -111,7 +129,7 @@ protected:
   int TestDelaunayFlipEdge(vtkIdType pt1, vtkIdType pt2);
   int TestAspectRatioCollapseEdge(vtkIdType cellId, vtkIdType& pt1, vtkIdType& pt2);
   int TestAreaSplitEdge(vtkIdType cellId, vtkIdType& pt1, vtkIdType& pt2);
-
+  
   int GetEdgeCellsAndOppositeEdge(vtkIdType pt1, vtkIdType pt2, vtkIdType& cell1, vtkIdType& cell2, vtkIdType& pt3, vtkIdType& pt4);
 
   int SplitEdge(vtkIdType pt1, vtkIdType pt2);
@@ -124,6 +142,7 @@ protected:
   void RelocatePoint(vtkIdType pointId);
 
   int IsPointOnBoundary(vtkIdType pointId);
+  int IsPointOnEntityBoundary(vtkIdType pointId);
 
   int GetNumberOfBoundaryEdges(vtkIdType cellId);
 
@@ -131,20 +150,29 @@ protected:
 
   vtkPolyData* Mesh;
   vtkPolyData* InputBoundary;
+  vtkPolyData* InputEntityBoundary;
   vtkCellLocator* Locator;
   vtkCellLocator* BoundaryLocator;
+  vtkCellLocator* EntityBoundaryLocator;
+  vtkIdTypeArray* CellEntityIdsArray;
 
   double AspectRatioThreshold;
   double InternalAngleTolerance;
   double NormalAngleTolerance;
+  double CollapseAngleThreshold;
   double Relaxation;
   int NumberOfConnectivityOptimizationIterations;
   int NumberOfIterations;
 
+  int PreserveBoundaryEdges;
+
   int ElementSizeMode;
   double TargetArea;
   double TargetAreaFactor;
+  double MinimumAreaFactor;
   char* TargetAreaArrayName;
+
+  char* CellEntityIdsArrayName;
 
 private:
   vtkvmtkPolyDataSurfaceRemeshing(const vtkvmtkPolyDataSurfaceRemeshing&);  // Not implemented.
