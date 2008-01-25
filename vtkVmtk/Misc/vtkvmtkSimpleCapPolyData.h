@@ -37,8 +37,8 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkSimpleCapPolyData : public vtkPolyDataAlgorith
 
   static vtkvmtkSimpleCapPolyData *New();
   
-  vtkSetStringMacro(CellMarkerArrayName);
-  vtkGetStringMacro(CellMarkerArrayName);
+  vtkSetStringMacro(CellEntityIdsArrayName);
+  vtkGetStringMacro(CellEntityIdsArrayName);
 
   vtkSetObjectMacro(BoundaryIds,vtkIdList);
   vtkGetObjectMacro(BoundaryIds,vtkIdList);
@@ -50,7 +50,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkSimpleCapPolyData : public vtkPolyDataAlgorith
   virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
 
   vtkIdList* BoundaryIds;
-  char* CellMarkerArrayName;
+  char* CellEntityIdsArrayName;
 
   private:
   vtkvmtkSimpleCapPolyData(const vtkvmtkSimpleCapPolyData&);  // Not implemented.

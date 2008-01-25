@@ -36,16 +36,16 @@ vtkStandardNewMacro(vtkvmtkSimpleCapPolyData);
 
 vtkvmtkSimpleCapPolyData::vtkvmtkSimpleCapPolyData()
 {
-  this->CellMarkerArrayName = NULL;
+  this->CellEntityIdsArrayName = NULL;
   this->BoundaryIds = NULL;
 }
 
 vtkvmtkSimpleCapPolyData::~vtkvmtkSimpleCapPolyData()
 {
-  if (this->CellMarkerArrayName)
+  if (this->CellEntityIdsArrayName)
     {
-    delete[] this->CellMarkerArrayName;
-    this->CellMarkerArrayName = NULL;
+    delete[] this->CellEntityIdsArrayName;
+    this->CellEntityIdsArrayName = NULL;
     }
 
   if (this->BoundaryIds)
@@ -75,12 +75,12 @@ int vtkvmtkSimpleCapPolyData::RequestData(
 
   bool markCells = true;
 
-  if (!this->CellMarkerArrayName)
+  if (!this->CellEntityIdsArrayName)
     {
     markCells = false;
     }
 
-  if (strcmp(this->CellMarkerArrayName,"") == 0)
+  if (strcmp(this->CellEntityIdsArrayName,"") == 0)
     {
     markCells = false;
     }
@@ -93,14 +93,14 @@ int vtkvmtkSimpleCapPolyData::RequestData(
   vtkCellArray* newPolys = vtkCellArray::New();
   newPolys->DeepCopy(input->GetPolys());
 
-  vtkIntArray* cellMarkerArray = NULL;
+  vtkIntArray* cellEntityIdsArray = NULL;
 
   if (markCells)
     {
-    cellMarkerArray = vtkIntArray::New();
-    cellMarkerArray->SetName(this->CellMarkerArrayName);
-    cellMarkerArray->SetNumberOfTuples(newPolys->GetNumberOfCells());
-    cellMarkerArray->FillComponent(0,0.0);
+    cellEntityIdsArray = vtkIntArray::New();
+    cellEntityIdsArray->SetName(this->CellEntityIdsArrayName);
+    cellEntityIdsArray->SetNumberOfTuples(newPolys->GetNumberOfCells());
+    cellEntityIdsArray->FillComponent(0,0.0);
     }
 
   vtkvmtkPolyDataBoundaryExtractor* boundaryExtractor = vtkvmtkPolyDataBoundaryExtractor::New();
@@ -129,7 +129,7 @@ int vtkvmtkSimpleCapPolyData::RequestData(
     newPolys->InsertNextCell(boundaryPointIds);
     if (markCells)
       {
-      cellMarkerArray->InsertNextValue(i+1);
+      cellEntityIdsArray->InsertNextValue(i+1);
       }
     boundaryPointIds->Delete();
     }
@@ -141,8 +141,8 @@ int vtkvmtkSimpleCapPolyData::RequestData(
 
   if (markCells)
     {
-    output->GetCellData()->AddArray(cellMarkerArray);
-    cellMarkerArray->Delete();
+    output->GetCellData()->AddArray(cellEntityIdsArray);
+    cellEntityIdsArray->Delete();
     }
 
   newPoints->Delete();
