@@ -30,7 +30,7 @@ class vmtkSurfaceCapper(pypes.pypeScript):
         
         self.Surface = None
         self.TriangleOutput = 1
-        self.CellEntityIdsArrayName = ''
+        self.CellEntityIdsArrayName = 'CellEntityIds'
         self.Interactive = 1
         self.Method = 'simple'
         self.ConstraintFactor = 1.0
@@ -45,7 +45,7 @@ class vmtkSurfaceCapper(pypes.pypeScript):
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
             ['Method','method','str',1,'["simple","centerpoint","smooth"]','capping method'],
             ['TriangleOutput','triangle','bool',1,'','toggle triangulation of the output'],
-            ['CellEntityIdsArrayName','cellmarkerarray','str',1,'','name of the array where the id of the caps have to be stored'],
+            ['CellEntityIdsArrayName','entityidsarray','str',1,'','name of the array where the id of the caps have to be stored'],
             ['ConstraintFactor','constraint','float',1,'','amount of influence of the shape of the surface near the boundary on the shape of the cap ("smooth" method only)'],
             ['NumberOfRings','rings','int',1,'(0,)','number of rings composing the cap ("smooth" method only)'],
             ['Interactive','interactive','bool',1],
@@ -53,7 +53,7 @@ class vmtkSurfaceCapper(pypes.pypeScript):
             ])
         self.SetOutputMembers([
             ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter'],
-            ['CellEntityIdsArrayName','cellmarkerarray','str',1,'','name of the array where the id of the caps are stored']
+            ['CellEntityIdsArrayName','entityidsarray','str',1,'','name of the array where the id of the caps are stored']
             ])
 
     def LabelValidator(self,text):

@@ -222,9 +222,6 @@ class vmtkImageReader(pypes.pypeScript):
 #            matrix.GetElement(1,0), matrix.GetElement(1,1), matrix.GetElement(1,2), matrix.GetElement(1,3),
 #            matrix.GetElement(2,0), matrix.GetElement(2,1), matrix.GetElement(2,2), matrix.GetElement(2,3),
 #            matrix.GetElement(3,0), matrix.GetElement(3,1), matrix.GetElement(3,2), matrix.GetElement(3,3)]
-        print 'Spacing ', self.Image.GetSpacing()
-        print 'Origin ', self.Image.GetOrigin()
-        print 'Dimensions ', self.Image.GetDimensions()
         if self.ApplyTransform:
             origin = self.Image.GetOrigin()
             matrix = vtk.vtkMatrix4x4()
@@ -312,6 +309,10 @@ class vmtkImageReader(pypes.pypeScript):
                 flipFilter.Update()
                 temp2 = flipFilter.GetOutput()
             self.Image = temp2
+
+        print 'Spacing ', self.Image.GetSpacing()
+        print 'Origin ', self.Image.GetOrigin()
+        print 'Dimensions ', self.Image.GetDimensions()
 
         if self.Image.GetSource():
             self.Image.GetSource().UnRegisterAllOutputs()

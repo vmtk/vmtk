@@ -54,7 +54,7 @@ class vmtkSurfaceRemeshing(pypes.pypeScript):
             ['MinimumAreaFactor','minareafactor','float',1,'(0.0,)'],
             ['NumberOfIterations','iterations','int',1,'(0,)'],
             ['NumberOfConnectivityOptimizationIterations','connectivityiterations','int',1,'(0,)'],
-            ['CellEntityIdsArrayName','cellentityidsarray','str',1],
+            ['CellEntityIdsArrayName','entityidsarray','str',1],
             ['TargetAreaArrayName','targetareaarray','str',1],
             ['ElementSizeMode','elementsizemode','str',1,'["fixedarea","areaarray"]'],
             ['AspectRatioThreshold','aspectratio','float',1,'(0.0,)'],
@@ -83,7 +83,8 @@ class vmtkSurfaceRemeshing(pypes.pypeScript):
 
         surfaceRemeshing = vtkvmtk.vtkvmtkPolyDataSurfaceRemeshing()
         surfaceRemeshing.SetInput(triangleFilter.GetOutput())
-        surfaceRemeshing.SetCellEntityIdsArrayName(self.CellEntityIdsArrayName)
+        if (self.CellEntityIdsArrayName):
+            surfaceRemeshing.SetCellEntityIdsArrayName(self.CellEntityIdsArrayName)
         surfaceRemeshing.SetTargetAreaArrayName(self.TargetAreaArrayName)
         if self.ElementSizeMode == 'fixedarea':
             surfaceRemeshing.SetElementSizeModeToTargetArea()

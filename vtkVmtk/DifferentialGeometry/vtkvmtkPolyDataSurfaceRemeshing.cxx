@@ -49,6 +49,7 @@ vtkvmtkPolyDataSurfaceRemeshing::vtkvmtkPolyDataSurfaceRemeshing()
   this->TargetAreaFactor = 1.0;
   this->MinimumAreaFactor = 0.5;
   this->TargetAreaArrayName = NULL;
+  this->TargetAreaArray = NULL;
   this->NumberOfConnectivityOptimizationIterations = 20;
   this->NumberOfIterations = 10;
   this->ElementSizeMode = TARGET_AREA;
@@ -135,8 +136,8 @@ int vtkvmtkPolyDataSurfaceRemeshing::RequestData(
       vtkErrorMacro(<<"TargetAreaArrayName not specified");
       return 1;
       }
-    vtkDataArray* targetAreaArray = input->GetPointData()->GetArray(this->TargetAreaArrayName);
-    if (!targetAreaArray)
+    this->TargetAreaArray = input->GetPointData()->GetArray(this->TargetAreaArrayName);
+    if (!this->TargetAreaArray)
       {
       vtkErrorMacro(<<"TargetAreaArray with name specified does not exist");
       return 1;
@@ -162,7 +163,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::RequestData(
     }
   else
     {
-    this->CellEntityIdsArray->SetNumberOfValues(input->GetNumberOfPoints());
+    this->CellEntityIdsArray->SetNumberOfValues(input->GetNumberOfCells());
     this->CellEntityIdsArray->FillComponent(0,0.0);
     }
 
@@ -1308,10 +1309,9 @@ double vtkvmtkPolyDataSurfaceRemeshing::ComputeTriangleTargetArea(vtkIdType cell
     vtkTriangle* centerCell = vtkTriangle::SafeDownCast(vtkPolyData::SafeDownCast(this->Locator->GetDataSet())->GetCell(centerCellId));
     double pcoords[3], weights[3];
     centerCell->EvaluatePosition(projectedCenter,NULL,subId,pcoords,dist2,weights);
-    vtkDataArray* targetAreaArray = this->Locator->GetDataSet()->GetPointData()->GetArray(this->TargetAreaArrayName);
     for (int i=0; i<3; i++)
       {
-      targetArea += weights[i] * targetAreaArray->GetTuple1(centerCell->GetPointId(i));
+      targetArea += weights[i] * this->TargetAreaArray->GetTuple1(centerCell->GetPointId(i));
       }
     targetArea *= this->TargetAreaFactor;
     }
@@ -1492,17 +1492,17 @@ int vtkvmtkPolyDataSurfaceRemeshing::TestAreaSplitEdge(vtkIdType cellId, vtkIdTy
     return DO_NOTHING;
     }
 
-  if (side1Squared > side2Squared && side1Squared > side3Squared)
+  if (side1Squared >= side2Squared && side1Squared >= side3Squared)
     {
     pt1 = tri[0];
     pt2 = tri[1];
     }
-  else if (side2Squared > side1Squared && side2Squared > side3Squared)
+  else if (side2Squared >= side1Squared && side2Squared >= side3Squared)
     {
     pt1 = tri[1];
     pt2 = tri[2];
     }
-  else if (side3Squared > side1Squared && side3Squared > side1Squared)
+  else if (side3Squared >= side1Squared && side3Squared >= side1Squared)
     {
     pt1 = tri[2];
     pt2 = tri[0];

@@ -31,11 +31,11 @@ class vmtkTetGen(pypes.pypeScript):
         self.Mesh = None
         self.GenerateCaps = 0
 
-        self.PLC = 0
+        self.PLC = 1
         self.Refine = 0
         self.Coarsen = 0
         self.NoBoundarySplit = 0
-        self.Quality = 0
+        self.Quality = 1
         self.MinRatio = 1.414
         self.VarVolume = 0
         self.FixedVolume = 0
@@ -81,7 +81,7 @@ class vmtkTetGen(pypes.pypeScript):
             ['Order','order','int',1,'','see TetGen documentation'],
             ['DoCheck','docheck','int',1,'','see TetGen documentation'],
             ['Verbose','verbose','int',1,'','see TetGen documentation'],
-            ['CellEntityIdsArrayName','cellentityidsarray','str',1,'','name of the array where cell entity ids are stored'],
+            ['CellEntityIdsArrayName','entityidsarray','str',1,'','name of the array where cell entity ids are stored'],
             ['TetrahedronVolumeArrayName','tetravolumearray','str',1,'','name of the array where volumes of tetrahedra are stored'],
             ['OutputSurfaceElements','surfaceelements','int',1,'','toggle output surface elements'], 
             ['OutputVolumeElements','volumeelements','int',1,'','toggle output volume elements']
@@ -89,7 +89,7 @@ class vmtkTetGen(pypes.pypeScript):
 
         self.SetOutputMembers([
             ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh','vmtkmeshwriter'],
-            ['CellEntityIdsArrayName','cellentityidsarray','str',1,'','name of the array where cell entity ids are stored'],
+            ['CellEntityIdsArrayName','entityidsarray','str',1,'','name of the array where cell entity ids are stored'],
             ['TetrahedronVolumeArrayName','tetravolumearray','str',1,'','name of the array where volumes of tetrahedra are stored']
             ])
 

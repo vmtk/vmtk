@@ -155,6 +155,7 @@ protected:
   vtkCellLocator* BoundaryLocator;
   vtkCellLocator* EntityBoundaryLocator;
   vtkIdTypeArray* CellEntityIdsArray;
+  vtkDataArray* TargetAreaArray;
 
   double AspectRatioThreshold;
   double InternalAngleTolerance;
