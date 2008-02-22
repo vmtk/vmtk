@@ -56,6 +56,7 @@ __all__ = [
   'vmtkpointsplitextractor',
   'vmtkpointtransform',
   'vmtkpotentialfit',
+  'vmtkpythonscript',
   'vmtkrenderer',
   'vmtksurfacecapper',
   'vmtksurfacecelldatatopointdata',
