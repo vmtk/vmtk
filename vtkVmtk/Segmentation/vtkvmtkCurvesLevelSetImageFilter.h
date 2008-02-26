@@ -82,6 +82,11 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkCurvesLevelSetImageFilter : public vtk
     DelegateITKInputMacro( SetUseNegativeFeatures, value);
   }
 
+  void SetUseImageSpacing (int value )
+  {
+    DelegateITKInputMacro( SetUseImageSpacing, value);
+  }
+
   void SetAutoGenerateSpeedAdvection (int value )
   {
     DelegateITKInputMacro( SetAutoGenerateSpeedAdvection, value);

@@ -64,7 +64,7 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
         self.FWHMRadius = [1.0, 1.0, 1.0]
         self.FWHMBackgroundValue = 0.0
         
-        self.ResampleImage = 1
+        self.ResampleImage = 0
         self.ResampleSpacing = 0.0
 
         self.ImageSeeder = None
@@ -352,6 +352,7 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
         levelSets.SetIsoSurfaceValue(self.IsoSurfaceValue)
         levelSets.SetMaximumRMSError(self.MaximumRMSError)
         levelSets.SetInterpolateSurfaceLocation(1)
+        levelSets.SetUseImageSpacing(1)
         levelSets.AddObserver("ProgressEvent", self.PrintProgress)
         levelSets.Update()
 
@@ -397,13 +398,6 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
 
     def MakeImageIsotropic(self):
        
-        cast = vtk.vtkImageCast()
-        cast.SetInput(self.Image)
-        cast.SetOutputScalarTypeToFloat()
-        cast.Update()
-
-        self.Image = cast.GetOutput()
-
         if not self.ResampleImage:
             return
 
@@ -467,6 +461,12 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
           
         if self.Image == None:
             self.PrintError('Error: no Image.')
+
+        cast = vtk.vtkImageCast()
+        cast.SetInput(self.Image)
+        cast.SetOutputScalarTypeToFloat()
+        cast.Update()
+        self.Image = cast.GetOutput()
 
         if self.ResampleImage==1:
             self.MakeImageIsotropic()

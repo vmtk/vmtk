@@ -82,6 +82,11 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkGeodesicActiveContourLevelSetImageFilt
     DelegateITKInputMacro( SetUseNegativeFeatures, value);
   }
 
+  void SetUseImageSpacing (int value )
+  {
+    DelegateITKInputMacro( SetUseImageSpacing, value);
+  }
+
   void SetAutoGenerateSpeedAdvection (int value )
   {
     DelegateITKInputMacro( SetAutoGenerateSpeedAdvection, value);
@@ -148,7 +153,7 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkGeodesicActiveContourLevelSetImageFilt
     DelegateITKOutputMacro( GetInterpolateSurfaceLocation );
   }
 
-  float GetDerivativeSigma ( float value )
+  float GetDerivativeSigma ( )
   {
     DelegateITKOutputMacro ( GetDerivativeSigma );
   };

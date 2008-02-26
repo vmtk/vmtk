@@ -91,7 +91,12 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkGeodesicActiveContourLevelSet2DImageFi
   {
     DelegateITKInputMacro( SetInterpolateSurfaceLocation, value);
   }
-  
+ 
+  void SetUseImageSpacing (int value )
+  {
+    DelegateITKInputMacro( SetUseImageSpacing, value);
+  }
+ 
   void SetDerivativeSigma ( float value )
   {
     DelegateITKInputMacro ( SetDerivativeSigma, value );

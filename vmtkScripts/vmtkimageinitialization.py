@@ -261,8 +261,8 @@ class vmtkImageInitialization(pypes.pypeScript):
         speedImage = shiftScale.GetOutput()
         
         fastMarching = vtkvmtk.vtkvmtkFastMarchingUpwindGradientImageFilter()
-#        fastMarching.SetInput(speedImage)
-        fastMarching.SetInput(thresholdedImage)
+        fastMarching.SetInput(speedImage)
+#        fastMarching.SetInput(thresholdedImage)
         fastMarching.SetSeeds(sourceSeedIds)
         fastMarching.SetTargets(targetSeedIds)
         fastMarching.GenerateGradientImageOff()
@@ -332,8 +332,7 @@ class vmtkImageInitialization(pypes.pypeScript):
         speedImage = shiftScale.GetOutput()
 
         collidingFronts = vtkvmtk.vtkvmtkCollidingFrontsImageFilter()
-#        collidingFronts.SetInput(speedImage)
-        collidingFronts.SetInput(thresholdedImage)
+        collidingFronts.SetInput(speedImage)
         collidingFronts.SetSeeds1(seedIds1)
         collidingFronts.SetSeeds2(seedIds2)
         collidingFronts.ApplyConnectivityOn()
