@@ -544,21 +544,22 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
         if self.ResampleImage:
             self.MakeImageIsotropic()
 
-        if self.LevelSetsType in ["geodesic", "curves"]:
-            imageFeatures = vmtkscripts.vmtkImageFeatures()
-            imageFeatures.Image = self.Image
-            imageFeatures.FeatureImageType = self.FeatureImageType
-            imageFeatures.SigmoidRemapping = self.SigmoidRemapping
-            imageFeatures.DerivativeSigma = self.FeatureDerivativeSigma
-            imageFeatures.UpwindFactor = self.UpwindFactor
-            imageFeatures.FWHMRadius = self.FWHMRadius
-            imageFeatures.FWHMBackgroundValue = self.FWHMBackgroundValue
-            imageFeatures.Execute()
-            self.FeatureImage = imageFeatures.FeatureImage
-        elif self.LevelSetsType == "threshold":
-            self.FeatureImage = self.Image
-        else:
-            self.PrintError('Unsupported LevelSetsType')
+        if not self.FeatureImage:
+            if self.LevelSetsType in ["geodesic", "curves"]:
+                imageFeatures = vmtkscripts.vmtkImageFeatures()
+                imageFeatures.Image = self.Image
+                imageFeatures.FeatureImageType = self.FeatureImageType
+                imageFeatures.SigmoidRemapping = self.SigmoidRemapping
+                imageFeatures.DerivativeSigma = self.FeatureDerivativeSigma
+                imageFeatures.UpwindFactor = self.UpwindFactor
+                imageFeatures.FWHMRadius = self.FWHMRadius
+                imageFeatures.FWHMBackgroundValue = self.FWHMBackgroundValue
+                imageFeatures.Execute()
+                self.FeatureImage = imageFeatures.FeatureImage
+            elif self.LevelSetsType == "threshold":
+                self.FeatureImage = self.Image
+            else:
+                self.PrintError('Unsupported LevelSetsType')
 
         if self.NumberOfIterations != 0:
             self.LevelSetsInput = self.InitialLevelSets
