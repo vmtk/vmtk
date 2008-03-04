@@ -67,6 +67,14 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
         self.ResampleImage = 0
         self.ResampleSpacing = 0.0
 
+        self.UseSpacing = 1
+        self.InterpolateSurfaceLocation = 1
+
+        self.EdgeWeight = 0.0
+        self.SmoothingIterations = 5
+        self.SmoothingTimeStep = 0.1
+        self.SmoothingConductance = 0.8
+
         self.ImageSeeder = None
 
         self.SetScriptName('vmtklevelsetsegmentation')
@@ -75,7 +83,7 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
             ['FeatureImage','featureimage','vtkImageData',1,'','','vmtkimagereader'],
             ['InitialLevelSets','initiallevelsets','vtkImageData',1,'','','vmtkimagereader'],
             ['LevelSets','levelsets','vtkImageData',1,'','','vmtkimagereader'],
-            ['LevelSetsType','levelsetstype','str',1,'["geodesic","curves"]'],
+            ['LevelSetsType','levelsetstype','str',1,'["geodesic","curves","threshold"]'],
             ['FeatureImageType','featureimagetype','str',1,'["vtkgradient","gradient","upwind","fwhm"]'],
             ['SigmoidRemapping','sigmoid','bool',1],
             ['IsoSurfaceValue','isosurfacevalue','float',1],
@@ -83,6 +91,8 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
             ['FeatureDerivativeSigma','featurederivativesigma','float',1,'(0.0,)'],
             ['ResampleImage','resampleimage','bool',1],
             ['ResampleSpacing','resamplespacing','float',1],
+            ['UseSpacing','usespacing','bool',1],
+            ['InterpolateSurfaceLocation','interpolatelocation','bool',1],
             ['UpwindFactor','upwindfactor','float',1,'(0.0,1.0)'],
             ['FWHMRadius','fwhmradius','float',3,'(0.0,)'],
             ['FWHMBackgroundValue','fwhmbackgroundvalue','float',1],
@@ -90,6 +100,10 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
             ['PropagationScaling','propagation','float',1,'(0.0,)'],
             ['CurvatureScaling','curvature','float',1,'(0.0,)'],
             ['AdvectionScaling','advection','float',1,'(0.0,)'],
+            ['EdgeWeight','edgeweight','float',1,'(0.0,)'],
+            ['SmoothingIterations','smoothingiterations','int',1,'(0,)'],
+            ['SmoothingTimeStep','smoothingtimestep','float',1,'(0,)'],
+            ['SmoothingConductance','smoothingconductance','float',1,'(0,)'],
             ['vmtkRenderer','renderer','vmtkRenderer',1]
             ])
         self.SetOutputMembers([
@@ -255,11 +269,14 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
 #        fastMarching = vtkvmtk.vtkvmtkFastMarchingDirectionalFreezeImageFilter()
         fastMarching.SetInput(speedImage)
         fastMarching.SetSeeds(sourceSeedIds)
-        fastMarching.SetTargets(targetSeedIds)
         fastMarching.GenerateGradientImageOff()
         fastMarching.SetTargetOffset(100.0)
-        fastMarching.SetTargetReachedModeToOneTarget()
-##         fastMarching.SetTargetReachedModeToAllTargets()
+        if targetSeedIds.GetNumberOfIds() > 0:
+            fastMarching.SetTargets(targetSeedIds)
+            fastMarching.SetTargetReachedModeToOneTarget()
+#            fastMarching.SetTargetReachedModeToAllTargets()
+        else:
+            fastMarching.SetTargetReachedModeToNoTargets()
         fastMarching.Update()
 
         self.LevelSetsInput = vtk.vtkImageData()
@@ -330,6 +347,36 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
 
         self.IsoSurfaceValue = 10.0 * collidingFronts.GetNegativeEpsilon()
 
+    def SeedInitialize(self):
+
+        self.PrintLog('Seed initialization.')
+
+        queryString = 'Please place seeds'
+        seeds = self.SeedInput(queryString,0)
+        
+        self.LevelSetsInput = vtk.vtkImageData()
+        self.LevelSetsInput.DeepCopy(self.Image)
+        self.LevelSetsInput.Update()
+
+        levelSetsInputScalars = self.LevelSetsInput.GetPointData().GetScalars()
+        levelSetsInputScalars.FillComponent(0,1.0)
+
+        dimensions = self.Image.GetDimensions()
+        for i in range(seeds.GetNumberOfPoints()):
+            id = self.Image.FindPoint(seeds.GetPoint(i))
+            levelSetsInputScalars.SetComponent(id,0,-1.0)
+
+        dilateErode = vtk.vtkImageDilateErode3D()
+        dilateErode.SetInput(self.LevelSetsInput)
+        dilateErode.SetDilateValue(-1.0)
+        dilateErode.SetErodeValue(1.0)
+        dilateErode.SetKernelSize(3,3,3)
+        dilateErode.Update()
+
+        self.LevelSetsInput.DeepCopy(dilateErode.GetOutput())
+
+        self.IsoSurfaceValue = 0.0
+
     def PrintProgress(self,obj,event):
         self.OutputProgress(obj.GetProgress(),10)
 
@@ -337,22 +384,48 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
 
         if self.LevelSetsType == "geodesic":
             levelSets = vtkvmtk.vtkvmtkGeodesicActiveContourLevelSetImageFilter()
+            levelSets.SetFeatureImage(self.FeatureImage)
+            levelSets.SetDerivativeSigma(self.FeatureDerivativeSigma)
+
         elif self.LevelSetsType == "curves":
             levelSets = vtkvmtk.vtkvmtkCurvesLevelSetImageFilter()
+            levelSets.SetFeatureImage(self.FeatureImage)
+            levelSets.SetDerivativeSigma(self.FeatureDerivativeSigma)
+
+        elif self.LevelSetsType == "threshold":
+            levelSets = vtkvmtk.vtkvmtkThresholdSegmentationLevelSetImageFilter()
+            levelSets.SetFeatureImage(self.Image)
+            queryString = "Please input lower threshold (\'i\' to activate image, \'n\' for none): "
+            self.LowerThreshold = self.ThresholdInput(queryString)
+            queryString = "Please input upper threshold (\'i\' to activate image, \'n\' for none): "
+            self.UpperThreshold = self.ThresholdInput(queryString)
+            scalarRange = self.Image.GetScalarRange()
+            if self.LowerThreshold != None:
+                levelSets.SetLowerThreshold(self.LowerThreshold)
+            else:
+                levelSets.SetLowerThreshold(scalarRange[0]-1.0)
+            if self.UpperThreshold != None:
+                levelSets.SetUpperThreshold(self.UpperThreshold)
+            else:
+                levelSets.SetUpperThreshold(scalarRange[1]+1.0)
+            levelSets.SetEdgeWeight(self.EdgeWeight)
+            levelSets.SetSmoothingIterations(self.SmoothingIterations)
+            levelSets.SetSmoothingTimeStep(self.SmoothingTimeStep)
+            levelSets.SetSmoothingConductance(self.SmoothingConductance)
+
         else:
             self.PrintError('Unsupported LevelSetsType')
-        levelSets.SetDerivativeSigma(self.FeatureDerivativeSigma)
+
         levelSets.SetInput(self.LevelSetsInput)
-        levelSets.SetFeatureImage(self.FeatureImage)
-        levelSets.SetAutoGenerateSpeedAdvection(1)
-        levelSets.SetNumberOfIterations(self.NumberOfIterations)
         levelSets.SetPropagationScaling(self.PropagationScaling)
         levelSets.SetCurvatureScaling(self.CurvatureScaling)
         levelSets.SetAdvectionScaling(self.AdvectionScaling)
+        levelSets.SetAutoGenerateSpeedAdvection(1)
+        levelSets.SetNumberOfIterations(self.NumberOfIterations)
         levelSets.SetIsoSurfaceValue(self.IsoSurfaceValue)
         levelSets.SetMaximumRMSError(self.MaximumRMSError)
-        levelSets.SetInterpolateSurfaceLocation(1)
-        levelSets.SetUseImageSpacing(1)
+        levelSets.SetInterpolateSurfaceLocation(self.InterpolateSurfaceLocation)
+        levelSets.SetUseImageSpacing(self.UseSpacing)
         levelSets.AddObserver("ProgressEvent", self.PrintProgress)
         levelSets.Update()
 
@@ -436,7 +509,7 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
             self.LevelSets = reslice.GetOutput()
 
     def InitializationTypeValidator(self,text):
-        if text in ['0','1','2','3']:
+        if text in ['0','1','2','3','4']:
             return 1
         return 0
 
@@ -451,7 +524,7 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
         if text in ['q','e']:
             return 1
         for char in text:
-            if char not in string.digits + '.' + ' ':
+            if char not in string.digits + '.' + ' ' + '-':
                 return 0
         if len(text.strip().split(' ')) in [1,4]:
             return 1
@@ -468,20 +541,24 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
         cast.Update()
         self.Image = cast.GetOutput()
 
-        if self.ResampleImage==1:
+        if self.ResampleImage:
             self.MakeImageIsotropic()
 
-        imageFeatures = vmtkscripts.vmtkImageFeatures()
-        imageFeatures.Image = self.Image
-        imageFeatures.FeatureImageType = self.FeatureImageType
-        imageFeatures.SigmoidRemapping = self.SigmoidRemapping
-        imageFeatures.DerivativeSigma = self.FeatureDerivativeSigma
-        imageFeatures.UpwindFactor = self.UpwindFactor
-        imageFeatures.FWHMRadius = self.FWHMRadius
-        imageFeatures.FWHMBackgroundValue = self.FWHMBackgroundValue
-        imageFeatures.Execute()
-
-        self.FeatureImage = imageFeatures.FeatureImage
+        if self.LevelSetsType in ["geodesic", "curves"]:
+            imageFeatures = vmtkscripts.vmtkImageFeatures()
+            imageFeatures.Image = self.Image
+            imageFeatures.FeatureImageType = self.FeatureImageType
+            imageFeatures.SigmoidRemapping = self.SigmoidRemapping
+            imageFeatures.DerivativeSigma = self.FeatureDerivativeSigma
+            imageFeatures.UpwindFactor = self.UpwindFactor
+            imageFeatures.FWHMRadius = self.FWHMRadius
+            imageFeatures.FWHMBackgroundValue = self.FWHMBackgroundValue
+            imageFeatures.Execute()
+            self.FeatureImage = imageFeatures.FeatureImage
+        elif self.LevelSetsType == "threshold":
+            self.FeatureImage = self.Image
+        else:
+            self.PrintError('Unsupported LevelSetsType')
 
         if self.NumberOfIterations != 0:
             self.LevelSetsInput = self.InitialLevelSets
@@ -512,7 +589,8 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
                                 '0': self.CollidingFrontsInitialize,
                                 '1': self.FastMarchingInitialize,
                                 '2': self.ThresholdInitialize,
-                                '3': self.IsosurfaceInitialize
+                                '3': self.IsosurfaceInitialize,
+                                '4': self.SeedInitialize
                                 }
   
         endSegmentation = 0
@@ -521,7 +599,7 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
             if self.InitialLevelSets == None:
                 endInitialization = 0
                 while (endInitialization == 0):
-                    queryString = 'Please choose initialization type: (0: colliding fronts; 1: fast marching; 2: threshold; 3: isosurface): '
+                    queryString = 'Please choose initialization type: (0: colliding fronts; 1: fast marching; 2: threshold; 3: isosurface, 4: seed): '
                     initializationType = self.InputText(queryString,self.InitializationTypeValidator)
                     initializationMethods[initializationType]()
                     self.DisplayLevelSetSurface(self.LevelSetsInput,self.IsoSurfaceValue)

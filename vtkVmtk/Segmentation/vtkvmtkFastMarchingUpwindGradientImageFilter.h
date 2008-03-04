@@ -93,6 +93,11 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkFastMarchingUpwindGradientImageFilter 
     this->SetTargetReachedMode ( ImageFilterType::OneTarget );
   }
 
+  void SetTargetReachedModeToNoTargets()
+  {
+    this->SetTargetReachedMode ( ImageFilterType::NoTargets );
+  }
+
   void SetTargetReachedModeToAllTargets()
   {
     this->SetTargetReachedMode ( ImageFilterType::AllTargets );

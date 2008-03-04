@@ -16,6 +16,7 @@ SET (VTK_VMTK_SEGMENTATION_SRCS
   vtkvmtkRecursiveGaussianImageFilter.cxx
   vtkvmtkRecursiveGaussian2DImageFilter.cxx
   vtkvmtkSigmoidImageFilter.cxx
+  vtkvmtkThresholdSegmentationLevelSetImageFilter.cxx
   vtkvmtkUpwindGradientMagnitudeImageFilter.cxx
   vtkvmtkPolyDataPotentialFit.cxx
 #  vtkvmtkConstrainedLaplacianPolyDataFilter.cxx
