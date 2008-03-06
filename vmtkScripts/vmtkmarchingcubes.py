@@ -67,11 +67,11 @@ class vmtkMarchingCubes(pypes.pypeScript):
         self.Surface = marchingCubes.GetOutput()
 
         if self.Connectivity == 1:
-            connecitvityFilter = vtk.vtkPolyDataConnectivityFilter()
-            connecitvityFilter.SetInput(self.Surface)
-            connecitvityFilter.SetExtractionModeToLargestRegion()
-            connecitvityFilter.Update()
-            self.Surface = connecitvityFilter.GetOutput()
+            connectivityFilter = vtk.vtkPolyDataConnectivityFilter()
+            connectivityFilter.SetInput(self.Surface)
+            connectivityFilter.SetExtractionModeToLargestRegion()
+            connectivityFilter.Update()
+            self.Surface = connectivityFilter.GetOutput()
 
         if self.Surface.GetSource():
             self.Surface.GetSource().UnRegisterAllOutputs()
