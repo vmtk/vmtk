@@ -16,6 +16,7 @@ SET(SCRIPTS_SRCS
   vmtkcenterlineattributes.py
   vmtkcenterlinegeometry.py
   vmtkcenterlinelabeler.py
+  vmtkcenterlinemeshsections.py
   vmtkcenterlinemerge.py
   vmtkcenterlineoffsetattributes.py
   vmtkcenterlineresampling.py

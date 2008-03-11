@@ -45,6 +45,7 @@ SET (VTK_VMTK_COMPUTATIONALGEOMETRY_SRCS
   vtkvmtkSimplifyVoronoiDiagram.cxx
   vtkvmtkSteepestDescentLineTracer.cxx
   vtkvmtkSteepestDescentShooter.cxx
+  vtkvmtkUnstructuredGridCenterlineSections.cxx
   vtkvmtkVoronoiDiagram3D.cxx
   )
 
