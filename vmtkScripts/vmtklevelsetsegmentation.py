@@ -83,7 +83,7 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
             ['FeatureImage','featureimage','vtkImageData',1,'','','vmtkimagereader'],
             ['InitialLevelSets','initiallevelsets','vtkImageData',1,'','','vmtkimagereader'],
             ['LevelSets','levelsets','vtkImageData',1,'','','vmtkimagereader'],
-            ['LevelSetsType','levelsetstype','str',1,'["geodesic","curves","threshold"]'],
+            ['LevelSetsType','levelsetstype','str',1,'["geodesic","curves","threshold","laplacian"]'],
             ['FeatureImageType','featureimagetype','str',1,'["vtkgradient","gradient","upwind","fwhm"]'],
             ['SigmoidRemapping','sigmoid','bool',1],
             ['IsoSurfaceValue','isosurfacevalue','float',1],
@@ -386,11 +386,19 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
             levelSets = vtkvmtk.vtkvmtkGeodesicActiveContourLevelSetImageFilter()
             levelSets.SetFeatureImage(self.FeatureImage)
             levelSets.SetDerivativeSigma(self.FeatureDerivativeSigma)
+            levelSets.SetAutoGenerateSpeedAdvection(1)
+            levelSets.SetPropagationScaling(self.PropagationScaling)
+            levelSets.SetCurvatureScaling(self.CurvatureScaling)
+            levelSets.SetAdvectionScaling(self.AdvectionScaling)
 
         elif self.LevelSetsType == "curves":
             levelSets = vtkvmtk.vtkvmtkCurvesLevelSetImageFilter()
             levelSets.SetFeatureImage(self.FeatureImage)
             levelSets.SetDerivativeSigma(self.FeatureDerivativeSigma)
+            levelSets.SetAutoGenerateSpeedAdvection(1)
+            levelSets.SetPropagationScaling(self.PropagationScaling)
+            levelSets.SetCurvatureScaling(self.CurvatureScaling)
+            levelSets.SetAdvectionScaling(self.AdvectionScaling)
 
         elif self.LevelSetsType == "threshold":
             levelSets = vtkvmtk.vtkvmtkThresholdSegmentationLevelSetImageFilter()
@@ -412,15 +420,19 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
             levelSets.SetSmoothingIterations(self.SmoothingIterations)
             levelSets.SetSmoothingTimeStep(self.SmoothingTimeStep)
             levelSets.SetSmoothingConductance(self.SmoothingConductance)
+            levelSets.SetPropagationScaling(self.PropagationScaling)
+            levelSets.SetCurvatureScaling(self.CurvatureScaling)
+
+        elif self.LevelSetsType == "laplacian":
+            levelSets = vtkvmtk.vtkvmtkLaplacianSegmentationLevelSetImageFilter()
+            levelSets.SetFeatureImage(self.Image)
+            levelSets.SetPropagationScaling(-self.PropagationScaling)
+            levelSets.SetCurvatureScaling(self.CurvatureScaling)
 
         else:
             self.PrintError('Unsupported LevelSetsType')
 
         levelSets.SetInput(self.LevelSetsInput)
-        levelSets.SetPropagationScaling(self.PropagationScaling)
-        levelSets.SetCurvatureScaling(self.CurvatureScaling)
-        levelSets.SetAdvectionScaling(self.AdvectionScaling)
-        levelSets.SetAutoGenerateSpeedAdvection(1)
         levelSets.SetNumberOfIterations(self.NumberOfIterations)
         levelSets.SetIsoSurfaceValue(self.IsoSurfaceValue)
         levelSets.SetMaximumRMSError(self.MaximumRMSError)
@@ -556,7 +568,7 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
                 imageFeatures.FWHMBackgroundValue = self.FWHMBackgroundValue
                 imageFeatures.Execute()
                 self.FeatureImage = imageFeatures.FeatureImage
-            elif self.LevelSetsType == "threshold":
+            elif self.LevelSetsType in ["threshold", "laplacian"]:
                 self.FeatureImage = self.Image
             else:
                 self.PrintError('Unsupported LevelSetsType')
