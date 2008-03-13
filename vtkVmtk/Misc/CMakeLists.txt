@@ -11,6 +11,7 @@ SET (VTK_VMTK_MISC_SRCS
   vtkvmtkPolyDataToUnstructuredGridFilter.cxx
   vtkvmtkSimpleCapPolyData.cxx
   vtkvmtkSmoothCapPolyData.cxx
+  vtkvmtkStreamlineClusteringFilter.cxx
   vtkvmtkSurfaceDistance.cxx
   vtkvmtkSurfaceProjection.cxx
   vtkvmtkTetGenWrapper.cxx
