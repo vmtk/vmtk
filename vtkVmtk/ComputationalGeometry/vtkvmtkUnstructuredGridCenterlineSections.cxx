@@ -53,18 +53,19 @@ vtkvmtkUnstructuredGridCenterlineSections::vtkvmtkUnstructuredGridCenterlineSect
   this->AdditionalNormalsPolyData = NULL;
   this->UpNormalsArrayName = NULL;
   this->AdditionalNormalsArrayName = NULL;
+  this->AdditionalScalarsArrayName = NULL;
   this->TransformSections = 0;
-  this->OriginOffset = 0.0;
+  this->OriginOffset[0] = this->OriginOffset[1] = this->OriginOffset[2] = 0.0;
   this->VectorsArrayName = NULL;
 }
 
 vtkvmtkUnstructuredGridCenterlineSections::~vtkvmtkUnstructuredGridCenterlineSections()
 {
-//  if (this->Centerlines)
-//    {
-//    this->Centerlines->Delete();
-//    this->Centerlines = NULL;
-//    }
+  if (this->Centerlines)
+    {
+    this->Centerlines->Delete();
+    this->Centerlines = NULL;
+    }
   if (this->AdditionalNormalsPolyData)
     {
     this->AdditionalNormalsPolyData->Delete();
@@ -79,6 +80,11 @@ vtkvmtkUnstructuredGridCenterlineSections::~vtkvmtkUnstructuredGridCenterlineSec
     {
     delete[] this->AdditionalNormalsArrayName;
     this->AdditionalNormalsArrayName = NULL;
+    }
+  if (this->AdditionalScalarsArrayName)
+    {
+    delete[] this->AdditionalScalarsArrayName;
+    this->AdditionalScalarsArrayName = NULL;
     }
   if (this->VectorsArrayName)
     {
@@ -160,6 +166,7 @@ int vtkvmtkUnstructuredGridCenterlineSections::RequestData(
     }
 
   vtkDataArray* additionalNormalsArray = NULL;
+  vtkDataArray* additionalScalarsArray = NULL;
   if (this->AdditionalNormalsArrayName)
     {
     additionalNormalsArray = this->Centerlines->GetPointData()->GetArray(this->AdditionalNormalsArrayName);
@@ -171,6 +178,14 @@ int vtkvmtkUnstructuredGridCenterlineSections::RequestData(
       {
       vtkErrorMacro(<<"AdditionalNormalsArray does not have 3 components!");
       additionalNormalsArray = NULL;
+      }
+    if (this->AdditionalScalarsArrayName)
+      {
+      additionalScalarsArray = this->Centerlines->GetPointData()->GetArray(this->AdditionalScalarsArrayName);
+      if (!additionalScalarsArray)
+        {
+        vtkErrorMacro(<<"AdditionalScalarsArray with name specified does not exist!");
+        }
       }
     }
 
@@ -186,9 +201,13 @@ int vtkvmtkUnstructuredGridCenterlineSections::RequestData(
   vtkDoubleArray* additionalNormalsNormals = vtkDoubleArray::New();
   additionalNormalsNormals->SetNumberOfComponents(3);
   additionalNormalsNormals->SetName(this->AdditionalNormalsArrayName);
+  vtkDoubleArray* additionalNormalsScalars = vtkDoubleArray::New();
+  additionalNormalsScalars->SetNumberOfComponents(1);
+  additionalNormalsScalars->SetName(this->AdditionalScalarsArrayName);
   this->AdditionalNormalsPolyData->SetPoints(additionalNormalsPoints);
   this->AdditionalNormalsPolyData->SetVerts(additionalNormalsVerts);
   this->AdditionalNormalsPolyData->GetPointData()->AddArray(additionalNormalsNormals);
+  this->AdditionalNormalsPolyData->GetPointData()->AddArray(additionalNormalsScalars);
 
   vtkAppendPolyData* appendFilter = vtkAppendPolyData::New();
 
@@ -297,9 +316,9 @@ int vtkvmtkUnstructuredGridCenterlineSections::RequestData(
         currentUpNormal[2] = upNormal[2];
   
         double targetOrigin[3];
-        targetOrigin[0] = j * this->OriginOffset;
-        targetOrigin[1] = 0.0;
-        targetOrigin[2] = 0.0;
+        targetOrigin[0] = j * this->OriginOffset[0];
+        targetOrigin[1] = j * this->OriginOffset[1];
+        targetOrigin[2] = j * this->OriginOffset[2];
   
         double targetNormal[3];
         targetNormal[0] = 0.0;
@@ -374,6 +393,11 @@ int vtkvmtkUnstructuredGridCenterlineSections::RequestData(
           additionalNormalsVerts->InsertNextCell(1);
           additionalNormalsVerts->InsertCellPoint(pointId);
           additionalNormalsNormals->InsertNextTuple(transformedAdditionalNormal);
+          if (additionalScalarsArray)
+            {
+            double scalar = additionalScalarsArray->GetTuple1(centerlineCell->GetPointId(j));
+            additionalNormalsScalars->InsertNextTuple1(scalar);
+            }
           }
 
         transform->Delete();
@@ -393,7 +417,8 @@ int vtkvmtkUnstructuredGridCenterlineSections::RequestData(
   appendFilter->Delete();
   additionalNormalsPoints->Delete();
   additionalNormalsVerts->Delete();
-  additionalNormalsArray->Delete();
+  additionalNormalsNormals->Delete();
+  additionalNormalsScalars->Delete();
 
   return 1;
 }

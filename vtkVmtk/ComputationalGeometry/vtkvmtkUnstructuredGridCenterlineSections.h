@@ -48,12 +48,15 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkUnstructuredGridCenterlineSe
   vtkSetStringMacro(AdditionalNormalsArrayName);
   vtkGetStringMacro(AdditionalNormalsArrayName);
 
+  vtkSetStringMacro(AdditionalScalarsArrayName);
+  vtkGetStringMacro(AdditionalScalarsArrayName);
+
   vtkSetMacro(TransformSections,int);
   vtkGetMacro(TransformSections,int);
   vtkBooleanMacro(TransformSections,int);
 
-  vtkSetMacro(OriginOffset,double);
-  vtkGetMacro(OriginOffset,double);
+  vtkSetVectorMacro(OriginOffset,double,3);
+  vtkGetVectorMacro(OriginOffset,double,3);
  
   vtkSetStringMacro(VectorsArrayName);
   vtkGetStringMacro(VectorsArrayName);
@@ -74,13 +77,15 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkUnstructuredGridCenterlineSe
   vtkPolyData* AdditionalNormalsPolyData;
 
   char* UpNormalsArrayName;
+
   char* AdditionalNormalsArrayName;
+  char* AdditionalScalarsArrayName;
 
   char* VectorsArrayName;
 
   int TransformSections;
 
-  double OriginOffset;
+  double OriginOffset[3];
 
   private:
   vtkvmtkUnstructuredGridCenterlineSections(const vtkvmtkUnstructuredGridCenterlineSections&);  // Not implemented.
