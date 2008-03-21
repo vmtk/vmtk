@@ -71,8 +71,8 @@ int vtkvmtkStreamlineClusteringFilter::RequestData(
     }
 
   double resampleLength = 0.01;
-  int numberOfChunkPoints = 400;
-  int numberOfClusters = 6;
+  int numberOfChunkPoints = 40;
+  int numberOfClusters = 4;
 
   vtkSplineFilter* splineFilter = vtkSplineFilter::New();
   splineFilter->SetInput(input);

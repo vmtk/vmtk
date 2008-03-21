@@ -42,6 +42,24 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkUnstructuredGridCenterlineSe
   vtkSetObjectMacro(Centerlines,vtkPolyData);
   vtkGetObjectMacro(Centerlines,vtkPolyData);
 
+  vtkSetStringMacro(UpNormalsArrayName);
+  vtkGetStringMacro(UpNormalsArrayName);
+
+  vtkSetStringMacro(AdditionalNormalsArrayName);
+  vtkGetStringMacro(AdditionalNormalsArrayName);
+
+  vtkSetMacro(TransformSections,int);
+  vtkGetMacro(TransformSections,int);
+  vtkBooleanMacro(TransformSections,int);
+
+  vtkSetMacro(OriginOffset,double);
+  vtkGetMacro(OriginOffset,double);
+ 
+  vtkSetStringMacro(VectorsArrayName);
+  vtkGetStringMacro(VectorsArrayName);
+  
+  vtkGetObjectMacro(AdditionalNormalsPolyData,vtkPolyData);
+
   protected:
   vtkvmtkUnstructuredGridCenterlineSections();
   ~vtkvmtkUnstructuredGridCenterlineSections();  
@@ -50,7 +68,19 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkUnstructuredGridCenterlineSe
 
   virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
 
+  double ComputeAngle(double vector0[3], double vector1[3]);
+
   vtkPolyData* Centerlines;
+  vtkPolyData* AdditionalNormalsPolyData;
+
+  char* UpNormalsArrayName;
+  char* AdditionalNormalsArrayName;
+
+  char* VectorsArrayName;
+
+  int TransformSections;
+
+  double OriginOffset;
 
   private:
   vtkvmtkUnstructuredGridCenterlineSections(const vtkvmtkUnstructuredGridCenterlineSections&);  // Not implemented.

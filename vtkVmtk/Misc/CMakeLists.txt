@@ -12,6 +12,7 @@ SET (VTK_VMTK_MISC_SRCS
   vtkvmtkSimpleCapPolyData.cxx
   vtkvmtkSmoothCapPolyData.cxx
   vtkvmtkStreamlineClusteringFilter.cxx
+  vtkvmtkStreamlineOsculatingCentersFilter.cxx
   vtkvmtkSurfaceDistance.cxx
   vtkvmtkSurfaceProjection.cxx
   vtkvmtkTetGenWrapper.cxx
