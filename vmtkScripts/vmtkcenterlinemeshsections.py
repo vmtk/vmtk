@@ -34,7 +34,8 @@ class vmtkCenterlineMeshSections(pypes.pypeScript):
         self.TransformSections = False
         self.UpNormalsArrayName = ''
         self.AdditionalNormalsArrayName = ''
-        self.OriginOffset = 0.0
+        self.AdditionalScalarsArrayName = ''
+        self.OriginOffset = [0.0, 0.0, 0.0]
         self.VectorsArrayName = ''
 
         self.SetScriptName('vmtkcenterlinemeshsections')
@@ -44,9 +45,10 @@ class vmtkCenterlineMeshSections(pypes.pypeScript):
             ['Centerlines','centerlines','vtkPolyData',1,'','the input centerlines','vmtksurfacereader'],
             ['TransformSections','transformsections','bool',1,'','transform sections so that they are at the origin, with normal 0,0,1 and upNormal 0,1,0'],
             ['UpNormalsArrayName','upnormalsarray','str',1,'','the name of the array where normals determining the "up" orientation of sections are stored'],
-            ['AdditionalNormalsArrayName','additionalnormalsarray','str',1,'','the name of the array that contains normals that will be transformed'],
+            ['AdditionalNormalsArrayName','additionalnormalsarray','str',1,'','the name of the array that contains normals that will be transformed and assigned to additional data points'],
+            ['AdditionalScalarsArrayName','additionalscalarsarray','str',1,'','the name of the array that contains scalars that will be assigned to additional data points'],
             ['VectorsArrayName','vectorsarray','str',1,'','the name of the array where vectors, e.g. velocity vectors, are stored'],
-            ['OriginOffset','originoffset','float',1,'','offset subsequent sections along x after transforming']
+            ['OriginOffset','originoffset','float',3,'','offset of subsequent sections after transformation']
             ])
         self.SetOutputMembers([
             ['CenterlineSections','o','vtkPolyData',1,'','the output sections','vmtksurfacewriter'],
@@ -72,6 +74,8 @@ class vmtkCenterlineMeshSections(pypes.pypeScript):
             centerlineSections.SetUpNormalsArrayName(self.UpNormalsArrayName)
         if self.AdditionalNormalsArrayName:
             centerlineSections.SetAdditionalNormalsArrayName(self.AdditionalNormalsArrayName)
+        if self.AdditionalScalarsArrayName:
+            centerlineSections.SetAdditionalScalarsArrayName(self.AdditionalScalarsArrayName)
         centerlineSections.Update()
 
         self.CenterlineSections = centerlineSections.GetOutput()
