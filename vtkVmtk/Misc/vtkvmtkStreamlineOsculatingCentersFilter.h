@@ -35,12 +35,25 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkStreamlineOsculatingCentersFilter : public vtk
   void PrintSelf(ostream& os, vtkIndent indent); 
 
   static vtkvmtkStreamlineOsculatingCentersFilter *New();
-  
+
+  vtkSetObjectMacro(VoronoiDiagram,vtkPolyData);
+  vtkGetObjectMacro(VoronoiDiagram,vtkPolyData);
+
+  vtkSetStringMacro(VoronoiSheetIdsArrayName);
+  vtkGetStringMacro(VoronoiSheetIdsArrayName);
+
+  vtkGetObjectMacro(OsculatingCenters,vtkPolyData);
+
   protected:
   vtkvmtkStreamlineOsculatingCentersFilter();
   ~vtkvmtkStreamlineOsculatingCentersFilter();  
 
   virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+
+  vtkPolyData* VoronoiDiagram;
+  char* VoronoiSheetIdsArrayName;
+  
+  vtkPolyData* OsculatingCenters;
 
   private:
   vtkvmtkStreamlineOsculatingCentersFilter(const vtkvmtkStreamlineOsculatingCentersFilter&);  // Not implemented.

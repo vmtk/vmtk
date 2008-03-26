@@ -31,7 +31,7 @@ Version:   $Revision: 1.6 $
 #include "vtkCellData.h"
 #include "vtkMath.h"
 #include "vtkSplineFilter.h"
-//#include "vtkPointLocator.h"
+#include "vtkCellLocator.h"
 #include "vtkCellArray.h"
 #include "vtkCell.h"
 
@@ -40,10 +40,28 @@ vtkStandardNewMacro(vtkvmtkStreamlineOsculatingCentersFilter);
 
 vtkvmtkStreamlineOsculatingCentersFilter::vtkvmtkStreamlineOsculatingCentersFilter()
 {
+  this->VoronoiDiagram = NULL;
+  this->VoronoiSheetIdsArrayName = NULL;
+  this->OsculatingCenters = NULL;
 }
 
 vtkvmtkStreamlineOsculatingCentersFilter::~vtkvmtkStreamlineOsculatingCentersFilter()
 {
+  if (this->VoronoiDiagram)
+    {
+    this->VoronoiDiagram->Delete();
+    this->VoronoiDiagram = NULL;
+    }
+  if (this->OsculatingCenters)
+    {
+    this->OsculatingCenters->Delete();
+    this->OsculatingCenters = NULL;
+    }
+  if (this->VoronoiSheetIdsArrayName)
+    {
+    delete[] this->VoronoiSheetIdsArrayName;
+    this->VoronoiSheetIdsArrayName = NULL;
+    }
 }
 
 int vtkvmtkStreamlineOsculatingCentersFilter::RequestData(
@@ -64,6 +82,14 @@ int vtkvmtkStreamlineOsculatingCentersFilter::RequestData(
     return 1;
     }
 
+  if (this->OsculatingCenters)
+    {
+    this->OsculatingCenters->Delete();
+    this->OsculatingCenters = NULL;
+    }
+
+  this->OsculatingCenters = vtkPolyData::New();
+
   double resampleLength = 0.1;
   double thresholdRadius = 0.1;
 
@@ -74,6 +100,29 @@ int vtkvmtkStreamlineOsculatingCentersFilter::RequestData(
   splineFilter->Update();
 
   vtkPolyData* streamlines = splineFilter->GetOutput();
+
+  vtkIntArray* voronoiSheetIdsArray = NULL;
+  vtkIntArray* sheetIdsArray = NULL;
+  vtkIntArray* streamlineSheetIdsArray = NULL;
+  vtkCellLocator* cellLocator = NULL;
+  if (this->VoronoiDiagram)
+    {
+    if (!this->VoronoiDiagram->GetCellData()->GetArray(this->VoronoiSheetIdsArrayName))
+      {
+      vtkErrorMacro(<< "VoronoiSheetIdsArray with name specified does not exist!");
+      return 1;
+      }
+    voronoiSheetIdsArray = vtkIntArray::New();
+    voronoiSheetIdsArray->DeepCopy(this->VoronoiDiagram->GetCellData()->GetArray(this->VoronoiSheetIdsArrayName));
+    sheetIdsArray = vtkIntArray::New();
+    sheetIdsArray->SetName(this->VoronoiSheetIdsArrayName);
+    cellLocator = vtkCellLocator::New();
+    cellLocator->SetDataSet(this->VoronoiDiagram);
+    cellLocator->BuildLocator();
+    streamlineSheetIdsArray = vtkIntArray::New();
+    streamlineSheetIdsArray->SetName(this->VoronoiSheetIdsArrayName);
+    streamlineSheetIdsArray->SetNumberOfTuples(streamlines->GetNumberOfPoints());
+    }
 
   int numberOfCells = streamlines->GetNumberOfCells();
 
@@ -130,24 +179,51 @@ int vtkvmtkStreamlineOsculatingCentersFilter::RequestData(
         osculatingCenter[j] = a[j] + t * u[j];
         }
       double radius = sqrt(vtkMath::Distance2BetweenPoints(osculatingCenter,x1));
-      int id = outputPoints->InsertNextPoint(osculatingCenter);
+      vtkIdType id = outputPoints->InsertNextPoint(osculatingCenter);
       outputVertices->InsertNextCell(1);
       outputVertices->InsertCellPoint(id);
       labelArray->InsertNextValue(i);
       radiusArray->InsertNextValue(radius);
+      if (this->VoronoiDiagram)
+        {
+        double closestPoint[3], dist2;
+        vtkIdType sheetId, cellId, subId;
+        cellLocator->FindClosestPoint(osculatingCenter,closestPoint,cellId,subId,dist2);
+        sheetId = voronoiSheetIdsArray->GetValue(cellId);
+        sheetIdsArray->InsertNextValue(sheetId);
+        streamlineSheetIdsArray->InsertValue(streamline->GetPointId(ip),sheetId);
+        }
       }
     }
 
-  output->SetPoints(outputPoints);
-  output->SetVerts(outputVertices);
-  output->GetPointData()->AddArray(labelArray);
-  output->GetPointData()->AddArray(radiusArray);
+  this->OsculatingCenters->SetPoints(outputPoints);
+  this->OsculatingCenters->SetVerts(outputVertices);
+  this->OsculatingCenters->GetPointData()->AddArray(labelArray);
+  this->OsculatingCenters->GetPointData()->AddArray(radiusArray);
+  if (sheetIdsArray)
+    {
+    this->OsculatingCenters->GetPointData()->AddArray(sheetIdsArray);
+    }
+
+  output->DeepCopy(streamlines);
+  if (sheetIdsArray)
+    {
+    output->GetPointData()->AddArray(streamlineSheetIdsArray);
+    }
 
   splineFilter->Delete(); 
   outputPoints->Delete();
   outputVertices->Delete();
   labelArray->Delete();
   radiusArray->Delete();
+
+  if (voronoiSheetIdsArray)
+    {
+    voronoiSheetIdsArray->Delete();
+    sheetIdsArray->Delete();
+    streamlineSheetIdsArray->Delete();
+    cellLocator->Delete();
+    }
 
   return 1;
 }
