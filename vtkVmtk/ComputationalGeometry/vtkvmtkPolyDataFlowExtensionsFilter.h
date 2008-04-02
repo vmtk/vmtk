@@ -28,7 +28,6 @@ Version:   $Revision: 1.6 $
 #include "vtkPolyDataAlgorithm.h"
 #include "vtkPolyData.h"
 #include "vtkIdList.h"
-//#include "vtkvmtkComputationalGeometryWin32Header.h"
 #include "vtkvmtkWin32Header.h"
 
 class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataFlowExtensionsFilter : public vtkPolyDataAlgorithm
@@ -81,6 +80,13 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataFlowExtensionsFilter
   void SetExtensionModeToUseCenterlineDirection()
   { this->SetExtensionMode(USE_CENTERLINE_DIRECTION); }
 
+  vtkSetMacro(InterpolationMode,int);
+  vtkGetMacro(InterpolationMode,int);
+  void SetInterpolationModeToLinear()
+  { this->SetInterpolationMode(USE_LINEAR_INTERPOLATION); }
+  void SetInterpolationModeToThinPlateSpline()
+  { this->SetInterpolationMode(USE_THIN_PLATE_SPLINE_INTERPOLATION); }
+
 //BTX
   enum {
     USE_NORMAL_TO_BOUNDARY = 0,
@@ -88,10 +94,9 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataFlowExtensionsFilter
   };
 
   enum {
-    LINEAR = 0,
-    THIN_PLATE
+    USE_LINEAR_INTERPOLATION = 0,
+    USE_THIN_PLATE_SPLINE_INTERPOLATION
   };
-
 //ETX
 
   protected:
@@ -117,6 +122,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataFlowExtensionsFilter
   int NumberOfBoundaryPoints;
 
   int ExtensionMode;
+  int InterpolationMode;
 
   vtkIdList* BoundaryIds;
 

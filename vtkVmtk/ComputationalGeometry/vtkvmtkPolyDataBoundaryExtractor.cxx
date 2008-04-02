@@ -54,7 +54,7 @@ int vtkvmtkPolyDataBoundaryExtractor::RequestData(
   vtkIdList *boundary, *boundaryIds, *cellEdgeNeighbors, *newCell;
   vtkIdType i, j, currentId, firstId, id, newId, id0, id1;
   newId = -1;
-  vtkGenericCell* cell;
+  vtkCell* cell;
   bool foundAny, foundNeighbor, done;
   vtkPoints* newPoints;
   vtkCellArray* newLines;
@@ -75,7 +75,7 @@ int vtkvmtkPolyDataBoundaryExtractor::RequestData(
   // Execute  
   for (i=0; i<input->GetNumberOfCells(); i++)
     {
-    cell = (vtkGenericCell*)input->GetCell(i);
+    cell = input->GetCell(i);
     for (j=0; j<3; j++)
       {
       cellEdgeNeighbors->Initialize();

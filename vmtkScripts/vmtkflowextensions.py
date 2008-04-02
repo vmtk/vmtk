@@ -40,6 +40,7 @@ class vmtkFlowExtensions(pypes.pypeScript):
         self.TargetNumberOfBoundaryPoints = 50
         self.CenterlineNormalEstimationDistanceRatio = 1.0
         self.ExtensionMode = "centerlinedirection"
+        self.InterpolationMode = "centerlinedirection"
         self.Interactive = 1
         self.Sigma = 1.0
 
@@ -51,6 +52,7 @@ class vmtkFlowExtensions(pypes.pypeScript):
             ['Surface','i','vtkPolyData',1,'','','vmtksurfacereader'],
             ['Centerlines','centerlines','vtkPolyData',1,'','','vmtksurfacereader'],
             ['ExtensionMode','extensionmode','str',1,'["centerlinedirection","boundarynormal"]','method for computing the normal for extension'],
+            ['InterpolationMode','interpolationmode','str',1,'["linear","thinplatespline"]','method for computing interpolation from the model section to a circular section'],
             ['Sigma','sigma','float',1,'(0.0,)','thin plate spline stiffness'],
             ['AdaptiveExtensionLength','adaptivelength','bool',1],
             ['AdaptiveExtensionRadius','adaptiveradius','bool',1],
@@ -157,6 +159,10 @@ class vmtkFlowExtensions(pypes.pypeScript):
             flowExtensionsFilter.SetExtensionModeToUseCenterlineDirection()
         elif self.ExtensionMode == "boundarynormal":
             flowExtensionsFilter.SetExtensionModeToUseNormalToBoundary()
+        if self.InterpolationMode == "linear":
+            flowExtensionsFilter.SetInterpolationModeToLinear()
+        elif self.InterpolationMode == "thinplatespline":
+            flowExtensionsFilter.SetInterpolationModeToThinPlateSpline()
         if self.Interactive:
             flowExtensionsFilter.SetBoundaryIds(boundaryIds)
         flowExtensionsFilter.Update()
