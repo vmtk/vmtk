@@ -162,7 +162,7 @@ class vmtkImageVOISelector(pypes.pypeScript):
         newVOI[5] = min(wholeExtent[5],int(math.floor((self.BoxBounds[5]-origin[2])/spacing[2])))
 
         extractVOI = vtk.vtkExtractVOI()
-        extractVOI.SetInput(self.Image)
+        extractVOI.SetInput(self.CroppedImage)
         extractVOI.SetVOI(newVOI)
         extractVOI.Update()
 
@@ -171,7 +171,7 @@ class vmtkImageVOISelector(pypes.pypeScript):
         translateExtent.SetTranslation(-newVOI[0],-newVOI[2],-newVOI[4])
         translateExtent.Update()
 
-        self.CroppedImage.ShallowCopy(translateExtent.GetOutput())
+        self.CroppedImage.DeepCopy(translateExtent.GetOutput())
         self.CroppedImage.Update()
 
         if self.CroppedImage.GetSource():

@@ -127,7 +127,7 @@ int vtkvmtkPolyDataBoundaryExtractor::RequestData(
         {
         foundAny = true;
         isBoundaryEdge = false;
-        if (input->IsEdge(currentId,id))
+        if (currentId!=-1 && input->IsEdge(currentId,id))
           {
           cellEdgeNeighbors->Initialize();
           input->GetCellEdgeNeighbors(-1,currentId,id,cellEdgeNeighbors);

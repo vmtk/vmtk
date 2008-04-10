@@ -19,15 +19,14 @@ Version:   $Revision: 1.4 $
 
 =========================================================================*/
 
-  // .NAME vtkvmtkPolyBallModeller - sample poly ball onto structured points 
-  // .SECTION Description
-  // ..
+// .NAME vtkvmtkPolyBallModeller - sample poly ball onto structured points 
+// .SECTION Description
+// ..
 
 #ifndef __vtkvmtkPolyBallModeller_h
 #define __vtkvmtkPolyBallModeller_h
 
 #include "vtkImageAlgorithm.h"
-//#include "vtkvmtkComputationalGeometryWin32Header.h"
 #include "vtkvmtkWin32Header.h"
 
 class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyBallModeller : public vtkImageAlgorithm 
@@ -39,21 +38,10 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyBallModeller : public vt
   static vtkvmtkPolyBallModeller *New();
   
   // Description:
-  // Compute ModelBounds from input geometry.
-  double ComputeModelBounds(double origin[3], double spacing[3]);
-
-  // Description:
   // Specify i-j-k dimensions on which to sample polyball function.
   vtkGetVectorMacro(SampleDimensions,int,3);
+  vtkSetVectorMacro(SampleDimensions,int,3);
   
-  // Description:
-  // Set the i-j-k dimensions on which to sample polyball function.
-  void SetSampleDimensions(int i, int j, int k);
-
-  // Description:
-  // Set the i-j-k dimensions on which to sample polyball function.
-  void SetSampleDimensions(int dim[3]);
-
   // Description:
   // Specify influence distance of each input point. 
   vtkSetMacro(MaximumDistance,double);
@@ -61,20 +49,25 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyBallModeller : public vt
 
   // Description:
   // Specify the position in space to perform the sampling.
-  vtkSetVector6Macro(ModelBounds,double);
+  vtkSetVectorMacro(ModelBounds,double,6);
   vtkGetVectorMacro(ModelBounds,double,6);
+
+  vtkSetStringMacro(RadiusArrayName);
+  vtkGetStringMacro(RadiusArrayName);
 
   protected:
   vtkvmtkPolyBallModeller();
-  ~vtkvmtkPolyBallModeller() {};
+  ~vtkvmtkPolyBallModeller();
 
   int FillInputPortInformation(int, vtkInformation *info);
   virtual int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
-  virtual void ExecuteData(vtkDataObject *);
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
 
   int SampleDimensions[3];
   double MaximumDistance;
   double ModelBounds[6];
+
+  char* RadiusArrayName;
 
   private:
   vtkvmtkPolyBallModeller(const vtkvmtkPolyBallModeller&);  // Not implemented.

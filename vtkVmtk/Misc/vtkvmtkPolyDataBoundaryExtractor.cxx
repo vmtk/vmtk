@@ -155,7 +155,6 @@ int vtkvmtkPolyDataBoundaryExtractor::RequestData(
       {
       done = true;
       }
-    cout<<currentId<<endl;
     }
 
   output->SetPoints(newPoints);

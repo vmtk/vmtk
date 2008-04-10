@@ -20,6 +20,8 @@ Version:   $Revision: 1.4 $
 =========================================================================*/
 #include "vtkvmtkPolyBallModeller.h"
 
+#include "vtkvmtkPolyBall.h"
+#include "vtkPolyData.h"
 #include "vtkDoubleArray.h"
 #include "vtkImageData.h"
 #include "vtkMath.h"
@@ -35,7 +37,7 @@ vtkStandardNewMacro(vtkvmtkPolyBallModeller);
 
 vtkvmtkPolyBallModeller::vtkvmtkPolyBallModeller()
 {
-  this->MaximumDistance = 2.0;
+  this->MaximumDistance = 1.0;
 
   this->ModelBounds[0] = 0.0;
   this->ModelBounds[1] = 0.0;
@@ -48,73 +50,16 @@ vtkvmtkPolyBallModeller::vtkvmtkPolyBallModeller()
   this->SampleDimensions[1] = 50;
   this->SampleDimensions[2] = 50;
 
+  this->RadiusArrayName = NULL;
 }
 
-// Compute ModelBounds from input geometry.
-double vtkvmtkPolyBallModeller::ComputeModelBounds(double origin[3], double spacing[3])
+vtkvmtkPolyBallModeller::~vtkvmtkPolyBallModeller()
 {
-  double *bounds, maxDist;
-  int i;
-
-  bounds = this->ModelBounds;
-
-  for (maxDist=0.0, i=0; i<3; i++)
+  if (this->RadiusArrayName)
     {
-    if ((bounds[2*i+1] - bounds[2*i]) > maxDist)
-      {
-      maxDist = bounds[2*i+1] - bounds[2*i];
-      }
+    delete[] this->RadiusArrayName;
+    this->RadiusArrayName = NULL;
     }
-  maxDist *= 0.5;
-
-  return maxDist;
-
-#if 0
-  double *bounds, maxDist;
-  int i, adjustBounds=0;
-
-  // compute model bounds if not set previously
-  if ((this->ModelBounds[0] >= this->ModelBounds[1]) || (this->ModelBounds[2] >= this->ModelBounds[3]) || (this->ModelBounds[4] >= this->ModelBounds[5]))
-    {
-    adjustBounds = 1;
-    bounds = this->GetInput()->GetBounds();
-    }
-  else
-    {
-    bounds = this->ModelBounds;
-    }
-
-  for (maxDist=0.0, i=0; i<3; i++)
-    {
-    if ((bounds[2*i+1] - bounds[2*i]) > maxDist)
-      {
-      maxDist = bounds[2*i+1] - bounds[2*i];
-      }
-    }
-  maxDist *= 0.5;
-
-  // adjust bounds so model fits strictly inside (only if not set previously)
-  if (adjustBounds)
-    {
-    for (i=0; i<3; i++)
-      {
-      this->ModelBounds[2*i] = bounds[2*i] - maxDist;
-      this->ModelBounds[2*i+1] = bounds[2*i+1] + maxDist;
-      }
-    }
-
-  // Set volume origin and data spacing
-  for (i=0; i<3; i++)
-    {
-    origin[i] = this->ModelBounds[2*i];
-    spacing[i] = (this->ModelBounds[2*i+1] - this->ModelBounds[2*i]) / (this->SampleDimensions[i] - 1);
-    }
-
-  this->GetOutput()->SetOrigin(origin);
-  this->GetOutput()->SetSpacing(spacing);
-
-  return maxDist;  
-#endif
 }
 
 int vtkvmtkPolyBallModeller::RequestInformation (
@@ -122,8 +67,7 @@ int vtkvmtkPolyBallModeller::RequestInformation (
   vtkInformationVector** vtkNotUsed( inputVector ),
   vtkInformationVector *outputVector)
 {
-  int i;
-  double ar[3], origin[3];
+  double spacing[3], origin[3];
 
   vtkInformation* outInfo = outputVector->GetInformationObject(0);
   
@@ -131,199 +75,94 @@ int vtkvmtkPolyBallModeller::RequestInformation (
 
   outInfo->Set(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(),0, this->SampleDimensions[0]-1, 0, this->SampleDimensions[1]-1, 0, this->SampleDimensions[2]-1);
 
+  if ((this->ModelBounds[0] >= this->ModelBounds[1]) || (this->ModelBounds[2] >= this->ModelBounds[3]) || (this->ModelBounds[4] >= this->ModelBounds[5]))
+    {
+    double* bounds = vtkPolyData::SafeDownCast(this->GetInput())->GetBounds();
+    double maxDist = 0.0;
+    int i;
+    for (i=0; i<3; i++)
+      {
+      if ((bounds[2*i+1] - bounds[2*i]) > maxDist)
+        {
+        maxDist = bounds[2*i+1] - bounds[2*i];
+        }
+      }
+    maxDist *= 0.5;
+
+    for (i=0; i<3; i++)
+      {
+      this->ModelBounds[2*i] = bounds[2*i] - maxDist;
+      this->ModelBounds[2*i+1] = bounds[2*i+1] + maxDist;
+      }
+    }
+
+  int i;
   for (i=0; i<3; i++)
     {
     origin[i] = this->ModelBounds[2*i];
     if (this->SampleDimensions[i] <= 1)
       {
-      ar[i] = 1.0;
+      spacing[i] = 1.0;
       }
     else
       {
-      ar[i] = (this->ModelBounds[2*i+1] - this->ModelBounds[2*i]) / (this->SampleDimensions[i] - 1);
+      spacing[i] = (this->ModelBounds[2*i+1] - this->ModelBounds[2*i]) / (this->SampleDimensions[i] - 1);
       }
     }
 
   outInfo->Set(vtkDataObject::ORIGIN(),origin,3);
-  outInfo->Set(vtkDataObject::SPACING(),ar,3);
+  outInfo->Set(vtkDataObject::SPACING(),spacing,3);
 
   return 1;
 }
 
 int vtkvmtkPolyBallModeller::FillInputPortInformation(int, vtkInformation *info)
 {
-  info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkDataSet");
+  info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkPolyData");
   return 1;
 }
 
-void vtkvmtkPolyBallModeller::ExecuteData(vtkDataObject *outp)
+int vtkvmtkPolyBallModeller::RequestData(
+  vtkInformation *vtkNotUsed(request),
+  vtkInformationVector **inputVector,
+  vtkInformationVector *outputVector)
 {
-  vtkIdType ptId, i;
-  int j, k, jkFactor;
-  double *px, x[3], spacing[3], origin[3], sphereFunctionValue;
-  
-  double maxDistance, ballRadius;
-  vtkDataArray *inScalars;
-  vtkIdType numPts, idx;
-  int min[3], max[3];
-  vtkDataSet *input = vtkDataSet::SafeDownCast(this->GetInput());
-  vtkImageData *output = this->AllocateOutputData(outp);
-  vtkDoubleArray *newScalars = vtkDoubleArray::SafeDownCast(output->GetPointData()->GetScalars());
+  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
+  vtkInformation *outInfo = outputVector->GetInformationObject(0);
 
-  // Check input
-  //
-  if ((numPts=input->GetNumberOfPoints()) < 1)
+  vtkPolyData *input = vtkPolyData::SafeDownCast(
+    inInfo->Get(vtkDataObject::DATA_OBJECT()));
+  vtkImageData *output = vtkImageData::SafeDownCast(
+    outInfo->Get(vtkDataObject::DATA_OBJECT()));
+ 
+  vtkDoubleArray* functionArray = vtkDoubleArray::New();
+  functionArray->SetName(this->RadiusArrayName);
+  functionArray->SetNumberOfTuples(output->GetNumberOfPoints());
+
+  output->GetPointData()->AddArray(functionArray);
+  output->GetPointData()->SetActiveScalars(this->RadiusArrayName);
+
+  functionArray->FillComponent(0,VTK_VMTK_LARGE_DOUBLE);
+
+  int numberOfOutputPoints = output->GetNumberOfPoints();
+
+  vtkvmtkPolyBall* polyBall = vtkvmtkPolyBall::New();
+  polyBall->SetInput(input);
+  polyBall->SetPolyBallRadiusArrayName(this->RadiusArrayName);
+
+  double point[3];
+  int i;
+  for (i=0; i<numberOfOutputPoints; i++)
     {
-    vtkErrorMacro(<<"Points must be defined!");
-    return;
+    output->GetPoint(i,point);
+    double polyBallFunction = polyBall->EvaluateFunction(point);
+    functionArray->SetComponent(i,0,polyBallFunction);
     }
 
-  if ((inScalars = input->GetPointData()->GetScalars()) == NULL)
-    {
-    vtkErrorMacro(<<"Scalars must be defined!");
-    return;
-    }
+  polyBall->Delete();
+  functionArray->Delete();
 
-  // Allocate
-  //
-  newScalars->FillComponent(0,VTK_VMTK_LARGE_DOUBLE);
-
-  this->ComputeModelBounds(origin,spacing);
-
-  // Traverse all input points. 
-  // Each input point affects voxels within maxDistance.
-  //
-  int abortExecute=0;
-  for (ptId=0; (ptId<numPts) && (!abortExecute); ptId++)
-    {
-    if (!(ptId % 1000))
-      {
-      vtkDebugMacro(<<"Inserting point #" << ptId);
-      this->UpdateProgress (ptId/numPts);
-      if (this->GetAbortExecute())
-        {
-        abortExecute = 1;
-        break;
-        }
-      }
-
-    px = input->GetPoint(ptId);
-    ballRadius = inScalars->GetComponent(ptId,0);
-    maxDistance = ballRadius * this->MaximumDistance;
-
-    for (i=0; i<3; i++) //compute dimensional bounds in data set
-      {
-      double amin = static_cast<double>(((px[i] - maxDistance) - origin[i]) / spacing[i]);
-      double amax = static_cast<double>(((px[i] + maxDistance) - origin[i]) / spacing[i]);
-      min[i] = static_cast<int>(amin);
-      max[i] = static_cast<int>(amax);
-      
-      if (min[i] < amin)
-        {
-        min[i]++; // round upward to nearest integer to get min[i]
-        }
-      if (max[i] > amax)
-        {
-        max[i]--; // round downward to nearest integer to get max[i]
-        }
-
-      if (min[i] < 0)
-        {
-        min[i] = 0; // valid range check
-        }
-      if (max[i] >= this->SampleDimensions[i]) 
-        {
-        max[i] = this->SampleDimensions[i] - 1;
-        }
-      }
-
-    for (i=0; i<3; i++) //compute dimensional bounds in data set
-      {
-      min[i] = static_cast<int>(static_cast<double>(((px[i] - maxDistance) - origin[i]) / spacing[i]));
-      max[i] = static_cast<int>(static_cast<double>(((px[i] + maxDistance) - origin[i]) / spacing[i]));
-      if (min[i] < 0)
-        {
-        min[i] = 0;
-        }
-      if (max[i] >= this->SampleDimensions[i]) 
-        {
-        max[i] = this->SampleDimensions[i] - 1;
-        }
-      }
-
-    jkFactor = this->SampleDimensions[0]*this->SampleDimensions[1];
-    for (k=min[2]; k<=max[2]; k++) 
-      {
-      x[2] = spacing[2] * k + origin[2];
-      for (j=min[1]; j<=max[1]; j++)
-        {
-        x[1] = spacing[1] * j + origin[1];
-        for (i=min[0]; i<=max[0]; i++) 
-          {
-          x[0] = spacing[0] * i + origin[0];
-
-          idx = jkFactor*k + this->SampleDimensions[0]*j + i;
-
-          sphereFunctionValue = ((x[0] - px[0]) * (x[0] - px[0]) + (x[1] - px[1]) * (x[1] - px[1]) + (x[2] - px[2]) * (x[2] - px[2])) - ballRadius*ballRadius;
-
-          if (sphereFunctionValue<newScalars->GetComponent(idx,0))
-            {
-            newScalars->SetComponent(idx,0,sphereFunctionValue);
-            }
-          }
-        }
-      }
-    }
-}
-
-// Set the i-j-k dimensions on which to sample the distance function.
-void vtkvmtkPolyBallModeller::SetSampleDimensions(int i, int j, int k)
-{
-  int dim[3];
-
-  dim[0] = i;
-  dim[1] = j;
-  dim[2] = k;
-
-  this->SetSampleDimensions(dim);
-}
-
-// Set the i-j-k dimensions on which to sample the distance function.
-void vtkvmtkPolyBallModeller::SetSampleDimensions(int dim[3])
-{
-  int dataDim, i;
-
-  vtkDebugMacro(<< " setting SampleDimensions to (" << dim[0] << ","  << dim[1] << "," << dim[2] << ")");
-
-  if ((dim[0] != this->SampleDimensions[0]) || (dim[1] != this->SampleDimensions[1]) || (dim[2] != this->SampleDimensions[2]))
-    {
-    if ((dim[0]<1) || (dim[1]<1) || (dim[2]<1))
-      {
-      vtkErrorMacro (<< "Bad Sample Dimensions, retaining previous values");
-      return;
-      }
-
-    for (dataDim=0, i=0; i<3 ; i++)
-      {
-      if (dim[i] > 1)
-        {
-        dataDim++;
-        }
-      }
-
-    if (dataDim  < 3)
-      {
-      vtkErrorMacro(<<"Sample dimensions must define a volume!");
-      return;
-      }
-
-    for (i=0; i<3; i++)
-      {
-      this->SampleDimensions[i] = dim[i];
-      }
-
-    this->Modified();
-    }
+  return 1;
 }
 
 void vtkvmtkPolyBallModeller::PrintSelf(ostream& os, vtkIndent indent)
