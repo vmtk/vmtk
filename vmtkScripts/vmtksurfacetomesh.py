@@ -30,7 +30,7 @@ class vmtkSurfaceToMesh(pypes.pypeScript):
         
         self.Surface = None
         self.Mesh = None
-        self.CleanInput = 0
+        self.CleanInput = 1
 
         self.SetScriptName('vmtksurfacetomesh')
         self.SetScriptDoc('convert surface to a mesh')
@@ -39,7 +39,7 @@ class vmtkSurfaceToMesh(pypes.pypeScript):
             ['CleanInput','cleaninput','bool',1,'','clean unused points in the input']
             ])
         self.SetOutputMembers([
-            ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh','vmtksurfacewriter']])
+            ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh','vmtkmeshwriter']])
 
     def Execute(self):
 

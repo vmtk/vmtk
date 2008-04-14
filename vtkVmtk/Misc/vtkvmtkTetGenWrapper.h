@@ -113,6 +113,9 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkTetGenWrapper : public vtkUnstructuredGridAlgo
   vtkSetStringMacro(TetrahedronVolumeArrayName);
   vtkGetStringMacro(TetrahedronVolumeArrayName);
 
+  vtkSetStringMacro(SizingFunctionArrayName);
+  vtkGetStringMacro(SizingFunctionArrayName);
+
   vtkSetMacro(OutputSurfaceElements,int);
   vtkGetMacro(OutputSurfaceElements,int);
   vtkBooleanMacro(OutputSurfaceElements,int);
@@ -120,6 +123,10 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkTetGenWrapper : public vtkUnstructuredGridAlgo
   vtkSetMacro(OutputVolumeElements,int);
   vtkGetMacro(OutputVolumeElements,int);
   vtkBooleanMacro(OutputVolumeElements,int);
+
+  vtkSetMacro(UseSizingFunction,int);
+  vtkGetMacro(UseSizingFunction,int);
+  vtkBooleanMacro(UseSizingFunction,int);
 
   protected:
   vtkvmtkTetGenWrapper();
@@ -146,9 +153,11 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkTetGenWrapper : public vtkUnstructuredGridAlgo
   int Order;
   int DoCheck;
   int Verbose;
+  int UseSizingFunction;
 
   char* CellEntityIdsArrayName;
   char* TetrahedronVolumeArrayName;
+  char* SizingFunctionArrayName;
 
   int OutputSurfaceElements;
   int OutputVolumeElements;

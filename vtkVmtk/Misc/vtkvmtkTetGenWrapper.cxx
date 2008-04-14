@@ -20,6 +20,7 @@ Version:   $Revision: 1.8 $
 =========================================================================*/
 
 #include "vtkvmtkTetGenWrapper.h"
+#include "vtkvmtkConstants.h"
 #include "vtkUnstructuredGrid.h"
 #include "vtkPoints.h"
 #include "vtkCellArray.h"
@@ -55,12 +56,13 @@ vtkvmtkTetGenWrapper::vtkvmtkTetGenWrapper()
   this->CheckClosure = 0;       // -c switch, 0
   this->Order = 1;              // number after -o switch, 1 (e.g. -o2 for quadratic elements)
   this->DoCheck = 0;            // -C switch, 0
+  this->UseSizingFunction = 0;            // -C switch, 0
   
   this->Verbose = 0;
 
   this->CellEntityIdsArrayName = NULL;
-
   this->TetrahedronVolumeArrayName = NULL;
+  this->SizingFunctionArrayName = NULL;
 
   this->OutputSurfaceElements = 1;
   this->OutputVolumeElements = 1;
@@ -78,6 +80,12 @@ vtkvmtkTetGenWrapper::~vtkvmtkTetGenWrapper()
     {
     delete[] this->TetrahedronVolumeArrayName;
     this->TetrahedronVolumeArrayName = NULL;
+    }
+
+ if (this->SizingFunctionArrayName)
+    {
+    delete[] this->SizingFunctionArrayName;
+    this->SizingFunctionArrayName = NULL;
     }
 }
 
@@ -196,6 +204,17 @@ int vtkvmtkTetGenWrapper::RequestData(
     tetgenOptionString += "Q";  
     }
 
+  vtkDataArray* sizingFunctionArray = NULL;
+  if (this->SizingFunctionArrayName)
+    {
+    sizingFunctionArray = input->GetPointData()->GetArray(this->SizingFunctionArrayName);
+    }
+
+  if (this->UseSizingFunction && sizingFunctionArray)
+    {
+    tetgenOptionString += "m"; 
+    }
+
   tetgenio in_tetgenio;
   tetgenio out_tetgenio;
 
@@ -209,11 +228,24 @@ int vtkvmtkTetGenWrapper::RequestData(
   in_tetgenio.numberofpointattributes = 0;
   //TODO
 
+  in_tetgenio.pointmtrlist = NULL;
+  in_tetgenio.numberofpointmtrs = 0;
+
   int numberOfPoints = input->GetNumberOfPoints();
 
   in_tetgenio.numberofpoints = numberOfPoints;
   in_tetgenio.pointlist = new REAL[meshDimensionality * numberOfPoints];
-//  in_tetgenio.pointmarkerlist = new int[numberOfPoints];
+#if 0
+  if (pointMarkerArray)
+    {
+    in_tetgenio.pointmarkerlist = new int[numberOfPoints];
+    }
+#endif
+  if (sizingFunctionArray)
+    {
+    in_tetgenio.numberofpointmtrs = 1;
+    in_tetgenio.pointmtrlist = new REAL[numberOfPoints];
+    }
 
   double point[3];
   int i;
@@ -233,6 +265,14 @@ int vtkvmtkTetGenWrapper::RequestData(
       in_tetgenio.pointmarkerlist[i] = 0;
       }
 #endif
+    if (sizingFunctionArray)
+      {
+      in_tetgenio.pointmtrlist[i] = sizingFunctionArray->GetComponent(i,0);
+      if (in_tetgenio.pointmtrlist[i] == 0.0)
+        {
+        in_tetgenio.pointmtrlist[i] = VTK_VMTK_FLOAT_TOL;
+        }
+      }
     }
 
   vtkIdList* facetCellIds = vtkIdList::New();
@@ -374,7 +414,7 @@ int vtkvmtkTetGenWrapper::RequestData(
 
   char tetgenOptions[512];
   strcpy(tetgenOptions,tetgenOptionString.c_str());
-  cout<<tetgenOptions<<endl;
+  cout<<"TetGen command line options: "<<tetgenOptions<<endl;
   tetrahedralize(tetgenOptions,&in_tetgenio,&out_tetgenio);
 
   //TODO

@@ -31,6 +31,7 @@ class vmtkSurfaceCapper(pypes.pypeScript):
         self.Surface = None
         self.TriangleOutput = 1
         self.CellEntityIdsArrayName = 'CellEntityIds'
+        self.CellEntityIdOffset = 1
         self.Interactive = 1
         self.Method = 'simple'
         self.ConstraintFactor = 1.0
@@ -46,6 +47,7 @@ class vmtkSurfaceCapper(pypes.pypeScript):
             ['Method','method','str',1,'["simple","centerpoint","smooth"]','capping method'],
             ['TriangleOutput','triangle','bool',1,'','toggle triangulation of the output'],
             ['CellEntityIdsArrayName','entityidsarray','str',1,'','name of the array where the id of the caps have to be stored'],
+            ['CellEntityIdOffset','entityidoffset','int',1,'(0,)','offset for entity ids ("simple" method only")'],
             ['ConstraintFactor','constraint','float',1,'','amount of influence of the shape of the surface near the boundary on the shape of the cap ("smooth" method only)'],
             ['NumberOfRings','rings','int',1,'(0,)','number of rings composing the cap ("smooth" method only)'],
             ['Interactive','interactive','bool',1],
@@ -143,6 +145,7 @@ class vmtkSurfaceCapper(pypes.pypeScript):
             if self.Interactive:
                 capper.SetBoundaryIds(boundaryIds)
             capper.SetCellEntityIdsArrayName(self.CellEntityIdsArrayName)
+            capper.SetCellEntityIdOffset(self.CellEntityIdOffset)
             capper.Update()
             self.Surface = capper.GetOutput()
         elif self.Method == 'centerpoint':

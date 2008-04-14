@@ -1,7 +1,7 @@
 /*=========================================================================
 
 Program:   VMTK
-Module:    $RCSfile: vtkvmtkSimpleCapPolyData.h,v $
+Module:    $RCSfile: vtkvmtkPolyDataSizingFunction.h,v $
 Language:  C++
 Date:      $Date: 2006/07/17 09:53:14 $
 Version:   $Revision: 1.5 $
@@ -18,48 +18,44 @@ Version:   $Revision: 1.5 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkSimpleCapPolyData - Add caps to boundaries.
+  // .NAME vtkvmtkPolyDataSizingFunction - Add caps to boundaries.
   // .SECTION Description
-  // This class closes the boundaries of a surface with a cap.
+  // This class constructs a sizing function for volume meshing on the basis 
+  // on the input surface.
 
-#ifndef __vtkvmtkSimpleCapPolyData_h
-#define __vtkvmtkSimpleCapPolyData_h
+#ifndef __vtkvmtkPolyDataSizingFunction_h
+#define __vtkvmtkPolyDataSizingFunction_h
 
 #include "vtkPolyDataAlgorithm.h"
 #include "vtkIdList.h"
 #include "vtkvmtkWin32Header.h"
 
-class VTK_VMTK_MISC_EXPORT vtkvmtkSimpleCapPolyData : public vtkPolyDataAlgorithm
+class VTK_VMTK_MISC_EXPORT vtkvmtkPolyDataSizingFunction : public vtkPolyDataAlgorithm
 {
   public: 
-  vtkTypeRevisionMacro(vtkvmtkSimpleCapPolyData,vtkPolyDataAlgorithm);
+  vtkTypeRevisionMacro(vtkvmtkPolyDataSizingFunction,vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent); 
 
-  static vtkvmtkSimpleCapPolyData *New();
+  static vtkvmtkPolyDataSizingFunction *New();
   
-  vtkSetStringMacro(CellEntityIdsArrayName);
-  vtkGetStringMacro(CellEntityIdsArrayName);
+  vtkSetStringMacro(SizingFunctionArrayName);
+  vtkGetStringMacro(SizingFunctionArrayName);
 
-  vtkSetObjectMacro(BoundaryIds,vtkIdList);
-  vtkGetObjectMacro(BoundaryIds,vtkIdList);
-
-  vtkSetMacro(CellEntityIdOffset,int);
-  vtkGetMacro(CellEntityIdOffset,int);
+  vtkSetMacro(ScaleFactor,double);
+  vtkGetMacro(ScaleFactor,double);
 
   protected:
-  vtkvmtkSimpleCapPolyData();
-  ~vtkvmtkSimpleCapPolyData();  
+  vtkvmtkPolyDataSizingFunction();
+  ~vtkvmtkPolyDataSizingFunction();  
 
   virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
 
-  vtkIdList* BoundaryIds;
-  char* CellEntityIdsArrayName;
-
-  int CellEntityIdOffset;
+  char* SizingFunctionArrayName;
+  double ScaleFactor;
 
   private:
-  vtkvmtkSimpleCapPolyData(const vtkvmtkSimpleCapPolyData&);  // Not implemented.
-  void operator=(const vtkvmtkSimpleCapPolyData&);  // Not implemented.
+  vtkvmtkPolyDataSizingFunction(const vtkvmtkPolyDataSizingFunction&);  // Not implemented.
+  void operator=(const vtkvmtkPolyDataSizingFunction&);  // Not implemented.
 };
 
 #endif

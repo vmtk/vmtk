@@ -50,6 +50,8 @@ class vmtkTetGen(pypes.pypeScript):
         self.Order = 1
         self.DoCheck = 0
       	self.Verbose = 0
+        self.UseSizingFunction = 0
+        self.SizingFunctionArrayName = ''
         
         self.CellEntityIdsArrayName = 'CellEntityIds'
         self.TetrahedronVolumeArrayName = 'TetrahedronVolume'
@@ -81,8 +83,10 @@ class vmtkTetGen(pypes.pypeScript):
             ['Order','order','int',1,'','see TetGen documentation'],
             ['DoCheck','docheck','int',1,'','see TetGen documentation'],
             ['Verbose','verbose','int',1,'','see TetGen documentation'],
+            ['UseSizingFunction','usesizingfunction','int',1,'','see TetGen documentation'],
             ['CellEntityIdsArrayName','entityidsarray','str',1,'','name of the array where cell entity ids are stored'],
             ['TetrahedronVolumeArrayName','tetravolumearray','str',1,'','name of the array where volumes of tetrahedra are stored'],
+            ['SizingFunctionArrayName','sizingfunctionarray','str',1,'','name of the array where sizing function values are stored'],
             ['OutputSurfaceElements','surfaceelements','int',1,'','toggle output surface elements'], 
             ['OutputVolumeElements','volumeelements','int',1,'','toggle output volume elements']
             ])
@@ -134,8 +138,10 @@ class vmtkTetGen(pypes.pypeScript):
         tetgen.SetOrder(self.Order)
         tetgen.SetDoCheck(self.DoCheck)
         tetgen.SetVerbose(self.Verbose)
+        tetgen.SetUseSizingFunction(self.UseSizingFunction)
         tetgen.SetCellEntityIdsArrayName(self.CellEntityIdsArrayName)
         tetgen.SetTetrahedronVolumeArrayName(self.TetrahedronVolumeArrayName)
+        tetgen.SetSizingFunctionArrayName(self.SizingFunctionArrayName)
         tetgen.SetOutputSurfaceElements(self.OutputSurfaceElements)
         tetgen.SetOutputVolumeElements(self.OutputVolumeElements)
         tetgen.Update()

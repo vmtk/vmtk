@@ -166,12 +166,7 @@ class vmtkImageVOISelector(pypes.pypeScript):
         extractVOI.SetVOI(newVOI)
         extractVOI.Update()
 
-        translateExtent = vtk.vtkImageTranslateExtent()
-        translateExtent.SetInput(extractVOI.GetOutput())
-        translateExtent.SetTranslation(-newVOI[0],-newVOI[2],-newVOI[4])
-        translateExtent.Update()
-
-        self.CroppedImage.DeepCopy(translateExtent.GetOutput())
+        self.CroppedImage.DeepCopy(extractVOI.GetOutput())
         self.CroppedImage.Update()
 
         if self.CroppedImage.GetSource():
@@ -181,6 +176,8 @@ class vmtkImageVOISelector(pypes.pypeScript):
 
         if self.Image == None:
             self.PrintError('Error: no Image.')
+
+        self.CroppedImage.DeepCopy(self.Image)
 
         if self.Interactive == 1:
             

@@ -8,6 +8,7 @@ SET (VTK_VMTK_MISC_SRCS
   vtkvmtkMeshVorticity.cxx
 #  vtkvmtkPolyDataBoundaryExtractor.cxx
   vtkvmtkPolyDataKiteRemovalFilter.cxx
+  vtkvmtkPolyDataSizingFunction.cxx
   vtkvmtkPolyDataToUnstructuredGridFilter.cxx
   vtkvmtkSimpleCapPolyData.cxx
   vtkvmtkSmoothCapPolyData.cxx

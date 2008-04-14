@@ -38,6 +38,7 @@ vtkvmtkSimpleCapPolyData::vtkvmtkSimpleCapPolyData()
 {
   this->CellEntityIdsArrayName = NULL;
   this->BoundaryIds = NULL;
+  this->CellEntityIdOffset = 1;
 }
 
 vtkvmtkSimpleCapPolyData::~vtkvmtkSimpleCapPolyData()
@@ -100,7 +101,7 @@ int vtkvmtkSimpleCapPolyData::RequestData(
     cellEntityIdsArray = vtkIntArray::New();
     cellEntityIdsArray->SetName(this->CellEntityIdsArrayName);
     cellEntityIdsArray->SetNumberOfTuples(newPolys->GetNumberOfCells());
-    cellEntityIdsArray->FillComponent(0,0.0);
+    cellEntityIdsArray->FillComponent(0,static_cast<double>(this->CellEntityIdOffset));
     }
 
   vtkvmtkPolyDataBoundaryExtractor* boundaryExtractor = vtkvmtkPolyDataBoundaryExtractor::New();
@@ -129,7 +130,7 @@ int vtkvmtkSimpleCapPolyData::RequestData(
     newPolys->InsertNextCell(boundaryPointIds);
     if (markCells)
       {
-      cellEntityIdsArray->InsertNextValue(i+1);
+      cellEntityIdsArray->InsertNextValue(i+1+this->CellEntityIdOffset);
       }
     boundaryPointIds->Delete();
     }
