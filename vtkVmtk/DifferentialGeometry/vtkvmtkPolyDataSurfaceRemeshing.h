@@ -61,8 +61,14 @@ public:
   vtkSetMacro(TargetAreaFactor,double);
   vtkGetMacro(TargetAreaFactor,double);
 
-  vtkSetMacro(MinimumAreaFactor,double);
-  vtkGetMacro(MinimumAreaFactor,double);
+  vtkSetMacro(MinAreaFactor,double);
+  vtkGetMacro(MinAreaFactor,double);
+
+  vtkSetMacro(MaxArea,double);
+  vtkGetMacro(MaxArea,double);
+
+  vtkSetMacro(MinArea,double);
+  vtkGetMacro(MinArea,double);
 
   vtkSetMacro(NumberOfIterations,int);
   vtkGetMacro(NumberOfIterations,int);
@@ -170,7 +176,9 @@ protected:
   int ElementSizeMode;
   double TargetArea;
   double TargetAreaFactor;
-  double MinimumAreaFactor;
+  double MaxArea;
+  double MinArea;
+  double MinAreaFactor;
   char* TargetAreaArrayName;
 
   char* CellEntityIdsArrayName;

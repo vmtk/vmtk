@@ -40,7 +40,6 @@ vtkStandardNewMacro(vtkvmtkLinearToQuadraticMeshFilter);
 
 vtkvmtkLinearToQuadraticMeshFilter::vtkvmtkLinearToQuadraticMeshFilter()
 {
-  this->SubdivisionMethod = LINEAR_SUBDIVISION;
 }
 
 vtkvmtkLinearToQuadraticMeshFilter::~vtkvmtkLinearToQuadraticMeshFilter()
@@ -58,9 +57,7 @@ int vtkvmtkLinearToQuadraticMeshFilter::RequestData(
   vtkUnstructuredGrid *input = vtkUnstructuredGrid::SafeDownCast(inInfo->Get(vtkDataObject::DATA_OBJECT()));
   vtkUnstructuredGrid *output = vtkUnstructuredGrid::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
-  //TODO: run the geometry filter and subdivide (select surface cells based on entity).
-  //TODO: finally move mid-edge surface points into subdivision position. 
-  //TODO: to find point, compute corresponding mid-edge node and use locator
+  //TODO: finally project mid-edge surface points to position on the original surface (use locator).
  
 //   vtkIdTypeArray* triangleIds = vtkIdTypeArray::New();
 //   input->GetIdsOfCellsOfType(VTK_TRIANGLE,triangleIds);

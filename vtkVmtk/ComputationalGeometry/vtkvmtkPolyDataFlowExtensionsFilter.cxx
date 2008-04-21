@@ -166,7 +166,7 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
     vtkvmtkBoundaryReferenceSystems::OrientBoundaryNormalOutwards(input,boundaries,i,normal,outwardNormal);
 
     int boundaryDirection = 1;
-    if (vtkMath::Dot(normal,outwardNormal) > 0.0)
+    if (vtkMath::Dot(normal,outwardNormal) < 0.0)
       {
       boundaryDirection = -1;
       }
@@ -324,6 +324,14 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
     double advancementRatio, factor;
 
     previousBoundaryIds->DeepCopy(boundaryIds);
+    if (boundaryDirection == -1)
+      {
+      previousBoundaryIds->Initialize();
+      for (j=0; j<numberOfBoundaryPoints; j++)
+        {
+        previousBoundaryIds->InsertNextId(boundaryIds->GetId(numberOfBoundaryPoints-j-1));
+        }
+      }
 
     // TODO: use area, not meanRadius as targetRadius
 
@@ -342,7 +350,8 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
     vtkPoints* targetStaggeredBoundaryPoints = vtkPoints::New();
 
     double baseRadialNormal[3];
-    boundary->GetPoints()->GetPoint(0,point);
+//    boundary->GetPoints()->GetPoint(0,point);
+    input->GetPoint(previousBoundaryIds->GetId(0),point);
     for (k=0; k<3; k++)
       {
       baseRadialNormal[k] = point[k] - barycenter[k];
@@ -388,7 +397,8 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
       for (j=0; j<numberOfBoundaryPoints; j++)
         {
         double firstBoundaryPoint[3], lastBoundaryPoint[3];
-        boundary->GetPoints()->GetPoint(j,point);
+//        boundary->GetPoints()->GetPoint(j,point);
+        input->GetPoint(previousBoundaryIds->GetId(j),point);
         targetBoundaryPoints->GetPoint(j,firstBoundaryPoint);
         sourceLandmarks->InsertNextPoint(firstBoundaryPoint);
         targetLandmarks->InsertNextPoint(point);
@@ -402,15 +412,6 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
       thinPlateSplineTransform->SetSourceLandmarks(sourceLandmarks);
       thinPlateSplineTransform->SetTargetLandmarks(targetLandmarks);
       }
-
-//    if (boundaryDirection == -1)
-//      {
-//      previousBoundaryIds->Initialize();
-//      for (j=0; j<numberOfBoundaryPoints; j++)
-//        {
-//        previousBoundaryIds->InsertNextId(boundaryIds->GetId(numberOfBoundaryPoints-j-1));
-//        }
-//      }
 
     int numberOfLayers = extensionLength / targetDistanceBetweenPoints;
     int numberOfTransitionLayers = (extensionLength * this->TransitionRatio) / targetDistanceBetweenPoints;

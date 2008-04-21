@@ -40,7 +40,7 @@ class vmtkFlowExtensions(pypes.pypeScript):
         self.TargetNumberOfBoundaryPoints = 50
         self.CenterlineNormalEstimationDistanceRatio = 1.0
         self.ExtensionMode = "centerlinedirection"
-        self.InterpolationMode = "centerlinedirection"
+        self.InterpolationMode = "thinplatespline"
         self.Interactive = 1
         self.Sigma = 1.0
 

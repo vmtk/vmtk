@@ -34,6 +34,8 @@ class vmtkMeshGenerator(pypes.pypeScript):
         self.TargetArea = 1.0
         self.TargetAreaFactor = 1.0
         self.TargetAreaArrayName = 'TargetArea'
+        self.MaxArea = 1E16
+        self.MinArea = 0.0
         self.CellEntityIdsArrayName = 'CellEntityIds'
         self.SurfaceElementSizeMode = 'fixedarea'
         self.VolumeElementScaleFactor = 0.8
@@ -47,6 +49,8 @@ class vmtkMeshGenerator(pypes.pypeScript):
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
             ['TargetArea','targetarea','float',1,'(0.0,)'],
             ['TargetAreaFactor','targetareafactor','float',1,'(0.0,)'],
+            ['MaxArea','maxarea','float',1,'(0.0,)'],
+            ['MinArea','minarea','float',1,'(0.0,)'],
             ['CellEntityIdsArrayName','entityidsarray','str',1],
             ['TargetAreaArrayName','targetareaarray','str',1],
             ['SizingFunctionArrayName','sizingfunctionarray','str',1],
@@ -77,6 +81,8 @@ class vmtkMeshGenerator(pypes.pypeScript):
         remeshing.Surface = capper.Surface
         remeshing.CellEntityIdsArrayName = capper.CellEntityIdsArrayName
         remeshing.TargetArea = self.TargetArea
+        remeshing.MaxArea = self.MaxArea
+        remeshing.MinArea = self.MinArea
         remeshing.TargetAreaFactor = self.TargetAreaFactor
         remeshing.TargetAreaArrayName = self.TargetAreaArrayName
         remeshing.ElementSizeMode = self.SurfaceElementSizeMode

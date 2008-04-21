@@ -32,7 +32,9 @@ class vmtkSurfaceRemeshing(pypes.pypeScript):
 
         self.TargetArea = 1.0
         self.TargetAreaFactor = 1.0
-        self.MinimumAreaFactor = 0.5
+        self.MinAreaFactor = 0.5
+        self.MaxArea = 1E16
+        self.MinArea = 0.0
         self.NumberOfIterations = 10
         self.NumberOfConnectivityOptimizationIterations = 20
         self.CellEntityIdsArrayName = None
@@ -51,7 +53,9 @@ class vmtkSurfaceRemeshing(pypes.pypeScript):
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
             ['TargetArea','targetarea','float',1,'(0.0,)'],
             ['TargetAreaFactor','targetareafactor','float',1,'(0.0,)'],
-            ['MinimumAreaFactor','minareafactor','float',1,'(0.0,)'],
+            ['MinAreaFactor','minareafactor','float',1,'(0.0,)'],
+            ['MaxArea','maxarea','float',1,'(0.0,)'],
+            ['MinArea','minarea','float',1,'(0.0,)'],
             ['NumberOfIterations','iterations','int',1,'(0,)'],
             ['NumberOfConnectivityOptimizationIterations','connectivityiterations','int',1,'(0,)'],
             ['CellEntityIdsArrayName','entityidsarray','str',1],
@@ -94,7 +98,9 @@ class vmtkSurfaceRemeshing(pypes.pypeScript):
             self.PrintError('Error: unsupported ElementSizeMode.')
         surfaceRemeshing.SetTargetArea(self.TargetArea)
         surfaceRemeshing.SetTargetAreaFactor(self.TargetAreaFactor)
-        surfaceRemeshing.SetMinimumAreaFactor(self.MinimumAreaFactor)
+        surfaceRemeshing.SetMinAreaFactor(self.MinAreaFactor)
+        surfaceRemeshing.SetMaxArea(self.MaxArea)
+        surfaceRemeshing.SetMinArea(self.MinArea)
         surfaceRemeshing.SetNumberOfIterations(self.NumberOfIterations)
         surfaceRemeshing.SetNumberOfConnectivityOptimizationIterations(self.NumberOfConnectivityOptimizationIterations)
         surfaceRemeshing.SetRelaxation(self.Relaxation)

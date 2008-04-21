@@ -36,28 +36,11 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkLinearToQuadraticMeshFilter : public vtkUnstru
 
   static vtkvmtkLinearToQuadraticMeshFilter *New();
   
-  vtkSetMacro(SubdivisionMethod,int);
-  vtkGetMacro(SubdivisionMethod,int);
-  void SetSubdivisionMethodToLinear()
-  { this->SubdivisionMethod = LINEAR_SUBDIVISION; }
-  void SetSubdivisionMethodToButterfly()
-  { this->SubdivisionMethod = BUTTERFLY_SUBDIVISION; }
-
   protected:
   vtkvmtkLinearToQuadraticMeshFilter();
   ~vtkvmtkLinearToQuadraticMeshFilter();
 
   virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
-
-  int SubdivisionMethod;
-
-  //BTX
-  enum
-  {
-    LINEAR_SUBDIVISION,
-    BUTTERFLY_SUBDIVISION
-  };
-  //ETX
 
   private:
   vtkvmtkLinearToQuadraticMeshFilter(const vtkvmtkLinearToQuadraticMeshFilter&);  // Not implemented.

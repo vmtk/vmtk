@@ -47,7 +47,9 @@ vtkvmtkPolyDataSurfaceRemeshing::vtkvmtkPolyDataSurfaceRemeshing()
   this->Relaxation = 0.5;
   this->TargetArea = 1.0;
   this->TargetAreaFactor = 1.0;
-  this->MinimumAreaFactor = 0.5;
+  this->MinAreaFactor = 0.5;
+  this->MaxArea = VTK_VMTK_LARGE_FLOAT;
+  this->MinArea = 0.0;
   this->TargetAreaArrayName = NULL;
   this->TargetAreaArray = NULL;
   this->NumberOfConnectivityOptimizationIterations = 20;
@@ -288,6 +290,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::RequestData(
     this->EntityBoundaryLocator->BuildLocator();
     }
 
+  cout<<"Remeshing surface..."<<endl;
   for (int n=0; n<this->NumberOfIterations; n++)
     {
     this->EdgeCollapseIteration();
@@ -302,7 +305,12 @@ int vtkvmtkPolyDataSurfaceRemeshing::RequestData(
       this->EdgeFlipConnectivityOptimizationIteration();
       }
     }
-  this->EdgeFlipIteration();
+
+  cout<<"Smoothing final surface mesh..."<<endl;
+  for (int i=0; i<this->NumberOfIterations; i++)
+    {
+    this->PointRelocationIteration();
+    }
   
   vtkPoints* newPoints = vtkPoints::New();
   vtkCellArray* newCells = vtkCellArray::New();
@@ -1320,6 +1328,14 @@ double vtkvmtkPolyDataSurfaceRemeshing::ComputeTriangleTargetArea(vtkIdType cell
     vtkErrorMacro(<<"ElementSizeMode specified is unknown");
     return 0.0;
     }
+  if (targetArea > this->MaxArea)
+    {
+    targetArea = this->MaxArea;
+    }
+  if (targetArea < this->MinArea)
+    {
+    targetArea = this->MinArea;
+    }
   return targetArea;
 }
 
@@ -1356,7 +1372,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::TestAspectRatioCollapseEdge(vtkIdType cellI
   
   double frobeniusAspectRatio = (side1Squared + side2Squared + side3Squared) / (4.0 * sqrt(3.0) * area);
 
-  if (frobeniusAspectRatio < this->AspectRatioThreshold && area > targetArea * this->MinimumAreaFactor)
+  if (frobeniusAspectRatio < this->AspectRatioThreshold && area > targetArea * this->MinAreaFactor)
     {
     return DO_NOTHING;
     }
@@ -1379,6 +1395,11 @@ int vtkvmtkPolyDataSurfaceRemeshing::TestAspectRatioCollapseEdge(vtkIdType cellI
 
   vtkIdType cell1, cell2, pt3, pt4;
   int success = vtkvmtkPolyDataSurfaceRemeshing::GetEdgeCellsAndOppositeEdge(pt1,pt2,cell1,cell2,pt3,pt4);
+
+  if (pt3 == pt4)
+    {
+    return DO_NOTHING;
+    }
 
   bool proceed = false;
 
