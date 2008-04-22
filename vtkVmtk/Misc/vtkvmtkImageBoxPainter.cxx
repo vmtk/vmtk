@@ -112,12 +112,20 @@ void vtkvmtkImageBoxPainter::SimpleExecute(vtkImageData* input,
     return;
     }
 
+  int relativeBoxExtent[6];
+  relativeBoxExtent[0] = this->BoxExtent[0] - extent[0];
+  relativeBoxExtent[1] = this->BoxExtent[1] - extent[0];
+  relativeBoxExtent[2] = this->BoxExtent[2] - extent[2];
+  relativeBoxExtent[3] = this->BoxExtent[3] - extent[2];
+  relativeBoxExtent[4] = this->BoxExtent[4] - extent[4];
+  relativeBoxExtent[5] = this->BoxExtent[5] - extent[4];
+
   switch(output->GetScalarType())
     {
     // This is simple a #define for a big case list. It handles
     // all data types vtk can handle.
     vtkTemplateMacro6(vtkvmtkImageBoxPainterExecute, input, output,
-                      (VTK_TT *)(inPtr), (VTK_TT *)(outPtr), this->BoxExtent, 
+                      (VTK_TT *)(inPtr), (VTK_TT *)(outPtr), relativeBoxExtent, 
                       (VTK_TT)this->PaintValue);
     default:
       vtkGenericWarningMacro("Execute: Unknown input ScalarType");
