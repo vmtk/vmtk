@@ -33,6 +33,7 @@ class vmtkImageFeatureCorrection(pypes.pypeScript):
         self.Sigma = 1.0
         self.ScaleValue = 0.02
         self.NegateLevelSets = False
+        self.ComputeScaleValueFromInput = True
 
         self.SetScriptName('vmtkimagefeaturecorrection')
         self.SetScriptDoc('correct a feature image (e.g. remove influence of bone and/or air from CT-based feature images)')
@@ -41,6 +42,7 @@ class vmtkImageFeatureCorrection(pypes.pypeScript):
             ['LevelSets','levelsets','vtkImageData',1,'','the input level sets','vmtkimagereader'],
             ['Sigma','sigma','float',1,'(0.0,)'],
             ['ScaleValue','scale','float',1,'(0.0,)'],
+            ['ComputeScaleValueFromInput','scalefrominput','bool',1,''],
             ['NegateLevelSets','negate','bool',1,'']
             ])
         self.SetOutputMembers([
@@ -68,6 +70,10 @@ class vmtkImageFeatureCorrection(pypes.pypeScript):
         sigmoid.SetLevelSetsImage(self.LevelSets)
         sigmoid.SetSigma(self.Sigma)
         sigmoid.SetScaleValue(self.ScaleValue)
+        if self.ComputeScaleValueFromInput:
+            sigmoid.ComputeScaleValueFromInputOn()
+        else:
+            sigmoid.ComputeScaleValueFromInputOff()
         sigmoid.Update()
  
         self.Image = sigmoid.GetOutput()

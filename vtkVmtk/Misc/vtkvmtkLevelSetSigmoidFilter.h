@@ -46,6 +46,10 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkLevelSetSigmoidFilter : public vtkSimpleImageT
   vtkSetMacro(ScaleValue,double);
   vtkGetMacro(ScaleValue,double);
 
+  vtkSetMacro(ComputeScaleValueFromInput,int);
+  vtkGetMacro(ComputeScaleValueFromInput,int);
+  vtkBooleanMacro(ComputeScaleValueFromInput,int);
+
   protected:
   vtkvmtkLevelSetSigmoidFilter();
   ~vtkvmtkLevelSetSigmoidFilter();  
@@ -56,6 +60,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkLevelSetSigmoidFilter : public vtkSimpleImageT
 
   double Sigma;
   double ScaleValue;
+  int ComputeScaleValueFromInput;
 
   private:
   vtkvmtkLevelSetSigmoidFilter(const vtkvmtkLevelSetSigmoidFilter&);  // Not implemented.

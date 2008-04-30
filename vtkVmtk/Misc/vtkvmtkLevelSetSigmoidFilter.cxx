@@ -34,6 +34,7 @@ vtkvmtkLevelSetSigmoidFilter::vtkvmtkLevelSetSigmoidFilter()
   this->LevelSetsImage = NULL;
   this->Sigma = 1.0;
   this->ScaleValue = 0.02;
+  this->ComputeScaleValueFromInput = 1;
 }
 
 vtkvmtkLevelSetSigmoidFilter::~vtkvmtkLevelSetSigmoidFilter()
@@ -74,15 +75,28 @@ void vtkvmtkLevelSetSigmoidFilter::SimpleExecute(vtkImageData* input, vtkImageDa
   double windowValueReal = windowValue * minSpacing;
   double sigmaReal = this->Sigma * minSpacing;
 
+  double scaleValue = this->ScaleValue;
+
   int numberOfPoints = input->GetNumberOfPoints();
+
   int i;
+  if (this->ComputeScaleValueFromInput)
+    {
+    scaleValue = 0.0;
+    for (i=0; i<numberOfPoints; i++)
+      {
+      scaleValue += inputScalars->GetComponent(i,0);
+      }
+    scaleValue /= numberOfPoints;
+    }
+
   for (i=0; i<numberOfPoints; i++)
     {
     double featureValue = inputScalars->GetComponent(i,0);
     double levelSetsValue = levelSetsScalars->GetComponent(i,0);
     if (levelSetsValue < windowValueReal)
       {
-      double sigmoidValue = this->ScaleValue * 1.0 / (1.0 + exp(levelSetsValue-sigmaReal)/(0.5*sigmaReal));
+      double sigmoidValue = scaleValue * 1.0 / (1.0 + exp(levelSetsValue-sigmaReal)/(0.5*sigmaReal));
       featureValue += sigmoidValue;
       outputScalars->SetComponent(i,0,featureValue);
       }
