@@ -39,7 +39,7 @@ class vmtkMeshGenerator(pypes.pypeScript):
         self.CellEntityIdsArrayName = 'CellEntityIds'
         self.SurfaceElementSizeMode = 'fixedarea'
         self.VolumeElementScaleFactor = 0.8
-        self.Order = 1
+#        self.Order = 1
 
         self.SizingFunctionArrayName = 'VolumeSizingFunction'
 
@@ -56,7 +56,7 @@ class vmtkMeshGenerator(pypes.pypeScript):
             ['SizingFunctionArrayName','sizingfunctionarray','str',1],
             ['SurfaceElementSizeMode','sizemode','str',1,'["fixedarea","areaarray"]'],
             ['VolumeElementScaleFactor','volumeelementfactor','float',1,'(0.0,)'],
-            ['Order','order','int',1,'(1,2)','mesh order']
+#            ['Order','order','int',1,'(1,2)','mesh order']
             ])
         self.SetOutputMembers([
             ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh','vmtkmeshwriter']
@@ -107,18 +107,16 @@ class vmtkMeshGenerator(pypes.pypeScript):
         tetgen.UseSizingFunction = 1
         tetgen.SizingFunctionArrayName = self.SizingFunctionArrayName
         tetgen.CellEntityIdsArrayName = self.CellEntityIdsArrayName
-        tetgen.Order = self.Order
+#        tetgen.Order = self.Order
         tetgen.Quality = 1
         tetgen.PLC = 1
         tetgen.NoBoundarySplit = 1
         tetgen.RemoveSliver = 1
+        tetgen.OutputSurfaceElements = 1
+        tetgen.OutputVolumeElements = 1
         tetgen.Execute()
 
         self.Mesh = tetgen.Mesh
-
-        if self.Order == 2:
-            #TODO extract surface mesh and move quadratic nodes to original surface
-            pass
 
         #TODO: smooth mesh?
 

@@ -30,6 +30,7 @@ SET(SCRIPTS_SRCS
   vmtkicpregistration.py
   vmtkimagecast.py
   vmtkimagecompose.py
+  vmtkimagefeaturecorrection.py
   vmtkimagefeatures.py
   vmtkimageinitialization.py
   vmtkimagelinetracer.py

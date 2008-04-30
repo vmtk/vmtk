@@ -39,7 +39,7 @@ class vmtkMeshWriter(pypes.pypeScript):
         self.SetScriptDoc('write a mesh to disk')
         self.SetInputMembers([
             ['Mesh','i','vtkUnstructuredGrid',1,'','the input mesh','vmtkmeshreader'],
-            ['Format','f','str',1,'["vtkxml","vtk","xda","fdneut","tecplot","pointdata"]','file format (xda - libmesh ASCII format, fdneut - FIDAP neutral format)'],
+            ['Format','f','str',1,'["vtkxml","vtk","xda","fdneut","tecplot","lifev","pointdata"]','file format (xda - libmesh ASCII format, fdneut - FIDAP neutral format)'],
             ['GuessFormat','guessformat','bool',1,'','guess file format from extension'],
             ['OutputFileName','ofile','str',1,'','output file name'],
             ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh'],
@@ -136,6 +136,74 @@ class vmtkMeshWriter(pypes.pypeScript):
             line = line + '\n'
             f.write(line)
 
+    def WriteLifeVMeshFile(self):
+        if (self.OutputFileName == ''):
+            self.PrintError('Error: no OutputFileName.')
+        self.PrintLog('Writing LifeV file.')
+
+        self.Mesh.BuildLinks()
+
+        cellEntityIdsArray = vtk.vtkIntArray()
+        cellEntityIdsArray.DeepCopy(self.Mesh.GetCellData().GetArray(self.CellEntityIdsArrayName))
+
+        f=open(self.OutputFileName, 'w')
+        line = "MeshVersionFormatted 1\n\n"
+        line += "Dimension\n"
+        line += "3\n\n"
+        line += "Vertices\n"
+        line += "%d\n" % self.Mesh.GetNumberOfPoints()
+        f.write(line)
+        for i in range(self.Mesh.GetNumberOfPoints()):
+            point = self.Mesh.GetPoint(i)
+            pointCells = vtk.vtkIdList()
+            self.Mesh.GetPointCells(i,pointCells)
+            maxCellEntityId = -1
+            for j in range(pointCells.GetNumberOfIds()):
+                cellEntityId = cellEntityIdsArray.GetValue(pointCells.GetId(j))
+                if cellEntityId > maxCellEntityId:
+                    maxCellEntityId = cellEntityId
+            line = "%f  %f  %f  %d\n" % (point[0], point[1], point[2], maxCellEntityId)
+            f.write(line)
+        line = "\n"
+
+        tetraCellIdArray = vtk.vtkIdTypeArray()
+        tetraCellType = 10
+        self.Mesh.GetIdsOfCellsOfType(tetraCellType,tetraCellIdArray)
+        numberOfTetras = tetraCellIdArray.GetNumberOfTuples()
+        line += "Tetrahedra\n"
+        line += "%d\n" % numberOfTetras
+        f.write(line)
+        for i in range(numberOfTetras):
+            tetraCellId = tetraCellIdArray.GetValue(i) 
+            cellPointIds = self.Mesh.GetCell(tetraCellId).GetPointIds()
+            line = ''
+            for j in range(cellPointIds.GetNumberOfIds()):
+                if j>0:
+                    line += '  '
+                line += "%d" % (cellPointIds.GetId(j)+1)
+            line += '  %d\n' % 1
+            f.write(line)
+        line = "\n"
+
+        triangleCellIdArray = vtk.vtkIdTypeArray()
+        triangleCellType = 5
+        self.Mesh.GetIdsOfCellsOfType(triangleCellType,triangleCellIdArray)
+        numberOfTriangles = triangleCellIdArray.GetNumberOfTuples()
+        line += "Triangles\n"
+        line += "%d\n" % numberOfTriangles
+        f.write(line)
+        for i in range(numberOfTriangles):
+            triangleCellId = triangleCellIdArray.GetValue(i)
+            cellPointIds = self.Mesh.GetCell(triangleCellId).GetPointIds()
+            line = ''
+            for j in range(cellPointIds.GetNumberOfIds()):
+                if j>0:
+                    line += '  '
+                line += "%d" % (cellPointIds.GetId(j)+1)
+            cellEntityId = cellEntityIdsArray.GetValue(triangleCellId)
+            line += '  %d\n' % cellEntityId
+            f.write(line)
+
     def WritePointDataMeshFile(self):
         if (self.OutputFileName == ''):
             self.PrintError('Error: no OutputFileName.')
@@ -180,6 +248,7 @@ class vmtkMeshWriter(pypes.pypeScript):
                             'vtk':'vtk',
                             'xda':'xda',
                             'FDNEUT':'fdneut',
+                            'lifev':'lifev',
                             'tec':'tecplot',
                             'dat':'pointdata'}
 
@@ -206,6 +275,8 @@ class vmtkMeshWriter(pypes.pypeScript):
             self.WriteXdaMeshFile()
         elif (self.Format == 'fdneut'):
             self.WriteFDNEUTMeshFile()
+        elif (self.Format == 'lifev'):
+            self.WriteLifeVMeshFile()
         elif (self.Format == 'tecplot'):
             self.WriteTecplotMeshFile()
         elif (self.Format == 'pointdata'):

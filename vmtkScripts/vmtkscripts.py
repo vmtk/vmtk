@@ -27,6 +27,7 @@ __all__ = [
   'vmtkicpregistration',
   'vmtkimagecast',
   'vmtkimagecompose',
+  'vmtkimagefeaturecorrection',
   'vmtkimagefeatures',
   'vmtkimageinitialization',
   'vmtkimagelinetracer',

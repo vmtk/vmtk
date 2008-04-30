@@ -235,8 +235,8 @@ int vtkvmtkBoundaryLayerGenerator::RequestData(
         }
       else if (cellType == VTK_QUADRATIC_TRIANGLE)
         {
-//         prismNPts = npts * 3 - 3;
-        prismNPts = npts * 3;
+         prismNPts = npts * 3 - 3;
+//        prismNPts = npts * 3;
         prismPts = new int[prismNPts];
 
         boundaryLayerCellTypes->InsertNextId(VTK_QUADRATIC_WEDGE);
@@ -262,9 +262,9 @@ int vtkvmtkBoundaryLayerGenerator::RequestData(
         prismPts[14] = pts[2] + k*numberOfLayerPoints + numberOfLayerPoints/2;
 
         // TODO: this creates a 18-noded wedge, which is not supported by VTK, but it works as a 15-node (the last 3 points are ignored). Better solutions? Could put it in as a vtkGenericCell, but harder to identify it afterwards
-        prismPts[15] = pts[3] + k*numberOfLayerPoints + numberOfLayerPoints/2;
-        prismPts[16] = pts[4] + k*numberOfLayerPoints + numberOfLayerPoints/2;
-        prismPts[17] = pts[5] + k*numberOfLayerPoints + numberOfLayerPoints/2;
+//        prismPts[15] = pts[3] + k*numberOfLayerPoints + numberOfLayerPoints/2;
+//        prismPts[16] = pts[4] + k*numberOfLayerPoints + numberOfLayerPoints/2;
+//        prismPts[17] = pts[5] + k*numberOfLayerPoints + numberOfLayerPoints/2;
 
         boundaryLayerCellArray->InsertNextCell(prismNPts,prismPts);
         delete[] prismPts;

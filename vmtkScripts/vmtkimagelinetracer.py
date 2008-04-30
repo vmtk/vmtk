@@ -137,7 +137,7 @@ class vmtkImageLineTracer(pypes.pypeScript):
         self.vmtkRenderer.Renderer.AddActor(self.ImageActor)
 
         self.ImageTracerWidget.SetCaptureRadius(1.5)
-        self.ImageTracerWidget.SetProp(self.ImageActor)
+        self.ImageTracerWidget.SetViewProp(self.ImageActor)
         self.ImageTracerWidget.SetInput(widgetImage)
         self.ImageTracerWidget.ProjectToPlaneOn()
         self.ImageTracerWidget.SetProjectionNormal(self.Axis)

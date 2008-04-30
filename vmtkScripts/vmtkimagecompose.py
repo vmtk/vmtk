@@ -30,13 +30,15 @@ class vmtkImageCompose(pypes.pypeScript):
         self.Image = None
         self.Image2 = None
         self.Operation = 'min'
+        self.NegateImage2 = False
 
         self.SetScriptName('vmtkimagecompose')
         self.SetScriptDoc('compose an image based on user-specified parameters or on a reference image')
         self.SetInputMembers([
             ['Image','i','vtkImageData',1,'','the input image','vmtkimagereader'],
             ['Image2','i2','vtkImageData',1,'','the second input image','vmtkimagereader'],
-            ['Operation','operation','str',1,'["min","max"]','the operation used to compose images']
+            ['Operation','operation','str',1,'["min","max"]','the operation used to compose images'],
+            ['NegateImage2','negatei2','bool',1,'','negate the second input before composing']
             ])
         self.SetOutputMembers([
             ['Image','o','vtkImageData',1,'','the output image','vmtkimagewriter']
@@ -49,6 +51,14 @@ class vmtkImageCompose(pypes.pypeScript):
 
         if self.Image2 == None:
             self.PrintError('Error: No input image2.')
+
+        if self.NegateImage2:
+            negateFilter = vtk.vtkImageMathematics()
+            negateFilter.SetInput(self.Image2)
+            negateFilter.SetOperationToMultiplyByK()
+            negateFilter.SetK(-1.0)
+            negateFilter.Update()
+            self.Image2 = negateFilter.GetOutput()
 
         composeFilter = vtk.vtkImageMathematics()
         composeFilter.SetInput1(self.Image)

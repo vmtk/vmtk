@@ -32,49 +32,30 @@ class vmtkImageInitialization(pypes.pypeScript):
 
         self.Image = None
 
-        self.Interactive = 1
-
         self.vmtkRenderer = None
         self.OwnRenderer = 0
 
-        self.Method = 'collidingfronts'
-        self.IsosurfaceValue = 0.0
-        self.UpperThreshold = 1E20
-        self.LowerThreshold = -1E20
-        self.Seeds = []
-        self.TargetSeeds = []
+        self.InitialLevelSets = None
+        self.Surface = None
+
+        self.UpperThreshold = 0.0
+        self.LowerThreshold = 0.0
+
+        self.IsoSurfaceValue = 0.0
 
         self.ImageSeeder = None
+        self.SurfaceViewer = None
 
         self.SetScriptName('vmtkimageinitialization')
         self.SetInputMembers([
             ['Image','i','vtkImageData',1,'','','vmtkimagereader'],
-            ['Method','method','str',1,'["collidingfronts","fastmarching","voxels","threshold","isosurface"]','the initialization method'],
-            ['Interactive','interactive','bool',1],
-            ['IsosurfaceValue','isosurfacevalue','float',1],
-            ['UpperThreshold','upperthreshold','float',1],
-            ['LowerThreshold','lowerthreshold','float',1],
-            ['Seeds','seeds','float',-1],
-            ['TargetSeeds','targetseeds','float',-1],
             ['vmtkRenderer','renderer','vmtkRenderer',1]
             ])
         self.SetOutputMembers([
-            ['Image','o','vtkImageData',1,'','','vmtkimagewriter'],
-            ['IsosurfaceValue','oisosurfacevalue','float',1]
+            ['IsoSurfaceValue','isosurfacevalue','float',1],
+            ['InitialLevelSets','olevelsets','vtkImageData',1,'','','vmtkimagewriter'],
+            ['Surface','osurface','vtkPolyData',1,'','','vmtksurfacewriter']
             ])
-
-    def SeedsToPoints(self,seeds):
-
-        points = vtk.vtkPoints()
-        if len(seeds) % 3 != 0:
-            self.PrintError('Error: seeds not made up of triplets.')
-            return points
-
-        for i in range(len(seeds)/3):
-            point = [seeds[3*i+0],seeds[3*i+1],seeds[3*i+2]]
-            points.InsertNextPoint(point)
-
-        return points
 
     def SeedInput(self,queryString,numberOfSeeds):
 
@@ -123,9 +104,8 @@ class vmtkImageInitialization(pypes.pypeScript):
 
         self.PrintLog('Isosurface initialization.')
 
-        if self.Interactive:
-            queryString = "Please input isosurface level (\'i\' to activate image, \'n\' for none): "
-            self.IsosurfaceValue = self.ThresholdInput(queryString)
+        queryString = "Please input isosurface level (\'i\' to activate image, \'n\' for none): "
+        self.IsoSurfaceValue = self.ThresholdInput(queryString)
         
         imageMathematics = vtk.vtkImageMathematics()
         imageMathematics.SetInput(self.Image)
@@ -133,20 +113,21 @@ class vmtkImageInitialization(pypes.pypeScript):
         imageMathematics.SetOperationToMultiplyByK()
         imageMathematics.Update()
 
-        self.IsosurfaceValue *= -1.0
+        self.IsoSurfaceValue *= -1.0
 
-        self.Image = imageMathematics.GetOutput()
+        self.InitialLevelSets = vtk.vtkImageData()
+        self.InitialLevelSets.DeepCopy(imageMathematics.GetOutput())
+        self.InitialLevelSets.Update()
 
     def ThresholdInitialize(self):
 
         self.PrintLog('Threshold initialization.')
 
-        if self.Interactive:
-            queryString = "Please input lower threshold (\'i\' to activate image, \'n\' for none): "
-            self.LowerThreshold = self.ThresholdInput(queryString)
+        queryString = "Please input lower threshold (\'i\' to activate image, \'n\' for none): "
+        self.LowerThreshold = self.ThresholdInput(queryString)
 
-            queryString = "Please input upper threshold (\'i\' to activate image, \'n\' for none): "
-            self.UpperThreshold = self.ThresholdInput(queryString)
+        queryString = "Please input upper threshold (\'i\' to activate image, \'n\' for none): "
+        self.UpperThreshold = self.ThresholdInput(queryString)
 
         scalarRange = self.Image.GetScalarRange()
 
@@ -169,58 +150,27 @@ class vmtkImageInitialization(pypes.pypeScript):
         
             thresholdedImage = threshold.GetOutput()
  
-        self.Image = thresholdedImage
-        self.IsosurfaceValue = 0.0
+        self.InitialLevelSets = vtk.vtkImageData()
+        self.InitialLevelSets.DeepCopy(thresholdedImage)
+        self.InitialLevelSets.Update()
 
-    def VoxelsInitialize(self):
-
-        self.PrintLog('Voxel initialization.')
-
-        if self.Interactive:
-            queryString = 'Please place seeds'
-            sourceSeeds = self.SeedInput(queryString,0)
-        else:
-            sourceSeeds = self.SeedsToPoints(self.Seeds)
-
-        sourceSeedIds = vtk.vtkIdList()
-        for i in range(sourceSeeds.GetNumberOfPoints()):
-            sourceSeedIds.InsertNextId(self.Image.FindPoint(sourceSeeds.GetPoint(i)))
-
-        initializedImage = vtk.vtkImageData()
-        initializedImage.DeepCopy(self.Image)
-
-        imageScalars = initializedImage.GetPointData().GetScalars()
-
-        imageScalars.FillComponent(0,1.0)
-
-        for i in range(sourceSeedIds.GetNumberOfIds()):
-            id = sourceSeedIds.GetId(i)
-            if id < 0:
-                continue
-            imageScalars.SetComponent(id,0,-1.0)
-
-        self.Image = initializedImage
+        self.IsoSurfaceValue = 0.0
 
     def FastMarchingInitialize(self):
 
         self.PrintLog('Fast marching initialization.')
 
-        if self.Interactive:
-            queryString = "Please input lower threshold (\'i\' to activate image, \'n\' for none): "
-            self.LowerThreshold = self.ThresholdInput(queryString)
+        queryString = "Please input lower threshold (\'i\' to activate image, \'n\' for none): "
+        self.LowerThreshold = self.ThresholdInput(queryString)
 
-            queryString = "Please input upper threshold (\'i\' to activate image, \'n\' for none): "
-            self.UpperThreshold = self.ThresholdInput(queryString)
+        queryString = "Please input upper threshold (\'i\' to activate image, \'n\' for none): "
+        self.UpperThreshold = self.ThresholdInput(queryString)
 
-            queryString = 'Please place source seeds'
-            sourceSeeds = self.SeedInput(queryString,0)
+        queryString = 'Please place source seeds'
+        sourceSeeds = self.SeedInput(queryString,0)
         
-            queryString = 'Please place target seeds'
-            targetSeeds = self.SeedInput(queryString,0)
-
-        else:
-            sourceSeeds = self.SeedsToPoints(self.Seeds)
-            targetSeeds = self.SeedsToPoints(self.TargetSeeds)
+        queryString = 'Please place target seeds'
+        targetSeeds = self.SeedInput(queryString,0)
 
         sourceSeedIds = vtk.vtkIdList()
         for i in range(sourceSeeds.GetNumberOfPoints()):
@@ -255,45 +205,41 @@ class vmtkImageInitialization(pypes.pypeScript):
         shiftScale = vtk.vtkImageShiftScale()
         shiftScale.SetInput(thresholdedImage)
         shiftScale.SetShift(-scalarRange[0])
-        shiftScale.SetScale(1./float(scalarRange[1]-scalarRange[0]))
+        shiftScale.SetScale(1/(scalarRange[1]-scalarRange[0]))
         shiftScale.Update()
         
         speedImage = shiftScale.GetOutput()
-        
+
         fastMarching = vtkvmtk.vtkvmtkFastMarchingUpwindGradientImageFilter()
         fastMarching.SetInput(speedImage)
-#        fastMarching.SetInput(thresholdedImage)
         fastMarching.SetSeeds(sourceSeedIds)
-        fastMarching.SetTargets(targetSeedIds)
         fastMarching.GenerateGradientImageOff()
         fastMarching.SetTargetOffset(100.0)
-        fastMarching.SetTargetReachedModeToOneTarget()
-##         fastMarching.SetTargetReachedModeToAllTargets()
+        if targetSeedIds.GetNumberOfIds() > 0:
+            fastMarching.SetTargets(targetSeedIds)
+            fastMarching.SetTargetReachedModeToOneTarget()
+        else:
+            fastMarching.SetTargetReachedModeToNoTargets()
         fastMarching.Update()
 
-#        self.Image = vtk.vtkImageData()
-        self.Image.DeepCopy(fastMarching.GetOutput())
-        self.Image.Update()
+        self.InitialLevelSets = vtk.vtkImageData()
+        self.InitialLevelSets.DeepCopy(fastMarching.GetOutput())
+        self.InitialLevelSets.Update()
 
-        self.IsosurfaceValue = fastMarching.GetTargetValue()
+        self.IsoSurfaceValue = fastMarching.GetTargetValue()
 
     def CollidingFrontsInitialize(self):
 
         self.PrintLog('Colliding fronts initialization.')
 
-        if self.Interactive:
+        queryString = "Please input lower threshold (\'i\' to activate image, \'n\' for none): "
+        self.LowerThreshold = self.ThresholdInput(queryString)
 
-            queryString = "Please input lower threshold (\'i\' to activate image, \'n\' for none): "
-            self.LowerThreshold = self.ThresholdInput(queryString)
-    
-            queryString = "Please input upper threshold (\'i\' to activate image, \'n\' for none): "
-            self.UpperThreshold = self.ThresholdInput(queryString)
-    
-            queryString = 'Please place two seeds'
-            seeds = self.SeedInput(queryString,2)
+        queryString = "Please input upper threshold (\'i\' to activate image, \'n\' for none): "
+        self.UpperThreshold = self.ThresholdInput(queryString)
 
-        else:
-            seeds = self.SeedsToPoints(self.Seeds)
+        queryString = 'Please place two seeds'
+        seeds = self.SeedInput(queryString,2)
 
         seedIds1 = vtk.vtkIdList()
         seedIds2 = vtk.vtkIdList()
@@ -338,29 +284,86 @@ class vmtkImageInitialization(pypes.pypeScript):
         collidingFronts.ApplyConnectivityOn()
         collidingFronts.Update()
 
-        self.Image = vtk.vtkImageData()
-        self.Image.DeepCopy(collidingFronts.GetOutput())
-        self.Image.Update()
+        self.InitialLevelSets = vtk.vtkImageData()
+        self.InitialLevelSets.DeepCopy(collidingFronts.GetOutput())
+        self.InitialLevelSets.Update()
 
-        self.IsosurfaceValue = 10.0 * collidingFronts.GetNegativeEpsilon()
+        self.IsoSurfaceValue = 10.0 * collidingFronts.GetNegativeEpsilon()
+
+    def SeedInitialize(self):
+
+        self.PrintLog('Seed initialization.')
+
+        queryString = 'Please place seeds'
+        seeds = self.SeedInput(queryString,0)
+        
+        self.InitialLevelSets = vtk.vtkImageData()
+        self.InitialLevelSets.DeepCopy(self.Image)
+        self.InitialLevelSets.Update()
+
+        levelSetsInputScalars = self.InitialLevelSets.GetPointData().GetScalars()
+        levelSetsInputScalars.FillComponent(0,1.0)
+
+        dimensions = self.Image.GetDimensions()
+        for i in range(seeds.GetNumberOfPoints()):
+            id = self.Image.FindPoint(seeds.GetPoint(i))
+            levelSetsInputScalars.SetComponent(id,0,-1.0)
+
+        dilateErode = vtk.vtkImageDilateErode3D()
+        dilateErode.SetInput(self.InitialLevelSets)
+        dilateErode.SetDilateValue(-1.0)
+        dilateErode.SetErodeValue(1.0)
+        dilateErode.SetKernelSize(3,3,3)
+        dilateErode.Update()
+
+        self.InitialLevelSets.DeepCopy(dilateErode.GetOutput())
+
+        self.IsoSurfaceValue = 0.0
+
+    def DisplayLevelSetSurface(self,levelSets,value=0.0):
+      
+        marchingCubes = vtk.vtkMarchingCubes()
+        marchingCubes.SetInput(levelSets)
+        marchingCubes.SetValue(0,value)
+        marchingCubes.Update()
+
+        self.Surface = marchingCubes.GetOutput()
+
+        self.OutputText('Displaying.\n')
+  
+        self.SurfaceViewer.Surface = marchingCubes.GetOutput()
+        if self.SurfaceViewer.Surface.GetSource():
+            self.SurfaceViewer.Surface.GetSource().UnRegisterAllOutputs()
+        self.SurfaceViewer.Display = 1
+        self.SurfaceViewer.Opacity = 0.5
+        self.SurfaceViewer.BuildView()
+
+    def InitializationTypeValidator(self,text):
+        if text in ['0','1','2','3','4']:
+            return 1
+        return 0
+
+    def YesNoValidator(self,text):
+        if text in ['n','y']:
+            return 1
+        return 0
+
+    def EvolutionParametersValidator(self,text):
+        if not text:
+            return 1
+        if text in ['q','e']:
+            return 1
+        for char in text:
+            if char not in string.digits + '.' + ' ' + '-':
+                return 0
+        if len(text.strip().split(' ')) in [1,4]:
+            return 1
+        return 0
 
     def Execute(self):
           
         if self.Image == None:
             self.PrintError('Error: no Image.')
-
-        if self.UpperThreshold > 1E19:
-            self.UpperThreshold = None  
-        if self.LowerThreshold < -1E19:
-            self.LowerThreshold = None       
-
-        initializationMethods = {
-                                'collidingfronts': self.CollidingFrontsInitialize,
-                                'fastmarching': self.FastMarchingInitialize,
-                                'voxels': self.VoxelsInitialize,
-                                'threshold': self.ThresholdInitialize,
-                                'isosurface': self.IsosurfaceInitialize
-                                }
 
         cast = vtk.vtkImageCast()
         cast.SetInput(self.Image)
@@ -368,13 +371,12 @@ class vmtkImageInitialization(pypes.pypeScript):
         cast.Update()
         self.Image = cast.GetOutput()
 
-        if self.Interactive:
-
-            if not self.vmtkRenderer:
-                self.vmtkRenderer = vmtkscripts.vmtkRenderer()
-                self.vmtkRenderer.Initialize()
-                self.OwnRenderer = 1
-      
+        if not self.vmtkRenderer:
+            self.vmtkRenderer = vmtkscripts.vmtkRenderer()
+            self.vmtkRenderer.Initialize()
+            self.OwnRenderer = 1
+ 
+        if not self.ImageSeeder: 
             self.ImageSeeder = vmtkscripts.vmtkImageSeeder()
             self.ImageSeeder.vmtkRenderer = self.vmtkRenderer
             self.ImageSeeder.Image = self.Image
@@ -382,19 +384,35 @@ class vmtkImageInitialization(pypes.pypeScript):
             self.ImageSeeder.Execute()
             self.ImageSeeder.Display = 1
             self.ImageSeeder.BuildView()
- 
-        initializationMethods[self.Method]()
+  
+        if not self.SurfaceViewer:
+            self.SurfaceViewer = vmtkscripts.vmtkSurfaceViewer()
+            self.SurfaceViewer.vmtkRenderer = self.vmtkRenderer
+  
+        initializationMethods = {
+                                '0': self.CollidingFrontsInitialize,
+                                '1': self.FastMarchingInitialize,
+                                '2': self.ThresholdInitialize,
+                                '3': self.IsosurfaceInitialize,
+                                '4': self.SeedInitialize
+                                }
+  
+        endInitialization = 0
+        while (endInitialization == 0):
+            queryString = 'Please choose initialization type: (0: colliding fronts; 1: fast marching; 2: threshold; 3: isosurface, 4: seed): '
+            initializationType = self.InputText(queryString,self.InitializationTypeValidator)
+            initializationMethods[initializationType]()
+            self.DisplayLevelSetSurface(self.InitialLevelSets,self.IsoSurfaceValue)
+            queryString = 'Accept initialization? (y/n): '
+            inputString = self.InputText(queryString,self.YesNoValidator)
+            if (inputString == 'y'):
+                endInitialization = 1
+            elif (inputString == 'n'):
+                endInitialization = 0
 
-        if self.IsosurfaceValue != 0:
-            shiftScale = vtk.vtkImageShiftScale()
-            shiftScale.SetInput(self.Image)
-            shiftScale.SetShift(-self.IsosurfaceValue)
-            shiftScale.Update()
-            self.Image = shiftScale.GetOutput()
-        
         if self.OwnRenderer:
             self.vmtkRenderer.Deallocate()
-  
+
 
 if __name__=='__main__':
     main = pypes.pypeMain()

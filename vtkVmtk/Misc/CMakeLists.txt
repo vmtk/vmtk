@@ -1,6 +1,7 @@
 SET (VTK_VMTK_MISC_SRCS
   vtkvmtkBoundaryLayerGenerator.cxx
   vtkvmtkImageBoxPainter.cxx
+  vtkvmtkLevelSetSigmoidFilter.cxx
   vtkvmtkLinearToQuadraticMeshFilter.cxx
   vtkvmtkLinearToQuadraticSurfaceMeshFilter.cxx
   vtkvmtkMeshProjection.cxx
