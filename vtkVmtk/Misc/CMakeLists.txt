@@ -1,4 +1,5 @@
 SET (VTK_VMTK_MISC_SRCS
+  vtkvmtkAppendFilter.cxx
   vtkvmtkBoundaryLayerGenerator.cxx
   vtkvmtkImageBoxPainter.cxx
   vtkvmtkLevelSetSigmoidFilter.cxx

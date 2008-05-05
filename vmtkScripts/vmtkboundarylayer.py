@@ -29,6 +29,7 @@ class vmtkBoundaryLayer(pypes.pypeScript):
         pypes.pypeScript.__init__(self)
 
         self.Mesh = None
+        self.InnerSurfaceMesh = None
         
         self.WarpVectorsArrayName = ''
         self.ThicknessArrayName = ''
@@ -43,6 +44,7 @@ class vmtkBoundaryLayer(pypes.pypeScript):
         self.UseWarpVectorMagnitudeAsThickness = 0;
         self.ConstantThickness = 0;
         self.IncludeSurfaceCells = 1
+        self.NegateWarpVectors = 0
 
         self.SetScriptName('vmtkboundarylayer')
         self.SetScriptDoc('create a prismatic boundary layer from a surface mesh and a set of vectors defined on the nodes')
@@ -57,10 +59,12 @@ class vmtkBoundaryLayer(pypes.pypeScript):
             ['SubLayerRatio','sublayerratio','float',1,'(0.0,)','ratio between the thickness of two successive boundary layers'],
             ['UseWarpVectorMagnitudeAsThickness','warpvectormagnitudeasthickness','bool',1,'','compute boundary layer thickness as the norm of warp vectors'],
             ['ConstantThickness','constantthickness','bool',1,'','toggle constant boundary layer thickness'],
-            ['IncludeSurfaceCells','includesurfacecells','bool',1,'','include surface cells in output mesh']
+            ['IncludeSurfaceCells','includesurfacecells','bool',1,'','include surface cells in output mesh'],
+            ['NegateWarpVectors','negatewarpvectors','bool',1,'','flip the orientation of warp vectors']
             ])
         self.SetOutputMembers([
-            ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh','vmtkmeshwriter']
+            ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh','vmtkmeshwriter'],
+            ['InnerSurfaceMesh','oinner','vtkUnstructuredGrid',1,'','the output inner surface mesh','vmtkmeshwriter']
             ])
 
     def Execute(self):
@@ -80,9 +84,11 @@ class vmtkBoundaryLayer(pypes.pypeScript):
         boundaryLayerGenerator.SetConstantThickness(self.ConstantThickness)
         boundaryLayerGenerator.SetUseWarpVectorMagnitudeAsThickness(self.UseWarpVectorMagnitudeAsThickness)
         boundaryLayerGenerator.SetIncludeSurfaceCells(self.IncludeSurfaceCells)
+        boundaryLayerGenerator.SetNegateWarpVectors(self.NegateWarpVectors)
         boundaryLayerGenerator.Update()
         
         self.Mesh = boundaryLayerGenerator.GetOutput()
+        self.InnerSurfaceMesh = boundaryLayerGenerator.GetInnerSurface()
 
         if self.Mesh.GetSource():
             self.Mesh.GetSource().UnRegisterAllOutputs()

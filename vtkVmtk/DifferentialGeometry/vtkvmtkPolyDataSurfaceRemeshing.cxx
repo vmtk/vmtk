@@ -24,7 +24,7 @@
 #include "vtkvmtkPolyDataBoundaryExtractor.h"
 #include "vtkPolyDataNormals.h"
 #include "vtkIdList.h"
-#include "vtkIdTypeArray.h"
+#include "vtkIntArray.h"
 #include "vtkCellArray.h"
 #include "vtkMeshQuality.h"
 #include "vtkCellLocator.h"
@@ -152,7 +152,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::RequestData(
     this->CellEntityIdsArray = NULL;
     }
     
-  this->CellEntityIdsArray = vtkIdTypeArray::New();
+  this->CellEntityIdsArray = vtkIntArray::New();
   if (this->CellEntityIdsArrayName)
     {
     vtkDataArray* cellEntityIdsArray = input->GetCellData()->GetArray(this->CellEntityIdsArrayName);
@@ -290,7 +290,6 @@ int vtkvmtkPolyDataSurfaceRemeshing::RequestData(
     this->EntityBoundaryLocator->BuildLocator();
     }
 
-  cout<<"Remeshing surface..."<<endl;
   for (int n=0; n<this->NumberOfIterations; n++)
     {
     this->EdgeCollapseIteration();
@@ -306,7 +305,6 @@ int vtkvmtkPolyDataSurfaceRemeshing::RequestData(
       }
     }
 
-  cout<<"Smoothing final surface mesh..."<<endl;
   for (int i=0; i<this->NumberOfIterations; i++)
     {
     this->PointRelocationIteration();
@@ -314,7 +312,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::RequestData(
   
   vtkPoints* newPoints = vtkPoints::New();
   vtkCellArray* newCells = vtkCellArray::New();
-  vtkIdTypeArray* newCellEntityIdsArray = vtkIdTypeArray::New();
+  vtkIntArray* newCellEntityIdsArray = vtkIntArray::New();
   newCellEntityIdsArray->SetName(this->CellEntityIdsArrayName);
 
   newPoints->DeepCopy(this->Mesh->GetPoints());

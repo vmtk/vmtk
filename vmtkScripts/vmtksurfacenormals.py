@@ -29,7 +29,7 @@ class vmtkSurfaceNormals(pypes.pypeScript):
         pypes.pypeScript.__init__(self)
         
         self.Surface = None
-        self.NormalsArrayName = ''
+        self.NormalsArrayName = 'Normals'
 
         self.AutoOrientNormals = 1
         self.FlipNormals = 0

@@ -31,15 +31,18 @@ class vmtkMeshGenerator(pypes.pypeScript):
         
         self.Surface = None
 
-        self.TargetArea = 1.0
-        self.TargetAreaFactor = 1.0
-        self.TargetAreaArrayName = 'TargetArea'
-        self.MaxArea = 1E16
-        self.MinArea = 0.0
+        self.TargetEdgeLength = 1.0
+        self.TargetEdgeLengthFactor = 1.0
+        self.TargetEdgeLengthArrayName = ''
+        self.MaxEdgeLength = 1E16
+        self.MinEdgeLength = 0.0
         self.CellEntityIdsArrayName = 'CellEntityIds'
-        self.SurfaceElementSizeMode = 'fixedarea'
+        self.ElementSizeMode = 'edgelength'
         self.VolumeElementScaleFactor = 0.8
-#        self.Order = 1
+
+        self.BoundaryLayer = False
+        self.NumberOfSubLayers = 2
+        self.BoundaryLayerThicknessFactor = 0.25
 
         self.SizingFunctionArrayName = 'VolumeSizingFunction'
 
@@ -47,16 +50,17 @@ class vmtkMeshGenerator(pypes.pypeScript):
         self.SetScriptDoc('generate a mesh suitable for CFD from a surface')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
-            ['TargetArea','targetarea','float',1,'(0.0,)'],
-            ['TargetAreaFactor','targetareafactor','float',1,'(0.0,)'],
-            ['MaxArea','maxarea','float',1,'(0.0,)'],
-            ['MinArea','minarea','float',1,'(0.0,)'],
+            ['TargetEdgeLength','targetedgelength','float',1,'(0.0,)'],
+            ['TargetEdgeLengthArrayName','targetedgelengtharray','str',1],
+            ['TargetEdgeLengthFactor','targetedgelengthfactor','float',1,'(0.0,)'],
+            ['MaxEdgeLength','maxedgelength','float',1,'(0.0,)'],
+            ['MinEdgeLength','minedgelength','float',1,'(0.0,)'],
             ['CellEntityIdsArrayName','entityidsarray','str',1],
-            ['TargetAreaArrayName','targetareaarray','str',1],
-            ['SizingFunctionArrayName','sizingfunctionarray','str',1],
-            ['SurfaceElementSizeMode','sizemode','str',1,'["fixedarea","areaarray"]'],
+            ['ElementSizeMode','elementsizemode','str',1,'["edgelength","edgelengtharray"]'],
             ['VolumeElementScaleFactor','volumeelementfactor','float',1,'(0.0,)'],
-#            ['Order','order','int',1,'(1,2)','mesh order']
+            ['BoundaryLayer','boundarylayer','bool',1,''],
+            ['NumberOfSubLayers','sublayers','int',1,'(0,)'],
+            ['BoundaryLayerThicknessFactor','thicknessfactor','float',1,'(0.0,1.0)']
             ])
         self.SetOutputMembers([
             ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh','vmtkmeshwriter']
@@ -80,46 +84,130 @@ class vmtkMeshGenerator(pypes.pypeScript):
         remeshing = vmtkscripts.vmtkSurfaceRemeshing()
         remeshing.Surface = capper.Surface
         remeshing.CellEntityIdsArrayName = capper.CellEntityIdsArrayName
-        remeshing.TargetArea = self.TargetArea
-        remeshing.MaxArea = self.MaxArea
-        remeshing.MinArea = self.MinArea
-        remeshing.TargetAreaFactor = self.TargetAreaFactor
-        remeshing.TargetAreaArrayName = self.TargetAreaArrayName
-        remeshing.ElementSizeMode = self.SurfaceElementSizeMode
+        remeshing.TargetEdgeLength = self.TargetEdgeLength
+        remeshing.MaxEdgeLength = self.MaxEdgeLength
+        remeshing.MinEdgeLength = self.MinEdgeLength
+        remeshing.TargetEdgeLengthFactor = self.TargetEdgeLengthFactor
+        remeshing.TargetEdgeLengthArrayName = self.TargetEdgeLengthArrayName
+        remeshing.ElementSizeMode = self.ElementSizeMode
         remeshing.Execute()
 
-        self.PrintLog("Computing sizing function")
-        sizingFunction = vtkvmtk.vtkvmtkPolyDataSizingFunction()
-        sizingFunction.SetInput(remeshing.Surface)
-        sizingFunction.SetSizingFunctionArrayName(self.SizingFunctionArrayName)
-        sizingFunction.SetScaleFactor(self.VolumeElementScaleFactor)
-        sizingFunction.Update()
+        if self.BoundaryLayer:
 
-        self.PrintLog("Converting surface to mesh")
-        surfaceToMesh = vmtkscripts.vmtkSurfaceToMesh()
-        surfaceToMesh.Surface = sizingFunction.GetOutput()
-        surfaceToMesh.Execute()
+            projection = vmtkscripts.vmtkSurfaceProjection()
+            projection.Surface = remeshing.Surface
+            projection.ReferenceSurface = capper.Surface
+            projection.Execute()
 
-        self.PrintLog("Generating volume mesh")
-        tetgen = vmtkscripts.vmtkTetGen()
-        tetgen.Mesh = surfaceToMesh.Mesh
-        tetgen.GenerateCaps = 0
-        tetgen.UseSizingFunction = 1
-        tetgen.SizingFunctionArrayName = self.SizingFunctionArrayName
-        tetgen.CellEntityIdsArrayName = self.CellEntityIdsArrayName
-#        tetgen.Order = self.Order
-        tetgen.Quality = 1
-        tetgen.PLC = 1
-        tetgen.NoBoundarySplit = 1
-        tetgen.RemoveSliver = 1
-        tetgen.OutputSurfaceElements = 1
-        tetgen.OutputVolumeElements = 1
-        tetgen.Execute()
+            normals = vmtkscripts.vmtkSurfaceNormals()
+            normals.Surface = projection.Surface
+            normals.NormalsArrayName = 'Normals'
+            normals.Execute()
+    
+            surfaceToMesh = vmtkscripts.vmtkSurfaceToMesh()
+            surfaceToMesh.Surface = normals.Surface
+            surfaceToMesh.Execute()
 
-        self.Mesh = tetgen.Mesh
+            self.PrintLog("Generating boundary layer")
+            boundaryLayer = vmtkscripts.vmtkBoundaryLayer()
+            boundaryLayer.Mesh = surfaceToMesh.Mesh
+            boundaryLayer.WarpVectorsArrayName = 'Normals'
+            boundaryLayer.NegateWarpVectors = True
+            boundaryLayer.ThicknessArrayName = self.TargetEdgeLengthArrayName
+            if self.ElementSizeMode == 'edgelength':
+                boundaryLayer.ConstantThickness = True
+            else: 
+                boundaryLayer.ConstantThickness = False
+            boundaryLayer.IncludeSurfaceCells = 0
+            boundaryLayer.NumberOfSubLayers = self.NumberOfSubLayers
+            boundaryLayer.SubLayerRatio = 0.5
+            boundaryLayer.Thickness = self.BoundaryLayerThicknessFactor * self.TargetEdgeLength
+            boundaryLayer.ThicknessRatio = self.BoundaryLayerThicknessFactor * self.TargetEdgeLengthFactor
+            boundaryLayer.MaximumThickness = self.BoundaryLayerThicknessFactor * self.MaxEdgeLength
+            boundaryLayer.Execute()
 
-        #TODO: smooth mesh?
+            cellEntityIdsArray = vtk.vtkIntArray()
+            cellEntityIdsArray.SetName(self.CellEntityIdsArrayName)
+            cellEntityIdsArray.SetNumberOfTuples(boundaryLayer.Mesh.GetNumberOfCells())
+            cellEntityIdsArray.FillComponent(0,0.0)
+            boundaryLayer.Mesh.GetCellData().AddArray(cellEntityIdsArray)
 
+            innerCellEntityIdsArray = vtk.vtkIntArray()
+            innerCellEntityIdsArray.SetName(self.CellEntityIdsArrayName)
+            innerCellEntityIdsArray.SetNumberOfTuples(boundaryLayer.InnerSurfaceMesh.GetNumberOfCells())
+            innerCellEntityIdsArray.FillComponent(0,0.0)
+            boundaryLayer.InnerSurfaceMesh.GetCellData().AddArray(cellEntityIdsArray)
+
+            meshToSurface = vmtkscripts.vmtkMeshToSurface()
+            meshToSurface.Mesh = boundaryLayer.InnerSurfaceMesh
+            meshToSurface.Execute()
+
+            self.PrintLog("Computing sizing function")
+            sizingFunction = vtkvmtk.vtkvmtkPolyDataSizingFunction()
+            sizingFunction.SetInput(meshToSurface.Surface)
+            sizingFunction.SetSizingFunctionArrayName(self.SizingFunctionArrayName)
+            sizingFunction.SetScaleFactor(self.VolumeElementScaleFactor)
+            sizingFunction.Update()
+
+            surfaceToMesh2 = vmtkscripts.vmtkSurfaceToMesh()
+            surfaceToMesh2.Surface = sizingFunction.GetOutput()
+            surfaceToMesh2.Execute()
+
+            self.PrintLog("Generating volume mesh")
+            tetgen = vmtkscripts.vmtkTetGen()
+            tetgen.Mesh = surfaceToMesh2.Mesh
+            tetgen.GenerateCaps = 0
+            tetgen.UseSizingFunction = 1
+            tetgen.SizingFunctionArrayName = self.SizingFunctionArrayName
+            tetgen.CellEntityIdsArrayName = self.CellEntityIdsArrayName
+            tetgen.Order = 1
+            tetgen.Quality = 1
+            tetgen.PLC = 1
+            tetgen.NoBoundarySplit = 1
+            tetgen.RemoveSliver = 1
+            tetgen.OutputSurfaceElements = 0
+            tetgen.OutputVolumeElements = 1
+            tetgen.Execute()
+
+            appendFilter = vtkvmtk.vtkvmtkAppendFilter()
+            appendFilter.AddInput(surfaceToMesh.Mesh)
+            appendFilter.AddInput(boundaryLayer.Mesh)
+            appendFilter.AddInput(tetgen.Mesh)
+            appendFilter.Update()
+
+            self.Mesh = appendFilter.GetOutput()
+
+        else:
+
+            self.PrintLog("Computing sizing function")
+            sizingFunction = vtkvmtk.vtkvmtkPolyDataSizingFunction()
+            sizingFunction.SetInput(remeshing.Surface)
+            sizingFunction.SetSizingFunctionArrayName(self.SizingFunctionArrayName)
+            sizingFunction.SetScaleFactor(self.VolumeElementScaleFactor)
+            sizingFunction.Update()
+    
+            self.PrintLog("Converting surface to mesh")
+            surfaceToMesh = vmtkscripts.vmtkSurfaceToMesh()
+            surfaceToMesh.Surface = sizingFunction.GetOutput()
+            surfaceToMesh.Execute()
+
+            self.PrintLog("Generating volume mesh")
+            tetgen = vmtkscripts.vmtkTetGen()
+            tetgen.Mesh = surfaceToMesh.Mesh
+            tetgen.GenerateCaps = 0
+            tetgen.UseSizingFunction = 1
+            tetgen.SizingFunctionArrayName = self.SizingFunctionArrayName
+            tetgen.CellEntityIdsArrayName = self.CellEntityIdsArrayName
+            tetgen.Order = 1
+            tetgen.Quality = 1
+            tetgen.PLC = 1
+            tetgen.NoBoundarySplit = 1
+            tetgen.RemoveSliver = 1
+            tetgen.OutputSurfaceElements = 1
+            tetgen.OutputVolumeElements = 1
+            tetgen.Execute()
+
+            self.Mesh = tetgen.Mesh
 
 
 if __name__=='__main__':

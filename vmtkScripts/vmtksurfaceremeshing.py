@@ -31,15 +31,20 @@ class vmtkSurfaceRemeshing(pypes.pypeScript):
         self.Surface = None
 
         self.TargetArea = 1.0
+        self.TargetEdgeLength = 1.0
         self.TargetAreaFactor = 1.0
-        self.MinAreaFactor = 0.5
+        self.TargetEdgeLengthFactor = 1.0
         self.MaxArea = 1E16
         self.MinArea = 0.0
+        self.MaxEdgeLength = 1E16
+        self.MinEdgeLength = 0.0
         self.NumberOfIterations = 10
         self.NumberOfConnectivityOptimizationIterations = 20
         self.CellEntityIdsArrayName = None
         self.TargetAreaArrayName = 'TargetArea'
-        self.ElementSizeMode = 'fixedarea'
+        self.TargetEdgeLengthArrayName = ''
+        self.ElementSizeMode = 'area'
+        self.MinAreaFactor = 0.5
         self.AspectRatioThreshold = 1.2
         self.InternalAngleTolerance = 0.0
         self.NormalAngleTolerance = 0.2
@@ -51,17 +56,19 @@ class vmtkSurfaceRemeshing(pypes.pypeScript):
         self.SetScriptDoc('remesh a surface using quality triangles')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
+            ['ElementSizeMode','elementsizemode','str',1,'["area","edgelength","areaarray","edgelengtharray]'],
             ['TargetArea','targetarea','float',1,'(0.0,)'],
+            ['TargetAreaArrayName','targetareaarray','str',1],
+            ['TargetEdgeLengthArrayName','targetedgelengtharray','str',1],
             ['TargetAreaFactor','targetareafactor','float',1,'(0.0,)'],
-            ['MinAreaFactor','minareafactor','float',1,'(0.0,)'],
+            ['TargetEdgeLengthFactor','targetedgelengthfactor','float',1,'(0.0,)'],
             ['MaxArea','maxarea','float',1,'(0.0,)'],
             ['MinArea','minarea','float',1,'(0.0,)'],
             ['NumberOfIterations','iterations','int',1,'(0,)'],
             ['NumberOfConnectivityOptimizationIterations','connectivityiterations','int',1,'(0,)'],
             ['CellEntityIdsArrayName','entityidsarray','str',1],
-            ['TargetAreaArrayName','targetareaarray','str',1],
-            ['ElementSizeMode','elementsizemode','str',1,'["fixedarea","areaarray"]'],
             ['AspectRatioThreshold','aspectratio','float',1,'(0.0,)'],
+            ['MinAreaFactor','minareafactor','float',1,'(0.0,)'],
             ['InternalAngleTolerance','internalangletolerance','float',1,'(0.0,)'],
             ['NormalAngleTolerance','normalangletolerance','float',1,'(0.0,)'],
             ['CollapseAngleThreshold','collapseangle','float',1,'(0.0,)'],
@@ -85,25 +92,40 @@ class vmtkSurfaceRemeshing(pypes.pypeScript):
         triangleFilter.SetInput(cleaner.GetOutput())
         triangleFilter.Update()
 
+        self.Surface = triangleFilter.GetOutput()
+
+        if self.ElementSizeMode == 'edgelength':
+            self.TargetArea = 0.25 * 3.0**0.5 * self.TargetEdgeLength**2
+        elif self.ElementSizeMode == 'edgelengtharray':
+            calculator = vtk.vtkArrayCalculator()
+            calculator.SetInput(self.Surface)
+            calculator.AddScalarArrayName(self.TargetEdgeLengthArrayName,0)
+            calculator.SetFunction("%f^2 * 0.25 * sqrt(3) * %s^2" % (self.TargetEdgeLengthFactor,self.TargetEdgeLengthArrayName))
+            calculator.SetResultArrayName(self.TargetAreaArrayName)
+            calculator.Update()
+            self.MaxArea = 0.25 * 3.0**0.5 * self.MaxEdgeLength**2
+            self.MinArea = 0.25 * 3.0**0.5 * self.MinEdgeLength**2
+            self.Surface = calculator.GetOutput()
+
         surfaceRemeshing = vtkvmtk.vtkvmtkPolyDataSurfaceRemeshing()
-        surfaceRemeshing.SetInput(triangleFilter.GetOutput())
-        if (self.CellEntityIdsArrayName):
+        surfaceRemeshing.SetInput(self.Surface)
+        if self.CellEntityIdsArrayName:
             surfaceRemeshing.SetCellEntityIdsArrayName(self.CellEntityIdsArrayName)
-        surfaceRemeshing.SetTargetAreaArrayName(self.TargetAreaArrayName)
-        if self.ElementSizeMode == 'fixedarea':
+        if self.ElementSizeMode in ['area','edgelength']:
             surfaceRemeshing.SetElementSizeModeToTargetArea()
-        elif self.ElementSizeMode == 'areaarray':
+        elif self.ElementSizeMode in ['areaarray','edgelengtharray']:
             surfaceRemeshing.SetElementSizeModeToTargetAreaArray()
+            surfaceRemeshing.SetTargetAreaArrayName(self.TargetAreaArrayName)
         else:
             self.PrintError('Error: unsupported ElementSizeMode.')
         surfaceRemeshing.SetTargetArea(self.TargetArea)
         surfaceRemeshing.SetTargetAreaFactor(self.TargetAreaFactor)
-        surfaceRemeshing.SetMinAreaFactor(self.MinAreaFactor)
         surfaceRemeshing.SetMaxArea(self.MaxArea)
         surfaceRemeshing.SetMinArea(self.MinArea)
         surfaceRemeshing.SetNumberOfIterations(self.NumberOfIterations)
         surfaceRemeshing.SetNumberOfConnectivityOptimizationIterations(self.NumberOfConnectivityOptimizationIterations)
         surfaceRemeshing.SetRelaxation(self.Relaxation)
+        surfaceRemeshing.SetMinAreaFactor(self.MinAreaFactor)
         surfaceRemeshing.SetAspectRatioThreshold(self.AspectRatioThreshold)
         surfaceRemeshing.SetInternalAngleTolerance(self.InternalAngleTolerance)
         surfaceRemeshing.SetNormalAngleTolerance(self.NormalAngleTolerance)

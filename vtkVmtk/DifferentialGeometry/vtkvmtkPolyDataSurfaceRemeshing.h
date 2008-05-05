@@ -30,7 +30,7 @@
 #include "vtkvmtkWin32Header.h"
 
 class vtkCellLocator;
-class vtkIdTypeArray;
+class vtkIntArray;
 
 class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkPolyDataSurfaceRemeshing : public vtkPolyDataAlgorithm
 {
@@ -160,7 +160,7 @@ protected:
   vtkCellLocator* Locator;
   vtkCellLocator* BoundaryLocator;
   vtkCellLocator* EntityBoundaryLocator;
-  vtkIdTypeArray* CellEntityIdsArray;
+  vtkIntArray* CellEntityIdsArray;
   vtkDataArray* TargetAreaArray;
 
   double AspectRatioThreshold;

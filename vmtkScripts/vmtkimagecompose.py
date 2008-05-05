@@ -56,7 +56,7 @@ class vmtkImageCompose(pypes.pypeScript):
             negateFilter = vtk.vtkImageMathematics()
             negateFilter.SetInput(self.Image2)
             negateFilter.SetOperationToMultiplyByK()
-            negateFilter.SetK(-1.0)
+            negateFilter.SetConstantK(-1.0)
             negateFilter.Update()
             self.Image2 = negateFilter.GetOutput()
 

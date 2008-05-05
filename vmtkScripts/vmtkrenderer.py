@@ -70,6 +70,7 @@ class vmtkRenderer(pypes.pypeScript):
             self.RenderWindow.SetLineSmoothing(self.LineSmoothing)
             self.RenderWindow.SetPolygonSmoothing(self.PolygonSmoothing)
             self.RenderWindowInteractor = vtk.vtkRenderWindowInteractor()
+            self.RenderWindowInteractor.SetInteractorStyle(vtk.vtkInteractorStyleTrackballCamera())
             self.RenderWindow.SetInteractor(self.RenderWindowInteractor)
 
     def Execute(self):

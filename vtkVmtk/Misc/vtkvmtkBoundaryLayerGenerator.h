@@ -57,6 +57,10 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkBoundaryLayerGenerator : public vtkUnstructure
   vtkSetMacro(IncludeSurfaceCells,int);
   vtkBooleanMacro(IncludeSurfaceCells,int);
 
+  vtkGetMacro(NegateWarpVectors,int);
+  vtkSetMacro(NegateWarpVectors,int);
+  vtkBooleanMacro(NegateWarpVectors,int);
+
   vtkGetMacro(LayerThickness,double);
   vtkSetMacro(LayerThickness,double);
 
@@ -71,6 +75,8 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkBoundaryLayerGenerator : public vtkUnstructure
 
   vtkGetMacro(SubLayerRatio,double);
   vtkSetMacro(SubLayerRatio,double);
+
+  vtkGetObjectMacro(InnerSurface,vtkUnstructuredGrid);
 
   protected:
   vtkvmtkBoundaryLayerGenerator();
@@ -97,6 +103,9 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkBoundaryLayerGenerator : public vtkUnstructure
   double SubLayerRatio;
 
   int IncludeSurfaceCells;
+  int NegateWarpVectors;
+
+  vtkUnstructuredGrid* InnerSurface;
 
   private:
   vtkvmtkBoundaryLayerGenerator(const vtkvmtkBoundaryLayerGenerator&);  // Not implemented.

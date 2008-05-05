@@ -52,6 +52,9 @@ vtkvmtkBoundaryLayerGenerator::vtkvmtkBoundaryLayerGenerator()
   this->SubLayerRatio = 1.0; // thickness ratio between successive sublayers (moving from the surface)
 
   this->IncludeSurfaceCells = 0;
+  this->NegateWarpVectors = 0;
+
+  this->InnerSurface = NULL;
 }
 
 vtkvmtkBoundaryLayerGenerator::~vtkvmtkBoundaryLayerGenerator()
@@ -66,6 +69,12 @@ vtkvmtkBoundaryLayerGenerator::~vtkvmtkBoundaryLayerGenerator()
     {
     delete[] this->LayerThicknessArrayName;
     this->LayerThicknessArrayName = NULL;
+    }
+
+  if (this->InnerSurface)
+    {
+    this->InnerSurface->Delete();
+    this->InnerSurface = NULL;
     }
 }
 
@@ -146,7 +155,6 @@ int vtkvmtkBoundaryLayerGenerator::RequestData(
     outputPoints->SetPoint(i,point);
     }
 
-  //input->BuildCells();
   int npts, *pts;
   int *surfacePts;
 
@@ -190,7 +198,19 @@ int vtkvmtkBoundaryLayerGenerator::RequestData(
       delete[] surfacePts;
       }
     }
-  
+
+  if (this->InnerSurface)
+    {
+    this->InnerSurface->Delete();
+    this->InnerSurface = NULL;
+    }
+
+  this->InnerSurface = vtkUnstructuredGrid::New();
+  this->InnerSurface->DeepCopy(input);
+  vtkPoints* innerSurfacePoints = vtkPoints::New();
+  this->WarpPoints(inputPoints,innerSurfacePoints,this->NumberOfSubLayers-1,warpQuadratic);
+  this->InnerSurface->GetPoints()->DeepCopy(innerSurfacePoints);
+
   int k;
   for (k=0; k<this->NumberOfSubLayers; k++)
     {
@@ -328,7 +348,8 @@ int vtkvmtkBoundaryLayerGenerator::RequestData(
   warpedPoints->Delete();
   boundaryLayerCellArray->Delete();
   boundaryLayerCellTypes->Delete();
-  
+  innerSurfacePoints->Delete();
+ 
   return 1;
 }
 
@@ -369,6 +390,12 @@ void vtkvmtkBoundaryLayerGenerator::WarpPoints(vtkPoints* inputPoints, vtkPoints
     {
     inputPoints->GetPoint(i,point);
     this->WarpVectorsArray->GetTuple(i,warpVector);
+    if (this->NegateWarpVectors)
+      {
+      warpVector[0] *= -1.0;
+      warpVector[1] *= -1.0;
+      warpVector[2] *= -1.0;
+      }
 
     layerThickness = 0.0;
     if (this->ConstantThickness)
@@ -382,9 +409,8 @@ void vtkvmtkBoundaryLayerGenerator::WarpPoints(vtkPoints* inputPoints, vtkPoints
     else
       {
       layerThickness = this->LayerThicknessArray->GetComponent(i,0);
+      layerThickness *= this->LayerThicknessRatio;
       }
-
-    layerThickness *= this->LayerThicknessRatio;
 
     if (layerThickness > this->MaximumLayerThickness)
       {
