@@ -98,8 +98,8 @@ void vtkvmtkLevelSetSigmoidFilter::SimpleExecute(vtkImageData* input, vtkImageDa
       {
       double sigmoidValue = scaleValue * 1.0 / (1.0 + exp(levelSetsValue-sigmaReal)/(0.5*sigmaReal));
       featureValue += sigmoidValue;
-      outputScalars->SetComponent(i,0,featureValue);
       }
+    outputScalars->SetComponent(i,0,featureValue);
     }
 }
 
