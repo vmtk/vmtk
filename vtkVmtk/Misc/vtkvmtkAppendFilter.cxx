@@ -168,9 +168,9 @@ int vtkvmtkAppendFilter::RequestData(
   
   // Now can allocate memory
   output->Allocate(numCells); //allocate storage for geometry/topology
-  outputPD->CopyGlobalIdsOn();
+//  outputPD->CopyGlobalIdsOn();
   outputPD->CopyAllocate(ptList,numPts);
-  outputCD->CopyGlobalIdsOn();
+//  outputCD->CopyGlobalIdsOn();
   outputCD->CopyAllocate(cellList,numCells);
 
   newPts = vtkPoints::New();
