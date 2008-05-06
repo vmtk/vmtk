@@ -381,7 +381,7 @@ class vmtkImageInitialization(pypes.pypeScript):
             return 1
         return 0
 
-   def MergeLevelSets(self):
+    def MergeLevelSets(self):
 
         if self.MergedInitialLevelSets == None:
             self.MergedInitialLevelSets = vtk.vtkImageData()
