@@ -38,6 +38,8 @@ class vmtkImageInitialization(pypes.pypeScript):
         self.InitialLevelSets = None
         self.Surface = None
 
+        self.MergedInitialLevelSets = None
+
         self.UpperThreshold = 0.0
         self.LowerThreshold = 0.0
 
@@ -113,11 +115,17 @@ class vmtkImageInitialization(pypes.pypeScript):
         imageMathematics.SetOperationToMultiplyByK()
         imageMathematics.Update()
 
-        self.IsoSurfaceValue *= -1.0
+        subtract = vtk.vtkImageMathematics()
+        subtract.SetInput(imageMathematics.GetOutput())
+        subtract.SetOperationToAddConstant()
+        subtract.SetConstantC(self.IsoSurfaceValue)
+        subtract.Update()
 
         self.InitialLevelSets = vtk.vtkImageData()
-        self.InitialLevelSets.DeepCopy(imageMathematics.GetOutput())
+        self.InitialLevelSets.DeepCopy(subtract.GetOutput())
         self.InitialLevelSets.Update()
+
+        self.IsoSurfaceValue = 0.0
 
     def ThresholdInitialize(self):
 
@@ -222,11 +230,17 @@ class vmtkImageInitialization(pypes.pypeScript):
             fastMarching.SetTargetReachedModeToNoTargets()
         fastMarching.Update()
 
+        subtract = vtk.vtkImageMathematics()
+        subtract.SetInput(fastMarching.GetOutput())
+        subtract.SetOperationToAddConstant()
+        subtract.SetConstantC(-fastMarching.GetTargetValue())
+        subtract.Update()
+
         self.InitialLevelSets = vtk.vtkImageData()
-        self.InitialLevelSets.DeepCopy(fastMarching.GetOutput())
+        self.InitialLevelSets.DeepCopy(subtract.GetOutput())
         self.InitialLevelSets.Update()
 
-        self.IsoSurfaceValue = fastMarching.GetTargetValue()
+        self.IsoSurfaceValue = 0.0
 
     def CollidingFrontsInitialize(self):
 
@@ -284,11 +298,17 @@ class vmtkImageInitialization(pypes.pypeScript):
         collidingFronts.ApplyConnectivityOn()
         collidingFronts.Update()
 
+        subtract = vtk.vtkImageMathematics()
+        subtract.SetInput(collidingFronts.GetOutput())
+        subtract.SetOperationToAddConstant()
+        subtract.SetConstantC(-10.0 * collidingFronts.GetNegativeEpsilon())
+        subtract.Update()
+
         self.InitialLevelSets = vtk.vtkImageData()
-        self.InitialLevelSets.DeepCopy(collidingFronts.GetOutput())
+        self.InitialLevelSets.DeepCopy(subtract.GetOutput())
         self.InitialLevelSets.Update()
 
-        self.IsoSurfaceValue = 10.0 * collidingFronts.GetNegativeEpsilon()
+        self.IsoSurfaceValue = 0.0 
 
     def SeedInitialize(self):
 
@@ -320,8 +340,9 @@ class vmtkImageInitialization(pypes.pypeScript):
 
         self.IsoSurfaceValue = 0.0
 
-    def DisplayLevelSetSurface(self,levelSets,value=0.0):
-      
+    def DisplayLevelSetSurface(self,levelSets):
+     
+        value = 0.0 
         marchingCubes = vtk.vtkMarchingCubes()
         marchingCubes.SetInput(levelSets)
         marchingCubes.SetValue(0,value)
@@ -360,6 +381,19 @@ class vmtkImageInitialization(pypes.pypeScript):
             return 1
         return 0
 
+   def MergeLevelSets(self):
+
+        if self.MergedInitialLevelSets == None:
+            self.MergedInitialLevelSets = vtk.vtkImageData()
+            self.MergedInitialLevelSets.DeepCopy(self.InitialLevelSets)
+        else:
+            minFilter = vtk.vtkImageMathematics()
+            minFilter.SetOperationToMin()
+            minFilter.SetInput1(self.MergedInitialLevelSets)
+            minFilter.SetInput2(self.InitialLevelSets)
+            minFilter.Update()
+            self.MergedInitialLevelSets = minFilter.GetOutput()
+
     def Execute(self):
           
         if self.Image == None:
@@ -397,18 +431,25 @@ class vmtkImageInitialization(pypes.pypeScript):
                                 '4': self.SeedInitialize
                                 }
   
-        endInitialization = 0
-        while (endInitialization == 0):
+        endInitialization = False
+        while not endInitialization:
             queryString = 'Please choose initialization type: (0: colliding fronts; 1: fast marching; 2: threshold; 3: isosurface, 4: seed): '
             initializationType = self.InputText(queryString,self.InitializationTypeValidator)
             initializationMethods[initializationType]()
-            self.DisplayLevelSetSurface(self.InitialLevelSets,self.IsoSurfaceValue)
+            self.DisplayLevelSetSurface(self.InitialLevelSets)
             queryString = 'Accept initialization? (y/n): '
             inputString = self.InputText(queryString,self.YesNoValidator)
-            if (inputString == 'y'):
-                endInitialization = 1
-            elif (inputString == 'n'):
-                endInitialization = 0
+            if inputString == 'y':
+                self.MergeLevelSets()
+                self.DisplayLevelSetSurface(self.MergedInitialLevelSets)
+            queryString = 'Initialize another branch? (y/n): '
+            inputString = self.InputText(queryString,self.YesNoValidator)
+            if inputString == 'y':
+                endInitialization = False
+            elif inputString == 'n':
+                endInitialization = True
+
+        self.InitialLevelSets = self.MergedInitialLevelSets
 
         if self.OwnRenderer:
             self.vmtkRenderer.Deallocate()

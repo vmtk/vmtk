@@ -307,15 +307,16 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
   
             if self.InitialLevelSets == None:
                 self.vmtkImageInitialization.Execute()
-                self.IsoSurfaceValue = self.vmtkImageInitialization.IsoSurfaceValue
                 self.LevelSetsInput = self.vmtkImageInitialization.InitialLevelSets
+#                self.IsoSurfaceValue = self.vmtkImageInitialization.IsoSurfaceValue
+                self.IsoSurfaceValue = 0.0
             else:
                 self.LevelSetsInput = self.InitialLevelSets
                 self.InitialLevelSets = None
                 self.DisplayLevelSetSurface(self.LevelSetsInput,self.IsoSurfaceValue)
   
-            endEvolution = 0
-            while (endEvolution == 0):
+            endEvolution = False
+            while not endEvolution:
   
                 queryString = 'Please input parameters (type return to accept current values, \'e\' to end, \'q\' to quit):\nNumberOfIterations('+str(self.NumberOfIterations)+') [PropagationScaling('+str(self.PropagationScaling)+') CurvatureScaling('+str(self.CurvatureScaling)+') AdvectionScaling('+str(self.AdvectionScaling)+')]: '
                 inputString = self.InputText(queryString,self.EvolutionParametersValidator)
@@ -323,7 +324,7 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
                 if inputString == 'q':
                     return
                 elif inputString == 'e':
-                    endEvolution = 1
+                    endEvolution = True
                 elif inputString != '':
                     splitInputString = inputString.strip().split(' ')
                     if len(splitInputString) == 1:
@@ -345,29 +346,29 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
   
                 queryString = 'Accept result? (y/n): '
                 inputString = self.InputText(queryString,self.YesNoValidator)
-                if (inputString == 'y'):
-                    endEvolution = 1
-                elif (inputString == 'n'):
-                    endEvolution = 0
+                if inputString == 'y':
+                    endEvolution = True
+                elif inputString == 'n':
+                    endEvolution = False
   
             queryString = 'Merge branch? (y/n): '
             inputString = self.InputText(queryString,self.YesNoValidator)
-            if (inputString == 'y'):
+            if inputString == 'y':
                 self.MergeLevelSet()
-            elif (inputString == 'n'):
+            elif inputString == 'n':
                 pass
   
             self.DisplayLevelSetSurface(self.LevelSets)
   
             queryString = 'Segment another branch? (y/n): '
             inputString = self.InputText(queryString,self.YesNoValidator)
-            if (inputString == 'y'):
-                endSegmentation = 0
-            elif (inputString == 'n'):
-                endSegmentation = 1
+            if inputString == 'y':
+                endSegmentation = False
+            elif inputString == 'n':
+                endSegmentation = True
         if self.OwnRenderer:
             self.vmtkRenderer.Deallocate()
-  
+
 
 if __name__=='__main__':
     main = pypes.pypeMain()
