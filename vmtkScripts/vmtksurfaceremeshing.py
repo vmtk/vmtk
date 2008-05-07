@@ -56,7 +56,7 @@ class vmtkSurfaceRemeshing(pypes.pypeScript):
         self.SetScriptDoc('remesh a surface using quality triangles')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
-            ['ElementSizeMode','elementsizemode','str',1,'["area","edgelength","areaarray","edgelengtharray]'],
+            ['ElementSizeMode','elementsizemode','str',1,'["area","edgelength","areaarray","edgelengtharray"]'],
             ['TargetArea','targetarea','float',1,'(0.0,)'],
             ['TargetAreaArrayName','targetareaarray','str',1],
             ['TargetEdgeLengthArrayName','targetedgelengtharray','str',1],
