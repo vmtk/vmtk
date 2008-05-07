@@ -31,12 +31,14 @@ class vmtkLinearToQuadratic(pypes.pypeScript):
         self.Mesh = None
         self.Mode = 'volume'
         self.SubdivisionMethod = 'linear'
+        self.UseBiquadraticWedge = True
 
         self.SetScriptName('vmtklineartoquadratic')
         self.SetScriptDoc('convert the elements of a mesh from linear to quadratic')
         self.SetInputMembers([
             ['Mesh','i','vtkUnstructuredGrid',1,'','the input mesh','vmtkmeshreader'],
             ['Mode','mode','str',1,'["volume","surface"]','kind of elements to work with'],
+            ['UseBiquadraticWedge','biquadraticwedge','bool',1,'','if on, convert linear wedges to 18-noded biquadratic quadratic wedges, otherwise use 15-noded quadratic wedges'],
             ['SubdivisionMethod','subdivisionmethod','str',1,'["linear","butterfly"]','subdivision method for surface elements']
             ])
         self.SetOutputMembers([
@@ -51,6 +53,7 @@ class vmtkLinearToQuadratic(pypes.pypeScript):
 
         if self.Mode == 'volume':
             linearToQuadraticFilter = vtkvmtk.vtkvmtkLinearToQuadraticMeshFilter()
+            linearToQuadraticFilter.SetUseBiquadraticWedge(self.UseBiquadraticWedge)
         elif self.Mode == 'surface':
             linearToQuadraticFilter = vtkvmtk.vtkvmtkLinearToQuadraticSurfaceMeshFilter()
             if self.SubdivisionMethod == 'linear':

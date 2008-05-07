@@ -40,6 +40,7 @@ vtkStandardNewMacro(vtkvmtkLinearToQuadraticMeshFilter);
 
 vtkvmtkLinearToQuadraticMeshFilter::vtkvmtkLinearToQuadraticMeshFilter()
 {
+  this->UseBiquadraticWedge = 1;
 }
 
 vtkvmtkLinearToQuadraticMeshFilter::~vtkvmtkLinearToQuadraticMeshFilter()
@@ -68,6 +69,9 @@ int vtkvmtkLinearToQuadraticMeshFilter::RequestData(
 
   vtkEdgeTable* edgeTable = vtkEdgeTable::New();
   edgeTable->InitEdgeInsertion(numberOfInputPoints,1);
+
+  vtkEdgeTable* faceTable = vtkEdgeTable::New();
+  faceTable->InitEdgeInsertion(numberOfInputPoints,1);
 
   vtkPointData* inputPointData = input->GetPointData();
   vtkPointData* outputPointData = output->GetPointData();
@@ -112,7 +116,14 @@ int vtkvmtkLinearToQuadraticMeshFilter::RequestData(
   double point[3];
   vtkIdType edgePointId01, edgePointId02, edgePointId03, edgePointId12, edgePointId13, edgePointId23;
   vtkIdType edgePointId14, edgePointId34, edgePointId45, edgePointId35, edgePointId25;
-  vtkIdType pts[15];
+  vtkIdType facePointId0143, facePointId1254, facePointId2035;
+  vtkIdType neighborCellId;
+  vtkIdType pts[18];
+  double weights[4];
+  weights[0] = weights[1] = weights[2] = weights[3] = 0.25;
+
+  vtkIdList* facePointIds = vtkIdList::New();
+  vtkIdList* cellNeighbors = vtkIdList::New();
 
   for (i=0; i<numberOfInputWedges; i++)
     {
@@ -241,6 +252,99 @@ int vtkvmtkLinearToQuadraticMeshFilter::RequestData(
       edgeTable->InsertEdge(pointId2,pointId5,edgePointId25);
       }
 
+    if (this->UseBiquadraticWedge)
+      {
+      facePointIds->Initialize();
+      facePointIds->InsertNextId(pointId0);
+      facePointIds->InsertNextId(pointId1);
+      facePointIds->InsertNextId(pointId4);
+      facePointIds->InsertNextId(pointId3);
+      input->GetCellNeighbors(cellId,facePointIds,cellNeighbors);
+      neighborCellId = -1;
+      for (j=0; j<cellNeighbors->GetNumberOfIds(); j++)
+        {
+        if (input->GetCellType(cellNeighbors->GetId(j)) == VTK_WEDGE)
+          {
+          neighborCellId = cellNeighbors->GetId(j);
+          break;
+          }
+        }
+      if (neighborCellId != -1)
+        {
+        facePointId0143 = faceTable->IsEdge(cellId,neighborCellId);
+        if (facePointId0143 == -1)
+          {
+          for (j=0; j<3; j++)
+            {
+            point[j] = 0.25 * (point0[j] + point1[j] + point4[j] + point3[j]);
+            }
+          facePointId0143 = outputPoints->InsertNextPoint(point);
+          outputPointData->InterpolatePoint(inputPointData,facePointId0143,facePointIds,weights);
+          faceTable->InsertEdge(cellId,neighborCellId,facePointId0143);
+          }
+        }
+  
+      facePointIds->Initialize();
+      facePointIds->InsertNextId(pointId1);
+      facePointIds->InsertNextId(pointId2);
+      facePointIds->InsertNextId(pointId5);
+      facePointIds->InsertNextId(pointId4);
+      input->GetCellNeighbors(cellId,facePointIds,cellNeighbors);
+      neighborCellId = -1;
+      for (j=0; j<cellNeighbors->GetNumberOfIds(); j++)
+        {
+        if (input->GetCellType(cellNeighbors->GetId(j)) == VTK_WEDGE)
+          {
+          neighborCellId = cellNeighbors->GetId(j);
+          break;
+          }
+        }
+      if (neighborCellId != -1)
+        {
+        facePointId1254 = faceTable->IsEdge(cellId,neighborCellId);
+        if (facePointId1254 == -1)
+          {
+          for (j=0; j<3; j++)
+            {
+            point[j] = 0.25 * (point1[j] + point2[j] + point5[j] + point4[j]);
+            }
+          facePointId1254 = outputPoints->InsertNextPoint(point);
+          outputPointData->InterpolatePoint(inputPointData,facePointId1254,facePointIds,weights);
+          faceTable->InsertEdge(cellId,neighborCellId,facePointId1254);
+          }
+        }
+  
+      facePointIds->Initialize();
+      facePointIds->InsertNextId(pointId2);
+      facePointIds->InsertNextId(pointId0);
+      facePointIds->InsertNextId(pointId3);
+      facePointIds->InsertNextId(pointId5);
+      input->GetCellNeighbors(cellId,facePointIds,cellNeighbors);
+      neighborCellId = -1;
+      for (j=0; j<cellNeighbors->GetNumberOfIds(); j++)
+        {
+        if (input->GetCellType(cellNeighbors->GetId(j)) == VTK_WEDGE)
+          {
+          neighborCellId = cellNeighbors->GetId(j);
+          break;
+          }
+        }
+      if (neighborCellId != -1)
+        {
+        facePointId2035 = faceTable->IsEdge(cellId,neighborCellId);
+        if (facePointId2035 == -1)
+          {
+          for (j=0; j<3; j++)
+            {
+            point[j] = 0.25 * (point2[j] + point0[j] + point3[j] + point5[j]);
+            }
+          facePointId2035 = outputPoints->InsertNextPoint(point);
+          outputPointData->InterpolatePoint(inputPointData,facePointId2035,facePointIds,weights);
+          faceTable->InsertEdge(cellId,neighborCellId,facePointId2035);
+          }
+        }
+      }
+
     pts[0] = pointId0;
     pts[1] = pointId1;
     pts[2] = pointId2;
@@ -257,8 +361,20 @@ int vtkvmtkLinearToQuadraticMeshFilter::RequestData(
     pts[12] = edgePointId03;
     pts[13] = edgePointId14;
     pts[14] = edgePointId25;
+    pts[15] = facePointId0143;
+    pts[16] = facePointId1254;
+    pts[17] = facePointId2035;
 
-    vtkIdType newCellId = output->InsertNextCell(VTK_QUADRATIC_WEDGE, 15, pts);
+    vtkIdType newCellId;
+
+    if (this->UseBiquadraticWedge)
+      {
+      newCellId = output->InsertNextCell(VTK_BIQUADRATIC_QUADRATIC_WEDGE, 18, pts);
+      }
+    else
+      {
+      newCellId = output->InsertNextCell(VTK_QUADRATIC_WEDGE, 15, pts);
+      }
 
     outputCellData->CopyData(inputCellData,cellId,newCellId);
     }
@@ -429,10 +545,13 @@ int vtkvmtkLinearToQuadraticMeshFilter::RequestData(
 
   outputPoints->Delete();
   edgeTable->Delete();
+  faceTable->Delete();
 
   triangleIds->Delete();
   tetraIds->Delete();
   wedgeIds->Delete();
+  facePointIds->Delete();
+  cellNeighbors->Delete();
 
   cell->Delete();
 

@@ -91,10 +91,11 @@ void vtkvmtkXdaWriter::WriteData()
       quadraticTetraType,
       quadraticHexahedronType,
       quadraticWedgeType,
+      biquadraticWedgeType,
       quadraticPyramidType
     };
 
-  const int numberOfVolumeCellTypes = 8;
+  const int numberOfVolumeCellTypes = 9;
 
   enum
     {
@@ -109,7 +110,7 @@ void vtkvmtkXdaWriter::WriteData()
       pyramid5LibmeshType
     };
 
-  int elementTypeLibmeshMap[8];
+  int elementTypeLibmeshMap[numberOfVolumeCellTypes];
   elementTypeLibmeshMap[tetraType] = tet4LibmeshType;
   elementTypeLibmeshMap[hexahedronType] = hex8LibmeshType;
   elementTypeLibmeshMap[wedgeType] = prism6LibmeshType;
@@ -117,16 +118,17 @@ void vtkvmtkXdaWriter::WriteData()
   elementTypeLibmeshMap[quadraticTetraType] = tet10LibmeshType;
   elementTypeLibmeshMap[quadraticHexahedronType] = hex20LibmeshType;
   elementTypeLibmeshMap[quadraticWedgeType] = prism15LibmeshType;
+  elementTypeLibmeshMap[biquadraticWedgeType] = prism18LibmeshType;
   elementTypeLibmeshMap[quadraticPyramidType] = -1;
 
-  int numberOfElementsInBlock[8];
+  int numberOfElementsInBlock[numberOfVolumeCellTypes];
   int i;
   for (i=0; i<numberOfVolumeCellTypes; i++)
     {
     numberOfElementsInBlock[i] = 0;
     }
 
-  int blockVtkCellTypes[8];
+  int blockVtkCellTypes[numberOfVolumeCellTypes];
   blockVtkCellTypes[tetraType] = VTK_TETRA;
   blockVtkCellTypes[hexahedronType] = VTK_HEXAHEDRON;
   blockVtkCellTypes[wedgeType] = VTK_WEDGE;
@@ -134,6 +136,7 @@ void vtkvmtkXdaWriter::WriteData()
   blockVtkCellTypes[quadraticTetraType] = VTK_QUADRATIC_TETRA;
   blockVtkCellTypes[quadraticHexahedronType] = VTK_QUADRATIC_HEXAHEDRON;
   blockVtkCellTypes[quadraticWedgeType] = VTK_QUADRATIC_WEDGE;
+  blockVtkCellTypes[biquadraticWedgeType] = VTK_BIQUADRATIC_QUADRATIC_WEDGE;
   blockVtkCellTypes[quadraticPyramidType] = VTK_QUADRATIC_PYRAMID;
 
   int numberOfVolumeCells = 0;
@@ -163,6 +166,9 @@ void vtkvmtkXdaWriter::WriteData()
         break;
       case VTK_QUADRATIC_WEDGE:
         ++numberOfElementsInBlock[quadraticWedgeType];
+        break;
+      case VTK_BIQUADRATIC_QUADRATIC_WEDGE:
+        ++numberOfElementsInBlock[biquadraticWedgeType];
         break;
       case VTK_QUADRATIC_PYRAMID:
         vtkWarningMacro(<<"Quadratic pyramid not currently supported in libmesh. Skipping element.");
@@ -384,12 +390,6 @@ void vtkvmtkXdaWriter::GetLibmeshConnectivity(int cellType, vtkIdList* libmeshCo
       break;
     case VTK_WEDGE:
       libmeshConnectivity->SetNumberOfIds(6);
-//       libmeshConnectivity->SetId(0,0);
-//       libmeshConnectivity->SetId(1,1);
-//       libmeshConnectivity->SetId(2,2);
-//       libmeshConnectivity->SetId(3,3);
-//       libmeshConnectivity->SetId(4,4);
-//       libmeshConnectivity->SetId(5,5);
       // flipped
       libmeshConnectivity->SetId(0,0);
       libmeshConnectivity->SetId(1,2);
@@ -444,21 +444,6 @@ void vtkvmtkXdaWriter::GetLibmeshConnectivity(int cellType, vtkIdList* libmeshCo
       break;
     case VTK_QUADRATIC_WEDGE:
       libmeshConnectivity->SetNumberOfIds(15);
-//       libmeshConnectivity->SetId(0,0);
-//       libmeshConnectivity->SetId(1,1);
-//       libmeshConnectivity->SetId(2,2);
-//       libmeshConnectivity->SetId(3,3);
-//       libmeshConnectivity->SetId(4,4);
-//       libmeshConnectivity->SetId(5,5);
-//       libmeshConnectivity->SetId(6,6);
-//       libmeshConnectivity->SetId(7,7);
-//       libmeshConnectivity->SetId(8,8);
-//       libmeshConnectivity->SetId(9,12);
-//       libmeshConnectivity->SetId(10,13);
-//       libmeshConnectivity->SetId(11,14);
-//       libmeshConnectivity->SetId(12,9);
-//       libmeshConnectivity->SetId(13,10);
-//       libmeshConnectivity->SetId(14,11);
       //flipped
       libmeshConnectivity->SetId(0,0);
       libmeshConnectivity->SetId(1,2);
@@ -475,6 +460,28 @@ void vtkvmtkXdaWriter::GetLibmeshConnectivity(int cellType, vtkIdList* libmeshCo
       libmeshConnectivity->SetId(12,9);
       libmeshConnectivity->SetId(13,11);
       libmeshConnectivity->SetId(14,10);
+      break;
+    case VTK_BIQUADRATIC_QUADRATIC_WEDGE:
+      libmeshConnectivity->SetNumberOfIds(18);
+      //flipped
+      libmeshConnectivity->SetId(0,0);
+      libmeshConnectivity->SetId(1,2);
+      libmeshConnectivity->SetId(2,1);
+      libmeshConnectivity->SetId(3,3);
+      libmeshConnectivity->SetId(4,5);
+      libmeshConnectivity->SetId(5,4);
+      libmeshConnectivity->SetId(6,6);
+      libmeshConnectivity->SetId(7,8);
+      libmeshConnectivity->SetId(8,7);
+      libmeshConnectivity->SetId(9,12);
+      libmeshConnectivity->SetId(10,14);
+      libmeshConnectivity->SetId(11,13);
+      libmeshConnectivity->SetId(12,9);
+      libmeshConnectivity->SetId(13,11);
+      libmeshConnectivity->SetId(14,10);
+      libmeshConnectivity->SetId(15,15);
+      libmeshConnectivity->SetId(16,17);
+      libmeshConnectivity->SetId(17,16);
       break;
     default:
       cerr<<"Element type not currently supported in libmesh. Skipping element."<<endl;
@@ -537,6 +544,7 @@ void vtkvmtkXdaWriter::GetLibmeshFaceOrder(int cellType, vtkIdList* libmeshFaceO
       libmeshFaceOrder->SetId(5,5);
       break;
     case VTK_QUADRATIC_WEDGE:
+    case VTK_BIQUADRATIC_QUADRATIC_WEDGE:
       libmeshFaceOrder->SetNumberOfIds(5);
       libmeshFaceOrder->SetId(0,0);
       libmeshFaceOrder->SetId(1,4);

@@ -36,11 +36,17 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkLinearToQuadraticMeshFilter : public vtkUnstru
 
   static vtkvmtkLinearToQuadraticMeshFilter *New();
   
+  vtkSetMacro(UseBiquadraticWedge,int);
+  vtkGetMacro(UseBiquadraticWedge,int);
+  vtkBooleanMacro(UseBiquadraticWedge,int);
+
   protected:
   vtkvmtkLinearToQuadraticMeshFilter();
   ~vtkvmtkLinearToQuadraticMeshFilter();
 
   virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+
+  int UseBiquadraticWedge;
 
   private:
   vtkvmtkLinearToQuadraticMeshFilter(const vtkvmtkLinearToQuadraticMeshFilter&);  // Not implemented.
