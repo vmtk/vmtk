@@ -246,6 +246,9 @@ void vtkvmtkXdaWriter::WriteData()
   out << "Id String" << endl;
   out << "Title String" << endl;
 
+  vtkIdList* volumeCellIdMap = vtkIdList::New();
+  volumeCellIdMap->SetNumberOfIds(numberOfCells);
+  int volumeCellCounter = 0;
   for (i=0; i<numberOfVolumeCellTypes; i++)
     {
     if (numberOfElementsInBlock[i] == 0)
@@ -276,6 +279,8 @@ void vtkvmtkXdaWriter::WriteData()
 //      out << j << " " << "-1"; // TODO: change -1 into parent for AMR datasets
       out << endl;
 
+      volumeCellIdMap->SetId(id,volumeCellCounter);
+      volumeCellCounter++;
       cellPoints->Delete();
       }
     
@@ -356,12 +361,13 @@ void vtkvmtkXdaWriter::WriteData()
       libmeshFaceOrder->Delete();
 
       short int boundaryValue = static_cast<short int>(boundaryDataArray->GetComponent(i,0));
-      out << cellId << " " << libmeshFaceId << " " << boundaryValue << endl;
+      out << volumeCellIdMap->GetId(cellId) << " " << libmeshFaceId << " " << boundaryValue << endl;
 
       faceCellPoints->Delete();
       }
     }
 
+  volumeCellIdMap->Delete();
 }
 
 void vtkvmtkXdaWriter::GetLibmeshConnectivity(int cellType, vtkIdList* libmeshConnectivity)
@@ -390,7 +396,6 @@ void vtkvmtkXdaWriter::GetLibmeshConnectivity(int cellType, vtkIdList* libmeshCo
       break;
     case VTK_WEDGE:
       libmeshConnectivity->SetNumberOfIds(6);
-      // flipped
       libmeshConnectivity->SetId(0,0);
       libmeshConnectivity->SetId(1,2);
       libmeshConnectivity->SetId(2,1);
@@ -444,44 +449,42 @@ void vtkvmtkXdaWriter::GetLibmeshConnectivity(int cellType, vtkIdList* libmeshCo
       break;
     case VTK_QUADRATIC_WEDGE:
       libmeshConnectivity->SetNumberOfIds(15);
-      //flipped
       libmeshConnectivity->SetId(0,0);
       libmeshConnectivity->SetId(1,2);
       libmeshConnectivity->SetId(2,1);
       libmeshConnectivity->SetId(3,3);
       libmeshConnectivity->SetId(4,5);
       libmeshConnectivity->SetId(5,4);
-      libmeshConnectivity->SetId(6,6);
-      libmeshConnectivity->SetId(7,8);
-      libmeshConnectivity->SetId(8,7);
-      libmeshConnectivity->SetId(9,12);
-      libmeshConnectivity->SetId(10,14);
-      libmeshConnectivity->SetId(11,13);
+      libmeshConnectivity->SetId(6,8);
+      libmeshConnectivity->SetId(7,7);
+      libmeshConnectivity->SetId(8,6);
+      libmeshConnectivity->SetId(9,14);
+      libmeshConnectivity->SetId(10,13);
+      libmeshConnectivity->SetId(11,12);
       libmeshConnectivity->SetId(12,9);
       libmeshConnectivity->SetId(13,11);
       libmeshConnectivity->SetId(14,10);
       break;
     case VTK_BIQUADRATIC_QUADRATIC_WEDGE:
       libmeshConnectivity->SetNumberOfIds(18);
-      //flipped
       libmeshConnectivity->SetId(0,0);
       libmeshConnectivity->SetId(1,2);
       libmeshConnectivity->SetId(2,1);
       libmeshConnectivity->SetId(3,3);
       libmeshConnectivity->SetId(4,5);
       libmeshConnectivity->SetId(5,4);
-      libmeshConnectivity->SetId(6,6);
-      libmeshConnectivity->SetId(7,8);
-      libmeshConnectivity->SetId(8,7);
-      libmeshConnectivity->SetId(9,12);
-      libmeshConnectivity->SetId(10,14);
-      libmeshConnectivity->SetId(11,13);
+      libmeshConnectivity->SetId(6,8);
+      libmeshConnectivity->SetId(7,7);
+      libmeshConnectivity->SetId(8,6);
+      libmeshConnectivity->SetId(9,14);
+      libmeshConnectivity->SetId(10,13);
+      libmeshConnectivity->SetId(11,12);
       libmeshConnectivity->SetId(12,9);
       libmeshConnectivity->SetId(13,11);
       libmeshConnectivity->SetId(14,10);
-      libmeshConnectivity->SetId(15,15);
-      libmeshConnectivity->SetId(16,17);
-      libmeshConnectivity->SetId(17,16);
+      libmeshConnectivity->SetId(15,17);
+      libmeshConnectivity->SetId(16,16);
+      libmeshConnectivity->SetId(17,15);
       break;
     default:
       cerr<<"Element type not currently supported in libmesh. Skipping element."<<endl;
