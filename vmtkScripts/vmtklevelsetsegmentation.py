@@ -309,6 +309,8 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
                 self.vmtkImageInitialization.Execute()
                 self.LevelSetsInput = self.vmtkImageInitialization.InitialLevelSets
 #                self.IsoSurfaceValue = self.vmtkImageInitialization.IsoSurfaceValue
+                self.vmtkImageInitialization.InitialLevelSets = None
+#                self.vmtkImageInitialization.IsosurfaceValue = 0.0
                 self.IsoSurfaceValue = 0.0
             else:
                 self.LevelSetsInput = self.InitialLevelSets
