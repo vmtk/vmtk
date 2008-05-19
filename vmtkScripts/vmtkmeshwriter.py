@@ -39,7 +39,7 @@ class vmtkMeshWriter(pypes.pypeScript):
         self.SetScriptDoc('write a mesh to disk')
         self.SetInputMembers([
             ['Mesh','i','vtkUnstructuredGrid',1,'','the input mesh','vmtkmeshreader'],
-            ['Format','f','str',1,'["vtkxml","vtk","xda","fdneut","tecplot","lifev","pointdata"]','file format (xda - libmesh ASCII format, fdneut - FIDAP neutral format)'],
+            ['Format','f','str',1,'["vtkxml","vtk","xda","fdneut","tecplot","lifev","dolfin","pointdata"]','file format (xda - libmesh ASCII format, fdneut - FIDAP neutral format)'],
             ['GuessFormat','guessformat','bool',1,'','guess file format from extension'],
             ['OutputFileName','ofile','str',1,'','output file name'],
             ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh'],
@@ -204,6 +204,45 @@ class vmtkMeshWriter(pypes.pypeScript):
             line += '  %d\n' % cellEntityId
             f.write(line)
 
+    def WriteDolfinMeshFile(self):
+        if (self.OutputFileName == ''):
+            self.PrintError('Error: no OutputFileName.')
+        self.PrintLog('Writing Dolfin file.')
+
+        self.Mesh.BuildLinks()
+
+        cellEntityIdsArray = vtk.vtkIntArray()
+        cellEntityIdsArray.DeepCopy(self.Mesh.GetCellData().GetArray(self.CellEntityIdsArrayName))
+
+        numberOfPoints = self.Mesh.GetNumberOfPoints()
+
+        tetraCellIdArray = vtk.vtkIdTypeArray()
+        tetraCellType = 10
+        self.Mesh.GetIdsOfCellsOfType(tetraCellType,tetraCellIdArray)
+        numberOfTetras = tetraCellIdArray.GetNumberOfTuples()
+
+        f=open(self.OutputFileName, 'w')
+        line = '<?xml version="1.0" encoding="UTF-8"?>\n\n'
+        line += '<dolfin xmlns:dolfin="http://www.phi.chalmers.se/dolfin/">\n'
+        line += '  <mesh celltype="tetrahedron" dim="3">\n'
+        f.write(line)
+        line = '    <vertices size="%d">\n' % numberOfPoints
+        for i in range(numberOfPoints):
+            point = self.Mesh.GetPoint(i)
+            line += '      <vertex index="%d" x="%f" y="%f" z="%f"/>\n' % (i,point[0],point[1],point[2])
+        line += '    </vertices>\n'
+        f.write(line)
+        line = '    <cells size="%d">\n' % numberOfTetras
+        for i in range(numberOfTetras):
+            tetraCellId = tetraCellIdArray.GetValue(i) 
+            cellPointIds = self.Mesh.GetCell(tetraCellId).GetPointIds()
+            line += '      <tetrahedron index="%d" v0="%d" v1="%d" v2="%d" v3="%d"/>\n' % (i,cellPointIds.GetId(0),cellPointIds.GetId(1),cellPointIds.GetId(2),cellPointIds.GetId(3))
+        line += '    </cells>\n'
+        f.write(line)
+        line = '  </mesh>\n'
+        line += '</dolfin>\n'
+        f.write(line)
+
     def WritePointDataMeshFile(self):
         if (self.OutputFileName == ''):
             self.PrintError('Error: no OutputFileName.')
@@ -249,6 +288,7 @@ class vmtkMeshWriter(pypes.pypeScript):
                             'xda':'xda',
                             'FDNEUT':'fdneut',
                             'lifev':'lifev',
+                            'xml':'dolfin',
                             'tec':'tecplot',
                             'dat':'pointdata'}
 
@@ -277,6 +317,8 @@ class vmtkMeshWriter(pypes.pypeScript):
             self.WriteFDNEUTMeshFile()
         elif (self.Format == 'lifev'):
             self.WriteLifeVMeshFile()
+        elif (self.Format == 'dolfin'):
+            self.WriteDolfinMeshFile()
         elif (self.Format == 'tecplot'):
             self.WriteTecplotMeshFile()
         elif (self.Format == 'pointdata'):

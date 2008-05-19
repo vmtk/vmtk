@@ -40,9 +40,11 @@ class vmtkMeshGenerator(pypes.pypeScript):
         self.ElementSizeMode = 'edgelength'
         self.VolumeElementScaleFactor = 0.8
 
-        self.BoundaryLayer = False
+        self.BoundaryLayer = 0
         self.NumberOfSubLayers = 2
         self.BoundaryLayerThicknessFactor = 0.25
+
+        self.Tetrahedralize = 0
 
         self.SizingFunctionArrayName = 'VolumeSizingFunction'
 
@@ -60,7 +62,8 @@ class vmtkMeshGenerator(pypes.pypeScript):
             ['VolumeElementScaleFactor','volumeelementfactor','float',1,'(0.0,)'],
             ['BoundaryLayer','boundarylayer','bool',1,''],
             ['NumberOfSubLayers','sublayers','int',1,'(0,)'],
-            ['BoundaryLayerThicknessFactor','thicknessfactor','float',1,'(0.0,1.0)']
+            ['BoundaryLayerThicknessFactor','thicknessfactor','float',1,'(0.0,1.0)'],
+            ['Tetrahedralize','tetrahedralize','bool',1,'']
             ])
         self.SetOutputMembers([
             ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh','vmtkmeshwriter']
@@ -208,6 +211,14 @@ class vmtkMeshGenerator(pypes.pypeScript):
             tetgen.Execute()
 
             self.Mesh = tetgen.Mesh
+
+        if self.Tetrahedralize:
+
+            tetrahedralize = vtk.vtkDataSetTriangleFilter()
+            tetrahedralize.SetInput(self.Mesh)
+            tetrahedralize.Update()
+
+            self.Mesh = tetrahedralize.GetOutput()
 
 
 if __name__=='__main__':

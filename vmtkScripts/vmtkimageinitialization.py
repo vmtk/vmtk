@@ -450,6 +450,7 @@ class vmtkImageInitialization(pypes.pypeScript):
                 endInitialization = True
 
         self.InitialLevelSets = self.MergedInitialLevelSets
+        self.MergedInitialLevelSets = None
 
         if self.OwnRenderer:
             self.vmtkRenderer.Deallocate()
