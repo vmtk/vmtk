@@ -208,40 +208,12 @@ class vmtkMeshWriter(pypes.pypeScript):
         if (self.OutputFileName == ''):
             self.PrintError('Error: no OutputFileName.')
         self.PrintLog('Writing Dolfin file.')
-
-        self.Mesh.BuildLinks()
-
-        cellEntityIdsArray = vtk.vtkIntArray()
-        cellEntityIdsArray.DeepCopy(self.Mesh.GetCellData().GetArray(self.CellEntityIdsArrayName))
-
-        numberOfPoints = self.Mesh.GetNumberOfPoints()
-
-        tetraCellIdArray = vtk.vtkIdTypeArray()
-        tetraCellType = 10
-        self.Mesh.GetIdsOfCellsOfType(tetraCellType,tetraCellIdArray)
-        numberOfTetras = tetraCellIdArray.GetNumberOfTuples()
-
-        f=open(self.OutputFileName, 'w')
-        line = '<?xml version="1.0" encoding="UTF-8"?>\n\n'
-        line += '<dolfin xmlns:dolfin="http://www.phi.chalmers.se/dolfin/">\n'
-        line += '  <mesh celltype="tetrahedron" dim="3">\n'
-        f.write(line)
-        line = '    <vertices size="%d">\n' % numberOfPoints
-        for i in range(numberOfPoints):
-            point = self.Mesh.GetPoint(i)
-            line += '      <vertex index="%d" x="%f" y="%f" z="%f"/>\n' % (i,point[0],point[1],point[2])
-        line += '    </vertices>\n'
-        f.write(line)
-        line = '    <cells size="%d">\n' % numberOfTetras
-        for i in range(numberOfTetras):
-            tetraCellId = tetraCellIdArray.GetValue(i) 
-            cellPointIds = self.Mesh.GetCell(tetraCellId).GetPointIds()
-            line += '      <tetrahedron index="%d" v0="%d" v1="%d" v2="%d" v3="%d"/>\n' % (i,cellPointIds.GetId(0),cellPointIds.GetId(1),cellPointIds.GetId(2),cellPointIds.GetId(3))
-        line += '    </cells>\n'
-        f.write(line)
-        line = '  </mesh>\n'
-        line += '</dolfin>\n'
-        f.write(line)
+        writer = vtkvmtk.vtkvmtkDolfinWriter()
+        writer.SetInput(self.Mesh)
+        writer.SetFileName(self.OutputFileName)
+        if self.CellEntityIdsArrayName != '':
+            writer.SetBoundaryDataArrayName(self.CellEntityIdsArrayName)
+        writer.Write()
 
     def WritePointDataMeshFile(self):
         if (self.OutputFileName == ''):

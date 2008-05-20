@@ -1,5 +1,6 @@
 SET (VTK_VMTK_IO_SRCS
   vtkvmtkDICOMImageReader.cxx
+  vtkvmtkDolfinWriter.cxx
   vtkvmtkFDNEUTReader.cxx
   vtkvmtkFDNEUTWriter.cxx
   vtkvmtkXdaReader.cxx
