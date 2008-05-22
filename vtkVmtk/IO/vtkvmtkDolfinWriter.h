@@ -44,6 +44,9 @@ public:
   vtkSetStringMacro(BoundaryDataArrayName);
   vtkGetStringMacro(BoundaryDataArrayName);
 
+  vtkSetMacro(BoundaryDataIdOffset,int);
+  vtkGetMacro(BoundaryDataIdOffset,int);
+
 protected:
   vtkvmtkDolfinWriter();
   ~vtkvmtkDolfinWriter();
@@ -54,6 +57,7 @@ protected:
   static void GetDolfinFaceOrder(int cellType, vtkIdList* dolfinFaceOrder);
 
   char* BoundaryDataArrayName;
+  int BoundaryDataIdOffset;
 
 private:
   vtkvmtkDolfinWriter(const vtkvmtkDolfinWriter&);  // Not implemented.

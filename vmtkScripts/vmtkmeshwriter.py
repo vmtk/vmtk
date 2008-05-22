@@ -33,6 +33,9 @@ class vmtkMeshWriter(pypes.pypeScript):
         self.Mesh = None
         self.Input = None
 
+        self.Compressed = 1
+        self.CellEntityIdsOffset = -1
+
         self.CellEntityIdsArrayName = ''
 
         self.SetScriptName('vmtkmeshwriter')
@@ -41,9 +44,11 @@ class vmtkMeshWriter(pypes.pypeScript):
             ['Mesh','i','vtkUnstructuredGrid',1,'','the input mesh','vmtkmeshreader'],
             ['Format','f','str',1,'["vtkxml","vtk","xda","fdneut","tecplot","lifev","dolfin","pointdata"]','file format (xda - libmesh ASCII format, fdneut - FIDAP neutral format)'],
             ['GuessFormat','guessformat','bool',1,'','guess file format from extension'],
+            ['Compressed','compressed','bool',1,'','output gz compressed file (dolfin only)'],
             ['OutputFileName','ofile','str',1,'','output file name'],
             ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh'],
-            ['CellEntityIdsArrayName','entityidsarray','str',1,'','name of the array where entity ids are stored']
+            ['CellEntityIdsArrayName','entityidsarray','str',1,'','name of the array where entity ids are stored'],
+            ['CellEntityIdsOffset','entityidsoffset','int',1,'','add this number to entity ids in output (dolfin only)']
             ])
         self.SetOutputMembers([])
 
@@ -208,12 +213,23 @@ class vmtkMeshWriter(pypes.pypeScript):
         if (self.OutputFileName == ''):
             self.PrintError('Error: no OutputFileName.')
         self.PrintLog('Writing Dolfin file.')
+        if self.Compressed:
+            self.OutputFileName += '.gz'
         writer = vtkvmtk.vtkvmtkDolfinWriter()
         writer.SetInput(self.Mesh)
         writer.SetFileName(self.OutputFileName)
         if self.CellEntityIdsArrayName != '':
             writer.SetBoundaryDataArrayName(self.CellEntityIdsArrayName)
+            writer.SetBoundaryDataIdOffset(self.CellEntityIdsOffset)
         writer.Write()
+        if self.Compressed:
+            file = open(self.OutputFileName,'r')
+            xml = file.read()
+            file.close()
+            import gzip
+            gzfile = gzip.open(self.OutputFileName,'w')
+            gzfile.write(xml)
+            gzfile.close()
 
     def WritePointDataMeshFile(self):
         if (self.OutputFileName == ''):

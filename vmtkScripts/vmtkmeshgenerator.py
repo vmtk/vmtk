@@ -66,7 +66,8 @@ class vmtkMeshGenerator(pypes.pypeScript):
             ['Tetrahedralize','tetrahedralize','bool',1,'']
             ])
         self.SetOutputMembers([
-            ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh','vmtkmeshwriter']
+            ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh','vmtkmeshwriter'],
+            ['CellEntityIdsArrayName','entityidsarray','str',1]
             ])
 
     def Execute(self):

@@ -36,6 +36,7 @@ vtkStandardNewMacro(vtkvmtkDolfinWriter);
 vtkvmtkDolfinWriter::vtkvmtkDolfinWriter()
 {
   this->BoundaryDataArrayName = NULL;
+  this->BoundaryDataIdOffset = 0;
 }
 
 vtkvmtkDolfinWriter::~vtkvmtkDolfinWriter()
@@ -189,7 +190,7 @@ void vtkvmtkDolfinWriter::WriteData()
       }
 
     out << "    <data>" << endl;
-    out << "      <meshfunction name=\"boundary facet cells\" type=\"uint\" dim=\"2\" size=\"" << numberOfTriangles << "\">" << endl;
+    out << "      <array name=\"boundary facet cells\" type=\"uint\" size=\"" << numberOfTriangles << "\">" << endl;
     for (i=0; i<numberOfTriangles; i++)
       {
       triangleCellId = triangleCellIdArray->GetValue(i);
@@ -197,9 +198,9 @@ void vtkvmtkDolfinWriter::WriteData()
       out << "value=\"" << boundaryFaceCells->GetId(triangleCellId) << "\" "; 
       out << "/>" << endl;
       }
-    out << "      </meshfunction>" << endl;
+    out << "      </array>" << endl;
 
-    out << "      <meshfunction name=\"boundary facet numbers\" type=\"uint\" dim=\"2\" size=\"" << numberOfTriangles << "\">" << endl;
+    out << "      <array name=\"boundary facet numbers\" type=\"uint\" size=\"" << numberOfTriangles << "\">" << endl;
     for (i=0; i<numberOfTriangles; i++)
       {
       triangleCellId = triangleCellIdArray->GetValue(i);
@@ -207,17 +208,17 @@ void vtkvmtkDolfinWriter::WriteData()
       out << "value=\"" << boundaryFaceIds->GetId(triangleCellId) << "\" "; 
       out << "/>" << endl;
       }
-    out << "      </meshfunction>" << endl;
+    out << "      </array>" << endl;
 
-    out << "      <meshfunction name=\"boundary indicators\" type=\"uint\" dim=\"2\" size=\"" << numberOfTriangles << "\">" << endl;
+    out << "      <array name=\"boundary indicators\" type=\"uint\" size=\"" << numberOfTriangles << "\">" << endl;
     for (i=0; i<numberOfTriangles; i++)
       {
       triangleCellId = triangleCellIdArray->GetValue(i);
       out << "        <entity index=\"" << i << "\" "; 
-      out << "value=\"" << boundaryDataArray->GetValue(triangleCellId) << "\" "; 
+      out << "value=\"" << boundaryDataArray->GetValue(triangleCellId) + this->BoundaryDataIdOffset << "\" "; 
       out << "/>" << endl;
       }
-    out << "      </meshfunction>" << endl;
+    out << "      </array>" << endl;
   
     out << "    </data>" << endl;
   
