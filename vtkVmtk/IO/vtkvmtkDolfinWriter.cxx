@@ -194,7 +194,7 @@ void vtkvmtkDolfinWriter::WriteData()
     for (i=0; i<numberOfTriangles; i++)
       {
       triangleCellId = triangleCellIdArray->GetValue(i);
-      out << "        <entry index=\"" << i << "\" "; 
+      out << "        <element index=\"" << i << "\" "; 
       out << "value=\"" << boundaryFaceCells->GetId(triangleCellId) << "\" "; 
       out << "/>" << endl;
       }
@@ -204,7 +204,7 @@ void vtkvmtkDolfinWriter::WriteData()
     for (i=0; i<numberOfTriangles; i++)
       {
       triangleCellId = triangleCellIdArray->GetValue(i);
-      out << "        <entry index=\"" << i << "\" "; 
+      out << "        <element index=\"" << i << "\" "; 
       out << "value=\"" << boundaryFaceIds->GetId(triangleCellId) << "\" "; 
       out << "/>" << endl;
       }
@@ -214,7 +214,7 @@ void vtkvmtkDolfinWriter::WriteData()
     for (i=0; i<numberOfTriangles; i++)
       {
       triangleCellId = triangleCellIdArray->GetValue(i);
-      out << "        <entry index=\"" << i << "\" "; 
+      out << "        <element index=\"" << i << "\" "; 
       out << "value=\"" << boundaryDataArray->GetValue(triangleCellId) + this->BoundaryDataIdOffset << "\" "; 
       out << "/>" << endl;
       }
