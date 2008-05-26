@@ -33,7 +33,8 @@ Version:   $Revision: 1.2 $
 
 
 #include "vtkITKImageToImageFilterFF.h"
-#include "itkVesselnessMeasureImageFilter.h"
+#include "itkMultiScaleHessianBasedMeasureImageFilter.h"
+#include "itkHessianToObjectnessMeasureImageFilter.h"
 #include "vtkvmtkWin32Header.h"
 
 class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkVesselnessMeasureImageFilter : public vtkITKImageToImageFilterFF
@@ -42,35 +43,85 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkVesselnessMeasureImageFilter : public 
   static vtkvmtkVesselnessMeasureImageFilter *New();
   vtkTypeRevisionMacro(vtkvmtkVesselnessMeasureImageFilter, vtkITKImageToImageFilterFF);
 
-  void SetSigma ( float value )
+  void SetSigmaMin(double value)
   {
-    DelegateITKInputMacro ( SetSigma, value );
-  };
+    DelegateITKInputMacro(SetSigmaMin,value);
+  }
 
-  void SetNormalizeAcrossScale ( int value )
+  double GetSigmaMin()
   {
-    DelegateITKInputMacro ( SetNormalizeAcrossScale, value );
-  };
+    DelegateITKOutputMacro(GetSigmaMin);
+  }
 
-  void SetAlpha1 ( float value )
+  void SetSigmaMax(double value)
   {
-    DelegateITKInputMacro ( SetAlpha1, value );
-  };
- 
-  void SetAlpha2 ( float value )
+    DelegateITKInputMacro(SetSigmaMax,value);
+  }
+
+  double GetSigmaMax()
   {
-    DelegateITKInputMacro ( SetAlpha2, value );
-  };
+    DelegateITKOutputMacro(GetSigmaMax);
+  }
+
+  void SetNumberOfSigmaSteps(int value)
+  {
+    DelegateITKInputMacro(SetNumberOfSigmaSteps,value);
+  }
+
+  int GetNumberOfSigmaSteps()
+  {
+    DelegateITKOutputMacro(GetNumberOfSigmaSteps);
+  }
+
+  void SetAlpha(double value)
+  {
+    DelegateITKInputMacro(GetHessianToMeasureFilter()->SetAlpha,value);
+  }
+
+  double GetAlpha()
+  {
+    DelegateITKOutputMacro(GetHessianToMeasureFilter()->GetAlpha);
+  }
+
+  void SetBeta(double value)
+  {
+    DelegateITKInputMacro(GetHessianToMeasureFilter()->SetBeta,value);
+  }
+
+  double GetBeta()
+  {
+    DelegateITKOutputMacro(GetHessianToMeasureFilter()->GetBeta);
+  }
+
+  void SetGamma(double value)
+  {
+    DelegateITKInputMacro(GetHessianToMeasureFilter()->SetGamma,value);
+  }
+
+  double GetGamma()
+  {
+    DelegateITKOutputMacro(GetHessianToMeasureFilter()->GetGamma);
+  }
 
 protected:
   //BTX
-  typedef itk::VesselnessMeasureImageFilter<Superclass::InputImageType,Superclass::OutputImageType> ImageFilterType;
-  vtkvmtkVesselnessMeasureImageFilter() : Superclass ( ImageFilterType::New() ){};
-  ~vtkvmtkVesselnessMeasureImageFilter() {};
-  ImageFilterType* GetImageFilterPointer() { return dynamic_cast<ImageFilterType*> ( m_Filter.GetPointer() ); }
+  typedef itk::HessianToObjectnessMeasureImageFilter<double,3> ObjectnessFilterType;
+  typedef itk::MultiScaleHessianBasedMeasureImageFilter<Superclass::InputImageType,ObjectnessFilterType> ImageFilterType;
 
+  vtkvmtkVesselnessMeasureImageFilter() : Superclass(ImageFilterType::New())
+  {
+    ImageFilterType* imageFilter = this->GetImageFilterPointer();
+    imageFilter->SetSigmaStepMethodToEquispaced();
+    ObjectnessFilterType* objectnessFilter = imageFilter->GetHessianToMeasureFilter();
+    objectnessFilter->SetScaleObjectnessMeasure(false);
+    objectnessFilter->SetBrightObject(true);
+    objectnessFilter->SetObjectDimension(1);
+  }
+
+  ~vtkvmtkVesselnessMeasureImageFilter() {};
+  ImageFilterType* GetImageFilterPointer() { return dynamic_cast<ImageFilterType*>(m_Filter.GetPointer()); }
   //ETX
-  
+
 private:
   vtkvmtkVesselnessMeasureImageFilter(const vtkvmtkVesselnessMeasureImageFilter&);  // Not implemented.
   void operator=(const vtkvmtkVesselnessMeasureImageFilter&);  // Not implemented.

@@ -11,8 +11,6 @@ SET (VTK_VMTK_SEGMENTATION_SRCS
   vtkvmtkGradientMagnitudeImageFilter.cxx
   vtkvmtkGradientMagnitudeRecursiveGaussianImageFilter.cxx
   vtkvmtkGradientMagnitudeRecursiveGaussian2DImageFilter.cxx
-#  vtkvmtkObjectnessMeasureImageFilter.cxx
-#  vtkvmtkObjectnessMeasure2DImageFilter.cxx
   vtkvmtkLaplacianSegmentationLevelSetImageFilter.cxx
   vtkvmtkRecursiveGaussianImageFilter.cxx
   vtkvmtkRecursiveGaussian2DImageFilter.cxx
@@ -27,8 +25,6 @@ SET (VTK_VMTK_SEGMENTATION_SRCS
 IF (NOT VMTK_EXTERNAL_vtkITK)
 SET (VTK_VMTK_SEGMENTATION_SRCS 
   ${VTK_VMTK_SEGMENTATION_SRCS}
-#  vtkvmtkObjectnessMeasureImageFilter.cxx
-#  vtkvmtkObjectnessMeasure2DImageFilter.cxx
   )
 ENDIF (NOT VMTK_EXTERNAL_vtkITK)
 
