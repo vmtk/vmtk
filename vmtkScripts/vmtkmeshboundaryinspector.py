@@ -39,6 +39,8 @@ class vmtkMeshBoundaryInspector(pypes.pypeScript):
         self.vmtkRenderer = None
         self.OwnRenderer = 0
 
+        self.ReferenceSystems = None
+
         self.SetScriptName('vmtkmeshboundaryinspector')
         self.SetScriptDoc('')
         self.SetInputMembers([
@@ -48,6 +50,7 @@ class vmtkMeshBoundaryInspector(pypes.pypeScript):
             ['WallCellEntityId','wallid','int',1],
             ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer']])
         self.SetOutputMembers([
+            ['ReferenceSystems','o','vtkPolyData',1,'','the output reference systems with boundary information','vmtksurfacewriter']
             ])
 
     def Execute(self):
@@ -102,13 +105,13 @@ class vmtkMeshBoundaryInspector(pypes.pypeScript):
         boundaryReferenceSystems.SetPoint2ArrayName("Point2Array")
         boundaryReferenceSystems.Update()
 
-        referenceSystems = boundaryReferenceSystems.GetOutput()
+        self.ReferenceSystems = boundaryReferenceSystems.GetOutput()
 
         cellEntityIdsArray = vtk.vtkIntArray()
         cellEntityIdsArray.SetName(self.CellEntityIdsArrayName)
-        cellEntityIdsArray.SetNumberOfTuples(referenceSystems.GetNumberOfPoints())
+        cellEntityIdsArray.SetNumberOfTuples(self.ReferenceSystems.GetNumberOfPoints())
 
-        referenceSystems.GetPointData().AddArray(cellEntityIdsArray)
+        self.ReferenceSystems.GetPointData().AddArray(cellEntityIdsArray)
 
         wallMeshToSurface = vtk.vtkGeometryFilter()
         wallMeshToSurface.SetInput(boundaryMesh)
@@ -121,25 +124,25 @@ class vmtkMeshBoundaryInspector(pypes.pypeScript):
         surfaceCellEntityIdsArray.DeepCopy(boundarySurface.GetCellData().GetArray(self.CellEntityIdsArrayName))
 
         self.PrintLog('')
-        for i in range(referenceSystems.GetNumberOfPoints()):
-            pointId = boundarySurface.FindPoint(referenceSystems.GetPoint(i))
+        for i in range(self.ReferenceSystems.GetNumberOfPoints()):
+            pointId = boundarySurface.FindPoint(self.ReferenceSystems.GetPoint(i))
             boundarySurface.GetPointCells(pointId,pointCells)
             cellId = pointCells.GetId(0)
             cellEntityId = surfaceCellEntityIdsArray.GetValue(cellId)
             cellEntityIdsArray.SetValue(i,cellEntityId)
-            origin = referenceSystems.GetPoint(i)
-            normal = referenceSystems.GetPointData().GetArray("BoundaryNormals").GetTuple3(i)
-            radius = referenceSystems.GetPointData().GetArray("BoundaryRadius").GetTuple1(i)
+            origin = self.ReferenceSystems.GetPoint(i)
+            normal = self.ReferenceSystems.GetPointData().GetArray("BoundaryNormals").GetTuple3(i)
+            radius = self.ReferenceSystems.GetPointData().GetArray("BoundaryRadius").GetTuple1(i)
             logLine = 'CellEntityId: %d\n' % cellEntityId
             logLine += '  Origin: %f, %f, %f\n' % (origin[0],origin[1],origin[2])
             logLine += '  Normal: %f, %f, %f\n' % (normal[0],normal[1],normal[2])
             logLine += '  Radius: %f\n' % radius
             self.PrintLog(logLine)
 
-        referenceSystems.GetPointData().SetActiveScalars(self.CellEntityIdsArrayName)
+        self.ReferenceSystems.GetPointData().SetActiveScalars(self.CellEntityIdsArrayName)
 
         labelsMapper = vtk.vtkLabeledDataMapper();
-        labelsMapper.SetInput(referenceSystems)
+        labelsMapper.SetInput(self.ReferenceSystems)
         labelsMapper.SetLabelModeToLabelScalars()
         labelsActor = vtk.vtkActor2D()
         labelsActor.SetMapper(labelsMapper)
