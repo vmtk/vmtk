@@ -39,6 +39,7 @@ SET(SCRIPTS_SRCS
   vmtkimagereslice.py
   vmtkimageseeder.py
   vmtkimagesmoothing.py
+  vmtkimagevesselenhancement.py
   vmtkimageviewer.py
   vmtkimagevoipainter.py
   vmtkimagevoiselector.py
@@ -48,6 +49,7 @@ SET(SCRIPTS_SRCS
   vmtklineresampling.py
   vmtklocalgeometry.py
   vmtkmarchingcubes.py
+  vmtkmeshboundaryinspector.py
   vmtkmeshclipper.py
   vmtkmeshdatareader.py
   vmtkmeshlinearize.py
