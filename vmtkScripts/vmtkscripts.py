@@ -79,6 +79,7 @@ __all__ = [
   'vmtksurfacesmoothing',
   'vmtksurfacesubdivision',
   'vmtksurfacetransform',
+  'vmtksurfacetriangle',
   'vmtksurfacetomesh',
   'vmtksurfaceviewer',
   'vmtksurfacewriter',
