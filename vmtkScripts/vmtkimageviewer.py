@@ -40,6 +40,7 @@ class vmtkImageViewer(pypes.pypeScript):
         self.PlaneWidgetZ = None
 
         self.TextureInterpolation = 1
+        self.ContinuousCursor = 0
         self.WindowLevel = [0.0, 0.0]
 
         self.SetScriptName('vmtkimageviewer')
@@ -50,7 +51,8 @@ class vmtkImageViewer(pypes.pypeScript):
             ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer'],
             ['WindowLevel','windowlevel','float',2,'','the window/level for displaying the image'],
             ['Display','display','bool',1,'','toggle rendering'],
-            ['TextureInterpolation','textureinterpolation','bool',1,'','toggle interpolation of graylevels on image planes']
+            ['TextureInterpolation','textureinterpolation','bool',1,'','toggle interpolation of graylevels on image planes'],
+            ['ContinuousCursor','continuouscursor','bool',1,'','toggle use of physical continuous coordinates for the cursor']
             ])
         self.SetOutputMembers([
             ['Image','o','vtkImageData',1,'','the output image','vmtkimagewriter']
@@ -81,8 +83,9 @@ class vmtkImageViewer(pypes.pypeScript):
             
         self.Picker.SetTolerance(0.005)
 
-        self.PlaneWidgetX.SetResliceInterpolateToNearestNeighbour()
+        self.PlaneWidgetX.SetResliceInterpolateToLinear()
         self.PlaneWidgetX.SetTextureInterpolate(self.TextureInterpolation)
+        self.PlaneWidgetX.SetUseContinuousCursor(self.ContinuousCursor)
         self.PlaneWidgetX.SetInput(self.Image)
         self.PlaneWidgetX.SetPlaneOrientationToXAxes()
         self.PlaneWidgetX.SetSliceIndex(wholeExtent[0])
@@ -94,8 +97,9 @@ class vmtkImageViewer(pypes.pypeScript):
             self.PlaneWidgetX.SetWindowLevel(self.WindowLevel[0],self.WindowLevel[1])
         self.PlaneWidgetX.On()
 
-        self.PlaneWidgetY.SetResliceInterpolateToNearestNeighbour()
+        self.PlaneWidgetY.SetResliceInterpolateToLinear()
         self.PlaneWidgetY.SetTextureInterpolate(self.TextureInterpolation)
+        self.PlaneWidgetY.SetUseContinuousCursor(self.ContinuousCursor)
         self.PlaneWidgetY.SetInput(self.Image)
         self.PlaneWidgetY.SetPlaneOrientationToYAxes()
         self.PlaneWidgetY.SetSliceIndex(wholeExtent[2])
@@ -108,8 +112,9 @@ class vmtkImageViewer(pypes.pypeScript):
             self.PlaneWidgetY.SetWindowLevel(self.WindowLevel[0],self.WindowLevel[1])
         self.PlaneWidgetY.On()
 
-        self.PlaneWidgetZ.SetResliceInterpolateToNearestNeighbour()
+        self.PlaneWidgetZ.SetResliceInterpolateToLinear()
         self.PlaneWidgetZ.SetTextureInterpolate(self.TextureInterpolation)
+        self.PlaneWidgetZ.SetUseContinuousCursor(self.ContinuousCursor)
         self.PlaneWidgetZ.SetInput(self.Image)
         self.PlaneWidgetZ.SetPlaneOrientationToZAxes()
         self.PlaneWidgetZ.SetSliceIndex(wholeExtent[4])
