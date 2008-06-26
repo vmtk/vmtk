@@ -87,9 +87,10 @@ class vmtkImageInitialization(pypes.pypeScript):
         if text == 'i':
             self.vmtkRenderer.Render()
             return 0
-        for char in text:
-            if char not in string.digits + '.' +  ' ' + '-':
-                return 0
+        try:
+            float(text)
+        except ValueError:
+            return 0
         return 1
 
     def ThresholdInput(self,queryString):
@@ -366,18 +367,6 @@ class vmtkImageInitialization(pypes.pypeScript):
 
     def YesNoValidator(self,text):
         if text in ['n','y']:
-            return 1
-        return 0
-
-    def EvolutionParametersValidator(self,text):
-        if not text:
-            return 1
-        if text in ['q','e']:
-            return 1
-        for char in text:
-            if char not in string.digits + '.' + ' ' + '-':
-                return 0
-        if len(text.strip().split(' ')) in [1,4]:
             return 1
         return 0
 

@@ -26,6 +26,7 @@ Version:   $Revision: 1.4 $
 #define __vtkvmtkLinearToQuadraticMeshFilter_h
 
 #include "vtkUnstructuredGridAlgorithm.h"
+#include "vtkPolyData.h"
 #include "vtkvmtkWin32Header.h"
 
 class VTK_VMTK_MISC_EXPORT vtkvmtkLinearToQuadraticMeshFilter : public vtkUnstructuredGridAlgorithm
@@ -40,6 +41,15 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkLinearToQuadraticMeshFilter : public vtkUnstru
   vtkGetMacro(UseBiquadraticWedge,int);
   vtkBooleanMacro(UseBiquadraticWedge,int);
 
+  vtkSetObjectMacro(ReferenceSurface,vtkPolyData);
+  vtkGetObjectMacro(ReferenceSurface,vtkPolyData);
+
+  vtkSetStringMacro(CellEntityIdsArrayName);
+  vtkGetStringMacro(CellEntityIdsArrayName);
+
+  vtkSetMacro(ProjectedCellEntityId,int);
+  vtkGetMacro(ProjectedCellEntityId,int);
+
   protected:
   vtkvmtkLinearToQuadraticMeshFilter();
   ~vtkvmtkLinearToQuadraticMeshFilter();
@@ -47,6 +57,11 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkLinearToQuadraticMeshFilter : public vtkUnstru
   virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
 
   int UseBiquadraticWedge;
+
+  vtkPolyData* ReferenceSurface;
+
+  char* CellEntityIdsArrayName;
+  int ProjectedCellEntityId;
 
   private:
   vtkvmtkLinearToQuadraticMeshFilter(const vtkvmtkLinearToQuadraticMeshFilter&);  // Not implemented.

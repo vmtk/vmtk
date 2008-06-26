@@ -25,12 +25,14 @@ Version:   $Revision: 1.6 $
 #include "vtkLinearSubdivisionFilter.h"
 #include "vtkButterflySubdivisionFilter.h"
 #include "vtkPolyData.h"
+#include "vtkCellLocator.h"
 #include "vtkUnstructuredGrid.h"
 #include "vtkPointData.h"
 #include "vtkCellData.h"
 #include "vtkCellArray.h"
 #include "vtkGenericCell.h"
 #include "vtkEdgeTable.h"
+#include "vtkIntArray.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
@@ -41,10 +43,24 @@ vtkStandardNewMacro(vtkvmtkLinearToQuadraticMeshFilter);
 vtkvmtkLinearToQuadraticMeshFilter::vtkvmtkLinearToQuadraticMeshFilter()
 {
   this->UseBiquadraticWedge = 1;
+  this->ReferenceSurface = NULL;
+  this->CellEntityIdsArrayName = NULL;
+  this->ProjectedCellEntityId = -1;
 }
 
 vtkvmtkLinearToQuadraticMeshFilter::~vtkvmtkLinearToQuadraticMeshFilter()
 {
+  if (this->ReferenceSurface)
+    {
+    this->ReferenceSurface->Delete();
+    this->ReferenceSurface = NULL;
+    }
+
+  if (this->CellEntityIdsArrayName)
+    {
+    delete[] this->CellEntityIdsArrayName;
+    this->CellEntityIdsArrayName = NULL;
+    }
 }
 
 int vtkvmtkLinearToQuadraticMeshFilter::RequestData(
@@ -58,10 +74,19 @@ int vtkvmtkLinearToQuadraticMeshFilter::RequestData(
   vtkUnstructuredGrid *input = vtkUnstructuredGrid::SafeDownCast(inInfo->Get(vtkDataObject::DATA_OBJECT()));
   vtkUnstructuredGrid *output = vtkUnstructuredGrid::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
-  //TODO: finally project mid-edge surface points to position on the original surface (use locator).
- 
-//   vtkIdTypeArray* triangleIds = vtkIdTypeArray::New();
-//   input->GetIdsOfCellsOfType(VTK_TRIANGLE,triangleIds);
+  vtkIntArray* cellEntityIdsArray = vtkIntArray::New();
+  if (this->ReferenceSurface)
+    {
+    if (this->CellEntityIdsArrayName)
+      {
+      if (input->GetCellData()->GetArray(this->CellEntityIdsArrayName) == NULL)
+        {
+        vtkErrorMacro(<< "Error: CellEntityIdsArray with name specified does not exist");
+        return 1;
+        }
+      cellEntityIdsArray->DeepCopy(input->GetCellData()->GetArray(this->CellEntityIdsArrayName));
+      }
+    }
 
   vtkPoints* outputPoints = vtkPoints::New();
 
@@ -117,6 +142,7 @@ int vtkvmtkLinearToQuadraticMeshFilter::RequestData(
   vtkIdType edgePointId01, edgePointId02, edgePointId03, edgePointId12, edgePointId13, edgePointId23;
   vtkIdType edgePointId14, edgePointId34, edgePointId45, edgePointId35, edgePointId25;
   vtkIdType facePointId0143, facePointId1254, facePointId2035;
+  facePointId0143 = facePointId1254 = facePointId2035 = -1;
   vtkIdType neighborCellId;
   vtkIdType pts[18];
   double weights[4];
@@ -486,6 +512,19 @@ int vtkvmtkLinearToQuadraticMeshFilter::RequestData(
     outputCellData->CopyData(inputCellData,cellId,newCellId);
     }
 
+  vtkCellLocator* locator = NULL;
+  if (this->ReferenceSurface)
+    {
+    locator = vtkCellLocator::New();
+    locator->SetDataSet(this->ReferenceSurface);
+    locator->BuildLocator();
+    }
+
+  double projectedPoint[3];
+  vtkIdType referenceCellId;
+  int subId;
+  double dist2;
+
   for (i=0; i<numberOfInputTriangles; i++)
     {
     cellId = triangleIds->GetValue(i);
@@ -545,6 +584,31 @@ int vtkvmtkLinearToQuadraticMeshFilter::RequestData(
     vtkIdType newCellId = output->InsertNextCell(VTK_QUADRATIC_TRIANGLE, 6, pts);
 
     outputCellData->CopyData(inputCellData,cellId,newCellId);
+
+    if (locator)
+      {
+      bool project = true;
+      if (this->CellEntityIdsArrayName) 
+        {
+        if (cellEntityIdsArray->GetValue(cellId) != this->ProjectedCellEntityId)
+          {
+          project = false;
+          }
+        }
+
+      if (project)
+        {
+        outputPoints->GetPoint(edgePointId01,point);
+        locator->FindClosestPoint(point,projectedPoint,referenceCellId,subId,dist2);
+        outputPoints->SetPoint(edgePointId01,projectedPoint);
+        outputPoints->GetPoint(edgePointId12,point);
+        locator->FindClosestPoint(point,projectedPoint,referenceCellId,subId,dist2);
+        outputPoints->SetPoint(edgePointId12,projectedPoint);
+        outputPoints->GetPoint(edgePointId02,point);
+        locator->FindClosestPoint(point,projectedPoint,referenceCellId,subId,dist2);
+        outputPoints->SetPoint(edgePointId02,projectedPoint);
+        }
+      }
     }
 
   outputPoints->Delete();
@@ -558,6 +622,11 @@ int vtkvmtkLinearToQuadraticMeshFilter::RequestData(
   cellNeighbors->Delete();
 
   cell->Delete();
+  if (locator)
+    {
+    locator->Delete();
+    }
+  cellEntityIdsArray->Delete();
 
   output->Squeeze();
 

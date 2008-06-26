@@ -33,6 +33,7 @@ class vmtkFlowExtensions(pypes.pypeScript):
 
         self.AdaptiveExtensionLength = 0
         self.AdaptiveExtensionRadius = 1
+        self.AdaptiveNumberOfBoundaryPoints = 0
         self.ExtensionLength = 1.0
         self.ExtensionRatio = 10.0
         self.ExtensionRadius = 1.0
@@ -56,6 +57,7 @@ class vmtkFlowExtensions(pypes.pypeScript):
             ['Sigma','sigma','float',1,'(0.0,)','thin plate spline stiffness'],
             ['AdaptiveExtensionLength','adaptivelength','bool',1],
             ['AdaptiveExtensionRadius','adaptiveradius','bool',1],
+            ['AdaptiveNumberOfBoundaryPoints','adaptivepoints','bool',1],
             ['ExtensionLength','extensionlength','float',1,'(0.0,)'],
             ['ExtensionRatio','extensionratio','float',1,'(0.0,)'],
             ['ExtensionRadius','extensionradius','float',1,'(0.0,)'],
@@ -73,6 +75,8 @@ class vmtkFlowExtensions(pypes.pypeScript):
     def LabelValidator(self,text):
         import string
         if not text:
+            return 0
+        if not text.split():
             return 0
         for char in text:
             if char not in string.digits + " ":
@@ -149,6 +153,7 @@ class vmtkFlowExtensions(pypes.pypeScript):
         flowExtensionsFilter.SetSigma(self.Sigma)
         flowExtensionsFilter.SetAdaptiveExtensionLength(self.AdaptiveExtensionLength)
         flowExtensionsFilter.SetAdaptiveExtensionRadius(self.AdaptiveExtensionRadius)
+        flowExtensionsFilter.SetAdaptiveNumberOfBoundaryPoints(self.AdaptiveNumberOfBoundaryPoints)
         flowExtensionsFilter.SetExtensionLength(self.ExtensionLength)
         flowExtensionsFilter.SetExtensionRatio(self.ExtensionRatio)
         flowExtensionsFilter.SetExtensionRadius(self.ExtensionRadius)

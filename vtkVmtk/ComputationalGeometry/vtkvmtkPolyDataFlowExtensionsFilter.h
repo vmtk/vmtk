@@ -70,6 +70,10 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataFlowExtensionsFilter
   vtkSetMacro(NumberOfBoundaryPoints,int);
   vtkGetMacro(NumberOfBoundaryPoints,int);
 
+  vtkSetMacro(AdaptiveNumberOfBoundaryPoints,int);
+  vtkGetMacro(AdaptiveNumberOfBoundaryPoints,int);
+  vtkBooleanMacro(AdaptiveNumberOfBoundaryPoints,int);
+
   vtkSetObjectMacro(BoundaryIds,vtkIdList);
   vtkGetObjectMacro(BoundaryIds,vtkIdList);
 
@@ -120,6 +124,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataFlowExtensionsFilter
   int AdaptiveExtensionRadius;
 
   int NumberOfBoundaryPoints;
+  int AdaptiveNumberOfBoundaryPoints;
 
   int ExtensionMode;
   int InterpolationMode;

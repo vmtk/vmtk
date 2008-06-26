@@ -44,7 +44,7 @@ class vmtkImageVesselEnhancement(pypes.pypeScript):
         self.SetScriptDoc('compute a feature image for use in segmentation')
         self.SetInputMembers([
             ['Image','i','vtkImageData',1,'','the input image','vmtkimagereader'],
-            ['Method','method','str',1,["frangi"]],
+            ['Method','method','str',1,'["frangi","sato","ved"]'],
             ['SigmaMin','sigmamin','float',1,'(0.0,)'],
             ['SigmaMax','sigmamax','float',1,'(0.0,)'],
             ['NumberOfSigmaSteps','sigmasteps','int',1,'(0,)'],
@@ -71,15 +71,27 @@ class vmtkImageVesselEnhancement(pypes.pypeScript):
         self.EnhancedImage = vtk.vtkImageData()
         self.EnhancedImage.DeepCopy(vesselness.GetOutput())
 
+    def ApplySatoVesselness(self):
+
+        self.PrintError('Error: Sato vesselness not implemented yet.')
+
+    def ApplyVED(self):
+
+        self.PrintError('Error: VED method implemented yet.')
+
     def Execute(self):
 
         if self.Image == None:
             self.PrintError('Error: No input image.')
 
         if self.Method == 'frangi':
-          self.ApplyFrangiVesselness()
+            self.ApplyFrangiVesselness()
+        elif self.Method == 'sato':
+            self.ApplySatoVesselness()
+        elif self.Method == 'ved':
+            self.ApplyVED()
         else:
-          self.PrintError('Error: unsupported vessel enhancement method')
+            self.PrintError('Error: unsupported vessel enhancement method')
 
         self.Image = self.EnhancedImage
 

@@ -430,7 +430,7 @@ class vmtkCenterlines(pypes.pypeScript):
         self.SeedSelector = None
         self.SeedSelectorName = 'pickpoint'
         self.FlipNormals = 0
-        self.CapDisplacement = 0.1
+        self.CapDisplacement = 0.0
         self.RadiusArrayName = 'MaximumInscribedSphereRadius'
         self.CostFunction = '1/R'
         self.AppendEndPoints = 0
@@ -521,6 +521,7 @@ class vmtkCenterlines(pypes.pypeScript):
             surfaceCapper = vtkvmtk.vtkvmtkCapPolyData()
             surfaceCapper.SetInput(surfaceTriangulator.GetOutput())
             surfaceCapper.SetDisplacement(self.CapDisplacement)
+            surfaceCapper.SetInPlaneDisplacement(self.CapDisplacement)
             surfaceCapper.Update()
             centerlineInputSurface = surfaceCapper.GetOutput()
             capCenterIds = surfaceCapper.GetCapCenterIds()
@@ -587,11 +588,13 @@ class vmtkCenterlines(pypes.pypeScript):
             tetgen.Mesh = surfaceToMesh.Mesh
             tetgen.PLC = 1
             tetgen.NoMerge = 1
+            tetgen.Quality = 0
             if self.TetGenDetectInter == 1:
                 tetgen.DetectInter = 1
                 tetgen.NoMerge = 0
             tetgen.OutputSurfaceElements = 0
             tetgen.Execute()
+            centerlineFilter.GenerateDelaunayTessellationOff()
             centerlineFilter.SetDelaunayTessellation(tetgen.Mesh)
         centerlineFilter.SetCenterlineResampling(self.Resampling)
         centerlineFilter.SetResamplingStepLength(self.ResamplingStepLength)

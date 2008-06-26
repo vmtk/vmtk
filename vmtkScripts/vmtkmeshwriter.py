@@ -42,7 +42,7 @@ class vmtkMeshWriter(pypes.pypeScript):
         self.SetScriptDoc('write a mesh to disk')
         self.SetInputMembers([
             ['Mesh','i','vtkUnstructuredGrid',1,'','the input mesh','vmtkmeshreader'],
-            ['Format','f','str',1,'["vtkxml","vtk","xda","fdneut","tecplot","lifev","dolfin","pointdata"]','file format (xda - libmesh ASCII format, fdneut - FIDAP neutral format)'],
+            ['Format','f','str',1,'["vtkxml","vtk","xda","fdneut","tecplot","lifev","dolfin","fluent","pointdata"]','file format (xda - libmesh ASCII format, fdneut - FIDAP neutral format)'],
             ['GuessFormat','guessformat','bool',1,'','guess file format from extension'],
             ['Compressed','compressed','bool',1,'','output gz compressed file (dolfin only)'],
             ['OutputFileName','ofile','str',1,'','output file name'],
@@ -231,6 +231,20 @@ class vmtkMeshWriter(pypes.pypeScript):
             gzfile.write(xml)
             gzfile.close()
 
+    def WriteFluentMeshFile(self):
+        if (self.OutputFileName == ''):
+            self.PrintError('Error: no OutputFileName.')
+        self.PrintError('Error: Fluent writer not implemented yet.')
+        return
+        self.PrintLog('Writing Fluent file.')
+        writer = vtkvmtk.vtkvmtkFluentWriter()
+        writer.SetInput(self.Mesh)
+        writer.SetFileName(self.OutputFileName)
+        if self.CellEntityIdsArrayName != '':
+            writer.SetBoundaryDataArrayName(self.CellEntityIdsArrayName)
+            writer.SetBoundaryDataIdOffset(self.CellEntityIdsOffset)
+        writer.Write()
+
     def WritePointDataMeshFile(self):
         if (self.OutputFileName == ''):
             self.PrintError('Error: no OutputFileName.')
@@ -277,6 +291,7 @@ class vmtkMeshWriter(pypes.pypeScript):
                             'FDNEUT':'fdneut',
                             'lifev':'lifev',
                             'xml':'dolfin',
+                            'msh':'fluent',
                             'tec':'tecplot',
                             'dat':'pointdata'}
 
@@ -307,6 +322,8 @@ class vmtkMeshWriter(pypes.pypeScript):
             self.WriteLifeVMeshFile()
         elif (self.Format == 'dolfin'):
             self.WriteDolfinMeshFile()
+        elif (self.Format == 'fluent'):
+            self.WriteFluentMeshFile()
         elif (self.Format == 'tecplot'):
             self.WriteTecplotMeshFile()
         elif (self.Format == 'pointdata'):

@@ -105,9 +105,10 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
         if text == 'i':
             self.vmtkRenderer.Render()
             return 0
-        for char in text:
-            if char not in string.digits + '.' +  ' ' + '-':
-                return 0
+        try:
+            float(text)
+        except ValueError:
+            return 0
         return 1
 
     def ThresholdInput(self,queryString):
@@ -234,12 +235,18 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
             return 1
         if text in ['q','e']:
             return 1
-        for char in text:
-            if char not in string.digits + '.' + ' ' + '-':
-                return 0
-        if len(text.strip().split(' ')) in [1,4]:
-            return 1
-        return 0
+        splitText = text.strip().split(' ')
+        if len(splitText) not in [1,4]:
+            return 0
+        try:
+            int(splitText[0])
+            if len(splitText) == 4:
+                float(splitText[1])
+                float(splitText[2])
+                float(splitText[3])
+        except ValueError:
+            return 0
+        return 1
 
     def Execute(self):
           

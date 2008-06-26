@@ -73,6 +73,8 @@ class vmtkBranchClipper(pypes.pypeScript):
         import string
         if not text:
             return 0
+        if not text.split():
+            return 0
         for char in text:
             if char not in string.digits + " ":
                 return 0

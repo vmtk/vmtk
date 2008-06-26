@@ -50,6 +50,7 @@ vtkvmtkPolyDataFlowExtensionsFilter::vtkvmtkPolyDataFlowExtensionsFilter()
   this->AdaptiveExtensionLength = 1;
   this->AdaptiveExtensionRadius = 1;
   this->NumberOfBoundaryPoints = 50;
+  this->AdaptiveNumberOfBoundaryPoints = 0;
   this->BoundaryIds = NULL;
   this->Sigma = 1.0;
   this->SetExtensionModeToUseCenterlineDirection();
@@ -294,7 +295,7 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
     if (this->AdaptiveExtensionRadius)
       {
       double barycenterToPoint[3];
-      double outOfPlaneDistance, projectedDistanceToBarycenter;
+      double outOfPlaneDistance;
       double projectedBarycenterToPoint[3];
       for (j=0; j<numberOfBoundaryPoints; j++)
         {
@@ -321,8 +322,6 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
     vtkIdList* previousBoundaryIds = vtkIdList::New();
     vtkIdType pointId;
 
-    double advancementRatio, factor;
-
     previousBoundaryIds->DeepCopy(boundaryIds);
     if (boundaryDirection == -1)
       {
@@ -335,13 +334,17 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
 
     // TODO: use area, not meanRadius as targetRadius
 
-    double targetDistanceBetweenPoints = 2.0 * sin (vtkMath::Pi() / this->NumberOfBoundaryPoints) * targetRadius;
+    int targetNumberOfBoundaryPoints = this->NumberOfBoundaryPoints;
+    if (this->AdaptiveNumberOfBoundaryPoints)
+      {
+      targetNumberOfBoundaryPoints = numberOfBoundaryPoints;
+      }
 
-    double currentLength = 0.0;
+    double targetDistanceBetweenPoints = 2.0 * sin (vtkMath::Pi() / targetNumberOfBoundaryPoints) * targetRadius;
 
     vtkThinPlateSplineTransform* thinPlateSplineTransform = vtkThinPlateSplineTransform::New();
-    thinPlateSplineTransform->SetBasisToR2LogR();
     thinPlateSplineTransform->SetSigma(this->Sigma);
+    thinPlateSplineTransform->SetBasisToR2LogR();
     
     vtkPoints* sourceLandmarks = vtkPoints::New();
     vtkPoints* targetLandmarks = vtkPoints::New();
@@ -350,7 +353,6 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
     vtkPoints* targetStaggeredBoundaryPoints = vtkPoints::New();
 
     double baseRadialNormal[3];
-//    boundary->GetPoints()->GetPoint(0,point);
     input->GetPoint(previousBoundaryIds->GetId(0),point);
     for (k=0; k<3; k++)
       {
@@ -362,7 +364,8 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
       baseRadialNormal[k] -= outOfPlaneComponent * flowExtensionNormal[k];
       }
     vtkMath::Normalize(baseRadialNormal);
-    double angle = 360.0 / numberOfBoundaryPoints;
+    int startNumberOfBoundaryPoints = numberOfBoundaryPoints;
+    double angle = 360.0 / targetNumberOfBoundaryPoints;
     if (boundaryDirection == -1)
       {
       angle *= -1.0;
@@ -375,7 +378,7 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
       radialVector[k] = targetRadius * baseRadialNormal[k];
       }
     double targetPoint[3];
-    for (j=0; j<numberOfBoundaryPoints; j++)
+    for (j=0; j<targetNumberOfBoundaryPoints; j++)
       {
       for (k=0; k<3; k++)
         {
@@ -394,12 +397,25 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
     
     if (this->InterpolationMode == USE_THIN_PLATE_SPLINE_INTERPOLATION)
       {
-      for (j=0; j<numberOfBoundaryPoints; j++)
+      for (j=0; j<targetNumberOfBoundaryPoints; j++)
         {
         double firstBoundaryPoint[3], lastBoundaryPoint[3];
-//        boundary->GetPoints()->GetPoint(j,point);
-        input->GetPoint(previousBoundaryIds->GetId(j),point);
         targetBoundaryPoints->GetPoint(j,firstBoundaryPoint);
+        double distance = 1E20;
+        double currentPoint[3];
+        for (int j2=0; j2<startNumberOfBoundaryPoints; j2++)
+          {
+          input->GetPoint(previousBoundaryIds->GetId(j2),currentPoint);
+          double currentDistance = vtkMath::Distance2BetweenPoints(currentPoint,firstBoundaryPoint);
+          if (currentDistance < distance)
+            {
+            distance = currentDistance;
+            for (k=0; k<3; k++)
+              {
+              point[k] = currentPoint[k];
+              }
+            }
+          }
         sourceLandmarks->InsertNextPoint(firstBoundaryPoint);
         targetLandmarks->InsertNextPoint(point);
         for (k=0; k<3; k++)
@@ -419,7 +435,7 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
     for (l=0; l<numberOfLayers; l++)
       {
       newBoundaryIds->Initialize();
-      for (j=0; j<numberOfBoundaryPoints; j++)
+      for (j=0; j<targetNumberOfBoundaryPoints; j++)
         {
         if (l%2 != 0)
           {
@@ -447,32 +463,84 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
         newBoundaryIds->InsertNextId(pointId);
         }
 
-      vtkIdType pts[3];
-      for (j=0; j<numberOfBoundaryPoints; j++)
+      if (l==0)
         {
-        if (l%2 != 0)
+        vtkIdType pts[3];
+        int j2 = 0;
+        for (j=0; j<targetNumberOfBoundaryPoints; j++)
           {
-          pts[0] = newBoundaryIds->GetId(j);
-          pts[1] = newBoundaryIds->GetId((j-1+numberOfBoundaryPoints)%numberOfBoundaryPoints);
-          pts[2] = previousBoundaryIds->GetId((j-1+numberOfBoundaryPoints)%numberOfBoundaryPoints);
-          outputPolys->InsertNextCell(3,pts);
+          double point0[3], point1[3], point2[3], point3[3];
+          outputPoints->GetPoint(previousBoundaryIds->GetId(j2%startNumberOfBoundaryPoints),point0);
+          outputPoints->GetPoint(previousBoundaryIds->GetId((j2+1)%startNumberOfBoundaryPoints),point1);
+          outputPoints->GetPoint(newBoundaryIds->GetId(j),point2);
+          outputPoints->GetPoint(newBoundaryIds->GetId((j+1)%targetNumberOfBoundaryPoints),point3);
 
-          pts[0] = previousBoundaryIds->GetId(j);
-          pts[1] = newBoundaryIds->GetId(j);
-          pts[2] = previousBoundaryIds->GetId((j-1+numberOfBoundaryPoints)%numberOfBoundaryPoints);
+          bool advance = false;
+          if ((j==0) || (j==targetNumberOfBoundaryPoints-1) || (vtkMath::Distance2BetweenPoints(point0,point3) > vtkMath::Distance2BetweenPoints(point1,point2)))
+            {
+            advance = true;
+            }
+          if (j2 == startNumberOfBoundaryPoints)
+            {
+            advance = false;
+            }
+          while(advance) 
+            {
+            pts[0] = previousBoundaryIds->GetId(j2%startNumberOfBoundaryPoints);
+            pts[1] = newBoundaryIds->GetId(j);
+            pts[2] = previousBoundaryIds->GetId((j2+1)%startNumberOfBoundaryPoints);
+            outputPolys->InsertNextCell(3,pts);
+            j2 += 1;
+
+            outputPoints->GetPoint(previousBoundaryIds->GetId(j2%startNumberOfBoundaryPoints),point0);
+            outputPoints->GetPoint(previousBoundaryIds->GetId((j2+1)%startNumberOfBoundaryPoints),point1);
+            outputPoints->GetPoint(newBoundaryIds->GetId(j),point2);
+            outputPoints->GetPoint(newBoundaryIds->GetId((j+1)%targetNumberOfBoundaryPoints),point3);
+
+            if (j2 == startNumberOfBoundaryPoints || vtkMath::Distance2BetweenPoints(point0,point3) < vtkMath::Distance2BetweenPoints(point1,point2))
+              {
+              advance = false;
+              if (j2 < startNumberOfBoundaryPoints && j == targetNumberOfBoundaryPoints-1)
+                {
+                advance = true;
+                }
+              }
+            }
+          pts[0] = newBoundaryIds->GetId(j);
+          pts[1] = newBoundaryIds->GetId((j+1)%targetNumberOfBoundaryPoints);
+          pts[2] = previousBoundaryIds->GetId(j2%startNumberOfBoundaryPoints);
           outputPolys->InsertNextCell(3,pts);
           }
-        else
+        }
+      else
+        {
+        vtkIdType pts[3];
+        for (j=0; j<targetNumberOfBoundaryPoints; j++)
           {
-          pts[0] = newBoundaryIds->GetId(j);
-          pts[1] = newBoundaryIds->GetId((j-1+numberOfBoundaryPoints)%numberOfBoundaryPoints);
-          pts[2] = previousBoundaryIds->GetId(j);
-          outputPolys->InsertNextCell(3,pts);
+          if (l%2 != 0)
+            {
+            pts[0] = newBoundaryIds->GetId(j);
+            pts[1] = newBoundaryIds->GetId((j-1+targetNumberOfBoundaryPoints)%targetNumberOfBoundaryPoints);
+            pts[2] = previousBoundaryIds->GetId((j-1+targetNumberOfBoundaryPoints)%targetNumberOfBoundaryPoints);
+            outputPolys->InsertNextCell(3,pts);
   
-          pts[0] = previousBoundaryIds->GetId(j);
-          pts[1] = newBoundaryIds->GetId((j-1+numberOfBoundaryPoints)%numberOfBoundaryPoints);
-          pts[2] = previousBoundaryIds->GetId((j-1+numberOfBoundaryPoints)%numberOfBoundaryPoints);
-          outputPolys->InsertNextCell(3,pts);
+            pts[0] = previousBoundaryIds->GetId(j);
+            pts[1] = newBoundaryIds->GetId(j);
+            pts[2] = previousBoundaryIds->GetId((j-1+targetNumberOfBoundaryPoints)%targetNumberOfBoundaryPoints);
+            outputPolys->InsertNextCell(3,pts);
+            }
+          else
+            {
+            pts[0] = newBoundaryIds->GetId(j);
+            pts[1] = newBoundaryIds->GetId((j-1+targetNumberOfBoundaryPoints)%targetNumberOfBoundaryPoints);
+            pts[2] = previousBoundaryIds->GetId(j);
+            outputPolys->InsertNextCell(3,pts);
+    
+            pts[0] = previousBoundaryIds->GetId(j);
+            pts[1] = newBoundaryIds->GetId((j-1+targetNumberOfBoundaryPoints)%targetNumberOfBoundaryPoints);
+            pts[2] = previousBoundaryIds->GetId((j-1+targetNumberOfBoundaryPoints)%targetNumberOfBoundaryPoints);
+            outputPolys->InsertNextCell(3,pts);
+            }
           }
         }
 
