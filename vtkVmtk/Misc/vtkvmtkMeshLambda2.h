@@ -1,7 +1,7 @@
 /*=========================================================================
 
 Program:   VMTK
-Module:    $RCSfile: vtkvmtkMeshVorticity.h,v $
+Module:    $RCSfile: vtkvmtkMeshLambda2.h,v $
 Language:  C++
 Date:      $Date: 2006/07/27 08:28:36 $
 Version:   $Revision: 1.1 $
@@ -18,30 +18,30 @@ Version:   $Revision: 1.1 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkMeshVorticity - ...
+  // .NAME vtkvmtkMeshLambda2 - ...
   // .SECTION Description
   // .
 
-#ifndef __vtkvmtkMeshVorticity_h
-#define __vtkvmtkMeshVorticity_h
+#ifndef __vtkvmtkMeshLambda2_h
+#define __vtkvmtkMeshLambda2_h
 
 #include "vtkUnstructuredGridAlgorithm.h"
 #include "vtkUnstructuredGrid.h"
 #include "vtkvmtkWin32Header.h"
 
-class VTK_VMTK_MISC_EXPORT vtkvmtkMeshVorticity : public vtkUnstructuredGridAlgorithm
+class VTK_VMTK_MISC_EXPORT vtkvmtkMeshLambda2 : public vtkUnstructuredGridAlgorithm
 {
   public: 
-  vtkTypeRevisionMacro(vtkvmtkMeshVorticity,vtkUnstructuredGridAlgorithm);
+  vtkTypeRevisionMacro(vtkvmtkMeshLambda2,vtkUnstructuredGridAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent); 
 
-  static vtkvmtkMeshVorticity *New();
+  static vtkvmtkMeshLambda2 *New();
 
   vtkSetStringMacro(VelocityArrayName);
   vtkGetStringMacro(VelocityArrayName);
  
-  vtkSetStringMacro(VorticityArrayName);
-  vtkGetStringMacro(VorticityArrayName);
+  vtkSetStringMacro(Lambda2ArrayName);
+  vtkGetStringMacro(Lambda2ArrayName);
  
   vtkSetMacro(ComputeIndividualPartialDerivatives,int);
   vtkGetMacro(ComputeIndividualPartialDerivatives,int);
@@ -54,22 +54,21 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkMeshVorticity : public vtkUnstructuredGridAlgo
   vtkGetMacro(QuadratureOrder,int);
 
   protected:
-  vtkvmtkMeshVorticity();
-  ~vtkvmtkMeshVorticity();  
+  vtkvmtkMeshLambda2();
+  ~vtkvmtkMeshLambda2();  
 
   virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
 
   char* VelocityArrayName;
-  char* VorticityArrayName;
+  char* Lambda2ArrayName;
 
   int ComputeIndividualPartialDerivatives;
-
   double ConvergenceTolerance;
   int QuadratureOrder;
 
   private:
-  vtkvmtkMeshVorticity(const vtkvmtkMeshVorticity&);  // Not implemented.
-  void operator=(const vtkvmtkMeshVorticity&);  // Not implemented.
+  vtkvmtkMeshLambda2(const vtkvmtkMeshLambda2&);  // Not implemented.
+  void operator=(const vtkvmtkMeshLambda2&);  // Not implemented.
 };
 
 #endif

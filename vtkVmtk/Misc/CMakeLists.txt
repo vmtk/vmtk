@@ -7,6 +7,7 @@ SET (VTK_VMTK_MISC_SRCS
   vtkvmtkLinearToQuadraticSurfaceMeshFilter.cxx
   vtkvmtkMeshProjection.cxx
   vtkvmtkMeshVelocityStatistics.cxx
+  vtkvmtkMeshLambda2.cxx
   vtkvmtkMeshVorticity.cxx
 #  vtkvmtkPolyDataBoundaryExtractor.cxx
   vtkvmtkPolyDataKiteRemovalFilter.cxx

@@ -1,7 +1,7 @@
 /*=========================================================================
 
 Program:   VMTK
-Module:    $RCSfile: vtkvmtkMeshVorticity.cxx,v $
+Module:    $RCSfile: vtkvmtkMeshLambda2.cxx,v $
 Language:  C++
 Date:      $Date: 2006/07/27 08:28:36 $
 Version:   $Revision: 1.1 $
@@ -19,7 +19,7 @@ Version:   $Revision: 1.1 $
 
 =========================================================================*/
 
-#include "vtkvmtkMeshVorticity.h"
+#include "vtkvmtkMeshLambda2.h"
 
 #include "vtkvmtkUnstructuredGridGradientFilter.h"
 
@@ -31,33 +31,33 @@ Version:   $Revision: 1.1 $
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkMeshVorticity, "$Revision: 1.1 $");
-vtkStandardNewMacro(vtkvmtkMeshVorticity);
+vtkCxxRevisionMacro(vtkvmtkMeshLambda2, "$Revision: 1.1 $");
+vtkStandardNewMacro(vtkvmtkMeshLambda2);
 
-vtkvmtkMeshVorticity::vtkvmtkMeshVorticity()
+vtkvmtkMeshLambda2::vtkvmtkMeshLambda2()
 {
   this->VelocityArrayName = NULL;
-  this->VorticityArrayName = NULL;
+  this->Lambda2ArrayName = NULL;
   this->ComputeIndividualPartialDerivatives = 0;
   this->ConvergenceTolerance = 1E-6;
   this->QuadratureOrder = 3;
 }
 
-vtkvmtkMeshVorticity::~vtkvmtkMeshVorticity()
+vtkvmtkMeshLambda2::~vtkvmtkMeshLambda2()
 {
   if (this->VelocityArrayName)
     {
     delete[] this->VelocityArrayName;
     this->VelocityArrayName = NULL;
     }
-  if (this->VorticityArrayName)
+  if (this->Lambda2ArrayName)
     {
-    delete[] this->VorticityArrayName;
-    this->VorticityArrayName = NULL;
+    delete[] this->Lambda2ArrayName;
+    this->Lambda2ArrayName = NULL;
     }
 }
 
-int vtkvmtkMeshVorticity::RequestData(
+int vtkvmtkMeshLambda2::RequestData(
   vtkInformation *vtkNotUsed(request),
   vtkInformationVector **inputVector,
   vtkInformationVector *outputVector)
@@ -99,40 +99,84 @@ int vtkvmtkMeshVorticity::RequestData(
 
   int numberOfPoints = input->GetNumberOfPoints();
   
-  vtkDoubleArray* vorticityArray = vtkDoubleArray::New();
-  if (this->VorticityArrayName)
+  vtkDoubleArray* lambda2Array = vtkDoubleArray::New();
+  if (this->Lambda2ArrayName)
     {
-    vorticityArray->SetName(this->VorticityArrayName);
+    lambda2Array->SetName(this->Lambda2ArrayName);
     }
   else
     {
-    vorticityArray->SetName("Vorticity");
+    lambda2Array->SetName("Lambda2");
     }
-  vorticityArray->SetNumberOfComponents(3);
-  vorticityArray->SetNumberOfTuples(numberOfPoints);
+  lambda2Array->SetNumberOfComponents(1);
+  lambda2Array->SetNumberOfTuples(numberOfPoints);
 
   double velocityGradient[9];
-  double vorticity[3];
+  double symmetricVelocityGradient[3][3];
+  double antiSymmetricVelocityGradient[3][3];
+  double A[3][3];
   
-  int i;
+  int i, j, k, l;
   for (i=0; i<numberOfPoints; i++)
     {
     velocityGradientArray->GetTuple(i,velocityGradient);
-    vorticity[0] = velocityGradient[7] - velocityGradient[5];
-    vorticity[1] = velocityGradient[2] - velocityGradient[6];
-    vorticity[2] = velocityGradient[3] - velocityGradient[1];
-    vorticityArray->SetTuple(i,vorticity);
+    for (j=0; j<3; j++)
+      {
+      for (k=0; k<3; k++)
+        {
+        int index0 = k + j*3;
+        int index1 = j + k*3;
+        symmetricVelocityGradient[j][k] = 0.5 * (velocityGradient[index0] + velocityGradient[index1]);
+        antiSymmetricVelocityGradient[j][k] = 0.5 * (velocityGradient[index0] - velocityGradient[index1]);
+        }
+      } 
+
+    for (j=0; j<3; j++)
+      {
+      for (k=0; k<3; k++)
+        {
+        A[j][k] = 0.0;
+        for (l=0; l<3; l++)
+          {
+          A[j][k] += symmetricVelocityGradient[j][l]*symmetricVelocityGradient[l][k] + 
+                     antiSymmetricVelocityGradient[j][l]*antiSymmetricVelocityGradient[l][k];
+          }
+        }
+      } 
+
+    double eigenVectors[3][3];
+    double eigenValues[3];
+    vtkMath::Diagonalize3x3(A,eigenValues,eigenVectors);
+
+    bool done = false;
+    while (!done)
+      {
+      done = true;
+      for (j=0; j<2; j++)
+        {
+        if (eigenValues[j] > eigenValues[j+1])
+          {
+          done = false;
+          double tmp = eigenValues[j+1];
+          eigenValues[j+1] = eigenValues[j];
+          eigenValues[j] = tmp;
+          }
+        }
+      }
+    double lambda2 = eigenValues[1];
+
+    lambda2Array->SetTuple1(i,lambda2);
     }
 
   output->DeepCopy(input);
-  output->GetPointData()->AddArray(vorticityArray);
+  output->GetPointData()->AddArray(lambda2Array);
   
-  vorticityArray->Delete();
+  lambda2Array->Delete();
   
   return 1;
 }
 
-void vtkvmtkMeshVorticity::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkMeshLambda2::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

@@ -21,6 +21,7 @@ Version:   $Revision: 1.4 $
 #include "vtkvmtkPolyBallModeller.h"
 
 #include "vtkvmtkPolyBall.h"
+#include "vtkvmtkPolyBallLine.h"
 #include "vtkPolyData.h"
 #include "vtkDoubleArray.h"
 #include "vtkImageData.h"
@@ -51,6 +52,8 @@ vtkvmtkPolyBallModeller::vtkvmtkPolyBallModeller()
   this->SampleDimensions[2] = 50;
 
   this->RadiusArrayName = NULL;
+
+  this->UsePolyBallLine = 0;
 }
 
 vtkvmtkPolyBallModeller::~vtkvmtkPolyBallModeller()
@@ -71,10 +74,6 @@ int vtkvmtkPolyBallModeller::RequestInformation (
 
   vtkInformation* outInfo = outputVector->GetInformationObject(0);
   
-  vtkDataObject::SetPointDataActiveScalarInfo(outInfo, VTK_DOUBLE, 1);
-
-  outInfo->Set(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(),0, this->SampleDimensions[0]-1, 0, this->SampleDimensions[1]-1, 0, this->SampleDimensions[2]-1);
-
   if ((this->ModelBounds[0] >= this->ModelBounds[1]) || (this->ModelBounds[2] >= this->ModelBounds[3]) || (this->ModelBounds[4] >= this->ModelBounds[5]))
     {
     double* bounds = vtkPolyData::SafeDownCast(this->GetInput())->GetBounds();
@@ -113,6 +112,9 @@ int vtkvmtkPolyBallModeller::RequestInformation (
   outInfo->Set(vtkDataObject::ORIGIN(),origin,3);
   outInfo->Set(vtkDataObject::SPACING(),spacing,3);
 
+  vtkDataObject::SetPointDataActiveScalarInfo(outInfo, VTK_DOUBLE, 1);
+  outInfo->Set(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(),0, this->SampleDimensions[0]-1, 0, this->SampleDimensions[1]-1, 0, this->SampleDimensions[2]-1);
+
   return 1;
 }
 
@@ -134,33 +136,41 @@ int vtkvmtkPolyBallModeller::RequestData(
     inInfo->Get(vtkDataObject::DATA_OBJECT()));
   vtkImageData *output = vtkImageData::SafeDownCast(
     outInfo->Get(vtkDataObject::DATA_OBJECT()));
- 
-  vtkDoubleArray* functionArray = vtkDoubleArray::New();
+
+  output->SetExtent(outInfo->Get(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT()));
+  output->AllocateScalars();
+
+  vtkDoubleArray *functionArray = vtkDoubleArray::SafeDownCast(output->GetPointData()->GetScalars());
   functionArray->SetName(this->RadiusArrayName);
-  functionArray->SetNumberOfTuples(output->GetNumberOfPoints());
-
-  output->GetPointData()->AddArray(functionArray);
-  output->GetPointData()->SetActiveScalars(this->RadiusArrayName);
-
-  functionArray->FillComponent(0,VTK_VMTK_LARGE_DOUBLE);
 
   int numberOfOutputPoints = output->GetNumberOfPoints();
 
-  vtkvmtkPolyBall* polyBall = vtkvmtkPolyBall::New();
-  polyBall->SetInput(input);
-  polyBall->SetPolyBallRadiusArrayName(this->RadiusArrayName);
+  vtkImplicitFunction* function;
+  if (!this->UsePolyBallLine)
+    {
+    vtkvmtkPolyBall* polyBall = vtkvmtkPolyBall::New();
+    polyBall->SetInput(input);
+    polyBall->SetPolyBallRadiusArrayName(this->RadiusArrayName);
+    function = polyBall;
+    }
+  else
+    {
+    vtkvmtkPolyBallLine* polyBall = vtkvmtkPolyBallLine::New();
+    polyBall->SetInput(input);
+    polyBall->SetPolyBallRadiusArrayName(this->RadiusArrayName);
+    function = polyBall;
+    }
 
   double point[3];
   int i;
   for (i=0; i<numberOfOutputPoints; i++)
     {
     output->GetPoint(i,point);
-    double polyBallFunction = polyBall->EvaluateFunction(point);
+    double polyBallFunction = function->EvaluateFunction(point);
     functionArray->SetComponent(i,0,polyBallFunction);
     }
 
-  polyBall->Delete();
-  functionArray->Delete();
+  function->Delete();
 
   return 1;
 }

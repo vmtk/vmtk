@@ -124,7 +124,6 @@ int vtkvmtkUnstructuredGridGradientFilter::RequestData(
       assembler->SetQuadratureOrder(this->QuadratureOrder);
       assembler->SetAssemblyModeToGradient();
       assembler->Build();
-      assembler->Delete();
         
       vtkvmtkLinearSystem* linearSystem = vtkvmtkLinearSystem::New();
       linearSystem->SetA(sparseMatrix);
@@ -138,7 +137,7 @@ int vtkvmtkUnstructuredGridGradientFilter::RequestData(
       solver->SetSolverType(vtkvmtkLASPACKLinearSystemSolver::VTK_VMTK_LASPACK_SOLVER_CG);
       solver->SetPreconditionerType(vtkvmtkLASPACKLinearSystemSolver::VTK_VMTK_LASPACK_PRECONDITIONER_JACOBI);
       solver->Solve();
-    
+
       solutionVector->CopyVariableIntoArrayComponent(gradientArray,0,3*i+0);
       solutionVector->CopyVariableIntoArrayComponent(gradientArray,1,3*i+1);
       solutionVector->CopyVariableIntoArrayComponent(gradientArray,2,3*i+2);

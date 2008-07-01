@@ -55,6 +55,10 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyBallModeller : public vt
   vtkSetStringMacro(RadiusArrayName);
   vtkGetStringMacro(RadiusArrayName);
 
+  vtkSetMacro(UsePolyBallLine,int);
+  vtkGetMacro(UsePolyBallLine,int);
+  vtkBooleanMacro(UsePolyBallLine,int);
+
   protected:
   vtkvmtkPolyBallModeller();
   ~vtkvmtkPolyBallModeller();
@@ -68,6 +72,8 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyBallModeller : public vt
   double ModelBounds[6];
 
   char* RadiusArrayName;
+
+  int UsePolyBallLine;
 
   private:
   vtkvmtkPolyBallModeller(const vtkvmtkPolyBallModeller&);  // Not implemented.
