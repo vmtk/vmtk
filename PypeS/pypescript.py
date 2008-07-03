@@ -332,6 +332,49 @@ class pypeScript(object):
         usageString += '\n'
         return usageString
 
+    def GetPmWikiUsageString(self):
+        usageString = 'version=pmwiki-2.2.0-beta65 ordered=1 urlencoded=1\n'
+        usageString += 'name=VmtkScripts.' + self.ScriptName.capitalize() + '\n'
+        usageString += 'text='
+        usageString += '!' + self.ScriptName
+        usageString += '%0a'
+        if self.ScriptDoc != '':
+            usageString += '!!Description' + '%0a'
+            usageString += self.ScriptDoc + '%0a'
+            usageString += '%0a'
+        for memberList in [self.InputMembers, self.OutputMembers]:
+            if memberList == self.InputMembers :
+                 usageString += '!!Input arguments' + '%0a'
+            elif memberList == self.OutputMembers :
+                 usageString += '!!Output arguments' + '%0a'
+            usageString += '||border=1 cellpadding=3 cellspacing=0' + '%0a'
+            usageString += '||!Argument ||!Variable ||!Type ||!Length ||!Range ||!Default ||!Description ||%0a'
+            for memberEntry in memberList:
+                memberUsageString = ''
+                memberName  = memberEntry.MemberName
+                option = memberEntry.OptionName
+                memberType = memberEntry.MemberType
+                memberLength = memberEntry.MemberLength
+                memberRange = memberEntry.MemberRange
+                memberDoc = memberEntry.MemberDoc
+                if option!='':
+                    default = 0
+                    if memberLength == 0:
+                        memberUsageString += '||' + option + ' ||' + memberName + ' || || || || ||'
+                    elif memberType in self.BuiltinOptionTypes + ["bool"]:
+                        default = self.__getattribute__(memberName)
+                        memberUsageString += '||' + option + ' ||' + memberName + ' ||' + memberType + ' ||' + str(memberLength) + ' ||' + str(memberRange) + ' ||' + str(default) + ' ||'
+                    else:
+                        memberUsageString += '||' + option + ' ||' + memberName + ' ||' + memberType + ' ||' + str(memberLength) + ' || || ||'
+                    if memberDoc != '':
+                        memberUsageString += memberDoc
+                    memberUsageString += ' ||'
+                memberUsageString += '%0a'
+                usageString += memberUsageString
+            usageString += '%0a'
+        usageString += '%0a'
+        return usageString
+
     def ParseArguments(self):
         for arg in self.Arguments:
             if arg == '--help':
@@ -342,6 +385,11 @@ class pypeScript(object):
             if arg == '--dokuwiki':
                 self.PrintLog('')
                 self.OutputText(self.GetDokuWikiUsageString())
+                self.PrintLog('')
+                return 0
+            if arg == '--pmwiki':
+                self.PrintLog('')
+                self.OutputText(self.GetPmWikiUsageString())
                 self.PrintLog('')
                 return 0
             if (arg[0] == '-') & (len(arg)==1):

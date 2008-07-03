@@ -53,6 +53,9 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkMeshLambda2 : public vtkUnstructuredGridAlgori
   vtkSetMacro(QuadratureOrder,int);
   vtkGetMacro(QuadratureOrder,int);
 
+  vtkSetMacro(NegativeBoundary,int);
+  vtkGetMacro(NegativeBoundary,int);
+
   protected:
   vtkvmtkMeshLambda2();
   ~vtkvmtkMeshLambda2();  
