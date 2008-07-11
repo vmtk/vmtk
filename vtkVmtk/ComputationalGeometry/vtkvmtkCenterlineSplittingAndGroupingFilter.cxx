@@ -306,9 +306,6 @@ void vtkvmtkCenterlineSplittingAndGroupingFilter::GroupTracts(vtkPolyData* input
 
 void vtkvmtkCenterlineSplittingAndGroupingFilter::CoincidentExtremePointGroupTracts(vtkPolyData* input, vtkPolyData* centerlineTracts, bool first)
 {
-  vtkIntArray* blankingArray = vtkIntArray::SafeDownCast(centerlineTracts->GetCellData()->GetArray(this->BlankingArrayName));
-  vtkIntArray* centerlineIdsArray = vtkIntArray::SafeDownCast(centerlineTracts->GetCellData()->GetArray(this->CenterlineIdsArrayName));
-
   vtkIntArray* groupIdsArray = vtkIntArray::New();
   groupIdsArray->SetName(this->GroupIdsArrayName);
   int numberOfCells = centerlineTracts->GetNumberOfCells();

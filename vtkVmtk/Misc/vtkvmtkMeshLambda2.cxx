@@ -41,6 +41,7 @@ vtkvmtkMeshLambda2::vtkvmtkMeshLambda2()
   this->ComputeIndividualPartialDerivatives = 0;
   this->ConvergenceTolerance = 1E-6;
   this->QuadratureOrder = 3;
+  this->ForceBoundaryToNegative = 0;
 }
 
 vtkvmtkMeshLambda2::~vtkvmtkMeshLambda2()

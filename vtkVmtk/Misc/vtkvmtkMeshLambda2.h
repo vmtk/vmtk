@@ -53,8 +53,9 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkMeshLambda2 : public vtkUnstructuredGridAlgori
   vtkSetMacro(QuadratureOrder,int);
   vtkGetMacro(QuadratureOrder,int);
 
-  vtkSetMacro(NegativeBoundary,int);
-  vtkGetMacro(NegativeBoundary,int);
+  vtkSetMacro(ForceBoundaryToNegative,int);
+  vtkGetMacro(ForceBoundaryToNegative,int);
+  vtkBooleanMacro(ForceBoundaryToNegative,int);
 
   protected:
   vtkvmtkMeshLambda2();
@@ -68,6 +69,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkMeshLambda2 : public vtkUnstructuredGridAlgori
   int ComputeIndividualPartialDerivatives;
   double ConvergenceTolerance;
   int QuadratureOrder;
+  int ForceBoundaryToNegative;
 
   private:
   vtkvmtkMeshLambda2(const vtkvmtkMeshLambda2&);  // Not implemented.

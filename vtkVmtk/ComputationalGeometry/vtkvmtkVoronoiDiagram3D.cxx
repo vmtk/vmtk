@@ -103,6 +103,7 @@ void vtkvmtkVoronoiDiagram3D::BuildVoronoiPolys(vtkUnstructuredGrid* input, vtkC
 {
   bool boundaryTetra;
   vtkIdType npts, *pts;
+  pts = NULL;
   vtkIdType neighborTetraId;
   vtkIdType i, k, h;
   vtkCellArray* edgeArray;

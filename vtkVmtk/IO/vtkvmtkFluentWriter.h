@@ -1,7 +1,7 @@
 /*=========================================================================
                                                                                                                                     
 Program:   VMTK
-Module:    $RCSfile: vtkvmtkDolfinWriter.h,v $
+Module:    $RCSfile: vtkvmtkFluentWriter.h,v $
 Language:  C++
 Date:      $Date: 2006/04/06 16:47:47 $
 Version:   $Revision: 1.2 $
@@ -19,14 +19,14 @@ Version:   $Revision: 1.2 $
                                                                                                                                     
 =========================================================================*/
 
-// .NAME vtkvmtkDolfinWriter - 
+// .NAME vtkvmtkFluentWriter - 
 // .SECTION Description
-// vtkvmtkDolfinWriter writes Dolfin files - www.fenics.org
+// vtkvmtkFluentWriter writes Fluent .msh files. Many thanks to M. Xenos, Y. Alemu and D. Bluestein, BioFluids Laboratory, Stony Brook University, Stony Brook, NY, for the inputs on the file format.
 
 // .SECTION See Also
 
-#ifndef __vtkvmtkDolfinWriter_h
-#define __vtkvmtkDolfinWriter_h
+#ifndef __vtkvmtkFluentWriter_h
+#define __vtkvmtkFluentWriter_h
 
 #include "vtkvmtkWin32Header.h"
 #include "vtkUnstructuredGridWriter.h"
@@ -34,11 +34,11 @@ Version:   $Revision: 1.2 $
 class vtkCell;
 class vtkIdList;
 
-class VTK_VMTK_IO_EXPORT vtkvmtkDolfinWriter : public vtkUnstructuredGridWriter
+class VTK_VMTK_IO_EXPORT vtkvmtkFluentWriter : public vtkUnstructuredGridWriter
 {
 public:
-  static vtkvmtkDolfinWriter *New();
-  vtkTypeRevisionMacro(vtkvmtkDolfinWriter,vtkUnstructuredGridWriter);
+  static vtkvmtkFluentWriter *New();
+  vtkTypeRevisionMacro(vtkvmtkFluentWriter,vtkUnstructuredGridWriter);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   vtkSetStringMacro(BoundaryDataArrayName);
@@ -48,20 +48,17 @@ public:
   vtkGetMacro(BoundaryDataIdOffset,int);
 
 protected:
-  vtkvmtkDolfinWriter();
-  ~vtkvmtkDolfinWriter();
+  vtkvmtkFluentWriter();
+  ~vtkvmtkFluentWriter();
 
   void WriteData();
-
-  static void GetDolfinConnectivity(int cellType, vtkIdList* dolfinConnectivity);
-  static void GetDolfinFaceOrder(int cellType, vtkIdList* dolfinFaceOrder);
 
   char* BoundaryDataArrayName;
   int BoundaryDataIdOffset;
 
 private:
-  vtkvmtkDolfinWriter(const vtkvmtkDolfinWriter&);  // Not implemented.
-  void operator=(const vtkvmtkDolfinWriter&);  // Not implemented.
+  vtkvmtkFluentWriter(const vtkvmtkFluentWriter&);  // Not implemented.
+  void operator=(const vtkvmtkFluentWriter&);  // Not implemented.
 };
 
 #endif

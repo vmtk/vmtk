@@ -108,8 +108,6 @@ int vtkvmtkFDNEUTReader::RequestData(
     points->InsertPoint(pointId-1,doublePoint);
     }
 
-  int numberOfPoints = points->GetNumberOfPoints();
-
   int cellId, i;
   int nodesPerElement, geometry, fdneutType;
 
@@ -142,7 +140,7 @@ int vtkvmtkFDNEUTReader::RequestData(
     fscanf(FDNEUTFile, "%s", currentEntityName);
     while (fgetc(FDNEUTFile) != '\n');
 
-    int type;
+    int type = -1;
     int pointBuffer;
     int numberOfCellPoints = 0;
 #if 0

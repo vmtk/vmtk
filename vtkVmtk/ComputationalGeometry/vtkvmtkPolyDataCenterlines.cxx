@@ -370,6 +370,7 @@ void vtkvmtkPolyDataCenterlines::FindVoronoiSeeds(vtkUnstructuredGrid *delaunay,
   double circumcenter[3], circumradius, tetraRadius;
   double referenceVector[3];
   double pole[3], poleVector[3], secondPole[3], secondPoleVector[3];
+  pole[0] = pole[1] = pole[2] = 0.0;
   vtkIdType maxRadiusCellId, secondMaxRadiusCellId;
 
   pointCells = vtkIdList::New();

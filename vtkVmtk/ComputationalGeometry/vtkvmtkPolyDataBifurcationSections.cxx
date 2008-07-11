@@ -413,9 +413,6 @@ int vtkvmtkPolyDataBifurcationSections::RequestData(
     
     vtkvmtkCenterlineUtilities::FindAdjacentCenterlineGroupIds(this->Centerlines,this->CenterlineGroupIdsArrayName,this->CenterlineIdsArrayName,this->CenterlineTractIdsArrayName,bifurcationGroupId,upStreamGroupIds,downStreamGroupIds);
     
-    int numberOfUpStreamGroupIds = upStreamGroupIds->GetNumberOfIds();
-    int numberOfDownStreamGroupIds = downStreamGroupIds->GetNumberOfIds();
-
     this->ComputeBifurcationSections(input,bifurcationGroupId,upStreamGroupIds,downStreamGroupIds,output);
     
     upStreamGroupIds->Delete();

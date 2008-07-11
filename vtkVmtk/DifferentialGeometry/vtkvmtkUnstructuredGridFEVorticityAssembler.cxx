@@ -80,7 +80,6 @@ void vtkvmtkUnstructuredGridFEVorticityAssembler::Build()
   int dimension = 3;
 
   int numberOfCells = this->DataSet->GetNumberOfCells();
-  int numberOfPoints = this->DataSet->GetNumberOfPoints();
   int k;
   for (k=0; k<numberOfCells; k++)
     {
@@ -92,7 +91,7 @@ void vtkvmtkUnstructuredGridFEVorticityAssembler::Build()
     gaussQuadrature->Initialize(cell->GetCellType());
     feShapeFunctions->Initialize(cell,gaussQuadrature->GetQuadraturePoints());
     int numberOfQuadraturePoints = gaussQuadrature->GetNumberOfQuadraturePoints();
-    double quadraturePCoords[3], quadraturePoint[3];
+    double quadraturePCoords[3];
     int numberOfCellPoints = cell->GetNumberOfPoints();
     int i, j;
     int q;
@@ -102,7 +101,7 @@ void vtkvmtkUnstructuredGridFEVorticityAssembler::Build()
       double quadratureWeight = gaussQuadrature->GetQuadratureWeight(q);
       double jacobian = feShapeFunctions->GetJacobian(q);
       double phii, phij;
-      double dphii[3], dphij[3];
+      double dphii[3];
       double velocityValue[3];
 //      double vorticityValue[3];
 //      vorticityValue[0] = vorticityValue[1] = vorticityValue[2] = 0.0;

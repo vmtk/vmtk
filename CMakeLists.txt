@@ -2,6 +2,10 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.4)
   
 PROJECT(VMTK)
 
+IF(COMMAND cmake_policy)
+  cmake_policy(SET CMP0003 NEW)
+ENDIF(COMMAND cmake_policy)
+
 SUBDIRS(
   PypeS
   vtkVmtk

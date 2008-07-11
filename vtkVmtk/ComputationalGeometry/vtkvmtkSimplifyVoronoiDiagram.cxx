@@ -110,10 +110,11 @@ int vtkvmtkSimplifyVoronoiDiagram::RequestData(
   vtkIdType i, j, id;
   vtkIdType n;
   vtkIdType npts, *pts, ncells;
+  npts = 0;
+  pts = NULL;
   vtkIdType edge[2];
-  vtkCellArray *newPolys, *currentPolys;
+  vtkCellArray *currentPolys;
   vtkCellLinks* currentLinks;
-  vtkIdList* newCell;
   vtkIdType newCellId;
   vtkCellArray* inputPolys = input->GetPolys();
 
@@ -183,7 +184,6 @@ int vtkvmtkSimplifyVoronoiDiagram::RequestData(
   currentLinks->Allocate(input->GetNumberOfPoints());
   currentLinks->BuildLinks(input,currentPolys);
 
-  bool insertCell = true;
   anyRemoved = true;
   while (anyRemoved)
     {

@@ -3,7 +3,7 @@ SET (VTK_VMTK_IO_SRCS
   vtkvmtkDolfinWriter.cxx
   vtkvmtkFDNEUTReader.cxx
   vtkvmtkFDNEUTWriter.cxx
-#  vtkvmtkFluentWriter.cxx
+  vtkvmtkFluentWriter.cxx
   vtkvmtkXdaReader.cxx
   vtkvmtkXdaWriter.cxx
   )

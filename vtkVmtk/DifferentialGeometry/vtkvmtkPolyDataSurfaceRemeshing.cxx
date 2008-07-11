@@ -472,6 +472,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::EdgeFlipConnectivityOptimizationIteration()
       break;
       }
     }
+  return numberOfChanges;
 }
 
 int vtkvmtkPolyDataSurfaceRemeshing::EdgeFlipIteration()
@@ -1180,6 +1181,8 @@ int vtkvmtkPolyDataSurfaceRemeshing::TestFlipEdgeValidity(vtkIdType pt1, vtkIdTy
     {
     return DO_NOTHING;
     } 
+
+  return DO_CHANGE;
 }
 
 int vtkvmtkPolyDataSurfaceRemeshing::TestConnectivityFlipEdge(vtkIdType pt1, vtkIdType pt2)

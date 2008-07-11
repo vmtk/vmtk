@@ -40,14 +40,7 @@ int vtkvmtkPolyDataRigidSurfaceModelling::RequestData(
   vtkInformationVector **inputVector,
   vtkInformationVector *outputVector)
 {
-  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
-  vtkInformation *outInfo = outputVector->GetInformationObject(0);
-
-  vtkPolyData *input = vtkPolyData::SafeDownCast(
-    inInfo->Get(vtkDataObject::DATA_OBJECT()));
-  vtkPolyData *output = vtkPolyData::SafeDownCast(
-    outInfo->Get(vtkDataObject::DATA_OBJECT()));
-
+  vtkErrorMacro(<< "vtkvmtkPolyDataRigidSurfaceModelling hasn't been implemented yet.");
  
   return 1;
 }

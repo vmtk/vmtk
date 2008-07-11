@@ -106,12 +106,10 @@ int vtkvmtkPolyDataCenterlineProjection::RequestData(
     tube->SetPolyBallRadiusArrayName(this->CenterlineRadiusArrayName);
     }
 
-  double point[3], centerlinePoint[3];
-  double distanceToCenterlines = 0.0;
+  double point[3];
   for (int i=0; i<numberOfInputPoints; i++)
     {
     input->GetPoint(i,point);
-    double tubeFunctionValue = tube->EvaluateFunction(point);
     vtkIdType cellId = tube->GetLastPolyBallCellId();
     vtkIdType subId = tube->GetLastPolyBallCellSubId();
     double pcoord = tube->GetLastPolyBallCellPCoord();

@@ -103,7 +103,7 @@ void vtkvmtkUnstructuredGridFEGradientAssembler::BuildGradient()
     gaussQuadrature->Initialize(cell->GetCellType());
     feShapeFunctions->Initialize(cell,gaussQuadrature->GetQuadraturePoints());
     int numberOfQuadraturePoints = gaussQuadrature->GetNumberOfQuadraturePoints();
-    double quadraturePCoords[3], quadraturePoint[3];
+    double quadraturePCoords[3];
     int numberOfCellPoints = cell->GetNumberOfPoints();
     int i, j;
     int q;
@@ -113,7 +113,7 @@ void vtkvmtkUnstructuredGridFEGradientAssembler::BuildGradient()
       double quadratureWeight = gaussQuadrature->GetQuadratureWeight(q);
       double jacobian = feShapeFunctions->GetJacobian(q);
       double phii, phij;
-      double dphii[3], dphij[3];
+      double dphii[3];
       double gradientValue[3];
       gradientValue[0] = gradientValue[1] = gradientValue[2] = 0.0;
       for (i=0; i<numberOfCellPoints; i++)
@@ -179,7 +179,6 @@ void vtkvmtkUnstructuredGridFEGradientAssembler::BuildPartialDerivative()
   int dimension = 3;
 
   int numberOfCells = this->DataSet->GetNumberOfCells();
-  int numberOfPoints = this->DataSet->GetNumberOfPoints();
   int k;
   for (k=0; k<numberOfCells; k++)
     {
@@ -191,7 +190,7 @@ void vtkvmtkUnstructuredGridFEGradientAssembler::BuildPartialDerivative()
     gaussQuadrature->Initialize(cell->GetCellType());
     feShapeFunctions->Initialize(cell,gaussQuadrature->GetQuadraturePoints());
     int numberOfQuadraturePoints = gaussQuadrature->GetNumberOfQuadraturePoints();
-    double quadraturePCoords[3], quadraturePoint[3];
+    double quadraturePCoords[3];
     int numberOfCellPoints = cell->GetNumberOfPoints();
     int i, j;
     int q;
@@ -201,7 +200,7 @@ void vtkvmtkUnstructuredGridFEGradientAssembler::BuildPartialDerivative()
       double quadratureWeight = gaussQuadrature->GetQuadratureWeight(q);
       double jacobian = feShapeFunctions->GetJacobian(q);
       double phii, phij;
-      double dphii[3], dphij[3];
+      double dphii[3];
       double partialDerivativeValue = 0.0;
       for (i=0; i<numberOfCellPoints; i++)
         {

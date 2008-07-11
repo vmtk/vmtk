@@ -35,7 +35,7 @@ class vmtkImageFeatures(pypes.pypeScript):
 
         self.DerivativeSigma = 0.0
         self.SigmoidRemapping = 0
-        self.FeatureImageType = 'vtkgradient'
+        self.FeatureImageType = 'gradient'
         self.UpwindFactor = 1.0
 
         self.FWHMRadius = [3, 3, 3]

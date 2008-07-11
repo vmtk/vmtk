@@ -85,7 +85,7 @@ void vtkvmtkPolyDataFEGradientAssembler::Build()
     gaussQuadrature->Initialize(cell->GetCellType());
     feShapeFunctions->Initialize(cell,gaussQuadrature->GetQuadraturePoints());
     int numberOfQuadraturePoints = gaussQuadrature->GetNumberOfQuadraturePoints();
-    double quadraturePCoords[3], quadraturePoint[3];
+    double quadraturePCoords[3];
     int numberOfCellPoints = cell->GetNumberOfPoints();
     int i, j;
     int q;
@@ -95,7 +95,7 @@ void vtkvmtkPolyDataFEGradientAssembler::Build()
       double quadratureWeight = gaussQuadrature->GetQuadratureWeight(q);
       double jacobian = feShapeFunctions->GetJacobian(q);
       double phii, phij;
-      double dphii[3], dphij[3];
+      double dphii[3];
       double gradientValue[3];
       gradientValue[0] = gradientValue[1] = gradientValue[2] = 0.0;
       for (i=0; i<numberOfCellPoints; i++)

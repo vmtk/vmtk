@@ -59,7 +59,6 @@ vtkvmtkFEShapeFunctions::~vtkvmtkFEShapeFunctions()
 
 void vtkvmtkFEShapeFunctions::Initialize(vtkCell* cell, vtkDoubleArray* pcoords)
 {
-  vtkIdType cellType = cell->GetCellType();
   vtkIdType cellDimension = cell->GetCellDimension();
   vtkIdType numberOfPCoords = pcoords->GetNumberOfTuples();
   vtkIdType numberOfCellPoints = cell->GetNumberOfPoints();

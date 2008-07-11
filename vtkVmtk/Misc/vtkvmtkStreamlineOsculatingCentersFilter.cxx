@@ -91,7 +91,6 @@ int vtkvmtkStreamlineOsculatingCentersFilter::RequestData(
   this->OsculatingCenters = vtkPolyData::New();
 
   double resampleLength = 0.1;
-  double thresholdRadius = 0.1;
 
   vtkSplineFilter* splineFilter = vtkSplineFilter::New();
   splineFilter->SetInput(input);

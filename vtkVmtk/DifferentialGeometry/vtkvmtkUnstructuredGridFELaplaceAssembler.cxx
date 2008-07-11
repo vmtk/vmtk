@@ -61,7 +61,7 @@ void vtkvmtkUnstructuredGridFELaplaceAssembler::Build()
     gaussQuadrature->Initialize(cell->GetCellType());
     feShapeFunctions->Initialize(cell,gaussQuadrature->GetQuadraturePoints());
     int numberOfQuadraturePoints = gaussQuadrature->GetNumberOfQuadraturePoints();
-    double quadraturePCoords[3], quadraturePoint[3];
+    double quadraturePCoords[3];
     int numberOfCellPoints = cell->GetNumberOfPoints();
     int i, j;
     int q;
