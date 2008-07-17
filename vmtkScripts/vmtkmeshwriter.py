@@ -151,6 +151,9 @@ class vmtkMeshWriter(pypes.pypeScript):
         cellEntityIdsArray = vtk.vtkIntArray()
         cellEntityIdsArray.DeepCopy(self.Mesh.GetCellData().GetArray(self.CellEntityIdsArrayName))
 
+        tetraCellType = 10
+        triangleCellType = 5
+
         f=open(self.OutputFileName, 'w')
         line = "MeshVersionFormatted 1\n\n"
         line += "Dimension\n"
@@ -162,17 +165,24 @@ class vmtkMeshWriter(pypes.pypeScript):
             point = self.Mesh.GetPoint(i)
             pointCells = vtk.vtkIdList()
             self.Mesh.GetPointCells(i,pointCells)
-            maxCellEntityId = -1
+            minTriangleCellEntityId = -1
+            tetraCellEntityId = -1
             for j in range(pointCells.GetNumberOfIds()):
-                cellEntityId = cellEntityIdsArray.GetValue(pointCells.GetId(j))
-                if cellEntityId > maxCellEntityId:
-                    maxCellEntityId = cellEntityId
-            line = "%f  %f  %f  %d\n" % (point[0], point[1], point[2], maxCellEntityId)
+                cellId = pointCells.GetId(j)
+                if self.Mesh.GetCellType(cellId) == triangleCellType:
+                    cellEntityId = cellEntityIdsArray.GetValue(cellId)
+                    if cellEntityId < minTriangleCellEntityId or minTriangleCellEntityId == -1:
+                        minTriangleCellEntityId = cellEntityId
+                else:
+                    tetraCellEntityId = cellEntityIdsArray.GetValue(cellId)
+            cellEntityId = tetraCellEntityId
+            if minTriangleCellEntityId != -1:
+                cellEntityId = minTriangleCellEntityId
+            line = "%f  %f  %f  %d\n" % (point[0], point[1], point[2], cellEntityId)
             f.write(line)
         line = "\n"
 
         tetraCellIdArray = vtk.vtkIdTypeArray()
-        tetraCellType = 10
         self.Mesh.GetIdsOfCellsOfType(tetraCellType,tetraCellIdArray)
         numberOfTetras = tetraCellIdArray.GetNumberOfTuples()
         line += "Tetrahedra\n"
@@ -191,7 +201,6 @@ class vmtkMeshWriter(pypes.pypeScript):
         line = "\n"
 
         triangleCellIdArray = vtk.vtkIdTypeArray()
-        triangleCellType = 5
         self.Mesh.GetIdsOfCellsOfType(triangleCellType,triangleCellIdArray)
         numberOfTriangles = triangleCellIdArray.GetNumberOfTuples()
         line += "Triangles\n"

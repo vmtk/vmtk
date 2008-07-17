@@ -1,5 +1,10 @@
 PROJECT(vtkITK)
 
+CMAKE_MINIMUM_REQUIRED(VERSION 2.4)
+IF(COMMAND cmake_policy)
+  cmake_policy(SET CMP0003 NEW)
+ENDIF(COMMAND cmake_policy)
+
 # --------------------------------------------------------------------------
 # Sources
 
