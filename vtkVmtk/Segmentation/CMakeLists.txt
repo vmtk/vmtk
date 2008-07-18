@@ -22,6 +22,19 @@ SET (VTK_VMTK_SEGMENTATION_SRCS
   vtkvmtkVesselnessMeasureImageFilter.cxx
   )
 
+SET (VTK_VMTK_SEGMENTATION_ITK_HEADERS
+  itkFWHMFeatureImageFilter.h
+  itkFWHMFeatureImageFilter.txx
+  itkFastMarchingDirectionalFreezeImageFilter.h
+  itkFastMarchingDirectionalFreezeImageFilter.txx
+  itkHessianToObjectnessMeasureImageFilter.h
+  itkHessianToObjectnessMeasureImageFilter.txx
+  itkMultiScaleHessianBasedMeasureImageFilter.h
+  itkMultiScaleHessianBasedMeasureImageFilter.txx
+  itkUpwindGradientMagnitudeImageFilter.h
+  itkUpwindGradientMagnitudeImageFilter.txx
+)
+
 IF (NOT VMTK_EXTERNAL_vtkITK)
 SET (VTK_VMTK_SEGMENTATION_SRCS 
   ${VTK_VMTK_SEGMENTATION_SRCS}
@@ -43,6 +56,7 @@ TARGET_LINK_LIBRARIES(vtkvmtkSegmentation vtkvmtkDifferentialGeometry vtkCommon 
 
 INSTALL_TARGETS(${VTK_VMTK_INSTALL_LIB_DIR} vtkvmtkSegmentation)
 INSTALL_FILES(${VTK_VMTK_INSTALL_INCLUDE_DIR} .h ${VTK_VMTK_SEGMENTATION_SRCS})
+INSTALL_FILES(${VTK_VMTK_INSTALL_INCLUDE_DIR} FILES ${VTK_VMTK_SEGMENTATION_ITK_HEADERS})
 
 IF (VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
   VTK_WRAP_PYTHON3(vtkvmtkSegmentationPython VTK_VMTK_SEGMENTATION_PYTHON_SRCS "${VTK_VMTK_SEGMENTATION_SRCS}")

@@ -326,7 +326,6 @@ void vtkvmtkPolyDataPotentialFit::ComputeDisplacements(bool potential, bool stif
 {
   vtkIdType i;
   vtkIdType numberOfPoints;
-  vtkPoints *points;
   double displacement[3];
   double potentialDisplacement[3];
   double stiffnessDisplacement[3];
