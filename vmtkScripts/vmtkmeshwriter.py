@@ -243,15 +243,15 @@ class vmtkMeshWriter(pypes.pypeScript):
     def WriteFluentMeshFile(self):
         if (self.OutputFileName == ''):
             self.PrintError('Error: no OutputFileName.')
-        self.PrintError('Error: Fluent writer not implemented yet.')
-        return
+#        self.PrintError('Error: Fluent writer not implemented yet.')
+#        return
         self.PrintLog('Writing Fluent file.')
         writer = vtkvmtk.vtkvmtkFluentWriter()
         writer.SetInput(self.Mesh)
         writer.SetFileName(self.OutputFileName)
         if self.CellEntityIdsArrayName != '':
             writer.SetBoundaryDataArrayName(self.CellEntityIdsArrayName)
-            writer.SetBoundaryDataIdOffset(self.CellEntityIdsOffset)
+#            writer.SetBoundaryDataIdOffset(self.CellEntityIdsOffset)
         writer.Write()
 
     def WritePointDataMeshFile(self):

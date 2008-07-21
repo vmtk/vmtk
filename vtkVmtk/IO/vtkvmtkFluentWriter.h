@@ -44,9 +44,6 @@ public:
   vtkSetStringMacro(BoundaryDataArrayName);
   vtkGetStringMacro(BoundaryDataArrayName);
 
-  vtkSetMacro(BoundaryDataIdOffset,int);
-  vtkGetMacro(BoundaryDataIdOffset,int);
-
 protected:
   vtkvmtkFluentWriter();
   ~vtkvmtkFluentWriter();
@@ -54,7 +51,6 @@ protected:
   void WriteData();
 
   char* BoundaryDataArrayName;
-  int BoundaryDataIdOffset;
 
 private:
   vtkvmtkFluentWriter(const vtkvmtkFluentWriter&);  // Not implemented.
