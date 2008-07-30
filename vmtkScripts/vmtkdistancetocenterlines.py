@@ -32,6 +32,7 @@ class vmtkDistanceToCenterlines(pypes.pypeScript):
         self.Centerlines = None
         self.UseRadiusInformation = 0
         self.EvaluateTubeFunction = 0
+        self.EvaluateCenterlineRadius = 0
         self.DistanceToCenterlinesArrayName = 'DistanceToCenterlines'
         self.RadiusArrayName = ''
         
@@ -41,6 +42,7 @@ class vmtkDistanceToCenterlines(pypes.pypeScript):
             ['Centerlines','centerlines','vtkPolyData',1,'','','vmtksurfacereader'],
             ['UseRadiusInformation','useradius','bool',1],
             ['EvaluateTubeFunction','tubefunction','bool',1],
+            ['EvaluateCenterlineRadius','centerlineradius','bool',1],
             ['DistanceToCenterlinesArrayName','distancetocenterlinesarray','str',1],
             ['RadiusArrayName','radiusarray','str',1]
             ])
@@ -61,6 +63,7 @@ class vmtkDistanceToCenterlines(pypes.pypeScript):
         distanceToCenterlinesFilter.SetCenterlines(self.Centerlines)
         distanceToCenterlinesFilter.SetUseRadiusInformation(self.UseRadiusInformation)
         distanceToCenterlinesFilter.SetEvaluateTubeFunction(self.EvaluateTubeFunction)
+        distanceToCenterlinesFilter.SetEvaluateCenterlineRadius(self.EvaluateCenterlineRadius)
         distanceToCenterlinesFilter.SetDistanceToCenterlinesArrayName(self.DistanceToCenterlinesArrayName)
         distanceToCenterlinesFilter.SetCenterlineRadiusArrayName(self.RadiusArrayName)
         distanceToCenterlinesFilter.Update()

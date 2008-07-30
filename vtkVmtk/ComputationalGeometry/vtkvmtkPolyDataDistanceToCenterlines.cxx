@@ -41,6 +41,7 @@ vtkvmtkPolyDataDistanceToCenterlines::vtkvmtkPolyDataDistanceToCenterlines()
 
   this->UseRadiusInformation = 1;
   this->EvaluateTubeFunction = 0;
+  this->EvaluateCenterlineRadius = 0;
 }
 
 vtkvmtkPolyDataDistanceToCenterlines::~vtkvmtkPolyDataDistanceToCenterlines()
@@ -89,7 +90,7 @@ int vtkvmtkPolyDataDistanceToCenterlines::RequestData(
     return 1;
     }
 
-  if (this->EvaluateTubeFunction)
+  if (this->EvaluateTubeFunction || this->EvaluateCenterlineRadius)
     {
     this->UseRadiusInformation = 1;
     }
@@ -123,6 +124,18 @@ int vtkvmtkPolyDataDistanceToCenterlines::RequestData(
   
   output->GetPointData()->AddArray(distanceToCenterlinesArray);
 
+  vtkDoubleArray* surfaceCenterlineRadiusArray = NULL;
+  if (this->EvaluateCenterlineRadius)
+    {
+    surfaceCenterlineRadiusArray = vtkDoubleArray::New();
+    surfaceCenterlineRadiusArray->SetName(this->CenterlineRadiusArrayName);
+    surfaceCenterlineRadiusArray->SetNumberOfComponents(1);
+    surfaceCenterlineRadiusArray->SetNumberOfTuples(numberOfInputPoints);
+    surfaceCenterlineRadiusArray->FillComponent(0,0.0);
+    
+    output->GetPointData()->AddArray(surfaceCenterlineRadiusArray);
+    }
+
   vtkvmtkPolyBallLine* tube = vtkvmtkPolyBallLine::New();
   tube->SetInput(this->Centerlines);
   tube->SetUseRadiusInformation(this->UseRadiusInformation);
@@ -147,10 +160,18 @@ int vtkvmtkPolyDataDistanceToCenterlines::RequestData(
       distanceToCenterlines = sqrt(vtkMath::Distance2BetweenPoints(point,centerlinePoint));
       }
     distanceToCenterlinesArray->SetComponent(i,0,distanceToCenterlines);
+    if (this->EvaluateCenterlineRadius)
+      {
+      surfaceCenterlineRadiusArray->SetComponent(i,0,tube->GetLastPolyBallCenterRadius());
+      }
     }
 
   tube->Delete();
   distanceToCenterlinesArray->Delete();
+  if (surfaceCenterlineRadiusArray)
+    {
+    surfaceCenterlineRadiusArray->Delete();
+    }
 
   return 1;
 }
