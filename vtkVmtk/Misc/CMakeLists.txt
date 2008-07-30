@@ -3,13 +3,14 @@ SET (VTK_VMTK_MISC_SRCS
   vtkvmtkBoundaryLayerGenerator.cxx
   vtkvmtkImageBoxPainter.cxx
   vtkvmtkLevelSetSigmoidFilter.cxx
+  vtkvmtkLinearizeMeshFilter.cxx
   vtkvmtkLinearToQuadraticMeshFilter.cxx
   vtkvmtkLinearToQuadraticSurfaceMeshFilter.cxx
+  vtkvmtkMeshLambda2.cxx
   vtkvmtkMeshProjection.cxx
   vtkvmtkMeshVelocityStatistics.cxx
-  vtkvmtkMeshLambda2.cxx
   vtkvmtkMeshVorticity.cxx
-#  vtkvmtkPolyDataBoundaryExtractor.cxx
+  vtkvmtkMeshWallShearRate.cxx
   vtkvmtkPolyDataKiteRemovalFilter.cxx
   vtkvmtkPolyDataSizingFunction.cxx
   vtkvmtkPolyDataToUnstructuredGridFilter.cxx

@@ -1,10 +1,3 @@
-PROJECT(vtkITK)
-
-CMAKE_MINIMUM_REQUIRED(VERSION 2.4)
-IF(COMMAND cmake_policy)
-  cmake_policy(SET CMP0003 NEW)
-ENDIF(COMMAND cmake_policy)
-
 # --------------------------------------------------------------------------
 # Sources
 
@@ -12,11 +5,11 @@ ENDIF(COMMAND cmake_policy)
 INCLUDE (${CMAKE_ROOT}/Modules/TestBigEndian.cmake)
 TEST_BIG_ENDIAN(CMAKE_WORDS_BIGENDIAN)
 
-FIND_PACKAGE(VTK REQUIRED)
-INCLUDE(${VTK_USE_FILE})
+#FIND_PACKAGE(VTK REQUIRED)
+#INCLUDE(${VTK_USE_FILE})
 
-FIND_PACKAGE(ITK REQUIRED)
-INCLUDE(${ITK_USE_FILE})
+#FIND_PACKAGE(ITK REQUIRED)
+#INCLUDE(${ITK_USE_FILE})
 
 SET(vtkITK_SRCS
     vtkITKArchetypeImageSeriesReader.cxx
@@ -43,12 +36,12 @@ SET(vtkITK_SRCS
 # --------------------------------------------------------------------------
 # Include dirs
 
-INCLUDE_DIRECTORIES(
-  ${vtkITK_SOURCE_DIR}
-  ${vtkITK_BINARY_DIR}
-  ${ITK_INCLUDE_DIRS}
-  ${VTK_INCLUDE_DIRS}
-  )
+#INCLUDE_DIRECTORIES(
+#  ${vtkITK_SOURCE_DIR}
+#  ${vtkITK_BINARY_DIR}
+#  ${ITK_INCLUDE_DIRS}
+#  ${VTK_INCLUDE_DIRS}
+#  )
 
 # --------------------------------------------------------------------------
 # Build the library
@@ -125,12 +118,12 @@ ENDIF (VTK_WRAP_TCL AND VTK_VMTK_WRAP_TCL)
 #  SUBDIRS(Testing)
 #ENDIF(BUILD_TESTING)
 #
-CONFIGURE_FILE(
-  ${vtkITK_SOURCE_DIR}/vtkITKConfigure.h.in 
-  ${vtkITK_BINARY_DIR}/vtkITKConfigure.h
-)
+#CONFIGURE_FILE(
+#  ${vtkITK_SOURCE_DIR}/vtkITKConfigure.h.in 
+#  ${vtkITK_BINARY_DIR}/vtkITKConfigure.h
+#)
 
-CONFIGURE_FILE(
-  ${vtkITK_SOURCE_DIR}/vtkITKConfig.cmake.in 
-  ${vtkITK_BINARY_DIR}/vtkITKConfig.cmake
-)
+#CONFIGURE_FILE(
+#  ${vtkITK_SOURCE_DIR}/vtkITKConfig.cmake.in 
+#  ${vtkITK_BINARY_DIR}/vtkITKConfig.cmake
+#)

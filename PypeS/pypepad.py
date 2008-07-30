@@ -131,7 +131,7 @@ class PypeTkPad(object):
 
     def AboutCommand(self):
         self.OutputText('\n')
-        self.OutputText('* PypePad, Copyright (c) 2004-2006 Luca Antiga, David Steinman. *\n')
+        self.OutputText('* PypePad, Copyright (c) Luca Antiga, David Steinman. *\n')
         self.OutputText('\n')
 
     def RunPype(self,arguments):

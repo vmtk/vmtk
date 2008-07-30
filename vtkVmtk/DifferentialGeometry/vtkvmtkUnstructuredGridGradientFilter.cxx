@@ -123,7 +123,9 @@ int vtkvmtkUnstructuredGridGradientFilter::RequestData(
       assembler->SetSolutionVector(solutionVector);
       assembler->SetQuadratureOrder(this->QuadratureOrder);
       assembler->SetAssemblyModeToGradient();
+      cout<<"Assembling system"<<endl;
       assembler->Build();
+      cout<<"Done"<<endl;
         
       vtkvmtkLinearSystem* linearSystem = vtkvmtkLinearSystem::New();
       linearSystem->SetA(sparseMatrix);
@@ -136,7 +138,9 @@ int vtkvmtkUnstructuredGridGradientFilter::RequestData(
       solver->SetMaximumNumberOfIterations(numberOfInputPoints);
       solver->SetSolverType(vtkvmtkLASPACKLinearSystemSolver::VTK_VMTK_LASPACK_SOLVER_CG);
       solver->SetPreconditionerType(vtkvmtkLASPACKLinearSystemSolver::VTK_VMTK_LASPACK_PRECONDITIONER_JACOBI);
+      cout<<"Solving system"<<endl;
       solver->Solve();
+      cout<<"Done"<<endl;
 
       solutionVector->CopyVariableIntoArrayComponent(gradientArray,0,3*i+0);
       solutionVector->CopyVariableIntoArrayComponent(gradientArray,1,3*i+1);
@@ -161,7 +165,9 @@ int vtkvmtkUnstructuredGridGradientFilter::RequestData(
         assembler->SetQuadratureOrder(this->QuadratureOrder);
         assembler->SetAssemblyModeToPartialDerivative();
         assembler->SetDirection(j);
+        cout<<"Assembling system"<<endl;
         assembler->Build();
+        cout<<"Done"<<endl;
           
         vtkvmtkLinearSystem* linearSystem = vtkvmtkLinearSystem::New();
         linearSystem->SetA(sparseMatrix);
@@ -174,7 +180,9 @@ int vtkvmtkUnstructuredGridGradientFilter::RequestData(
         solver->SetMaximumNumberOfIterations(numberOfInputPoints);
         solver->SetSolverType(vtkvmtkLASPACKLinearSystemSolver::VTK_VMTK_LASPACK_SOLVER_CG);
         solver->SetPreconditionerType(vtkvmtkLASPACKLinearSystemSolver::VTK_VMTK_LASPACK_PRECONDITIONER_JACOBI);
+        cout<<"Solving system"<<endl;
         solver->Solve();
+        cout<<"Done"<<endl;
       
         solutionVector->CopyIntoArrayComponent(gradientArray,3*i+j);
        

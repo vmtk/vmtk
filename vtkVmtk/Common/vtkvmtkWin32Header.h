@@ -131,11 +131,18 @@
   #define VTK_VMTK_MISC_EXPORT __declspec( dllimport ) 
  #endif
 
+// #if defined(vtkvmtkITK_EXPORTS)
+  #define VTK_ITK_EXPORT __declspec( dllexport ) 
+// #else
+//  #define VTK_ITK_EXPORT __declspec( dllimport ) 
+// #endif
+
  #if defined(vtkvmtkSegmentation_EXPORTS)
   #define VTK_VMTK_SEGMENTATION_EXPORT __declspec( dllexport ) 
  #else
   #define VTK_VMTK_SEGMENTATION_EXPORT __declspec( dllimport ) 
  #endif
+
 
 #else
  #define VTK_VMTK_COMMON_EXPORT
@@ -143,6 +150,7 @@
  #define VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT
  #define VTK_VMTK_IO_EXPORT
  #define VTK_VMTK_MISC_EXPORT
+ #define VTK_ITK_EXPORT
  #define VTK_VMTK_SEGMENTATION_EXPORT
 #endif
 
