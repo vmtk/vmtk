@@ -437,6 +437,8 @@ class pypeScript(object):
                 for value in optionValues:
                     if value[0] == '@':
                         memberEntry.ExplicitPipe = value[1:]
+                        if value[1:] == '':
+                            memberEntry.ExplicitPipe = 'None'
                     else: 
                         if memberType in self.BuiltinOptionTypes:
                             exec('castValue = '+memberType+'(\''+value+'\')')

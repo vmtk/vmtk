@@ -344,8 +344,8 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
 
     vtkThinPlateSplineTransform* thinPlateSplineTransform = vtkThinPlateSplineTransform::New();
     thinPlateSplineTransform->SetSigma(this->Sigma);
-//    thinPlateSplineTransform->SetBasisToR2LogR();
-    thinPlateSplineTransform->SetBasisToR();
+    thinPlateSplineTransform->SetBasisToR2LogR();
+//    thinPlateSplineTransform->SetBasisToR();
     
     vtkPoints* sourceLandmarks = vtkPoints::New();
     vtkPoints* targetLandmarks = vtkPoints::New();

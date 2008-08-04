@@ -62,6 +62,7 @@ __all__ = [
   'vmtkpotentialfit',
   'vmtkpythonscript',
   'vmtkrenderer',
+  'vmtkrbfinterpolation',
   'vmtksurfacecapper',
   'vmtksurfacecelldatatopointdata',
   'vmtksurfacecenterlineprojection',

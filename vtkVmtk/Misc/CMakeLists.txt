@@ -14,6 +14,7 @@ SET (VTK_VMTK_MISC_SRCS
   vtkvmtkPolyDataKiteRemovalFilter.cxx
   vtkvmtkPolyDataSizingFunction.cxx
   vtkvmtkPolyDataToUnstructuredGridFilter.cxx
+  vtkvmtkRBFInterpolation.cxx
   vtkvmtkSimpleCapPolyData.cxx
   vtkvmtkSmoothCapPolyData.cxx
   vtkvmtkStreamlineClusteringFilter.cxx

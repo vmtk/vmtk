@@ -134,6 +134,10 @@ class Pype(object):
             memberName  = memberEntry.MemberName
             option = memberEntry.OptionName
             memberType  = memberEntry.MemberType
+            if memberEntry.ExplicitPipe == 'None':
+                memberEntry.MemberPipe = None
+                exec ('scriptObject.'+memberEntry.MemberName+'= None')
+                continue
             if memberEntry.ExplicitPipe:
                 pipedArgument = memberEntry.ExplicitPipe
                 splitPipedArgument = pipedArgument.split('.')

@@ -65,6 +65,7 @@ SET(SCRIPTS_SRCS
   vmtkpotentialfit.py
   vmtkpythonscript.py
   vmtkrenderer.py
+  vmtkrbfinterpolation.py
   vmtksurfacecapper.py
   vmtksurfacecelldatatopointdata.py
   vmtksurfacecenterlineprojection.py

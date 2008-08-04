@@ -44,6 +44,7 @@ class vmtkImageSeeder(pypes.pypeScript):
         self.Seeds = None
 
         self.TextureInterpolation = 0
+        self.KeepSeeds = 0
 
         self.SetScriptName('vmtkimageseeder')
         self.SetScriptDoc('interactively place seeds in a 3D image')
@@ -52,6 +53,7 @@ class vmtkImageSeeder(pypes.pypeScript):
             ['ArrayName','array','str',1,'','name of the array to display'],
             ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer'],
             ['Display','display','bool',1,'','toggle rendering'],
+            ['KeepSeeds','keepseeds','bool',1,'','toggle avoid removal of seeds from renderer'],
             ['TextureInterpolation','textureinterpolation','bool',1,'','toggle interpolation of graylevels on image planes']
             ])
         self.SetOutputMembers([
@@ -171,9 +173,11 @@ class vmtkImageSeeder(pypes.pypeScript):
         self.InitializeSeeds()
 
         self.BuildView()
-
+        
         self.WidgetsOff()
-        self.vmtkRenderer.Renderer.RemoveActor(self.SeedActor)
+
+        if not self.KeepSeeds:
+            self.vmtkRenderer.Renderer.RemoveActor(self.SeedActor)
 
         if self.OwnRenderer:
             self.vmtkRenderer.Deallocate()

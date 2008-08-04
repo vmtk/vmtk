@@ -76,6 +76,15 @@ class vmtkSurfaceSmoothing(pypes.pypeScript):
 
         self.Surface = smoothingFilter.GetOutput()
 
+        if self.Surface.GetPointData().GetNormals():
+            normalsFilter = vtk.vtkPolyDataNormals()
+            normalsFilter.SetInput(self.Surface)
+            normalsFilter.AutoOrientNormalsOn()
+            normalsFilter.ConsistencyOn()
+            normalsFilter.SplittingOff()
+            normalsFilter.Update()
+            self.Surface = normalsFilter.GetOutput()
+
         if self.Surface.GetSource():
             self.Surface.GetSource().UnRegisterAllOutputs()
 
