@@ -48,6 +48,8 @@ protected:
   vtkvmtkFluentWriter();
   ~vtkvmtkFluentWriter();
 
+  void ConvertFaceToLeftHanded(vtkUnstructuredGrid* input, vtkIdType tetraCellId, vtkIdType& id0, vtkIdType& id1, vtkIdType& id2);
+
   void WriteData();
 
   char* BoundaryDataArrayName;

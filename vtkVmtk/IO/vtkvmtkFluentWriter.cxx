@@ -29,6 +29,7 @@ Version:   $Revision: 1.6 $
 #include "vtkCellData.h"
 #include "vtkIntArray.h"
 #include "vtkIdTypeArray.h"
+#include "vtkMath.h"
 #include "vtkObjectFactory.h"
 #include "vtkvmtkConstants.h"
 
@@ -46,6 +47,53 @@ vtkvmtkFluentWriter::~vtkvmtkFluentWriter()
     {
     delete[] this->BoundaryDataArrayName;
     this->BoundaryDataArrayName = NULL;
+    }
+}
+
+void vtkvmtkFluentWriter::ConvertFaceToLeftHanded(vtkUnstructuredGrid* input, vtkIdType tetraCellId, vtkIdType& id0, vtkIdType& id1, vtkIdType& id2)
+{
+  vtkTetra* tetra = vtkTetra::SafeDownCast(input->GetCell(tetraCellId));
+  vtkIdList* cellPointIds = tetra->GetPointIds();
+  vtkIdType id3 = -1;
+  vtkIdType tmpId = -1;
+  int k;
+  for (k=0; k<4; k++)
+    {
+    tmpId = cellPointIds->GetId(k);
+    if (tmpId != id0 && tmpId != id1 && tmpId != id2)
+      {
+      id3 = tmpId;
+      break;
+      }
+    }
+
+  bool reverse = false;
+  double point0[3], point1[3], point2[3], point3[3];
+  double vector0[3], vector1[3], vector2[3];
+  double cross[3], dot;
+  input->GetPoint(id0,point0);
+  input->GetPoint(id1,point1);
+  input->GetPoint(id2,point2);
+  input->GetPoint(id3,point3);
+  vector0[0] = point1[0] - point0[0];
+  vector0[1] = point1[1] - point0[1];
+  vector0[2] = point1[2] - point0[2];
+  vector1[0] = point2[0] - point0[0];
+  vector1[1] = point2[1] - point0[1];
+  vector1[2] = point2[2] - point0[2];
+  vector2[0] = point3[0] - point0[0];
+  vector2[1] = point3[1] - point0[1];
+  vector2[2] = point3[2] - point0[2];
+  vtkMath::Cross(vector0,vector1,cross);
+  if (vtkMath::Dot(cross,vector2) < 0.0)
+    {
+    reverse = true;
+    }
+  if (reverse)
+    {
+    tmpId = id2;
+    id2 = id1;
+    id1 = tmpId;
     }
 }
 
@@ -190,25 +238,24 @@ void vtkvmtkFluentWriter::WriteData()
       vtkIdType id1 = cellPointIds->GetId(1);
       vtkIdType id2 = cellPointIds->GetId(2);
       input->GetCellNeighbors(triangleCellId,cellPointIds,neighborCellIds);
-      sprintf(str," 3 %x %x %x %x 0",id0+1,id1+1,id2+1,tetraCellIdMap->GetId(neighborCellIds->GetId(0))+1);
+      vtkIdType tetraCellId = neighborCellIds->GetId(0);
+      this->ConvertFaceToLeftHanded(input,tetraCellId,id0,id1,id2);
+      sprintf(str," 3 %x %x %x %x 0",id0+1,id1+1,id2+1,tetraCellId+1);
       out << str << endl;
       }
     out << "))" << endl << endl;
     faceOffset += numberOfBoundaryTriangles;
     }
 
-//  sprintf(str,"(13 (%x %x %x %x 0)(",entityId,faceOffset,faceOffset+numberOfInteriorFaces-1,entityId);
   sprintf(str,"(13 (%x %x %x 2 0)(",entityId,faceOffset,faceOffset+numberOfInteriorFaces-1);
   out << str << endl;
 
 //TODO: loop over tets and write interior faces.
 //one space, #points on the face, pid1, pid2, pid3, tetraid1, tetraid2
-//  vtkIdList* facePointIds = vtkIdList::New();
   for (i=0; i<numberOfTetras; i++)
     {
     vtkIdType tetraCellId = tetraCellIdArray->GetValue(i);
     vtkTetra* tetra = vtkTetra::SafeDownCast(input->GetCell(tetraCellId));
-    //vtkIdList* cellPointIds = tetra->GetPointIds();
     int j;
     for (j=0; j<4; j++)
       {
@@ -217,11 +264,6 @@ void vtkvmtkFluentWriter::WriteData()
       vtkIdType id0 = facePointIds->GetId(0);
       vtkIdType id1 = facePointIds->GetId(1);
       vtkIdType id2 = facePointIds->GetId(2);
-//      facePointIds->Initialize();
-//      facePointIds->InsertNextId(id0);
-//      facePointIds->InsertNextId(id1);
-//      facePointIds->InsertNextId(id2);
-//      input->GetCellNeighbors(tetraCellId,facePointIds,neighborCellIds);
       input->GetCellNeighbors(tetraCellId,facePointIds,neighborCellIds);
       if (neighborCellIds->GetNumberOfIds() != 1)
         {
@@ -235,11 +277,11 @@ void vtkvmtkFluentWriter::WriteData()
         {
         continue;
         }
+      this->ConvertFaceToLeftHanded(input,tetraCellId,id0,id1,id2);
       sprintf(str," 3 %x %x %x %x %x",id0+1,id1+1,id2+1,tetraCellIdMap->GetId(tetraCellId)+1,tetraCellIdMap->GetId(neighborCellIds->GetId(0))+1);
       out << str << endl;
       }
     }
-//  facePointIds->Delete();
   out << "))" << endl << endl;
   faceOffset += numberOfInteriorFaces;
 
