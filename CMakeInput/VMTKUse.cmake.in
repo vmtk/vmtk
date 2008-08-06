@@ -1,0 +1,9 @@
+INCLUDE(CMakeImportBuildSettings)
+
+CMAKE_IMPORT_BUILD_SETTINGS("${VMTK_BUILD_SETTINGS_FILE}")
+
+INCLUDE_DIRECTORIES(${VMTK_INCLUDE_DIRS})
+
+LINK_DIRECTORIES(${VMTK_LIBRARY_DIRS})
+
+LINK_LIBRARIES(vtkvmtkCommon vtkvmtkComputationalGeometry vtkvmtkDifferentialGeometry vtkvmtkIO vtkvmtkITK vtkvmtkMisc vtkvmtkSegmentation laspack tet)

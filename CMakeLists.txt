@@ -85,3 +85,26 @@ IF(EXISTS "${ITK_DIR}/CMakeCache.txt")
 ENDIF(EXISTS "${ITK_DIR}/CMakeCache.txt")
 INCLUDE(CPack)
 
+# Export Build settings and library dependencies
+  INCLUDE(CMakeExportBuildSettings)
+  
+  CMAKE_EXPORT_BUILD_SETTINGS(
+    ${VMTK_BINARY_DIR}/VMTKBuildSettings.cmake
+  )
+  
+  EXPORT_LIBRARY_DEPENDENCIES(
+    ${VMTK_BINARY_DIR}/VMTKLibraryDepends.cmake
+  )
+
+  CONFIGURE_FILE(
+    ${VMTK_SOURCE_DIR}/CMakeInput/VMTKConfig.cmake.in
+    ${VMTK_BINARY_DIR}/VMTKConfig.cmake
+  @ONLY IMMEDIATE
+  )
+  
+  CONFIGURE_FILE(
+    ${VMTK_SOURCE_DIR}/CMakeInput/VMTKUse.cmake.in
+    ${VMTK_BINARY_DIR}/VMTKUse.cmake
+  @ONLY IMMEDIATE
+  )
+ 

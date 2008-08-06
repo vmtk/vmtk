@@ -116,6 +116,12 @@ vtkvmtkPolyDataSurfaceRemeshing::~vtkvmtkPolyDataSurfaceRemeshing()
     delete[] this->CellEntityIdsArrayName;
     this->CellEntityIdsArrayName = NULL;
     }
+
+  if (this->CellEntityIdsArray)
+    {
+    this->CellEntityIdsArray->Delete();
+    this->CellEntityIdsArray = NULL;
+    } 
 }
 
 int vtkvmtkPolyDataSurfaceRemeshing::RequestData(
@@ -290,13 +296,18 @@ int vtkvmtkPolyDataSurfaceRemeshing::RequestData(
     this->EntityBoundaryLocator->BuildLocator();
     }
 
+  int relocationSuccess = RELOCATE_SUCCESS;
   for (int n=0; n<this->NumberOfIterations; n++)
     {
     this->EdgeCollapseIteration();
     this->EdgeFlipIteration();
     this->EdgeSplitIteration();
     this->EdgeFlipIteration();
-    this->PointRelocationIteration();
+    relocationSuccess = this->PointRelocationIteration();
+    if (relocationSuccess == RELOCATE_FAILURE)
+      {
+      break;
+      }
     this->EdgeFlipIteration();
 
     for (int i=0; i<this->NumberOfConnectivityOptimizationIterations; i++)
@@ -307,7 +318,16 @@ int vtkvmtkPolyDataSurfaceRemeshing::RequestData(
 
   for (int i=0; i<this->NumberOfIterations; i++)
     {
-    this->PointRelocationIteration();
+    relocationSuccess = this->PointRelocationIteration();
+    if (relocationSuccess == RELOCATE_FAILURE)
+      {
+      break;
+      }
+    }
+
+  if (relocationSuccess == RELOCATE_FAILURE)
+    {
+    return 1;
     }
   
   vtkPoints* newPoints = vtkPoints::New();
@@ -550,13 +570,19 @@ int vtkvmtkPolyDataSurfaceRemeshing::EdgeSplitIteration()
   return numberOfChanges;
 }
 
-void vtkvmtkPolyDataSurfaceRemeshing::PointRelocationIteration()
+int vtkvmtkPolyDataSurfaceRemeshing::PointRelocationIteration()
 {
   int numberOfPoints = this->Mesh->GetNumberOfPoints();
+  int success = RELOCATE_SUCCESS;
   for (int i=0; i<numberOfPoints; i++)
     {
-    this->RelocatePoint(i);
+    success = this->RelocatePoint(i);
+    if (success == RELOCATE_FAILURE)
+      {
+      return RELOCATE_FAILURE;
+      }
     } 
+  return RELOCATE_SUCCESS;
 }
 
 int vtkvmtkPolyDataSurfaceRemeshing::IsPointOnEntityBoundary(vtkIdType pointId)
@@ -594,7 +620,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::IsPointOnEntityBoundary(vtkIdType pointId)
   return 0;
 }
 
-void vtkvmtkPolyDataSurfaceRemeshing::RelocatePoint(vtkIdType pointId)
+int vtkvmtkPolyDataSurfaceRemeshing::RelocatePoint(vtkIdType pointId)
 {
   vtkvmtkPolyDataUmbrellaStencil* stencil = vtkvmtkPolyDataUmbrellaStencil::New();
   stencil->SetDataSet(this->Mesh);
@@ -679,12 +705,14 @@ void vtkvmtkPolyDataSurfaceRemeshing::RelocatePoint(vtkIdType pointId)
       projectedRelocatedPoint[0] = relocatedPoint[0];
       projectedRelocatedPoint[1] = relocatedPoint[1];
       projectedRelocatedPoint[2] = relocatedPoint[2];
+      return RELOCATE_FAILURE;
       }
   
     this->Mesh->GetPoints()->SetPoint(pointId,projectedRelocatedPoint);
     }
 
   stencil->Delete();
+  return RELOCATE_SUCCESS;
 }
 
 int vtkvmtkPolyDataSurfaceRemeshing::GetEdgeCellsAndOppositeEdge(vtkIdType pt1, vtkIdType pt2, vtkIdType& cell1, vtkIdType& cell2, vtkIdType& pt3, vtkIdType& pt4)

@@ -114,6 +114,11 @@ public:
     TARGET_AREA,
     TARGET_AREA_ARRAY
   };
+
+  enum {
+    RELOCATE_SUCCESS,
+    RELOCATE_FAILURE
+  };
   //ETX
 
 protected:
@@ -128,7 +133,7 @@ protected:
   int EdgeFlipIteration();
   int EdgeCollapseIteration();
   int EdgeSplitIteration();
-  void PointRelocationIteration();
+  int PointRelocationIteration();
 
   int TestFlipEdgeValidity(vtkIdType pt1, vtkIdType pt2, vtkIdType cell1, vtkIdType cell2, vtkIdType pt3, vtkIdType pt4);
   int TestConnectivityFlipEdge(vtkIdType pt1, vtkIdType pt2);
@@ -145,7 +150,7 @@ protected:
   int SplitTriangle(vtkIdType cellId);
   int CollapseTriangle(vtkIdType cellId);
 
-  void RelocatePoint(vtkIdType pointId);
+  int RelocatePoint(vtkIdType pointId);
 
   int IsPointOnBoundary(vtkIdType pointId);
   int IsPointOnEntityBoundary(vtkIdType pointId);
