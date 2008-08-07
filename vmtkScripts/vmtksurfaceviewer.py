@@ -126,7 +126,7 @@ class vmtkSurfaceViewer(pypes.pypeScript):
             self.vmtkRenderer.Render()
 ##            self.vmtkRenderer.Renderer.RemoveActor(self.Actor)
 ##            self.vmtkRenderer.Renderer.RemoveActor(self.ScalarBarActor)
-      
+
         if self.OwnRenderer:
             self.vmtkRenderer.Deallocate()
 
