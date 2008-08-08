@@ -15,6 +15,7 @@
 
 import vtk
 import sys
+import os
 
 import pypes
 
@@ -50,6 +51,29 @@ class vmtkRenderer(pypes.pypeScript):
         self.SetOutputMembers([
             ['vmtkRenderer','o','vmtkRenderer',1,'','the renderer']])
 
+    def KeyPressed(self,object,event):
+
+        key = object.GetKeySym()
+        ctrlPressed = self.RenderWindowInteractor.GetControlKey()
+        if key == 's' and  ctrlPressed:
+            filePrefix = 'vmtk-screenshot'
+            fileNumber = 0
+            fileName = "%s-%d.png" % (filePrefix,fileNumber)
+            existingFiles = os.listdir('.')
+            while fileName in existingFiles:
+                fileNumber += 1
+                fileName = "%s-%d.png" % (filePrefix,fileNumber)
+            self.PrintLog('Saving screenshot to ' + fileName)
+            windowToImage = vtk.vtkWindowToImageFilter()
+            windowToImage.SetInput(self.RenderWindow)
+            windowToImage.SetMagnification(4)
+            windowToImage.Update()
+            self.RenderWindow.Render()
+            writer = vtk.vtkPNGWriter()
+            writer.SetInput(windowToImage.GetOutput())
+            writer.SetFileName(fileName)
+            writer.Write()
+
     def Render(self,interactive=1):
 
         if interactive:
@@ -72,6 +96,8 @@ class vmtkRenderer(pypes.pypeScript):
             self.RenderWindowInteractor = vtk.vtkRenderWindowInteractor()
             self.RenderWindowInteractor.SetInteractorStyle(vtk.vtkInteractorStyleTrackballCamera())
             self.RenderWindow.SetInteractor(self.RenderWindowInteractor)
+
+            self.vmtkRenderer.RenderWindowInteractor.AddObserver("KeyPressEvent", self.KeyPressed)
 
     def Execute(self):
         self.Initialize()

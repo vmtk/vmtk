@@ -43,7 +43,7 @@ class vmtkImageSeeder(pypes.pypeScript):
 
         self.Seeds = None
 
-        self.TextureInterpolation = 0
+        self.TextureInterpolation = 1
         self.KeepSeeds = 0
 
         self.SetScriptName('vmtkimageseeder')
@@ -98,7 +98,8 @@ class vmtkImageSeeder(pypes.pypeScript):
             self.Image.GetPointData().SetActiveScalars(self.ArrayName)
         wholeExtent = self.Image.GetWholeExtent()
 
-        self.PlaneWidgetX.SetResliceInterpolateToNearestNeighbour()
+#        self.PlaneWidgetX.SetResliceInterpolateToNearestNeighbour()
+        self.PlaneWidgetX.SetResliceInterpolateToLinear()
         self.PlaneWidgetX.SetTextureInterpolate(self.TextureInterpolation)
         self.PlaneWidgetX.SetInput(self.Image)
         self.PlaneWidgetX.SetPlaneOrientationToXAxes()
@@ -106,7 +107,8 @@ class vmtkImageSeeder(pypes.pypeScript):
         self.PlaneWidgetX.DisplayTextOn()
         self.PlaneWidgetX.KeyPressActivationOff()
         
-        self.PlaneWidgetY.SetResliceInterpolateToNearestNeighbour()
+#        self.PlaneWidgetY.SetResliceInterpolateToNearestNeighbour()
+        self.PlaneWidgetY.SetResliceInterpolateToLinear()
         self.PlaneWidgetY.SetTextureInterpolate(self.TextureInterpolation)
         self.PlaneWidgetY.SetInput(self.Image)
         self.PlaneWidgetY.SetPlaneOrientationToYAxes()
@@ -115,7 +117,8 @@ class vmtkImageSeeder(pypes.pypeScript):
         self.PlaneWidgetY.KeyPressActivationOff()
         self.PlaneWidgetY.SetLookupTable(self.PlaneWidgetX.GetLookupTable())
 
-        self.PlaneWidgetZ.SetResliceInterpolateToNearestNeighbour()
+#        self.PlaneWidgetZ.SetResliceInterpolateToNearestNeighbour()
+        self.PlaneWidgetZ.SetResliceInterpolateToLinear()
         self.PlaneWidgetZ.SetTextureInterpolate(self.TextureInterpolation)
         self.PlaneWidgetZ.SetInput(self.Image)
         self.PlaneWidgetZ.SetPlaneOrientationToZAxes()
