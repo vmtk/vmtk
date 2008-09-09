@@ -1,0 +1,74 @@
+#!/usr/bin/env python
+
+## Program:   VMTK
+## Module:    $RCSfile: vmtkcenterlinemodeller.py,v $
+## Language:  Python
+## Date:      $Date: 2005/09/14 09:49:59 $
+## Version:   $Revision: 1.7 $
+
+##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
+##   See LICENCE file for details.
+
+##      This software is distributed WITHOUT ANY WARRANTY; without even 
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      PURPOSE.  See the above copyright notices for more information.
+
+
+import vtk
+import sys
+import vtkvmtk
+import pypes
+
+vmtkcenterlinemodeller = 'vmtkCenterlineModeller'
+
+class vmtkCenterlineModeller(pypes.pypeScript):
+
+    def __init__(self):
+
+        pypes.pypeScript.__init__(self)
+        
+        self.Centerlines = None
+        self.RadiusArrayName = None
+        self.Image = None
+        self.ModelBounds = None 
+        self.SampleDimensions = [64,64,64]
+
+        self.SetScriptName('vmtkcenterlinemodeller')
+        self.SetScriptDoc('converts a centerline to an image containing the tube function')
+        self.SetInputMembers([
+            ['Centerlines','i','vtkPolyData',1,'','the input centerlines','vmtksurfacereader'],
+            ['RadiusArrayName','radiusarray','str',1,'','name of the array where radius values are stored'],
+            ['SampleDimensions','dimensions','int',3,'(0,)','dimensions of the output image'],
+            ['ModelBounds','bounds','float',6,'(0.0,)','model bounds in physical coordinates (if None, they are computed automatically)']
+            ])
+        self.SetOutputMembers([
+            ['Image','o','vtkImageData',1,'','the output image','vmtkimagewriter']])
+
+    def Execute(self):
+
+        if self.Centerlines == None:
+            self.PrintError('Error: No input centerlines.')
+
+        if self.RadiusArrayName == None:
+            self.PrintError('Error: No radius array name.')
+
+        modeller = vtkvmtk.vtkvmtkPolyBallModeller()
+        modeller.SetInput(self.Centerlines)
+        modeller.SetRadiusArrayName(self.RadiusArrayName)
+        modeller.UsePolyBallLineOn()
+        modeller.SetSampleDimensions(self.SampleDimensions)
+        if self.ModelBounds:
+            modeller.SetModelBounds(self.ModelBounds)
+        modeller.Update()
+
+        self.Image = modeller.GetOutput()
+        
+        if self.Image.GetSource():
+            self.Image.GetSource().UnRegisterAllOutputs()
+
+
+if __name__=='__main__':
+
+    main = pypes.pypeMain()
+    main.Arguments = sys.argv
+    main.Execute()

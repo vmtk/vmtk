@@ -52,9 +52,9 @@ class vmtkMeshGenerator(pypes.pypeScript):
         self.SetScriptDoc('generate a mesh suitable for CFD from a surface')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
-            ['TargetEdgeLength','targetedgelength','float',1,'(0.0,)'],
-            ['TargetEdgeLengthArrayName','targetedgelengtharray','str',1],
-            ['TargetEdgeLengthFactor','targetedgelengthfactor','float',1,'(0.0,)'],
+            ['TargetEdgeLength','edgelength','float',1,'(0.0,)'],
+            ['TargetEdgeLengthArrayName','edgelengtharray','str',1],
+            ['TargetEdgeLengthFactor','edgelengthfactor','float',1,'(0.0,)'],
             ['MaxEdgeLength','maxedgelength','float',1,'(0.0,)'],
             ['MinEdgeLength','minedgelength','float',1,'(0.0,)'],
             ['CellEntityIdsArrayName','entityidsarray','str',1],
@@ -173,6 +173,9 @@ class vmtkMeshGenerator(pypes.pypeScript):
             tetgen.OutputVolumeElements = 1
             tetgen.Execute()
 
+            if tetgen.Mesh.GetNumberOfCells() == 0 and surfaceToMesh.Mesh.GetNumberOfCells() > 0:
+                self.PrintLog('An error occurred during tetrahedralization. Will only output surface mesh and boundary layer.')
+
             appendFilter = vtkvmtk.vtkvmtkAppendFilter()
             appendFilter.AddInput(surfaceToMesh.Mesh)
             appendFilter.AddInput(boundaryLayer.Mesh)
@@ -212,6 +215,10 @@ class vmtkMeshGenerator(pypes.pypeScript):
             tetgen.Execute()
 
             self.Mesh = tetgen.Mesh
+
+            if self.Mesh.GetNumberOfCells() == 0 and surfaceToMesh.Mesh.GetNumberOfCells() > 0:
+                self.PrintLog('An error occurred during tetrahedralization. Will only output surface mesh.')
+                self.Mesh = surfaceToMesh.Mesh
 
         if self.Tetrahedralize:
 

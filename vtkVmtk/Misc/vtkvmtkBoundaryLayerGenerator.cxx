@@ -155,8 +155,8 @@ int vtkvmtkBoundaryLayerGenerator::RequestData(
     outputPoints->SetPoint(i,point);
     }
 
-  int npts, *pts;
-  int *surfacePts;
+  vtkIdType npts, *pts;
+  vtkIdType *surfacePts;
 
   if (this->IncludeSurfaceCells)
     {
@@ -164,7 +164,7 @@ int vtkvmtkBoundaryLayerGenerator::RequestData(
       {
       input->GetCellPoints(i,npts,pts);
       cellType = input->GetCellType(i);
-      surfacePts = new int[npts];
+      surfacePts = new vtkIdType[npts];
       switch(cellType)
         {
         case VTK_TRIANGLE:
@@ -223,7 +223,7 @@ int vtkvmtkBoundaryLayerGenerator::RequestData(
       outputPoints->SetPoint(i + numberOfInputPoints + k*numberOfLayerPoints,point);
       }
    
-    int prismNPts, *prismPts;
+    vtkIdType prismNPts, *prismPts;
     for (i=0; i<numberOfInputCells; i++)
       {
       input->GetCellPoints(i,npts,pts);
@@ -231,7 +231,7 @@ int vtkvmtkBoundaryLayerGenerator::RequestData(
       if (cellType == VTK_TRIANGLE || cellType == VTK_QUAD)
         {
         prismNPts = npts * 2;
-        prismPts = new int[prismNPts];
+        prismPts = new vtkIdType[prismNPts];
         int j;
         for (j=0; j<npts; j++)
           {
@@ -257,7 +257,7 @@ int vtkvmtkBoundaryLayerGenerator::RequestData(
         {
          prismNPts = npts * 3 - 3;
 //        prismNPts = npts * 3;
-        prismPts = new int[prismNPts];
+        prismPts = new vtkIdType[prismNPts];
 
         boundaryLayerCellTypes->InsertNextId(VTK_QUADRATIC_WEDGE);
         
@@ -304,7 +304,7 @@ int vtkvmtkBoundaryLayerGenerator::RequestData(
           {
           input->GetCellPoints(i,npts,pts);
           cellType = input->GetCellType(i);
-          surfacePts = new int[npts];
+          surfacePts = new vtkIdType[npts];
           switch(cellType)
             {
             case VTK_TRIANGLE:

@@ -70,7 +70,7 @@ void vtkvmtkFluentWriter::ConvertFaceToLeftHanded(vtkUnstructuredGrid* input, vt
   bool reverse = false;
   double point0[3], point1[3], point2[3], point3[3];
   double vector0[3], vector1[3], vector2[3];
-  double cross[3], dot;
+  double cross[3];
   input->GetPoint(id0,point0);
   input->GetPoint(id1,point1);
   input->GetPoint(id2,point2);

@@ -330,7 +330,7 @@ int vtkvmtkTetGenWrapper::RequestData(
 
     for (i=0; i<numberOfFacets; i++)
       {
-      int npts, *pts;
+      vtkIdType npts, *pts;
       input->GetCellPoints(facetCellIds->GetId(i),npts,pts);
       in_tetgenio.facetlist[i].numberofpolygons = 1;
       in_tetgenio.facetlist[i].polygonlist = new tetgenio::polygon[in_tetgenio.facetlist[i].numberofpolygons];
@@ -390,7 +390,7 @@ int vtkvmtkTetGenWrapper::RequestData(
 
     for (i=0; i<numberOfTetras; i++)
       {
-      int npts, *pts;
+      vtkIdType npts, *pts;
       input->GetCellPoints(tetraCellIds->GetId(i),npts,pts);
       for (int j=0; j<npts; j++)
         {
@@ -415,7 +415,15 @@ int vtkvmtkTetGenWrapper::RequestData(
   char tetgenOptions[512];
   strcpy(tetgenOptions,tetgenOptionString.c_str());
   cout<<"TetGen command line options: "<<tetgenOptions<<endl;
-  tetrahedralize(tetgenOptions,&in_tetgenio,&out_tetgenio);
+  try
+    {
+    tetrahedralize(tetgenOptions,&in_tetgenio,&out_tetgenio);
+    }
+  catch ( ... )
+    {
+    vtkErrorMacro(<<"TetGen quit with an exception.");
+    return 1;
+    }
 
   //TODO
 //  out_tetgenio.edgelist; //int* 

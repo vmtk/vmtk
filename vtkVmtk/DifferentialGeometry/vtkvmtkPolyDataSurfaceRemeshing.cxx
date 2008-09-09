@@ -244,6 +244,8 @@ int vtkvmtkPolyDataSurfaceRemeshing::RequestData(
 
   this->Locator = vtkCellLocator::New();
   this->Locator->SetDataSet(input);
+  this->Locator->SetNumberOfCellsPerBucket(5);
+  this->Locator->CacheCellBoundsOn();
   this->Locator->BuildLocator();
 
   if (this->InputBoundary)
@@ -299,6 +301,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::RequestData(
   int relocationSuccess = RELOCATE_SUCCESS;
   for (int n=0; n<this->NumberOfIterations; n++)
     {
+    cout<<"Iteration "<<n+1<<"/"<<this->NumberOfIterations<<endl;
     this->EdgeCollapseIteration();
     this->EdgeFlipIteration();
     this->EdgeSplitIteration();
@@ -316,9 +319,14 @@ int vtkvmtkPolyDataSurfaceRemeshing::RequestData(
       }
     }
 
+  bool projectToSurface = false;
   for (int i=0; i<this->NumberOfIterations; i++)
     {
-    relocationSuccess = this->PointRelocationIteration();
+    if (i == this->NumberOfIterations/2)
+      {
+      projectToSurface = true;
+      }
+    relocationSuccess = this->PointRelocationIteration(projectToSurface);
     if (relocationSuccess == RELOCATE_FAILURE)
       {
       break;
@@ -466,6 +474,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::IsPointOnBoundary(vtkIdType pointId)
 
 int vtkvmtkPolyDataSurfaceRemeshing::EdgeFlipConnectivityOptimizationIteration()
 {
+  //TODO: randomize. 
   int numberOfChanges = 0;
   int numberOfCells = this->Mesh->GetNumberOfCells();
   for (int i=0; i<numberOfCells; i++)
@@ -570,13 +579,13 @@ int vtkvmtkPolyDataSurfaceRemeshing::EdgeSplitIteration()
   return numberOfChanges;
 }
 
-int vtkvmtkPolyDataSurfaceRemeshing::PointRelocationIteration()
+int vtkvmtkPolyDataSurfaceRemeshing::PointRelocationIteration(bool projectToSurface)
 {
   int numberOfPoints = this->Mesh->GetNumberOfPoints();
   int success = RELOCATE_SUCCESS;
   for (int i=0; i<numberOfPoints; i++)
     {
-    success = this->RelocatePoint(i);
+    success = this->RelocatePoint(i,projectToSurface);
     if (success == RELOCATE_FAILURE)
       {
       return RELOCATE_FAILURE;
@@ -620,7 +629,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::IsPointOnEntityBoundary(vtkIdType pointId)
   return 0;
 }
 
-int vtkvmtkPolyDataSurfaceRemeshing::RelocatePoint(vtkIdType pointId)
+int vtkvmtkPolyDataSurfaceRemeshing::RelocatePoint(vtkIdType pointId, bool projectToSurface)
 {
   vtkvmtkPolyDataUmbrellaStencil* stencil = vtkvmtkPolyDataUmbrellaStencil::New();
   stencil->SetDataSet(this->Mesh);
@@ -650,7 +659,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::RelocatePoint(vtkIdType pointId)
     relocatedPoint[0] = point[0] + this->Relaxation * (targetPoint[0] - point[0]);
     relocatedPoint[1] = point[1] + this->Relaxation * (targetPoint[1] - point[1]);
     relocatedPoint[2] = point[2] + this->Relaxation * (targetPoint[2] - point[2]);
-  
+ 
     double projectedRelocatedPoint[3];
     vtkIdType cellId;
     int subId;
@@ -661,7 +670,16 @@ int vtkvmtkPolyDataSurfaceRemeshing::RelocatePoint(vtkIdType pointId)
       }
     else
       {
-      this->Locator->FindClosestPoint(relocatedPoint,projectedRelocatedPoint,cellId,subId,dist2);
+      if (projectToSurface)
+        {
+        this->Locator->FindClosestPoint(relocatedPoint,projectedRelocatedPoint,cellId,subId,dist2);
+        }
+      else
+        {
+        projectedRelocatedPoint[0] = relocatedPoint[0];
+        projectedRelocatedPoint[1] = relocatedPoint[1];
+        projectedRelocatedPoint[2] = relocatedPoint[2];
+        }
       }
     this->Mesh->GetPoints()->SetPoint(pointId,projectedRelocatedPoint);
     }
@@ -1237,10 +1255,12 @@ int vtkvmtkPolyDataSurfaceRemeshing::TestConnectivityFlipEdge(vtkIdType pt1, vtk
 
   int targetValence = 6;
 
-  int currentValence = (ncells1-targetValence)*(ncells1-targetValence) + (ncells2-targetValence)*(ncells2-targetValence) + (ncells3-targetValence)*(ncells3-targetValence) + (ncells4-targetValence)*(ncells4-targetValence);
-  int flippedValence = (ncells1-1-targetValence)*(ncells1-1-targetValence) + (ncells2-1-targetValence)*(ncells2-1-targetValence) + (ncells3+1-targetValence)*(ncells3+1-targetValence) + (ncells4+1-targetValence)*(ncells4+1-targetValence);
+  //TODO: if ncells1 < targetValence and ncells2 < targetValence, then the edge should be collapsed.
+  //TODO: if ncells1 > targetValence and ncells2 > targetValence, then the edge should be split.
+  int currentCost = (ncells1-targetValence)*(ncells1-targetValence) + (ncells2-targetValence)*(ncells2-targetValence) + (ncells3-targetValence)*(ncells3-targetValence) + (ncells4-targetValence)*(ncells4-targetValence);
+  int flippedCost = (ncells1-1-targetValence)*(ncells1-1-targetValence) + (ncells2-1-targetValence)*(ncells2-1-targetValence) + (ncells3+1-targetValence)*(ncells3+1-targetValence) + (ncells4+1-targetValence)*(ncells4+1-targetValence);
 
-  if (flippedValence >= currentValence)
+  if (flippedCost >= currentCost)
     {
     return DO_NOTHING;
     }

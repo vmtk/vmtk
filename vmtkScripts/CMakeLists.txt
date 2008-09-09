@@ -18,6 +18,7 @@ SET(SCRIPTS_SRCS
   vmtkcenterlinelabeler.py
   vmtkcenterlinemeshsections.py
   vmtkcenterlinemerge.py
+  vmtkcenterlinemodeller.py
   vmtkcenterlineoffsetattributes.py
   vmtkcenterlineresampling.py
   vmtkcenterlines.py
@@ -75,6 +76,7 @@ SET(SCRIPTS_SRCS
   vmtksurfacedecimation.py
   vmtksurfacedistance.py
   vmtksurfacekiteremoval.py
+  vmtksurfacemodeller.py
   vmtksurfacenormals.py
   vmtksurfaceprojection.py
   vmtksurfacereader.py

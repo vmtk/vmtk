@@ -17,6 +17,8 @@ CONFIGURE_FILE(
   ${VTK_VMTK_BINARY_DIR}/vtkvmtkConfigure.h
   )                                                                                                  
 
+OPTION(VTK_VMTK_BUILD_TETGEN "Build TetGen and TetGen wrapper." ON)
+
 OPTION(VMTK_EXTERNAL_vtkITK "Use external vtkITK installation" OFF)
 MARK_AS_ADVANCED(VMTK_EXTERNAL_vtkITK)
 

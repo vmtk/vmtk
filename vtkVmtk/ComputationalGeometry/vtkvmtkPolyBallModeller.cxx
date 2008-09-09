@@ -38,8 +38,6 @@ vtkStandardNewMacro(vtkvmtkPolyBallModeller);
 
 vtkvmtkPolyBallModeller::vtkvmtkPolyBallModeller()
 {
-  this->MaximumDistance = 1.0;
-
   this->ModelBounds[0] = 0.0;
   this->ModelBounds[1] = 0.0;
   this->ModelBounds[2] = 0.0;
@@ -73,21 +71,30 @@ int vtkvmtkPolyBallModeller::RequestInformation (
   double spacing[3], origin[3];
 
   vtkInformation* outInfo = outputVector->GetInformationObject(0);
-  
+
+  vtkPolyData* input = vtkPolyData::SafeDownCast(this->GetInput());
+ 
+  if (this->RadiusArrayName == NULL)
+    {
+    vtkErrorMacro(<<"Error: RadiusArrayName not specified!");
+    return 1;
+    }
+
+  vtkDataArray* radiusArray = input->GetPointData()->GetArray(this->RadiusArrayName);
+  if (radiusArray == NULL)
+    {
+    vtkErrorMacro(<<"Error: RadiusArray with name specified does not exist!");
+    return 1;
+    }
+
+  double maxRadius = radiusArray->GetRange()[1]; 
+ 
   if ((this->ModelBounds[0] >= this->ModelBounds[1]) || (this->ModelBounds[2] >= this->ModelBounds[3]) || (this->ModelBounds[4] >= this->ModelBounds[5]))
     {
-    double* bounds = vtkPolyData::SafeDownCast(this->GetInput())->GetBounds();
-    double maxDist = 0.0;
-    int i;
-    for (i=0; i<3; i++)
-      {
-      if ((bounds[2*i+1] - bounds[2*i]) > maxDist)
-        {
-        maxDist = bounds[2*i+1] - bounds[2*i];
-        }
-      }
-    maxDist *= 0.5;
+    double* bounds = input->GetBounds();
+    double maxDist = 2.0 * maxRadius;
 
+    int i;
     for (i=0; i<3; i++)
       {
       this->ModelBounds[2*i] = bounds[2*i] - maxDist;
@@ -137,6 +144,18 @@ int vtkvmtkPolyBallModeller::RequestData(
   vtkImageData *output = vtkImageData::SafeDownCast(
     outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
+  if (this->RadiusArrayName == NULL)
+    {
+    vtkErrorMacro(<<"Error: RadiusArrayName not specified!");
+    return 1;
+    }
+
+  if (input->GetPointData()->GetArray(this->RadiusArrayName) == NULL)
+    {
+    vtkErrorMacro(<<"Error: RadiusArray with name specified does not exist!");
+    return 1;
+    }
+
   output->SetExtent(outInfo->Get(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT()));
   output->AllocateScalars();
 
@@ -178,8 +197,6 @@ int vtkvmtkPolyBallModeller::RequestData(
 void vtkvmtkPolyBallModeller::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
-
-  os << indent << "Maximum Distance: " << this->MaximumDistance << "\n";
 
   os << indent << "Sample Dimensions: (" << this->SampleDimensions[0] << ", "
      << this->SampleDimensions[1] << ", "

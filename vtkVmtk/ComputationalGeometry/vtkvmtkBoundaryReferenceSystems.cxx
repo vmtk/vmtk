@@ -184,8 +184,8 @@ void vtkvmtkBoundaryReferenceSystems::OrientBoundaryNormalOutwards(vtkPolyData* 
   surface->BuildLinks();
 
   unsigned short ncells;
-  int *cells;
-  int npts, *pts;
+  vtkIdType *cells;
+  vtkIdType npts, *pts;
 
   double boundaryPoint[3], neighborPoint[3];
 

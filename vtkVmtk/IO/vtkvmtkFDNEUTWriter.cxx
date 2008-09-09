@@ -139,7 +139,7 @@ void vtkvmtkFDNEUTWriter::WriteData()
       }
 
     int fdneutElementType, fdneutElementGeometry, numberOfNodesInElement;
-    int npts, *pts, *cellPoints;
+    vtkIdType npts, *pts, *cellPoints;
     fdneutElementType = -1;
     fdneutElementGeometry = -1;
 
@@ -188,8 +188,8 @@ void vtkvmtkFDNEUTWriter::WriteData()
         continue;
         }
       input->GetCellPoints(k,npts,pts);
-      cellPoints = new int[npts];
-      memcpy(cellPoints,pts,npts*sizeof(int));
+      cellPoints = new vtkIdType[npts];
+      memcpy(cellPoints,pts,npts*sizeof(vtkIdType));
       this->ZeroToOneOffset(npts,cellPoints);
 
       if (npts != numberOfNodesInElement)

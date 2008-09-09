@@ -166,12 +166,6 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
     vtkvmtkBoundaryReferenceSystems::ComputeBoundaryNormal(boundary->GetPoints(),barycenter,normal);
     vtkvmtkBoundaryReferenceSystems::OrientBoundaryNormalOutwards(input,boundaries,i,normal,outwardNormal);
 
-    int boundaryDirection = 1;
-    if (vtkMath::Dot(normal,outwardNormal) < 0.0)
-      {
-      boundaryDirection = -1;
-      }
-
     double flowExtensionNormal[3];
     flowExtensionNormal[0] = flowExtensionNormal[1] = flowExtensionNormal[2] = 0.0;  
  
@@ -323,14 +317,6 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
     vtkIdType pointId;
 
     previousBoundaryIds->DeepCopy(boundaryIds);
-    if (boundaryDirection == -1)
-      {
-      previousBoundaryIds->Initialize();
-      for (j=0; j<numberOfBoundaryPoints; j++)
-        {
-        previousBoundaryIds->InsertNextId(boundaryIds->GetId(numberOfBoundaryPoints-j-1));
-        }
-      }
 
     // TODO: use area, not meanRadius as targetRadius
 
@@ -367,12 +353,33 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
     vtkMath::Normalize(baseRadialNormal);
     int startNumberOfBoundaryPoints = numberOfBoundaryPoints;
     double angle = 360.0 / targetNumberOfBoundaryPoints;
-    if (boundaryDirection == -1)
-      {
-      angle *= -1.0;
-      }
     vtkTransform* transform = vtkTransform::New();
     transform->RotateWXYZ(0.5*angle,flowExtensionNormal);
+    double testRadialNormal[3];
+    transform->TransformPoint(baseRadialNormal,testRadialNormal);
+    double cross[3], testCross[3], point1[3];
+    vtkMath::Cross(baseRadialNormal,testRadialNormal,testCross);
+    double dist = 0.0;
+    int testId = 1;
+    int numberOfPreviousBoundaryIds = previousBoundaryIds->GetNumberOfIds();
+    while (dist < 1E-8 && testId < numberOfPreviousBoundaryIds)
+      {
+      input->GetPoint(previousBoundaryIds->GetId(testId),point1);
+      dist = sqrt(vtkMath::Distance2BetweenPoints(point,point1));
+      testId++;
+      }
+    double testRadialVector[3];
+    for (k=0; k<3; k++)
+      {
+      testRadialVector[k] = point1[k] - barycenter[k];
+      }
+    vtkMath::Cross(baseRadialNormal,testRadialVector,cross);
+    if (vtkMath::Dot(cross,testCross) < 0.0)
+      {
+      angle *= -1.0;
+      transform->Identity();
+      transform->RotateWXYZ(0.5*angle,flowExtensionNormal); 
+      }
     double radialVector[3];
     for (k=0; k<3; k++)
       {

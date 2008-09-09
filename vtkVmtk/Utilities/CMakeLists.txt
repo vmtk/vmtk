@@ -1,9 +1,11 @@
 SUBDIRS(
   Doxygen
   laspack
-#  tetgen1.4.1
-  tetgen1.4.2
   )
+
+IF (VTK_VMTK_BUILD_TETGEN)
+  SUBDIRS(tetgen1.4.2)
+ENDIF (VTK_VMTK_BUILD_TETGEN)
 
 IF (NOT VMTK_EXTERNAL_vtkITK)
   SUBDIRS(vtkITK)

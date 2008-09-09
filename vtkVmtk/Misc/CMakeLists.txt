@@ -21,25 +21,18 @@ SET (VTK_VMTK_MISC_SRCS
   vtkvmtkStreamlineOsculatingCentersFilter.cxx
   vtkvmtkSurfaceDistance.cxx
   vtkvmtkSurfaceProjection.cxx
-  vtkvmtkTetGenWrapper.cxx
   )
 
-INCLUDE_DIRECTORIES(${TETGEN_SOURCE_DIR})
-LINK_DIRECTORIES(${TETGEN_LIB_DIR})
+SET (VTK_VMTK_MISC_TARGET_LINK_LIBRARIES vtkvmtkMisc vtkvmtkDifferentialGeometry vtkCommon vtkFiltering vtkGraphics vtkHybrid)
 
-SET (VTK_VMTK_MISC_TARGET_LINK_LIBRARIES vtkvmtkMisc vtkvmtkDifferentialGeometry vtkCommon vtkFiltering vtkGraphics vtkHybrid tet)
+IF (VTK_VMTK_BUILD_TETGEN)
+  SET (VTK_VMTK_MISC_SRCS ${VTK_VMTK_MISC_SRCS} vtkvmtkTetGenWrapper.cxx)
 
-#OPTION(VTK_VMTK_SURFMESH_SUPPORT "Build SurfMesh support." OFF)
+  INCLUDE_DIRECTORIES(${TETGEN_SOURCE_DIR})
+  LINK_DIRECTORIES(${TETGEN_LIB_DIR})
 
-#IF (VTK_VMTK_SURFMESH_SUPPORT)
-#  FIND_PATH(VTK_VMTK_SURFMESH_INCLUDE_DIR SurfaceMesher.h /usr/include/surfmesh
-#  /usr/local/include/surfmesh)
-#  FIND_PATH(VTK_VMTK_SURFMESH_LIB_DIR libsurfmesh.a /usr/lib /usr/local/lib)
-#  SET (VTK_VMTK_MISC_TARGET_LINK_LIBRARIES ${VTK_VMTK_MISC_TARGET_LINK_LIBRARIES} surfmesh)
-#  SET (VTK_VMTK_MISC_SRCS ${VTK_VMTK_MISC_SRCS} vtkvmtkSurfMeshWrapper.cxx) 
-#  INCLUDE_DIRECTORIES(${VTK_VMTK_SURFMESH_INCLUDE_DIR})
-#  LINK_DIRECTORIES(${VTK_VMTK_SURFMESH_LIB_DIR})
-#ENDIF (VTK_VMTK_SURFMESH_SUPPORT)
+  SET (VTK_VMTK_MISC_TARGET_LINK_LIBRARIES ${VTK_VMTK_MISC_TARGET_LINK_LIBRARIES} tet)
+ENDIF (VTK_VMTK_BUILD_TETGEN)
 
 ADD_LIBRARY (vtkvmtkMisc ${VTK_VMTK_MISC_SRCS})
 TARGET_LINK_LIBRARIES(vtkvmtkMisc ${VTK_VMTK_MISC_TARGET_LINK_LIBRARIES})

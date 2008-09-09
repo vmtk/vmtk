@@ -43,11 +43,6 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyBallModeller : public vt
   vtkSetVectorMacro(SampleDimensions,int,3);
   
   // Description:
-  // Specify influence distance of each input point. 
-  vtkSetMacro(MaximumDistance,double);
-  vtkGetMacro(MaximumDistance,double);
-
-  // Description:
   // Specify the position in space to perform the sampling.
   vtkSetVectorMacro(ModelBounds,double,6);
   vtkGetVectorMacro(ModelBounds,double,6);
@@ -68,7 +63,6 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyBallModeller : public vt
   virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
 
   int SampleDimensions[3];
-  double MaximumDistance;
   double ModelBounds[6];
 
   char* RadiusArrayName;

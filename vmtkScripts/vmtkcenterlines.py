@@ -575,6 +575,7 @@ class vmtkCenterlines(pypes.pypeScript):
         centerlineFilter.SetCostFunction(self.CostFunction)
         centerlineFilter.SetFlipNormals(self.FlipNormals)
         centerlineFilter.SetAppendEndPointsToCenterlines(self.AppendEndPoints)
+        centerlineFilter.SimplifyVoronoiOn()
         if self.DelaunayTessellation != None:
             centerlineFilter.GenerateDelaunayTessellationOff()
             centerlineFilter.SetDelaunayTessellation(self.DelaunayTessellation)

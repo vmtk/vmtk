@@ -133,7 +133,7 @@ protected:
   int EdgeFlipIteration();
   int EdgeCollapseIteration();
   int EdgeSplitIteration();
-  int PointRelocationIteration();
+  int PointRelocationIteration(bool projectToSurface=true);
 
   int TestFlipEdgeValidity(vtkIdType pt1, vtkIdType pt2, vtkIdType cell1, vtkIdType cell2, vtkIdType pt3, vtkIdType pt4);
   int TestConnectivityFlipEdge(vtkIdType pt1, vtkIdType pt2);
@@ -150,7 +150,7 @@ protected:
   int SplitTriangle(vtkIdType cellId);
   int CollapseTriangle(vtkIdType cellId);
 
-  int RelocatePoint(vtkIdType pointId);
+  int RelocatePoint(vtkIdType pointId, bool projectToSurface);
 
   int IsPointOnBoundary(vtkIdType pointId);
   int IsPointOnEntityBoundary(vtkIdType pointId);

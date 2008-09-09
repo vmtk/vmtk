@@ -90,7 +90,7 @@ int vtkvmtkSurfMeshWrapper::RequestData(
 
   input->BuildCells();
   int numberOfInputCells = input->GetNumberOfCells();
-  int npts, *pts;
+  vtkIdType npts, *pts;
   for (i=0; i<numberOfInputCells; i++)
     {
     if (input->GetCellType(i) != VTK_TRIANGLE)
