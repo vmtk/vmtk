@@ -48,6 +48,7 @@ vtkvmtkPolyDataCenterlineGroupsClipper::vtkvmtkPolyDataCenterlineGroupsClipper()
   this->ClipAllCenterlineGroupIds = 0;
   this->CutoffRadiusFactor = VTK_VMTK_LARGE_DOUBLE;
   this->ClipValue = 0.0; 
+  this->UseRadiusInformation = 1; 
  
   this->SetNumberOfOutputPorts(2);
   this->GenerateClippedOutput = 0;
@@ -204,10 +205,12 @@ int vtkvmtkPolyDataCenterlineGroupsClipper::RequestData(
   vtkvmtkPolyBallLine* groupTubes = vtkvmtkPolyBallLine::New();
   groupTubes->SetInput(this->Centerlines);
   groupTubes->SetPolyBallRadiusArrayName(this->CenterlineRadiusArrayName);
+  groupTubes->SetUseRadiusInformation(this->UseRadiusInformation);
 
   vtkvmtkPolyBallLine* nonGroupTubes = vtkvmtkPolyBallLine::New();
   nonGroupTubes->SetInput(this->Centerlines);
   nonGroupTubes->SetPolyBallRadiusArrayName(this->CenterlineRadiusArrayName);
+  nonGroupTubes->SetUseRadiusInformation(this->UseRadiusInformation);
 
   int numberOfPoints = input->GetNumberOfPoints();
 

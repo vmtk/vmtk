@@ -73,6 +73,10 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataCenterlineGroupsClip
   vtkSetMacro(ClipValue,double);
   vtkGetMacro(ClipValue,double);
 
+  vtkSetMacro(UseRadiusInformation,int);
+  vtkGetMacro(UseRadiusInformation,int);
+  vtkBooleanMacro(UseRadiusInformation,int);
+
   protected:
   vtkvmtkPolyDataCenterlineGroupsClipper();
   ~vtkvmtkPolyDataCenterlineGroupsClipper();
@@ -94,6 +98,8 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataCenterlineGroupsClip
   double ClipValue;
 
   int GenerateClippedOutput;
+
+  int UseRadiusInformation;
 
   private:
   vtkvmtkPolyDataCenterlineGroupsClipper(const vtkvmtkPolyDataCenterlineGroupsClipper&);  // Not implemented.

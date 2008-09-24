@@ -437,6 +437,7 @@ class vmtkCenterlines(pypes.pypeScript):
         
         self.Resampling = 0
         self.ResamplingStepLength = 1.0
+        self.SimplifyVoronoi = 0
 
         self.EikonalSolutionArrayName = 'EikonalSolution'
         self.EdgeArrayName = 'EdgeArray'
@@ -472,6 +473,7 @@ class vmtkCenterlines(pypes.pypeScript):
             ['Resampling','resampling','bool',1,'','toggle centerlines resampling'],
             ['ResamplingStepLength','resamplingstep','float',1,'(0.0,)','distance between points in the resampled line'],
             ['DelaunayTessellation','delaunaytessellation','vtkUnstructuredGrid',1,'','optional input Delaunay tessellation'],
+            ['SimplifyVoronoi','simplifyvoronoi','bool',1,'','toggle simplification of Voronoi diagram'],
             ['UseTetGen','usetetgen','bool',1,'','toggle use TetGen to compute Delaunay tessellation'],
             ['TetGenDetectInter','tetgendetectinter','bool',1,'','TetGen option'],
             ['CostFunction','costfunction','str',1,'','specify cost function to be minimized during centerline computation']])
@@ -575,7 +577,7 @@ class vmtkCenterlines(pypes.pypeScript):
         centerlineFilter.SetCostFunction(self.CostFunction)
         centerlineFilter.SetFlipNormals(self.FlipNormals)
         centerlineFilter.SetAppendEndPointsToCenterlines(self.AppendEndPoints)
-        centerlineFilter.SimplifyVoronoiOn()
+        centerlineFilter.SetSimplifyVoronoi(self.SimplifyVoronoi)
         if self.DelaunayTessellation != None:
             centerlineFilter.GenerateDelaunayTessellationOff()
             centerlineFilter.SetDelaunayTessellation(self.DelaunayTessellation)
