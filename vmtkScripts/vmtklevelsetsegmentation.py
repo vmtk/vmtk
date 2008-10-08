@@ -301,13 +301,12 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
         if self.LevelSets != None:
             self.DisplayLevelSetSurface(self.LevelSets,0.0)
   
-        if self.InitialLevelSets == None:
-            self.vmtkImageInitialization = vmtkscripts.vmtkImageInitialization()
-            self.vmtkImageInitialization.Image = self.Image
-            self.vmtkImageInitialization.vmtkRenderer = self.vmtkRenderer
-            self.vmtkImageInitialization.ImageSeeder = self.ImageSeeder
-            self.vmtkImageInitialization.SurfaceViewer = self.SurfaceViewer
-            self.vmtkImageInitialization.OwnRenderer = 0
+        self.vmtkImageInitialization = vmtkscripts.vmtkImageInitialization()
+        self.vmtkImageInitialization.Image = self.Image
+        self.vmtkImageInitialization.vmtkRenderer = self.vmtkRenderer
+        self.vmtkImageInitialization.ImageSeeder = self.ImageSeeder
+        self.vmtkImageInitialization.SurfaceViewer = self.SurfaceViewer
+        self.vmtkImageInitialization.OwnRenderer = 0
  
         endSegmentation = 0
         while (endSegmentation == 0):

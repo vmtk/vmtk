@@ -33,6 +33,7 @@ class vmtkICPRegistration(pypes.pypeScript):
         self.DistanceArrayName = ''
         self.SignedDistanceArrayName = ''
         self.Level = 0.0
+        self.MaximumMeanDistance = 1E-2
 
         self.FlipNormals = 0
 
@@ -43,7 +44,8 @@ class vmtkICPRegistration(pypes.pypeScript):
             ['ReferenceSurface','r','vtkPolyData',1,'','the reference surface','vmtksurfacereader'],
             ['DistanceArrayName','distancearray','str',1,'','name of the array where the distance of the input surface to the reference surface has to be stored'],
             ['SignedDistanceArrayName','signeddistancearray','str',1,'','name of the array where the signed distance of the input surface to the reference surface is stored; distance is positive if distance vector and normal to the reference surface have negative dot product, i.e. if the input surface is outer with respect to the reference surface'],
-            ['FlipNormals','flipnormals','bool',1,'','flip normals to the reference surface after computing them']
+            ['FlipNormals','flipnormals','bool',1,'','flip normals to the reference surface after computing them'],
+            ['MaximumMeanDistance','maxmeandistance','float',1,'','convergence threshold based on the maximum mean distance between the two surfaces']
             ])
         self.SetOutputMembers([
             ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter']
@@ -77,7 +79,7 @@ class vmtkICPRegistration(pypes.pypeScript):
         icpTransform.StartByMatchingCentroidsOn()
         icpTransform.SetMaximumNumberOfLandmarks(1000)
         icpTransform.SetMaximumNumberOfIterations(1000)
-        icpTransform.SetMaximumMeanDistance(1E-2)
+        icpTransform.SetMaximumMeanDistance(self.MaximumMeanDistance)
 
         transformFilter = vtk.vtkTransformPolyDataFilter()
         transformFilter.SetInput(self.Surface)
