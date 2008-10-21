@@ -155,7 +155,8 @@ int vtkvmtkPolyDataStencilFlowFilter::RequestData(
       if (this->ConstrainOnSurface)
         {
         double closestPoint[3];
-        int cellId, subId;
+        vtkIdType cellId;
+        int subId;
         double dist2, pcoords[3];
         if (input->GetCell(constrainCellIds->GetId(pointId))->EvaluatePosition(newPoint,closestPoint,subId,pcoords,dist2,weights)==0)
           {

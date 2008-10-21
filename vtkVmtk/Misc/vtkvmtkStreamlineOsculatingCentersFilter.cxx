@@ -186,7 +186,8 @@ int vtkvmtkStreamlineOsculatingCentersFilter::RequestData(
       if (this->VoronoiDiagram)
         {
         double closestPoint[3], dist2;
-        vtkIdType sheetId, cellId, subId;
+        vtkIdType sheetId, cellId;
+        int subId;
         cellLocator->FindClosestPoint(osculatingCenter,closestPoint,cellId,subId,dist2);
         sheetId = voronoiSheetIdsArray->GetValue(cellId);
         sheetIdsArray->InsertNextValue(sheetId);

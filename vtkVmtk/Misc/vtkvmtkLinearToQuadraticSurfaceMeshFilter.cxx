@@ -128,8 +128,16 @@ int vtkvmtkLinearToQuadraticSurfaceMeshFilter::RequestData(
     }
 
   delete[] qpts;
-                                                                                                                                               
-  output->SetCells(quadraticTriangleCellTypes->GetPointer(0),quadraticTriangles);
+
+  int* quadraticTriangleCellTypesInt = new int[quadraticTriangleCellTypes->GetNumberOfIds()];
+  for (int i=0; i<quadraticTriangleCellTypes->GetNumberOfIds(); i++)
+    {
+    quadraticTriangleCellTypesInt[i] = quadraticTriangleCellTypes->GetId(i);
+    }                                                                                                             
+
+  output->SetCells(quadraticTriangleCellTypesInt,quadraticTriangles);
+
+  delete[] quadraticTriangleCellTypesInt;
 
   geometryFilter->Delete();
   subdivisionFilter->Delete();

@@ -198,7 +198,7 @@ void vtkvmtkFDNEUTWriter::WriteData()
         return;
         }
 
-      fprintf(FDNEUTFile,"%8d",cellCount);
+      fprintf(FDNEUTFile,"%8d",(int)cellCount);
    
       int i;
       switch (cellType)
@@ -206,170 +206,170 @@ void vtkvmtkFDNEUTWriter::WriteData()
         case VTK_QUAD:
           for (i=0; i<numberOfNodesInElement; i++)
             {
-            fprintf(FDNEUTFile,"%8d",cellPoints[i]);
+            fprintf(FDNEUTFile,"%8d",(int)cellPoints[i]);
             }
           break;
         case VTK_QUADRATIC_QUAD:
-          fprintf(FDNEUTFile,"%8d",cellPoints[0]);
-          fprintf(FDNEUTFile,"%8d",cellPoints[4]);
-          fprintf(FDNEUTFile,"%8d",cellPoints[1]);
-          fprintf(FDNEUTFile,"%8d",cellPoints[5]);
-          fprintf(FDNEUTFile,"%8d",cellPoints[2]);
-          fprintf(FDNEUTFile,"%8d",cellPoints[6]);
-          fprintf(FDNEUTFile,"%8d",cellPoints[3]);
-          fprintf(FDNEUTFile,"%8d",cellPoints[7]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[0]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[4]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[1]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[5]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[2]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[6]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[3]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[7]);
           if (numberOfNodesInElement==9)
             {
-            fprintf(FDNEUTFile,"%8d",cellPoints[8]);
+            fprintf(FDNEUTFile,"%8d",(int)cellPoints[8]);
             }
           break;
         case VTK_TRIANGLE:
           for (i=0; i<numberOfNodesInElement; i++)
             {
-            fprintf(FDNEUTFile,"%8d",cellPoints[i]);
+            fprintf(FDNEUTFile,"%8d",(int)cellPoints[i]);
             }
           break;
         case VTK_QUADRATIC_TRIANGLE:
-          fprintf(FDNEUTFile,"%8d",cellPoints[0]);
-          fprintf(FDNEUTFile,"%8d",cellPoints[3]);
-          fprintf(FDNEUTFile,"%8d",cellPoints[1]);
-          fprintf(FDNEUTFile,"%8d",cellPoints[4]);
-          fprintf(FDNEUTFile,"%8d",cellPoints[2]);
-          fprintf(FDNEUTFile,"%8d",cellPoints[5]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[0]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[3]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[1]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[4]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[2]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[5]);
           break;
         case VTK_HEXAHEDRON:
-          fprintf(FDNEUTFile,"%8d",cellPoints[0]);
-          fprintf(FDNEUTFile,"%8d",cellPoints[1]);
-          fprintf(FDNEUTFile,"%8d",cellPoints[3]);
-          fprintf(FDNEUTFile,"%8d",cellPoints[2]);
-          fprintf(FDNEUTFile,"%8d",cellPoints[4]);
-          fprintf(FDNEUTFile,"%8d",cellPoints[5]);
-          fprintf(FDNEUTFile,"%8d",cellPoints[7]);
-          fprintf(FDNEUTFile,"%8d",cellPoints[6]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[0]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[1]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[3]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[2]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[4]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[5]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[7]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[6]);
           break;
         case VTK_QUADRATIC_HEXAHEDRON:
           if (numberOfNodesInElement != 27)
             {
             vtkErrorMacro(<< "Only 27-noded hexahedra are supported in FDNEUT.");
             }
-          fprintf(FDNEUTFile,"%8d",cellPoints[0]);
-          fprintf(FDNEUTFile,"%8d",cellPoints[8]);
-          fprintf(FDNEUTFile,"%8d",cellPoints[1]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[0]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[8]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[1]);
 
-          fprintf(FDNEUTFile,"%8d",cellPoints[11]);
-          fprintf(FDNEUTFile,"%8d",cellPoints[24]);
-          fprintf(FDNEUTFile,"%8d",cellPoints[9]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[11]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[24]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[9]);
 
-          fprintf(FDNEUTFile,"%8d",cellPoints[3]);
-          fprintf(FDNEUTFile,"%8d",cellPoints[10]);
-          fprintf(FDNEUTFile,"%8d",cellPoints[2]);
-
-          fprintf(FDNEUTFile,"\n");
-
-          fprintf(FDNEUTFile,"%8d",cellPoints[16]);
-          fprintf(FDNEUTFile,"%8d",cellPoints[20]);
-          fprintf(FDNEUTFile,"%8d",cellPoints[17]);
-
-          fprintf(FDNEUTFile,"%8d",cellPoints[23]);
-          fprintf(FDNEUTFile,"%8d",cellPoints[26]);
-          fprintf(FDNEUTFile,"%8d",cellPoints[21]);
-
-          fprintf(FDNEUTFile,"%8d",cellPoints[19]);
-          fprintf(FDNEUTFile,"%8d",cellPoints[22]);
-          fprintf(FDNEUTFile,"%8d",cellPoints[18]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[3]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[10]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[2]);
 
           fprintf(FDNEUTFile,"\n");
 
-          fprintf(FDNEUTFile,"%8d",cellPoints[4]);
-          fprintf(FDNEUTFile,"%8d",cellPoints[12]);
-          fprintf(FDNEUTFile,"%8d",cellPoints[5]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[16]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[20]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[17]);
 
-          fprintf(FDNEUTFile,"%8d",cellPoints[15]);
-          fprintf(FDNEUTFile,"%8d",cellPoints[25]);
-          fprintf(FDNEUTFile,"%8d",cellPoints[13]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[23]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[26]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[21]);
 
-          fprintf(FDNEUTFile,"%8d",cellPoints[7]);
-          fprintf(FDNEUTFile,"%8d",cellPoints[14]);
-          fprintf(FDNEUTFile,"%8d",cellPoints[6]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[19]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[22]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[18]);
+
+          fprintf(FDNEUTFile,"\n");
+
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[4]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[12]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[5]);
+
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[15]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[25]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[13]);
+
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[7]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[14]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[6]);
 
           break;
         case VTK_TETRA:
           for (i=0; i<numberOfNodesInElement; i++)
             {
-            fprintf(FDNEUTFile,"%8d",cellPoints[i]);
+            fprintf(FDNEUTFile,"%8d",(int)cellPoints[i]);
             }
           break;
         case VTK_QUADRATIC_TETRA:
-          fprintf(FDNEUTFile,"%8d",cellPoints[0]);
-          fprintf(FDNEUTFile,"%8d",cellPoints[4]);
-          fprintf(FDNEUTFile,"%8d",cellPoints[1]);
-          fprintf(FDNEUTFile,"%8d",cellPoints[6]);
-          fprintf(FDNEUTFile,"%8d",cellPoints[5]);
-          fprintf(FDNEUTFile,"%8d",cellPoints[2]);
-          fprintf(FDNEUTFile,"%8d",cellPoints[7]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[0]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[4]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[1]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[6]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[5]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[2]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[7]);
           fprintf(FDNEUTFile,"\n");
-          fprintf(FDNEUTFile,"%8d",cellPoints[8]);
-          fprintf(FDNEUTFile,"%8d",cellPoints[9]);
-          fprintf(FDNEUTFile,"%8d",cellPoints[3]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[8]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[9]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[3]);
           break;
         case WEDGE:
           for (i=0; i<numberOfNodesInElement; i++)
             {
-            fprintf(FDNEUTFile,"%8d",cellPoints[i]);
+            fprintf(FDNEUTFile,"%8d",(int)cellPoints[i]);
             }
           break;
         case VTK_QUADRATIC_WEDGE:
           if (numberOfNodesInElement==18)
             {
-            fprintf(FDNEUTFile,"%8d",cellPoints[0]);
-            fprintf(FDNEUTFile,"%8d",cellPoints[6]);
-            fprintf(FDNEUTFile,"%8d",cellPoints[1]);
+            fprintf(FDNEUTFile,"%8d",(int)cellPoints[0]);
+            fprintf(FDNEUTFile,"%8d",(int)cellPoints[6]);
+            fprintf(FDNEUTFile,"%8d",(int)cellPoints[1]);
 
-            fprintf(FDNEUTFile,"%8d",cellPoints[8]);
-            fprintf(FDNEUTFile,"%8d",cellPoints[7]);
-            fprintf(FDNEUTFile,"%8d",cellPoints[2]);
+            fprintf(FDNEUTFile,"%8d",(int)cellPoints[8]);
+            fprintf(FDNEUTFile,"%8d",(int)cellPoints[7]);
+            fprintf(FDNEUTFile,"%8d",(int)cellPoints[2]);
 
-            fprintf(FDNEUTFile,"%8d",cellPoints[12]);
-            fprintf(FDNEUTFile,"%8d",cellPoints[15]);
-            fprintf(FDNEUTFile,"%8d",cellPoints[13]);
+            fprintf(FDNEUTFile,"%8d",(int)cellPoints[12]);
+            fprintf(FDNEUTFile,"%8d",(int)cellPoints[15]);
+            fprintf(FDNEUTFile,"%8d",(int)cellPoints[13]);
 
             fprintf(FDNEUTFile,"\n");
 
-            fprintf(FDNEUTFile,"%8d",cellPoints[17]);
-            fprintf(FDNEUTFile,"%8d",cellPoints[16]);
-            fprintf(FDNEUTFile,"%8d",cellPoints[14]);
+            fprintf(FDNEUTFile,"%8d",(int)cellPoints[17]);
+            fprintf(FDNEUTFile,"%8d",(int)cellPoints[16]);
+            fprintf(FDNEUTFile,"%8d",(int)cellPoints[14]);
 
-            fprintf(FDNEUTFile,"%8d",cellPoints[3]);
-            fprintf(FDNEUTFile,"%8d",cellPoints[9]);
-            fprintf(FDNEUTFile,"%8d",cellPoints[4]);
+            fprintf(FDNEUTFile,"%8d",(int)cellPoints[3]);
+            fprintf(FDNEUTFile,"%8d",(int)cellPoints[9]);
+            fprintf(FDNEUTFile,"%8d",(int)cellPoints[4]);
 
-            fprintf(FDNEUTFile,"%8d",cellPoints[11]);
-            fprintf(FDNEUTFile,"%8d",cellPoints[10]);
-            fprintf(FDNEUTFile,"%8d",cellPoints[5]);
+            fprintf(FDNEUTFile,"%8d",(int)cellPoints[11]);
+            fprintf(FDNEUTFile,"%8d",(int)cellPoints[10]);
+            fprintf(FDNEUTFile,"%8d",(int)cellPoints[5]);
             }
           else if (numberOfNodesInElement==15)
             {
-            fprintf(FDNEUTFile,"%8d",cellPoints[0]);
-            fprintf(FDNEUTFile,"%8d",cellPoints[6]);
-            fprintf(FDNEUTFile,"%8d",cellPoints[1]);
+            fprintf(FDNEUTFile,"%8d",(int)cellPoints[0]);
+            fprintf(FDNEUTFile,"%8d",(int)cellPoints[6]);
+            fprintf(FDNEUTFile,"%8d",(int)cellPoints[1]);
 
-            fprintf(FDNEUTFile,"%8d",cellPoints[8]);
-            fprintf(FDNEUTFile,"%8d",cellPoints[7]);
-            fprintf(FDNEUTFile,"%8d",cellPoints[2]);
+            fprintf(FDNEUTFile,"%8d",(int)cellPoints[8]);
+            fprintf(FDNEUTFile,"%8d",(int)cellPoints[7]);
+            fprintf(FDNEUTFile,"%8d",(int)cellPoints[2]);
 
-            fprintf(FDNEUTFile,"%8d",cellPoints[12]);
-            fprintf(FDNEUTFile,"%8d",cellPoints[13]);
-            fprintf(FDNEUTFile,"%8d",cellPoints[14]);
+            fprintf(FDNEUTFile,"%8d",(int)cellPoints[12]);
+            fprintf(FDNEUTFile,"%8d",(int)cellPoints[13]);
+            fprintf(FDNEUTFile,"%8d",(int)cellPoints[14]);
 
             fprintf(FDNEUTFile,"\n");
 
-            fprintf(FDNEUTFile,"%8d",cellPoints[3]);
-            fprintf(FDNEUTFile,"%8d",cellPoints[9]);
-            fprintf(FDNEUTFile,"%8d",cellPoints[4]);
+            fprintf(FDNEUTFile,"%8d",(int)cellPoints[3]);
+            fprintf(FDNEUTFile,"%8d",(int)cellPoints[9]);
+            fprintf(FDNEUTFile,"%8d",(int)cellPoints[4]);
 
-            fprintf(FDNEUTFile,"%8d",cellPoints[11]);
-            fprintf(FDNEUTFile,"%8d",cellPoints[10]);
-            fprintf(FDNEUTFile,"%8d",cellPoints[5]);
+            fprintf(FDNEUTFile,"%8d",(int)cellPoints[11]);
+            fprintf(FDNEUTFile,"%8d",(int)cellPoints[10]);
+            fprintf(FDNEUTFile,"%8d",(int)cellPoints[5]);
             }
           break;
         }

@@ -197,7 +197,7 @@ int vtkvmtkInternalTetrahedraExtractor::RequestData(
         }
       }
     }
-
+  
   for (i=0; i<input->GetNumberOfCells(); i++)
     {
     if (keepCell->GetValue(i))
@@ -207,14 +207,22 @@ int vtkvmtkInternalTetrahedraExtractor::RequestData(
       }
     }
 
+  int* newCellTypesInt = new int[newCellTypes->GetNumberOfIds()];
+  for (i=0; i<newCellTypes->GetNumberOfIds(); i++)
+    {
+    newCellTypesInt[i] = newCellTypes->GetId(i);
+    }
+
   output->SetPoints(input->GetPoints());
   output->GetPointData()->PassData(input->GetPointData());
-  output->SetCells(newCellTypes->GetPointer(0),newTetras);
+  output->SetCells(newCellTypesInt,newTetras);
 
   // Destroy
   newTetras->Delete();
   newCellTypes->Delete();
   keepCell->Delete();
+
+  delete[] newCellTypesInt;
 
   return 1;
 }

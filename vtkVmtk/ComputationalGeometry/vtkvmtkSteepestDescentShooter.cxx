@@ -76,7 +76,7 @@ vtkvmtkSteepestDescentShooter::~vtkvmtkSteepestDescentShooter()
 void vtkvmtkSteepestDescentShooter::FindNearestPolyLinePoint(double* currentPoint, double* lineClosestPoint, int &lineCellId, int &lineCellSubId, double &linePCoord)
 {
   vtkIdType i;
-  vtkIdType subId;
+  int subId;
   double closestPoint[3];
   double parCoords[3];
   double dist2, minDist2;
@@ -119,7 +119,7 @@ void vtkvmtkSteepestDescentShooter::Backtrace(vtkPolyData* input, vtkIdType seed
   double steepestDescentS;
   double previousPoint[3], lineClosestPoint[3];
   double vector[3];
-  vtkIdType lineCellId, lineCellSubId;
+  int lineCellId, lineCellSubId;
   double linePCoord;
 
   done = false;

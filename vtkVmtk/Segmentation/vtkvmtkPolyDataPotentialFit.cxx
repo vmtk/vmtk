@@ -105,7 +105,7 @@ vtkCxxSetObjectMacro(vtkvmtkPolyDataPotentialFit,PotentialImage,vtkImageData);
 
 void vtkvmtkPolyDataPotentialFit::EvaluateForce(double point[3], double force[3], bool normalize)
 {
-  vtkIdType ijk[3];
+  int ijk[3];
   double pcoords[3];
   double weights[8];
   int inBounds;
@@ -162,7 +162,7 @@ void vtkvmtkPolyDataPotentialFit::EvaluateForce(double point[3], double force[3]
 
 double vtkvmtkPolyDataPotentialFit::EvaluatePotential(double point[3])
 {
-  vtkIdType ijk[3];
+  int ijk[3];
   double pcoords[3];
   double weights[8];
   int inBounds;

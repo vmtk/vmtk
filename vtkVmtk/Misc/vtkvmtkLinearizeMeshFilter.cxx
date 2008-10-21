@@ -200,7 +200,16 @@ int vtkvmtkLinearizeMeshFilter::RequestData(
   output->GetCellData()->Squeeze();
 
   output->SetPoints(outputPoints);
-  output->SetCells(outputCellTypes->GetPointer(0),remappedOutputCellArray);
+
+  int* outputCellTypesInt = new int[outputCellTypes->GetNumberOfIds()];
+  for (i=0; i<outputCellTypes->GetNumberOfIds(); i++)
+    {
+    outputCellTypesInt[i] = outputCellTypes->GetId(i);
+    }
+
+  output->SetCells(outputCellTypesInt,remappedOutputCellArray);
+
+  delete[] outputCellTypesInt;
 
   outputPoints->Delete();
   outputCellArray->Delete();

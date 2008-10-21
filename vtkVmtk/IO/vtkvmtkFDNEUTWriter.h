@@ -57,7 +57,7 @@ protected:
 
   void WriteData();
 
-  static void ZeroToOneOffset(int npts, int* pts)
+  static void ZeroToOneOffset(vtkIdType npts, vtkIdType* pts)
   { for (int i=0; i<npts; i++) ++pts[i]; }
 
 private:

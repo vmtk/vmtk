@@ -58,11 +58,12 @@ int vtkvmtkPolyDataToUnstructuredGridFilter::RequestData(
   output->GetCellData()->PassData(input->GetCellData());
   
   vtkCellArray* cellArray = vtkCellArray::New();
-  vtkIdList* cellTypes = vtkIdList::New();
 
   int numberOfCells = input->GetNumberOfCells();
 
   input->BuildCells();
+
+  int* cellTypes = new int[numberOfCells];
 
   vtkIdType npts, *pts;
   int cellType;
@@ -72,13 +73,13 @@ int vtkvmtkPolyDataToUnstructuredGridFilter::RequestData(
     cellType = input->GetCellType(i);
     
     cellArray->InsertNextCell(npts,pts);
-    cellTypes->InsertNextId(cellType);
+    cellTypes[i] = cellType;
     }
 
-  output->SetCells(cellTypes->GetPointer(0),cellArray);
+  output->SetCells(cellTypes,cellArray);
 
   cellArray->Delete();
-  cellTypes->Delete();
+  delete[] cellTypes;
 
   return 1;
 }

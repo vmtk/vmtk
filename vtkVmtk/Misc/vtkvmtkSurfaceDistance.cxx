@@ -84,7 +84,8 @@ int vtkvmtkSurfaceDistance::RequestData(
 
   vtkIdType i, j;
   vtkIdType numberOfPoints, numberOfCellPoints;
-  vtkIdType cellId, subId, pointId;
+  vtkIdType cellId, pointId;
+  int subId;
   double point[3], closestPoint[3];
   double distance2, distance, signedDistance;
   double pcoords[3];

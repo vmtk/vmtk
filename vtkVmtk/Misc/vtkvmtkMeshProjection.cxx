@@ -63,7 +63,8 @@ int vtkvmtkMeshProjection::RequestData(
     outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
   vtkIdType i;
-  vtkIdType cellId, subId;
+  vtkIdType cellId;
+  int subId;
   double point[3], closestPoint[3];
   double pcoords[3];
   double distance2;

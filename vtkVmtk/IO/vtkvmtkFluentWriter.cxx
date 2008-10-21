@@ -240,14 +240,14 @@ void vtkvmtkFluentWriter::WriteData()
       input->GetCellNeighbors(triangleCellId,cellPointIds,neighborCellIds);
       vtkIdType tetraCellId = neighborCellIds->GetId(0);
       this->ConvertFaceToLeftHanded(input,tetraCellId,id0,id1,id2);
-      sprintf(str," 3 %x %x %x %x 0",id0+1,id1+1,id2+1,tetraCellId+1);
+      sprintf(str," 3 %x %x %x %x 0",(int)id0+1,(int)id1+1,(int)id2+1,(int)tetraCellId+1);
       out << str << endl;
       }
     out << "))" << endl << endl;
     faceOffset += numberOfBoundaryTriangles;
     }
 
-  sprintf(str,"(13 (%x %x %x 2 0)(",entityId,faceOffset,faceOffset+numberOfInteriorFaces-1);
+  sprintf(str,"(13 (%x %x %x 2 0)(",(int)entityId,faceOffset,faceOffset+numberOfInteriorFaces-1);
   out << str << endl;
 
 //TODO: loop over tets and write interior faces.
@@ -278,7 +278,7 @@ void vtkvmtkFluentWriter::WriteData()
         continue;
         }
       this->ConvertFaceToLeftHanded(input,tetraCellId,id0,id1,id2);
-      sprintf(str," 3 %x %x %x %x %x",id0+1,id1+1,id2+1,tetraCellIdMap->GetId(tetraCellId)+1,tetraCellIdMap->GetId(neighborCellIds->GetId(0))+1);
+      sprintf(str," 3 %x %x %x %x %x",(int)id0+1,(int)id1+1,(int)id2+1,(int)tetraCellIdMap->GetId(tetraCellId)+1,(int)tetraCellIdMap->GetId(neighborCellIds->GetId(0))+1);
       out << str << endl;
       }
     }

@@ -95,7 +95,7 @@ void vtkvmtkNonManifoldFastMarching::InitPropagation(vtkPolyData* input)
   vtkIdList* neighborCells;
   vtkIdList* neighborIds;
   vtkIdList* boundaryPointIds;
-  vtkIdType subId;
+  int subId;
   double pcoords[3], *weights;
   double closestPoint[3];
   double distance, distance2, minDistance;

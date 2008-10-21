@@ -60,7 +60,7 @@ void vtkvmtkImageBoxPainterExecute(vtkImageData* input,
   
   int size = dims[0]*dims[1]*dims[2];
 
-  vtkIdType ijk[3];
+  int ijk[3];
   vtkIdType id;
 
   for (int i=0; i<size; i++)

@@ -342,7 +342,16 @@ int vtkvmtkBoundaryLayerGenerator::RequestData(
     }
 
   output->SetPoints(outputPoints);
-  output->SetCells(boundaryLayerCellTypes->GetPointer(0),boundaryLayerCellArray);
+
+  int* boundaryLayerCellTypesInt = new int[boundaryLayerCellTypes->GetNumberOfIds()];
+  for (i=0; i<boundaryLayerCellTypes->GetNumberOfIds(); i++)
+    {
+    boundaryLayerCellTypesInt[i] = boundaryLayerCellTypes->GetId(i);
+    }
+
+  output->SetCells(boundaryLayerCellTypesInt,boundaryLayerCellArray);
+
+  delete[] boundaryLayerCellTypesInt;
 
   outputPoints->Delete();
   warpedPoints->Delete();

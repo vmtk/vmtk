@@ -142,7 +142,7 @@ int vtkvmtkFDNEUTReader::RequestData(
 
     int type = -1;
     int pointBuffer;
-    int numberOfCellPoints = 0;
+    vtkIdType numberOfCellPoints = 0;
 #if 0
     vtkUnsignedCharArray* entityArray = NULL;
     entityArray = vtkUnsignedCharArray::New();
@@ -449,7 +449,13 @@ int vtkvmtkFDNEUTReader::RequestData(
         {
         typesArray->InsertNextValue(type);
         this->OneToZeroOffset(numberOfCellPoints,cellPoints);
-        gridCellArray->InsertNextCell(numberOfCellPoints,cellPoints);
+        vtkIdType* cellPointsIdType = new vtkIdType[numberOfCellPoints];
+        for (int i=0; i<numberOfCellPoints; i++)
+          {
+          cellPointsIdType[i] = cellPoints[i];
+          }
+        gridCellArray->InsertNextCell(numberOfCellPoints,cellPointsIdType);
+        delete[] cellPointsIdType;
         singleEntityArray->InsertNextValue(entityCounter);
         delete[] cellPoints;
         }
