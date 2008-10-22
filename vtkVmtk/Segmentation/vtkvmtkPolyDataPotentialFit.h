@@ -108,12 +108,12 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkPolyDataPotentialFit : public vtkPolyD
 
   static double ComputeMinSpacing(double spacing[3]);
 
-  static bool IsInExtent(vtkIdType extent[6], vtkIdType ijk[3], vtkIdType border)
+  static bool IsInExtent(vtkIdType extent[6], int ijk[3], vtkIdType border)
     {
     return (ijk[0]>=extent[0]+border && ijk[0]<=extent[1]-border) && (ijk[1]>=extent[2]+border && ijk[1]<=extent[3]-border) && (ijk[2]>=extent[4]+border && ijk[2]<=extent[5]-border) ? true : false;
     }
 
-  static bool IsCellInExtent(vtkIdType extent[6], vtkIdType ijk[3], vtkIdType border)
+  static bool IsCellInExtent(int extent[6], int ijk[3], vtkIdType border)
     {
     return (ijk[0]>=extent[0]+border && ijk[0]<extent[1]-border) && (ijk[1]>=extent[2]+border && ijk[1]<extent[3]-border) && (ijk[2]>=extent[4]+border && ijk[2]<extent[5]-border) ? true : false;
     }
