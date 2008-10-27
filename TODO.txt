@@ -4,4 +4,7 @@
 - write class with Voronoi saliency measurements (not using centerlines, like sphere ratios etc)
 - write selective smoothing filter
 
-- IMPORTANT: use concrete array types (vtkIntArray, vtkDoubleArray) and call DeepCopy when fetching the array from PointData or CellData: DeepCopy handles eventual type casting.
+- use concrete array types (vtkIntArray, vtkDoubleArray) and call DeepCopy when fetching the array from PointData or CellData: DeepCopy handles eventual type casting.
+
+- turn vmtkenv.py into vmtkenv.py.in, configurable by CMake. 
+

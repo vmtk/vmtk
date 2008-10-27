@@ -279,7 +279,7 @@ void vtkvmtkXdaWriter::WriteData()
       vtkIdType id = typeCellIds->GetValue(j);
       vtkIdList* cellPoints = vtkIdList::New();
       input->GetCellPoints(id,cellPoints);
-
+      //TODO: get individual connectivity, reversed if needed by positive Jacobian in libMesh
       int numberOfCellPoints = libmeshConnectivity->GetNumberOfIds();
       for (int k=0; k<numberOfCellPoints; k++)
         {
@@ -467,12 +467,12 @@ void vtkvmtkXdaWriter::GetLibmeshConnectivity(int cellType, vtkIdList* libmeshCo
       libmeshConnectivity->SetId(6,8);
       libmeshConnectivity->SetId(7,7);
       libmeshConnectivity->SetId(8,6);
-      libmeshConnectivity->SetId(9,14);
-      libmeshConnectivity->SetId(10,13);
-      libmeshConnectivity->SetId(11,12);
-      libmeshConnectivity->SetId(12,9);
-      libmeshConnectivity->SetId(13,11);
-      libmeshConnectivity->SetId(14,10);
+      libmeshConnectivity->SetId(9,12);
+      libmeshConnectivity->SetId(10,14);
+      libmeshConnectivity->SetId(11,13);
+      libmeshConnectivity->SetId(12,11);
+      libmeshConnectivity->SetId(13,10);
+      libmeshConnectivity->SetId(14,9);
       break;
 #if VTK_MAJOR_VERSION > 5 || (VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION > 0)
     case VTK_BIQUADRATIC_QUADRATIC_WEDGE:
@@ -486,12 +486,12 @@ void vtkvmtkXdaWriter::GetLibmeshConnectivity(int cellType, vtkIdList* libmeshCo
       libmeshConnectivity->SetId(6,8);
       libmeshConnectivity->SetId(7,7);
       libmeshConnectivity->SetId(8,6);
-      libmeshConnectivity->SetId(9,14);
-      libmeshConnectivity->SetId(10,13);
-      libmeshConnectivity->SetId(11,12);
-      libmeshConnectivity->SetId(12,9);
-      libmeshConnectivity->SetId(13,11);
-      libmeshConnectivity->SetId(14,10);
+      libmeshConnectivity->SetId(9,12);
+      libmeshConnectivity->SetId(10,14);
+      libmeshConnectivity->SetId(11,13);
+      libmeshConnectivity->SetId(12,11);
+      libmeshConnectivity->SetId(13,10);
+      libmeshConnectivity->SetId(14,9);
       libmeshConnectivity->SetId(15,17);
       libmeshConnectivity->SetId(16,16);
       libmeshConnectivity->SetId(17,15);
