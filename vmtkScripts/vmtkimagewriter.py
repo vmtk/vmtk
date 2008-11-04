@@ -150,15 +150,17 @@ class vmtkImageWriter(pypes.pypeScript):
         f=open(self.OutputFileName, 'w')
         line = "X Y Z"
         arrayNames = []
+        if self.Image.GetPointData().GetScalars().GetName() == None:
+            self.Image.GetPointData().GetScalars().SetName('__Scalars')
         for i in range(self.Image.GetPointData().GetNumberOfArrays()):
             array = self.Image.GetPointData().GetArray(i)
             arrayName = array.GetName()
             if arrayName == None:
                 continue
-            if (arrayName[-1]=='_'):
+            if arrayName[-1]=='_':
                 continue
             arrayNames.append(arrayName)
-            if (array.GetNumberOfComponents() == 1):
+            if array.GetNumberOfComponents() == 1:
                 line = line + ' ' + arrayName
             else:
                 for j in range(array.GetNumberOfComponents()):

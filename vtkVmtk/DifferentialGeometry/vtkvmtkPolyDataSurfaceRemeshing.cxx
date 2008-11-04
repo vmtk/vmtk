@@ -1436,7 +1436,8 @@ int vtkvmtkPolyDataSurfaceRemeshing::TestAspectRatioCollapseEdge(vtkIdType cellI
     pt1 = tri[1];
     pt2 = tri[2];
     }
-  else if (side3Squared < side1Squared && side3Squared < side1Squared)
+//  else if (side3Squared < side1Squared && side3Squared < side1Squared)
+  else 
     {
     pt1 = tri[2];
     pt2 = tri[0];
