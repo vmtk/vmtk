@@ -31,14 +31,14 @@ class vmtkSurfaceCenterlineProjection(pypes.pypeScript):
         self.Surface = None
         self.Centerlines = None
         self.UseRadiusInformation = 0
-        self.CenterlineRadiusArrayName = ''
+        self.RadiusArrayName = ''
         
         self.SetScriptName('vmtksurfacecenterlineprojection')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','','vmtksurfacereader'],
             ['Centerlines','centerlines','vtkPolyData',1,'','','vmtksurfacereader'],
             ['UseRadiusInformation','useradius','bool',1],
-            ['CenterlineRadiusArrayName','radiusarray','str',1]
+            ['RadiusArrayName','radiusarray','str',1]
             ])
         self.SetOutputMembers([
             ['Surface','o','vtkPolyData',1,'','','vmtksurfacewriter']
@@ -56,7 +56,7 @@ class vmtkSurfaceCenterlineProjection(pypes.pypeScript):
         projectionFilter.SetInput(self.Surface)
         projectionFilter.SetCenterlines(self.Centerlines)
         projectionFilter.SetUseRadiusInformation(self.UseRadiusInformation)
-        projectionFilter.SetCenterlineRadiusArrayName(self.CenterlineRadiusArrayName)
+        projectionFilter.SetRadiusArrayName(self.RadiusArrayName)
         projectionFilter.Update()
 
         self.Surface = projectionFilter.GetOutput()
