@@ -58,7 +58,6 @@ AnisotropicDiffusionVesselEnhancementImageFilter<TInputImage, TOutputImage, TVes
   //instantiate the vesselness filter
   m_MultiScaleVesselnessFilter  = MultiScaleVesselnessFilterType::New();
   m_MultiScaleVesselnessFilter->ComputeHessianOutputOn();
-  m_MultiScaleVesselnessFilter->GetHessianToMeasureFilter()->SetScaleVesselnessMeasure(false);
 
   // Vesselness guided vesselness function algorithm parameter
   m_WStrength = 25.0;
