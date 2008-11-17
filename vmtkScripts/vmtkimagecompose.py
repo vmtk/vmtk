@@ -37,7 +37,7 @@ class vmtkImageCompose(pypes.pypeScript):
         self.SetInputMembers([
             ['Image','i','vtkImageData',1,'','the input image','vmtkimagereader'],
             ['Image2','i2','vtkImageData',1,'','the second input image','vmtkimagereader'],
-            ['Operation','operation','str',1,'["min","max","multiply"]','the operation used to compose images'],
+            ['Operation','operation','str',1,'["min","max","multiply","subtract"]','the operation used to compose images'],
             ['NegateImage2','negatei2','bool',1,'','negate the second input before composing']
             ])
         self.SetOutputMembers([
@@ -69,6 +69,8 @@ class vmtkImageCompose(pypes.pypeScript):
             composeFilter.SetOperationToMax()
         elif self.Operation == 'multiply':
             composeFilter.SetOperationToMultiply()
+        elif self.Operation == 'subtract':
+            composeFilter.SetOperationToSubtract()
         else:
             self.PrintError('Error: Unsupported operation')
         composeFilter.Update()

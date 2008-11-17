@@ -71,7 +71,8 @@ public:
   typedef TOutputImage                                   OutputImageType;
 
   typedef THessianToMeasureFilter                        HessianToMeasureFilterType;
-  
+  typedef typename HessianToMeasureFilterType::InputImageType    HessianImageType;
+
   typedef typename TInputImage::PixelType                InputPixelType;
   typedef typename TOutputImage::PixelType               OutputPixelType;
 
@@ -79,7 +80,7 @@ public:
   itkStaticConstMacro(ImageDimension, unsigned int, ::itk::GetImageDimension<InputImageType>::ImageDimension);
  
   /** Hessian computation filter. */
-  typedef HessianRecursiveGaussianImageFilter< InputImageType, typename HessianToMeasureFilterType::InputImageType > HessianFilterType;
+  typedef HessianRecursiveGaussianImageFilter< InputImageType, HessianImageType> HessianFilterType;
  
   /** Update image buffer that holds the best objectness response */ 
   typedef Image< double, itkGetStaticConstMacro(ImageDimension) > UpdateBufferType;
@@ -124,6 +125,18 @@ public:
   void SetScalesOutput(OutputImageType *scalesImage)
   { this->SetNthOutput(1, scalesImage); };
 
+  /** Get the image containing the Hessian computed at the best response scale*/
+  HessianImageType* GetHessianOutput()
+  { return static_cast<const HessianImageType*>(this->ProcessObject::GetOutput(2)); };
+
+  /** Set the image containing the Hessian computed at the best response scale*/
+  void SetHessianOutput(HessianImageType *hessianImage)
+  { this->SetNthOutput(2, hessianImage); };
+
+  itkSetMacro(ComputeHessianOutput,bool);
+  itkGetMacro(ComputeHessianOutput,bool);
+  itkBooleanMacro(ComputeHessianOutput);
+
 protected:
   MultiScaleHessianBasedMeasureImageFilter();
   ~MultiScaleHessianBasedMeasureImageFilter() {};
@@ -143,16 +156,18 @@ private:
   MultiScaleHessianBasedMeasureImageFilter(const Self&); 
   void operator=(const Self&); //purposely not implemented
 
-  double                                            m_SigmaMin;
-  double                                            m_SigmaMax;
+  double m_SigmaMin;
+  double m_SigmaMax;
 
-  int                                               m_NumberOfSigmaSteps;
-  SigmaStepMethodType                               m_SigmaStepMethod;
+  int m_NumberOfSigmaSteps;
+  SigmaStepMethodType m_SigmaStepMethod;
 
-  typename HessianToMeasureFilterType::Pointer      m_HessianToMeasureFilter;
-  typename HessianFilterType::Pointer               m_HessianFilter;
+  typename HessianToMeasureFilterType::Pointer m_HessianToMeasureFilter;
+  typename HessianFilterType::Pointer m_HessianFilter;
 
-  typename UpdateBufferType::Pointer                m_UpdateBuffer;
+  typename UpdateBufferType::Pointer m_UpdateBuffer;
+
+  bool m_ComputeHessianOutput;
 };
 
 } // end namespace itk

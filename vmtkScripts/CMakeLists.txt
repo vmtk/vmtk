@@ -61,6 +61,7 @@ SET(SCRIPTS_SRCS
   vmtkmeshtosurface.py
   vmtkmeshviewer.py
   vmtkmeshwriter.py
+  vmtknetworkextraction.py
   vmtkpointsplitextractor.py
   vmtkpointtransform.py
   vmtkpotentialfit.py

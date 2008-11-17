@@ -41,15 +41,19 @@ MultiScaleHessianBasedMeasureImageFilter
   m_NumberOfSigmaSteps = 10;
   m_SigmaStepMethod = Self::LogarithmicSigmaSteps;
 
-  m_HessianFilter                = HessianFilterType::New();
-  m_HessianToMeasureFilter       = HessianToMeasureFilterType::New();
+  m_HessianFilter = HessianFilterType::New();
+  m_HessianToMeasureFilter = HessianToMeasureFilterType::New();
 
   //Instantiate Update buffer
-  m_UpdateBuffer                 = UpdateBufferType::New();
+  m_UpdateBuffer = UpdateBufferType::New();
 
-  typename TOutputImage::Pointer scalesImage = TOutputImage::New();
-  this->ProcessObject::SetNumberOfRequiredOutputs(2);
-  this->ProcessObject::SetNthOutput(1, scalesImage.GetPointer());
+  m_ComputeHessianOutput = false;
+
+  typename OutputImageType::Pointer scalesImage = OutputImageType::New();
+  typename HessianImageType::Pointer hessianImage = HessianImageType::New();
+  this->ProcessObject::SetNumberOfRequiredOutputs(3);
+  this->ProcessObject::SetNthOutput(1,scalesImage.GetPointer());
+  this->ProcessObject::SetNthOutput(2,hessianImage.GetPointer());
 }
 
 template <typename TInputImage, typename THessianToMeasureFilter, typename TOutputImage >
@@ -81,11 +85,17 @@ MultiScaleHessianBasedMeasureImageFilter
 ::GenerateData()
 {
   // Allocate the output
-  this->GetOutput(0)->SetBufferedRegion( this->GetOutput(0)->GetRequestedRegion() );
+  this->GetOutput(0)->SetBufferedRegion(this->GetOutput(0)->GetRequestedRegion());
   this->GetOutput(0)->Allocate();
 
-  this->GetOutput(1)->SetBufferedRegion( this->GetOutput(1)->GetRequestedRegion() );
+  this->GetOutput(1)->SetBufferedRegion(this->GetOutput(1)->GetRequestedRegion());
   this->GetOutput(1)->Allocate();
+
+  if (m_ComputeHessianOutput)
+    {
+    this->GetOutput(2)->SetBufferedRegion(this->GetOutput(2)->GetRequestedRegion());
+    this->GetOutput(2)->Allocate();
+    }
 
   // The values are all positive and it is never used for any comparisons. Thanks to Hauke Heibel. 
   this->GetOutput(1)->FillBuffer(0);
@@ -105,7 +115,7 @@ MultiScaleHessianBasedMeasureImageFilter
 
   while (sigma <= m_SigmaMax)
     {
-    std::cout << "Computing measure for scale with sigma= " 
+    std::cout << "Computing measure for scale with sigma = " 
               << sigma << std::endl;
 
     m_HessianFilter->SetSigma( sigma );
@@ -142,19 +152,28 @@ MultiScaleHessianBasedMeasureImageFilter
 <TInputImage,THessianToMeasureFilter,TOutputImage>
 ::UpdateMaximumResponse(double sigma)
 {
-
   ImageRegionIterator<UpdateBufferType> oit(m_UpdateBuffer,m_UpdateBuffer->GetLargestPossibleRegion());
-  ImageRegionIterator<TOutputImage> osit(this->GetOutput(1),this->GetOutput(1)->GetLargestPossibleRegion());
+  ImageRegionIterator<OutputImageType> osit(this->GetOutput(1),this->GetOutput(1)->GetLargestPossibleRegion());
+
+  typename HessianImageType::Pointer hessianImage = static_cast<const HessianImageType*>(this->ProcessObject::GetOutput(2));
+  ImageRegionIterator<HessianImageType> ohit(hessianImage,hessianImage->GetLargestPossibleRegion());
 
   oit.GoToBegin();
   osit.GoToBegin();
+  if (m_ComputeHessianOutput)
+    {
+    ohit.GoToBegin();
+    }
 
   typedef typename HessianToMeasureFilterType::OutputImageType HessianToMeasureOutputImageType;
 
   ImageRegionIterator<HessianToMeasureOutputImageType> it(m_HessianToMeasureFilter->GetOutput(),
     this->m_HessianToMeasureFilter->GetOutput()->GetLargestPossibleRegion());
+  ImageRegionIterator<HessianImageType> hit(m_HessianFilter->GetOutput(),
+    this->m_HessianFilter->GetOutput()->GetLargestPossibleRegion());
 
   it.GoToBegin();
+  hit.GoToBegin();
 
   while(!oit.IsAtEnd())
     {
@@ -162,10 +181,15 @@ MultiScaleHessianBasedMeasureImageFilter
       {
       oit.Value() = it.Value();
       osit.Value() = sigma;
+      if (m_ComputeHessianOutput)
+        {
+        ohit.Value() = hit.Value();
+        }
       }
     ++oit;
     ++osit;
     ++it;
+    ++hit;
     }
 }
 
@@ -211,6 +235,7 @@ MultiScaleHessianBasedMeasureImageFilter
   os << indent << "SigmaMax:  " << m_SigmaMax  << std::endl;
   os << indent << "NumberOfSigmaSteps:  " << m_NumberOfSigmaSteps  << std::endl;
   os << indent << "SigmaStepMethod:  " << m_SigmaStepMethod  << std::endl;
+  os << indent << "ComputeHessianOutput:  " << m_ComputeHessianOutput << std::endl;
 }
 
 

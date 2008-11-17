@@ -11,6 +11,7 @@ SET (VTK_VMTK_MISC_SRCS
   vtkvmtkMeshVelocityStatistics.cxx
   vtkvmtkMeshVorticity.cxx
   vtkvmtkMeshWallShearRate.cxx
+  vtkvmtkPolyDataNetworkExtraction.cxx
   vtkvmtkPolyDataKiteRemovalFilter.cxx
   vtkvmtkPolyDataSizingFunction.cxx
   vtkvmtkPolyDataToUnstructuredGridFilter.cxx

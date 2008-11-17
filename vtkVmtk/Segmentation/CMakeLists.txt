@@ -2,6 +2,7 @@ SET (VTK_VMTK_SEGMENTATION_SRCS
   vtkvmtkBoundedReciprocalImageFilter.cxx
   vtkvmtkDanielssonDistanceMapImageFilter.cxx
   vtkvmtkCollidingFrontsImageFilter.cxx
+#  vtkvmtkConstrainedLaplacianPolyDataFilter.cxx
   vtkvmtkCurvesLevelSetImageFilter.cxx
   vtkvmtkFastMarchingDirectionalFreezeImageFilter.cxx
   vtkvmtkFastMarchingUpwindGradientImageFilter.cxx
@@ -12,13 +13,14 @@ SET (VTK_VMTK_SEGMENTATION_SRCS
   vtkvmtkGradientMagnitudeRecursiveGaussianImageFilter.cxx
   vtkvmtkGradientMagnitudeRecursiveGaussian2DImageFilter.cxx
   vtkvmtkLaplacianSegmentationLevelSetImageFilter.cxx
+  vtkvmtkPolyDataPotentialFit.cxx
   vtkvmtkRecursiveGaussianImageFilter.cxx
   vtkvmtkRecursiveGaussian2DImageFilter.cxx
+  vtkvmtkSatoVesselnessMeasureImageFilter.cxx
   vtkvmtkSigmoidImageFilter.cxx
   vtkvmtkThresholdSegmentationLevelSetImageFilter.cxx
   vtkvmtkUpwindGradientMagnitudeImageFilter.cxx
-  vtkvmtkPolyDataPotentialFit.cxx
-#  vtkvmtkConstrainedLaplacianPolyDataFilter.cxx
+  vtkvmtkVesselEnhancingDiffusionImageFilter.cxx
   vtkvmtkVesselnessMeasureImageFilter.cxx
   )
 
