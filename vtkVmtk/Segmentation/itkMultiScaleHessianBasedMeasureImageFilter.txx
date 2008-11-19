@@ -47,7 +47,8 @@ MultiScaleHessianBasedMeasureImageFilter
   //Instantiate Update buffer
   m_UpdateBuffer = UpdateBufferType::New();
 
-  m_ComputeHessianOutput = false;
+  m_GenerateScalesOutput = false;
+  m_GenerateHessianOutput = false;
 
   typename OutputImageType::Pointer scalesImage = OutputImageType::New();
   typename HessianImageType::Pointer hessianImage = HessianImageType::New();
@@ -88,17 +89,18 @@ MultiScaleHessianBasedMeasureImageFilter
   this->GetOutput(0)->SetBufferedRegion(this->GetOutput(0)->GetRequestedRegion());
   this->GetOutput(0)->Allocate();
 
-  this->GetOutput(1)->SetBufferedRegion(this->GetOutput(1)->GetRequestedRegion());
-  this->GetOutput(1)->Allocate();
+  if (m_GenerateScalesOutput)
+    {
+    this->GetOutput(1)->SetBufferedRegion(this->GetOutput(1)->GetRequestedRegion());
+    this->GetOutput(1)->Allocate();
+    this->GetOutput(1)->FillBuffer(0);
+    }
 
-  if (m_ComputeHessianOutput)
+  if (m_GenerateHessianOutput)
     {
     this->GetOutput(2)->SetBufferedRegion(this->GetOutput(2)->GetRequestedRegion());
     this->GetOutput(2)->Allocate();
     }
-
-  // The values are all positive and it is never used for any comparisons. Thanks to Hauke Heibel. 
-  this->GetOutput(1)->FillBuffer(0);
 
   // Allocate the buffer
   AllocateUpdateBuffer();
@@ -153,14 +155,19 @@ MultiScaleHessianBasedMeasureImageFilter
 ::UpdateMaximumResponse(double sigma)
 {
   ImageRegionIterator<UpdateBufferType> oit(m_UpdateBuffer,m_UpdateBuffer->GetLargestPossibleRegion());
-  ImageRegionIterator<OutputImageType> osit(this->GetOutput(1),this->GetOutput(1)->GetLargestPossibleRegion());
+
+  typename OutputImageType::Pointer scalesImage = static_cast<const OutputImageType*>(this->ProcessObject::GetOutput(1));
+  ImageRegionIterator<OutputImageType> osit(scalesImage,scalesImage->GetLargestPossibleRegion());
 
   typename HessianImageType::Pointer hessianImage = static_cast<const HessianImageType*>(this->ProcessObject::GetOutput(2));
   ImageRegionIterator<HessianImageType> ohit(hessianImage,hessianImage->GetLargestPossibleRegion());
 
   oit.GoToBegin();
-  osit.GoToBegin();
-  if (m_ComputeHessianOutput)
+  if (m_GenerateScalesOutput)
+    {
+    osit.GoToBegin();
+    }
+  if (m_GenerateHessianOutput)
     {
     ohit.GoToBegin();
     }
@@ -180,16 +187,26 @@ MultiScaleHessianBasedMeasureImageFilter
     if( oit.Value() < it.Value() )
       {
       oit.Value() = it.Value();
-      osit.Value() = sigma;
-      if (m_ComputeHessianOutput)
+      if (m_GenerateScalesOutput)
+        {
+        osit.Value() = sigma;
+        }
+      if (m_GenerateHessianOutput)
         {
         ohit.Value() = hit.Value();
         }
       }
     ++oit;
-    ++osit;
     ++it;
-    ++hit;
+    if (m_GenerateScalesOutput)
+      {
+      ++osit;
+      }
+    if (m_GenerateHessianOutput)
+      {
+      ++ohit;
+      ++hit;
+      }
     }
 }
 
@@ -235,7 +252,8 @@ MultiScaleHessianBasedMeasureImageFilter
   os << indent << "SigmaMax:  " << m_SigmaMax  << std::endl;
   os << indent << "NumberOfSigmaSteps:  " << m_NumberOfSigmaSteps  << std::endl;
   os << indent << "SigmaStepMethod:  " << m_SigmaStepMethod  << std::endl;
-  os << indent << "ComputeHessianOutput:  " << m_ComputeHessianOutput << std::endl;
+  os << indent << "GenerateScalesOutput:  " << m_GenerateScalesOutput << std::endl;
+  os << indent << "GenerateHessianOutput:  " << m_GenerateHessianOutput << std::endl;
 }
 
 

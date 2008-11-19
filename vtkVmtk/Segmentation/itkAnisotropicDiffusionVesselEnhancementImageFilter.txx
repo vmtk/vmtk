@@ -44,7 +44,7 @@ AnisotropicDiffusionVesselEnhancementImageFilter<TInputImage, TOutputImage, TVes
  
   this->SetNumberOfIterations(1);
 
-  m_TimeStep = 10e-3;
+  m_TimeStep = 1e-2;
 
   //set the function
   typename AnisotropicDiffusionVesselEnhancementFunction<UpdateBufferType>::Pointer q
@@ -57,12 +57,12 @@ AnisotropicDiffusionVesselEnhancementImageFilter<TInputImage, TOutputImage, TVes
  
   //instantiate the vesselness filter
   m_MultiScaleVesselnessFilter  = MultiScaleVesselnessFilterType::New();
-  m_MultiScaleVesselnessFilter->ComputeHessianOutputOn();
+  m_MultiScaleVesselnessFilter->GenerateHessianOutputOn();
 
   // Vesselness guided vesselness function algorithm parameter
   m_WStrength = 25.0;
   m_Sensitivity = 5.0;
-  m_Epsilon = 10e-2;
+  m_Epsilon = 1e-1;
 
   m_NumberOfDiffusionSubIterations = 1;
 }
@@ -285,6 +285,8 @@ AnisotropicDiffusionVesselEnhancementImageFilter<TInputImage, TOutputImage, TVes
     
     Lambda1 = 1 + ( m_WStrength - 1 ) * vcl_pow ( vesselnessValue, iS ); 
     Lambda2 = Lambda3 = 1 + ( m_Epsilon - 1 ) * vcl_pow ( vesselnessValue, iS ); 
+//    Lambda1 = m_Epsilon + (1 - m_Epsilon) * vesselnessValue; 
+//    Lambda2 = Lambda3 = m_Epsilon; 
 
     eigenValueMatrix(0,0) = Lambda1;
     eigenValueMatrix(1,1) = Lambda2;

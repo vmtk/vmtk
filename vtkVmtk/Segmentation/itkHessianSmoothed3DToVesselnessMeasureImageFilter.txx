@@ -38,7 +38,7 @@ HessianSmoothed3DToVesselnessMeasureImageFilter< TPixel >
   m_Beta  = 0.5;
   m_Gamma = 5.0;
 
-  m_C = 10e-6;
+  m_C = 1e-5;
 
   m_SymmetricEigenValueFilter = EigenAnalysisFilterType::New();
   m_SymmetricEigenValueFilter->SetDimension( ImageDimension );

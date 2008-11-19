@@ -133,9 +133,13 @@ public:
   void SetHessianOutput(HessianImageType *hessianImage)
   { this->SetNthOutput(2, hessianImage); };
 
-  itkSetMacro(ComputeHessianOutput,bool);
-  itkGetMacro(ComputeHessianOutput,bool);
-  itkBooleanMacro(ComputeHessianOutput);
+  itkSetMacro(GenerateScalesOutput,bool);
+  itkGetMacro(GenerateScalesOutput,bool);
+  itkBooleanMacro(GenerateScalesOutput);
+
+  itkSetMacro(GenerateHessianOutput,bool);
+  itkGetMacro(GenerateHessianOutput,bool);
+  itkBooleanMacro(GenerateHessianOutput);
 
 protected:
   MultiScaleHessianBasedMeasureImageFilter();
@@ -167,7 +171,8 @@ private:
 
   typename UpdateBufferType::Pointer m_UpdateBuffer;
 
-  bool m_ComputeHessianOutput;
+  bool m_GenerateScalesOutput;
+  bool m_GenerateHessianOutput;
 };
 
 } // end namespace itk
