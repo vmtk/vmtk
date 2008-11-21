@@ -156,10 +156,10 @@ MultiScaleHessianBasedMeasureImageFilter
 {
   ImageRegionIterator<UpdateBufferType> oit(m_UpdateBuffer,m_UpdateBuffer->GetLargestPossibleRegion());
 
-  typename OutputImageType::Pointer scalesImage = static_cast<const OutputImageType*>(this->ProcessObject::GetOutput(1));
+  typename OutputImageType::Pointer scalesImage = static_cast<OutputImageType*>(this->ProcessObject::GetOutput(1));
   ImageRegionIterator<OutputImageType> osit(scalesImage,scalesImage->GetLargestPossibleRegion());
 
-  typename HessianImageType::Pointer hessianImage = static_cast<const HessianImageType*>(this->ProcessObject::GetOutput(2));
+  typename HessianImageType::Pointer hessianImage = static_cast<HessianImageType*>(this->ProcessObject::GetOutput(2));
   ImageRegionIterator<HessianImageType> ohit(hessianImage,hessianImage->GetLargestPossibleRegion());
 
   oit.GoToBegin();

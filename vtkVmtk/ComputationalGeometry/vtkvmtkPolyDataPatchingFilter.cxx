@@ -318,7 +318,6 @@ int vtkvmtkPolyDataPatchingFilter::RequestData(
 
     double longitudinalMappingRange[2];
 
-    longitudinalMappingArray->ComputeRange(0);
     longitudinalMappingArray->GetRange(longitudinalMappingRange,0);
 
     double longitudinalCylinderPatchBounds[2];

@@ -127,7 +127,7 @@ public:
 
   /** Get the image containing the Hessian computed at the best response scale*/
   HessianImageType* GetHessianOutput()
-  { return static_cast<const HessianImageType*>(this->ProcessObject::GetOutput(2)); };
+  { return static_cast<HessianImageType*>(this->ProcessObject::GetOutput(2)); };
 
   /** Set the image containing the Hessian computed at the best response scale*/
   void SetHessianOutput(HessianImageType *hessianImage)

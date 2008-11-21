@@ -92,7 +92,6 @@ class vmtkSurfaceViewer(pypes.pypeScript):
                 if (self.ScalarRange[1] > self.ScalarRange[0]):
                     mapper.SetScalarRange(self.ScalarRange)
                 elif array:
-                    array.ComputeRange(0)
                     mapper.SetScalarRange(array.GetRange(0))
                 if self.Grayscale:
                     lut = vtk.vtkLookupTable()

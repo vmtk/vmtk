@@ -78,7 +78,6 @@ class vmtkMeshViewer(pypes.pypeScript):
                 self.Mesh.GetPointData().SetActiveScalars(self.ArrayName)
             if (self.Mesh.GetPointData().GetScalars() != None):
                 array = self.Mesh.GetPointData().GetScalars()
-                array.ComputeRange(0)
                 if (self.ScalarRange[1] > self.ScalarRange[0]):
                     mapper.SetScalarRange(self.ScalarRange)
                 else:
