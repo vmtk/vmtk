@@ -40,6 +40,10 @@ class vmtkBranchGeometry(pypes.pypeScript):
         self.TorsionArrayName = 'Torsion'
         self.TortuosityArrayName = 'Tortuosity'
 
+        self.LineSmoothing = 0
+        self.NumberOfSmoothingIterations = 100
+        self.SmoothingFactor = 0.1
+
         self.SetScriptName('vmtkbranchgeometry')
         self.SetScriptDoc('compute geometric parameters for each branch of a tree. The script takes in input the centerlines already split into branches.')
         self.SetInputMembers([
@@ -51,6 +55,9 @@ class vmtkBranchGeometry(pypes.pypeScript):
       	    ['CurvatureArrayName','curvaturearray','str',1,'','name of the array where the average curvature of each branch has to be stored'],
       	    ['TorsionArrayName','torsionarray','str',1,'','name of the array where the average torsion of each branch has to be stored'],
       	    ['TortuosityArrayName','tortuosityarray','str',1,'','name of the array where the average tortuosity of each branch, defined as the length of a line divided by the distance of its endpoints, has to be stored'],
+      	    ['LineSmoothing','smoothing','bool',1,''],
+      	    ['NumberOfSmoothingIterations','iterations','int',1,'(0,)'],
+      	    ['SmoothingFactor','factor','float',1,'(0.0,)']
             ])
         self.SetOutputMembers([
             ['GeometryData','o','vtkPolyData',1,'','the output data set','vmtksurfacewriter'],
@@ -74,6 +81,10 @@ class vmtkBranchGeometry(pypes.pypeScript):
         centerlineBranchGeometry.SetCurvatureArrayName(self.CurvatureArrayName)
         centerlineBranchGeometry.SetTorsionArrayName(self.TorsionArrayName)
         centerlineBranchGeometry.SetTortuosityArrayName(self.TortuosityArrayName)
+        centerlineBranchGeometry.SetLineSmoothing(self.LineSmoothing)
+        centerlineBranchGeometry.SetNumberOfSmoothingIterations(self.NumberOfSmoothingIterations)
+        centerlineBranchGeometry.SetSmoothingFactor(self.SmoothingFactor)
+
         centerlineBranchGeometry.Update()
 
         self.GeometryData = centerlineBranchGeometry.GetOutput()
