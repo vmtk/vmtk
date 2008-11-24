@@ -238,6 +238,7 @@ protected:
     this->itkFeatureImporter = FeatureImageImportType::New();
     this->itkSpeedExporter = SpeedImageExportType::New();
     this->vtkSpeedImporter = vtkImageImport::New();
+    this->vtkSpeedImporter->SetScalarArrayName("Scalars_");
     ConnectPipelines(this->itkSpeedExporter, this->vtkSpeedImporter);
     ConnectPipelines(this->vtkFeatureExporter, this->itkFeatureImporter);
     (dynamic_cast<ImageFilterType*>(m_Filter.GetPointer()))->SetFeatureImage(this->itkFeatureImporter->GetOutput());

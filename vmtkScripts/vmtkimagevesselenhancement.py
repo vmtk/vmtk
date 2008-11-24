@@ -131,6 +131,9 @@ class vmtkImageVesselEnhancement(pypes.pypeScript):
         if self.Image == None:
             self.PrintError('Error: No input image.')
 
+        if self.SigmaMax < self.SigmaMin:
+            self.SigmaMax = self.SigmaMin
+
         if self.Method == 'frangi':
             self.ApplyFrangiVesselness()
         elif self.Method == 'sato':

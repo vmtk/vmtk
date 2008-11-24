@@ -33,6 +33,7 @@ __all__ = [
   'vmtkimageinitialization',
   'vmtkimagelinetracer',
   'vmtkimagemipviewer',
+  'vmtkimageobjectenhancement',
   'vmtkimagereader',
   'vmtkimagereslice',
   'vmtkimageseeder',

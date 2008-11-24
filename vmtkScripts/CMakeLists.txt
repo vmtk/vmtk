@@ -36,6 +36,7 @@ SET(SCRIPTS_SRCS
   vmtkimageinitialization.py
   vmtkimagelinetracer.py
   vmtkimagemipviewer.py
+  vmtkimageobjectenhancement.py
   vmtkimagereader.py
   vmtkimagereslice.py
   vmtkimageseeder.py

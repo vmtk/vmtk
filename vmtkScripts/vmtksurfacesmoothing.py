@@ -18,6 +18,7 @@ import vtk
 import sys
 
 import pypes
+import vmtkscripts
 
 vmtksurfacesmoothing = 'vmtkSurfaceSmoothing'
 
@@ -75,6 +76,12 @@ class vmtkSurfaceSmoothing(pypes.pypeScript):
             self.PrintError('Error: smoothing method not supported.')
 
         self.Surface = smoothingFilter.GetOutput()
+
+        normals = vmtkscripts.vmtkSurfaceNormals()
+        normals.Surface = self.Surface
+        normals.Execute()
+
+        self.Surface = normals.Surface
 
         if self.Surface.GetSource():
             self.Surface.GetSource().UnRegisterAllOutputs()
