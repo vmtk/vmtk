@@ -140,7 +140,9 @@ protected:
   {
     this->itkScalesExporter = ScalesImageExportType::New();
     this->vtkScalesImporter = vtkImageImport::New();
+#if VTK_MAJOR_VERSION > 5 || (VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION > 2)
     this->vtkScalesImporter->SetScalarArrayName("Scalars_");
+#endif
     ConnectPipelines(this->itkScalesExporter, this->vtkScalesImporter);
     ImageFilterType* imageFilter = this->GetImageFilterPointer();
     imageFilter->SetSigmaStepMethodToEquispaced();

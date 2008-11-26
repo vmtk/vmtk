@@ -189,7 +189,9 @@ public:
     this->vtkCast = vtkImageCast::New();
     this->vtkExporter = vtkImageExport::New();
     this->vtkImporter = vtkImageImport::New();
+#if VTK_MAJOR_VERSION > 5 || (VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION > 2)
     this->vtkImporter->SetScalarArrayName("Scalars_");
+#endif
     this->vtkExporter->SetInput ( this->vtkCast->GetOutput() );
     this->m_Process = NULL;
     this->m_ProgressCommand = MemberCommand::New();
