@@ -110,6 +110,7 @@ int vtkvmtkPolyDataCenterlineProjection::RequestData(
   for (int i=0; i<numberOfInputPoints; i++)
     {
     input->GetPoint(i,point);
+    tube->EvaluateFunction(point);
     vtkIdType cellId = tube->GetLastPolyBallCellId();
     vtkIdType subId = tube->GetLastPolyBallCellSubId();
     double pcoord = tube->GetLastPolyBallCellPCoord();
