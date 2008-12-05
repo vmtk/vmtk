@@ -54,16 +54,17 @@ public:
   double GetJacobian(vtkIdType i)
   { return this->Jacobians->GetValue(i); }
 
+  static void GetInterpolationFunctions(vtkCell* cell, double* pcoords, double* sf);
+  static void GetInterpolationDerivs(vtkCell* cell, double* pcoords, double* derivs);
+ 
+  static double ComputeJacobian(vtkCell* cell, double* pcoords);
+
 protected:
   vtkvmtkFEShapeFunctions();
   ~vtkvmtkFEShapeFunctions();
-
-  void GetInterpolationFunctions(vtkCell* cell, double* pcoords, double* sf);
-  void GetInterpolationDerivs(vtkCell* cell, double* pcoords, double* derivs);
-  
-  double ComputeJacobian(vtkCell* cell, double* pcoords);
-  void ComputeInverseJacobianMatrix2D(vtkCell* cell, double* pcoords, double inverseJacobianMatrix[2][3]);
-  void ComputeInverseJacobianMatrix3D(vtkCell* cell, double* pcoords, double inverseJacobianMatrix[3][3]);
+ 
+  static void ComputeInverseJacobianMatrix2D(vtkCell* cell, double* pcoords, double inverseJacobianMatrix[2][3]);
+  static void ComputeInverseJacobianMatrix3D(vtkCell* cell, double* pcoords, double inverseJacobianMatrix[3][3]);
 
   vtkDoubleArray* Phi;
   vtkDoubleArray* DPhi;

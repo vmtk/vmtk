@@ -136,13 +136,14 @@ void vtkvmtkFEShapeFunctions::ComputeInverseJacobianMatrix2D(vtkCell* cell, doub
 
   if (cellDimension != 2)
   {
-    vtkErrorMacro("Error: ComputeInverseJacobian2D only works for 2D cells.");
+    vtkGenericWarningMacro("Error: ComputeInverseJacobian2D only works for 2D cells.");
+    return;
   }
 
   int numberOfCellPoints = cell->GetNumberOfPoints();
   double* derivs = new double[2*numberOfCellPoints];
 
-  this->GetInterpolationDerivs(cell,pcoords,derivs);
+  vtkvmtkFEShapeFunctions::GetInterpolationDerivs(cell,pcoords,derivs);
 
   int i, j;
 
@@ -175,7 +176,7 @@ void vtkvmtkFEShapeFunctions::ComputeInverseJacobianMatrix2D(vtkCell* cell, doub
   if (jacobianSquared < 0.0)
   {
 #ifdef VTKVMTKFESHAPEFUNCTIONS_NEGATIVE_JACOBIAN_WARNING 
-    vtkWarningMacro("Warning: negative determinant of squared Jacobian, taking absolute value.");
+    vtkGenericWarningMacro("Warning: negative determinant of squared Jacobian, taking absolute value.");
 #endif
     jacobianSquared = fabs(jacobianSquared);
   }
@@ -202,13 +203,14 @@ void vtkvmtkFEShapeFunctions::ComputeInverseJacobianMatrix3D(vtkCell* cell, doub
 
   if (cellDimension != 3)
   {
-    vtkErrorMacro("Error: ComputeInverseJacobian3D only works for 3D cells.");
+    vtkGenericWarningMacro("Error: ComputeInverseJacobian3D only works for 3D cells.");
+    return;
   }
 
   int numberOfCellPoints = cell->GetNumberOfPoints();
   double* derivs = new double[3*numberOfCellPoints];
 
-  this->GetInterpolationDerivs(cell,pcoords,derivs);
+  vtkvmtkFEShapeFunctions::GetInterpolationDerivs(cell,pcoords,derivs);
 
   int i, j;
 
@@ -276,7 +278,7 @@ void vtkvmtkFEShapeFunctions::GetInterpolationFunctions(vtkCell* cell, double* p
       vtkQuadraticTetra::SafeDownCast(cell)->InterpolationFunctions(pcoords,sf);
       break;
     default:
-      vtkErrorMacro("Error: unsupported cell type.");
+      vtkGenericWarningMacro("Error: unsupported cell type.");
       return;
   }
 }
@@ -325,7 +327,7 @@ void vtkvmtkFEShapeFunctions::GetInterpolationDerivs(vtkCell* cell, double* pcoo
       vtkQuadraticTetra::SafeDownCast(cell)->InterpolationDerivs(pcoords,derivs);
       break;
     default:
-      vtkErrorMacro("Error: unsupported cell type.");
+      vtkGenericWarningMacro("Error: unsupported cell type.");
       return;
   }
 }
@@ -341,7 +343,7 @@ double vtkvmtkFEShapeFunctions::ComputeJacobian(vtkCell* cell, double* pcoords)
     int numberOfCellPoints = cell->GetNumberOfPoints();
     double* derivs = new double[2*numberOfCellPoints];
   
-    this->GetInterpolationDerivs(cell,pcoords,derivs);
+    vtkvmtkFEShapeFunctions::GetInterpolationDerivs(cell,pcoords,derivs);
   
     int i, j;
   
@@ -374,7 +376,7 @@ double vtkvmtkFEShapeFunctions::ComputeJacobian(vtkCell* cell, double* pcoords)
     if (jacobianSquared < 0.0)
     {
 #ifdef VTKVMTKFESHAPEFUNCTIONS_NEGATIVE_JACOBIAN_WARNING 
-      vtkWarningMacro("Warning: negative determinant of squared Jacobian, taking absolute value.");
+      vtkGenericWarningMacro("Warning: negative determinant of squared Jacobian, taking absolute value.");
 #endif
       jacobianSquared = fabs(jacobianSquared);
     }
@@ -386,7 +388,7 @@ double vtkvmtkFEShapeFunctions::ComputeJacobian(vtkCell* cell, double* pcoords)
     int numberOfCellPoints = cell->GetNumberOfPoints();
     double* derivs = new double[3*numberOfCellPoints];
   
-    this->GetInterpolationDerivs(cell,pcoords,derivs);
+    vtkvmtkFEShapeFunctions::GetInterpolationDerivs(cell,pcoords,derivs);
   
     int i, j;
   
@@ -414,7 +416,7 @@ double vtkvmtkFEShapeFunctions::ComputeJacobian(vtkCell* cell, double* pcoords)
     if (jacobian < 0.0)
     {
 #ifdef VTKVMTKFESHAPEFUNCTIONS_NEGATIVE_JACOBIAN_WARNING 
-      vtkWarningMacro("Warning: negative Jacobian, taking absolute value.");
+      vtkGenericWarningMacro("Warning: negative Jacobian, taking absolute value.");
 #endif
       jacobian = fabs(jacobian);
     }

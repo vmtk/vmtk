@@ -20,6 +20,8 @@ Version:   $Revision: 1.6 $
 =========================================================================*/
 
 #include "vtkvmtkLinearToQuadraticMeshFilter.h"
+#include "vtkvmtkGaussQuadrature.h"
+#include "vtkvmtkFEShapeFunctions.h"
 #include "vtkGeometryFilter.h"
 #include "vtkInterpolatingSubdivisionFilter.h"
 #include "vtkLinearSubdivisionFilter.h"
@@ -33,6 +35,7 @@ Version:   $Revision: 1.6 $
 #include "vtkGenericCell.h"
 #include "vtkEdgeTable.h"
 #include "vtkIntArray.h"
+#include "vtkMath.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
@@ -46,6 +49,7 @@ vtkvmtkLinearToQuadraticMeshFilter::vtkvmtkLinearToQuadraticMeshFilter()
   this->ReferenceSurface = NULL;
   this->CellEntityIdsArrayName = NULL;
   this->ProjectedCellEntityId = -1;
+  this->NegativeJacobianTolerance = 1E-2;
 }
 
 vtkvmtkLinearToQuadraticMeshFilter::~vtkvmtkLinearToQuadraticMeshFilter()
@@ -598,15 +602,96 @@ int vtkvmtkLinearToQuadraticMeshFilter::RequestData(
 
       if (project)
         {
-        outputPoints->GetPoint(edgePointId01,point);
-        locator->FindClosestPoint(point,projectedPoint,referenceCellId,subId,dist2);
+        double point01[3], point12[3], point02[3];
+        outputPoints->GetPoint(edgePointId01,point01);
+        locator->FindClosestPoint(point01,projectedPoint,referenceCellId,subId,dist2);
         outputPoints->SetPoint(edgePointId01,projectedPoint);
-        outputPoints->GetPoint(edgePointId12,point);
-        locator->FindClosestPoint(point,projectedPoint,referenceCellId,subId,dist2);
+        outputPoints->GetPoint(edgePointId12,point12);
+        locator->FindClosestPoint(point12,projectedPoint,referenceCellId,subId,dist2);
         outputPoints->SetPoint(edgePointId12,projectedPoint);
-        outputPoints->GetPoint(edgePointId02,point);
-        locator->FindClosestPoint(point,projectedPoint,referenceCellId,subId,dist2);
+        outputPoints->GetPoint(edgePointId02,point02);
+        locator->FindClosestPoint(point02,projectedPoint,referenceCellId,subId,dist2);
         outputPoints->SetPoint(edgePointId02,projectedPoint);
+        }
+      }
+    }
+
+  for (i=0; i<numberOfInputTriangles; i++)
+    {
+    cellId = triangleIds->GetValue(i);
+    input->GetCell(cellId,cell);
+
+    cell->Points->GetPoint(0,point0);
+    cell->Points->GetPoint(1,point1);
+    cell->Points->GetPoint(2,point2);
+
+    pointId0 = cell->PointIds->GetId(0);
+    pointId1 = cell->PointIds->GetId(1);
+    pointId2 = cell->PointIds->GetId(2);
+
+    edgePointId01 = edgeTable->IsEdge(pointId0,pointId1);
+    edgePointId12 = edgeTable->IsEdge(pointId1,pointId2);
+    edgePointId02 = edgeTable->IsEdge(pointId0,pointId2);
+ 
+    if (locator)
+      {
+      bool project = true;
+      if (this->CellEntityIdsArrayName) 
+        {
+        if (cellEntityIdsArray->GetValue(cellId) != this->ProjectedCellEntityId)
+          {
+          project = false;
+          }
+        }
+
+      if (project)
+        {
+        vtkIdType volumeCellId = -1;
+        vtkIdList* volumeCellIds = vtkIdList::New();
+        output->GetCellNeighbors(cellId,cell->PointIds,volumeCellIds);
+        if (volumeCellIds->GetNumberOfIds() == 0)
+          {
+          vtkWarningMacro(<<"Warning: surface element "<<cellId<<" does not have a volume element attached.");
+          volumeCellIds->Delete();
+          continue;
+          }
+        if (volumeCellIds->GetNumberOfIds() > 1)
+          {
+          vtkWarningMacro(<<"Warning: surface element "<<cellId<<" has more than one volume element attached.");
+          volumeCellIds->Delete();
+          continue;
+          }
+        volumeCellId = volumeCellIds->GetId(0);
+cout<<volumeCellId<<endl;
+        vtkCell* linearVolumeCell = input->GetCell(volumeCellId);
+        vtkCell* quadraticVolumeCell = output->GetCell(volumeCellId);
+        double point01[3], point12[3], point02[3];
+        double projectedPoint01[3], projectedPoint12[3], projectedPoint02[3];
+        outputPoints->GetPoint(edgePointId01,projectedPoint01);
+        outputPoints->GetPoint(edgePointId12,projectedPoint12);
+        outputPoints->GetPoint(edgePointId02,projectedPoint02);
+        int numberOfRelaxationSteps = 10;
+        int s;
+        for (s=0; s<numberOfRelaxationSteps; s++)
+          {
+          if (!this->HasJacobianChangedSign(linearVolumeCell,quadraticVolumeCell))
+            {
+            break;
+            }
+          vtkWarningMacro(<<"Warning: projection causes element "<<volumeCellId<<" to have a negative Jacobian somewhere. Relaxing projection for this element.");
+          double relaxation = (double)(s+1)/(double)numberOfRelaxationSteps;
+          for (j=0; j<3; j++)
+            {
+            point01[j] = (1.0 - relaxation) * projectedPoint01[j] + relaxation * (0.5 * (point0[j] + point1[j]));
+            point12[j] = (1.0 - relaxation) * projectedPoint12[j] + relaxation * (0.5 * (point1[j] + point2[j]));
+            point02[j] = (1.0 - relaxation) * projectedPoint02[j] + relaxation * (0.5 * (point0[j] + point2[j]));
+            }
+          outputPoints->SetPoint(edgePointId01,point01);
+          outputPoints->SetPoint(edgePointId12,point12);
+          outputPoints->SetPoint(edgePointId02,point02);
+          quadraticVolumeCell = output->GetCell(volumeCellId);
+          }
+        volumeCellIds->Delete();
         }
       }
     }
@@ -631,6 +716,68 @@ int vtkvmtkLinearToQuadraticMeshFilter::RequestData(
   output->Squeeze();
 
   return 1;
+}
+
+double vtkvmtkLinearToQuadraticMeshFilter::ComputeJacobian(vtkCell* cell, double pcoords[3])
+{
+  double jacobian = 0.0;
+
+  int numberOfCellPoints = cell->GetNumberOfPoints();
+  double* derivs = new double[3*numberOfCellPoints];
+  
+  vtkvmtkFEShapeFunctions::GetInterpolationDerivs(cell,pcoords,derivs);
+  
+  int i, j;
+  
+  double jacobianMatrix[3][3];
+  for (i=0; i<3; i++)
+    {
+    jacobianMatrix[0][i] = jacobianMatrix[1][i] = jacobianMatrix[2][i] = 0.0;
+    }
+  
+  double x[3];
+  for (j=0; j<numberOfCellPoints; j++)
+    {
+    cell->GetPoints()->GetPoint(j,x);
+    for (i=0; i<3; i++)
+      {
+      jacobianMatrix[0][i] += x[i] * derivs[j];
+      jacobianMatrix[1][i] += x[i] * derivs[numberOfCellPoints+j];
+      jacobianMatrix[2][i] += x[i] * derivs[2*numberOfCellPoints+j];
+      }
+    }
+  delete[] derivs;
+
+  jacobian = vtkMath::Determinant3x3(jacobianMatrix);
+
+  return jacobian;
+}
+
+bool vtkvmtkLinearToQuadraticMeshFilter::HasJacobianChangedSign(vtkCell* linearVolumeCell, vtkCell* quadraticVolumeCell)
+{
+  int order = 5;
+  vtkvmtkGaussQuadrature* gaussQuadrature = vtkvmtkGaussQuadrature::New();
+  gaussQuadrature->SetOrder(order);
+  gaussQuadrature->Initialize(quadraticVolumeCell->GetCellType());
+  bool signChanged = false;
+  int numberOfQuadraturePoints = gaussQuadrature->GetNumberOfQuadraturePoints();
+  double quadraturePCoords[3];
+  int q;
+  for (q=0; q<numberOfQuadraturePoints; q++)
+    {
+    gaussQuadrature->GetQuadraturePoint(q,quadraturePCoords);
+    double linearJacobian = this->ComputeJacobian(linearVolumeCell,quadraturePCoords);
+    double quadraticJacobian = this->ComputeJacobian(quadraticVolumeCell,quadraturePCoords);
+//    if ((linearJacobian*quadraticJacobian < 0.0) || (fabs(quadraticJacobian) < this->NegativeJacobianTolerance))
+cout<<linearJacobian<<" "<<quadraticJacobian<<endl;
+    if (linearJacobian*quadraticJacobian < 0.0)
+      {
+//      signChanged = true;
+      break;
+      }
+    }
+  gaussQuadrature->Delete();
+  return signChanged;
 }
 
 void vtkvmtkLinearToQuadraticMeshFilter::PrintSelf(ostream& os, vtkIndent indent)

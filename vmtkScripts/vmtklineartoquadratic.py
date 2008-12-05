@@ -36,6 +36,7 @@ class vmtkLinearToQuadratic(pypes.pypeScript):
         self.CapSurface = False
         self.CellEntityIdsArrayName = None
         self.ProjectedCellEntityId = 1
+        #self.NegativeJacobianTolerance = 1E-5
 
         self.SetScriptName('vmtklineartoquadratic')
         self.SetScriptDoc('convert the elements of a mesh from linear to quadratic')

@@ -27,6 +27,7 @@ Version:   $Revision: 1.4 $
 
 #include "vtkUnstructuredGridAlgorithm.h"
 #include "vtkPolyData.h"
+#include "vtkCell.h"
 #include "vtkvmtkWin32Header.h"
 
 class VTK_VMTK_MISC_EXPORT vtkvmtkLinearToQuadraticMeshFilter : public vtkUnstructuredGridAlgorithm
@@ -50,11 +51,17 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkLinearToQuadraticMeshFilter : public vtkUnstru
   vtkSetMacro(ProjectedCellEntityId,int);
   vtkGetMacro(ProjectedCellEntityId,int);
 
+  vtkSetMacro(NegativeJacobianTolerance,double);
+  vtkGetMacro(NegativeJacobianTolerance,double);
+
   protected:
   vtkvmtkLinearToQuadraticMeshFilter();
   ~vtkvmtkLinearToQuadraticMeshFilter();
 
   virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+
+  bool HasJacobianChangedSign(vtkCell* linearVolumeCell, vtkCell* quadraticVolumeCell);
+  double ComputeJacobian(vtkCell* cell, double pcoords[3]);
 
   int UseBiquadraticWedge;
 
@@ -62,6 +69,8 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkLinearToQuadraticMeshFilter : public vtkUnstru
 
   char* CellEntityIdsArrayName;
   int ProjectedCellEntityId;
+
+  double NegativeJacobianTolerance;
 
   private:
   vtkvmtkLinearToQuadraticMeshFilter(const vtkvmtkLinearToQuadraticMeshFilter&);  // Not implemented.
