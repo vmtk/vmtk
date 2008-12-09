@@ -33,7 +33,7 @@ Version:   $Revision: 1.6 $
 #include "vtkPointData.h"
 #include "vtkCellData.h"
 #include "vtkPolyLine.h"
-#include "vtkIntArray.h"
+#include "vtkIdTypeArray.h"
 #include "vtkDoubleArray.h"
 #include "vtkLine.h"
 #include "vtkCommand.h"
@@ -150,7 +150,7 @@ void vtkvmtkPolyDataNetworkExtraction::BoundarySeparator(vtkPolyData* appendedBo
     }
 }
 
-void vtkvmtkPolyDataNetworkExtraction::InsertInEdgeTable(vtkIntArray* edgeTable, vtkIdType pointId0, vtkIdType pointId1)
+void vtkvmtkPolyDataNetworkExtraction::InsertInEdgeTable(vtkIdTypeArray* edgeTable, vtkIdType pointId0, vtkIdType pointId1)
 {
   vtkIdType edge[2];
   edge[0] = pointId0;
@@ -158,7 +158,7 @@ void vtkvmtkPolyDataNetworkExtraction::InsertInEdgeTable(vtkIntArray* edgeTable,
   edgeTable->InsertNextTupleValue(edge);
 }
 
-bool vtkvmtkPolyDataNetworkExtraction::InsertUniqueInEdgeTable(vtkIntArray* edgeTable, vtkIdType pointId0, vtkIdType pointId1)
+bool vtkvmtkPolyDataNetworkExtraction::InsertUniqueInEdgeTable(vtkIdTypeArray* edgeTable, vtkIdType pointId0, vtkIdType pointId1)
 {
   vtkIdType edge[2];
   edge[0] = pointId0;
@@ -178,7 +178,7 @@ bool vtkvmtkPolyDataNetworkExtraction::InsertUniqueInEdgeTable(vtkIntArray* edge
   return true;
 }
 
-void vtkvmtkPolyDataNetworkExtraction::GetFromEdgeTable(vtkIntArray* edgeTable, vtkIdType position, vtkIdType edge[2])
+void vtkvmtkPolyDataNetworkExtraction::GetFromEdgeTable(vtkIdTypeArray* edgeTable, vtkIdType position, vtkIdType edge[2])
 {
   edgeTable->GetTupleValue(position,edge);
 }
@@ -191,7 +191,7 @@ void vtkvmtkPolyDataNetworkExtraction::UpdateEdgeTableCollectionReal(vtkPolyData
     {
     vtkPolyData* profile=profiles->GetNextItem();
     profile->Update();
-    vtkIntArray* edgeTable = vtkIntArray::New();
+    vtkIdTypeArray* edgeTable = vtkIdTypeArray::New();
     edgeTable->SetNumberOfComponents(2);
     vtkIdType i;
     for (i=0; i<profile->GetNumberOfPoints(); i++)
@@ -337,7 +337,7 @@ void vtkvmtkPolyDataNetworkExtraction::DefineVirtualSphere(vtkPolyDataCollection
 
 vtkIdType vtkvmtkPolyDataNetworkExtraction::CurrentPointId(vtkPolyData* model,vtkIdType currentEdge[2])
 {
-  vtkIntArray* marksArray = vtkIntArray::SafeDownCast(model->GetPointData()->GetArray(MarksArrayName));
+  vtkIdTypeArray* marksArray = vtkIdTypeArray::SafeDownCast(model->GetPointData()->GetArray(MarksArrayName));
 
   vtkIdType currentPointId;
   if (currentEdge[0] != currentEdge[1])
@@ -363,7 +363,7 @@ vtkIdType vtkvmtkPolyDataNetworkExtraction::CurrentPointId(vtkPolyData* model,vt
   return currentPointId;
 }
 
-void vtkvmtkPolyDataNetworkExtraction::InsertEdgeForNewProfiles(vtkPolyData* model, vtkIdType* edge, vtkIntArray* edgeTable, vtkIntArray* cellPairs, vtkIdList* pointIds)
+void vtkvmtkPolyDataNetworkExtraction::InsertEdgeForNewProfiles(vtkPolyData* model, vtkIdType* edge, vtkIdTypeArray* edgeTable, vtkIdTypeArray* cellPairs, vtkIdList* pointIds)
 {
   if (this->InsertUniqueInEdgeTable(edgeTable,edge[0],edge[1]))
     {
@@ -402,9 +402,9 @@ void vtkvmtkPolyDataNetworkExtraction::InsertEdgeForNewProfiles(vtkPolyData* mod
 }
 
 
-bool vtkvmtkPolyDataNetworkExtraction::LookForNeighbors(vtkPolyData* model, vtkIdType pointId, vtkIdList* notVisitedIds, vtkIntArray* edgeTableForIncludedGlobalProfiles)
+bool vtkvmtkPolyDataNetworkExtraction::LookForNeighbors(vtkPolyData* model, vtkIdType pointId, vtkIdList* notVisitedIds, vtkIdTypeArray* edgeTableForIncludedGlobalProfiles)
 {
-  vtkIntArray* marksArray = vtkIntArray::SafeDownCast(model->GetPointData()->GetArray(MarksArrayName));
+  vtkIdTypeArray* marksArray = vtkIdTypeArray::SafeDownCast(model->GetPointData()->GetArray(MarksArrayName));
 
   bool someNeighborsFound = false;
   // return non visited neighbors, and true if there are any, false otherwise
@@ -437,9 +437,9 @@ bool vtkvmtkPolyDataNetworkExtraction::LookForNeighbors(vtkPolyData* model, vtkI
   return someNeighborsFound;
 }
 
-void vtkvmtkPolyDataNetworkExtraction::PropagateFromBaseProfilePoint(vtkPolyData* model, vtkIdList* toVisitPointIds, double center[3], double radius, vtkIntArray* edgeTableForNewProfiles, vtkIntArray* cellPairsForNewProfiles, vtkIdList* pointIdsForNewProfiles, vtkPoints* markedPoints, vtkIdList* markedPointIds, vtkIntArray* edgeTableForIncludedGlobalProfiles)
+void vtkvmtkPolyDataNetworkExtraction::PropagateFromBaseProfilePoint(vtkPolyData* model, vtkIdList* toVisitPointIds, double center[3], double radius, vtkIdTypeArray* edgeTableForNewProfiles, vtkIdTypeArray* cellPairsForNewProfiles, vtkIdList* pointIdsForNewProfiles, vtkPoints* markedPoints, vtkIdList* markedPointIds, vtkIdTypeArray* edgeTableForIncludedGlobalProfiles)
 {
-  vtkIntArray* marksArray = vtkIntArray::SafeDownCast(model->GetPointData()->GetArray(MarksArrayName));
+  vtkIdTypeArray* marksArray = vtkIdTypeArray::SafeDownCast(model->GetPointData()->GetArray(MarksArrayName));
 
   while (toVisitPointIds->GetNumberOfIds())
     {
@@ -549,7 +549,7 @@ void vtkvmtkPolyDataNetworkExtraction::LocateVirtualPoint(vtkIdType edge[2], dou
     }
 }
 
-void vtkvmtkPolyDataNetworkExtraction::ReconstructNewProfiles(vtkPoints* virtualPoints, vtkIntArray* edgeTable, vtkIntArray* cellPairs, vtkPolyDataCollection* newProfiles, vtkCollection* newProfilesEdgeTables)
+void vtkvmtkPolyDataNetworkExtraction::ReconstructNewProfiles(vtkPoints* virtualPoints, vtkIdTypeArray* edgeTable, vtkIdTypeArray* cellPairs, vtkPolyDataCollection* newProfiles, vtkCollection* newProfilesEdgeTables)
 {
   // reconstruct using adjacent triangles
   vtkIdList* notVisitedIds = vtkIdList::New();
@@ -565,7 +565,7 @@ void vtkvmtkPolyDataNetworkExtraction::ReconstructNewProfiles(vtkPoints* virtual
     vtkPoints* newProfilePoints = vtkPoints::New();
     newProfile->SetPoints(newProfilePoints);
     
-    vtkIntArray* newProfileEdgeTable = vtkIntArray::New();
+    vtkIdTypeArray* newProfileEdgeTable = vtkIdTypeArray::New();
     newProfileEdgeTable->SetNumberOfComponents(2);
     vtkIdType cellPair0[2];
     vtkIdType position1 = notVisitedIds->GetId(0);
@@ -645,7 +645,7 @@ void vtkvmtkPolyDataNetworkExtraction::ReconstructNewProfiles(vtkPoints* virtual
   notVisitedIds->Delete();
 }
 
-void vtkvmtkPolyDataNetworkExtraction::GenerateNewProfiles(vtkPolyData* model, double center[3], double radius, vtkIntArray* edgeTableForNewProfiles, vtkIntArray* cellPairsForNewProfiles, vtkIdList* pointIdsForNewProfiles, vtkPolyDataCollection* newProfiles, vtkCollection* newProfilesEdgeTables)
+void vtkvmtkPolyDataNetworkExtraction::GenerateNewProfiles(vtkPolyData* model, double center[3], double radius, vtkIdTypeArray* edgeTableForNewProfiles, vtkIdTypeArray* cellPairsForNewProfiles, vtkIdList* pointIdsForNewProfiles, vtkPolyDataCollection* newProfiles, vtkCollection* newProfilesEdgeTables)
 {
   if (edgeTableForNewProfiles->GetNumberOfTuples())
     {
@@ -681,7 +681,7 @@ void vtkvmtkPolyDataNetworkExtraction::GenerateNewProfiles(vtkPolyData* model, d
 
 void vtkvmtkPolyDataNetworkExtraction::UnmarkPoints(vtkPolyData* model, vtkIdList* markedPointIds)
 {
-  vtkIntArray* marksArray = vtkIntArray::SafeDownCast(model->GetPointData()->GetArray(MarksArrayName));
+  vtkIdTypeArray* marksArray = vtkIdTypeArray::SafeDownCast(model->GetPointData()->GetArray(MarksArrayName));
   vtkIdType i;
   for (i=0; i<markedPointIds->GetNumberOfIds(); i++)
     {
@@ -774,7 +774,7 @@ void vtkvmtkPolyDataNetworkExtraction::LookForIntersectingPoint(vtkPoints* segme
 
 vtkIdType vtkvmtkPolyDataNetworkExtraction::StepIteration(vtkPolyData* model, vtkPolyDataCollection* baseProfiles, vtkCollection* baseProfilesEdgeTables, vtkPolyDataCollection* globalProfiles, vtkCollection* globalProfilesEdgeTables, vtkPolyDataCollection* newProfiles, vtkCollection* newProfilesEdgeTables, vtkPoints* segmentPoints, vtkDoubleArray* segmentRadii, vtkPoints* bifurcationPoints, vtkDoubleArray* bifurcationRadii, double oldCenter[3], double &oldRadius, double advancementRatio)
 { 
-  vtkIntArray* marksArray = vtkIntArray::SafeDownCast(model->GetPointData()->GetArray(MarksArrayName));
+  vtkIdTypeArray* marksArray = vtkIdTypeArray::SafeDownCast(model->GetPointData()->GetArray(MarksArrayName));
   
   double center[3];
   double radius;
@@ -791,13 +791,13 @@ vtkIdType vtkvmtkPolyDataNetworkExtraction::StepIteration(vtkPolyData* model, vt
     }
 
   // now propagate and build virtual profile(s)
-  vtkIntArray* edgeTableForNewProfiles = vtkIntArray::New();
+  vtkIdTypeArray* edgeTableForNewProfiles = vtkIdTypeArray::New();
   edgeTableForNewProfiles->SetNumberOfComponents(2);
-  vtkIntArray* cellPairsForNewProfiles = vtkIntArray::New();
+  vtkIdTypeArray* cellPairsForNewProfiles = vtkIdTypeArray::New();
   cellPairsForNewProfiles->SetNumberOfComponents(2);
   vtkIdList* pointIdsForNewProfiles = vtkIdList::New();  //for doubleScalars mapping
 
-  vtkIntArray* edgeTableForIncludedGlobalProfiles = vtkIntArray::New();
+  vtkIdTypeArray* edgeTableForIncludedGlobalProfiles = vtkIdTypeArray::New();
   edgeTableForIncludedGlobalProfiles->SetNumberOfComponents(2);
 
   vtkPoints* markedPoints = vtkPoints::New();
@@ -810,7 +810,7 @@ vtkIdType vtkvmtkPolyDataNetworkExtraction::StepIteration(vtkPolyData* model, vt
   for (i=0; i<baseProfiles->GetNumberOfItems(); i++)
     {
     vtkPolyData* baseProfile = baseProfiles->GetNextItem();
-    vtkIntArray* baseProfileEdgeTable = (vtkIntArray*)baseProfilesEdgeTables->GetNextItemAsObject();
+    vtkIdTypeArray* baseProfileEdgeTable = (vtkIdTypeArray*)baseProfilesEdgeTables->GetNextItemAsObject();
     vtkIdType j;
     for (j=0; j<baseProfile->GetNumberOfPoints(); j++)
       {
@@ -832,7 +832,7 @@ vtkIdType vtkvmtkPolyDataNetworkExtraction::StepIteration(vtkPolyData* model, vt
   for (i=0; i<baseProfiles->GetNumberOfItems(); i++)
     {
     vtkPolyData* baseProfile = baseProfiles->GetNextItem();
-    vtkIntArray* baseProfileEdgeTable = (vtkIntArray*)baseProfilesEdgeTables->GetNextItemAsObject();
+    vtkIdTypeArray* baseProfileEdgeTable = (vtkIdTypeArray*)baseProfilesEdgeTables->GetNextItemAsObject();
     
     vtkIdType j;
     for (j=0; j<baseProfile->GetNumberOfPoints(); j++)
@@ -873,7 +873,7 @@ vtkIdType vtkvmtkPolyDataNetworkExtraction::StepIteration(vtkPolyData* model, vt
 
   if (edgeTableForIncludedGlobalProfiles->GetNumberOfTuples() > 0)
     {
-    vtkIntArray* edgeTableForEffectiveIncludedGlobalProfiles = vtkIntArray::New();
+    vtkIdTypeArray* edgeTableForEffectiveIncludedGlobalProfiles = vtkIdTypeArray::New();
     edgeTableForEffectiveIncludedGlobalProfiles->SetNumberOfComponents(2);
 
     vtkIdType i;
@@ -900,7 +900,7 @@ vtkIdType vtkvmtkPolyDataNetworkExtraction::StepIteration(vtkPolyData* model, vt
         for (j=0; j<globalProfiles->GetNumberOfItems(); j++)
           {
 //          vtkPolyData* globalProfile = globalProfiles->GetNextItem();
-          vtkIntArray* globalProfileEdgeTable = (vtkIntArray*)globalProfilesEdgeTables->GetNextItemAsObject();
+          vtkIdTypeArray* globalProfileEdgeTable = (vtkIdTypeArray*)globalProfilesEdgeTables->GetNextItemAsObject();
           vtkIdType k;
           for (k=0; k<globalProfileEdgeTable->GetNumberOfTuples(); k++)
             {
@@ -931,7 +931,7 @@ vtkIdType vtkvmtkPolyDataNetworkExtraction::StepIteration(vtkPolyData* model, vt
       for (i=0; i<globalProfiles->GetNumberOfItems(); i++)
         {
         vtkPolyData* globalProfile = globalProfiles->GetNextItem();
-        vtkIntArray* globalProfileEdgeTable = (vtkIntArray*)globalProfilesEdgeTables->GetNextItemAsObject();
+        vtkIdTypeArray* globalProfileEdgeTable = (vtkIdTypeArray*)globalProfilesEdgeTables->GetNextItemAsObject();
         if (includedGlobalProfilesIds->IsId(i) != -1)
           {
           includedGlobalProfiles->AddItem(globalProfile);
@@ -1183,9 +1183,9 @@ vtkIdType vtkvmtkPolyDataNetworkExtraction::StepIteration(vtkPolyData* model, vt
 }
 
 
-void vtkvmtkPolyDataNetworkExtraction::MarkModelGlobalProfile(vtkPolyData* model, vtkIntArray* newGlobalProfileEdgeTable)
+void vtkvmtkPolyDataNetworkExtraction::MarkModelGlobalProfile(vtkPolyData* model, vtkIdTypeArray* newGlobalProfileEdgeTable)
 {
-  vtkIntArray* marksArray = vtkIntArray::SafeDownCast(model->GetPointData()->GetArray(MarksArrayName));
+  vtkIdTypeArray* marksArray = vtkIdTypeArray::SafeDownCast(model->GetPointData()->GetArray(MarksArrayName));
   vtkIdType i;
   for (i=0; i<newGlobalProfileEdgeTable->GetNumberOfTuples(); i++)
     {
@@ -1266,7 +1266,7 @@ void vtkvmtkPolyDataNetworkExtraction::BuildSegment(vtkPoints* segmentPoints, vt
   vtkPoints* segmentPolyPoints = vtkPoints::New();
   vtkDoubleArray* segmentPolyScalars = vtkDoubleArray::New();
   segmentPolyScalars->SetName(RadiusArrayName);
-  vtkIntArray* segmentTopologyArray = vtkIntArray::New();
+  vtkIdTypeArray* segmentTopologyArray = vtkIdTypeArray::New();
   segmentTopologyArray->SetName(TopologyArrayName);
   segmentTopologyArray->SetNumberOfComponents(2);
 
@@ -1377,7 +1377,7 @@ void vtkvmtkPolyDataNetworkExtraction::InsertNewBifurcation(vtkCollection* bifur
   bifurcationsRadii->AddItem(bifurcationRadii);
 }
 
-void vtkvmtkPolyDataNetworkExtraction::SegmentIteration(vtkPolyData* model, vtkPolyData* initialProfile, vtkIntArray* initialProfileEdgeTable, vtkPolyDataCollection* globalProfiles, vtkCollection* globalProfilesEdgeTables, vtkCollection* bifurcations, vtkCollection* bifurcationsRadii, vtkPolyDataCollection* segments, double advancementRatio)
+void vtkvmtkPolyDataNetworkExtraction::SegmentIteration(vtkPolyData* model, vtkPolyData* initialProfile, vtkIdTypeArray* initialProfileEdgeTable, vtkPolyDataCollection* globalProfiles, vtkCollection* globalProfilesEdgeTables, vtkCollection* bifurcations, vtkCollection* bifurcationsRadii, vtkPolyDataCollection* segments, double advancementRatio)
 {
   vtkPolyDataCollection* baseProfiles = vtkPolyDataCollection::New();
   baseProfiles->AddItem(initialProfile);
@@ -1433,7 +1433,7 @@ void vtkvmtkPolyDataNetworkExtraction::SegmentIteration(vtkPolyData* model, vtkP
     for (i=0; i<newProfiles->GetNumberOfItems(); i++)
       {
       globalProfiles->AddItem(newProfiles->GetNextItem());
-      vtkIntArray* newGlobalProfileEdgeTable = (vtkIntArray*)newProfilesEdgeTables->GetNextItemAsObject();
+      vtkIdTypeArray* newGlobalProfileEdgeTable = (vtkIdTypeArray*)newProfilesEdgeTables->GetNextItemAsObject();
       globalProfilesEdgeTables->AddItem(newGlobalProfileEdgeTable);
       this->MarkModelGlobalProfile(model,newGlobalProfileEdgeTable);
       }
@@ -1500,15 +1500,15 @@ void vtkvmtkPolyDataNetworkExtraction::JoinSegments (vtkPolyData* segment0, vtkP
   vtkPoints* segmentPoints = vtkPoints::New();
   vtkDoubleArray* radiusArray = vtkDoubleArray::New();
   radiusArray->SetName(RadiusArrayName);
-  vtkIntArray* topologyArray = vtkIntArray::New();
+  vtkIdTypeArray* topologyArray = vtkIdTypeArray::New();
   topologyArray->SetNumberOfComponents(2);
   topologyArray->SetName(TopologyArrayName);
 
   vtkDoubleArray* segment0RadiusArray = vtkDoubleArray::SafeDownCast(segment0->GetPointData()->GetArray(RadiusArrayName));
   vtkDoubleArray* segment1RadiusArray = vtkDoubleArray::SafeDownCast(segment1->GetPointData()->GetArray(RadiusArrayName));
 
-  vtkIntArray* segment0TopologyArray = vtkIntArray::SafeDownCast(segment0->GetCellData()->GetArray(TopologyArrayName));
-  vtkIntArray* segment1TopologyArray = vtkIntArray::SafeDownCast(segment1->GetCellData()->GetArray(TopologyArrayName));
+  vtkIdTypeArray* segment0TopologyArray = vtkIdTypeArray::SafeDownCast(segment0->GetCellData()->GetArray(TopologyArrayName));
+  vtkIdTypeArray* segment1TopologyArray = vtkIdTypeArray::SafeDownCast(segment1->GetCellData()->GetArray(TopologyArrayName));
 
   vtkIdType segmentTopology0[2];
   vtkIdType segmentTopology1[2];
@@ -1583,7 +1583,7 @@ void vtkvmtkPolyDataNetworkExtraction::RemoveDegenerateBifurcations(vtkPolyDataC
   vtkIdList* realBifurcations = vtkIdList::New();
   realBifurcations->InsertNextId(0);
   vtkIdList* degenerateBifurcations = vtkIdList::New();
-  vtkIntArray* bifurcationFrequency = vtkIntArray::New();
+  vtkIdTypeArray* bifurcationFrequency = vtkIdTypeArray::New();
   bifurcations->InitTraversal();
   vtkIdType i;
   for (i=0; i<bifurcations->GetNumberOfItems(); i++)
@@ -1595,7 +1595,7 @@ void vtkvmtkPolyDataNetworkExtraction::RemoveDegenerateBifurcations(vtkPolyDataC
     {
     vtkPolyData* segment = segments->GetNextItem();
 //    vtkDoubleArray* radiusArray = vtkDoubleArray::SafeDownCast(segment->GetPointData()->GetArray(RadiusArrayName));
-    vtkIntArray* topologyArray = vtkIntArray::SafeDownCast(segment->GetCellData()->GetArray(TopologyArrayName));
+    vtkIdTypeArray* topologyArray = vtkIdTypeArray::SafeDownCast(segment->GetCellData()->GetArray(TopologyArrayName));
     vtkIdType topology[2];
     topologyArray->GetTupleValue(0,topology);
     vtkIdType bifurcation0 = topology[0];
@@ -1639,7 +1639,7 @@ void vtkvmtkPolyDataNetworkExtraction::RemoveDegenerateBifurcations(vtkPolyDataC
       {
       currentSegment = segments->GetNextItem();
 //      vtkDoubleArray* radiusArray = vtkDoubleArray::SafeDownCast(currentSegment->GetPointData()->GetArray(RadiusArrayName));
-      vtkIntArray* topologyArray = vtkIntArray::SafeDownCast(currentSegment->GetCellData()->GetArray(TopologyArrayName));
+      vtkIdTypeArray* topologyArray = vtkIdTypeArray::SafeDownCast(currentSegment->GetCellData()->GetArray(TopologyArrayName));
       vtkIdType topology[2];
       topologyArray->GetTupleValue(0,topology);
       if (!segment0)
@@ -1698,7 +1698,7 @@ void vtkvmtkPolyDataNetworkExtraction::RemoveDegenerateBifurcations(vtkPolyDataC
     {
     vtkPolyData* currentSegment = segments->GetNextItem();
 //    vtkDoubleArray* radiusArray = vtkDoubleArray::SafeDownCast(currentSegment->GetPointData()->GetArray(RadiusArrayName));
-    vtkIntArray* topologyArray = vtkIntArray::SafeDownCast(currentSegment->GetCellData()->GetArray(TopologyArrayName));
+    vtkIdTypeArray* topologyArray = vtkIdTypeArray::SafeDownCast(currentSegment->GetCellData()->GetArray(TopologyArrayName));
     vtkIdType topology[2];
     topologyArray->GetTupleValue(0,topology);
     scalar0 = topology[0];
@@ -1756,7 +1756,7 @@ void vtkvmtkPolyDataNetworkExtraction::GlobalIteration(vtkPolyData* model, vtkPo
     globalProfiles->RemoveItem(initialProfile);
 
     globalProfilesEdgeTables->InitTraversal();
-    vtkIntArray* initialProfileEdgeTable = (vtkIntArray*)globalProfilesEdgeTables->GetNextItemAsObject();
+    vtkIdTypeArray* initialProfileEdgeTable = (vtkIdTypeArray*)globalProfilesEdgeTables->GetNextItemAsObject();
     initialProfileEdgeTable->Register((vtkObjectBase*)NULL);
     globalProfilesEdgeTables->RemoveItem(initialProfileEdgeTable);
 
@@ -1771,7 +1771,7 @@ void vtkvmtkPolyDataNetworkExtraction::GlobalIteration(vtkPolyData* model, vtkPo
 
   this->RemoveDegenerateBifurcations(segments,bifurcations);
 
-  vtkIntArray* topologyArray = vtkIntArray::New();
+  vtkIdTypeArray* topologyArray = vtkIdTypeArray::New();
   topologyArray->SetName(TopologyArrayName);
   topologyArray->SetNumberOfComponents(2);
 
@@ -1779,7 +1779,7 @@ void vtkvmtkPolyDataNetworkExtraction::GlobalIteration(vtkPolyData* model, vtkPo
   for (i=0; i<segments->GetNumberOfItems(); i++)
     {
     vtkIdType topology[2];
-    vtkIntArray* segmentTopologyArray = vtkIntArray::SafeDownCast(segments->GetNextItem()->GetCellData()->GetArray(TopologyArrayName));
+    vtkIdTypeArray* segmentTopologyArray = vtkIdTypeArray::SafeDownCast(segments->GetNextItem()->GetCellData()->GetArray(TopologyArrayName));
     segmentTopologyArray->GetTupleValue(0,topology);
     topologyArray->InsertNextTupleValue(topology);
     }
@@ -1808,7 +1808,7 @@ void vtkvmtkPolyDataNetworkExtraction::GlobalIteration(vtkPolyData* model, vtkPo
 
 void vtkvmtkPolyDataNetworkExtraction::MarkModelRealBoundary(vtkPolyData* model, vtkPolyData* modelBoundary)
 {
-  vtkIntArray* marksArray = vtkIntArray::SafeDownCast(model->GetPointData()->GetArray(MarksArrayName));
+  vtkIdTypeArray* marksArray = vtkIdTypeArray::SafeDownCast(model->GetPointData()->GetArray(MarksArrayName));
   vtkIdType i;
   for (i=0; i<model->GetNumberOfPoints(); i++)
     {
@@ -1834,12 +1834,12 @@ void vtkvmtkPolyDataNetworkExtraction::Graph(vtkPolyData* network, vtkPolyData* 
   vtkIdType numberOfPoints = network->GetNumberOfPoints();
   vtkIdType numberOfCells = network->GetNumberOfCells();
 
-  vtkIntArray* isPointInserted = vtkIntArray::New();
+  vtkIdTypeArray* isPointInserted = vtkIdTypeArray::New();
   isPointInserted->SetNumberOfTuples(numberOfPoints);
   isPointInserted->FillComponent(0,-1);
 
   vtkDoubleArray* radiusArray = vtkDoubleArray::SafeDownCast(network->GetPointData()->GetArray(this->RadiusArrayName));
-  vtkIntArray* topologyArray = vtkIntArray::SafeDownCast(network->GetCellData()->GetArray(this->TopologyArrayName));
+  vtkIdTypeArray* topologyArray = vtkIdTypeArray::SafeDownCast(network->GetCellData()->GetArray(this->TopologyArrayName));
 
   for (int i=0; i<numberOfCells; i++)
     {
@@ -1902,7 +1902,7 @@ int vtkvmtkPolyDataNetworkExtraction::RequestData(vtkInformation *vtkNotUsed(req
   vtkPolyData* model = vtkPolyData::New();
   model->DeepCopy(input);
 
-  vtkIntArray* marksArray = vtkIntArray::New();
+  vtkIdTypeArray* marksArray = vtkIdTypeArray::New();
   marksArray->SetName(this->MarksArrayName);
   marksArray->SetNumberOfTuples(model->GetNumberOfPoints());
   model->GetPointData()->AddArray(marksArray);
