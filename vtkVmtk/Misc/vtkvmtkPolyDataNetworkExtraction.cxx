@@ -166,7 +166,7 @@ bool vtkvmtkPolyDataNetworkExtraction::InsertUniqueInEdgeTable(vtkIdTypeArray* e
   vtkIdType i;
   for (i=0; i<edgeTable->GetNumberOfTuples(); i++)
     {
-    int currentEdge[2];
+    vtkIdType currentEdge[2];
     edgeTable->GetTupleValue(i,currentEdge);
     if (currentEdge[0]==edge[0] && currentEdge[1]==edge[1])
       {
