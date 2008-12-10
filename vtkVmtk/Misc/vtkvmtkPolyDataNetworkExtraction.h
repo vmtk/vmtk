@@ -30,7 +30,7 @@ Version:   $Revision: 1.5 $
 
 class vtkPolyData;
 class vtkPolyDataCollection;
-class vtkIntArray;
+class vtkIdTypeArray;
 class vtkCollection;
 class vtkPoints;
 
@@ -86,9 +86,9 @@ protected:
 
   void BoundaryExtractor (vtkPolyData* polyInput, vtkPolyData* boundary);
   void BoundarySeparator(vtkPolyData* appendedBoundaries, vtkPolyDataCollection* boundaries);
-  void InsertInEdgeTable(vtkIntArray* edgeTable, vtkIdType pointId0, vtkIdType pointId1);
-  bool InsertUniqueInEdgeTable(vtkIntArray* edgeTable, vtkIdType pointId0, vtkIdType pointId1);
-  void GetFromEdgeTable(vtkIntArray* edgeTable, vtkIdType position, vtkIdType edge[2]);
+  void InsertInEdgeTable(vtkIdTypeArray* edgeTable, vtkIdType pointId0, vtkIdType pointId1);
+  bool InsertUniqueInEdgeTable(vtkIdTypeArray* edgeTable, vtkIdType pointId0, vtkIdType pointId1);
+  void GetFromEdgeTable(vtkIdTypeArray* edgeTable, vtkIdType position, vtkIdType edge[2]);
   void UpdateEdgeTableCollectionReal(vtkPolyData* model,vtkPolyDataCollection* profiles,vtkCollection* edgeTables);
   double Distance(double point1[3], double point2[3]);
   double GetFurthestDistance (vtkPolyDataCollection* polyDataCollection, double fromPoint[3]);
@@ -96,23 +96,23 @@ protected:
   void ProfileBarycenter (vtkPoints* points, double barycenter[3]);
   void DefineVirtualSphere(vtkPolyDataCollection* baseProfiles, double center[3], double &radius, double ratio);
   vtkIdType CurrentPointId(vtkPolyData* model,vtkIdType currentEdge[2]);
-  void InsertEdgeForNewProfiles(vtkPolyData* model, vtkIdType* edge, vtkIntArray* edgeTable, vtkIntArray* cellPairs, vtkIdList* pointIds);
-  bool LookForNeighbors(vtkPolyData* model, vtkIdType pointId, vtkIdList* notVisitedIds, vtkIntArray* edgeTableForIncludedGlobalProfiles);
-  void PropagateFromBaseProfilePoint(vtkPolyData* model, vtkIdList* toVisitPointIds, double center[3], double radius, vtkIntArray* edgeTableForNewProfiles, vtkIntArray* cellPairsForNewProfiles, vtkIdList* pointIdsForNewProfiles, vtkPoints* markedPoints, vtkIdList* markedPointIds, vtkIntArray* edgeTableForIncludedGlobalProfiles);
+  void InsertEdgeForNewProfiles(vtkPolyData* model, vtkIdType* edge, vtkIdTypeArray* edgeTable, vtkIdTypeArray* cellPairs, vtkIdList* pointIds);
+  bool LookForNeighbors(vtkPolyData* model, vtkIdType pointId, vtkIdList* notVisitedIds, vtkIdTypeArray* edgeTableForIncludedGlobalProfiles);
+  void PropagateFromBaseProfilePoint(vtkPolyData* model, vtkIdList* toVisitPointIds, double center[3], double radius, vtkIdTypeArray* edgeTableForNewProfiles, vtkIdTypeArray* cellPairsForNewProfiles, vtkIdList* pointIdsForNewProfiles, vtkPoints* markedPoints, vtkIdList* markedPointIds, vtkIdTypeArray* edgeTableForIncludedGlobalProfiles);
   void LocateVirtualPoint(vtkIdType edge[2], double center[3], double radius, vtkIdList* pointIdsForNewProfiles, vtkPoints* pointsForNewProfiles, vtkDoubleArray* pointDistancesForNewProfiles, double virtualPoint[3]);
-  void ReconstructNewProfiles(vtkPoints* virtualPoints, vtkIntArray* edgeTable, vtkIntArray* cellPairs, vtkPolyDataCollection* newProfiles, vtkCollection* newProfilesEdgeTables);
-  void GenerateNewProfiles(vtkPolyData* model, double center[3], double radius, vtkIntArray* edgeTableForNewProfiles, vtkIntArray* cellPairsForNewProfiles, vtkIdList* pointIdsForNewProfiles, vtkPolyDataCollection* newProfiles, vtkCollection* newProfilesEdgeTables);
+  void ReconstructNewProfiles(vtkPoints* virtualPoints, vtkIdTypeArray* edgeTable, vtkIdTypeArray* cellPairs, vtkPolyDataCollection* newProfiles, vtkCollection* newProfilesEdgeTables);
+  void GenerateNewProfiles(vtkPolyData* model, double center[3], double radius, vtkIdTypeArray* edgeTableForNewProfiles, vtkIdTypeArray* cellPairsForNewProfiles, vtkIdList* pointIdsForNewProfiles, vtkPolyDataCollection* newProfiles, vtkCollection* newProfilesEdgeTables);
   void UnmarkPoints(vtkPolyData* model, vtkIdList* markedPointIds);
   double ComputeStepRadius(vtkPoints* points, double point1[3], double point2[3]);
   double ComputeMeanRadius(vtkPoints* points, double point1[3]);
   void PointsForRadius(vtkPoints *markedPoints, vtkPolyDataCollection *baseProfiles, vtkPolyDataCollection *newProfiles, vtkPoints *pointsForRadius);
   void LookForIntersectingPoint(vtkPoints* segmentPoints, double center[3], double radius, vtkIdType &intersectingPointId);
   vtkIdType StepIteration(vtkPolyData* model, vtkPolyDataCollection* baseProfiles, vtkCollection* baseProfilesEdgeTables, vtkPolyDataCollection* globalProfiles, vtkCollection* globalProfilesEdgeTables, vtkPolyDataCollection* newProfiles, vtkCollection* newProfilesEdgeTables, vtkPoints* segmentPoints, vtkDoubleArray* segmentRadii, vtkPoints* bifurcationPoints, vtkDoubleArray* bifurcationRadii, double oldCenter[3], double &oldRadius, double advancementRatio);
-  void MarkModelGlobalProfile(vtkPolyData* model, vtkIntArray* newGlobalProfileEdgeTable);
+  void MarkModelGlobalProfile(vtkPolyData* model, vtkIdTypeArray* newGlobalProfileEdgeTable);
   void SegmentTopology(vtkCollection* bifurcations, vtkCollection* bifurcationsRadii, double firstSegmentPoint[3], double lastSegmentPoint[3], double firstPoint[3], double &firstRadius, double lastPoint[3], double &lastRadius, vtkIdType segmentTopology[2]);
   void BuildSegment(vtkPoints* segmentPoints, vtkDoubleArray* segmentRadii, vtkIdType segmentTopology[2], double firstPoint[3], double firstRadius, double lastPoint[3], double lastRadius, const double* centralPoint, vtkPolyData* segment);
   void InsertNewBifurcation(vtkCollection* bifurcations, vtkCollection* bifurcationsRadii, vtkPoints* bifurcationPoints, vtkDoubleArray* bifurcationRadii, vtkPolyDataCollection* additionalSegments);
-  void SegmentIteration(vtkPolyData* model, vtkPolyData* initialProfile, vtkIntArray* initialProfileEdgeTable, vtkPolyDataCollection* globalProfiles, vtkCollection* globalProfilesEdgeTables, vtkCollection* bifurcations, vtkCollection* bifurcationsRadii, vtkPolyDataCollection* segments, double advancementRatio);
+  void SegmentIteration(vtkPolyData* model, vtkPolyData* initialProfile, vtkIdTypeArray* initialProfileEdgeTable, vtkPolyDataCollection* globalProfiles, vtkCollection* globalProfilesEdgeTables, vtkCollection* bifurcations, vtkCollection* bifurcationsRadii, vtkPolyDataCollection* segments, double advancementRatio);
   void JoinSegments (vtkPolyData* segment0, vtkPolyData* segment1, bool first0, bool first1, vtkPolyData* segment);
   void RemoveDegenerateBifurcations(vtkPolyDataCollection* segments,vtkCollection* bifurcations);
   void GlobalIteration(vtkPolyData* model, vtkPolyDataCollection* globalProfiles, vtkPolyData* network, double advancementRatio);
