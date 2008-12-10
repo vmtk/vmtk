@@ -49,7 +49,7 @@ CollidingFrontsImageFilter< TInputImage, TOutputImage >
   fastMarchingFilter1->SetOutputSize(this->GetInput()->GetBufferedRegion().GetSize()); 
   fastMarchingFilter1->SetOutputOrigin(this->GetInput()->GetOrigin());
   fastMarchingFilter1->SetOutputSpacing(this->GetInput()->GetSpacing());
-#if ITK_VERSION_MAJOR > 3 || (ITK_VERSION_MAJOR == 3 && ITK_VERSION_MINOR > 8)
+#if ITK_VERSION_MAJOR > 3 || (ITK_VERSION_MAJOR == 3 && ITK_VERSION_MINOR > 10)
   fastMarchingFilter1->SetOutputDirection(this->GetInput()->GetDirection());
 #endif
   fastMarchingFilter1->GenerateGradientImageOn();
@@ -66,7 +66,7 @@ CollidingFrontsImageFilter< TInputImage, TOutputImage >
   fastMarchingFilter2->SetOutputSize(this->GetInput()->GetBufferedRegion().GetSize());
   fastMarchingFilter2->SetOutputOrigin(this->GetInput()->GetOrigin());
   fastMarchingFilter2->SetOutputSpacing(this->GetInput()->GetSpacing());
-#if ITK_VERSION_MAJOR > 3 || (ITK_VERSION_MAJOR == 3 && ITK_VERSION_MINOR > 8)
+#if ITK_VERSION_MAJOR > 3 || (ITK_VERSION_MAJOR == 3 && ITK_VERSION_MINOR > 10)
   fastMarchingFilter2->SetOutputDirection(this->GetInput()->GetDirection());
 #endif
   fastMarchingFilter2->GenerateGradientImageOn();
