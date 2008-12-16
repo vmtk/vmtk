@@ -146,8 +146,15 @@ HessianToObjectnessMeasureImageFilter< TPixel, VDimension >
         {
         rADenominatorBase *= sortedAbsEigenValues[j];
         }
-      rA /= pow(rADenominatorBase, 1.0 / (ImageDimension-m_ObjectDimension-1));
-      objectnessMeasure *= 1.0 - vcl_exp(- 0.5 * vnl_math_sqr(rA) / vnl_math_sqr(m_Alpha));
+      if (fabs(rADenominatorBase) > 0.0)
+        {
+        rA /= pow(rADenominatorBase, 1.0 / (ImageDimension-m_ObjectDimension-1));
+        objectnessMeasure *= 1.0 - vcl_exp(- 0.5 * vnl_math_sqr(rA) / vnl_math_sqr(m_Alpha));
+        }
+      else
+        {
+        objectnessMeasure = 0.0;
+        }
       }
 
     if (m_ObjectDimension > 0)
@@ -158,8 +165,15 @@ HessianToObjectnessMeasureImageFilter< TPixel, VDimension >
         {
         rBDenominatorBase *= sortedAbsEigenValues[j];
         }
-      rB /= pow(rBDenominatorBase, 1.0 / (ImageDimension-m_ObjectDimension));
-      objectnessMeasure *= vcl_exp(- 0.5 * vnl_math_sqr(rB) / vnl_math_sqr(m_Beta));
+      if (fabs(rBDenominatorBase) > 0.0)
+        { 
+        rB /= pow(rBDenominatorBase, 1.0 / (ImageDimension-m_ObjectDimension));
+        objectnessMeasure *= vcl_exp(- 0.5 * vnl_math_sqr(rB) / vnl_math_sqr(m_Beta));
+        }
+      else
+        {
+        objectnessMeasure = 0.0;
+        }
       }
 
     double frobeniusNorm = 0.0;
