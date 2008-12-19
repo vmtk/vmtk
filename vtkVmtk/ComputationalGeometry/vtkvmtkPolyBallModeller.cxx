@@ -164,6 +164,7 @@ int vtkvmtkPolyBallModeller::RequestData(
 
   int numberOfOutputPoints = output->GetNumberOfPoints();
 
+#if 0
   vtkImplicitFunction* function;
   if (!this->UsePolyBallLine)
     {
@@ -190,6 +191,84 @@ int vtkvmtkPolyBallModeller::RequestData(
     }
 
   function->Delete();
+#endif
+
+  if (!this->UsePolyBallLine)
+    {
+    functionArray->FillComponent(0,VTK_VMTK_LARGE_DOUBLE);
+    vtkDoubleArray* radiusArray = vtkDoubleArray::SafeDownCast(input->GetPointData()->GetArray(this->RadiusArrayName));
+    int numberOfInputPoints = input->GetNumberOfPoints();
+    int extent[6];
+    double x[3], p[3], r;
+    double boundingBox0[3], boundingBox1[3];
+    int ijk0[3], ijk1[3], ijk[3];
+    int ijkExtent[6];
+    double pcoords[3];
+    int inBounds0, inBounds1;
+    double radiusFactor = 2.0;
+    output->GetExtent(extent);
+    double sphereFunctionValue, currentSphereFunctionValue;
+    int n;
+    int i, j, k;
+    vtkIdType outputId;
+    for (n=0; n<numberOfInputPoints; n++)
+      {
+      input->GetPoint(n,p);
+      r = radiusArray->GetValue(n);
+      boundingBox0[0] = p[0] - radiusFactor * r;
+      boundingBox0[1] = p[1] - radiusFactor * r;
+      boundingBox0[2] = p[2] - radiusFactor * r;
+      boundingBox1[0] = p[0] + radiusFactor * r;
+      boundingBox1[1] = p[1] + radiusFactor * r;
+      boundingBox1[2] = p[2] + radiusFactor * r;
+      inBounds0 = output->ComputeStructuredCoordinates(boundingBox0,ijk0,pcoords);
+      inBounds1 = output->ComputeStructuredCoordinates(boundingBox1,ijk1,pcoords);
+      if (!inBounds0 && !inBounds1)
+        {
+        continue;
+        }
+      ijkExtent[0] = ijk0[0] < extent[0] ? extent[0] : ijk0[0];
+      ijkExtent[1] = ijk1[0] > extent[1] ? extent[1] : ijk1[0];
+      ijkExtent[2] = ijk0[1] < extent[2] ? extent[2] : ijk0[1];
+      ijkExtent[3] = ijk1[1] > extent[3] ? extent[3] : ijk1[1];
+      ijkExtent[4] = ijk0[2] < extent[4] ? extent[4] : ijk0[2];
+      ijkExtent[5] = ijk1[2] > extent[5] ? extent[5] : ijk1[2];
+      for (k=ijkExtent[4]; k<=ijkExtent[5]; k++)
+        {
+        for (j=ijkExtent[2]; j<=ijkExtent[3]; j++)
+          {
+          for (i=ijkExtent[0]; i<=ijkExtent[1]; i++)
+            {
+            ijk[0] = i;
+            ijk[1] = j;
+            ijk[2] = k;
+            outputId = output->ComputePointId(ijk);
+            output->GetPoint(outputId,x);
+            sphereFunctionValue = ((x[0] - p[0]) * (x[0] - p[0]) + (x[1] - p[1]) * (x[1] - p[1]) + (x[2] - p[2]) * (x[2] - p[2])) - r * r; 
+            currentSphereFunctionValue = functionArray->GetComponent(outputId,0);
+            if (sphereFunctionValue < currentSphereFunctionValue)
+              {
+              functionArray->SetComponent(outputId,0,sphereFunctionValue);
+              }
+            }
+          }
+        }
+      }
+    }
+  else
+    {
+    vtkvmtkPolyBallLine* polyBallLine = vtkvmtkPolyBallLine::New();
+    polyBallLine->SetInput(input);
+    polyBallLine->SetPolyBallRadiusArrayName(this->RadiusArrayName);
+    double point[3];
+    int i;
+    for (i=0; i<numberOfOutputPoints; i++)
+      {
+      output->GetPoint(i,point);
+      double polyBallLineValue = polyBallLine->EvaluateFunction(point);
+      functionArray->SetComponent(i,0,polyBallLineValue);
+      }
+    }
 
   return 1;
 }

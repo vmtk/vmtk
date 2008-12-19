@@ -65,6 +65,7 @@ SET(SCRIPTS_SRCS
   vmtknetworkextraction.py
   vmtkpointsplitextractor.py
   vmtkpointtransform.py
+  vmtkpolyballmodeller.py
   vmtkpotentialfit.py
   vmtkpythonscript.py
   vmtkrenderer.py

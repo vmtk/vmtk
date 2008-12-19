@@ -62,6 +62,7 @@ __all__ = [
   'vmtknetworkextraction',
   'vmtkpointsplitextractor',
   'vmtkpointtransform',
+  'vmtkpolyballmodeller',
   'vmtkpotentialfit',
   'vmtkpythonscript',
   'vmtkrenderer',
