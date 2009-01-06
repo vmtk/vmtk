@@ -179,15 +179,22 @@ class PypeWrapper(object):
         moduleFile.write('\n')
 
         substModulePipeArguments = []
+        exposedMembersOrder = []
         for argument in self.ModulePipeArguments:
             if '@' in argument[1:]:
                 substModulePipeArguments.append(argument.split('@')[0])
             else:
                 substModulePipeArguments.append(argument)
-        for exposedMember in self.AllExposedMembers: 
+        for exposedMember in self.AllExposedMembers:
+            exposedMembersOrder.append(substModulePipeArguments.index(exposedMember.ExposedName))
             if exposedMember.ExposedChannel in ['input','output']:
                 substModulePipeArguments[substModulePipeArguments.index(exposedMember.ExposedName)-1] += 'file'
             substModulePipeArguments[substModulePipeArguments.index(exposedMember.ExposedName)] = '%s'
+        sortedExposedMembersOrder = exposedMembersOrder[:]
+        sortedExposedMembersOrder.sort()
+        allOrderedExposedMemberNames = []
+        for position in sortedExposedMembersOrder:
+            allOrderedExposedMemberNames.append(self.AllExposedMembers[exposedMembersOrder.index(position)].ExposedName)
 
         moduleFile.write('arguments = sys.argv[:]\n') 
         moduleFile.write('\n')
@@ -213,7 +220,7 @@ class PypeWrapper(object):
                 moduleFile.write('%s = " ".join(%s.split(","))\n' % (exposedMember.ExposedName, exposedMember.ExposedName))
                 moduleFile.write('\n')
  
-        moduleFile.write('pipe = "%s" %% (%s)\n' % (' '.join(substModulePipeArguments),','.join([member.ExposedName for member in self.AllExposedMembers])))
+        moduleFile.write('pipe = "%s" %% (%s)\n' % (' '.join(substModulePipeArguments),','.join(allOrderedExposedMemberNames)))
 
         moduleFile.write('\n')
         moduleFile.write('from vmtk import pypes\n')
