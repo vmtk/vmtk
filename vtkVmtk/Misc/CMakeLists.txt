@@ -1,6 +1,7 @@
 SET (VTK_VMTK_MISC_SRCS
   vtkvmtkAppendFilter.cxx
   vtkvmtkBoundaryLayerGenerator.cxx
+  vtkvmtkCurvedMPRImageFilter.cxx
   vtkvmtkImageBoxPainter.cxx
   vtkvmtkLevelSetSigmoidFilter.cxx
   vtkvmtkLinearizeMeshFilter.cxx

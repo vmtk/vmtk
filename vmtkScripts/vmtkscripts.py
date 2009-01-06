@@ -28,6 +28,7 @@ __all__ = [
   'vmtkicpregistration',
   'vmtkimagecast',
   'vmtkimagecompose',
+  'vmtkimagecurvedmpr',
   'vmtkimagefeaturecorrection',
   'vmtkimagefeatures',
   'vmtkimageinitialization',
