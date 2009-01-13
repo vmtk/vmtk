@@ -17,6 +17,11 @@ CONFIGURE_FILE(
   ${VTK_VMTK_BINARY_DIR}/vtkvmtkConfigure.h
   )                                                                                                  
 
+if(APPLE)
+  set(CMAKE_SHARED_LINKER_FLAGS "-Wl,-dylib_file,/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib")
+  set(CMAKE_EXE_LINKER_FLAGS "-Wl,-dylib_file,/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib")
+endif(APPLE)
+
 OPTION(VTK_VMTK_BUILD_TETGEN "Build TetGen and TetGen wrapper." ON)
 
 OPTION(VMTK_EXTERNAL_vtkITK "Use external vtkITK installation" OFF)

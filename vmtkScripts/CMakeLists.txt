@@ -41,6 +41,7 @@ SET(SCRIPTS_SRCS
   vmtkimagereader.py
   vmtkimagereslice.py
   vmtkimageseeder.py
+  vmtkimageshiftscale.py
   vmtkimagesmoothing.py
   vmtkimagevesselenhancement.py
   vmtkimageviewer.py

@@ -119,6 +119,12 @@ public:
     RELOCATE_SUCCESS,
     RELOCATE_FAILURE
   };
+
+  enum {
+    INTERNAL_POINT,
+    POINT_ON_BOUNDARY,
+    NO_NEIGHBORS
+  };
   //ETX
 
 protected:
@@ -158,6 +164,8 @@ protected:
   int GetNumberOfBoundaryEdges(vtkIdType cellId);
 
   double ComputeTriangleTargetArea(vtkIdType cellId);
+
+  int FindOneRingNeighbors(vtkIdType pointId, vtkIdList* neighborIds);
 
   vtkPolyData* Mesh;
   vtkPolyData* InputBoundary;

@@ -319,6 +319,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::RequestData(
       }
     }
 
+  cout<<"Final mesh improvement"<<endl;
   bool projectToSurface = false;
   for (int i=0; i<this->NumberOfIterations; i++)
     {
@@ -629,19 +630,165 @@ int vtkvmtkPolyDataSurfaceRemeshing::IsPointOnEntityBoundary(vtkIdType pointId)
   return 0;
 }
 
+int vtkvmtkPolyDataSurfaceRemeshing::FindOneRingNeighbors(vtkIdType pointId, vtkIdList* neighborIds)
+{
+  int pointLocation = INTERNAL_POINT;
+
+  vtkIdList* cellIds = vtkIdList::New();
+  this->Mesh->GetPointCells(pointId,cellIds);
+
+  vtkIdType numberOfCells = cellIds->GetNumberOfIds();
+  if (numberOfCells < 1)
+    {
+    cellIds->Delete();
+    return NO_NEIGHBORS;
+    }
+
+  vtkIdList* ptIds = vtkIdList::New();
+  this->Mesh->GetCellPoints(cellIds->GetId(0),ptIds);
+
+  vtkIdType bp1, bp2;
+  vtkIdType i, j;
+
+  vtkIdType p1, p2;
+  p2 = ptIds->GetId(0);
+  for (i=1; i<3; i++)
+    {
+    p2 = ptIds->GetId(i);
+    if (pointId != p2)
+      {
+      break;
+      }
+    }
+  neighborIds->InsertNextId(p2);
+
+  this->Mesh->GetCellEdgeNeighbors(-1,pointId,p2,cellIds);
+
+  vtkIdType startCell;
+  vtkIdType nextCell = cellIds->GetId(0);
+  if (cellIds->GetNumberOfIds() == 1)
+    {
+    startCell = -1;
+    }
+  else
+    {
+    startCell = cellIds->GetId(1);
+    }
+
+  bp2 = -1;
+  bp1 = p2;
+
+  // walk around the neighborhood counter-clockwise and get cells
+  vtkCell* cell = NULL;
+  for (j=0; j<numberOfCells; j++)
+    {
+    cell = this->Mesh->GetCell(nextCell);
+    p1 = -1;
+    for (i=0; i<3; i++)
+      {
+      p1 = cell->GetPointId(i);
+      if (p1 != pointId && p1 != p2)
+        {
+        break;
+        }
+      }
+
+    p2 = p1;
+    neighborIds->InsertNextId(p2);
+    this->Mesh->GetCellEdgeNeighbors(nextCell,pointId,p2,cellIds);
+    if (cellIds->GetNumberOfIds() != 1)
+      {
+      bp2 = p2;
+      j++;
+      break;
+      }
+    nextCell = cellIds->GetId(0);
+    }
+
+  // now walk around the other way. this will only happen if there
+  // is a boundary cell left that we have not visited
+  nextCell = startCell;
+  p2 = bp1;
+  for (; j<numberOfCells && startCell!=-1; j++)
+    {
+    cell = this->Mesh->GetCell(nextCell);
+    p1 = -1;
+    for (i=0; i<3; i++)
+      {
+      p1 = cell->GetPointId(i);
+      if (p1 != pointId && p1 != p2)
+        {
+        break;
+        }
+      }
+    p2 = p1;
+    neighborIds->InsertNextId(p2);
+    this->Mesh->GetCellEdgeNeighbors(nextCell,pointId,p2,cellIds);
+    if (cellIds->GetNumberOfIds() != 1)
+      {
+      bp1 = p2;
+      break;
+      }
+    nextCell = cellIds->GetId(0);
+    }
+
+  if (bp2 != -1) // boundary edge
+    {
+    pointLocation = POINT_ON_BOUNDARY;
+    vtkIdType id = neighborIds->IsId(bp2);
+    for (i=0; i<=id/2; i++)
+      {
+      p1 = neighborIds->GetId(i);
+      p2 = neighborIds->GetId(id-i);
+      neighborIds->SetId(i,p2);
+      neighborIds->SetId(id-i,p1);
+      }
+    }
+  else
+    {
+    // Remove last id. It's a duplicate of the first
+    neighborIds->SetNumberOfIds(neighborIds->GetNumberOfIds()-1);
+    }
+
+  cellIds->Delete();
+  ptIds->Delete();
+
+  return pointLocation;
+}
+#define USE_STENCIL
 int vtkvmtkPolyDataSurfaceRemeshing::RelocatePoint(vtkIdType pointId, bool projectToSurface)
 {
+#ifndef USE_STENCIL
+  vtkIdList* neighborIds = vtkIdList::New();
+  int pointLocation = this->FindOneRingNeighbors(pointId,neighborIds);
+#else
   vtkvmtkPolyDataUmbrellaStencil* stencil = vtkvmtkPolyDataUmbrellaStencil::New();
   stencil->SetDataSet(this->Mesh);
   stencil->SetDataSetPointId(pointId);
   stencil->NegateWeightsOff();
   stencil->Build();
+#endif
 
+#ifndef USE_STENCIL
+  if (!pointLocation == INTERNAL_POINT)
+#else
   if (!stencil->GetIsBoundary())
+#endif
     { 
     double targetPoint[3];
     targetPoint[0] = targetPoint[1] = targetPoint[2] = 0.0;
- 
+#ifndef USE_STENCIL 
+    int numberOfNeighbors = neighborIds->GetNumberOfIds();
+    double stencilWeight = 1.0 / numberOfNeighbors;
+    for (int i=0; i<numberOfNeighbors; i++)
+      {
+      double stencilPoint[3];
+      this->Mesh->GetPoint(neighborIds->GetId(i),stencilPoint);
+      targetPoint[0] += stencilWeight * stencilPoint[0];
+      targetPoint[1] += stencilWeight * stencilPoint[1];
+      targetPoint[2] += stencilWeight * stencilPoint[2];
+      }
+#else
     for (int i=0; i<stencil->GetNumberOfPoints(); i++)
       {
       double stencilPoint[3];
@@ -651,7 +798,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::RelocatePoint(vtkIdType pointId, bool proje
       targetPoint[1] += stencilWeight * stencilPoint[1];
       targetPoint[2] += stencilWeight * stencilPoint[2];
       }
-  
+#endif
     double point[3];
     this->Mesh->GetPoint(pointId,point);
   
@@ -689,14 +836,20 @@ int vtkvmtkPolyDataSurfaceRemeshing::RelocatePoint(vtkIdType pointId, bool proje
     targetPoint[0] = targetPoint[1] = targetPoint[2] = 0.0;
 
     double stencilPoint[3];
+#ifndef USE_STENCIL
+    this->Mesh->GetPoint(neighborIds->GetId(0),stencilPoint);
+#else
     this->Mesh->GetPoint((stencil->GetPointId(0)),stencilPoint);
-
+#endif
     double stencilWeight = 0.5;
     targetPoint[0] += stencilWeight * stencilPoint[0];
     targetPoint[1] += stencilWeight * stencilPoint[1];
     targetPoint[2] += stencilWeight * stencilPoint[2];
-
+#ifndef USE_STENCIL
+    this->Mesh->GetPoint(neighborIds->GetId(neighborIds->GetNumberOfIds()-1),stencilPoint);
+#else
     this->Mesh->GetPoint((stencil->GetPointId(stencil->GetNumberOfPoints()-1)),stencilPoint);
+#endif
     targetPoint[0] += stencilWeight * stencilPoint[0];
     targetPoint[1] += stencilWeight * stencilPoint[1];
     targetPoint[2] += stencilWeight * stencilPoint[2];
@@ -719,17 +872,20 @@ int vtkvmtkPolyDataSurfaceRemeshing::RelocatePoint(vtkIdType pointId, bool proje
       }
     else
       {
-      vtkErrorMacro(<<"Something's wrong: point on boundary but no BoundaryLocator is allocated.");
+//      vtkErrorMacro(<<"Something's wrong: point on boundary but no BoundaryLocator is allocated.");
       projectedRelocatedPoint[0] = relocatedPoint[0];
       projectedRelocatedPoint[1] = relocatedPoint[1];
       projectedRelocatedPoint[2] = relocatedPoint[2];
-      return RELOCATE_FAILURE;
+//      return RELOCATE_FAILURE;
       }
   
     this->Mesh->GetPoints()->SetPoint(pointId,projectedRelocatedPoint);
     }
-
+#ifndef USE_STENCIL
+  neighborIds->Delete();
+#else
   stencil->Delete();
+#endif
   return RELOCATE_SUCCESS;
 }
 

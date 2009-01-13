@@ -13,7 +13,7 @@ vtkvmtkCurvedMPRImageFilter::vtkvmtkCurvedMPRImageFilter()
   this->InplaneOutputSpacing[1] = 1.0;
   this->InplaneOutputSize[0] = 100;
   this->InplaneOutputSize[1] = 100;
-  this->ReslicingBackgroundLevel = 0;
+  this->ReslicingBackgroundLevel = 0.0;
 
   for (int i = 0;i<6;i++)
     {

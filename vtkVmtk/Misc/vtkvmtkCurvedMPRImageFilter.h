@@ -46,7 +46,7 @@ public:
   vtkGetVector2Macro(InplaneOutputSize,int);
       
   // Description:
-  // Set/Get the Back Ground Level of the Reslided Data
+  // Set/Get the Back Ground Level of the Resliced Data
   vtkSetMacro(ReslicingBackgroundLevel,double);
   vtkGetMacro(ReslicingBackgroundLevel,double);
  
@@ -102,7 +102,7 @@ public:
   vtkPolyData * Centerline;
   double InplaneOutputSpacing[2];
   int InplaneOutputSize[2];
-  int ReslicingBackgroundLevel;
+  double ReslicingBackgroundLevel;
   int OutputExtent[6];
   double OutputOrigin[3];
   double OutputSpacing[3];

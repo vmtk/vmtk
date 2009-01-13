@@ -13,10 +13,10 @@
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
 ##      PURPOSE.  See the above copyright notices for more information.
 
-# Note: this class was contributed by 
-# Hugo Gratama van Andel
-# Academic Medical Centre - University of Amsterdam
-# Dept. Biomedical Engineering  & Physics
+## Note: this class was contributed by 
+##       Hugo Gratama van Andel
+##       Academic Medical Centre - University of Amsterdam
+##       Dept. Biomedical Engineering  & Physics
 
 import vtk
 import sys
@@ -64,7 +64,7 @@ class vmtkImageCurvedMPR(pypes.pypeScript):
         if self.Centerlines == None:
             self.PrintError('Error: No input centerlines.')
    
-        curvedMPRImageFilter = vtkvmtk.vtkvmtkImageCurvedMPR()
+        curvedMPRImageFilter = vtkvmtk.vtkvmtkCurvedMPRImageFilter()
         curvedMPRImageFilter.SetInput(self.Image)
         curvedMPRImageFilter.SetCenterline(self.Centerlines)
         curvedMPRImageFilter.SetParallelTransportNormalsArrayName(self.NormalsArrayName)
