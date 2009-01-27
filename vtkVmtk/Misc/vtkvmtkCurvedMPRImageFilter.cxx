@@ -352,7 +352,7 @@ int vtkvmtkCurvedMPRImageFilter::RequestData(
     resliceUpdateExtent[4] = 0;
     resliceUpdateExtent[5] = 0;
 
-    int outputInc[3];
+    vtkIdType outputInc[3];
     outputImage->GetIncrements(outputInc);
 
     int scalarType =  reslice->GetOutput()->GetScalarType();
