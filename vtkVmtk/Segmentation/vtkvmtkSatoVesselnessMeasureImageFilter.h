@@ -73,6 +73,18 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkSatoVesselnessMeasureImageFilter : pub
     DelegateITKOutputMacro(GetNumberOfSigmaSteps);
   }
 
+  void SetSigmaStepMethodToEquispaced()
+  {
+    this->GetImageFilterPointer()->SetSigmaStepMethodToEquispaced();
+    this->Modified();
+  }
+  
+  void SetSigmaStepMethodToLogarithmic()
+  {
+    this->GetImageFilterPointer()->SetSigmaStepMethodToLogarithmic();
+    this->Modified();
+  }
+
   void SetAlpha1(double value)
   {
     DelegateITKInputMacro(GetHessianToMeasureFilter()->SetAlpha1,value);

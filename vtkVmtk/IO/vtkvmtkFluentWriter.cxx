@@ -223,7 +223,8 @@ void vtkvmtkFluentWriter::WriteData()
       {
       continue;
       }
-    sprintf(str,"(13 (%x %x %x %x 0)(",entityId,faceOffset,faceOffset+numberOfBoundaryTriangles-1,entityId);
+    //sprintf(str,"(13 (%x %x %x %x 0)(",entityId,faceOffset,faceOffset+numberOfBoundaryTriangles-1,entityId);
+    sprintf(str,"(13 (%x %x %x 3 0)(",entityId,faceOffset,faceOffset+numberOfBoundaryTriangles-1);
     entityId++;
     out << str << endl;
     for (i=0; i<numberOfTriangles; i++)
@@ -304,7 +305,7 @@ void vtkvmtkFluentWriter::WriteData()
       {
       continue;
       }
-    sprintf(str,"(45 (%x wall wall)())",entityId);
+    sprintf(str,"(45 (%x wall surface%d)())",entityId,entityId);
     entityId++;
     out << str << endl;
     }

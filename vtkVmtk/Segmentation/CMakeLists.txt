@@ -22,6 +22,7 @@ SET (VTK_VMTK_SEGMENTATION_SRCS
   vtkvmtkThresholdSegmentationLevelSetImageFilter.cxx
   vtkvmtkUpwindGradientMagnitudeImageFilter.cxx
   vtkvmtkVesselEnhancingDiffusionImageFilter.cxx
+  vtkvmtkVesselEnhancingDiffusion3DImageFilter.cxx
   vtkvmtkVesselnessMeasureImageFilter.cxx
   )
 
@@ -36,6 +37,8 @@ SET (VTK_VMTK_SEGMENTATION_ITK_HEADERS
   itkMultiScaleHessianBasedMeasureImageFilter.txx
   itkUpwindGradientMagnitudeImageFilter.h
   itkUpwindGradientMagnitudeImageFilter.txx
+  itkVesselEnhancingDiffusion3DImageFilter.h
+  itkVesselEnhancingDiffusion3DImageFilter.txx
 )
 
 IF (NOT VMTK_EXTERNAL_vtkITK)

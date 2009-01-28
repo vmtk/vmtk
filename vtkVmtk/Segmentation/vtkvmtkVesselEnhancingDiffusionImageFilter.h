@@ -74,6 +74,18 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkVesselEnhancingDiffusionImageFilter : 
     DelegateITKOutputMacro(GetMultiScaleVesselnessFilter()->GetNumberOfSigmaSteps);
   }
 
+  void SetSigmaStepMethodToEquispaced()
+  {
+    this->GetImageFilterPointer()->GetMultiScaleVesselnessFilter()->SetSigmaStepMethodToEquispaced();
+    this->Modified();
+  }
+  
+  void SetSigmaStepMethodToLogarithmic()
+  {
+    this->GetImageFilterPointer()->GetMultiScaleVesselnessFilter()->SetSigmaStepMethodToLogarithmic();
+    this->Modified();
+  }
+
   void SetTimeStep(double value)
   {
     DelegateITKInputMacro(SetTimeStep,value);

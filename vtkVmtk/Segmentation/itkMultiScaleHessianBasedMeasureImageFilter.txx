@@ -218,17 +218,22 @@ MultiScaleHessianBasedMeasureImageFilter
 {
   double sigmaValue;
 
+  if (m_NumberOfSigmaSteps < 2)
+    {
+    return m_SigmaMin;
+    }
+
   switch (m_SigmaStepMethod)
     {
     case Self::EquispacedSigmaSteps:
       {
-      const double stepSize = std::max(1e-10, ( m_SigmaMax - m_SigmaMin ) / m_NumberOfSigmaSteps);
+      const double stepSize = std::max(1e-10, ( m_SigmaMax - m_SigmaMin ) / (m_NumberOfSigmaSteps - 1));
       sigmaValue = m_SigmaMin + stepSize * scaleLevel;
       break;
       }
     case Self::LogarithmicSigmaSteps:
       {
-      const double stepSize = std::max(1e-10, ( vcl_log(m_SigmaMax) - vcl_log(m_SigmaMin) ) / m_NumberOfSigmaSteps);
+      const double stepSize = std::max(1e-10, ( vcl_log(m_SigmaMax) - vcl_log(m_SigmaMin) ) / (m_NumberOfSigmaSteps - 1));
       sigmaValue = vcl_exp( vcl_log (m_SigmaMin) + stepSize * scaleLevel);
       break;
       }

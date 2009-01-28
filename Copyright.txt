@@ -1,7 +1,7 @@
 COPYRIGHT
 ---------
 
-Copyright (C) 2004-2008, Luca Antiga, David Steinman 
+Copyright (C) 2004-2009, Luca Antiga, David Steinman 
 
 More detailed copyright information can be found in the individual source code files.
 
@@ -17,11 +17,13 @@ APPLICABLE LICENSES
 
 * Tetgen is licensed under a modified MIT license.
 
+* LASPack is licensed under a modified MIT license.
+
 
 COMPLETE LICENSE FOR VMTK
 -------------------------
 
-Copyright (c) 2004-2008, Luca Antiga, David Steinman
+Copyright (c) 2004-2009, Luca Antiga, David Steinman
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -56,7 +58,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 THE INSIGHT TOOLKIT (ITK) LICENSE
 ---------------------------------
 
-Copyright (c) 1999-2003 Insight Software Consortium
+The license of the Insight Toolkit is an open-source BSD license. It allows unrestricted use, including use in commercial products. (The only exceptions are software modules found in the patented software directory.) 
+
+Starting with ITK 3.6, The Insight Toolkit is distributed under the new and simplified BSD license approved by the Open Source Initiative (OSI). The complete license is shown below.
+
+Copyright (c) 1999-2009 Insight Software Consortium
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -88,7 +94,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 THE VISUALIZATION TOOLKIT (VTK) LICENSE
 ---------------------------------------
 
-Copyright (c) 1993-2006 Ken Martin, Will Schroeder, Bill Lorensen
+Copyright (c) 1993-2009 Ken Martin, Will Schroeder, Bill Lorensen
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without 
@@ -117,7 +123,7 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-TetGen License
+TETGEN LICENSE
 --------------
 
 The software (TetGen) is licensed under the terms of the  MIT  license
@@ -183,4 +189,52 @@ TORT  OR OTHERWISE, ARISING  FROM, OUT  OF OR  IN CONNECTION  WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ======================================================================
+
+
+LASPACK LICENSE
+---------------
+
+COPYRIGHT notice for LASPack library                                     
+                                                                         
+Copyright (C) 1992-1996 Tomas Skalicky. All rights reserved.             
+                                                                         
+Redistribution and use in source and binary forms, with or without       
+modification, are permitted provided that the following conditions       
+are met:                                                                 
+                                                                         
+1. Redistributions of source code must retain the above copyright        
+   notice, this list of conditions and the following disclaimer.         
+2. Redistributions in binary form must reproduce the above               
+   copyright notice, this list of conditions and the following           
+   disclaimer in the documentation and/or other materials provided       
+   with the distribution.                                                
+3. All modifications to the source code must be clearly marked as        
+   such.  Binary redistributions based on modified source code           
+   must be clearly marked as modified versions in the documentation      
+   and/or other materials provided with the distribution.                
+4. No fees may be charged for distribution of the codes, other than      
+   a fee to cover the cost of the media and a reasonable handling fee.   
+5. This code, and any derivative of this code, may not be used in a      
+   commercial package without the prior explicit written permission      
+   of the author.                                                        
+                                                                         
+This code is provided "as is", without any warranty of any kind,         
+either expressed or implied, including but not limited to, any implied   
+warranty of merchantibility or fitness for any purpose. In no event      
+will the author or any party who distributed the code be liable          
+for damages or for any claim(s) by any other party, including but not    
+limited to, any lost profits, lost data or data rendered inaccurate,     
+losses sustained by third parties, or any other special, incidental or   
+consequential damages arising out of the use or inability to use         
+the program, even if the possibility of such damages has been advised    
+against. The entire risk as to the quality, the performance, and         
+the fitness of the program for any particular purpose lies with          
+the party using the code.                                                
+                                                                         
+*************************************************************************
+                                                                          
+         ANY USE OF THIS CODE CONSTITUTES ACCEPTANCE OF THE TERMS         
+                         OF THE COPYRIGHT NOTICE                          
+                                                                          
+**************************************************************************
 
