@@ -173,7 +173,7 @@ int vtkvmtkCurvedMPRImageFilter::RequestInformation (
 }
 
 template <class T>
-void vtkvmtkCurvedMPRImageFilter::FillSlice(T* outReslicePtr, T* outputImagePtr, int* resliceUpdateExtent, int* outExtent, int* outputInc, int slice)
+void vtkvmtkCurvedMPRImageFilter::FillSlice(T* outReslicePtr, T* outputImagePtr, int* resliceUpdateExtent, int* outExtent, vtkIdType* outputInc, int slice)
 {
   //write result to the new dataset
   int size = (outExtent[1]-outExtent[0]+1)*(outExtent[3]-outExtent[2]+1);
