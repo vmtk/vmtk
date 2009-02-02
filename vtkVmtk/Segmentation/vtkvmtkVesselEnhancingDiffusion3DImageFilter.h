@@ -101,7 +101,7 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkVesselEnhancingDiffusion3DImageFilter 
     DelegateITKInputMacro(SetGamma,value);
   }
 
-  void SetRecalculateVesselness(double value)
+  void SetRecalculateVesselness(int value)
   {
     DelegateITKInputMacro(SetRecalculateVesselness,value);
   }
