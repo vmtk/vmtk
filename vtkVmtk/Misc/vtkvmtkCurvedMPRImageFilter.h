@@ -81,7 +81,7 @@ public:
   ~vtkvmtkCurvedMPRImageFilter();
 //BTX
   template<class T>
-  void FillSlice(T* outReslicePtr, T* outputImagePtr, int* resliceUpdateExtent, int* outExtent, int* outputInc, int slice);
+  void FillSlice(T* outReslicePtr, T* outputImagePtr, int* resliceUpdateExtent, int* outExtent, vtkIdType* outputInc, int slice);
 //ETX
   // Description:
   // This method is called by the superclass and sets the update extent of the input image to the wholeextent 
