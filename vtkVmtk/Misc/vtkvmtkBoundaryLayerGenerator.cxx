@@ -362,7 +362,7 @@ int vtkvmtkBoundaryLayerGenerator::RequestData(
   return 1;
 }
 
-void vtkvmtkBoundaryLayerGenerator::WarpPoints(vtkPoints* inputPoints, vtkPoints* warpedPoints, vtkIdType subLayerId, bool quadratic)
+void vtkvmtkBoundaryLayerGenerator::WarpPoints(vtkPoints* inputPoints, vtkPoints* warpedPoints, int subLayerId, bool quadratic)
 {
   double point[3], warpedPoint[3], warpVector[3];
   double layerThickness, subLayerThicknessRatio, subLayerThickness;
