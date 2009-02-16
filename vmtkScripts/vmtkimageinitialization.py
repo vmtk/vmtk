@@ -297,6 +297,7 @@ class vmtkImageInitialization(pypes.pypeScript):
         collidingFronts.SetSeeds1(seedIds1)
         collidingFronts.SetSeeds2(seedIds2)
         collidingFronts.ApplyConnectivityOn()
+        collidingFronts.StopOnTargetsOn()
         collidingFronts.Update()
 
         subtract = vtk.vtkImageMathematics()

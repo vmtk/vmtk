@@ -64,6 +64,22 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkCollidingFrontsImageFilter : public vt
   double GetNegativeEpsilon()
   { DelegateITKOutputMacro ( GetNegativeEpsilon ); }
 
+  void SetStopOnTargets ( int value )
+  {
+    DelegateITKInputMacro ( SetStopOnTargets, (bool) value );
+  }
+
+  void StopOnTargetsOn()
+  {
+    this->SetStopOnTargets (true);
+  }
+  void StopOnTargetsOff()
+  {
+    this->SetStopOnTargets (false);
+  }
+  int GetStopOnTargets()
+  { DelegateITKOutputMacro ( GetStopOnTargets ); }
+
   vtkSetObjectMacro(Seeds1,vtkIdList);
   vtkGetObjectMacro(Seeds1,vtkIdList);
 

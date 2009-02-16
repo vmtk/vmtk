@@ -36,6 +36,7 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
         self.OwnRenderer = 0
 
         self.InitialLevelSets = None
+        self.InitializationImage = None
         self.FeatureImage = None
         self.LevelSetsInput = None
         self.LevelSetsOutput = None
@@ -73,6 +74,7 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
         self.SetInputMembers([
             ['Image','i','vtkImageData',1,'','','vmtkimagereader'],
             ['FeatureImage','featureimage','vtkImageData',1,'','','vmtkimagereader'],
+            ['InitializationImage','initializationimage','vtkImageData',1,'','','vmtkimagereader'],
             ['InitialLevelSets','initiallevelsets','vtkImageData',1,'','','vmtkimagereader'],
             ['LevelSets','levelsets','vtkImageData',1,'','','vmtkimagereader'],
             ['LevelSetsType','levelsetstype','str',1,'["geodesic","curves","threshold","laplacian"]'],
@@ -259,6 +261,9 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
         cast.Update()
         self.Image = cast.GetOutput()
 
+        if not self.InitializationImage:
+            self.InitializationImage = self.Image
+
         if not self.FeatureImage:
             if self.LevelSetsType in ["geodesic", "curves"]:
                 imageFeatures = vmtkscripts.vmtkImageFeatures()
@@ -289,7 +294,8 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
   
         self.ImageSeeder = vmtkscripts.vmtkImageSeeder()
         self.ImageSeeder.vmtkRenderer = self.vmtkRenderer
-        self.ImageSeeder.Image = self.Image
+        #self.ImageSeeder.Image = self.Image
+        self.ImageSeeder.Image = self.InitializationImage
         self.ImageSeeder.Display = 0
         self.ImageSeeder.Execute()
         self.ImageSeeder.Display = 1
@@ -302,7 +308,8 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
             self.DisplayLevelSetSurface(self.LevelSets,0.0)
   
         self.vmtkImageInitialization = vmtkscripts.vmtkImageInitialization()
-        self.vmtkImageInitialization.Image = self.Image
+        #self.vmtkImageInitialization.Image = self.Image
+        self.vmtkImageInitialization.Image = self.InitializationImage
         self.vmtkImageInitialization.vmtkRenderer = self.vmtkRenderer
         self.vmtkImageInitialization.ImageSeeder = self.ImageSeeder
         self.vmtkImageInitialization.SurfaceViewer = self.SurfaceViewer
