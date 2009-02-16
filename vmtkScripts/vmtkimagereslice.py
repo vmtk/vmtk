@@ -13,6 +13,11 @@
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
 ##      PURPOSE.  See the above copyright notices for more information.
 
+## Note: this class was improved by 
+##       Hugo Gratama van Andel
+##       Academic Medical Centre - University of Amsterdam
+##       Dept. Biomedical Engineering  & Physics
+
 
 import vtk
 import sys
@@ -39,6 +44,15 @@ class vmtkImageReslice(pypes.pypeScript):
 
         self.BackgroundLevel = 0.0
 
+        self.MatrixCoefficients = []
+        self.InvertMatrix = 0
+        self.Matrix4x4 = None
+        self.Rotation = [0.0,0.0,0.0]
+        self.Translation = [0.0,0.0,0.0]
+        self.Scaling = [0.0,0.0,0.0]
+
+        self.TransformInputSampling = 1
+
         self.SetScriptName('vmtkimagereslice')
         self.SetScriptDoc('reslice an image based on user-specified parameters or on a reference image')
         self.SetInputMembers([
@@ -49,7 +63,14 @@ class vmtkImageReslice(pypes.pypeScript):
             ['OutputExtent','extent','int',6,'','the output extent'],
             ['Interpolation','interpolation','str',1,'["nearestneighbor","linear","cubic"]','interpolation during reslice'],
             ['Cast','cast','bool',1,'','toggle cast image to float type'],
-            ['BackgroundLevel','background','float',1,'','the output image background']
+            ['BackgroundLevel','background','float',1,'','the output image background'],
+            ['Matrix4x4','matrix4x4','vtkMatrix4x4',1,'','the input transform matrix'],
+            ['MatrixCoefficients','matrix','float',16,'','coefficients of transform matrix'],
+            ['InvertMatrix','invert','bool',1,'','invert matrix before applying transformation']
+            ['Rotation','rotation','float',3,'','rotations around the x-,y- and z-axis'],
+            ['Translation','translation','float',3,'','translation in the x-,y- and z-directions'],
+            ['Scaling','scaling','float',3,'','scaling of the x-,y- and z-directions'],
+            ['TransformInputSampling','transforminputsampling','bool',1,'','transform spacing, origin and extent of the Input (or the InformationInput) according to the direction cosines and origin of the ResliceAxes before applying them as the default output spacing, origin and extent']
             ])
         self.SetOutputMembers([
             ['Image','o','vtkImageData',1,'','the output image','vmtkimagewriter']
@@ -87,6 +108,36 @@ class vmtkImageReslice(pypes.pypeScript):
         else:
             self.PrintError('Error: unsupported interpolation mode')
         resliceFilter.SetBackgroundLevel(self.BackgroundLevel)
+
+        if self.TransformInputSampling:
+            resliceFilter.TransformInputSamplingOn()
+        else:
+            resliceFilter.TransformInputSamplingOff()
+ 
+        if not self.Matrix4x4:
+            if self.MatrixCoefficients != []:
+                self.PrintLog('Setting up transform matrix using specified coefficients')
+                self.Matrix4x4 = vtk.vtkMatrix4x4()
+                self.Matrix4x4.DeepCopy(self.MatrixCoefficients)
+            elif self.Translation != [0.0,0.0,0.0] or self.Rotation != [0.0,0.0,0.0] or self.Scaling != [0.0,0.0,0.0]:
+                self.PrintLog('Setting up transform matrix using specified translation, rotation and/or scaling')
+                transform = vtk.vtkTransform()
+                transform.RotateX(self.Rotations[0])
+                transform.RotateY(self.Rotations[1])
+                transform.RotateZ(self.Rotations[2])                       
+                transform.Translate(self.Translations[0], self.Translations[1], self.Translations[2])
+                transform.Scale(self.Scales[0], self.Scales[1], self.Scales[2])
+                self.Matrix4x4 = vtk.vtkMatrix4x4()
+                self.Matrix4x4.DeepCopy(transform.GetMatrix())
+
+        if self.InvertMatrix and self.Matrix4x4:
+            self.Matrix4x4.Invert()
+       
+        if self.Matrix4x4:
+            transform = vtk.vtkMatrixToLinearTransform()
+            transform.SetInput(self.Matrix4x4)
+            resliceFilter.SetResliceTransform(transform)
+
         resliceFilter.Update()
 
         self.Image = resliceFilter.GetOutput()

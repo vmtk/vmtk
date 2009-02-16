@@ -13,6 +13,12 @@
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
 ##      PURPOSE.  See the above copyright notices for more information.
 
+## Note: this class was improved by 
+##       Hugo Gratama van Andel
+##       Academic Medical Centre - University of Amsterdam
+##       Dept. Biomedical Engineering  & Physics
+
+
 import vtk
 import sys
 
@@ -30,13 +36,21 @@ class vmtkSurfaceTransform(pypes.pypeScript):
 
         self.MatrixCoefficients = []
         self.InvertMatrix = 0
+        self.Matrix4x4 = None
+        self.Rotation = [0.0,0.0,0.0]
+        self.Translation = [0.0,0.0,0.0]
+        self.Scaling = [0.0,0.0,0.0]
 
         self.SetScriptName('vmtksurfacetransform')
         self.SetScriptDoc('transform a surface with a provided matrix')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
+            ['Matrix4x4','matrix4x4','vtkMatrix4x4',1,'','the input transform matrix'],
             ['MatrixCoefficients','matrix','float',16,'','coefficients of transform matrix'],
             ['InvertMatrix','invert','bool',1,'','invert matrix before applying transformation']
+            ['Rotation','rotation','float',3,'','rotations around the x-,y- and z-axis'],
+            ['Translation','translation','float',3,'','translation in the x-,y- and z-directions'],
+            ['Scaling','scaling','float',3,'','scaling of the x-,y- and z-directions']
             ])
         self.SetOutputMembers([
             ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter']
@@ -47,13 +61,26 @@ class vmtkSurfaceTransform(pypes.pypeScript):
         if (self.Surface == None):
             self.PrintError('Error: no Surface.')
 
-        matrix = vtk.vtkMatrix4x4()
-        matrix.DeepCopy(self.MatrixCoefficients)
+        if not self.Matrix4x4:
+            self.Matrix4x4 = vtk.vtkMatrix4x4()
+            if self.MatrixCoefficients != []:
+                self.PrintLog('Setting up transform matrix using specified coefficients')
+                self.Matrix4x4.DeepCopy(self.MatrixCoefficients)
+            elif self.Translation != [0.0,0.0,0.0] or self.Rotation != [0.0,0.0,0.0] or self.Scaling != [0.0,0.0,0.0]:
+                self.PrintLog('Setting up transform matrix using specified translation, rotation and/or scaling')
+                transform = vtk.vtkTransform()
+                transform.RotateX(self.Rotations[0])
+                transform.RotateY(self.Rotations[1])
+                transform.RotateZ(self.Rotations[2])                       
+                transform.Translate(self.Translations[0], self.Translations[1], self.Translations[2])
+                transform.Scale(self.Scales[0], self.Scales[1], self.Scales[2])
+                self.Matrix4x4.DeepCopy(transform.GetMatrix())
+
         if self.InvertMatrix:
-            matrix.Invert()
+            self.Matrix4x4.Invert()
 
         transform = vtk.vtkMatrixToLinearTransform()
-        transform.SetInput(matrix)
+        transform.SetInput(self.Matrix4x4)
 
         transformFilter = vtk.vtkTransformPolyDataFilter()
         transformFilter.SetInput(self.Surface)

@@ -34,6 +34,7 @@ class vmtkICPRegistration(pypes.pypeScript):
         self.SignedDistanceArrayName = ''
         self.Level = 0.0
         self.MaximumMeanDistance = 1E-2
+        self.Matrix4x4 = None
 
         self.FlipNormals = 0
 
@@ -49,6 +50,7 @@ class vmtkICPRegistration(pypes.pypeScript):
             ])
         self.SetOutputMembers([
             ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter']
+            ['Matrix4x4','omatrix4x4','vtkMatrix4x4',1,'','the output transform matrix']
             ])
 
     def Execute(self):
@@ -89,6 +91,7 @@ class vmtkICPRegistration(pypes.pypeScript):
         self.PrintLog('Mean distance: '+str(icpTransform.GetMeanDistance()))
 
         self.Surface = transformFilter.GetOutput()
+        self.Matrix4x4 = icpTransform.GetMatrix()
 
         if (self.DistanceArrayName != '') | (self.SignedDistanceArrayName != ''):
             self.PrintLog('Computing distance.')
