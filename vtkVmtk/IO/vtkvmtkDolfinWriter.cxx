@@ -159,6 +159,15 @@ void vtkvmtkDolfinWriter::WriteData()
       vtkIdType cellId = cellIds->GetId(0);
       vtkCell* cell = input->GetCell(cellId);
       int cellType = cell->GetCellType();
+
+      if (cellType != VTK_TETRA)
+        {
+        vtkErrorMacro(<<"Volume cell adjacent to triangle is not tetrahedron (volume cell id: "<<cellId <<") and it is unsupported by Dolfin. Skipping face.");
+        faceCellPoints->Delete();
+        cellIds->Delete();
+        continue;
+        }
+
       int numberOfFaces = cell->GetNumberOfFaces();
       vtkIdType faceId = -1;
       int j;
@@ -254,7 +263,7 @@ void vtkvmtkDolfinWriter::GetDolfinConnectivity(int cellType, vtkIdList* dolfinC
       dolfinConnectivity->SetId(3,3);
       break;
     default:
-      cerr<<"Element type not currently supported in dolfin. Skipping element."<<endl;
+      cerr<<"Element type not currently supported in dolfin. Skipping element for connectivity."<<endl;
       break;
     }
 }
@@ -273,7 +282,7 @@ void vtkvmtkDolfinWriter::GetDolfinFaceOrder(int cellType, vtkIdList* dolfinFace
       dolfinFaceOrder->SetId(3,3);
       break;
     default:
-      cerr<<"Element type not currently supported in dolfin. Skipping element."<<endl;
+      cerr<<"Element type not currently supported in dolfin. Skipping element for face ordering."<<endl;
       break;
     }
 }
