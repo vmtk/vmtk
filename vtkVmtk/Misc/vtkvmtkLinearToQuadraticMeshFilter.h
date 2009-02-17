@@ -51,6 +51,12 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkLinearToQuadraticMeshFilter : public vtkUnstru
   vtkSetMacro(ProjectedCellEntityId,int);
   vtkGetMacro(ProjectedCellEntityId,int);
 
+  vtkSetMacro(QuadratureOrder,int);
+  vtkGetMacro(QuadratureOrder,int);
+
+  vtkSetMacro(NegativeJacobianTolerance,double);
+  vtkGetMacro(NegativeJacobianTolerance,double);
+
   protected:
   vtkvmtkLinearToQuadraticMeshFilter();
   ~vtkvmtkLinearToQuadraticMeshFilter();
@@ -66,6 +72,8 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkLinearToQuadraticMeshFilter : public vtkUnstru
 
   char* CellEntityIdsArrayName;
   int ProjectedCellEntityId;
+  int QuadratureOrder;
+  double NegativeJacobianTolerance;
 
   private:
   vtkvmtkLinearToQuadraticMeshFilter(const vtkvmtkLinearToQuadraticMeshFilter&);  // Not implemented.

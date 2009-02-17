@@ -36,7 +36,8 @@ class vmtkLinearToQuadratic(pypes.pypeScript):
         self.CapSurface = False
         self.CellEntityIdsArrayName = None
         self.ProjectedCellEntityId = 1
-        #self.NegativeJacobianTolerance = 1E-5
+        self.NegativeJacobianTolerance = 0.0
+        self.QuadratureOrder = 10
 
         self.SetScriptName('vmtklineartoquadratic')
         self.SetScriptDoc('convert the elements of a mesh from linear to quadratic')
@@ -48,6 +49,8 @@ class vmtkLinearToQuadratic(pypes.pypeScript):
             ['CapSurface','capsurface','bool',1,'','if on, cap the reference surface before projecting'],
             ['CellEntityIdsArrayName','entityidsarray','str',1,'','name of the array where entity ids relative to cells are stored'],
             ['ProjectedCellEntityId','projectedid','int',1,'','id of the entity that is to be projected onto the reference surface'],
+            ['QuadratureOrder','quadratureorder','int',1,'','quadrature order for checking negative Jacobians'],
+            ['NegativeJacobianTolerance','jacobiantolerance','float',1,'','tolerance for the evaluation of negative Jacobians'],
             ['SubdivisionMethod','subdivisionmethod','str',1,'["linear","butterfly"]','subdivision method for surface elements']
             ])
         self.SetOutputMembers([
@@ -73,6 +76,8 @@ class vmtkLinearToQuadratic(pypes.pypeScript):
             linearToQuadraticFilter.SetUseBiquadraticWedge(self.UseBiquadraticWedge)
             linearToQuadraticFilter.SetCellEntityIdsArrayName(self.CellEntityIdsArrayName)
             linearToQuadraticFilter.SetProjectedCellEntityId(self.ProjectedCellEntityId)
+            linearToQuadraticFilter.SetQuadratureOrder(self.QuadratureOrder)
+            linearToQuadraticFilter.SetNegativeJacobianTolerance(self.NegativeJacobianTolerance)
         elif self.Mode == 'surface':
             linearToQuadraticFilter = vtkvmtk.vtkvmtkLinearToQuadraticSurfaceMeshFilter()
             if self.SubdivisionMethod == 'linear':

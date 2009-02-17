@@ -49,6 +49,8 @@ vtkvmtkLinearToQuadraticMeshFilter::vtkvmtkLinearToQuadraticMeshFilter()
   this->ReferenceSurface = NULL;
   this->CellEntityIdsArrayName = NULL;
   this->ProjectedCellEntityId = -1;
+  this->QuadratureOrder = 10;
+  this->NegativeJacobianTolerance = 0.0;
 }
 
 vtkvmtkLinearToQuadraticMeshFilter::~vtkvmtkLinearToQuadraticMeshFilter()
@@ -616,9 +618,16 @@ int vtkvmtkLinearToQuadraticMeshFilter::RequestData(
     }
 
   int numberOfRelaxationSteps = 10;
+  int maxSignChangeIterations = 20;
+  int signChangeCounter = 0;
   bool anySignChange = true;
   while (anySignChange)
     {
+    if (signChangeCounter >= maxSignChangeIterations)
+      {
+      break;
+      }
+    signChangeCounter++;
     anySignChange = false;
     for (i=0; i<numberOfInputTriangles; i++)
       {
@@ -760,9 +769,8 @@ double vtkvmtkLinearToQuadraticMeshFilter::ComputeJacobian(vtkCell* cell, double
 
 bool vtkvmtkLinearToQuadraticMeshFilter::HasJacobianChangedSign(vtkCell* linearVolumeCell, vtkCell* quadraticVolumeCell)
 {
-  int order = 10;
   vtkvmtkGaussQuadrature* gaussQuadrature = vtkvmtkGaussQuadrature::New();
-  gaussQuadrature->SetOrder(order);
+  gaussQuadrature->SetOrder(this->QuadratureOrder);
   gaussQuadrature->Initialize(quadraticVolumeCell->GetCellType());
   bool signChanged = false;
   int numberOfQuadraturePoints = gaussQuadrature->GetNumberOfQuadraturePoints();
@@ -794,7 +802,7 @@ bool vtkvmtkLinearToQuadraticMeshFilter::HasJacobianChangedSign(vtkCell* linearV
     quadraturePCoords[2] = parametricCoords[q*numberOfCellPoints + 2];
     double linearJacobian = this->ComputeJacobian(linearVolumeCell,quadraturePCoords);
     double quadraticJacobian = this->ComputeJacobian(quadraticVolumeCell,quadraturePCoords);
-    if (linearJacobian*quadraticJacobian < 0.0)
+    if (linearJacobian*quadraticJacobian < this->NegativeJacobianTolerance)
       {
       signChanged = true;
       break;
