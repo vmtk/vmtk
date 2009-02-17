@@ -49,7 +49,7 @@ class vmtkICPRegistration(pypes.pypeScript):
             ['MaximumMeanDistance','maxmeandistance','float',1,'','convergence threshold based on the maximum mean distance between the two surfaces']
             ])
         self.SetOutputMembers([
-            ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter']
+            ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter'],
             ['Matrix4x4','omatrix4x4','vtkMatrix4x4',1,'','the output transform matrix']
             ])
 

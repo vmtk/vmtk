@@ -49,7 +49,7 @@ class vmtkImageReslice(pypes.pypeScript):
         self.Matrix4x4 = None
         self.Rotation = [0.0,0.0,0.0]
         self.Translation = [0.0,0.0,0.0]
-        self.Scaling = [0.0,0.0,0.0]
+        self.Scaling = [1.0,1.0,1.0]
 
         self.TransformInputSampling = 1
 
@@ -119,14 +119,14 @@ class vmtkImageReslice(pypes.pypeScript):
                 self.PrintLog('Setting up transform matrix using specified coefficients')
                 self.Matrix4x4 = vtk.vtkMatrix4x4()
                 self.Matrix4x4.DeepCopy(self.MatrixCoefficients)
-            elif self.Translation != [0.0,0.0,0.0] or self.Rotation != [0.0,0.0,0.0] or self.Scaling != [0.0,0.0,0.0]:
+            elif self.Translation != [0.0,0.0,0.0] or self.Rotation != [0.0,0.0,0.0] or self.Scaling != [1.0,1.0,1.0]:
                 self.PrintLog('Setting up transform matrix using specified translation, rotation and/or scaling')
                 transform = vtk.vtkTransform()
-                transform.RotateX(self.Rotations[0])
-                transform.RotateY(self.Rotations[1])
-                transform.RotateZ(self.Rotations[2])                       
-                transform.Translate(self.Translations[0], self.Translations[1], self.Translations[2])
-                transform.Scale(self.Scales[0], self.Scales[1], self.Scales[2])
+                transform.RotateX(self.Rotation[0])
+                transform.RotateY(self.Rotation[1])
+                transform.RotateZ(self.Rotation[2])                       
+                transform.Translate(self.Translation[0], self.Translation[1], self.Translation[2])
+                transform.Scale(self.Scaling[0], self.Scaling[1], self.Scaling[2])
                 self.Matrix4x4 = vtk.vtkMatrix4x4()
                 self.Matrix4x4.DeepCopy(transform.GetMatrix())
 
