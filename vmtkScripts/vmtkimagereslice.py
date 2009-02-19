@@ -66,7 +66,7 @@ class vmtkImageReslice(pypes.pypeScript):
             ['BackgroundLevel','background','float',1,'','the output image background'],
             ['Matrix4x4','matrix4x4','vtkMatrix4x4',1,'','the input transform matrix'],
             ['MatrixCoefficients','matrix','float',16,'','coefficients of transform matrix'],
-            ['InvertMatrix','invert','bool',1,'','invert matrix before applying transformation']
+            ['InvertMatrix','invert','bool',1,'','invert matrix before applying transformation'],
             ['Rotation','rotation','float',3,'','rotations around the x-,y- and z-axis'],
             ['Translation','translation','float',3,'','translation in the x-,y- and z-directions'],
             ['Scaling','scaling','float',3,'','scaling of the x-,y- and z-directions'],
