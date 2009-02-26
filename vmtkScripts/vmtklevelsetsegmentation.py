@@ -372,8 +372,9 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
                 self.MergeLevelSet()
             elif inputString == 'n':
                 pass
-  
-            self.DisplayLevelSetSurface(self.LevelSets)
+ 
+            if self.LevelSets != None: 
+                self.DisplayLevelSetSurface(self.LevelSets)
   
             queryString = 'Segment another branch? (y/n): '
             inputString = self.InputText(queryString,self.YesNoValidator)

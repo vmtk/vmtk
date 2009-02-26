@@ -76,7 +76,7 @@ MultiScaleHessianBasedMeasureImageFilter
   m_UpdateBuffer->Allocate();
 
   // Update buffer is used for > comparisons so make it really really small, just to be sure. Thanks to Hauke Heibel. 
-  m_UpdateBuffer->FillBuffer(itk::NumericTraits<typename UpdateBufferType::ValueType>::NonpositiveMin());  
+  m_UpdateBuffer->FillBuffer(itk::NumericTraits<typename UpdateBufferType::ValueType>::Zero);  
 }
 
 template <typename TInputImage, typename THessianToMeasureFilter, typename TOutputImage >
