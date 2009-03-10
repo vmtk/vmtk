@@ -202,9 +202,8 @@ void vtkvmtkDolfinWriter::WriteData()
     out << "      <array name=\"boundary facet cells\" type=\"uint\" size=\"" << numberOfTriangles << "\">" << endl;
     for (i=0; i<numberOfTriangles; i++)
       {
-      triangleCellId = triangleCellIdArray->GetValue(i);
       out << "        <element index=\"" << i << "\" "; 
-      out << "value=\"" << boundaryFaceCells->GetId(triangleCellId) << "\" "; 
+      out << "value=\"" << boundaryFaceCells->GetId(i) << "\" "; 
       out << "/>" << endl;
       }
     out << "      </array>" << endl;
@@ -212,9 +211,8 @@ void vtkvmtkDolfinWriter::WriteData()
     out << "      <array name=\"boundary facet numbers\" type=\"uint\" size=\"" << numberOfTriangles << "\">" << endl;
     for (i=0; i<numberOfTriangles; i++)
       {
-      triangleCellId = triangleCellIdArray->GetValue(i);
       out << "        <element index=\"" << i << "\" "; 
-      out << "value=\"" << boundaryFaceIds->GetId(triangleCellId) << "\" "; 
+      out << "value=\"" << boundaryFaceIds->GetId(i) << "\" "; 
       out << "/>" << endl;
       }
     out << "      </array>" << endl;
