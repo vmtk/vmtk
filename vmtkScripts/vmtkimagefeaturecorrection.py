@@ -61,7 +61,7 @@ class vmtkImageFeatureCorrection(pypes.pypeScript):
             negateFilter = vtk.vtkImageMathematics()
             negateFilter.SetInput(self.LevelSets)
             negateFilter.SetOperationToMultiplyByK()
-            negateFilter.SetK(-1.0)
+            negateFilter.SetConstantK(-1.0)
             negateFilter.Update()
             self.LevelSets = negateFilter.GetOutput()
 
