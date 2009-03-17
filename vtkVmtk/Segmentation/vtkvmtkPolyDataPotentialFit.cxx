@@ -279,7 +279,15 @@ void vtkvmtkPolyDataPotentialFit::ComputeInflationDisplacement(vtkIdType pointId
 
   output = this->GetOutput();
   neighborhood = this->Neighborhoods->GetNeighborhood(pointId);
-  
+ 
+  if (neighborhood->GetNumberOfPoints() == 0)
+    {
+    inflationDisplacement[0] = 0.0;
+    inflationDisplacement[1] = 0.0;
+    inflationDisplacement[2] = 0.0;
+    return;
+    }
+
   output->GetPoint(pointId,point);
   this->Normals->GetTuple(pointId,inputOutwardNormal);
 
