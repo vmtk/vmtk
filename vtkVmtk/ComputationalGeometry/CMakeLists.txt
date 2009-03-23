@@ -23,6 +23,7 @@ SET (VTK_VMTK_COMPUTATIONALGEOMETRY_SRCS
   vtkvmtkPolyBallLine.cxx
   vtkvmtkPolyBallModeller.cxx
   vtkvmtkPolyDataBifurcationSections.cxx
+  vtkvmtkPolyDataBifurcationProfiles.cxx
   vtkvmtkPolyDataBoundaryExtractor.cxx
   vtkvmtkPolyDataBranchSections.cxx
   vtkvmtkPolyDataBranchUtilities.cxx

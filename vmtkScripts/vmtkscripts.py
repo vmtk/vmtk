@@ -1,4 +1,5 @@
 __all__ = [
+  'vmtkbifurcationprofiles',
   'vmtkbifurcationreferencesystems',
   'vmtkbifurcationsections',
   'vmtkbifurcationvectors',

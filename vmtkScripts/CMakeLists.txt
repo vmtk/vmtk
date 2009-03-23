@@ -1,6 +1,7 @@
 PROJECT(VMTK_SCRIPTS)
 
 SET(SCRIPTS_SRCS
+  vmtkbifurcationprofiles.py
   vmtkbifurcationreferencesystems.py
   vmtkbifurcationsections.py
   vmtkbifurcationvectors.py

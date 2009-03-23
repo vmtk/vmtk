@@ -32,7 +32,7 @@ class vmtkSurfaceConnectivity(pypes.pypeScript):
         self.GroupId = -1
         self.GroupIdsArrayName = ''
 
-	self.CleanOutput = 0
+        self.CleanOutput = 0
 
         self.SetScriptName('vmtksurfaceconnectivity')
         self.SetScriptDoc('extract the largest connected region or the scalar-connected region from a surface')
