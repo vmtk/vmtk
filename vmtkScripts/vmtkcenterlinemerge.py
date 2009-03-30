@@ -32,9 +32,12 @@ class vmtkCenterlineMerge(pypes.pypeScript):
 
         self.RadiusArrayName = ''
         self.GroupIdsArrayName = ''
+        self.CenterlineIdsArrayName = ''
+        self.TractIdsArrayName = ''
         self.BlankingArrayName = ''
 
-        self.Length = 1.0;
+        self.Length = 0.0
+        self.MergeBlanked = 1
 
         self.SetScriptName('vmtkcenterlinemerge')
         self.SetScriptDoc('merge centerline tracts belonging to the same groups')
@@ -42,8 +45,11 @@ class vmtkCenterlineMerge(pypes.pypeScript):
             ['Centerlines','i','vtkPolyData',1,'','the input centerlines','vmtksurfacereader'],
       	    ['RadiusArrayName','radiusarray','str',1,'','name of the array where centerline radius is stored'],
       	    ['GroupIdsArrayName','groupidsarray','str',1,'','name of the array where centerline group ids are stored'],
+      	    ['CenterlineIdsArrayName','centerlineidsarray','str',1,'','name of the array where centerline ids are stored'],
+      	    ['TractIdsArrayName','tractidsarray','str',1,'','name of the array where centerline tract ids are stored'],
       	    ['BlankingArrayName','blankingarray','str',1,'','name of the array where centerline blanking information about branches is stored'],
-            ['Length','length','float',1,'(0.0,)','length of the resampling interval']
+            ['Length','length','float',1,'(0.0,)','length of the resampling interval'],
+            ['MergeBlanked','mergeblanked','bool',1,'','toggle generation of segments for blanked groups']
             ])
         self.SetOutputMembers([
             ['Centerlines','o','vtkPolyData',1,'','the output centerlines','vmtksurfacewriter']
@@ -58,8 +64,11 @@ class vmtkCenterlineMerge(pypes.pypeScript):
         mergeCenterlines.SetInput(self.Centerlines)
         mergeCenterlines.SetRadiusArrayName(self.RadiusArrayName)
         mergeCenterlines.SetGroupIdsArrayName(self.GroupIdsArrayName)
+        mergeCenterlines.SetCenterlineIdsArrayName(self.CenterlineIdsArrayName)
+        mergeCenterlines.SetTractIdsArrayName(self.TractIdsArrayName)
         mergeCenterlines.SetBlankingArrayName(self.BlankingArrayName)
         mergeCenterlines.SetResamplingStepLength(self.Length)
+        mergeCenterlines.SetMergeBlanked(self.MergeBlanked)
         mergeCenterlines.Update()
 
         self.Centerlines = mergeCenterlines.GetOutput()

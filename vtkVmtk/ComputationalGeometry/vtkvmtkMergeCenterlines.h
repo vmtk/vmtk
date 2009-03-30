@@ -43,11 +43,21 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkMergeCenterlines : public vt
   vtkSetStringMacro(GroupIdsArrayName);
   vtkGetStringMacro(GroupIdsArrayName);
 
+  vtkSetStringMacro(CenterlineIdsArrayName);
+  vtkGetStringMacro(CenterlineIdsArrayName);
+
+  vtkSetStringMacro(TractIdsArrayName);
+  vtkGetStringMacro(TractIdsArrayName);
+
   vtkSetStringMacro(BlankingArrayName);
   vtkGetStringMacro(BlankingArrayName);
 
   vtkSetMacro(ResamplingStepLength,double);
   vtkGetMacro(ResamplingStepLength,double);
+
+  vtkSetMacro(MergeBlanked,int);
+  vtkGetMacro(MergeBlanked,int);
+  vtkBooleanMacro(MergeBlanked,int);
 
   protected:
   vtkvmtkMergeCenterlines();
@@ -57,9 +67,12 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkMergeCenterlines : public vt
 
   char* RadiusArrayName;
   char* GroupIdsArrayName;
+  char* CenterlineIdsArrayName;
+  char* TractIdsArrayName;
   char* BlankingArrayName;
 
   double ResamplingStepLength;
+  int MergeBlanked;
 
   private:
   vtkvmtkMergeCenterlines(const vtkvmtkMergeCenterlines&);  // Not implemented.

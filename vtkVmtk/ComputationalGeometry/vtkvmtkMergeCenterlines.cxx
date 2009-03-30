@@ -21,6 +21,8 @@ Version:   $Revision: 1.4 $
 
 #include "vtkvmtkMergeCenterlines.h"
 #include "vtkvmtkCenterlineUtilities.h"
+#include "vtkvmtkCenterlineBifurcationReferenceSystems.h"
+#include "vtkvmtkReferenceSystemUtilities.h"
 #include "vtkSplineFilter.h"
 #include "vtkCleanPolyData.h"
 #include "vtkDoubleArray.h"
@@ -39,8 +41,11 @@ vtkvmtkMergeCenterlines::vtkvmtkMergeCenterlines()
 {
   this->RadiusArrayName = NULL;
   this->GroupIdsArrayName = NULL;
+  this->CenterlineIdsArrayName = NULL;
+  this->TractIdsArrayName = NULL;
   this->BlankingArrayName = NULL;
   this->ResamplingStepLength = 0.0;
+  this->MergeBlanked = 1;
 }
 
 vtkvmtkMergeCenterlines::~vtkvmtkMergeCenterlines()
@@ -55,6 +60,18 @@ vtkvmtkMergeCenterlines::~vtkvmtkMergeCenterlines()
     {
     delete[] this->GroupIdsArrayName;
     this->GroupIdsArrayName = NULL;
+    }
+
+  if (this->CenterlineIdsArrayName)
+    {
+    delete[] this->CenterlineIdsArrayName;
+    this->CenterlineIdsArrayName = NULL;
+    }
+
+  if (this->TractIdsArrayName)
+    {
+    delete[] this->TractIdsArrayName;
+    this->TractIdsArrayName = NULL;
     }
 
   if (this->BlankingArrayName)
@@ -97,6 +114,34 @@ int vtkvmtkMergeCenterlines::RequestData(vtkInformation *vtkNotUsed(request), vt
   if (!groupIdsArray)
     {
     vtkErrorMacro(<<"GroupIdsArray with name specified does not exist");
+    return 1;
+    }
+
+  if (!this->CenterlineIdsArrayName)
+    {
+    vtkErrorMacro(<<"CenterlineIdsArrayName not specified");
+    return 1;
+    }
+
+  vtkDataArray* centerlineIdsArray = input->GetCellData()->GetArray(this->CenterlineIdsArrayName);
+
+  if (!centerlineIdsArray)
+    {
+    vtkErrorMacro(<<"CenterlineIdsArray with name specified does not exist");
+    return 1;
+    }
+
+  if (!this->TractIdsArrayName)
+    {
+    vtkErrorMacro(<<"TractIdsArrayName not specified");
+    return 1;
+    }
+
+  vtkDataArray* tractIdsArray = input->GetCellData()->GetArray(this->TractIdsArrayName);
+
+  if (!tractIdsArray)
+    {
+    vtkErrorMacro(<<"TractIdsArray with name specified does not exist");
     return 1;
     }
 
@@ -148,7 +193,18 @@ int vtkvmtkMergeCenterlines::RequestData(vtkInformation *vtkNotUsed(request), vt
   vtkIdList* nonBlankedGroupIds = vtkIdList::New();
   vtkvmtkCenterlineUtilities::GetNonBlankedGroupsIdList(resampledCenterlines,this->GroupIdsArrayName,this->BlankingArrayName,nonBlankedGroupIds);
 
+  vtkIdList* groupIdsToMergedCells = vtkIdList::New();
+  vtkIdType maxGroupId = vtkvmtkCenterlineUtilities::GetMaxGroupId(resampledCenterlines,this->GroupIdsArrayName);
+  groupIdsToMergedCells->SetNumberOfIds(maxGroupId);
   int i;
+  for (i=0; i<maxGroupId; i++)
+    {
+    groupIdsToMergedCells->SetId(i,-1);
+    }
+
+  vtkIdTypeArray* cellEndPointIds = vtkIdTypeArray::New();
+  cellEndPointIds->SetNumberOfComponents(2);
+
   for (i=0; i<nonBlankedGroupIds->GetNumberOfIds(); i++)
     {
     vtkIdType groupId = nonBlankedGroupIds->GetId(i);
@@ -169,6 +225,7 @@ int vtkvmtkMergeCenterlines::RequestData(vtkInformation *vtkNotUsed(request), vt
       }
 
     vtkIdType mergedCellId = outputLines->InsertNextCell(numberOfMergedCellPoints);
+    groupIdsToMergedCells->InsertId(groupId,mergedCellId);
     int k;
     for (k=0; k<numberOfMergedCellPoints; k++)
       {
@@ -199,6 +256,10 @@ int vtkvmtkMergeCenterlines::RequestData(vtkInformation *vtkNotUsed(request), vt
       vtkIdType cellId = groupUniqueCellIds->GetId(0);
       vtkIdType pointId = resampledCenterlines->GetCell(cellId)->GetPointId(k);
       output->GetPointData()->CopyData(resampledCenterlines->GetPointData(),pointId,mergedPointId);
+      if (k==0 || k==numberOfMergedCellPoints-1)
+        {
+        cellEndPointIds->InsertNextValue(mergedPointId);
+        }
       }
 
     vtkIdType cellId = groupUniqueCellIds->GetId(0);
@@ -207,11 +268,166 @@ int vtkvmtkMergeCenterlines::RequestData(vtkInformation *vtkNotUsed(request), vt
     groupUniqueCellIds->Delete();
     }
 
+  if (!this->MergeBlanked)
+    {
+    nonBlankedGroupIds->Delete();
+    resampledCenterlines->Delete();
+    outputPoints->Delete();
+    outputLines->Delete();
+    groupIdsToMergedCells->Delete();
+    cellEndPointIds->Delete();
+    return 1;
+    }
+
+  vtkvmtkCenterlineBifurcationReferenceSystems* referenceSystemsFilter = vtkvmtkCenterlineBifurcationReferenceSystems::New();
+  referenceSystemsFilter->SetInput(resampledCenterlines);
+  referenceSystemsFilter->SetRadiusArrayName(this->RadiusArrayName);
+  referenceSystemsFilter->SetGroupIdsArrayName(this->GroupIdsArrayName);
+  referenceSystemsFilter->SetBlankingArrayName(this->BlankingArrayName);
+  referenceSystemsFilter->SetNormalArrayName("Normal");
+  referenceSystemsFilter->SetUpNormalArrayName("UpNormal");
+  referenceSystemsFilter->Update();
+
+  vtkPolyData* referenceSystems = referenceSystemsFilter->GetOutput();
+
+  int numberOfMergedCells = outputLines->GetNumberOfCells();
+
+  vtkIdList* blankedGroupIds = vtkIdList::New();
+  vtkvmtkCenterlineUtilities::GetBlankedGroupsIdList(resampledCenterlines,this->GroupIdsArrayName,this->BlankingArrayName,blankedGroupIds);
+  vtkIdList* groupIdsToBifurcationPointIds = vtkIdList::New();
+  vtkIdTypeArray* cellAdditionalEndPointIds = vtkIdTypeArray::New();
+  cellAdditionalEndPointIds->SetNumberOfComponents(2);
+  cellAdditionalEndPointIds->SetNumberOfTuples(numberOfMergedCells);
+  vtkIdType tupleValue[2];
+  tupleValue[0] = tupleValue[1] = -1;
+  for (i=0; i<numberOfMergedCells; i++)
+    {
+    cellAdditionalEndPointIds->SetTupleValue(i,tupleValue);
+    }
+
+  for (i=0; i<blankedGroupIds->GetNumberOfIds(); i++)
+    {
+    vtkIdType groupId = blankedGroupIds->GetId(i);
+
+    vtkIdType referenceSystemPointId = vtkvmtkReferenceSystemUtilities::GetReferenceSystemPointId(referenceSystems,this->GroupIdsArrayName,groupId);
+
+    vtkIdList* upStreamGroupIds = vtkIdList::New();
+    vtkIdList* downStreamGroupIds = vtkIdList::New();
+
+    vtkvmtkCenterlineUtilities::FindAdjacentCenterlineGroupIds(resampledCenterlines,this->GroupIdsArrayName,this->CenterlineIdsArrayName,this->TractIdsArrayName,groupId,upStreamGroupIds,downStreamGroupIds);
+
+    double bifurcationPoint[3];
+    referenceSystems->GetPoint(referenceSystemPointId,bifurcationPoint);
+    
+    vtkIdType bifurcationPointId = outputPoints->InsertNextPoint(bifurcationPoint);
+
+    vtkIdType sourcePointId = -1;
+    int j;
+    for (j=0; j<upStreamGroupIds->GetNumberOfIds(); j++)
+      {
+      vtkIdType mergedCellId = groupIdsToMergedCells->GetId(upStreamGroupIds->GetId(j));
+      if (mergedCellId == -1)
+        {
+        continue;
+        }
+      if (sourcePointId == -1)
+        {
+        vtkIdList* groupUniqueCellIds = vtkIdList::New();
+        vtkvmtkCenterlineUtilities::GetGroupUniqueCellIds(resampledCenterlines,this->GroupIdsArrayName,upStreamGroupIds->GetId(j),groupUniqueCellIds);
+        vtkCell* resampledCell = resampledCenterlines->GetCell(groupUniqueCellIds->GetId(0));
+        sourcePointId = resampledCell->GetPointId(resampledCell->GetNumberOfPoints()-1);
+        groupUniqueCellIds->Delete();
+        }
+      vtkIdType tupleValue[2];
+      cellAdditionalEndPointIds->GetTupleValue(mergedCellId,tupleValue);
+      tupleValue[1] = bifurcationPointId;
+      cellAdditionalEndPointIds->SetTupleValue(mergedCellId,tupleValue);
+      }
+
+    for (j=0; j<downStreamGroupIds->GetNumberOfIds(); j++)
+      {
+      vtkIdType mergedCellId = groupIdsToMergedCells->GetId(downStreamGroupIds->GetId(j));
+      if (mergedCellId == -1)
+        {
+        continue;
+        }
+      if (sourcePointId == -1)
+        {
+        vtkIdList* groupUniqueCellIds = vtkIdList::New();
+        vtkvmtkCenterlineUtilities::GetGroupUniqueCellIds(resampledCenterlines,this->GroupIdsArrayName,downStreamGroupIds->GetId(j),groupUniqueCellIds);
+        vtkCell* resampledCell = resampledCenterlines->GetCell(groupUniqueCellIds->GetId(0));
+        sourcePointId = resampledCell->GetPointId(0);
+        groupUniqueCellIds->Delete();
+        }
+      vtkIdType tupleValue[2];
+      cellAdditionalEndPointIds->GetTupleValue(mergedCellId,tupleValue);
+      tupleValue[0] = bifurcationPointId;
+      cellAdditionalEndPointIds->SetTupleValue(mergedCellId,tupleValue);
+      }
+    if (sourcePointId == -1)
+      {
+      upStreamGroupIds->Delete();
+      downStreamGroupIds->Delete();
+      continue;
+      }
+
+    // TODO: interpolate point data instead of copying from first upstream point - good enough for now
+    output->GetPointData()->CopyData(resampledCenterlines->GetPointData(),sourcePointId,bifurcationPointId);
+
+    upStreamGroupIds->Delete();
+    downStreamGroupIds->Delete();
+    }
+ 
+  vtkCellArray* extendedOutputLines = vtkCellArray::New();
+  outputLines->InitTraversal();
+  for (i=0; i<numberOfMergedCells; i++)
+    {
+    vtkIdType npts, *pts;
+    npts = 0;
+    pts = NULL;
+    outputLines->GetNextCell(npts,pts);
+    vtkIdType tupleValue[2];
+    cellAdditionalEndPointIds->GetTupleValue(i,tupleValue);
+    vtkIdType extendedNpts = npts;
+    if (tupleValue[0] != -1)
+      {
+      extendedNpts += 1;
+      }
+    if (tupleValue[1] != -1)
+      {
+      extendedNpts += 1;
+      }
+    extendedOutputLines->InsertNextCell(extendedNpts);
+    if (tupleValue[0] != -1)
+      {
+      extendedOutputLines->InsertCellPoint(tupleValue[0]);
+      }
+    int j;
+    for (j=0; j<npts; j++)
+      {
+      extendedOutputLines->InsertCellPoint(pts[j]);
+      }
+    if (tupleValue[1] != -1)
+      {
+      extendedOutputLines->InsertCellPoint(tupleValue[1]);
+      }
+    }
+
+  output->SetLines(extendedOutputLines);
+
   nonBlankedGroupIds->Delete();
   resampledCenterlines->Delete();
   outputPoints->Delete();
   outputLines->Delete();
+  groupIdsToMergedCells->Delete();
+  cellEndPointIds->Delete();
 
+  referenceSystemsFilter->Delete();
+  blankedGroupIds->Delete();
+  groupIdsToBifurcationPointIds->Delete();
+  cellAdditionalEndPointIds->Delete();
+  extendedOutputLines->Delete();
+ 
   return 1;
 }
 
