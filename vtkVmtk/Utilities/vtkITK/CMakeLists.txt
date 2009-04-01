@@ -21,6 +21,11 @@ SET(vtkITK_SRCS
     vtkITKImageToImageFilterFF.h
 )
 
+SET(VTKITK_EXTRA_INCLUDES
+  vtkITK.h
+  vtkITKUtility.h
+)
+
 # Abstract/pure virtual classes
 
 #SET_SOURCE_FILES_PROPERTIES (
