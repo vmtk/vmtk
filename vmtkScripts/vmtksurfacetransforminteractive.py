@@ -138,6 +138,7 @@ class vmtkSurfaceTransformInteractive(pypes.pypeScript):
             self.vmtkRenderer.Renderer.AddActor(self.Actor2)        
  
         self.BoxWidget = vtk.vtkBoxWidget()
+        self.BoxWidget.SetPlaceFactor(1.0)
         self.BoxWidget.SetInteractor(self.vmtkRenderer.RenderWindowInteractor)
         self.BoxWidget.GetFaceProperty().SetColor(0.6,0.6,0.2)
         self.BoxWidget.GetFaceProperty().SetOpacity(0.25)
