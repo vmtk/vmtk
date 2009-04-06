@@ -93,6 +93,7 @@ SET(SCRIPTS_SRCS
   vmtksurfacesmoothing.py
   vmtksurfacesubdivision.py
   vmtksurfacetransform.py
+  vmtksurfacetransforminteractive.py
   vmtksurfacetriangle.py
   vmtksurfacetomesh.py
   vmtksurfaceviewer.py
