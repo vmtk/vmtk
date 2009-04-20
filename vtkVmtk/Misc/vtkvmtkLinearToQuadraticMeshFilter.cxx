@@ -51,6 +51,7 @@ vtkvmtkLinearToQuadraticMeshFilter::vtkvmtkLinearToQuadraticMeshFilter()
   this->ProjectedCellEntityId = -1;
   this->QuadratureOrder = 10;
   this->NegativeJacobianTolerance = 0.0;
+  this->TestFinalJacobians = 0;
 }
 
 vtkvmtkLinearToQuadraticMeshFilter::~vtkvmtkLinearToQuadraticMeshFilter()
@@ -139,6 +140,15 @@ int vtkvmtkLinearToQuadraticMeshFilter::RequestData(
 
   output->SetPoints(outputPoints);
   output->Allocate(numberOfInputCells);
+
+  int numberOfCells = input->GetNumberOfCells();
+  vtkIdList* inputToOutputCellIds = vtkIdList::New();
+  inputToOutputCellIds->SetNumberOfIds(numberOfInputCells);
+
+  for (i=0; i<numberOfCells; i++)
+    {
+    inputToOutputCellIds->SetId(i,-1);
+    }
 
   vtkIdType cellId;
   double point0[3], point1[3], point2[3], point3[3], point4[3], point5[3];
@@ -411,6 +421,7 @@ int vtkvmtkLinearToQuadraticMeshFilter::RequestData(
     newCellId = output->InsertNextCell(VTK_QUADRATIC_WEDGE, 15, pts);
 #endif
 
+    inputToOutputCellIds->SetId(cellId,newCellId);
     outputCellData->CopyData(inputCellData,cellId,newCellId);
     }
 
@@ -514,6 +525,7 @@ int vtkvmtkLinearToQuadraticMeshFilter::RequestData(
 
     vtkIdType newCellId = output->InsertNextCell(VTK_QUADRATIC_TETRA, 10, pts);
 
+    inputToOutputCellIds->SetId(cellId,newCellId);
     outputCellData->CopyData(inputCellData,cellId,newCellId);
     }
 
@@ -530,10 +542,25 @@ int vtkvmtkLinearToQuadraticMeshFilter::RequestData(
   int subId;
   double dist2;
 
+  vtkEdgeTable* surfaceEdgeTable = vtkEdgeTable::New();
+  surfaceEdgeTable->InitEdgeInsertion(numberOfInputPoints,1);
+
   for (i=0; i<numberOfInputTriangles; i++)
     {
     cellId = triangleIds->GetValue(i);
     input->GetCell(cellId,cell);
+
+    bool project = true;
+    if (locator)
+      {
+      if (this->CellEntityIdsArrayName) 
+        {
+        if (cellEntityIdsArray->GetValue(cellId) != this->ProjectedCellEntityId)
+          {
+          project = false;
+          }
+        }
+      }
 
     cell->Points->GetPoint(0,point0);
     cell->Points->GetPoint(1,point1);
@@ -579,6 +606,13 @@ int vtkvmtkLinearToQuadraticMeshFilter::RequestData(
       edgeTable->InsertEdge(pointId1,pointId2,edgePointId12);
       }
 
+    if (project)
+      {
+      surfaceEdgeTable->InsertEdge(pointId0,pointId1,edgePointId01);
+      surfaceEdgeTable->InsertEdge(pointId0,pointId2,edgePointId02);
+      surfaceEdgeTable->InsertEdge(pointId1,pointId2,edgePointId12);
+      }
+
     pts[0] = pointId0;
     pts[1] = pointId1;
     pts[2] = pointId2;
@@ -588,35 +622,26 @@ int vtkvmtkLinearToQuadraticMeshFilter::RequestData(
 
     vtkIdType newCellId = output->InsertNextCell(VTK_QUADRATIC_TRIANGLE, 6, pts);
 
+    inputToOutputCellIds->SetId(cellId,newCellId);
     outputCellData->CopyData(inputCellData,cellId,newCellId);
 
-    if (locator)
+    if (locator && project)
       {
-      bool project = true;
-      if (this->CellEntityIdsArrayName) 
-        {
-        if (cellEntityIdsArray->GetValue(cellId) != this->ProjectedCellEntityId)
-          {
-          project = false;
-          }
-        }
-
-      if (project)
-        {
-        double point01[3], point12[3], point02[3];
-        outputPoints->GetPoint(edgePointId01,point01);
-        locator->FindClosestPoint(point01,projectedPoint,referenceCellId,subId,dist2);
-        outputPoints->SetPoint(edgePointId01,projectedPoint);
-        outputPoints->GetPoint(edgePointId12,point12);
-        locator->FindClosestPoint(point12,projectedPoint,referenceCellId,subId,dist2);
-        outputPoints->SetPoint(edgePointId12,projectedPoint);
-        outputPoints->GetPoint(edgePointId02,point02);
-        locator->FindClosestPoint(point02,projectedPoint,referenceCellId,subId,dist2);
-        outputPoints->SetPoint(edgePointId02,projectedPoint);
-        }
+      double point01[3], point12[3], point02[3];
+      outputPoints->GetPoint(edgePointId01,point01);
+      locator->FindClosestPoint(point01,projectedPoint,referenceCellId,subId,dist2);
+      outputPoints->SetPoint(edgePointId01,projectedPoint);
+      outputPoints->GetPoint(edgePointId12,point12);
+      locator->FindClosestPoint(point12,projectedPoint,referenceCellId,subId,dist2);
+      outputPoints->SetPoint(edgePointId12,projectedPoint);
+      outputPoints->GetPoint(edgePointId02,point02);
+      locator->FindClosestPoint(point02,projectedPoint,referenceCellId,subId,dist2);
+      outputPoints->SetPoint(edgePointId02,projectedPoint);
       }
     }
 
+//#define LEGACY_RELAXATION
+#ifdef LEGACY_RELAXATION
   int numberOfRelaxationSteps = 10;
   int maxSignChangeIterations = 20;
   int signChangeCounter = 0;
@@ -708,6 +733,116 @@ int vtkvmtkLinearToQuadraticMeshFilter::RequestData(
         }
       }
     }
+#else
+  int numberOfRelaxationSteps = 10;
+  int maxSignChangeIterations = 20;
+  int signChangeCounter = 0;
+  bool anySignChange = true;
+  if (!point || !locator)
+    {
+    anySignChange = false;
+    }
+  while (anySignChange)
+    {
+    if (signChangeCounter >= maxSignChangeIterations)
+      {
+      break;
+      }
+    signChangeCounter++;
+    anySignChange = false;
+
+    surfaceEdgeTable->InitTraversal();
+    vtkIdType edgePointId = surfaceEdgeTable->GetNextEdge(pointId0,pointId1);
+    vtkIdList* edgePointIds = vtkIdList::New();
+    vtkIdList* cellEdgeNeighbors = vtkIdList::New();
+    while (edgePointId >= 0)
+      {
+      edgePointIds->Initialize();
+      edgePointIds->InsertNextId(pointId0);
+      edgePointIds->InsertNextId(pointId1);
+      input->GetCellNeighbors(-1,edgePointIds,cellEdgeNeighbors);
+      int numberOfCellEdgeNeighbors = cellEdgeNeighbors->GetNumberOfIds();
+      for (i=0; i<numberOfCellEdgeNeighbors; i++)
+        {
+        vtkIdType volumeCellId = cellEdgeNeighbors->GetId(i);
+        if (input->GetCell(volumeCellId)->GetCellDimension() != 3)
+          {
+          continue;
+          }
+        vtkCell* linearVolumeCell = input->GetCell(volumeCellId);
+        vtkIdType outputCellId = inputToOutputCellIds->GetId(volumeCellId);
+        if (outputCellId == -1)
+          {
+          continue;
+          }
+        vtkCell* quadraticVolumeCell = output->GetCell(outputCellId);
+
+        int s;
+        for (s=0; s<numberOfRelaxationSteps; s++)
+          {
+          if (!this->HasJacobianChangedSign(linearVolumeCell,quadraticVolumeCell))
+            {
+            break;
+            }
+          anySignChange = true;
+          vtkWarningMacro(<<"Warning: projection causes element "<<volumeCellId<<" to have a negative Jacobian somewhere. Relaxing projection for this element.");
+          double relaxation = (double)(s+1)/(double)numberOfRelaxationSteps;
+          int numberOfEdges = linearVolumeCell->GetNumberOfEdges();
+          int e;
+          for (e=0; e<numberOfEdges; e++)
+            {
+            vtkCell* edge = linearVolumeCell->GetEdge(e);
+            vtkIdType pointId0 = edge->GetPointId(0);
+            vtkIdType pointId1 = edge->GetPointId(1);
+            vtkIdType edgePointId = surfaceEdgeTable->IsEdge(pointId0,pointId1);
+            if (edgePointId == -1)
+              {
+              continue;
+              }
+            double edgePoint[3], relaxedEdgePoint[3];
+            input->GetPoint(pointId0,point0);
+            input->GetPoint(pointId1,point1);
+            output->GetPoint(edgePointId,edgePoint);
+            for (j=0; j<3; j++)
+              {
+              relaxedEdgePoint[j] = (1.0 - relaxation) * edgePoint[j] + relaxation * (0.5 * (point0[j] + point1[j]));
+              }
+            outputPoints->SetPoint(edgePointId,relaxedEdgePoint);
+            }
+          quadraticVolumeCell = output->GetCell(outputCellId);
+          }
+        }
+      edgePointId = surfaceEdgeTable->GetNextEdge(pointId0,pointId1);
+      }
+    edgePointIds->Delete();
+    cellEdgeNeighbors->Delete();
+    }
+#endif
+
+  if (this->TestFinalJacobians)
+    {
+    for (i=0; i<numberOfCells; i++)
+      {
+      vtkCell* linearVolumeCell = input->GetCell(i);
+      if (linearVolumeCell->GetCellDimension() != 3)
+        {
+        continue;
+        }
+      vtkIdType outputCellId = inputToOutputCellIds->GetId(i);
+      if (outputCellId == -1)
+        {
+        continue;
+        }
+      vtkCell* quadraticVolumeCell = output->GetCell(outputCellId);
+  
+      if (this->HasJacobianChangedSign(linearVolumeCell,quadraticVolumeCell))
+        {
+        vtkErrorMacro("Error: negative Jacobian detected in cell "<<outputCellId<<" even after relaxation. Output quadratic mesh will have negative Jacobians.");
+        }
+      }
+    }
+
+  surfaceEdgeTable->Delete();
 
   outputPoints->Delete();
   edgeTable->Delete();
@@ -726,6 +861,8 @@ int vtkvmtkLinearToQuadraticMeshFilter::RequestData(
     locator = NULL;
     }
   cellEntityIdsArray->Delete();
+
+  inputToOutputCellIds->Delete();
 
   output->Squeeze();
 
