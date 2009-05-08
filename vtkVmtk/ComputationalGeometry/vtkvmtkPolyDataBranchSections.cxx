@@ -69,6 +69,7 @@ vtkvmtkPolyDataBranchSections::vtkvmtkPolyDataBranchSections()
   this->BranchSectionDistanceSpheresArrayName = NULL;
 
   this->NumberOfDistanceSpheres = 1;
+  this->ReverseDirection = 0;
 }
 
 vtkvmtkPolyDataBranchSections::~vtkvmtkPolyDataBranchSections()
@@ -401,9 +402,17 @@ void vtkvmtkPolyDataBranchSections::ComputeBranchSections(vtkPolyData* input, in
 
       vtkIdType firstSubId = 0;
       double firstPCoord = 0.0;
+      bool reverseTouchingDirection = false;
+
+      if (this->ReverseDirection) {
+        firstSubId = centerlineCellPoints->GetNumberOfPoints()-2;
+        firstPCoord = 1.0;
+        reverseTouchingDirection = true;
+      }
+
       vtkIdType touchingSubId = -1;
       double touchingPCoord = 0.0;
-      vtkvmtkCenterlineSphereDistance::FindNTouchingSphereCenter(this->Centerlines,this->CenterlineRadiusArrayName,centerlineCellId,firstSubId,firstPCoord,totalNumberOfSpheres,touchingSubId,touchingPCoord,false);
+      vtkvmtkCenterlineSphereDistance::FindNTouchingSphereCenter(this->Centerlines,this->CenterlineRadiusArrayName,centerlineCellId,firstSubId,firstPCoord,totalNumberOfSpheres,touchingSubId,touchingPCoord,reverseTouchingDirection);
       
       if (touchingSubId == -1)
         {

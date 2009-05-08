@@ -55,7 +55,10 @@ class vmtkImageViewer(pypes.pypeScript):
             ['ContinuousCursor','continuouscursor','bool',1,'','toggle use of physical continuous coordinates for the cursor']
             ])
         self.SetOutputMembers([
-            ['Image','o','vtkImageData',1,'','the output image','vmtkimagewriter']
+            ['Image','o','vtkImageData',1,'','the output image','vmtkimagewriter'],
+            ['PlaneWidgetX','xplane','vtkImagePlaneWidget',1,'','the X image plane widget'],
+            ['PlaneWidgetY','yplane','vtkImagePlaneWidget',1,'','the Y image plane widget'],
+            ['PlaneWidgetZ','zplane','vtkImagePlaneWidget',1,'','the Z image plane widget']
             ])
 
     def BuildView(self):

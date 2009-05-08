@@ -83,6 +83,10 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataBranchSections : pub
   vtkSetMacro(NumberOfDistanceSpheres,int);
   vtkGetMacro(NumberOfDistanceSpheres,int);
 
+  vtkSetMacro(ReverseDirection,int);
+  vtkGetMacro(ReverseDirection,int);
+  vtkBooleanMacro(ReverseDirection,int);
+
   static double ComputeBranchSectionArea(vtkPolyData* branchSection);
   static double ComputeBranchSectionShape(vtkPolyData* branchSection, double center[3], double sizeRange[2]);
 
@@ -114,6 +118,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataBranchSections : pub
   char* BranchSectionDistanceSpheresArrayName;
 
   int NumberOfDistanceSpheres;
+  int ReverseDirection;
 
   private:
   vtkvmtkPolyDataBranchSections(const vtkvmtkPolyDataBranchSections&);  // Not implemented.

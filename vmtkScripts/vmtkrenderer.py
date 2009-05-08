@@ -33,6 +33,8 @@ class vmtkRenderer(pypes.pypeScript):
         self.RenderWindow = None
         self.RenderWindowInteractor = None
 
+        self.Camera = None
+
         self.WindowSize = [800, 600]
         self.Background = [0.1, 0.1, 0.2]
 

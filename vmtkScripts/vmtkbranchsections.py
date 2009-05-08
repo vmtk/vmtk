@@ -33,6 +33,7 @@ class vmtkBranchSections(pypes.pypeScript):
         self.BranchSections = None
 
         self.NumberOfDistanceSpheres = 1
+        self.ReverseDirection = 0
 
         self.RadiusArrayName = ''
         self.GroupIdsArrayName = ''
@@ -54,6 +55,7 @@ class vmtkBranchSections(pypes.pypeScript):
             ['Surface','i','vtkPolyData',1,'','the input surface, already split into branches','vmtksurfacereader'],
             ['Centerlines','centerlines','vtkPolyData',1,'','the input centerlines, already split into branches','vmtksurfacereader'],
       	    ['NumberOfDistanceSpheres','distancespheres','int',1,'(0,)','distance from the bifurcation at which the sections have to be taken; the distance is expressed in number of inscribed spheres, where each sphere touches the center of the previous one'],
+      	    ['ReverseDirection','reverse','bool',1,'','toggle start generating sections from the end of the branches rather than the start'],
       	    ['RadiusArrayName','radiusarray','str',1,'','name of the array where centerline radius is stored'],
       	    ['GroupIdsArrayName','groupidsarray','str',1,'','name of the array where centerline group ids are stored'],
       	    ['CenterlineIdsArrayName','centerlineidsarray','str',1,'','name of the array where centerline ids are stored'],
@@ -90,7 +92,8 @@ class vmtkBranchSections(pypes.pypeScript):
         branchSections.SetInput(self.Surface)
         branchSections.SetGroupIdsArrayName(self.GroupIdsArrayName)
         branchSections.SetCenterlines(self.Centerlines)
-	branchSections.SetNumberOfDistanceSpheres(self.NumberOfDistanceSpheres)
+        branchSections.SetNumberOfDistanceSpheres(self.NumberOfDistanceSpheres)
+        branchSections.SetReverseDirection(self.ReverseDirection)
         branchSections.SetCenterlineRadiusArrayName(self.RadiusArrayName)
         branchSections.SetCenterlineGroupIdsArrayName(self.GroupIdsArrayName)
         branchSections.SetCenterlineIdsArrayName(self.CenterlineIdsArrayName)
