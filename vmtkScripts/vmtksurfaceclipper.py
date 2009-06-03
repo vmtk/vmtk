@@ -31,14 +31,17 @@ class vmtkSurfaceClipper(pypes.pypeScript):
         self.vmtkRenderer = None
         self.OwnRenderer = 0
 
+        self.WidgetType = 'box'
+
         self.Actor = None
-        self.BoxWidget = None
-        self.Planes = None
+        self.ClipWidget = None
+        self.ClipFunction = None
 
         self.SetScriptName('vmtksurfaceclipper')
         self.SetScriptDoc('interactively clip a surface with a box')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
+            ['WidgetType','type','str',1,'["box","sphere"]','type of widget used for clipping'],
             ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer']
             ])
         self.SetOutputMembers([
@@ -49,18 +52,21 @@ class vmtkSurfaceClipper(pypes.pypeScript):
         key = object.GetKeySym()
         if key != 'space':
             return
-        if self.BoxWidget.GetEnabled() != 1:
+        if self.ClipWidget.GetEnabled() != 1:
             return
-        self.BoxWidget.GetPlanes(self.Planes)
+        if self.WidgetType == "box":
+            self.ClipWidget.GetPlanes(self.ClipFunction)
+        elif self.WidgetType == "sphere":
+            self.ClipWidget.GetSphere(self.ClipFunction)
         self.Clipper.Update()
         self.Surface.DeepCopy(self.Clipper.GetClippedOutput())
         self.Surface.Update()
-        self.BoxWidget.Off()
+        self.ClipWidget.Off()
 
     def Display(self):
 
-      	self.BoxWidget.SetInput(self.Surface)
-      	self.BoxWidget.PlaceWidget()
+      	self.ClipWidget.SetInput(self.Surface)
+      	self.ClipWidget.PlaceWidget()
 
       	self.vmtkRenderer.RenderWindowInteractor.Initialize()
 
@@ -73,10 +79,14 @@ class vmtkSurfaceClipper(pypes.pypeScript):
         if (self.Surface == None):
             self.PrintError('Error: no Surface.')
 
-        self.Planes = vtk.vtkPlanes()
+        if self.WidgetType == "box":
+            self.ClipFunction = vtk.vtkPlanes()
+        elif self.WidgetType == "sphere":
+            self.ClipFunction = vtk.vtkSphere()
+
         self.Clipper = vtk.vtkClipPolyData()
         self.Clipper.SetInput(self.Surface)
-        self.Clipper.SetClipFunction(self.Planes)
+        self.Clipper.SetClipFunction(self.ClipFunction)
         self.Clipper.GenerateClippedOutputOn()
         self.Clipper.InsideOutOn()
         
@@ -92,11 +102,21 @@ class vmtkSurfaceClipper(pypes.pypeScript):
         self.Actor.SetMapper(mapper)
         self.vmtkRenderer.Renderer.AddActor(self.Actor)
 
-        self.BoxWidget = vtk.vtkBoxWidget()
-        self.BoxWidget.SetInteractor(self.vmtkRenderer.RenderWindowInteractor)
-        self.BoxWidget.GetFaceProperty().SetColor(0.6,0.6,0.2)
-        self.BoxWidget.GetFaceProperty().SetOpacity(0.25)
+        if self.WidgetType == "box":
+            self.ClipWidget = vtk.vtkBoxWidget()
+            self.ClipWidget.GetFaceProperty().SetColor(0.6,0.6,0.2)
+            self.ClipWidget.GetFaceProperty().SetOpacity(0.25)
+        elif self.WidgetType == "sphere":
+            self.ClipWidget = vtk.vtkSphereWidget()
+            self.ClipWidget.GetSphereProperty().SetColor(0.6,0.6,0.2)
+            self.ClipWidget.GetSphereProperty().SetOpacity(0.25)
+            self.ClipWidget.GetSelectedSphereProperty().SetColor(0.6,0.0,0.0)
+            self.ClipWidget.GetSelectedSphereProperty().SetOpacity(0.75)
+            self.ClipWidget.SetRepresentationToSurface()
+            self.ClipWidget.SetPhiResolution(20)
+            self.ClipWidget.SetThetaResolution(20)
 
+        self.ClipWidget.SetInteractor(self.vmtkRenderer.RenderWindowInteractor)
         self.Display()
 
         if self.OwnRenderer:
