@@ -1,3 +1,3 @@
-import pypes
-import vtkvmtk
-import vmtkscripts
+#import pypes
+#import vtkvmtk
+#import vmtkscripts

@@ -115,8 +115,10 @@ void vtkvmtkPolyDataPotentialFit::EvaluateForce(double point[3], double force[3]
 
   inBounds = this->PotentialGradientImage->ComputeStructuredCoordinates(point,ijk,pcoords);
 
-  if (!inBounds || !this->IsCellInExtent(this->PotentialGradientImage->GetExtent(),ijk,0))
+  if (!inBounds)
+//  if (!inBounds || !this->IsCellInExtent(this->PotentialGradientImage->GetExtent(),ijk,0))
     {
+    vtkWarningMacro("Point out of extent.");
     return;
     }
 
@@ -172,8 +174,10 @@ double vtkvmtkPolyDataPotentialFit::EvaluatePotential(double point[3])
 
   inBounds = this->PotentialImage->ComputeStructuredCoordinates(point,ijk,pcoords);
 
-  if (!inBounds || !this->IsCellInExtent(this->PotentialImage->GetExtent(),ijk,0))
+  if (!inBounds)
+//  if (!inBounds || !this->IsCellInExtent(this->PotentialImage->GetExtent(),ijk,0))
     {
+    vtkWarningMacro("Point out of extent.");
     return 0.0;
     }
 

@@ -1,4 +1,5 @@
 SET (VTK_VMTK_SEGMENTATION_SRCS
+  vtkvmtkActiveTubeFilter.cxx
   vtkvmtkBoundedReciprocalImageFilter.cxx
   vtkvmtkDanielssonDistanceMapImageFilter.cxx
   vtkvmtkCollidingFrontsImageFilter.cxx

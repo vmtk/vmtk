@@ -10,6 +10,12 @@ SUBDIRS(
   Utilities
   )
 
+OPTION(VTK_VMTK_CONTRIB "Build and install classes in the vtkVmtk/Contrib directory." ON)
+
+IF (VTK_VMTK_CONTRIB)
+  SUBDIRS(Contrib)
+ENDIF (VTK_VMTK_CONTRIB)
+
 INCLUDE (${VTK_VMTK_SOURCE_DIR}/CMakeOptions.cmake)
 
 CONFIGURE_FILE(
