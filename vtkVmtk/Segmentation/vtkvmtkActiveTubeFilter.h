@@ -67,6 +67,14 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkActiveTubeFilter : public vtkPolyDataA
  
   vtkSetMacro(MinimumRadius, double);
   vtkGetMacro(MinimumRadius, double);
+ 
+  vtkSetMacro(FixedEndpointCoordinates, int);
+  vtkGetMacro(FixedEndpointCoordinates, int);
+  vtkBooleanMacro(FixedEndpointCoordinates, int);
+ 
+  vtkSetMacro(FixedEndpointRadius, int);
+  vtkGetMacro(FixedEndpointRadius, int);
+  vtkBooleanMacro(FixedEndpointRadius, int);
   
   protected:
   vtkvmtkActiveTubeFilter();
@@ -87,6 +95,8 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkActiveTubeFilter : public vtkPolyDataA
     return (ijk[0]>=extent[0]+border && ijk[0]<extent[1]-border) && (ijk[1]>=extent[2]+border && ijk[1]<extent[3]-border) && (ijk[2]>=extent[4]+border && ijk[2]<extent[5]-border) ? true : false;
     }
 
+  void EvolveCell(vtkPolyData* lines, vtkIdType cellId);
+
   char* RadiusArrayName;
 
   vtkImageData *PotentialImage;
@@ -103,6 +113,9 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkActiveTubeFilter : public vtkPolyDataA
   double MinimumRadius;
 
   double PotentialMaxNorm;
+
+  int FixedEndpointCoordinates;
+  int FixedEndpointRadius;
 
   private:
   vtkvmtkActiveTubeFilter(const vtkvmtkActiveTubeFilter&);  // Not implemented.

@@ -10,7 +10,7 @@ SUBDIRS(
   Utilities
   )
 
-OPTION(VTK_VMTK_CONTRIB "Build and install classes in the vtkVmtk/Contrib directory." ON)
+OPTION(VTK_VMTK_CONTRIB "Build and install classes in the vtkVmtk/Contrib directory." OFF)
 
 IF (VTK_VMTK_CONTRIB)
   SUBDIRS(Contrib)

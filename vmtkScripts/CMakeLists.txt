@@ -107,7 +107,7 @@ SET(MODULE_SRCS
   vmtkscripts.py
   )
 
-OPTION(VMTK_CONTRIB_SCRIPTS "Install modules from the vmtkScripts/contrib directory." ON)
+OPTION(VMTK_CONTRIB_SCRIPTS "Install modules from the vmtkScripts/contrib directory." OFF)
 
 IF (VMTK_CONTRIB_SCRIPTS)
   SUBDIRS(contrib)
