@@ -42,6 +42,8 @@ class vmtkRenderer(pypes.pypeScript):
         self.LineSmoothing = 1
         self.PolygonSmoothing = 0
 
+        self.ScreenshotMagnification = 4.0
+
         self.SetScriptName('vmtkrenderer')
         self.SetScriptDoc('renderer used to make several viewers use the same rendering window')
         self.SetInputMembers([
@@ -49,7 +51,8 @@ class vmtkRenderer(pypes.pypeScript):
             ['PointSmoothing','pointsmoothing','bool',1,'','toggle rendering smooth points'],
             ['LineSmoothing','linesmoothing','bool',1,'','toggle rendering smooth lines'],
             ['PolygonSmoothing','polygonsmoothing','bool',1,'','toggle rendering smooth polygons'],
-            ['Background','background','float',3,'','background color of the rendering window']])
+            ['Background','background','float',3,'','background color of the rendering window'],
+            ['ScreenshotMagnification','magnification','int',1,'','magnification to apply to the rendering window when taking a screenshot']])
         self.SetOutputMembers([
             ['vmtkRenderer','o','vmtkRenderer',1,'','the renderer']])
 
@@ -68,7 +71,7 @@ class vmtkRenderer(pypes.pypeScript):
             self.PrintLog('Saving screenshot to ' + fileName)
             windowToImage = vtk.vtkWindowToImageFilter()
             windowToImage.SetInput(self.RenderWindow)
-            windowToImage.SetMagnification(4)
+            windowToImage.SetMagnification(self.ScreenshotMagnification)
             windowToImage.Update()
             self.RenderWindow.Render()
             writer = vtk.vtkPNGWriter()

@@ -117,6 +117,11 @@ MultiScaleHessianBasedMeasureImageFilter
 
   while (sigma <= m_SigmaMax)
     {
+    if ( m_NumberOfSigmaSteps == 0 )
+      {
+      break;
+      }
+
     std::cout << "Computing measure for scale with sigma = " 
               << sigma << std::endl;
 
@@ -131,6 +136,11 @@ MultiScaleHessianBasedMeasureImageFilter
     sigma  = this->ComputeSigmaValue( scaleLevel );
 
     scaleLevel++;
+
+    if ( m_NumberOfSigmaSteps == 1 )
+      {
+      break;
+      }
     } 
 
   //Write out the best response to the output image
