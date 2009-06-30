@@ -59,8 +59,26 @@ SET_SOURCE_FILES_PROPERTIES (
 ADD_LIBRARY (vtkvmtkComputationalGeometry ${VTK_VMTK_COMPUTATIONALGEOMETRY_SRCS})
 TARGET_LINK_LIBRARIES(vtkvmtkComputationalGeometry vtkvmtkCommon vtkCommon vtkFiltering vtkGraphics vtkHybrid)
 
-INSTALL_TARGETS(${VTK_VMTK_INSTALL_LIB_DIR} vtkvmtkComputationalGeometry)
-INSTALL_FILES(${VTK_VMTK_INSTALL_INCLUDE_DIR} .h ${VTK_VMTK_COMPUTATIONALGEOMETRY_SRCS})
+INSTALL(TARGETS vtkvmtkComputationalGeometry
+LIBRARY DESTINATION ${VTK_VMTK_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
+)
+
+FILE(GLOB files "${VTK_VMTK_COMPUTATIONALGEOMETRY_SRCS}/*.h")
+INSTALL(FILES ${files} DESTINATION ${VTK_VMTK_INSTALL_INCLUDE_DIR})
+
+### START VMTK IN SLICER PATCH ###
+IF (VTK_VMTK_IN_SLICER)
+  SET(LIBS vtkvmtkComputationalGeometry)
+
+  FOREACH(LIB ${LIBS})
+    slicer3_set_modules_output_path(${LIB})
+  ENDFOREACH(LIB ${LIBS})
+    
+  slicer3_install_modules(${LIBS})
+ENDIF (VTK_VMTK_IN_SLICER)
+### END VMTK IN SLICER PATCH ###
+
+
 
 IF (VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
   VTK_WRAP_PYTHON3(vtkvmtkComputationalGeometryPython VTK_VMTK_COMPUTATIONALGEOMETRY_PYTHON_SRCS "${VTK_VMTK_COMPUTATIONALGEOMETRY_SRCS}")
@@ -71,8 +89,12 @@ IF (VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
   IF(WIN32 AND NOT CYGWIN)
      SET_TARGET_PROPERTIES(vtkvmtkComputationalGeometryPython PROPERTIES SUFFIX ".pyd")
   ENDIF(WIN32 AND NOT CYGWIN)
-  INSTALL_TARGETS(${VTK_VMTK_INSTALL_LIB_DIR} vtkvmtkComputationalGeometryPythonD)
-  INSTALL_TARGETS(${VTK_VMTK_MODULE_INSTALL_LIB_DIR} vtkvmtkComputationalGeometryPython)
+  INSTALL(TARGETS vtkvmtkComputationalGeometryPythonD
+    LIBRARY DESTINATION ${VTK_VMTK_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
+  )
+  INSTALL(TARGETS vtkvmtkComputationalGeometryPython
+    LIBRARY DESTINATION ${VTK_VMTK_MODULE_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
+  )
 ENDIF (VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
 
 IF (VTK_WRAP_TCL AND VTK_VMTK_WRAP_TCL)
@@ -80,5 +102,21 @@ IF (VTK_WRAP_TCL AND VTK_VMTK_WRAP_TCL)
   VTK_WRAP_TCL3(vtkvmtkComputationalGeometryTCL VTK_VMTK_COMPUTATIONALGEOMETRY_TCL_SRCS "${VTK_VMTK_COMPUTATIONALGEOMETRY_SRCS}" "")
   ADD_LIBRARY(vtkvmtkComputationalGeometryTCL ${VTK_VMTK_COMPUTATIONALGEOMETRY_TCL_SRCS})
   TARGET_LINK_LIBRARIES(vtkvmtkComputationalGeometryTCL vtkvmtkComputationalGeometry vtkvmtkCommon vtkvmtkCommonTCL vtkCommon vtkCommonTCL vtkFiltering vtkFilteringTCL vtkGraphics vtkGraphicsTCL vtkHybrid vtkHybridTCL)
-  INSTALL_TARGETS(${VTK_VMTK_INSTALL_LIB_DIR} vtkvmtkComputationalGeometryTCL)
+
+  INSTALL(TARGETS vtkvmtkComputationalGeometryTCL
+    LIBRARY DESTINATION ${VTK_VMTK_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
+  )
+
+  ### START VMTK IN SLICER PATCH ###
+  IF (VTK_VMTK_IN_SLICER)
+    SET(LIBS vtkvmtkComputationalGeometryTCL)
+
+    FOREACH(LIB ${LIBS})
+      slicer3_set_modules_output_path(${LIB})
+    ENDFOREACH(LIB ${LIBS})
+    
+    slicer3_install_modules(${LIBS})
+  ENDIF (VTK_VMTK_IN_SLICER)
+  ### END VMTK IN SLICER PATCH ###
+
 ENDIF (VTK_WRAP_TCL AND VTK_VMTK_WRAP_TCL)

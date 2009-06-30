@@ -73,8 +73,27 @@ INCLUDE_DIRECTORIES(${VTK_VMTK_SOURCE_DIR}/Utilities/laspack)
 ADD_LIBRARY (vtkvmtkDifferentialGeometry ${VTK_VMTK_DIFFERENTIALGEOMETRY_SRCS})
 TARGET_LINK_LIBRARIES(vtkvmtkDifferentialGeometry vtkCommon vtkFiltering vtkGraphics vtkvmtkComputationalGeometry laspack)
   
-INSTALL_TARGETS(${VTK_VMTK_INSTALL_LIB_DIR} vtkvmtkDifferentialGeometry)
-INSTALL_FILES(${VTK_VMTK_INSTALL_INCLUDE_DIR} .h ${VTK_VMTK_DIFFERENTIALGEOMETRY_SRCS})
+INSTALL(TARGETS vtkvmtkDifferentialGeometry
+LIBRARY DESTINATION ${VTK_VMTK_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
+)
+
+FILE(GLOB files "${VTK_VMTK_DIFFERENTIALGEOMETRY_SRCS}/*.h")
+INSTALL(FILES ${files} DESTINATION ${VTK_VMTK_INSTALL_INCLUDE_DIR})
+
+### START VMTK IN SLICER PATCH ###
+IF (VTK_VMTK_IN_SLICER)
+  SET(LIBS vtkvmtkDifferentialGeometry)
+
+  FOREACH(LIB ${LIBS})
+    slicer3_set_modules_output_path(${LIB})
+  ENDFOREACH(LIB ${LIBS})
+    
+  slicer3_install_modules(${LIBS})
+ENDIF (VTK_VMTK_IN_SLICER)
+### END VMTK IN SLICER PATCH ###
+
+
+
 
 IF (VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
   VTK_WRAP_PYTHON3(vtkvmtkDifferentialGeometryPython VTK_VMTK_DIFFERENTIALGEOMETRY_PYTHON_SRCS "${VTK_VMTK_DIFFERENTIALGEOMETRY_SRCS}")
@@ -85,8 +104,12 @@ IF (VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
   IF(WIN32 AND NOT CYGWIN)
      SET_TARGET_PROPERTIES(vtkvmtkDifferentialGeometryPython PROPERTIES SUFFIX ".pyd")
   ENDIF(WIN32 AND NOT CYGWIN)
-  INSTALL_TARGETS(${VTK_VMTK_INSTALL_LIB_DIR} vtkvmtkDifferentialGeometryPythonD)
-  INSTALL_TARGETS(${VTK_VMTK_MODULE_INSTALL_LIB_DIR} vtkvmtkDifferentialGeometryPython)
+  INSTALL(TARGETS vtkvmtkDifferentialGeometryPythonD
+    LIBRARY DESTINATION ${VTK_VMTK_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
+  )
+  INSTALL(TARGETS vtkvmtkDifferentialGeometryPython
+    LIBRARY DESTINATION ${VTK_VMTK_MODULE_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
+  )
 ENDIF (VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
 
 IF (VTK_WRAP_TCL AND VTK_VMTK_WRAP_TCL)
@@ -94,5 +117,21 @@ IF (VTK_WRAP_TCL AND VTK_VMTK_WRAP_TCL)
   VTK_WRAP_TCL3(vtkvmtkDifferentialGeometryTCL VTK_VMTK_DIFFERENTIALGEOMETRY_TCL_SRCS "${VTK_VMTK_DIFFERENTIALGEOMETRY_SRCS}" "")
   ADD_LIBRARY(vtkvmtkDifferentialGeometryTCL ${VTK_VMTK_DIFFERENTIALGEOMETRY_TCL_SRCS})
   TARGET_LINK_LIBRARIES(vtkvmtkDifferentialGeometryTCL vtkvmtkDifferentialGeometry vtkvmtkComputationalGeometryTCL vtkvmtkComputationalGeometry vtkvmtkCommon vtkvmtkCommonTCL vtkCommon vtkCommonTCL vtkFiltering vtkFilteringTCL vtkGraphics vtkGraphicsTCL)
-  INSTALL_TARGETS(${VTK_VMTK_INSTALL_LIB_DIR} vtkvmtkDifferentialGeometryTCL)
+
+  INSTALL(TARGETS vtkvmtkDifferentialGeometryTCL
+    LIBRARY DESTINATION ${VTK_VMTK_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
+  )
+
+  ### START VMTK IN SLICER PATCH ###
+  IF (VTK_VMTK_IN_SLICER)
+    SET(LIBS vtkvmtkDifferentialGeometryTCL)
+
+    FOREACH(LIB ${LIBS})
+      slicer3_set_modules_output_path(${LIB})
+    ENDFOREACH(LIB ${LIBS})
+    
+    slicer3_install_modules(${LIBS})
+  ENDIF (VTK_VMTK_IN_SLICER)
+  ### END VMTK IN SLICER PATCH ###
+
 ENDIF (VTK_WRAP_TCL AND VTK_VMTK_WRAP_TCL)
