@@ -1,6 +1,19 @@
 PROJECT(VMTK_CONTRIB_SCRIPTS)
 
 SET(CONTRIB_SCRIPTS_SRCS
+    vmtkboundarylayer2.py
+    vmtkdijkstradistancetopoints.py
+    vmtkdistancetospheres.py
+    vmtkmeshaddexternallayer.py
+    vmtkmeshclipcenterlines.py
+    vmtkmeshtetrahedralize2.py
+    vmtkmeshviewer2.py
+    vmtkmeshwriter2.py
+    vmtksurfacewriter2.py
+  )
+  
+SET(CONTRIB_MODULE_SRCS
+  vmtkcontribscripts.py
   )
 
 IF(NOT VMTK_CONTRIB_SCRIPTS_INSTALL_BIN_DIR)
@@ -18,7 +31,7 @@ FOREACH (SCRIPT_FILE  ${CONTRIB_SCRIPTS_SRCS})
 ENDFOREACH (SCRIPT_FILE)
 
 #INSTALL_FILES(${VMTK_CONTRIB_SCRIPTS_INSTALL_LIB_DIR} .py ${CONTRIB_SCRIPTS_SRCS})
-INSTALL(FILES ${CONTRIB_SCRIPTS_SRCS} DESTINATION ${VMTK_CONTRIB_SCRIPTS_INSTALL_LIB_DIR})
+INSTALL(FILES ${CONTRIB_SCRIPTS_SRCS} ${CONTRIB_MODULE_SRCS} DESTINATION ${VMTK_CONTRIB_SCRIPTS_INSTALL_LIB_DIR})
 
 IF (NOT WIN32 AND NOT VMTK_MINIMAL_INSTALL)
 
