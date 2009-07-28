@@ -48,7 +48,7 @@ class vmtkSurfaceRemeshing(pypes.pypeScript):
         self.AspectRatioThreshold = 1.2
         self.InternalAngleTolerance = 0.0
         self.NormalAngleTolerance = 0.2
-        self.CollapseAngleThreshold = 0.5
+        self.CollapseAngleThreshold = 0.2
         self.Relaxation = 0.5
         self.PreserveBoundaryEdges = 0
 
@@ -59,6 +59,7 @@ class vmtkSurfaceRemeshing(pypes.pypeScript):
             ['ElementSizeMode','elementsizemode','str',1,'["area","edgelength","areaarray","edgelengtharray"]'],
             ['TargetArea','area','float',1,'(0.0,)'],
             ['TargetAreaArrayName','areaarray','str',1],
+            ['TargetEdgeLength','edgelength','float',1,'(0.0,)'],
             ['TargetEdgeLengthArrayName','edgelengtharray','str',1],
             ['TargetAreaFactor','areafactor','float',1,'(0.0,)'],
             ['TargetEdgeLengthFactor','edgelengthfactor','float',1,'(0.0,)'],

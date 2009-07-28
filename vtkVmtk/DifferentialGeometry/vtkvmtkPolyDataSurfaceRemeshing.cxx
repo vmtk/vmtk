@@ -1379,7 +1379,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::TestFlipEdgeValidity(vtkIdType pt1, vtkIdTy
     return DO_NOTHING;
     }
 
-  if (acos(vtkMath::Dot(normal3,normal4)) > acos(vtkMath::Dot(normal1,normal2)) + this->NormalAngleTolerance)
+  if (fabs(acos(vtkMath::Dot(normal3,normal4)) - acos(vtkMath::Dot(normal1,normal2))) > this->NormalAngleTolerance)
     {
     return DO_NOTHING;
     } 
