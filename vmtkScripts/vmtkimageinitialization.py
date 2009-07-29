@@ -224,8 +224,8 @@ class vmtkImageInitialization(pypes.pypeScript):
         fastMarching.SetSeeds(sourceSeedIds)
         fastMarching.GenerateGradientImageOff()
         fastMarching.SetTargetOffset(100.0)
+        fastMarching.SetTargets(targetSeedIds)
         if targetSeedIds.GetNumberOfIds() > 0:
-            fastMarching.SetTargets(targetSeedIds)
             fastMarching.SetTargetReachedModeToOneTarget()
         else:
             fastMarching.SetTargetReachedModeToNoTargets()
