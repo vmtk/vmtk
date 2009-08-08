@@ -3,8 +3,8 @@
   Program:   Insight Segmentation & Registration Toolkit
   Module:    $RCSfile: itkHessianToObjectnessMeasureImageFilter.h,v $
   Language:  C++
-  Date:      $Date: 2007/07/26 22:59:15$
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2009-07-01 12:43:38 $
+  Version:   $Revision: 1.6 $
 
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
@@ -22,7 +22,7 @@
 
 namespace itk
 {
-/** \class HessianObjectnessMeasureImageFilter
+/** \class HessianToObjectnessMeasureImageFilter
  * \brief A filter to enhance M-dimensional objects in N-dimensional images 
  * 
  * The objectness measure is a generalization of Frangi's vesselness measure,
@@ -54,74 +54,68 @@ namespace itk
  *
  */
   
-template < typename TPixel, unsigned int VDimension > 
+template < typename TInputImage, typename TOutputImage > 
 class ITK_EXPORT HessianToObjectnessMeasureImageFilter : public
-ImageToImageFilter< Image< SymmetricSecondRankTensor< TPixel, VDimension>, VDimension>, Image< TPixel, VDimension > >
+ImageToImageFilter< TInputImage,TOutputImage>
 {
 public:
   /** Standard class typedefs. */
   typedef HessianToObjectnessMeasureImageFilter Self;
 
-  typedef ImageToImageFilter< Image< SymmetricSecondRankTensor< TPixel, VDimension>, VDimension>, Image< TPixel, VDimension > > Superclass;
+  typedef ImageToImageFilter< TInputImage, TOutputImage >  Superclass;
 
-  typedef SmartPointer< Self > Pointer;
-  typedef SmartPointer< const Self > ConstPointer;
+  typedef SmartPointer< Self >                  Pointer;
+  typedef SmartPointer< const Self >            ConstPointer;
   
-  typedef typename Superclass::InputImageType InputImageType;
-  typedef typename Superclass::OutputImageType OutputImageType;
-  typedef typename InputImageType::PixelType InputPixelType;
-  typedef typename OutputImageType::PixelType OutputPixelType;
+  typedef typename Superclass::InputImageType   InputImageType;
+  typedef typename Superclass::OutputImageType  OutputImageType;
+  typedef typename InputImageType::PixelType    InputPixelType;
+  typedef typename OutputImageType::PixelType   OutputPixelType;
   
   /** Image dimension */
   itkStaticConstMacro(ImageDimension, unsigned int, ::itk::GetImageDimension<InputImageType>::ImageDimension);
 
-  typedef double EigenValueType;
-  typedef itk::FixedArray< EigenValueType, InputPixelType::Dimension > EigenValueArrayType;
-  typedef itk::Image< EigenValueArrayType, InputImageType::ImageDimension > EigenValueImageType;
-  typedef SymmetricEigenAnalysisImageFilter< InputImageType, EigenValueImageType > EigenAnalysisFilterType;
+  typedef double                                                    EigenValueType;
+  typedef itk::FixedArray< EigenValueType, itkGetStaticConstMacro( ImageDimension ) > EigenValueArrayType;
+  typedef itk::Image< EigenValueArrayType, itkGetStaticConstMacro( ImageDimension ) > EigenValueImageType;
 
-//  typedef itk::FixedArray<double,InputPixelType::Dimension-1> AlphaArrayType;
+  typedef SymmetricEigenAnalysisImageFilter< 
+    InputImageType, EigenValueImageType >                           EigenAnalysisFilterType;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
-//  /** Set Alpha (the weight at the denominator) corresponding to R_i (the i-th eigenvalue ratio) for 0<=i<=Dim-2; */
-//  void SetAlpha(unsigned int i, double alpha)
-//  {
-//    m_AlphaArray[i] = alpha;
-//    this->Modified();
-//  }
-
-//  /** Get Alpha (the weight at the denominator) corresponding to R_i (the i-th eigenvalue ratio) for 0<=i<=Dim-2 */
-//  double GetAlpha(unsigned int i)
-//  {
-//    return m_AlphaArray[i];
-//  }
-
-  /** Set/Get Alpha, the weight corresponding to R_A (the ratio of the smallest eigenvalue that has to be large to the larger ones). Smaller values lead to increased sensitivity to the object dimensionality. */
+  /** Set/Get Alpha, the weight corresponding to R_A 
+   * (the ratio of the smallest eigenvalue that has to be large to the larger ones). 
+   * Smaller values lead to increased sensitivity to the object dimensionality. */
   itkSetMacro(Alpha,double);
-  itkGetMacro(Alpha,double);
+  itkGetConstMacro(Alpha,double);
 
-  /** Set/Get Beta, the weight corresponding to R_B (the ratio of the largest eigenvalue that has to be small to the larger ones). Smaller values lead to increased sensitivity to the object dimensionality. */
+  /** Set/Get Beta, the weight corresponding to R_B 
+   * (the ratio of the largest eigenvalue that has to be small to the larger ones). 
+   * Smaller values lead to increased sensitivity to the object dimensionality. */
   itkSetMacro(Beta,double);
-  itkGetMacro(Beta,double);
+  itkGetConstMacro(Beta,double);
 
-  /** Set/Get Gamma, the weight corresponding to S (the Frobenius norm of the Hessian matrix, or second-order structureness) */
+  /** Set/Get Gamma, the weight corresponding to S 
+   * (the Frobenius norm of the Hessian matrix, or second-order structureness) */
   itkSetMacro(Gamma,double);
-  itkGetMacro(Gamma,double);
+  itkGetConstMacro(Gamma,double);
 
   /** Toggle scaling the objectness measure with the magnitude of the largest absolute eigenvalue */ 
   itkSetMacro(ScaleObjectnessMeasure,bool);
-  itkGetMacro(ScaleObjectnessMeasure,bool);
+  itkGetConstMacro(ScaleObjectnessMeasure,bool);
   itkBooleanMacro(ScaleObjectnessMeasure);
 
-  /** Set/Get the dimensionality of the object (0: points (blobs), 1: lines (vessels), 2: planes (plate-like structures), 3: hyper-planes. ObjectDimension must be smaller than ImageDimension. */
-  itkSetMacro(ObjectDimension,int);
-  itkGetMacro(ObjectDimension,int);
+  /** Set/Get the dimensionality of the object (0: points (blobs), 
+   * 1: lines (vessels), 2: planes (plate-like structures), 3: hyper-planes.
+   * ObjectDimension must be smaller than ImageDimension. */
+  itkSetMacro(ObjectDimension,unsigned int);
+  itkGetConstMacro(ObjectDimension,unsigned int);
 
   /** Enhance bright structures on a dark background if true, the opposite if false. */
   itkSetMacro(BrightObject,bool);
-  itkGetMacro(BrightObject,bool);
+  itkGetConstMacro(BrightObject,bool);
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   /** Begin concept checking */
@@ -143,13 +137,12 @@ private:
 
   typename EigenAnalysisFilterType::Pointer m_SymmetricEigenValueFilter;
 
-//  AlphaArrayType m_AlphaArray;
-  double m_Alpha;
-  double m_Beta;
-  double m_Gamma;
-  int m_ObjectDimension;
-  bool m_BrightObject;
-  bool m_ScaleObjectnessMeasure;
+  double                 m_Alpha;
+  double                 m_Beta;
+  double                 m_Gamma;
+  unsigned int           m_ObjectDimension;
+  bool                   m_BrightObject;
+  bool                   m_ScaleObjectnessMeasure;
 };
 
 } // end namespace itk

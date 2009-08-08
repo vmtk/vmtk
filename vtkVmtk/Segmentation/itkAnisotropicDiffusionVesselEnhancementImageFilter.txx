@@ -56,8 +56,12 @@ AnisotropicDiffusionVesselEnhancementImageFilter<TInputImage, TOutputImage, TVes
   m_EigenVectorMatrixAnalysisFilter->SetDimension( TensorPixelType::Dimension ); 
  
   //instantiate the vesselness filter
+
+  typename VesselnessFilterType::Pointer vesselnessFilter = VesselnessFilterType::New();
+
   m_MultiScaleVesselnessFilter  = MultiScaleVesselnessFilterType::New();
   m_MultiScaleVesselnessFilter->GenerateHessianOutputOn();
+  m_MultiScaleVesselnessFilter->SetHessianToMeasureFilter(vesselnessFilter);
 
   // Vesselness guided vesselness function algorithm parameter
   m_WStrength = 25.0;
@@ -227,7 +231,7 @@ AnisotropicDiffusionVesselEnhancementImageFilter<TInputImage, TOutputImage, TVes
   m_MultiScaleVesselnessFilter->Update();
 
   // Hessian matrix 
-  typename HessianImageType::Pointer hessianOutputImage;
+  typename HessianImageType::ConstPointer hessianOutputImage;
   hessianOutputImage = m_MultiScaleVesselnessFilter->GetHessianOutput();
 
   // Pass it to the eigenVector matrix analyzer

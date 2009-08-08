@@ -3,8 +3,8 @@
   Program:   Insight Segmentation & Registration Toolkit
   Module:    $RCSfile: itkHessianToObjectnessMeasureImageFilter.txx,v $
   Language:  C++
-  Date:      $Date: 2007/07/26 20:59:44 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2009-05-11 07:50:26 $
+  Version:   $Revision: 1.5 $
 
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
@@ -28,8 +28,8 @@ namespace itk
 /**
  * Constructor
  */
-template < typename TPixel, unsigned int VDimension >
-HessianToObjectnessMeasureImageFilter< TPixel, VDimension >
+template < typename TInputImage, typename TOutputImage > 
+HessianToObjectnessMeasureImageFilter< TInputImage, TOutputImage>
 ::HessianToObjectnessMeasureImageFilter()
 {
   m_Alpha = 0.5;
@@ -47,9 +47,9 @@ HessianToObjectnessMeasureImageFilter< TPixel, VDimension >
   m_BrightObject = true;
 }
 
-template < typename TPixel, unsigned int VDimension >
+template < typename TInputImage, typename TOutputImage > 
 void
-HessianToObjectnessMeasureImageFilter< TPixel, VDimension >
+HessianToObjectnessMeasureImageFilter< TInputImage, TOutputImage>
 ::GenerateData()
 {
   itkDebugMacro(<< "HessianToObjectnessMeasureImageFilter generating data ");
@@ -62,8 +62,6 @@ HessianToObjectnessMeasureImageFilter< TPixel, VDimension >
   m_SymmetricEigenValueFilter->SetInput( this->GetInput() );
   
   typename OutputImageType::Pointer output = this->GetOutput();
-
-  typedef typename EigenAnalysisFilterType::OutputImageType EigenValueImageType;
 
   m_SymmetricEigenValueFilter->Update();
   
@@ -146,9 +144,9 @@ HessianToObjectnessMeasureImageFilter< TPixel, VDimension >
         {
         rADenominatorBase *= sortedAbsEigenValues[j];
         }
-      if (fabs(rADenominatorBase) > 0.0)
+      if (vcl_fabs(rADenominatorBase) > 0.0)
         {
-        rA /= pow(rADenominatorBase, 1.0 / (ImageDimension-m_ObjectDimension-1));
+        rA /= vcl_pow(rADenominatorBase, 1.0 / (ImageDimension-m_ObjectDimension-1));
         objectnessMeasure *= 1.0 - vcl_exp(- 0.5 * vnl_math_sqr(rA) / vnl_math_sqr(m_Alpha));
         }
       else
@@ -165,9 +163,9 @@ HessianToObjectnessMeasureImageFilter< TPixel, VDimension >
         {
         rBDenominatorBase *= sortedAbsEigenValues[j];
         }
-      if (fabs(rBDenominatorBase) > 0.0)
+      if (vcl_fabs(rBDenominatorBase) > 0.0)
         { 
-        rB /= pow(rBDenominatorBase, 1.0 / (ImageDimension-m_ObjectDimension));
+        rB /= vcl_pow(rBDenominatorBase, 1.0 / (ImageDimension-m_ObjectDimension));
         objectnessMeasure *= vcl_exp(- 0.5 * vnl_math_sqr(rB) / vnl_math_sqr(m_Beta));
         }
       else
@@ -176,13 +174,12 @@ HessianToObjectnessMeasureImageFilter< TPixel, VDimension >
         }
       }
 
-    double frobeniusNorm = 0.0;
+    double frobeniusNormSquared = 0.0;
     for (unsigned int i=0; i<ImageDimension; i++)
       {
-      frobeniusNorm += vnl_math_sqr(sortedAbsEigenValues[i]);
+      frobeniusNormSquared += vnl_math_sqr(sortedAbsEigenValues[i]);
       }
-    frobeniusNorm = vcl_sqrt(frobeniusNorm);
-    objectnessMeasure *= 1.0 - vcl_exp(- 0.5 * vnl_math_sqr(frobeniusNorm) / vnl_math_sqr(m_Gamma));
+    objectnessMeasure *= 1.0 - vcl_exp(- 0.5 * frobeniusNormSquared / vnl_math_sqr(m_Gamma));
 
     // in case, scale by largest absolute eigenvalue
     if (m_ScaleObjectnessMeasure)
@@ -197,9 +194,9 @@ HessianToObjectnessMeasureImageFilter< TPixel, VDimension >
     }
 }
 
-template < typename TPixel, unsigned int VDimension >
+template < typename TInputImage, typename TOutputImage > 
 void
-HessianToObjectnessMeasureImageFilter< TPixel, VDimension >
+HessianToObjectnessMeasureImageFilter< TInputImage, TOutputImage>
 ::PrintSelf(std::ostream& os, Indent indent) const
 {
   Superclass::PrintSelf(os, indent);

@@ -77,9 +77,9 @@ public:
   typedef AnisotropicDiffusionVesselEnhancementFunction<InputImageType> FiniteDifferenceFunctionType;
 
   typedef TVesselnessFilter VesselnessFilterType;
-  typedef itk::MultiScaleHessianBasedMeasureImageFilter<InputImageType, VesselnessFilterType> MultiScaleVesselnessFilterType;
-  typedef typename MultiScaleVesselnessFilterType::OutputImageType VesselnessImageType;
-  typedef typename MultiScaleVesselnessFilterType::HessianImageType HessianImageType;
+  typedef typename VesselnessFilterType::InputImageType HessianImageType;
+  typedef typename VesselnessFilterType::OutputImageType VesselnessImageType;
+  typedef itk::MultiScaleHessianBasedMeasureImageFilter<InputImageType, HessianImageType, VesselnessImageType> MultiScaleVesselnessFilterType;
 
   typedef itk::Matrix<double, ImageDimension, ImageDimension> MatrixType;
 

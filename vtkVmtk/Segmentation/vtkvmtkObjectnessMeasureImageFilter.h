@@ -45,22 +45,22 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkObjectnessMeasureImageFilter : public 
 
   void SetSigmaMin(double value)
   {
-    DelegateITKInputMacro(SetSigmaMin,value);
+    DelegateITKInputMacro(SetSigmaMinimum,value);
   }
 
   double GetSigmaMin()
   {
-    DelegateITKOutputMacro(GetSigmaMin);
+    DelegateITKOutputMacro(GetSigmaMinimum);
   }
 
   void SetSigmaMax(double value)
   {
-    DelegateITKInputMacro(SetSigmaMax,value);
+    DelegateITKInputMacro(SetSigmaMaximum,value);
   }
 
   double GetSigmaMax()
   {
-    DelegateITKOutputMacro(GetSigmaMax);
+    DelegateITKOutputMacro(GetSigmaMaximum);
   }
 
   void SetNumberOfSigmaSteps(int value)
@@ -73,44 +73,112 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkObjectnessMeasureImageFilter : public 
     DelegateITKOutputMacro(GetNumberOfSigmaSteps);
   }
 
+  void SetSigmaStepMethodToEquispaced()
+  {
+    this->GetImageFilterPointer()->SetSigmaStepMethodToEquispaced();
+    this->Modified();
+  }
+  
+  void SetSigmaStepMethodToLogarithmic()
+  {
+    this->GetImageFilterPointer()->SetSigmaStepMethodToLogarithmic();
+    this->Modified();
+  }
+
   void SetAlpha(double value)
   {
-    DelegateITKInputMacro(GetHessianToMeasureFilter()->SetAlpha,value);
+    ImageFilterType* tempFilter = dynamic_cast<ImageFilterType*>(this->m_Filter.GetPointer()); 
+    if (tempFilter) 
+      { 
+      dynamic_cast<ObjectnessFilterType*>(tempFilter->GetHessianToMeasureFilter())->SetAlpha(value); 
+      this->Modified(); 
+      }
   }
 
   double GetAlpha()
   {
-    DelegateITKOutputMacro(GetHessianToMeasureFilter()->GetAlpha);
+    ImageFilterType* tempFilter = dynamic_cast<ImageFilterType*>(this->m_Filter.GetPointer()); 
+    if (tempFilter) 
+      { 
+      return dynamic_cast<ObjectnessFilterType*>(tempFilter->GetHessianToMeasureFilter())->GetAlpha(); 
+      }
+    else
+      {
+      vtkErrorMacro ( << this->GetClassName() << " Error getting method. Dynamic cast returned 0" );
+      return 0.0;
+      }
   }
 
   void SetBeta(double value)
   {
-    DelegateITKInputMacro(GetHessianToMeasureFilter()->SetBeta,value);
+    ImageFilterType* tempFilter = dynamic_cast<ImageFilterType*>(this->m_Filter.GetPointer()); 
+    if (tempFilter) 
+      { 
+      dynamic_cast<ObjectnessFilterType*>(tempFilter->GetHessianToMeasureFilter())->SetBeta(value); 
+      this->Modified(); 
+      }
   }
 
   double GetBeta()
   {
-    DelegateITKOutputMacro(GetHessianToMeasureFilter()->GetBeta);
+    ImageFilterType* tempFilter = dynamic_cast<ImageFilterType*>(this->m_Filter.GetPointer()); 
+    if (tempFilter) 
+      { 
+      return dynamic_cast<ObjectnessFilterType*>(tempFilter->GetHessianToMeasureFilter())->GetBeta(); 
+      }
+    else
+      {
+      vtkErrorMacro ( << this->GetClassName() << " Error getting method. Dynamic cast returned 0" );
+      return 0.0;
+      }
   }
 
   void SetGamma(double value)
   {
-    DelegateITKInputMacro(GetHessianToMeasureFilter()->SetGamma,value);
+    ImageFilterType* tempFilter = dynamic_cast<ImageFilterType*>(this->m_Filter.GetPointer()); 
+    if (tempFilter) 
+      { 
+      dynamic_cast<ObjectnessFilterType*>(tempFilter->GetHessianToMeasureFilter())->SetGamma(value); 
+      this->Modified(); 
+      }
   }
 
   double GetGamma()
   {
-    DelegateITKOutputMacro(GetHessianToMeasureFilter()->GetGamma);
+    ImageFilterType* tempFilter = dynamic_cast<ImageFilterType*>(this->m_Filter.GetPointer()); 
+    if (tempFilter) 
+      { 
+      return dynamic_cast<ObjectnessFilterType*>(tempFilter->GetHessianToMeasureFilter())->GetGamma(); 
+      }
+    else
+      {
+      vtkErrorMacro ( << this->GetClassName() << " Error getting method. Dynamic cast returned 0" );
+      return 0.0;
+      }
   }
 
   void SetObjectDimension(int value)
   {
-    DelegateITKInputMacro(GetHessianToMeasureFilter()->SetObjectDimension,value);
+    ImageFilterType* tempFilter = dynamic_cast<ImageFilterType*>(this->m_Filter.GetPointer()); 
+    if (tempFilter) 
+      { 
+      dynamic_cast<ObjectnessFilterType*>(tempFilter->GetHessianToMeasureFilter())->SetObjectDimension(value); 
+      this->Modified(); 
+      }
   }
 
-  double GetObjectDimension()
+  int GetObjectDimension()
   {
-    DelegateITKOutputMacro(GetHessianToMeasureFilter()->GetObjectDimension);
+    ImageFilterType* tempFilter = dynamic_cast<ImageFilterType*>(this->m_Filter.GetPointer()); 
+    if (tempFilter) 
+      { 
+      return dynamic_cast<ObjectnessFilterType*>(tempFilter->GetHessianToMeasureFilter())->GetObjectDimension(); 
+      }
+    else
+      {
+      vtkErrorMacro ( << this->GetClassName() << " Error getting method. Dynamic cast returned 0" );
+      return 0;
+      }
   }
 
   unsigned long int GetMTime()
@@ -132,9 +200,13 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkObjectnessMeasureImageFilter : public 
 
 protected:
   //BTX
-  typedef itk::HessianToObjectnessMeasureImageFilter<double,3> ObjectnessFilterType;
-  typedef itk::MultiScaleHessianBasedMeasureImageFilter<Superclass::InputImageType,ObjectnessFilterType> ImageFilterType;
-  typedef itk::VTKImageExport<InputImageType> ScalesImageExportType;
+  typedef itk::SymmetricSecondRankTensor<float,3> HessianPixelType;
+  typedef itk::Image<HessianPixelType,3> HessianImageType;
+  typedef itk::HessianToObjectnessMeasureImageFilter<HessianImageType,InputImageType> ObjectnessFilterType;
+  typedef itk::MultiScaleHessianBasedMeasureImageFilter<InputImageType,HessianImageType,InputImageType> ImageFilterType;
+  typedef ImageFilterType::ScalesImageType ScalesImageType;
+
+  typedef itk::VTKImageExport<ScalesImageType> ScalesImageExportType;
 
   vtkvmtkObjectnessMeasureImageFilter() : Superclass(ImageFilterType::New())
   {
@@ -144,12 +216,13 @@ protected:
     this->vtkScalesImporter->SetScalarArrayName("Scalars_");
 #endif
     ConnectPipelines(this->itkScalesExporter, this->vtkScalesImporter);
+    ObjectnessFilterType::Pointer objectnessFilter = ObjectnessFilterType::New();
+    objectnessFilter->SetScaleObjectnessMeasure(false);
+    objectnessFilter->SetBrightObject(true);
     ImageFilterType* imageFilter = this->GetImageFilterPointer();
     imageFilter->SetSigmaStepMethodToEquispaced();
     imageFilter->GenerateScalesOutputOn();
-    ObjectnessFilterType* objectnessFilter = imageFilter->GetHessianToMeasureFilter();
-    objectnessFilter->SetScaleObjectnessMeasure(false);
-    objectnessFilter->SetBrightObject(true);
+    imageFilter->SetHessianToMeasureFilter(objectnessFilter);
     this->itkScalesExporter->SetInput(imageFilter->GetScalesOutput());
   }
 

@@ -46,22 +46,22 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkVesselEnhancingDiffusionImageFilter : 
 
   void SetSigmaMin(double value)
   {
-    DelegateITKInputMacro(GetMultiScaleVesselnessFilter()->SetSigmaMin,value);
+    DelegateITKInputMacro(GetMultiScaleVesselnessFilter()->SetSigmaMinimum,value);
   }
 
   double GetSigmaMin()
   {
-    DelegateITKOutputMacro(GetMultiScaleVesselnessFilter()->GetSigmaMin);
+    DelegateITKOutputMacro(GetMultiScaleVesselnessFilter()->GetSigmaMinimum);
   }
 
   void SetSigmaMax(double value)
   {
-    DelegateITKInputMacro(GetMultiScaleVesselnessFilter()->SetSigmaMax,value);
+    DelegateITKInputMacro(GetMultiScaleVesselnessFilter()->SetSigmaMaximum,value);
   }
 
   double GetSigmaMax()
   {
-    DelegateITKOutputMacro(GetMultiScaleVesselnessFilter()->GetSigmaMax);
+    DelegateITKOutputMacro(GetMultiScaleVesselnessFilter()->GetSigmaMaximum);
   }
 
   void SetNumberOfSigmaSteps(int value)
@@ -138,42 +138,98 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkVesselEnhancingDiffusionImageFilter : 
 
   void SetAlpha(double value)
   {
-    DelegateITKInputMacro(GetMultiScaleVesselnessFilter()->GetHessianToMeasureFilter()->SetAlpha,value);
+    ImageFilterType* tempFilter = dynamic_cast<ImageFilterType*>(this->m_Filter.GetPointer()); 
+    if (tempFilter) 
+      { 
+      dynamic_cast<VesselnessFilterType*>(tempFilter->GetMultiScaleVesselnessFilter()->GetHessianToMeasureFilter())->SetAlpha(value); 
+      this->Modified(); 
+      }
   }
 
   double GetAlpha()
   {
-    DelegateITKOutputMacro(GetMultiScaleVesselnessFilter()->GetHessianToMeasureFilter()->GetAlpha);
+    ImageFilterType* tempFilter = dynamic_cast<ImageFilterType*>(this->m_Filter.GetPointer()); 
+    if (tempFilter) 
+      { 
+      return dynamic_cast<VesselnessFilterType*>(tempFilter->GetMultiScaleVesselnessFilter()->GetHessianToMeasureFilter())->GetAlpha(); 
+      }
+    else
+      {
+      vtkErrorMacro ( << this->GetClassName() << " Error getting method. Dynamic cast returned 0" );
+      return 0.0;
+      }
   }
 
   void SetBeta(double value)
   {
-    DelegateITKInputMacro(GetMultiScaleVesselnessFilter()->GetHessianToMeasureFilter()->SetBeta,value);
+    ImageFilterType* tempFilter = dynamic_cast<ImageFilterType*>(this->m_Filter.GetPointer()); 
+    if (tempFilter) 
+      { 
+      dynamic_cast<VesselnessFilterType*>(tempFilter->GetMultiScaleVesselnessFilter()->GetHessianToMeasureFilter())->SetBeta(value); 
+      this->Modified(); 
+      }
   }
 
   double GetBeta()
   {
-    DelegateITKOutputMacro(GetMultiScaleVesselnessFilter()->GetHessianToMeasureFilter()->GetBeta);
+    ImageFilterType* tempFilter = dynamic_cast<ImageFilterType*>(this->m_Filter.GetPointer()); 
+    if (tempFilter) 
+      { 
+      return dynamic_cast<VesselnessFilterType*>(tempFilter->GetMultiScaleVesselnessFilter()->GetHessianToMeasureFilter())->GetBeta(); 
+      }
+    else
+      {
+      vtkErrorMacro ( << this->GetClassName() << " Error getting method. Dynamic cast returned 0" );
+      return 0.0;
+      }
   }
 
   void SetGamma(double value)
   {
-    DelegateITKInputMacro(GetMultiScaleVesselnessFilter()->GetHessianToMeasureFilter()->SetGamma,value);
+    ImageFilterType* tempFilter = dynamic_cast<ImageFilterType*>(this->m_Filter.GetPointer()); 
+    if (tempFilter) 
+      { 
+      dynamic_cast<VesselnessFilterType*>(tempFilter->GetMultiScaleVesselnessFilter()->GetHessianToMeasureFilter())->SetGamma(value); 
+      this->Modified(); 
+      }
   }
 
   double GetGamma()
   {
-    DelegateITKOutputMacro(GetMultiScaleVesselnessFilter()->GetHessianToMeasureFilter()->GetGamma);
+    ImageFilterType* tempFilter = dynamic_cast<ImageFilterType*>(this->m_Filter.GetPointer()); 
+    if (tempFilter) 
+      { 
+      return dynamic_cast<VesselnessFilterType*>(tempFilter->GetMultiScaleVesselnessFilter()->GetHessianToMeasureFilter())->GetGamma(); 
+      }
+    else
+      {
+      vtkErrorMacro ( << this->GetClassName() << " Error getting method. Dynamic cast returned 0" );
+      return 0.0;
+      }
   }
 
   void SetC(double value)
   {
-    DelegateITKInputMacro(GetMultiScaleVesselnessFilter()->GetHessianToMeasureFilter()->SetC,value);
+    ImageFilterType* tempFilter = dynamic_cast<ImageFilterType*>(this->m_Filter.GetPointer()); 
+    if (tempFilter) 
+      { 
+      dynamic_cast<VesselnessFilterType*>(tempFilter->GetMultiScaleVesselnessFilter()->GetHessianToMeasureFilter())->SetC(value); 
+      this->Modified(); 
+      }
   }
 
   double GetC()
   {
-    DelegateITKOutputMacro(GetMultiScaleVesselnessFilter()->GetHessianToMeasureFilter()->GetC);
+    ImageFilterType* tempFilter = dynamic_cast<ImageFilterType*>(this->m_Filter.GetPointer()); 
+    if (tempFilter) 
+      { 
+      return dynamic_cast<VesselnessFilterType*>(tempFilter->GetMultiScaleVesselnessFilter()->GetHessianToMeasureFilter())->GetC(); 
+      }
+    else
+      {
+      vtkErrorMacro ( << this->GetClassName() << " Error getting method. Dynamic cast returned 0" );
+      return 0.0;
+      }
   }
 
   void SetNumberOfDiffusionSubIterations(int value)
@@ -189,6 +245,7 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkVesselEnhancingDiffusionImageFilter : 
 protected:
   //BTX
   typedef itk::AnisotropicDiffusionVesselEnhancementImageFilter<Superclass::InputImageType, Superclass::OutputImageType> ImageFilterType;
+  typedef ImageFilterType::VesselnessFilterType VesselnessFilterType;
 
   vtkvmtkVesselEnhancingDiffusionImageFilter() : Superclass(ImageFilterType::New())
   {
@@ -206,7 +263,4 @@ private:
 };
 
 #endif
-
-
-
 
