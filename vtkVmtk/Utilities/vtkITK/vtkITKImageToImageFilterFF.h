@@ -5,34 +5,34 @@
   See Doc/copyright/copyright.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
 
-  Program:   vtkITK
-  Module:    $HeadURL: http://www.na-mic.org/svn/Slicer3/trunk/Libs/vtkITK/vtkITKImageToImageFilterFF.h $
+  Program:   vtkvmtkITK
+  Module:    $HeadURL: http://www.na-mic.org/svn/Slicer3/trunk/Libs/vtkvmtkITK/vtkvmtkITKImageToImageFilterFF.h $
   Date:      $Date: 2006-12-21 13:21:52 +0100 (Thu, 21 Dec 2006) $
   Version:   $Revision: 1900 $
 
 ==========================================================================*/
 
-// .NAME vtkITKImageToImageFilter - Abstract base class for connecting ITK and VTK
+// .NAME vtkvmtkITKImageToImageFilter - Abstract base class for connecting ITK and VTK
 // .SECTION Description
-// vtkITKImageToImageFilter provides a 
+// vtkvmtkITKImageToImageFilter provides a 
 
-#ifndef __vtkITKImageToImageFilterFF_h
-#define __vtkITKImageToImageFilterFF_h
+#ifndef __vtkvmtkITKImageToImageFilterFF_h
+#define __vtkvmtkITKImageToImageFilterFF_h
 
 
-#include "vtkITKImageToImageFilter.h"
+#include "vtkvmtkITKImageToImageFilter.h"
 #include "vtkImageToImageFilter.h"
 #include "itkImageToImageFilter.h"
 #include "itkVTKImageExport.h"
 #include "itkVTKImageImport.h"
-#include "vtkITKUtility.h"
+#include "vtkvmtkITKUtility.h"
 
 
-class VTK_ITK_EXPORT vtkITKImageToImageFilterFF : public vtkITKImageToImageFilter
+class VTK_VMTK_ITK_EXPORT vtkvmtkITKImageToImageFilterFF : public vtkvmtkITKImageToImageFilter
 {
 public:
-  vtkTypeMacro(vtkITKImageToImageFilterFF,vtkITKImageToImageFilter);
-  static vtkITKImageToImageFilterFF* New() { return 0; };
+  vtkTypeMacro(vtkvmtkITKImageToImageFilterFF,vtkvmtkITKImageToImageFilter);
+  static vtkvmtkITKImageToImageFilterFF* New() { return 0; };
   void PrintSelf(ostream& os, vtkIndent indent)
   {
     Superclass::PrintSelf ( os, indent );
@@ -56,7 +56,7 @@ protected:
   typedef itk::ImageToImageFilter<InputImageType,OutputImageType> GenericFilterType;
   GenericFilterType::Pointer m_Filter;
 
-  vtkITKImageToImageFilterFF ( GenericFilterType* filter )
+  vtkvmtkITKImageToImageFilterFF ( GenericFilterType* filter )
   {
     // Need an import, export, and a ITK pipeline
     m_Filter = filter;
@@ -72,14 +72,14 @@ protected:
     this->vtkCast->SetOutputScalarTypeToFloat();
   };
 
-  ~vtkITKImageToImageFilterFF()
+  ~vtkvmtkITKImageToImageFilterFF()
   {
   };
   //ETX
   
 private:
-  vtkITKImageToImageFilterFF(const vtkITKImageToImageFilterFF&);  // Not implemented.
-  void operator=(const vtkITKImageToImageFilterFF&);  // Not implemented.
+  vtkvmtkITKImageToImageFilterFF(const vtkvmtkITKImageToImageFilterFF&);  // Not implemented.
+  void operator=(const vtkvmtkITKImageToImageFilterFF&);  // Not implemented.
 };
 
 #endif

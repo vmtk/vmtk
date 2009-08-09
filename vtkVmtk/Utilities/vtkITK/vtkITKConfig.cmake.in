@@ -1,6 +1,6 @@
-# The vtkITK source and binary trees.
-SET(vtkITK_SOURCE_DIR "@vtkITK_SOURCE_DIR@")
-SET(vtkITK_BINARY_DIR "@vtkITK_BINARY_DIR@")
-SET(vtkITK_LIB_DIR "@CMAKE_BINARY_DIR@/bin" "@CMAKE_BINARY_DIR@")
+# The vtkvmtkITK source and binary trees.
+SET(vtkvmtkITK_SOURCE_DIR "@vtkvmtkITK_SOURCE_DIR@")
+SET(vtkvmtkITK_BINARY_DIR "@vtkvmtkITK_BINARY_DIR@")
+SET(vtkvmtkITK_LIB_DIR "@CMAKE_BINARY_DIR@/bin" "@CMAKE_BINARY_DIR@")
 SET(ITK_DIR "@ITK_DIR@")
 SET(VTK_DIR "@VTK_DIR@")

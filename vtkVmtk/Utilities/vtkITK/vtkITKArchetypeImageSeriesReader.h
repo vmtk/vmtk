@@ -5,14 +5,14 @@
   See Doc/copyright/copyright.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
 
-  Program:   vtkITK
-  Module:    $HeadURL: http://www.na-mic.org/svn/Slicer3/trunk/Libs/vtkITK/vtkITKArchetypeImageSeriesReader.h $
+  Program:   vtkvmtkITK
+  Module:    $HeadURL: http://www.na-mic.org/svn/Slicer3/trunk/Libs/vtkvmtkITK/vtkvmtkITKArchetypeImageSeriesReader.h $
   Date:      $Date: 2007-03-03 16:22:29 -0500 (Sat, 03 Mar 2007) $
   Version:   $Revision: 2733 $
 
 ==========================================================================*/
 
-// .NAME vtkITKArchetypeImageSeriesReader - Read a series of files
+// .NAME vtkvmtkITKArchetypeImageSeriesReader - Read a series of files
 // that have a common naming convention
 // .SECTION Description
 // ArchetypeImageSeriesReader creates a volume from a series of images
@@ -24,8 +24,8 @@
 // (NAMIC), funded by the National Institutes of Health through the NIH Roadmap
 // for Medical Research, Grant U54 EB005149.
 
-#ifndef __vtkITKArchetypeImageSeriesReader_h
-#define __vtkITKArchetypeImageSeriesReader_h
+#ifndef __vtkvmtkITKArchetypeImageSeriesReader_h
+#define __vtkvmtkITKArchetypeImageSeriesReader_h
 
 #include "vtkImageSource.h"
 #include "vtkMatrix4x4.h"
@@ -33,13 +33,13 @@
 #include <vector>
 #include <string>
 
-#include "vtkITK.h"
+#include "vtkvmtkITK.h"
 
-class VTK_ITK_EXPORT vtkITKArchetypeImageSeriesReader : public vtkImageSource
+class VTK_VMTK_ITK_EXPORT vtkvmtkITKArchetypeImageSeriesReader : public vtkImageSource
 {
 public:
-  static vtkITKArchetypeImageSeriesReader *New();
-  vtkTypeRevisionMacro(vtkITKArchetypeImageSeriesReader,vtkImageSource);
+  static vtkvmtkITKArchetypeImageSeriesReader *New();
+  vtkTypeRevisionMacro(vtkvmtkITKArchetypeImageSeriesReader,vtkImageSource);
   void PrintSelf(ostream& os, vtkIndent indent);   
 
 //BTX
@@ -215,8 +215,8 @@ public:
   void RegisterExtraBuiltInFactories();
 
 protected:
-  vtkITKArchetypeImageSeriesReader();
-  ~vtkITKArchetypeImageSeriesReader();
+  vtkvmtkITKArchetypeImageSeriesReader();
+  ~vtkvmtkITKArchetypeImageSeriesReader();
 
   char *Archetype;
   int DataExtent[6];
@@ -246,8 +246,8 @@ protected:
   virtual void ExecuteData(vtkDataObject *data);
 
 private:
-  vtkITKArchetypeImageSeriesReader(const vtkITKArchetypeImageSeriesReader&);  // Not implemented.
-  void operator=(const vtkITKArchetypeImageSeriesReader&);  // Not implemented.
+  vtkvmtkITKArchetypeImageSeriesReader(const vtkvmtkITKArchetypeImageSeriesReader&);  // Not implemented.
+  void operator=(const vtkvmtkITKArchetypeImageSeriesReader&);  // Not implemented.
 };
 
 #endif

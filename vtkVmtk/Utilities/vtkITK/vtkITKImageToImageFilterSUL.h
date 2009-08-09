@@ -12,27 +12,27 @@ details.
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkITKImageToImageFilter - Abstract base class for connecting ITK and VTK
+// .NAME vtkvmtkITKImageToImageFilter - Abstract base class for connecting ITK and VTK
 // .SECTION Description
-// vtkITKImageToImageFilter provides a 
+// vtkvmtkITKImageToImageFilter provides a 
 
-#ifndef __vtkITKImageToImageFilterSUL_h
-#define __vtkITKImageToImageFilterSUL_h
+#ifndef __vtkvmtkITKImageToImageFilterSUL_h
+#define __vtkvmtkITKImageToImageFilterSUL_h
 
 
 #include "vtkImageToImageFilter.h"
-#include "vtkITKImageToImageFilter.h"
+#include "vtkvmtkITKImageToImageFilter.h"
 #include "itkImageToImageFilter.h"
 #include "itkVTKImageExport.h"
 #include "itkVTKImageImport.h"
-#include "vtkITKUtility.h"
+#include "vtkvmtkITKUtility.h"
 
 
-class VTK_EXPORT vtkITKImageToImageFilterSUL : public vtkITKImageToImageFilter
+class VTK_VMTK_ITK_EXPORT vtkvmtkITKImageToImageFilterSUL : public vtkvmtkITKImageToImageFilter
 {
 public:
-  vtkTypeMacro(vtkITKImageToImageFilterSUL,vtkITKImageToImageFilter);
-  static vtkITKImageToImageFilterSUL* New() { return 0; };
+  vtkTypeMacro(vtkvmtkITKImageToImageFilterSUL,vtkvmtkITKImageToImageFilter);
+  static vtkvmtkITKImageToImageFilterSUL* New() { return 0; };
   void PrintSelf(ostream& os, vtkIndent indent)
   {
     Superclass::PrintSelf ( os, indent );
@@ -59,7 +59,7 @@ protected:
   typedef itk::ImageToImageFilter<InputImageType,OutputImageType> FilterType;
   FilterType::Pointer m_Filter;
 
-  vtkITKImageToImageFilterSUL ( FilterType* filter )
+  vtkvmtkITKImageToImageFilterSUL ( FilterType* filter )
   {
     // Need an import, export, and a ITK pipeline
     m_Filter = filter;
@@ -74,14 +74,14 @@ protected:
     this->vtkCast->SetOutputScalarTypeToShort();
   };
 
-  ~vtkITKImageToImageFilterSUL()
+  ~vtkvmtkITKImageToImageFilterSUL()
   {
   };
   //ETX
     
 private:
-  vtkITKImageToImageFilterSUL(const vtkITKImageToImageFilterSUL&);  // Not implemented.
-  void operator=(const vtkITKImageToImageFilterSUL&);  // Not implemented.
+  vtkvmtkITKImageToImageFilterSUL(const vtkvmtkITKImageToImageFilterSUL&);  // Not implemented.
+  void operator=(const vtkvmtkITKImageToImageFilterSUL&);  // Not implemented.
 };
 
 #endif

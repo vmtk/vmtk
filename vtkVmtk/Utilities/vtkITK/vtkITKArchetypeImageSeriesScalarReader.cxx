@@ -5,14 +5,14 @@
   See Doc/copyright/copyright.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
 
-  Program:   vtkITK
-  Module:    $HeadURL: http://www.na-mic.org/svn/Slicer3/trunk/Libs/vtkITK/vtkITKArchetypeImageSeriesScalarReader.cxx $
+  Program:   vtkvmtkITK
+  Module:    $HeadURL: http://www.na-mic.org/svn/Slicer3/trunk/Libs/vtkvmtkITK/vtkvmtkITKArchetypeImageSeriesScalarReader.cxx $
   Date:      $Date: 2007-01-19 13:21:56 -0500 (Fri, 19 Jan 2007) $
   Version:   $Revision: 2267 $
 
 ==========================================================================*/
 
-#include "vtkITKArchetypeImageSeriesScalarReader.h"
+#include "vtkvmtkITKArchetypeImageSeriesScalarReader.h"
 
 #include "vtkImageData.h"
 #include "vtkObjectFactory.h"
@@ -32,22 +32,22 @@
 #include "itkGDCMImageIO.h"
 #include <itksys/SystemTools.hxx>
 
-vtkCxxRevisionMacro(vtkITKArchetypeImageSeriesScalarReader, "$Revision: 2267 $");
-vtkStandardNewMacro(vtkITKArchetypeImageSeriesScalarReader);
+vtkCxxRevisionMacro(vtkvmtkITKArchetypeImageSeriesScalarReader, "$Revision: 2267 $");
+vtkStandardNewMacro(vtkvmtkITKArchetypeImageSeriesScalarReader);
 
 
 //----------------------------------------------------------------------------
-vtkITKArchetypeImageSeriesScalarReader::vtkITKArchetypeImageSeriesScalarReader()
+vtkvmtkITKArchetypeImageSeriesScalarReader::vtkvmtkITKArchetypeImageSeriesScalarReader()
 {
 }
 
 //----------------------------------------------------------------------------
-vtkITKArchetypeImageSeriesScalarReader::~vtkITKArchetypeImageSeriesScalarReader() 
+vtkvmtkITKArchetypeImageSeriesScalarReader::~vtkvmtkITKArchetypeImageSeriesScalarReader() 
 {
 }
 
 //----------------------------------------------------------------------------
-void vtkITKArchetypeImageSeriesScalarReader::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkITKArchetypeImageSeriesScalarReader::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
   os << indent << "vtk ITK Archetype Image Series Scalar Reader\n";
@@ -56,7 +56,7 @@ void vtkITKArchetypeImageSeriesScalarReader::PrintSelf(ostream& os, vtkIndent in
 //----------------------------------------------------------------------------
 // This function reads a data from a file.  The datas extent/axes
 // are assumed to be the same as the file extent/order.
-void vtkITKArchetypeImageSeriesScalarReader::ExecuteData(vtkDataObject *output)
+void vtkvmtkITKArchetypeImageSeriesScalarReader::ExecuteData(vtkDataObject *output)
 {
   if (!this->Superclass::Archetype)
     {
@@ -73,7 +73,7 @@ void vtkITKArchetypeImageSeriesScalarReader::ExecuteData(vtkDataObject *output)
   data->SetExtent(data->GetWholeExtent());
 
   /// SCALAR MACRO
-#define vtkITKExecuteDataFromSeries(typeN, type) \
+#define vtkvmtkITKExecuteDataFromSeries(typeN, type) \
     case typeN: \
     {\
       typedef itk::Image<type,3> image##typeN;\
@@ -110,7 +110,7 @@ void vtkITKArchetypeImageSeriesScalarReader::ExecuteData(vtkDataObject *output)
     }\
     break
 
-#define vtkITKExecuteDataFromFile(typeN, type) \
+#define vtkvmtkITKExecuteDataFromFile(typeN, type) \
     case typeN: \
     {\
       typedef itk::Image<type,3> image2##typeN;\
@@ -150,16 +150,16 @@ void vtkITKArchetypeImageSeriesScalarReader::ExecuteData(vtkDataObject *output)
       {
       switch (this->OutputScalarType)
         {
-          vtkITKExecuteDataFromFile(VTK_DOUBLE, double);
-          vtkITKExecuteDataFromFile(VTK_FLOAT, float);
-          vtkITKExecuteDataFromFile(VTK_LONG, long);
-          vtkITKExecuteDataFromFile(VTK_UNSIGNED_LONG, unsigned long);
-          vtkITKExecuteDataFromFile(VTK_INT, int);
-          vtkITKExecuteDataFromFile(VTK_UNSIGNED_INT, unsigned int);
-          vtkITKExecuteDataFromFile(VTK_SHORT, short);
-          vtkITKExecuteDataFromFile(VTK_UNSIGNED_SHORT, unsigned short);
-          vtkITKExecuteDataFromFile(VTK_CHAR, char);
-          vtkITKExecuteDataFromFile(VTK_UNSIGNED_CHAR, unsigned char);
+          vtkvmtkITKExecuteDataFromFile(VTK_DOUBLE, double);
+          vtkvmtkITKExecuteDataFromFile(VTK_FLOAT, float);
+          vtkvmtkITKExecuteDataFromFile(VTK_LONG, long);
+          vtkvmtkITKExecuteDataFromFile(VTK_UNSIGNED_LONG, unsigned long);
+          vtkvmtkITKExecuteDataFromFile(VTK_INT, int);
+          vtkvmtkITKExecuteDataFromFile(VTK_UNSIGNED_INT, unsigned int);
+          vtkvmtkITKExecuteDataFromFile(VTK_SHORT, short);
+          vtkvmtkITKExecuteDataFromFile(VTK_UNSIGNED_SHORT, unsigned short);
+          vtkvmtkITKExecuteDataFromFile(VTK_CHAR, char);
+          vtkvmtkITKExecuteDataFromFile(VTK_UNSIGNED_CHAR, unsigned char);
         default:
           vtkErrorMacro(<< "UpdateFromFile: Unknown data type");
         }
@@ -175,16 +175,16 @@ void vtkITKArchetypeImageSeriesScalarReader::ExecuteData(vtkDataObject *output)
       {
       switch (this->OutputScalarType)
         {
-          vtkITKExecuteDataFromSeries(VTK_DOUBLE, double);
-          vtkITKExecuteDataFromSeries(VTK_FLOAT, float);
-          vtkITKExecuteDataFromSeries(VTK_LONG, long);
-          vtkITKExecuteDataFromSeries(VTK_UNSIGNED_LONG, unsigned long);
-          vtkITKExecuteDataFromSeries(VTK_INT, int);
-          vtkITKExecuteDataFromSeries(VTK_UNSIGNED_INT, unsigned int);
-          vtkITKExecuteDataFromSeries(VTK_SHORT, short);
-          vtkITKExecuteDataFromSeries(VTK_UNSIGNED_SHORT, unsigned short);
-          vtkITKExecuteDataFromSeries(VTK_CHAR, char);
-          vtkITKExecuteDataFromSeries(VTK_UNSIGNED_CHAR, unsigned char);
+          vtkvmtkITKExecuteDataFromSeries(VTK_DOUBLE, double);
+          vtkvmtkITKExecuteDataFromSeries(VTK_FLOAT, float);
+          vtkvmtkITKExecuteDataFromSeries(VTK_LONG, long);
+          vtkvmtkITKExecuteDataFromSeries(VTK_UNSIGNED_LONG, unsigned long);
+          vtkvmtkITKExecuteDataFromSeries(VTK_INT, int);
+          vtkvmtkITKExecuteDataFromSeries(VTK_UNSIGNED_INT, unsigned int);
+          vtkvmtkITKExecuteDataFromSeries(VTK_SHORT, short);
+          vtkvmtkITKExecuteDataFromSeries(VTK_UNSIGNED_SHORT, unsigned short);
+          vtkvmtkITKExecuteDataFromSeries(VTK_CHAR, char);
+          vtkvmtkITKExecuteDataFromSeries(VTK_UNSIGNED_CHAR, unsigned char);
         default:
           vtkErrorMacro(<< "UpdateFromFile: Unknown data type");
         }
@@ -197,9 +197,9 @@ void vtkITKArchetypeImageSeriesScalarReader::ExecuteData(vtkDataObject *output)
 }
 
 
-void vtkITKArchetypeImageSeriesScalarReader::ReadProgressCallback(itk::ProcessObject* obj,const itk::ProgressEvent&,void* data)
+void vtkvmtkITKArchetypeImageSeriesScalarReader::ReadProgressCallback(itk::ProcessObject* obj,const itk::ProgressEvent&,void* data)
 {
-  vtkITKArchetypeImageSeriesScalarReader* me=reinterpret_cast<vtkITKArchetypeImageSeriesScalarReader*>(data);
+  vtkvmtkITKArchetypeImageSeriesScalarReader* me=reinterpret_cast<vtkvmtkITKArchetypeImageSeriesScalarReader*>(data);
   me->Progress=obj->GetProgress();
   me->InvokeEvent(vtkCommand::ProgressEvent,&me->Progress);
 }

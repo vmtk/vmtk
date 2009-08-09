@@ -5,15 +5,15 @@
   See Doc/copyright/copyright.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
 
-  Program:   vtkITK
-  Module:    $HeadURL: http://www.na-mic.org/svn/Slicer3/trunk/Libs/vtkITK/vtkITKUtility.h $
+  Program:   vtkvmtkITK
+  Module:    $HeadURL: http://www.na-mic.org/svn/Slicer3/trunk/Libs/vtkvmtkITK/vtkvmtkITKUtility.h $
   Date:      $Date: 2006-12-21 13:21:52 +0100 (Thu, 21 Dec 2006) $
   Version:   $Revision: 1900 $
 
 ==========================================================================*/
 
-#ifndef __vtkITKUtility_h
-#define __vtkITKUtility_h
+#ifndef __vtkvmtkITKUtility_h
+#define __vtkvmtkITKUtility_h
 
 
 #include "vtkObjectFactory.h"
@@ -103,7 +103,7 @@ if ( 1 ) { \
   }
 
 
-// struct vtkITKProgressDisplay
+// struct vtkvmtkITKProgressDisplay
 // {
 //   ProgressDisplay(vtkObject* obj, itk::ProcessObject* process): m_Process(process), m_Object(obj) {}
   

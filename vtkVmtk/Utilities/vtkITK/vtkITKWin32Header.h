@@ -12,24 +12,24 @@
 
 ==========================================================================*/
 
-// .NAME vtkITKWin32Header - manage Windows system differences
+// .NAME vtkvmtkITKWin32Header - manage Windows system differences
 // .SECTION Description
 // The vtkITKWin32Header captures some system differences between Unix
 // and Windows operating systems. 
 
-#ifndef __vtkITKWin32Header_h
-#define __vtkITKWin32Header_h
+#ifndef __vtkvmtkITKWin32Header_h
+#define __vtkvmtkITKWin32Header_h
 
-#include <vtkITKConfigure.h>
+#include <vtkvmtkITKConfigure.h>
 
-#if defined(WIN32) && !defined(VTKITK_STATIC)
+#if defined(WIN32) && !defined(VTK_VMTK_ITK_STATIC)
 #if defined(vtkvmtkITK_EXPORTS)
-#define VTK_ITK_EXPORT __declspec( dllexport ) 
+#define VTK_VMTK_ITK_EXPORT __declspec( dllexport ) 
 #else
-#define VTK_ITK_EXPORT __declspec( dllimport ) 
+#define VTK_VMTK_ITK_EXPORT __declspec( dllimport ) 
 #endif
 #else
-#define VTK_ITK_EXPORT
+#define VTK_VMTK_ITK_EXPORT
 #endif
 
 #endif

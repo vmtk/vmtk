@@ -12,27 +12,27 @@ details.
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkITKImageToImageFilter - Abstract base class for connecting ITK and VTK
+// .NAME vtkvmtkITKImageToImageFilter - Abstract base class for connecting ITK and VTK
 // .SECTION Description
-// vtkITKImageToImageFilter provides a 
+// vtkvmtkITKImageToImageFilter provides a 
 
-#ifndef __vtkITKImageToImageFilterSF_h
-#define __vtkITKImageToImageFilterSF_h
+#ifndef __vtkvmtkITKImageToImageFilterSF_h
+#define __vtkvmtkITKImageToImageFilterSF_h
 
 
-#include "vtkITKImageToImageFilter.h"
+#include "vtkvmtkITKImageToImageFilter.h"
 #include "vtkImageToImageFilter.h"
 #include "itkImageToImageFilter.h"
 #include "itkVTKImageExport.h"
 #include "itkVTKImageImport.h"
-#include "vtkITKUtility.h"
+#include "vtkvmtkITKUtility.h"
 
 
-class VTK_EXPORT vtkITKImageToImageFilterSF : public vtkITKImageToImageFilter
+class VTK_VMTK_ITK_EXPORT vtkvmtkITKImageToImageFilterSF : public vtkvmtkITKImageToImageFilter
 {
 public:
-  vtkTypeMacro(vtkITKImageToImageFilterSF,vtkITKImageToImageFilter);
-  static vtkITKImageToImageFilterSF* New() { return 0; };
+  vtkTypeMacro(vtkvmtkITKImageToImageFilterSF,vtkvmtkITKImageToImageFilter);
+  static vtkvmtkITKImageToImageFilterSF* New() { return 0; };
   void PrintSelf(ostream& os, vtkIndent indent)
   {
     Superclass::PrintSelf ( os, indent );
@@ -65,7 +65,7 @@ protected:
   typedef itk::ImageToImageFilter<InputImageType,OutputImageType> GenericFilterType;
   GenericFilterType::Pointer m_Filter;
 
-  vtkITKImageToImageFilterSF ( GenericFilterType* filter )
+  vtkvmtkITKImageToImageFilterSF ( GenericFilterType* filter )
   {
     // Need an import, export, and a ITK pipeline
     m_Filter = filter;
@@ -81,14 +81,14 @@ protected:
     this->vtkCast->SetOutputScalarTypeToShort();
   };
 
-  ~vtkITKImageToImageFilterSF()
+  ~vtkvmtkITKImageToImageFilterSF()
   {
   };
   //ETX
   
 private:
-  vtkITKImageToImageFilterSF(const vtkITKImageToImageFilterSF&);  // Not implemented.
-  void operator=(const vtkITKImageToImageFilterSF&);  // Not implemented.
+  vtkvmtkITKImageToImageFilterSF(const vtkvmtkITKImageToImageFilterSF&);  // Not implemented.
+  void operator=(const vtkvmtkITKImageToImageFilterSF&);  // Not implemented.
 };
 
 #endif

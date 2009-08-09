@@ -5,14 +5,14 @@
   See Doc/copyright/copyright.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
 
-  Program:   vtkITK
-  Module:    $HeadURL: http://www.na-mic.org/svn/Slicer3/trunk/Libs/vtkITK/vtkITKImageWriter.cxx $
+  Program:   vtkvmtkITK
+  Module:    $HeadURL: http://www.na-mic.org/svn/Slicer3/trunk/Libs/vtkvmtkITK/vtkvmtkITKImageWriter.cxx $
   Date:      $Date: 2006-12-21 07:21:52 -0500 (Thu, 21 Dec 2006) $
   Version:   $Revision: 1900 $
 
 ==========================================================================*/
 
-#include "vtkITKImageWriter.h"
+#include "vtkvmtkITKImageWriter.h"
 
 #include <math.h>
 #include "vtkImageExport.h"
@@ -21,14 +21,14 @@
 #include "itkVTKImageImport.h"
 #include "itkImageFileWriter.h"
 
-#include "vtkITKUtility.h"
+#include "vtkvmtkITKUtility.h"
 
-vtkStandardNewMacro(vtkITKImageWriter);
-vtkCxxRevisionMacro(vtkITKImageWriter, "$Revision: 1900 $")
+vtkStandardNewMacro(vtkvmtkITKImageWriter);
+vtkCxxRevisionMacro(vtkvmtkITKImageWriter, "$Revision: 1900 $")
 #if 0
 // helper function
 template <class  TPixelType>
-void ITKWriteVTKImage(vtkITKImageWriter *self, vtkImageData *inputImage, char *fileName, 
+void ITKWriteVTKImage(vtkvmtkITKImageWriter *self, vtkImageData *inputImage, char *fileName, 
                       vtkMatrix4x4* rasToIjkMatrix, TPixelType dummy) {
 
   typedef  itk::Image<TPixelType, 3> ImageType;
@@ -141,7 +141,7 @@ void ITKWriteVTKImage(vtkITKImageWriter *self, vtkImageData *inputImage, char *f
 #endif
 
 template <class  TPixelType>
-void ITKWriteVTKImage(vtkITKImageWriter *self, vtkImageData *inputImage, char *fileName, 
+void ITKWriteVTKImage(vtkvmtkITKImageWriter *self, vtkImageData *inputImage, char *fileName, 
                       vtkMatrix4x4* rasToIjkMatrix, TPixelType dummy) {
 
   typedef  itk::Image<TPixelType, 3> ImageType;
@@ -282,7 +282,7 @@ void ITKWriteVTKImage(vtkITKImageWriter *self, vtkImageData *inputImage, char *f
 }
 
 //----------------------------------------------------------------------------
-vtkITKImageWriter::vtkITKImageWriter()
+vtkvmtkITKImageWriter::vtkvmtkITKImageWriter()
 {
   this->FileName = NULL;
   this->RasToIJKMatrix = NULL;
@@ -291,7 +291,7 @@ vtkITKImageWriter::vtkITKImageWriter()
 
 
 //----------------------------------------------------------------------------
-vtkITKImageWriter::~vtkITKImageWriter()
+vtkvmtkITKImageWriter::~vtkvmtkITKImageWriter()
 {
   // get rid of memory allocated for file names
   if (this->FileName) {
@@ -302,7 +302,7 @@ vtkITKImageWriter::~vtkITKImageWriter()
 
 
 //----------------------------------------------------------------------------
-void vtkITKImageWriter::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkITKImageWriter::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 
@@ -312,13 +312,13 @@ void vtkITKImageWriter::PrintSelf(ostream& os, vtkIndent indent)
 
 
 //----------------------------------------------------------------------------
-void vtkITKImageWriter::SetInput(vtkImageData *input)
+void vtkvmtkITKImageWriter::SetInput(vtkImageData *input)
 {
   this->vtkProcessObject::SetNthInput(0, input);
 }
 
 //----------------------------------------------------------------------------
-vtkImageData *vtkITKImageWriter::GetInput()
+vtkImageData *vtkvmtkITKImageWriter::GetInput()
 {
   if (this->NumberOfInputs < 1) {
     return NULL;
@@ -331,7 +331,7 @@ vtkImageData *vtkITKImageWriter::GetInput()
 
 //----------------------------------------------------------------------------
 // This function sets the name of the file. 
-void vtkITKImageWriter::SetFileName(const char *name)
+void vtkvmtkITKImageWriter::SetFileName(const char *name)
 {
   if ( this->FileName && name && (!strcmp(this->FileName,name))) {
     return;
@@ -350,13 +350,13 @@ void vtkITKImageWriter::SetFileName(const char *name)
 
 //----------------------------------------------------------------------------
 // Writes all the data from the input.
-void vtkITKImageWriter::Write()
+void vtkvmtkITKImageWriter::Write()
 {
   if ( this->GetInput() == NULL ) {
     return;
   }
   if ( ! this->FileName ) {
-    vtkErrorMacro(<<"vtkITKImageWriter: Please specify a FileName");
+    vtkErrorMacro(<<"vtkvmtkITKImageWriter: Please specify a FileName");
     return;
   }
 

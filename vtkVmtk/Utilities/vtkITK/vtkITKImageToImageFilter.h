@@ -5,19 +5,19 @@
   See Doc/copyright/copyright.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
 
-  Program:   vtkITK
-  Module:    $HeadURL: http://www.na-mic.org/svn/Slicer3/trunk/Libs/vtkITK/vtkITKImageToImageFilter.h $
+  Program:   vtkvmtkITK
+  Module:    $HeadURL: http://www.na-mic.org/svn/Slicer3/trunk/Libs/vtkvmtkITK/vtkvmtkITKImageToImageFilter.h $
   Date:      $Date: 2006-12-21 13:21:52 +0100 (Thu, 21 Dec 2006) $
   Version:   $Revision: 1900 $
 
 ==========================================================================*/
 
-// .NAME vtkITKImageToImageFilter - Abstract base class for connecting ITK and VTK
+// .NAME vtkvmtkITKImageToImageFilter - Abstract base class for connecting ITK and VTK
 // .SECTION Description
-// vtkITKImageToImageFilter provides a foo
+// vtkvmtkITKImageToImageFilter provides a foo
 
-#ifndef __vtkITKImageToImageFilter_h
-#define __vtkITKImageToImageFilter_h
+#ifndef __vtkvmtkITKImageToImageFilter_h
+#define __vtkvmtkITKImageToImageFilter_h
 
 
 #include "itkCommand.h"
@@ -29,7 +29,7 @@
 #include "vtkImageCast.h"
 #include "vtkImageData.h"
 
-#include "vtkITK.h"
+#include "vtkvmtkITK.h"
 
 #undef itkExceptionMacro  
 #define itkExceptionMacro(x) \
@@ -48,15 +48,15 @@
   std::cerr << message.str() << std::endl; \
   }
 
-class VTK_ITK_EXPORT vtkITKImageToImageFilter : public vtkImageToImageFilter
+class VTK_VMTK_ITK_EXPORT vtkvmtkITKImageToImageFilter : public vtkImageToImageFilter
 {
 public:
-  static vtkITKImageToImageFilter *New()
+  static vtkvmtkITKImageToImageFilter *New()
    {
-     return new vtkITKImageToImageFilter;
+     return new vtkvmtkITKImageToImageFilter;
    };
   
-  vtkTypeMacro(vtkITKImageToImageFilter,vtkImageToImageFilter);
+  vtkTypeMacro(vtkvmtkITKImageToImageFilter,vtkImageToImageFilter);
 
   void PrintSelf(ostream& os, vtkIndent indent)
   {
@@ -183,7 +183,7 @@ public:
   }
   // ETX
 
-  vtkITKImageToImageFilter()
+  vtkvmtkITKImageToImageFilter()
   {
     // Need an import, export, and a ITK pipeline
     this->vtkCast = vtkImageCast::New();
@@ -195,15 +195,15 @@ public:
     this->vtkExporter->SetInput ( this->vtkCast->GetOutput() );
     this->m_Process = NULL;
     this->m_ProgressCommand = MemberCommand::New();
-    this->m_ProgressCommand->SetCallbackFunction ( this, &vtkITKImageToImageFilter::HandleProgressEvent );
+    this->m_ProgressCommand->SetCallbackFunction ( this, &vtkvmtkITKImageToImageFilter::HandleProgressEvent );
     this->m_StartEventCommand = MemberCommand::New();
-    this->m_StartEventCommand->SetCallbackFunction ( this, &vtkITKImageToImageFilter::HandleStartEvent );
+    this->m_StartEventCommand->SetCallbackFunction ( this, &vtkvmtkITKImageToImageFilter::HandleStartEvent );
     this->m_EndEventCommand = MemberCommand::New();
-    this->m_EndEventCommand->SetCallbackFunction ( this, &vtkITKImageToImageFilter::HandleEndEvent );
+    this->m_EndEventCommand->SetCallbackFunction ( this, &vtkvmtkITKImageToImageFilter::HandleEndEvent );
   };
-  ~vtkITKImageToImageFilter()
+  ~vtkvmtkITKImageToImageFilter()
   {
-//    std::cerr << "Destructing vtkITKImageToImageFilter" << std::endl;
+//    std::cerr << "Destructing vtkvmtkITKImageToImageFilter" << std::endl;
     this->vtkExporter->Delete();
     this->vtkImporter->Delete();
     this->vtkCast->Delete();
@@ -221,7 +221,7 @@ public:
       }
   };
 
-  typedef itk::SimpleMemberCommand<vtkITKImageToImageFilter> MemberCommand;
+  typedef itk::SimpleMemberCommand<vtkvmtkITKImageToImageFilter> MemberCommand;
   typedef MemberCommand::Pointer MemberCommandPointer;
 
   itk::ProcessObject::Pointer m_Process;
@@ -237,8 +237,8 @@ public:
   //ETX
   
 private:
-  vtkITKImageToImageFilter(const vtkITKImageToImageFilter&);  // Not implemented.
-  void operator=(const vtkITKImageToImageFilter&);  // Not implemented.
+  vtkvmtkITKImageToImageFilter(const vtkvmtkITKImageToImageFilter&);  // Not implemented.
+  void operator=(const vtkvmtkITKImageToImageFilter&);  // Not implemented.
 };
 
 #endif

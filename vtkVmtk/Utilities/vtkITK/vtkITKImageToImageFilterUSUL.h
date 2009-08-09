@@ -5,33 +5,33 @@
   See Doc/copyright/copyright.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
 
-  Program:   vtkITK
-  Module:    $HeadURL: http://www.na-mic.org/svn/Slicer3/trunk/Libs/vtkITK/vtkITKImageToImageFilterUSUL.h $
+  Program:   vtkvmtkITK
+  Module:    $HeadURL: http://www.na-mic.org/svn/Slicer3/trunk/Libs/vtkvmtkITK/vtkvmtkITKImageToImageFilterUSUL.h $
   Date:      $Date: 2006-12-21 13:21:52 +0100 (Thu, 21 Dec 2006) $
   Version:   $Revision: 1900 $
 
 ==========================================================================*/
-// .NAME vtkITKImageToImageFilter - Abstract base class for connecting ITK and VTK
+// .NAME vtkvmtkITKImageToImageFilter - Abstract base class for connecting ITK and VTK
 // .SECTION Description
-// vtkITKImageToImageFilter provides a 
+// vtkvmtkITKImageToImageFilter provides a 
 
-#ifndef __vtkITKImageToImageFilterUSUL_h
-#define __vtkITKImageToImageFilterUSUL_h
+#ifndef __vtkvmtkITKImageToImageFilterUSUL_h
+#define __vtkvmtkITKImageToImageFilterUSUL_h
 
 
 #include "vtkImageToImageFilter.h"
-#include "vtkITKImageToImageFilter.h"
+#include "vtkvmtkITKImageToImageFilter.h"
 #include "itkImageToImageFilter.h"
 #include "itkVTKImageExport.h"
 #include "itkVTKImageImport.h"
-#include "vtkITKUtility.h"
+#include "vtkvmtkITKUtility.h"
 
 
-class VTK_ITK_EXPORT vtkITKImageToImageFilterUSUL : public vtkITKImageToImageFilter
+class VTK_VMTK_ITK_EXPORT vtkvmtkITKImageToImageFilterUSUL : public vtkvmtkITKImageToImageFilter
 {
 public:
-  vtkTypeMacro(vtkITKImageToImageFilterUSUL,vtkITKImageToImageFilter);
-  static vtkITKImageToImageFilterUSUL* New() { return 0; };
+  vtkTypeMacro(vtkvmtkITKImageToImageFilterUSUL,vtkvmtkITKImageToImageFilter);
+  static vtkvmtkITKImageToImageFilterUSUL* New() { return 0; };
   void PrintSelf(ostream& os, vtkIndent indent)
   {
     Superclass::PrintSelf ( os, indent );
@@ -53,7 +53,7 @@ protected:
   typedef itk::ImageToImageFilter<InputImageType,OutputImageType> FilterType;
   FilterType::Pointer m_Filter;
 
-  vtkITKImageToImageFilterUSUL ( FilterType* filter )
+  vtkvmtkITKImageToImageFilterUSUL ( FilterType* filter )
   {
     // Need an import, export, and a ITK pipeline
     m_Filter = filter;
@@ -68,14 +68,14 @@ protected:
     this->vtkCast->SetOutputScalarTypeToUnsignedShort();
   };
 
-  ~vtkITKImageToImageFilterUSUL()
+  ~vtkvmtkITKImageToImageFilterUSUL()
   {
   };
   //ETX
     
 private:
-  vtkITKImageToImageFilterUSUL(const vtkITKImageToImageFilterUSUL&);  // Not implemented.
-  void operator=(const vtkITKImageToImageFilterUSUL&);  // Not implemented.
+  vtkvmtkITKImageToImageFilterUSUL(const vtkvmtkITKImageToImageFilterUSUL&);  // Not implemented.
+  void operator=(const vtkvmtkITKImageToImageFilterUSUL&);  // Not implemented.
 };
 
 #endif

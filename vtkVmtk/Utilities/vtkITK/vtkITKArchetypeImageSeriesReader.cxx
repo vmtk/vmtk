@@ -5,13 +5,13 @@
   See Doc/copyright/copyright.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
 
-  Program:   vtkITK
-  Module:    $HeadURL: http://www.na-mic.org/svn/Slicer3/trunk/Libs/vtkITK/vtkITKArchetypeImageSeriesReader.cxx $
+  Program:   vtkvmtkITK
+  Module:    $HeadURL: http://www.na-mic.org/svn/Slicer3/trunk/Libs/vtkvmtkITK/vtkvmtkITKArchetypeImageSeriesReader.cxx $
   Date:      $Date: 2007-06-06 15:25:32 -0400 (Wed, 06 Jun 2007) $
   Version:   $Revision: 3493 $
 
 ==========================================================================*/
-#include "vtkITKArchetypeImageSeriesReader.h"
+#include "vtkvmtkITKArchetypeImageSeriesReader.h"
 
 #include "vtkImageData.h"
 #include "vtkObjectFactory.h"
@@ -79,11 +79,11 @@
 #include "itkAnalyzeImageIO.h"
 #include <itksys/SystemTools.hxx>
 
-vtkCxxRevisionMacro(vtkITKArchetypeImageSeriesReader, "$Revision: 3493 $");
-vtkStandardNewMacro(vtkITKArchetypeImageSeriesReader);
+vtkCxxRevisionMacro(vtkvmtkITKArchetypeImageSeriesReader, "$Revision: 3493 $");
+vtkStandardNewMacro(vtkvmtkITKArchetypeImageSeriesReader);
 
 //----------------------------------------------------------------------------
-vtkITKArchetypeImageSeriesReader::vtkITKArchetypeImageSeriesReader()
+vtkvmtkITKArchetypeImageSeriesReader::vtkvmtkITKArchetypeImageSeriesReader()
 {
   this->Archetype = NULL;
   this->RasToIjkMatrix = NULL;
@@ -112,7 +112,7 @@ vtkITKArchetypeImageSeriesReader::vtkITKArchetypeImageSeriesReader()
 // with so we register the factory explictly here
 //
 void
-vtkITKArchetypeImageSeriesReader::RegisterExtraBuiltInFactories()
+vtkvmtkITKArchetypeImageSeriesReader::RegisterExtraBuiltInFactories()
 {
 #ifdef USE_ITKGE5READER
   static bool firstTime = true;
@@ -133,7 +133,7 @@ vtkITKArchetypeImageSeriesReader::RegisterExtraBuiltInFactories()
 }
 
 //----------------------------------------------------------------------------
-vtkITKArchetypeImageSeriesReader::~vtkITKArchetypeImageSeriesReader()
+vtkvmtkITKArchetypeImageSeriesReader::~vtkvmtkITKArchetypeImageSeriesReader()
 { 
   if (this->Archetype)
     {
@@ -147,14 +147,14 @@ vtkITKArchetypeImageSeriesReader::~vtkITKArchetypeImageSeriesReader()
    }
 }
 
-vtkMatrix4x4* vtkITKArchetypeImageSeriesReader::GetRasToIjkMatrix()
+vtkMatrix4x4* vtkvmtkITKArchetypeImageSeriesReader::GetRasToIjkMatrix()
 {
   this->UpdateInformation();
   return RasToIjkMatrix;
 }
 
 //----------------------------------------------------------------------------
-void vtkITKArchetypeImageSeriesReader::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkITKArchetypeImageSeriesReader::PrintSelf(ostream& os, vtkIndent indent)
 {
   int idx;
   
@@ -189,7 +189,7 @@ void vtkITKArchetypeImageSeriesReader::PrintSelf(ostream& os, vtkIndent indent)
   
 }
 
-int vtkITKArchetypeImageSeriesReader::CanReadFile(const char* filename)
+int vtkvmtkITKArchetypeImageSeriesReader::CanReadFile(const char* filename)
 {
   std::string fileNameCollapsed = itksys::SystemTools::CollapseFullPath( this->Archetype);
 
@@ -204,7 +204,7 @@ int vtkITKArchetypeImageSeriesReader::CanReadFile(const char* filename)
 
 //----------------------------------------------------------------------------
 // This method returns the largest data that can be generated.
-void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
+void vtkvmtkITKArchetypeImageSeriesReader::ExecuteInformation()
 {
   vtkImageData *output = this->GetOutput();
   std::vector<std::string> candidateFiles;
@@ -223,7 +223,7 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
   // First see if the archetype exists
   if (!itksys::SystemTools::FileExists (fileNameCollapsed.c_str()))
     {
-    itkGenericExceptionMacro ( "vtkITKArchetypeImageSeriesReader::ExecuteInformation: Archetype file " << fileNameCollapsed.c_str() << " does not exist.");
+    itkGenericExceptionMacro ( "vtkvmtkITKArchetypeImageSeriesReader::ExecuteInformation: Archetype file " << fileNameCollapsed.c_str() << " does not exist.");
     return;
     }
 
@@ -378,7 +378,7 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
       imageIO = imageReader->GetImageIO();
       if (imageIO.GetPointer() == NULL) 
         {
-          itkGenericExceptionMacro ( "vtkITKArchetypeImageSeriesReader::ExecuteInformation: ImageIO for file " << fileNameCollapsed.c_str() << " does not exist.");
+          itkGenericExceptionMacro ( "vtkvmtkITKArchetypeImageSeriesReader::ExecuteInformation: ImageIO for file " << fileNameCollapsed.c_str() << " does not exist.");
           return;
         }
       }
@@ -557,7 +557,7 @@ void vtkITKArchetypeImageSeriesReader::ExecuteInformation()
 // This function reads a data from a file.  The datas extent/axes
 // are assumed to be the same as the file extent/order.
 // implemented in the Scalar and Vector subclasses
-void vtkITKArchetypeImageSeriesReader::ExecuteData(vtkDataObject *output)
+void vtkvmtkITKArchetypeImageSeriesReader::ExecuteData(vtkDataObject *output)
 {
   vtkErrorMacro(<<"The subclass has not defined anything for ExecuteData!\n");
 }

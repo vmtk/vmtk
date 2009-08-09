@@ -5,33 +5,33 @@
   See Doc/copyright/copyright.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
 
-  Program:   vtkITK
-  Module:    $HeadURL: http://www.na-mic.org/svn/Slicer3/trunk/Libs/vtkITK/vtkITKImageWriter.h $
+  Program:   vtkvmtkITK
+  Module:    $HeadURL: http://www.na-mic.org/svn/Slicer3/trunk/Libs/vtkvmtkITK/vtkvmtkITKImageWriter.h $
   Date:      $Date: 2006-12-21 07:21:52 -0500 (Thu, 21 Dec 2006) $
   Version:   $Revision: 1900 $
 
 ==========================================================================*/
 
-// .NAME vtkITKImageToImageFilter - Abstract base class for connecting ITK and VTK
+// .NAME vtkvmtkITKImageToImageFilter - Abstract base class for connecting ITK and VTK
 // .SECTION Description
-// vtkITKImageToImageFilter provides a 
+// vtkvmtkITKImageToImageFilter provides a 
 
-#ifndef __vtkITKImageWriter_h
-#define __vtkITKImageWriter_h
+#ifndef __vtkvmtkITKImageWriter_h
+#define __vtkvmtkITKImageWriter_h
 
 #include "vtkProcessObject.h"
 #include "vtkImageData.h"
 #include "vtkObjectFactory.h"
 #include "vtkMatrix4x4.h"
 
-#include "vtkITK.h"
+#include "vtkvmtkITK.h"
 
-class VTK_ITK_EXPORT vtkITKImageWriter : public vtkProcessObject
+class VTK_VMTK_ITK_EXPORT vtkvmtkITKImageWriter : public vtkProcessObject
 {
 public:
 
-  static vtkITKImageWriter *New();
-  vtkTypeRevisionMacro(vtkITKImageWriter,vtkProcessObject);
+  static vtkvmtkITKImageWriter *New();
+  vtkTypeRevisionMacro(vtkvmtkITKImageWriter,vtkProcessObject);
   void PrintSelf(ostream& os, vtkIndent indent);
   
   // Description:
@@ -65,19 +65,19 @@ public:
   }
 
 protected:
-  vtkITKImageWriter();
-  ~vtkITKImageWriter();
+  vtkvmtkITKImageWriter();
+  ~vtkvmtkITKImageWriter();
 
   char *FileName;
   vtkMatrix4x4* RasToIJKMatrix;
   int UseCompression;
 
 private:
-  vtkITKImageWriter(const vtkITKImageWriter&);  // Not implemented.
-  void operator=(const vtkITKImageWriter&);  // Not implemented.
+  vtkvmtkITKImageWriter(const vtkvmtkITKImageWriter&);  // Not implemented.
+  void operator=(const vtkvmtkITKImageWriter&);  // Not implemented.
 };
 
-//vtkStandardNewMacro(vtkITKImageWriter)
+//vtkStandardNewMacro(vtkvmtkITKImageWriter)
 
 #endif
 
