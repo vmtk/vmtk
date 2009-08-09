@@ -32,15 +32,15 @@ Version:   $Revision: 1.4 $
 #define __vtkvmtkLaplacianSegmentationLevelSetImageFilter_h
 
 
-#include "vtkITKImageToImageFilterFF.h"
+#include "vtkvmtkITKImageToImageFilterFF.h"
 #include "itkLaplacianSegmentationLevelSetImageFilter.h"
 #include "vtkvmtkWin32Header.h"
 
-class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkLaplacianSegmentationLevelSetImageFilter : public vtkITKImageToImageFilterFF
+class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkLaplacianSegmentationLevelSetImageFilter : public vtkvmtkITKImageToImageFilterFF
 {
  public:
   static vtkvmtkLaplacianSegmentationLevelSetImageFilter *New();
-  vtkTypeRevisionMacro(vtkvmtkLaplacianSegmentationLevelSetImageFilter, vtkITKImageToImageFilterFF);
+  vtkTypeRevisionMacro(vtkvmtkLaplacianSegmentationLevelSetImageFilter, vtkvmtkITKImageToImageFilterFF);
 
   float GetIsoSurfaceValue ()
   {

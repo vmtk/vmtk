@@ -32,16 +32,16 @@ Version:   $Revision: 1.2 $
 #define __vtkvmtkVesselnessMeasureImageFilter_h
 
 
-#include "vtkITKImageToImageFilterFF.h"
+#include "vtkvmtkITKImageToImageFilterFF.h"
 #include "itkMultiScaleHessianBasedMeasureImageFilter.h"
 #include "itkHessianToObjectnessMeasureImageFilter.h"
 #include "vtkvmtkWin32Header.h"
 
-class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkVesselnessMeasureImageFilter : public vtkITKImageToImageFilterFF
+class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkVesselnessMeasureImageFilter : public vtkvmtkITKImageToImageFilterFF
 {
  public:
   static vtkvmtkVesselnessMeasureImageFilter *New();
-  vtkTypeRevisionMacro(vtkvmtkVesselnessMeasureImageFilter, vtkITKImageToImageFilterFF);
+  vtkTypeRevisionMacro(vtkvmtkVesselnessMeasureImageFilter, vtkvmtkITKImageToImageFilterFF);
 
   void SetSigmaMin(double value)
   {

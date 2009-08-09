@@ -31,15 +31,15 @@ Version:   $Revision: 1.3 $
 #ifndef __vtkvmtkFWHMFeatureImageFilter_h
 #define __vtkvmtkFWHMFeatureImageFilter_h
 
-#include "vtkITKImageToImageFilterFF.h"
+#include "vtkvmtkITKImageToImageFilterFF.h"
 #include "itkFWHMFeatureImageFilter.h"
 #include "vtkvmtkWin32Header.h"
 
-class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkFWHMFeatureImageFilter : public vtkITKImageToImageFilterFF
+class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkFWHMFeatureImageFilter : public vtkvmtkITKImageToImageFilterFF
 {
  public:
   static vtkvmtkFWHMFeatureImageFilter *New();
-  vtkTypeRevisionMacro(vtkvmtkFWHMFeatureImageFilter, vtkITKImageToImageFilterFF);
+  vtkTypeRevisionMacro(vtkvmtkFWHMFeatureImageFilter, vtkvmtkITKImageToImageFilterFF);
 
   void SetUseImageSpacing ( int value )
   {

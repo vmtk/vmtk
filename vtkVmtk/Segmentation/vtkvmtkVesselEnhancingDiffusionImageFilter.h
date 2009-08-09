@@ -32,17 +32,17 @@ Version:   $Revision: 1.2 $
 #define __vtkvmtkVesselEnhancingDiffusionImageFilter_h
 
 
-#include "vtkITKImageToImageFilterFF.h"
+#include "vtkvmtkITKImageToImageFilterFF.h"
 #include "itkAnisotropicDiffusionVesselEnhancementImageFilter.h"
 #include "itkMultiScaleHessianBasedMeasureImageFilter.h"
 #include "itkHessianSmoothed3DToVesselnessMeasureImageFilter.h"
 #include "vtkvmtkWin32Header.h"
 
-class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkVesselEnhancingDiffusionImageFilter : public vtkITKImageToImageFilterFF
+class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkVesselEnhancingDiffusionImageFilter : public vtkvmtkITKImageToImageFilterFF
 {
  public:
   static vtkvmtkVesselEnhancingDiffusionImageFilter *New();
-  vtkTypeRevisionMacro(vtkvmtkVesselEnhancingDiffusionImageFilter, vtkITKImageToImageFilterFF);
+  vtkTypeRevisionMacro(vtkvmtkVesselEnhancingDiffusionImageFilter, vtkvmtkITKImageToImageFilterFF);
 
   void SetSigmaMin(double value)
   {

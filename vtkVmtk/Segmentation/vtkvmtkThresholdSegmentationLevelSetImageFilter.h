@@ -32,15 +32,15 @@ Version:   $Revision: 1.4 $
 #define __vtkvmtkThresholdSegmentationLevelSetImageFilter_h
 
 
-#include "vtkITKImageToImageFilterFF.h"
+#include "vtkvmtkITKImageToImageFilterFF.h"
 #include "itkThresholdSegmentationLevelSetImageFilter.h"
 #include "vtkvmtkWin32Header.h"
 
-class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkThresholdSegmentationLevelSetImageFilter : public vtkITKImageToImageFilterFF
+class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkThresholdSegmentationLevelSetImageFilter : public vtkvmtkITKImageToImageFilterFF
 {
  public:
   static vtkvmtkThresholdSegmentationLevelSetImageFilter *New();
-  vtkTypeRevisionMacro(vtkvmtkThresholdSegmentationLevelSetImageFilter, vtkITKImageToImageFilterFF);
+  vtkTypeRevisionMacro(vtkvmtkThresholdSegmentationLevelSetImageFilter, vtkvmtkITKImageToImageFilterFF);
 
   void SetUpperThreshold ( float value )
   {

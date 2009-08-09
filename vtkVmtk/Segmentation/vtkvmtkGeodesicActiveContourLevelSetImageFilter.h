@@ -32,15 +32,15 @@ Version:   $Revision: 1.4 $
 #define __vtkvmtkGeodesicActiveContourLevelSetImageFilter_h
 
 
-#include "vtkITKImageToImageFilterFF.h"
+#include "vtkvmtkITKImageToImageFilterFF.h"
 #include "itkGeodesicActiveContourLevelSetImageFilter.h"
 #include "vtkvmtkWin32Header.h"
 
-class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkGeodesicActiveContourLevelSetImageFilter : public vtkITKImageToImageFilterFF
+class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkGeodesicActiveContourLevelSetImageFilter : public vtkvmtkITKImageToImageFilterFF
 {
  public:
   static vtkvmtkGeodesicActiveContourLevelSetImageFilter *New();
-  vtkTypeRevisionMacro(vtkvmtkGeodesicActiveContourLevelSetImageFilter, vtkITKImageToImageFilterFF);
+  vtkTypeRevisionMacro(vtkvmtkGeodesicActiveContourLevelSetImageFilter, vtkvmtkITKImageToImageFilterFF);
 
   float GetIsoSurfaceValue ()
   {

@@ -32,15 +32,15 @@ Version:   $Revision: 1.4 $
 #define __vtkvmtkCurvesLevelSetImageFilter_h
 
 
-#include "vtkITKImageToImageFilterFF.h"
+#include "vtkvmtkITKImageToImageFilterFF.h"
 #include "itkCurvesLevelSetImageFilter.h"
 #include "vtkvmtkWin32Header.h"
 
-class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkCurvesLevelSetImageFilter : public vtkITKImageToImageFilterFF
+class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkCurvesLevelSetImageFilter : public vtkvmtkITKImageToImageFilterFF
 {
  public:
   static vtkvmtkCurvesLevelSetImageFilter *New();
-  vtkTypeRevisionMacro(vtkvmtkCurvesLevelSetImageFilter, vtkITKImageToImageFilterFF);
+  vtkTypeRevisionMacro(vtkvmtkCurvesLevelSetImageFilter, vtkvmtkITKImageToImageFilterFF);
 
   float GetIsoSurfaceValue ()
   {

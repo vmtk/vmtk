@@ -32,15 +32,15 @@ Version:   $Revision: 1.3 $
 #define __vtkvmtkGradientMagnitudeImageFilter_h
 
 
-#include "vtkITKImageToImageFilterFF.h"
+#include "vtkvmtkITKImageToImageFilterFF.h"
 #include "itkGradientMagnitudeImageFilter.h"
 #include "vtkvmtkWin32Header.h"
 
-class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkGradientMagnitudeImageFilter : public vtkITKImageToImageFilterFF
+class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkGradientMagnitudeImageFilter : public vtkvmtkITKImageToImageFilterFF
 {
  public:
   static vtkvmtkGradientMagnitudeImageFilter *New();
-  vtkTypeRevisionMacro(vtkvmtkGradientMagnitudeImageFilter, vtkITKImageToImageFilterFF);
+  vtkTypeRevisionMacro(vtkvmtkGradientMagnitudeImageFilter, vtkvmtkITKImageToImageFilterFF);
 
 protected:
   //BTX

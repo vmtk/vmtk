@@ -32,15 +32,15 @@ Version:   $Revision: 1.3 $
 #define __vtkvmtkUpwindGradientMagnitudeImageFilter_h
 
 
-#include "vtkITKImageToImageFilterFF.h"
+#include "vtkvmtkITKImageToImageFilterFF.h"
 #include "itkUpwindGradientMagnitudeImageFilter.h"
 #include "vtkvmtkWin32Header.h"
 
-class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkUpwindGradientMagnitudeImageFilter : public vtkITKImageToImageFilterFF
+class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkUpwindGradientMagnitudeImageFilter : public vtkvmtkITKImageToImageFilterFF
 {
  public:
   static vtkvmtkUpwindGradientMagnitudeImageFilter *New();
-  vtkTypeRevisionMacro(vtkvmtkUpwindGradientMagnitudeImageFilter, vtkITKImageToImageFilterFF);
+  vtkTypeRevisionMacro(vtkvmtkUpwindGradientMagnitudeImageFilter, vtkvmtkITKImageToImageFilterFF);
 
   void SetUpwindFactor ( float value )
   {

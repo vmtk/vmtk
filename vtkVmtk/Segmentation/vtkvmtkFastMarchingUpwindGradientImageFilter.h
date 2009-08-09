@@ -31,16 +31,16 @@ Version:   $Revision: 1.4 $
 #ifndef __vtkvmtkFastMarchingUpwindGradientImageFilter_h
 #define __vtkvmtkFastMarchingUpwindGradientImageFilter_h
 
-#include "vtkITKImageToImageFilterFF.h"
+#include "vtkvmtkITKImageToImageFilterFF.h"
 #include "itkFastMarchingUpwindGradientImageFilter.h"
 #include "vtkIdList.h"
 #include "vtkvmtkWin32Header.h"
 
-class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkFastMarchingUpwindGradientImageFilter : public vtkITKImageToImageFilterFF
+class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkFastMarchingUpwindGradientImageFilter : public vtkvmtkITKImageToImageFilterFF
 {
  public:
   static vtkvmtkFastMarchingUpwindGradientImageFilter *New();
-  vtkTypeRevisionMacro(vtkvmtkFastMarchingUpwindGradientImageFilter, vtkITKImageToImageFilterFF);
+  vtkTypeRevisionMacro(vtkvmtkFastMarchingUpwindGradientImageFilter, vtkvmtkITKImageToImageFilterFF);
 
 //   void SetUseImageSpacing ( int value )
 //   {

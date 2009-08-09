@@ -180,7 +180,7 @@ class vmtkImageWriter(pypes.pypeScript):
     def WriteITKIO(self):
         if self.OutputFileName == '':
             self.PrintError('Error: no OutputFileName.')
-        writer = vtkvmtk.vtkITKImageWriter()
+        writer = vtkvmtk.vtkvmtkITKImageWriter()
         writer.SetInput(self.Image)
         writer.SetFileName(self.OutputFileName)
         if self.ApplyTransform and self.RasToIjkMatrixCoefficients:

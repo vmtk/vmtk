@@ -32,15 +32,15 @@ Version:   $Revision: 1.3 $
 #define __vtkvmtkDanielssonDistanceMapImageFilter_h
 
 
-#include "vtkITKImageToImageFilterFF.h"
+#include "vtkvmtkITKImageToImageFilterFF.h"
 #include "itkDanielssonDistanceMapImageFilter.h"
 #include "vtkvmtkWin32Header.h"
 
-class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkDanielssonDistanceMapImageFilter : public vtkITKImageToImageFilterFF
+class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkDanielssonDistanceMapImageFilter : public vtkvmtkITKImageToImageFilterFF
 {
  public:
   static vtkvmtkDanielssonDistanceMapImageFilter *New();
-  vtkTypeRevisionMacro(vtkvmtkDanielssonDistanceMapImageFilter, vtkITKImageToImageFilterFF);
+  vtkTypeRevisionMacro(vtkvmtkDanielssonDistanceMapImageFilter, vtkvmtkITKImageToImageFilterFF);
 
   void SetSquaredDistance ( int value )
   {

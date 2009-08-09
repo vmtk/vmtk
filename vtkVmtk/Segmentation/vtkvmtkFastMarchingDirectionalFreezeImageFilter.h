@@ -31,16 +31,16 @@ Version:   $Revision: 1.4 $
 #ifndef __vtkvmtkFastMarchingDirectionalFreezeImageFilter_h
 #define __vtkvmtkFastMarchingDirectionalFreezeImageFilter_h
 
-#include "vtkITKImageToImageFilterFF.h"
+#include "vtkvmtkITKImageToImageFilterFF.h"
 #include "itkFastMarchingDirectionalFreezeImageFilter.h"
 #include "vtkIdList.h"
 #include "vtkvmtkWin32Header.h"
 
-class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkFastMarchingDirectionalFreezeImageFilter : public vtkITKImageToImageFilterFF
+class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkFastMarchingDirectionalFreezeImageFilter : public vtkvmtkITKImageToImageFilterFF
 {
  public:
   static vtkvmtkFastMarchingDirectionalFreezeImageFilter *New();
-  vtkTypeRevisionMacro(vtkvmtkFastMarchingDirectionalFreezeImageFilter, vtkITKImageToImageFilterFF);
+  vtkTypeRevisionMacro(vtkvmtkFastMarchingDirectionalFreezeImageFilter, vtkvmtkITKImageToImageFilterFF);
 
 //   void SetUseImageSpacing ( int value )
 //   {

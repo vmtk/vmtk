@@ -32,15 +32,15 @@ Version:   $Revision: 1.2 $
 #define __vtkvmtkVesselEnhancingDiffusion3DImageFilter_h
 
 
-#include "vtkITKImageToImageFilterFF.h"
+#include "vtkvmtkITKImageToImageFilterFF.h"
 #include "itkVesselEnhancingDiffusion3DImageFilter.h"
 #include "vtkvmtkWin32Header.h"
 
-class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkVesselEnhancingDiffusion3DImageFilter : public vtkITKImageToImageFilterFF
+class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkVesselEnhancingDiffusion3DImageFilter : public vtkvmtkITKImageToImageFilterFF
 {
  public:
   static vtkvmtkVesselEnhancingDiffusion3DImageFilter *New();
-  vtkTypeRevisionMacro(vtkvmtkVesselEnhancingDiffusion3DImageFilter, vtkITKImageToImageFilterFF);
+  vtkTypeRevisionMacro(vtkvmtkVesselEnhancingDiffusion3DImageFilter, vtkvmtkITKImageToImageFilterFF);
 
   vtkSetMacro(SigmaMin,double);
   vtkGetMacro(SigmaMin,double);

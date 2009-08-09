@@ -32,15 +32,15 @@ Version:   $Revision: 1.3 $
 #define __vtkvmtkBoundedReciprocalImageFilter_h
 
 
-#include "vtkITKImageToImageFilterFF.h"
+#include "vtkvmtkITKImageToImageFilterFF.h"
 #include "itkBoundedReciprocalImageFilter.h"
 #include "vtkvmtkWin32Header.h"
 
-class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkBoundedReciprocalImageFilter : public vtkITKImageToImageFilterFF
+class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkBoundedReciprocalImageFilter : public vtkvmtkITKImageToImageFilterFF
 {
  public:
   static vtkvmtkBoundedReciprocalImageFilter *New();
-  vtkTypeRevisionMacro(vtkvmtkBoundedReciprocalImageFilter, vtkITKImageToImageFilterFF);
+  vtkTypeRevisionMacro(vtkvmtkBoundedReciprocalImageFilter, vtkvmtkITKImageToImageFilterFF);
 
 protected:
   //BTX

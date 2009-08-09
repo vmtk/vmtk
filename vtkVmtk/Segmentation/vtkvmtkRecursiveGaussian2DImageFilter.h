@@ -32,15 +32,15 @@ Version:   $Revision: 1.2 $
 #define __vtkvmtkRecursiveGaussian2DImageFilter_h
 
 
-#include "vtkITKImageToImageFilter2DFF.h"
+#include "vtkvmtkITKImageToImageFilter2DFF.h"
 #include "itkRecursiveGaussianImageFilter.h"
 #include "vtkvmtkWin32Header.h"
 
-class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkRecursiveGaussian2DImageFilter : public vtkITKImageToImageFilter2DFF
+class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkRecursiveGaussian2DImageFilter : public vtkvmtkITKImageToImageFilter2DFF
 {
  public:
   static vtkvmtkRecursiveGaussian2DImageFilter *New();
-  vtkTypeRevisionMacro(vtkvmtkRecursiveGaussian2DImageFilter, vtkITKImageToImageFilter2DFF);
+  vtkTypeRevisionMacro(vtkvmtkRecursiveGaussian2DImageFilter, vtkvmtkITKImageToImageFilter2DFF);
 
   void SetSigma ( float value )
   {

@@ -32,15 +32,15 @@ Version:   $Revision: 1.3 $
 #define __vtkvmtkSigmoidImageFilter_h
 
 
-#include "vtkITKImageToImageFilterFF.h"
+#include "vtkvmtkITKImageToImageFilterFF.h"
 #include "itkSigmoidImageFilter.h"
 #include "vtkvmtkWin32Header.h"
 
-class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkSigmoidImageFilter : public vtkITKImageToImageFilterFF
+class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkSigmoidImageFilter : public vtkvmtkITKImageToImageFilterFF
 {
  public:
   static vtkvmtkSigmoidImageFilter *New();
-  vtkTypeRevisionMacro(vtkvmtkSigmoidImageFilter, vtkITKImageToImageFilterFF);
+  vtkTypeRevisionMacro(vtkvmtkSigmoidImageFilter, vtkvmtkITKImageToImageFilterFF);
 
   void SetAlpha ( float value )
   {

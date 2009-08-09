@@ -31,16 +31,16 @@ Version:   $Revision: 1.4 $
 #ifndef __vtkvmtkCollidingFrontsImageFilter_h
 #define __vtkvmtkCollidingFrontsImageFilter_h
 
-#include "vtkITKImageToImageFilterFF.h"
+#include "vtkvmtkITKImageToImageFilterFF.h"
 #include "itkCollidingFrontsImageFilter.h"
 #include "vtkIdList.h"
 #include "vtkvmtkWin32Header.h"
 
-class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkCollidingFrontsImageFilter : public vtkITKImageToImageFilterFF
+class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkCollidingFrontsImageFilter : public vtkvmtkITKImageToImageFilterFF
 {
  public:
   static vtkvmtkCollidingFrontsImageFilter *New();
-  vtkTypeRevisionMacro(vtkvmtkCollidingFrontsImageFilter, vtkITKImageToImageFilterFF);
+  vtkTypeRevisionMacro(vtkvmtkCollidingFrontsImageFilter, vtkvmtkITKImageToImageFilterFF);
 
   void SetApplyConnectivity ( int value )
   {

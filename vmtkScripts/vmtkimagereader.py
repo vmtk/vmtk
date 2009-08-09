@@ -203,7 +203,7 @@ class vmtkImageReader(pypes.pypeScript):
     def ReadITKIO(self):
         if self.InputFileName == '':
             self.PrintError('Error: no InputFileName.')
-        reader = vtkvmtk.vtkITKArchetypeImageSeriesScalarReader()
+        reader = vtkvmtk.vtkvmtkITKArchetypeImageSeriesScalarReader()
         reader.SetArchetype(self.InputFileName)
         reader.SetOutputScalarTypeToNative()
         reader.SetDesiredCoordinateOrientationToNative()
