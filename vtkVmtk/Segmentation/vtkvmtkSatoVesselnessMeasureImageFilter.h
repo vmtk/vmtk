@@ -31,132 +31,64 @@ Version:   $Revision: 1.2 $
 #ifndef __vtkvmtkSatoVesselnessMeasureImageFilter_h
 #define __vtkvmtkSatoVesselnessMeasureImageFilter_h
 
-
-#include "vtkvmtkITKImageToImageFilterFF.h"
-#include "itkMultiScaleHessianBasedMeasureImageFilter.h"
-#include "itkHessian3DToVesselnessMeasureImageFilter.h"
+#include "vtkSimpleImageToImageFilter.h"
 #include "vtkvmtkWin32Header.h"
 
-class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkSatoVesselnessMeasureImageFilter : public vtkvmtkITKImageToImageFilterFF
+class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkSatoVesselnessMeasureImageFilter : public vtkSimpleImageToImageFilter
 {
  public:
   static vtkvmtkSatoVesselnessMeasureImageFilter *New();
-  vtkTypeRevisionMacro(vtkvmtkSatoVesselnessMeasureImageFilter, vtkvmtkITKImageToImageFilterFF);
+  vtkTypeRevisionMacro(vtkvmtkSatoVesselnessMeasureImageFilter, vtkSimpleImageToImageFilter);
 
-  void SetSigmaMin(double value)
-  {
-    DelegateITKInputMacro(SetSigmaMinimum,value);
-  }
+  vtkGetMacro(SigmaMin,double);
+  vtkSetMacro(SigmaMin,double);
 
-  double GetSigmaMin()
-  {
-    DelegateITKOutputMacro(GetSigmaMinimum);
-  }
+  vtkGetMacro(SigmaMax,double);
+  vtkSetMacro(SigmaMax,double);
 
-  void SetSigmaMax(double value)
-  {
-    DelegateITKInputMacro(SetSigmaMaximum,value);
-  }
+  vtkGetMacro(NumberOfSigmaSteps,int);
+  vtkSetMacro(NumberOfSigmaSteps,int);
 
-  double GetSigmaMax()
-  {
-    DelegateITKOutputMacro(GetSigmaMaximum);
-  }
-
-  void SetNumberOfSigmaSteps(int value)
-  {
-    DelegateITKInputMacro(SetNumberOfSigmaSteps,value);
-  }
-
-  int GetNumberOfSigmaSteps()
-  {
-    DelegateITKOutputMacro(GetNumberOfSigmaSteps);
-  }
-
+  vtkGetMacro(SigmaStepMethod,int);
+  vtkSetMacro(SigmaStepMethod,int);
   void SetSigmaStepMethodToEquispaced()
   {
-    this->GetImageFilterPointer()->SetSigmaStepMethodToEquispaced();
-    this->Modified();
+    this->SetSigmaStepMethod(EQUISPACED);
   }
   
   void SetSigmaStepMethodToLogarithmic()
   {
-    this->GetImageFilterPointer()->SetSigmaStepMethodToLogarithmic();
-    this->Modified();
+    this->SetSigmaStepMethod(LOGARITHMIC);
   }
 
-  void SetAlpha1(double value)
+  vtkGetMacro(Alpha1,double);
+  vtkSetMacro(Alpha1,double);
+
+  vtkGetMacro(Alpha2,double);
+  vtkSetMacro(Alpha2,double);
+//BTX
+  enum 
   {
-    ImageFilterType* tempFilter = dynamic_cast<ImageFilterType*>(this->m_Filter.GetPointer()); 
-    if (tempFilter) 
-      { 
-      dynamic_cast<VesselnessFilterType*>(tempFilter->GetHessianToMeasureFilter())->SetAlpha1(value); 
-      this->Modified(); 
-      }
-  }
-
-  double GetAlpha1()
-  {
-    ImageFilterType* tempFilter = dynamic_cast<ImageFilterType*>(this->m_Filter.GetPointer()); 
-    if (tempFilter) 
-      { 
-      return dynamic_cast<VesselnessFilterType*>(tempFilter->GetHessianToMeasureFilter())->GetAlpha1(); 
-      }
-    else
-      {
-      vtkErrorMacro ( << this->GetClassName() << " Error getting method. Dynamic cast returned 0" );
-      return 0.0;
-      }
-  }
-
-  void SetAlpha2(double value)
-  {
-    ImageFilterType* tempFilter = dynamic_cast<ImageFilterType*>(this->m_Filter.GetPointer()); 
-    if (tempFilter) 
-      { 
-      dynamic_cast<VesselnessFilterType*>(tempFilter->GetHessianToMeasureFilter())->SetAlpha2(value); 
-      this->Modified(); 
-      }
-  }
-
-  double GetAlpha2()
-  {
-    ImageFilterType* tempFilter = dynamic_cast<ImageFilterType*>(this->m_Filter.GetPointer()); 
-    if (tempFilter) 
-      { 
-      return dynamic_cast<VesselnessFilterType*>(tempFilter->GetHessianToMeasureFilter())->GetAlpha2(); 
-      }
-    else
-      {
-      vtkErrorMacro ( << this->GetClassName() << " Error getting method. Dynamic cast returned 0" );
-      return 0.0;
-      }
-  }
-
+    EQUISPACED,
+    LOGARITHMIC
+  };
+//ETX
 protected:
-  //BTX
-  typedef itk::SymmetricSecondRankTensor<double,3> HessianPixelType;
-  typedef itk::Image<HessianPixelType,3> HessianImageType;
-  typedef itk::Hessian3DToVesselnessMeasureImageFilter<float> VesselnessFilterType;
-  //typedef itk::MultiScaleHessianBasedMeasureImageFilter<Superclass::InputImageType,VesselnessFilterType> ImageFilterType;
-  typedef itk::MultiScaleHessianBasedMeasureImageFilter<InputImageType,HessianImageType,InputImageType> ImageFilterType;
+  vtkvmtkSatoVesselnessMeasureImageFilter();
+  ~vtkvmtkSatoVesselnessMeasureImageFilter();
 
-  vtkvmtkSatoVesselnessMeasureImageFilter() : Superclass(ImageFilterType::New())
-  {
-    VesselnessFilterType::Pointer vesselnessFilter = VesselnessFilterType::New();
-    ImageFilterType* imageFilter = this->GetImageFilterPointer();
-    imageFilter->SetSigmaStepMethodToEquispaced();
-    imageFilter->GenerateScalesOutputOn();
-    imageFilter->SetHessianToMeasureFilter(vesselnessFilter.GetPointer());
-  }
-
-  ~vtkvmtkSatoVesselnessMeasureImageFilter() {};
-  ImageFilterType* GetImageFilterPointer() { return dynamic_cast<ImageFilterType*>(m_Filter.GetPointer()); }
-  //ETX
+  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output);
 
 private:
   vtkvmtkSatoVesselnessMeasureImageFilter(const vtkvmtkSatoVesselnessMeasureImageFilter&);  // Not implemented.
   void operator=(const vtkvmtkSatoVesselnessMeasureImageFilter&);  // Not implemented.
+
+  double SigmaMin;
+  double SigmaMax;
+  int NumberOfSigmaSteps;
+  int SigmaStepMethod;
+  double Alpha1;
+  double Alpha2;
 };
 
 #endif
