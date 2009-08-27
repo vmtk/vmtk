@@ -36,7 +36,7 @@
 #include "vtkDataArray.h"
 #include "vtkIdList.h"
 
-class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkCenterlineInterpolateArray : public vtkPolyDataAlgorithm
+class VTK_VMTK_CONTRIB_EXPORT vtkvmtkCenterlineInterpolateArray : public vtkPolyDataAlgorithm
 {
 public:
   static vtkvmtkCenterlineInterpolateArray* New();

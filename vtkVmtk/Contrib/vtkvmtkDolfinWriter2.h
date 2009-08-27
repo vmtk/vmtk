@@ -41,7 +41,7 @@
 class vtkCell;
 class vtkIdList;
 
-class VTK_VMTK_IO_EXPORT vtkvmtkDolfinWriter2 : public vtkUnstructuredGridWriter
+class VTK_VMTK_CONTRIB_EXPORT vtkvmtkDolfinWriter2 : public vtkUnstructuredGridWriter
 {
 public:
   static vtkvmtkDolfinWriter2 *New();

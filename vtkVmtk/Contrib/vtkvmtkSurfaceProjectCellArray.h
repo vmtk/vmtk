@@ -39,7 +39,7 @@
 
 class vtkPolyData;
 
-class VTK_VMTK_MISC_EXPORT vtkvmtkSurfaceProjectCellArray : public vtkPolyDataAlgorithm
+class VTK_VMTK_CONTRIB_EXPORT vtkvmtkSurfaceProjectCellArray : public vtkPolyDataAlgorithm
 {
   public: 
   vtkTypeRevisionMacro(vtkvmtkSurfaceProjectCellArray,vtkPolyDataAlgorithm);

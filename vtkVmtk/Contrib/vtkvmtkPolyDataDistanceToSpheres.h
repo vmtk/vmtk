@@ -35,7 +35,7 @@
 
 #include "vtkPolyData.h"
 
-class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataDistanceToSpheres : public vtkPolyDataAlgorithm
+class VTK_VMTK_CONTRIB_EXPORT vtkvmtkPolyDataDistanceToSpheres : public vtkPolyDataAlgorithm
 {
 public:
   static vtkvmtkPolyDataDistanceToSpheres* New();

@@ -36,7 +36,7 @@ class vtkUnstructuredGrid;
 class vtkThreshold;
 
 
-class VTK_VMTK_MISC_EXPORT vtkvmtkCellDimensionFilter : public vtkUnstructuredGridAlgorithm
+class VTK_VMTK_CONTRIB_EXPORT vtkvmtkCellDimensionFilter : public vtkUnstructuredGridAlgorithm
 {
   public: 
   vtkTypeRevisionMacro(vtkvmtkCellDimensionFilter,vtkUnstructuredGridAlgorithm);

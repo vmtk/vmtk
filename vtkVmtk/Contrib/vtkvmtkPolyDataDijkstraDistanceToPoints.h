@@ -36,7 +36,7 @@
 #include "vtkPolyData.h"
 #include "vtkIdList.h"
 
-class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataDijkstraDistanceToPoints : public vtkPolyDataAlgorithm
+class VTK_VMTK_CONTRIB_EXPORT vtkvmtkPolyDataDijkstraDistanceToPoints : public vtkPolyDataAlgorithm
 {
 public:
   static vtkvmtkPolyDataDijkstraDistanceToPoints* New();

@@ -41,7 +41,7 @@ class vtkPoints;
 class vtkDataArray;
 class vtkOrderedTriangulator;
 
-class VTK_VMTK_MISC_EXPORT vtkvmtkBoundaryLayerGenerator2 : public vtkvmtkBoundaryLayerGenerator
+class VTK_VMTK_CONTRIB_EXPORT vtkvmtkBoundaryLayerGenerator2 : public vtkvmtkBoundaryLayerGenerator
 {
   public: 
   vtkTypeRevisionMacro(vtkvmtkBoundaryLayerGenerator2,vtkvmtkBoundaryLayerGenerator);

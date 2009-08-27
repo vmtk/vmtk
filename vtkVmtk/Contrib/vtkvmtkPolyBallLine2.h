@@ -40,7 +40,7 @@
 //#include "vtkvmtkComputationalGeometryWin32Header.h"
 #include "vtkvmtkWin32Header.h"
 
-class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyBallLine2 : public vtkImplicitFunction
+class VTK_VMTK_CONTRIB_EXPORT vtkvmtkPolyBallLine2 : public vtkImplicitFunction
 {
   public:
 
