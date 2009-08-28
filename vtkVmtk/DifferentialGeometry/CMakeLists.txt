@@ -109,8 +109,11 @@ IF (VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
      SET_TARGET_PROPERTIES(vtkvmtkDifferentialGeometryPython PROPERTIES SUFFIX ".pyd")
   ENDIF(WIN32 AND NOT CYGWIN)
   INSTALL(TARGETS vtkvmtkDifferentialGeometryPythonD
-    LIBRARY DESTINATION ${VTK_VMTK_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
-  )
+    LIBRARY DESTINATION ${VTK_VMTK_INSTALL_LIB_DIR} 
+    ARCHIVE DESTINATION ${VTK_VMTK_INSTALL_LIB_DIR} 
+    RUNTIME DESTINATION ${VTK_VMTK_INSTALL_BIN_DIR} 
+    COMPONENT RuntimeLibraries
+    )
   INSTALL(TARGETS vtkvmtkDifferentialGeometryPython
     LIBRARY DESTINATION ${VTK_VMTK_MODULE_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
   )
@@ -123,8 +126,11 @@ IF (VTK_WRAP_TCL AND VTK_VMTK_WRAP_TCL)
   TARGET_LINK_LIBRARIES(vtkvmtkDifferentialGeometryTCL vtkvmtkDifferentialGeometry vtkvmtkComputationalGeometryTCL vtkvmtkComputationalGeometry vtkvmtkCommon vtkvmtkCommonTCL vtkCommon vtkCommonTCL vtkFiltering vtkFilteringTCL vtkGraphics vtkGraphicsTCL)
 
   INSTALL(TARGETS vtkvmtkDifferentialGeometryTCL
-    LIBRARY DESTINATION ${VTK_VMTK_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
-  )
+    LIBRARY DESTINATION ${VTK_VMTK_INSTALL_LIB_DIR} 
+    ARCHIVE DESTINATION ${VTK_VMTK_INSTALL_LIB_DIR} 
+    RUNTIME DESTINATION ${VTK_VMTK_INSTALL_BIN_DIR} 
+    COMPONENT RuntimeLibraries
+    )
 
   ### START VMTK IN SLICER PATCH ###
   IF (VTK_VMTK_IN_SLICER)
