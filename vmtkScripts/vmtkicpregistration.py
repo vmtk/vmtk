@@ -34,6 +34,8 @@ class vmtkICPRegistration(pypes.pypeScript):
         self.SignedDistanceArrayName = ''
         self.Level = 0.0
         self.MaximumMeanDistance = 1E-2
+        self.MaximumNumberOfLandmarks = 1000
+        self.MaximumNumberOfIterations = 1000
         self.Matrix4x4 = None
 
         self.FlipNormals = 0
@@ -46,6 +48,8 @@ class vmtkICPRegistration(pypes.pypeScript):
             ['DistanceArrayName','distancearray','str',1,'','name of the array where the distance of the input surface to the reference surface has to be stored'],
             ['SignedDistanceArrayName','signeddistancearray','str',1,'','name of the array where the signed distance of the input surface to the reference surface is stored; distance is positive if distance vector and normal to the reference surface have negative dot product, i.e. if the input surface is outer with respect to the reference surface'],
             ['FlipNormals','flipnormals','bool',1,'','flip normals to the reference surface after computing them'],
+            ['MaximumNumberOfLandmarks','landmarks','int',1,'','maximum number of landmarks sampled from the two surfaces for evaluation of the registration metric'],
+            ['MaximumNumberOfIterations','iterations','int',1,'','maximum number of iterations for the optimization problems'],
             ['MaximumMeanDistance','maxmeandistance','float',1,'','convergence threshold based on the maximum mean distance between the two surfaces']
             ])
         self.SetOutputMembers([
@@ -79,8 +83,8 @@ class vmtkICPRegistration(pypes.pypeScript):
         icpTransform.SetTarget(self.ReferenceSurface)
         icpTransform.GetLandmarkTransform().SetModeToRigidBody()
         icpTransform.StartByMatchingCentroidsOn()
-        icpTransform.SetMaximumNumberOfLandmarks(1000)
-        icpTransform.SetMaximumNumberOfIterations(1000)
+        icpTransform.SetMaximumNumberOfLandmarks(self.MaximumNumberOfLandmarks)
+        icpTransform.SetMaximumNumberOfLandmarks(self.MaximumNumberOfIterations)
         icpTransform.SetMaximumMeanDistance(self.MaximumMeanDistance)
 
         transformFilter = vtk.vtkTransformPolyDataFilter()

@@ -33,8 +33,8 @@ class vmtkCenterlineMeshSections(pypes.pypeScript):
         self.CenterlineSections = None
         self.TransformSections = False
         self.UpNormalsArrayName = ''
-        self.AdditionalNormalsArrayName = ''
-        self.AdditionalScalarsArrayName = ''
+        self.AdditionalNormalsArrayName = None
+        self.AdditionalScalarsArrayName = None
         self.OriginOffset = [0.0, 0.0, 0.0]
         self.VectorsArrayName = ''
 

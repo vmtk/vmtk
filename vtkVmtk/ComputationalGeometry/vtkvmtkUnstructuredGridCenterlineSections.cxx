@@ -206,8 +206,14 @@ int vtkvmtkUnstructuredGridCenterlineSections::RequestData(
   additionalNormalsScalars->SetName(this->AdditionalScalarsArrayName);
   this->AdditionalNormalsPolyData->SetPoints(additionalNormalsPoints);
   this->AdditionalNormalsPolyData->SetVerts(additionalNormalsVerts);
-  this->AdditionalNormalsPolyData->GetPointData()->AddArray(additionalNormalsNormals);
-  this->AdditionalNormalsPolyData->GetPointData()->AddArray(additionalNormalsScalars);
+  if (additionalNormalsArray)
+    {
+    this->AdditionalNormalsPolyData->GetPointData()->AddArray(additionalNormalsNormals);
+    }
+  if (additionalScalarsArray)
+    { 
+    this->AdditionalNormalsPolyData->GetPointData()->AddArray(additionalNormalsScalars);
+    }
 
   vtkAppendPolyData* appendFilter = vtkAppendPolyData::New();
 
@@ -260,10 +266,7 @@ int vtkvmtkUnstructuredGridCenterlineSections::RequestData(
       tangent[1] /= weightSum;
       tangent[2] /= weightSum;
  
-      upNormalsArray->GetTuple(centerlineCell->GetPointId(j),upNormal);
- 
       vtkMath::Normalize(tangent);
-      vtkMath::Normalize(upNormal);
   
       vtkPlane* plane = vtkPlane::New();
       plane->SetOrigin(point);
@@ -296,10 +299,14 @@ int vtkvmtkUnstructuredGridCenterlineSections::RequestData(
 
       if (!this->TransformSections)
         {
+        connectivityFilter->GetOutput()->GetPointData()->SetActiveVectors(this->VectorsArrayName);
         appendFilter->AddInput(connectivityFilter->GetOutput());
         }
       else
         {
+        upNormalsArray->GetTuple(centerlineCell->GetPointId(j),upNormal);
+        vtkMath::Normalize(upNormal);
+
         double currentOrigin[3];
         currentOrigin[0] = point[0];
         currentOrigin[1] = point[1];
