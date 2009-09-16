@@ -356,7 +356,7 @@ int vtkvmtkPolyDataPatchingFilter::RequestData(
         int patchId = k - circularPatchStartIndex + (j - longitudinalPatchStartIndex) * (circularPatchEndIndex-circularPatchStartIndex+1) + numberOfPreviousPatchDataLines * (circularPatchEndIndex-circularPatchStartIndex+1);
         double circularPatchCenter = 0.0;
         double shiftedCircularPatchCenter = 0.0;
-        vtkDataArray* patchShiftedCircularMappingArray = NULL;
+        char* patchShiftedCircularMappingArrayName = NULL;
 
         if (this->CircularPatching)
           {
@@ -376,8 +376,7 @@ int vtkvmtkPolyDataPatchingFilter::RequestData(
 //          if (circularPatchStart < pi && circularPatchEnd > pi)
           if (circularPatchCenter <= - 0.75 * pi || circularPatchCenter >= 0.75 * pi)
             {
-            patchShiftedCircularMappingArray = shiftedCircularMapping180Array;
-            longitudinalClipper1->GetOutput()->GetPointData()->SetActiveScalars(shiftedCircularMapping180ArrayName);
+            patchShiftedCircularMappingArrayName = shiftedCircularMapping180ArrayName;
             if (circularPatchCenter <= - 0.75 * pi)
               {
               circularPatchStart += pi;
@@ -392,24 +391,23 @@ int vtkvmtkPolyDataPatchingFilter::RequestData(
 //          else if (circularPatchStart < 0.5 * pi && circularPatchEnd > 0.5 * pi)
           else if (circularPatchCenter >= 0.25 * pi && circularPatchCenter < 0.75 * pi)
             {
-            patchShiftedCircularMappingArray = shiftedCircularMapping270Array;
-            longitudinalClipper1->GetOutput()->GetPointData()->SetActiveScalars(shiftedCircularMapping270ArrayName);
+            patchShiftedCircularMappingArrayName = shiftedCircularMapping270ArrayName;
             circularPatchStart -= 0.5 * pi;
             circularPatchEnd -= 0.5 * pi;
             }
 //          else if (circularPatchStart < -0.5 * pi && circularPatchEnd > -0.5 * pi)
           else if (circularPatchCenter > -0.75 * pi && circularPatchCenter <= -0.25 * pi)
             {
-            patchShiftedCircularMappingArray = shiftedCircularMapping90Array;
-            longitudinalClipper1->GetOutput()->GetPointData()->SetActiveScalars(shiftedCircularMapping90ArrayName);
+            patchShiftedCircularMappingArrayName = shiftedCircularMapping90ArrayName;
             circularPatchStart += 0.5 * pi;
             circularPatchEnd += 0.5 * pi;
             }
           else
             {
-            patchShiftedCircularMappingArray = circularMappingArray;
-            longitudinalClipper1->GetOutput()->GetPointData()->SetActiveScalars(this->CircularMappingArrayName);
+            patchShiftedCircularMappingArrayName = this->CircularMappingArrayName;
             }
+
+          longitudinalClipper1->GetOutput()->GetPointData()->SetActiveScalars(patchShiftedCircularMappingArrayName);
 
           shiftedCircularPatchCenter = 0.5 * (circularPatchStart + circularPatchEnd);
 
@@ -459,16 +457,21 @@ int vtkvmtkPolyDataPatchingFilter::RequestData(
         patch->BuildCells();
         int patchNumberOfCells = patch->GetNumberOfCells();
 
-        vtkDataArray* patchCircularMappingArray = patch->GetPointData()->GetArray(this->CircularMappingArrayName);
-        double angularOffset = circularPatchCenter - shiftedCircularPatchCenter;
-
-        vtkIdType patchNumberOfPoints = patch->GetNumberOfPoints();
-        vtkIdType pointId;
-        for (pointId=0; pointId<patchNumberOfPoints; pointId++)
+        if (this->CircularPatching)
           {
-          double circularMappingValue = patchShiftedCircularMappingArray->GetTuple1(pointId);
-          circularMappingValue += angularOffset;
-          patchCircularMappingArray->SetTuple1(pointId,circularMappingValue);
+          vtkDataArray* patchCircularMappingArray = patch->GetPointData()->GetArray(this->CircularMappingArrayName);
+          vtkDataArray* patchShiftedCircularMappingArray = patch->GetPointData()->GetArray(patchShiftedCircularMappingArrayName);
+
+          double angularOffset = circularPatchCenter - shiftedCircularPatchCenter;
+
+          vtkIdType patchNumberOfPoints = patch->GetNumberOfPoints();
+          vtkIdType pointId;
+          for (pointId=0; pointId<patchNumberOfPoints; pointId++)
+            {
+            double circularMappingValue = patchShiftedCircularMappingArray->GetTuple1(pointId);
+            circularMappingValue += angularOffset;
+            patchCircularMappingArray->SetTuple1(pointId,circularMappingValue);
+            }
           }
 
         vtkIntArray* longitudinalPatchNumberArray = vtkIntArray::New();
