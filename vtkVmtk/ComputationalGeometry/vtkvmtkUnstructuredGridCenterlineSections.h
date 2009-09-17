@@ -30,6 +30,7 @@ Version:   $Revision: 1.1 $
 #include "vtkPolyData.h"
 
 class vtkUnstructuredGrid;
+class vtkTransform;
 
 class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkUnstructuredGridCenterlineSections : public vtkPolyDataAlgorithm
 {
@@ -42,8 +43,14 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkUnstructuredGridCenterlineSe
   vtkSetObjectMacro(Centerlines,vtkPolyData);
   vtkGetObjectMacro(Centerlines,vtkPolyData);
 
-  vtkSetStringMacro(UpNormalsArrayName);
-  vtkGetStringMacro(UpNormalsArrayName);
+  vtkSetObjectMacro(SectionSource,vtkPolyData);
+  vtkGetObjectMacro(SectionSource,vtkPolyData);
+
+  vtkSetStringMacro(SectionUpNormalsArrayName);
+  vtkGetStringMacro(SectionUpNormalsArrayName);
+
+  vtkSetStringMacro(SectionNormalsArrayName);
+  vtkGetStringMacro(SectionNormalsArrayName);
 
   vtkSetStringMacro(AdditionalNormalsArrayName);
   vtkGetStringMacro(AdditionalNormalsArrayName);
@@ -55,13 +62,21 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkUnstructuredGridCenterlineSe
   vtkGetMacro(TransformSections,int);
   vtkBooleanMacro(TransformSections,int);
 
+  vtkSetMacro(UseSectionSource,int);
+  vtkGetMacro(UseSectionSource,int);
+  vtkBooleanMacro(UseSectionSource,int);
+
+  vtkSetMacro(SourceScaling,int);
+  vtkGetMacro(SourceScaling,int);
+  vtkBooleanMacro(SourceScaling,int);
+
   vtkSetVectorMacro(OriginOffset,double,3);
   vtkGetVectorMacro(OriginOffset,double,3);
  
   vtkSetStringMacro(VectorsArrayName);
   vtkGetStringMacro(VectorsArrayName);
   
-  vtkGetObjectMacro(AdditionalNormalsPolyData,vtkPolyData);
+  vtkGetObjectMacro(SectionPointsPolyData,vtkPolyData);
 
   protected:
   vtkvmtkUnstructuredGridCenterlineSections();
@@ -72,18 +87,23 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkUnstructuredGridCenterlineSe
   virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
 
   double ComputeAngle(double vector0[3], double vector1[3]);
+  void CreateTransform(vtkTransform* transform, double currentOrigin[3], double currentNormal[3], double currentUpNormal[3], double targetOrigin[3], double targetNormal[3], double targetUpNormal[3]);
 
   vtkPolyData* Centerlines;
-  vtkPolyData* AdditionalNormalsPolyData;
+  vtkPolyData* SectionSource;
+  vtkPolyData* SectionPointsPolyData;
 
-  char* UpNormalsArrayName;
-
+  char* SectionUpNormalsArrayName;
+  char* SectionNormalsArrayName;
   char* AdditionalNormalsArrayName;
   char* AdditionalScalarsArrayName;
 
   char* VectorsArrayName;
 
   int TransformSections;
+
+  int UseSectionSource;
+  int SourceScaling;
 
   double OriginOffset[3];
 

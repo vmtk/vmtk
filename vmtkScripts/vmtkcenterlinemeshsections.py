@@ -30,9 +30,13 @@ class vmtkCenterlineMeshSections(pypes.pypeScript):
        
         self.Mesh = None
         self.Centerlines = None
+        self.SectionSource = None
         self.CenterlineSections = None
         self.TransformSections = False
-        self.UpNormalsArrayName = ''
+        self.UseSectionSource = False
+        self.SourceScaling = False
+        self.SectionNormalsArrayName = 'SectionNormals'
+        self.SectionUpNormalsArrayName = ''
         self.AdditionalNormalsArrayName = None
         self.AdditionalScalarsArrayName = None
         self.OriginOffset = [0.0, 0.0, 0.0]
@@ -43,8 +47,12 @@ class vmtkCenterlineMeshSections(pypes.pypeScript):
         self.SetInputMembers([
             ['Mesh','i','vtkUnstructuredGrid',1,'','the input mesh','vmtkmeshreader'],
             ['Centerlines','centerlines','vtkPolyData',1,'','the input centerlines','vmtksurfacereader'],
+            ['SectionSource','source','vtkPolyData',1,'','the input section source with which to probe the mesh (optional)','vmtksurfacereader'],
+            ['UseSectionSource','usesource','bool',1,'','if off, slice mesh with plane to generate sections; if on, use the SectionSource to probe the mesh'],
+            ['SourceScaling','sourcescaling','bool',1,'','toggle scaling the source with the local radius'],
             ['TransformSections','transformsections','bool',1,'','transform sections so that they are at the origin, with normal 0,0,1 and upNormal 0,1,0'],
-            ['UpNormalsArrayName','upnormalsarray','str',1,'','the name of the array where normals determining the "up" orientation of sections are stored'],
+            ['SectionNormalsArrayName','normalsarray','str',1,'','the name of the array where normals determining the section planes are stored'],
+            ['SectionUpNormalsArrayName','upnormalsarray','str',1,'','the name of the array where normals determining the "up" orientation of sections are stored'],
             ['AdditionalNormalsArrayName','additionalnormalsarray','str',1,'','the name of the array that contains normals that will be transformed and assigned to additional data points'],
             ['AdditionalScalarsArrayName','additionalscalarsarray','str',1,'','the name of the array that contains scalars that will be assigned to additional data points'],
             ['VectorsArrayName','vectorsarray','str',1,'','the name of the array where vectors, e.g. velocity vectors, are stored'],
@@ -52,7 +60,7 @@ class vmtkCenterlineMeshSections(pypes.pypeScript):
             ])
         self.SetOutputMembers([
             ['CenterlineSections','o','vtkPolyData',1,'','the output sections','vmtksurfacewriter'],
-            ['AdditionalNormalsPolyData','additionalnormalsdata','vtkPolyData',1,'','the output additional normals poly data','vmtksurfacewriter']
+            ['SectionPointsPolyData','sectionpoints','vtkPolyData',1,'','the additional output poly data storing information about the location and orientation of sections','vmtksurfacewriter']
             ])
 
     def Execute(self):
@@ -66,12 +74,16 @@ class vmtkCenterlineMeshSections(pypes.pypeScript):
         centerlineSections = vtkvmtk.vtkvmtkUnstructuredGridCenterlineSections()
         centerlineSections.SetInput(self.Mesh)
         centerlineSections.SetCenterlines(self.Centerlines)
+        centerlineSections.SetSectionSource(self.SectionSource)
+        centerlineSections.SetUseSectionSource(self.UseSectionSource)
+        centerlineSections.SetSourceScaling(self.SourceScaling)
         centerlineSections.SetTransformSections(self.TransformSections)
         centerlineSections.SetOriginOffset(self.OriginOffset)
         if self.VectorsArrayName:
             centerlineSections.SetVectorsArrayName(self.VectorsArrayName)
-        if self.UpNormalsArrayName:
-            centerlineSections.SetUpNormalsArrayName(self.UpNormalsArrayName)
+        centerlineSections.SetSectionNormalsArrayName(self.SectionNormalsArrayName)
+        if self.SectionUpNormalsArrayName:
+            centerlineSections.SetSectionUpNormalsArrayName(self.SectionUpNormalsArrayName)
         if self.AdditionalNormalsArrayName:
             centerlineSections.SetAdditionalNormalsArrayName(self.AdditionalNormalsArrayName)
         if self.AdditionalScalarsArrayName:
@@ -80,7 +92,7 @@ class vmtkCenterlineMeshSections(pypes.pypeScript):
 
         self.CenterlineSections = centerlineSections.GetOutput()
 
-        self.AdditionalNormalsPolyData = centerlineSections.GetAdditionalNormalsPolyData()
+        self.SectionPointsPolyData = centerlineSections.GetSectionPointsPolyData()
 
 
 if __name__=='__main__':
