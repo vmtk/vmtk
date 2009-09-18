@@ -35,6 +35,7 @@ class vmtkCenterlineMeshSections(pypes.pypeScript):
         self.TransformSections = False
         self.UseSectionSource = False
         self.SourceScaling = False
+        self.SectionIdsArrayName = 'SectionIds'
         self.SectionNormalsArrayName = 'SectionNormals'
         self.SectionUpNormalsArrayName = ''
         self.AdditionalNormalsArrayName = None
@@ -51,6 +52,7 @@ class vmtkCenterlineMeshSections(pypes.pypeScript):
             ['UseSectionSource','usesource','bool',1,'','if off, slice mesh with plane to generate sections; if on, use the SectionSource to probe the mesh'],
             ['SourceScaling','sourcescaling','bool',1,'','toggle scaling the source with the local radius'],
             ['TransformSections','transformsections','bool',1,'','transform sections so that they are at the origin, with normal 0,0,1 and upNormal 0,1,0'],
+            ['SectionIdsArrayName','sectionidsarray','str',1,'','the name of the array where the ids identifying sections are stored'],
             ['SectionNormalsArrayName','normalsarray','str',1,'','the name of the array where normals determining the section planes are stored'],
             ['SectionUpNormalsArrayName','upnormalsarray','str',1,'','the name of the array where normals determining the "up" orientation of sections are stored'],
             ['AdditionalNormalsArrayName','additionalnormalsarray','str',1,'','the name of the array that contains normals that will be transformed and assigned to additional data points'],
@@ -81,6 +83,7 @@ class vmtkCenterlineMeshSections(pypes.pypeScript):
         centerlineSections.SetOriginOffset(self.OriginOffset)
         if self.VectorsArrayName:
             centerlineSections.SetVectorsArrayName(self.VectorsArrayName)
+        centerlineSections.SetSectionIdsArrayName(self.SectionIdsArrayName)
         centerlineSections.SetSectionNormalsArrayName(self.SectionNormalsArrayName)
         if self.SectionUpNormalsArrayName:
             centerlineSections.SetSectionUpNormalsArrayName(self.SectionUpNormalsArrayName)

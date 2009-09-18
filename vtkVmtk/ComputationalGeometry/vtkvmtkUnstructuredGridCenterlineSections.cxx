@@ -57,6 +57,7 @@ vtkvmtkUnstructuredGridCenterlineSections::vtkvmtkUnstructuredGridCenterlineSect
   this->SectionNormalsArrayName = NULL;
   this->AdditionalNormalsArrayName = NULL;
   this->AdditionalScalarsArrayName = NULL;
+  this->SectionIdsArrayName = NULL;
   this->TransformSections = 0;
   this->UseSectionSource = 0;
   this->SourceScaling = 0;
@@ -105,6 +106,11 @@ vtkvmtkUnstructuredGridCenterlineSections::~vtkvmtkUnstructuredGridCenterlineSec
     {
     delete[] this->VectorsArrayName;
     this->VectorsArrayName = NULL;
+    }
+  if (this->SectionIdsArrayName)
+    {
+    delete[] this->SectionIdsArrayName;
+    this->SectionIdsArrayName = NULL;
     }
 }
 
@@ -234,6 +240,12 @@ int vtkvmtkUnstructuredGridCenterlineSections::RequestData(
     return 1;
     }
  
+  if (!this->SectionIdsArrayName)
+    {
+    vtkErrorMacro(<<"SectionIdsArrayName not specified!");
+    return 1;
+    }
+ 
   vtkDataArray* additionalNormalsArray = NULL;
   vtkDataArray* additionalScalarsArray = NULL;
   if (this->AdditionalNormalsArrayName)
@@ -296,6 +308,7 @@ int vtkvmtkUnstructuredGridCenterlineSections::RequestData(
     this->SectionPointsPolyData->GetPointData()->AddArray(sectionPointsAdditionalScalars);
     }
 
+  vtkIdType sectionId = 0;
   vtkAppendPolyData* appendFilter = vtkAppendPolyData::New();
 
   int numberOfCenterlineCells = this->Centerlines->GetNumberOfCells();
@@ -449,6 +462,18 @@ int vtkvmtkUnstructuredGridCenterlineSections::RequestData(
         transform->Delete();
         }
 
+      vtkIdType numberOfSectionPoints = section->GetNumberOfPoints();
+      vtkIdTypeArray* sectionIdsArray = vtkIdTypeArray::New();
+      sectionIdsArray->SetName(this->SectionIdsArrayName);
+      sectionIdsArray->SetNumberOfTuples(numberOfSectionPoints);
+      vtkIdType pointId;
+      for (pointId=0; pointId<numberOfSectionPoints; pointId++)
+        {
+        sectionIdsArray->SetValue(pointId,sectionId);
+        }
+      sectionId += 1;
+      section->GetPointData()->AddArray(sectionIdsArray);
+
       if (!this->TransformSections)
         {
         appendFilter->AddInput(section);
@@ -507,46 +532,7 @@ int vtkvmtkUnstructuredGridCenterlineSections::RequestData(
   
         vtkTransform* transform = vtkTransform::New();
         this->CreateTransform(transform,currentOrigin,currentNormal,currentUpNormal,targetOrigin,targetNormal,targetUpNormal);
-/*
-        transform->PostMultiply();
-  
-        double translation0[3];
-        translation0[0] = 0.0 - currentOrigin[0];
-        translation0[1] = 0.0 - currentOrigin[1];
-        translation0[2] = 0.0 - currentOrigin[2];
- 
-        double translation1[3];
-        translation1[0] = targetOrigin[0] - 0.0;
-        translation1[1] = targetOrigin[1] - 0.0;
-        translation1[2] = targetOrigin[2] - 0.0;
-  
-        transform->Translate(translation0);
-  
-        double cross0[3];
-        vtkMath::Cross(currentNormal,targetNormal,cross0);
-        vtkMath::Normalize(cross0);
-        double angle0 = this->ComputeAngle(currentNormal,targetNormal);
-        angle0 = angle0 / (2.0*vtkMath::Pi()) * 360.0;
-        transform->RotateWXYZ(angle0,cross0);
- 
-        double dot = vtkMath::Dot(currentUpNormal,currentNormal);
-        double currentProjectedUpNormal[3];
-        currentProjectedUpNormal[0] = currentUpNormal[0] - dot * currentNormal[0];
-        currentProjectedUpNormal[1] = currentUpNormal[1] - dot * currentNormal[1];
-        currentProjectedUpNormal[2] = currentUpNormal[2] - dot * currentNormal[2];
-        vtkMath::Normalize(currentProjectedUpNormal);
- 
-        double transformedUpNormal[3];
-        transform->TransformNormal(currentProjectedUpNormal,transformedUpNormal);
 
-        double cross1[3];
-        vtkMath::Cross(transformedUpNormal,targetUpNormal,cross1);
-        vtkMath::Normalize(cross1);
-        double angle1 = this->ComputeAngle(transformedUpNormal,targetUpNormal);
-        angle1 = angle1 / (2.0*vtkMath::Pi()) * 360.0;
-        transform->RotateWXYZ(angle1,cross1);
-        transform->Translate(translation1);
-*/
         vtkTransformPolyDataFilter* transformFilter = vtkTransformPolyDataFilter::New();
         transformFilter->SetInput(section);
         transformFilter->SetTransform(transform);

@@ -75,6 +75,9 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkUnstructuredGridCenterlineSe
  
   vtkSetStringMacro(VectorsArrayName);
   vtkGetStringMacro(VectorsArrayName);
+ 
+  vtkSetStringMacro(SectionIdsArrayName);
+  vtkGetStringMacro(SectionIdsArrayName);
   
   vtkGetObjectMacro(SectionPointsPolyData,vtkPolyData);
 
@@ -97,6 +100,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkUnstructuredGridCenterlineSe
   char* SectionNormalsArrayName;
   char* AdditionalNormalsArrayName;
   char* AdditionalScalarsArrayName;
+  char* SectionIdsArrayName;
 
   char* VectorsArrayName;
 
