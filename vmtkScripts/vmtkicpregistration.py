@@ -84,7 +84,7 @@ class vmtkICPRegistration(pypes.pypeScript):
         icpTransform.GetLandmarkTransform().SetModeToRigidBody()
         icpTransform.StartByMatchingCentroidsOn()
         icpTransform.SetMaximumNumberOfLandmarks(self.MaximumNumberOfLandmarks)
-        icpTransform.SetMaximumNumberOfLandmarks(self.MaximumNumberOfIterations)
+        icpTransform.SetMaximumNumberOfIterations(self.MaximumNumberOfIterations)
         icpTransform.SetMaximumMeanDistance(self.MaximumMeanDistance)
 
         transformFilter = vtk.vtkTransformPolyDataFilter()
