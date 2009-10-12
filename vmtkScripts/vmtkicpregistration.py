@@ -35,7 +35,7 @@ class vmtkICPRegistration(pypes.pypeScript):
         self.Level = 0.0
         self.MaximumMeanDistance = 1E-2
         self.MaximumNumberOfLandmarks = 1000
-        self.MaximumNumberOfIterations = 1000
+        self.MaximumNumberOfIterations = 100
         self.Matrix4x4 = None
 
         self.FlipNormals = 0
