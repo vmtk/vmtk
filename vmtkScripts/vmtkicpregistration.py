@@ -83,6 +83,7 @@ class vmtkICPRegistration(pypes.pypeScript):
         icpTransform.SetTarget(self.ReferenceSurface)
         icpTransform.GetLandmarkTransform().SetModeToRigidBody()
         icpTransform.StartByMatchingCentroidsOn()
+        icpTransform.CheckMeanDistanceOn()
         icpTransform.SetMaximumNumberOfLandmarks(self.MaximumNumberOfLandmarks)
         icpTransform.SetMaximumNumberOfIterations(self.MaximumNumberOfIterations)
         icpTransform.SetMaximumMeanDistance(self.MaximumMeanDistance)

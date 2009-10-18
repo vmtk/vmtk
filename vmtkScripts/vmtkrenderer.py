@@ -42,7 +42,7 @@ class vmtkRenderer(pypes.pypeScript):
         self.LineSmoothing = 1
         self.PolygonSmoothing = 0
 
-        self.ScreenshotMagnification = 4.0
+        self.ScreenshotMagnification = 4
 
         self.SetScriptName('vmtkrenderer')
         self.SetScriptDoc('renderer used to make several viewers use the same rendering window')
