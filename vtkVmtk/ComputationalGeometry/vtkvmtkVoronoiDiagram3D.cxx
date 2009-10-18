@@ -44,6 +44,12 @@ vtkvmtkVoronoiDiagram3D::vtkvmtkVoronoiDiagram3D()
 vtkvmtkVoronoiDiagram3D::~vtkvmtkVoronoiDiagram3D()
 {
   this->PoleIds->Delete();
+
+  if (this->RadiusArrayName)
+    {
+    delete[] this->RadiusArrayName;
+    this->RadiusArrayName = NULL;
+    }
 }
 
 int vtkvmtkVoronoiDiagram3D::FillInputPortInformation(int, vtkInformation *info)

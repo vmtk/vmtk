@@ -49,6 +49,11 @@ vtkvmtkInternalTetrahedraExtractor::~vtkvmtkInternalTetrahedraExtractor()
     this->CapCenterIds->Delete();
     this->CapCenterIds = NULL;
     }
+  if (this->OutwardNormalsArrayName)
+    {
+    delete [] this->OutwardNormalsArrayName;
+    this->OutwardNormalsArrayName = NULL;
+    }
 }
 
 int vtkvmtkInternalTetrahedraExtractor::RequestData(

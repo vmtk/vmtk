@@ -79,6 +79,18 @@ vtkvmtkNonManifoldFastMarching::~vtkvmtkNonManifoldFastMarching()
     this->BoundaryPolyData = NULL;
     }
 
+   if (this->SolutionArrayName)
+    {
+    delete[] this->SolutionArrayName;
+    this->SolutionArrayName = NULL;
+    }
+
+  if (this->CostFunctionArrayName)
+    {
+    delete[] this->CostFunctionArrayName;
+    this->CostFunctionArrayName = NULL;
+    }
+
   this->TScalars->Delete();
   this->StatusScalars->Delete();
   this->ConsideredMinHeap->Delete();

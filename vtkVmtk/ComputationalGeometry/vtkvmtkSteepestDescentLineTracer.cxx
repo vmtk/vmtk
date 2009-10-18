@@ -66,6 +66,31 @@ vtkvmtkSteepestDescentLineTracer::~vtkvmtkSteepestDescentLineTracer()
     this->Targets->Delete();
     this->Targets = NULL;
     }
+
+  if (this->EdgePCoordArrayName)
+    {
+    delete [] this->EdgePCoordArrayName;
+    this->EdgePCoordArrayName = NULL;
+    }
+
+  if (this->EdgeArrayName)
+    {
+    delete [] this->EdgeArrayName;
+    this->EdgeArrayName = NULL;
+    }
+
+  if (this->DescentArrayName)
+    {
+    delete[] this->DescentArrayName;
+    this->DescentArrayName = NULL;
+    }
+
+  if (this->DataArrayName)
+    {
+    delete[] this->DataArrayName;
+    this->DataArrayName = NULL;
+    }
+
 }
 
 void vtkvmtkSteepestDescentLineTracer::Backtrace(vtkPolyData* input, vtkIdType seedId)
@@ -177,6 +202,7 @@ void vtkvmtkSteepestDescentLineTracer::Backtrace(vtkPolyData* input, vtkIdType s
     if (directionFactor*steepestDescent <  VTK_VMTK_DOUBLE_TOL)
       {
       if (!this->StopOnTargets)
+      //if (!this->StopOnTargets || (previousEdge[0] == currentEdge[0] && previousEdge[1] == currentEdge[1]))
         {
         vtkWarningMacro(<<"Target not reached.");
         done = true; // these two lines were outside the if (!this->StopOnTarget), but that may lead to unnecessary failure.
