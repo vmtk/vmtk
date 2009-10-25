@@ -77,6 +77,9 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkTetGenWrapper : public vtkUnstructuredGridAlgo
   vtkSetMacro(MaxDihedral,double);
   vtkGetMacro(MaxDihedral,double);
 
+  vtkSetMacro(MinDihedral,double);
+  vtkGetMacro(MinDihedral,double);
+
   vtkSetMacro(RegionAttrib,int);
   vtkGetMacro(RegionAttrib,int);
   vtkBooleanMacro(RegionAttrib,int);
@@ -144,6 +147,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkTetGenWrapper : public vtkUnstructuredGridAlgo
   int FixedVolume;
   double MaxVolume;
   int RemoveSliver;
+  double MinDihedral;
   double MaxDihedral;
   int RegionAttrib;
   double Epsilon;

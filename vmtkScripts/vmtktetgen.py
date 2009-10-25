@@ -37,11 +37,12 @@ class vmtkTetGen(pypes.pypeScript):
         self.NoBoundarySplit = 0
         self.Quality = 1
         self.MinRatio = 1.414
+        self.MinDihedral = 10.0
+        self.MaxDihedral = 165.0
         self.VarVolume = 0
         self.FixedVolume = 0
         self.MaxVolume = 1E-1
         self.RemoveSliver = 0
-        self.MaxDihedral = 175.0
         self.RegionAttrib = 0
         self.Epsilon = 1E-8
         self.NoMerge = 0
@@ -70,11 +71,12 @@ class vmtkTetGen(pypes.pypeScript):
             ['NoBoundarySplit','noboundarysplit','int',1,'','see TetGen documentation'],
             ['Quality','quality','int',1,'','see TetGen documentation'],
             ['MinRatio','minratio','float',1,'','see TetGen documentation'],
+            ['MinDihedral','mindihedral','float',1,'','see TetGen documentation'],
+            ['MaxDihedral','maxdihedral','float',1,'','see TetGen documentation'],
             ['VarVolume','varvolume','int',1,'','see TetGen documentation'],
             ['FixedVolume','fixedvolume','int',1,'','see TetGen documentation'],
             ['MaxVolume','maxvolume','float',1,'','see TetGen documentation'],
             ['RemoveSliver','removesliver','int',1,'','see TetGen documentation'],
-            ['MaxDihedral','maxdihedral','float',1,'','see TetGen documentation'],
             ['RegionAttrib','regionattrib','int',1,'','see TetGen documentation'],
             ['Epsilon','epsilon','float',1,'','see TetGen documentation'],
             ['NoMerge','nomerge','int',1,'','see TetGen documentation'],
@@ -125,11 +127,12 @@ class vmtkTetGen(pypes.pypeScript):
         tetgen.SetNoBoundarySplit(self.NoBoundarySplit)
         tetgen.SetQuality(self.Quality)
         tetgen.SetMinRatio(self.MinRatio)
+        tetgen.SetMinDihedral(self.MinDihedral)
+        tetgen.SetMaxDihedral(self.MaxDihedral)
         tetgen.SetVarVolume(self.VarVolume)
         tetgen.SetFixedVolume(self.FixedVolume)
         tetgen.SetMaxVolume(self.MaxVolume)
         tetgen.SetRemoveSliver(self.RemoveSliver)
-        tetgen.SetMaxDihedral(self.MaxDihedral)
         tetgen.SetRegionAttrib(self.RegionAttrib)
         tetgen.SetEpsilon(self.Epsilon)
         tetgen.SetNoMerge(self.NoMerge)

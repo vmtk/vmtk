@@ -1,7 +1,7 @@
-This is TetGen version 1.4.2 (released on April 16, 2007)
+This is TetGen version 1.4.3 (released on September 6, 2009)
 
-Please see the documentation of TetGen (available at the following link) for
-compiling and using TetGen.
+Please see the documentation of TetGen for compiling and using TetGen.
+It is available at the following link:
 
             http://tetgen.berlios.de/index.html
 
@@ -13,4 +13,4 @@ Please send bugs/comments to Hang Si <si@wias-berlin.de>
 Thank you and enjoy!
 
 Hang Si
-April 16, 2007
+September 6, 2009

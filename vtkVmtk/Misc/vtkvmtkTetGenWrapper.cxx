@@ -40,15 +40,16 @@ vtkvmtkTetGenWrapper::vtkvmtkTetGenWrapper()
 {
   this->PLC = 0;                // -p switch, 0
   this->Refine = 0;             // -r switch, 0
-  this->Coarsen = 0;             // -R switch, 0
+  this->Coarsen = 0;            // -R switch, 0
   this->Quality = 0;            // -q switch, 0
   this->NoBoundarySplit = 0;    // -Y switch, 0
-  this->MinRatio = 2.0;         //    number after -q, 2.0
   this->VarVolume = 0;          // -a switch without number, 0
   this->FixedVolume = 0;        // -a switch with number, 0
   this->MaxVolume = -1.0;       //    number after -a, -1.0
   this->RemoveSliver = 0;       // -s switch, 0
-  this->MaxDihedral = 0.0;      //    number after -s, 0.0
+  this->MinRatio = 2.0;         //    number after -q, 2.0
+  this->MinDihedral = 5.0;      //    number after -qq, 5.0
+  this->MaxDihedral = 165.0;    //    number after -qqq, 165.0
   this->RegionAttrib = 0;       // -A switch, 0
   this->Epsilon = 1.0e-8;       // number after -T switch, 1.0e-8
   this->NoMerge = 0;            // -M switch, 0
@@ -56,7 +57,7 @@ vtkvmtkTetGenWrapper::vtkvmtkTetGenWrapper()
   this->CheckClosure = 0;       // -c switch, 0
   this->Order = 1;              // number after -o switch, 1 (e.g. -o2 for quadratic elements)
   this->DoCheck = 0;            // -C switch, 0
-  this->UseSizingFunction = 0;            // -C switch, 0
+  this->UseSizingFunction = 0;  // -m switch, 0
   
   this->Verbose = 0;
 
@@ -132,6 +133,12 @@ int vtkvmtkTetGenWrapper::RequestData(
     tetgenOptionString += "q";  
     sprintf(buffer,"%f",this->MinRatio);
     tetgenOptionString += buffer;
+    tetgenOptionString += "q";  
+    sprintf(buffer,"%f",this->MinDihedral);
+    tetgenOptionString += buffer;
+    tetgenOptionString += "q";  
+    sprintf(buffer,"%f",this->MaxDihedral);
+    tetgenOptionString += buffer;
     }
 
   if (this->NoBoundarySplit)
@@ -142,8 +149,6 @@ int vtkvmtkTetGenWrapper::RequestData(
   if (this->RemoveSliver)
     {
     tetgenOptionString += "s";  
-    sprintf(buffer,"%f",this->MaxDihedral);
-    tetgenOptionString += buffer;
     }
 
   if (this->Order == 2)
