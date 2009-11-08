@@ -407,7 +407,7 @@ class vmtkNonManifoldSurfaceChecker(object):
                 if (i<neighborId):
                     
                     neighborCellIds.Initialize()
-                    surface.GetCellEdgeNeighbors(-1,i,neighborId,neighborCellIds)
+                    self.Surface.GetCellEdgeNeighbors(-1,i,neighborId,neighborCellIds)
                     
                     if (neighborCellIds.GetNumberOfIds()>2):
 
@@ -434,6 +434,7 @@ class vmtkCenterlines(pypes.pypeScript):
         self.RadiusArrayName = 'MaximumInscribedSphereRadius'
         self.CostFunction = '1/R'
         self.AppendEndPoints = 0
+        self.CheckNonManifold = 0
         
         self.Resampling = 0
         self.ResamplingStepLength = 1.0
@@ -466,6 +467,7 @@ class vmtkCenterlines(pypes.pypeScript):
             ['SourcePoints','sourcepoints','float',-1,'','list of source point coordinates'],
             ['TargetPoints','targetpoints','float',-1,'','list of target point coordinates'],
             ['AppendEndPoints','endpoints','bool',1,'','toggle append open profile barycenters to centerlines'],
+            ['CheckNonManifold','nonmanifoldcheck','bool',1,'','toggle checking the surface for non-manifold edges'],
             ['FlipNormals','flipnormals','bool',1,'','flip normals after outward normal computation; outward oriented normals must be computed for the removal of outer tetrahedra; the algorithm might fail so for weird geometries, so changing this might solve the problem'],
             ['CapDisplacement','capdisplacement','float',1,'','displacement of the center points of caps at open profiles along their normals (avoids the creation of degenerate tetrahedra)'],
             ['RadiusArrayName','radiusarray','str',1,'','name of the array where radius values of maximal inscribed spheres have to be stored'],
@@ -493,14 +495,16 @@ class vmtkCenterlines(pypes.pypeScript):
         if self.Surface == None:
             self.PrintError('Error: No input surface.')
         
-        self.PrintLog('NonManifold check.')
-        nonManifoldChecker = vmtkNonManifoldSurfaceChecker()
-        nonManifoldChecker.Surface = self.Surface
-        nonManifoldChecker.PrintError = self.PrintError
+        if self.CheckNonManifold:
+            self.PrintLog('NonManifold check.')
+            nonManifoldChecker = vmtkNonManifoldSurfaceChecker()
+            nonManifoldChecker.Surface = self.Surface
+            nonManifoldChecker.PrintError = self.PrintError
+            nonManifoldChecker.Execute()
 
-        if (nonManifoldChecker.NumberOfNonManifoldEdges > 0):
-            self.PrintLog(nonManifoldChecker.Report)
-            return
+            if (nonManifoldChecker.NumberOfNonManifoldEdges > 0):
+                self.PrintLog(nonManifoldChecker.Report)
+                return
 
         self.PrintLog('Cleaning surface.')
         surfaceCleaner = vtk.vtkCleanPolyData()

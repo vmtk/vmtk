@@ -62,6 +62,8 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkActiveTubeFilter : public vtkPolyDataA
   vtkSetMacro(Convergence, double);
   vtkGetMacro(Convergence, double);
 
+  // TODO: remove, automatically selected using CFL condition
+  // Instead, set CFL coefficient
   vtkSetMacro(TimeStep, double);
   vtkGetMacro(TimeStep, double);
  

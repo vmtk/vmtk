@@ -198,8 +198,9 @@ void vtkvmtkActiveTubeFilter::EvolveCell(vtkPolyData* lines, vtkIdType cellId)
   int numberOfPcoords = 10; // this should be based on length
   int numberOfAngularPositions = 16;
   
-  // TODO: whip strategy
-  
+  // TODO: whip strategy - from start to end of spline, create displacement field simulating
+  // inertia (i.e. force on a point dependent on displacement on previous point)
+
   vtkDoubleArray* coordinatesChangeArray = vtkDoubleArray::New();
   coordinatesChangeArray->SetNumberOfComponents(3);
   coordinatesChangeArray->SetNumberOfTuples(numberOfPoints);
@@ -214,7 +215,20 @@ void vtkvmtkActiveTubeFilter::EvolveCell(vtkPolyData* lines, vtkIdType cellId)
   vtkIntArray* changeCountArray = vtkIntArray::New();
   changeCountArray->SetNumberOfTuples(numberOfPoints);
   changeCountArray->FillComponent(0,0.0);
-  
+ 
+  //TODO:
+  // Instead of looping through the subIds, 
+  // interpolate line points with spline (individually for x, y, z, r),
+  // (eventually subsample for the first iteration), 
+  // and for each spline pcoord (normalized 0.0 to 1.0), 
+  // evaluate points and derivatives, evaluate forces on characteristic circle, 
+  // compute displacement for the spline pcoord.
+  // Then create new spline points for next interpolation by applying displacements.
+
+  //TODO: 
+  // derive a new vtkParametricSpline (vtkvmtkParametricSpline4D)
+  // make it compute derivatives - numerically with three evaluates is fine
+ 
   vtkIdType pointId0, pointId1;
   double point0[3], point1[3];
   double radius0, radius1;
@@ -251,7 +265,9 @@ void vtkvmtkActiveTubeFilter::EvolveCell(vtkPolyData* lines, vtkIdType cellId)
       }
     
     double tubeNorm = sqrt(tubeNormSquared);
-  
+ 
+    // TODO: implement internal (line shortening) forces
+ 
     vtkDoubleArray* probedForces = vtkDoubleArray::New();
     probedForces->SetNumberOfComponents(3);
     probedForces->SetNumberOfTuples(numberOfAngularPositions);
@@ -260,7 +276,7 @@ void vtkvmtkActiveTubeFilter::EvolveCell(vtkPolyData* lines, vtkIdType cellId)
     tubeNormals->SetNumberOfComponents(3);
     tubeNormals->SetNumberOfTuples(numberOfAngularPositions);
   
-    int k; 
+    int k;
     for (k=0; k<numberOfPcoords; k++)
       {
       pcoord = (k+1) / (numberOfPcoords+1);
@@ -379,7 +395,9 @@ void vtkvmtkActiveTubeFilter::EvolveCell(vtkPolyData* lines, vtkIdType cellId)
       radiusChangeArray->SetValue(j,radiusChange);
       }
     }
-  
+ 
+  //TODO: implement time step selection using CFL condition
+ 
   vtkIdType pointId;
   double point[3], radius;
   for (j=0; j<numberOfPoints; j++)
