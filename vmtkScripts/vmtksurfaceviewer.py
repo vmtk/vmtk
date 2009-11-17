@@ -62,7 +62,8 @@ class vmtkSurfaceViewer(pypes.pypeScript):
             ['LineWidth','linewidth','int',1,'(0.0,)','width of line objects in the scene'],
             ['LegendTitle','legendtitle','str',1,'','title of the scalar bar']])
         self.SetOutputMembers([
-            ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter']
+            ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter'],
+            ['Actor','oactor','vtkActor',1,'','the output actor']
             ])
 
     def BuildView(self):

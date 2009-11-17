@@ -61,6 +61,7 @@ class vmtkSurfaceWriter(pypes.pypeScript):
         writer = vtk.vtkXMLPolyDataWriter()
         writer.SetInput(self.Surface)
         writer.SetFileName(self.OutputFileName)
+        #writer.SetDataModeToAscii()
         writer.Write()
 
     def WriteSTLSurfaceFile(self):
