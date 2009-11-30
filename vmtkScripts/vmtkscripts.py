@@ -73,6 +73,7 @@ __all__ = [
   'vmtkrenderer',
   'vmtkrendertoimage',
   'vmtkrbfinterpolation',
+  'vmtksurfaceappend',
   'vmtksurfacecapper',
   'vmtksurfacecelldatatopointdata',
   'vmtksurfacecenterlineprojection',

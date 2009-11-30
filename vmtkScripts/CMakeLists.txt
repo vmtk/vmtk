@@ -76,6 +76,7 @@ SET(SCRIPTS_SRCS
   vmtkrenderer.py
   vmtkrendertoimage.py
   vmtkrbfinterpolation.py
+  vmtksurfaceappend.py
   vmtksurfacecapper.py
   vmtksurfacecelldatatopointdata.py
   vmtksurfacecenterlineprojection.py
