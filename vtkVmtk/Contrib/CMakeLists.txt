@@ -65,7 +65,7 @@ ENDIF (VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
 
 IF (VTK_WRAP_TCL AND VTK_VMTK_WRAP_TCL)
   SET(VTK_WRAP_HINTS ${VTK_VMTK_SOURCE_DIR}/Wrapping/Tcl/hints)
-  VTK_WRAP_TCL3(vtkvmtkContribTCL VTK_VMTK_MISC_TCL_SRCS "${VTK_VMTK_CONTRIB_SRCS}" "")
+  VTK_WRAP_TCL3(vtkvmtkContribTCL VTK_VMTK_CONTRIB_TCL_SRCS "${VTK_VMTK_CONTRIB_SRCS}" "")
   ADD_LIBRARY(vtkvmtkContribTCL ${VTK_VMTK_CONTRIB_TCL_SRCS})
   TARGET_LINK_LIBRARIES(vtkvmtkContribTCL vtkvmtkContrib vtkvmtkMiscTCL vtkvmtkMisc vtkCommon vtkCommonTCL vtkFiltering vtkFilteringTCL vtkGraphics vtkGraphicsTCL)
   INSTALL(TARGETS vtkvmtkContribTCL
