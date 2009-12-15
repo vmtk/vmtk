@@ -54,7 +54,12 @@ class vmtkDijkstraDistanceToPoints(pypes.pypeScript):
         self.Opacity = 1.
         self.PointActor = None
         self.ScalarBarActor = None
-        
+	self.InteractionMode = 0
+	self.ExamineSurface = None
+        self.ExamineSpheres = vtk.vtkPolyData()
+	self.ExamineSpheresActor = None
+	self.ExamineText = None
+	
         self.SetScriptName('vmtkdijkstradistancetopoints')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
@@ -98,10 +103,18 @@ class vmtkDijkstraDistanceToPoints(pypes.pypeScript):
       
     
     def InitializeSeeds(self):
-        self.SeedIds.Initialize()
-        self.SeedPoints.Initialize()
-        seedPoints = vtk.vtkPoints()
-        self.SeedPoints.SetPoints(seedPoints)
+        if (self.InteractionMode==0):
+	    self.SeedIds.Initialize()
+	    self.SeedPoints.Initialize()
+	    seedPoints = vtk.vtkPoints()
+	    self.SeedPoints.SetPoints(seedPoints)
+	else:
+	    self.ExamineSpheres.Initialize()
+	    spherePoints = vtk.vtkPoints()
+	    self.ExamineSpheres.SetPoints(spherePoints)
+	    self.ExamineSpheres.GetPointData().Initialize()
+	    sphereRadii = vtk.vtkDoubleArray()
+	    self.ExamineSpheres.GetPointData().SetScalars(sphereRadii)
         
     
     
@@ -130,10 +143,20 @@ class vmtkDijkstraDistanceToPoints(pypes.pypeScript):
                     pickedSeedId = pickedCellPointIds.GetId(i)
             if pickedSeedId == -1:
                 pickedSeedId = pickedCellPointIds.GetId(0)
-            self.SeedIds.InsertNextId(pickedSeedId)
-            point = self.Surface.GetPoint(pickedSeedId)
-            self.SeedPoints.GetPoints().InsertNextPoint(point)
-            self.SeedPoints.Modified()
+            if (self.InteractionMode==0):
+		self.SeedIds.InsertNextId(pickedSeedId)
+		point = self.Surface.GetPoint(pickedSeedId)
+		self.SeedPoints.GetPoints().InsertNextPoint(point)
+		self.SeedPoints.Modified()
+	    else:
+		point = self.Surface.GetPoint(pickedSeedId)
+		self.ExamineSpheres.GetPoints().InsertNextPoint(point)
+		length = 0.
+		array = self.ExamineSurface.GetPointData().GetArray(self.DijkstraDistanceToPointsArrayName)
+		if (array):
+		    length = array.GetComponent(pickedSeedId,0)
+		self.ExamineSpheres.GetPointData().GetScalars().InsertNextValue(length)
+		self.ExamineSpheres.Modified()
             self.vmtkRenderer.RenderWindow.Render()
         elif key == 'd':
             self.DisplayArray = not self.DisplayArray
@@ -162,6 +185,22 @@ class vmtkDijkstraDistanceToPoints(pypes.pypeScript):
                 self.MinDistance = float(splitInputString[2])
             if len(splitInputString) >= 4:
                 self.MaxDistance = float(splitInputString[3])
+	elif key == 'x':
+	    #Switch beetween examien and interact mode
+	    if self.InteractionMode == 0:
+		self.InteractionMode = 1
+		self.ExamineSurface = self.ComputeDistances()
+		self.PointActor.VisibilityOff()
+		self.ExamineSpheresActor.VisibilityOn()
+		self.ExamineText.VisibilityOn()
+		self.InitializeSeeds()
+	    else:
+		self.InteractionMode = 0
+		#Compute the distances
+		self.PointActor.VisibilityOn()
+		self.ExamineSpheresActor.VisibilityOff()
+		self.ExamineText.VisibilityOff()
+	    self.vmtkRenderer.RenderWindow.Render()
 
     
         
@@ -193,6 +232,24 @@ class vmtkDijkstraDistanceToPoints(pypes.pypeScript):
         self.PointActor.PickableOff()
         self.vmtkRenderer.Renderer.AddActor(self.PointActor)
         
+	examineGlyphs = vtk.vtkGlyph3D()
+        examineGlyphSource = vtk.vtkSphereSource()
+        examineGlyphSource.SetRadius(1)
+        examineGlyphs.SetInput(self.ExamineSpheres)
+        examineGlyphs.SetSource(examineGlyphSource.GetOutput())
+        examineGlyphs.SetScaleModeToScaleByScalar()
+        examineGlyphs.SetScaleFactor(1.)
+        examineGlyphMapper = vtk.vtkPolyDataMapper()
+        examineGlyphMapper.SetInput(examineGlyphs.GetOutput())
+        examineGlyphMapper.ScalarVisibilityOff()
+        self.ExamineSpheresActor = vtk.vtkActor()
+        self.ExamineSpheresActor.SetMapper(examineGlyphMapper)
+        self.ExamineSpheresActor.GetProperty().SetColor(0.0,1.0,0.0)
+        self.ExamineSpheresActor.GetProperty().SetOpacity(self.Opacity)
+        self.ExamineSpheresActor.PickableOff()
+	self.ExamineSpheresActor.VisibilityOff()
+        self.vmtkRenderer.Renderer.AddActor(self.ExamineSpheresActor)
+	
         self.vmtkRenderer.RenderWindowInteractor.AddObserver("KeyPressEvent", self.KeyPressed)
         
         self.SurfaceMapper = vtk.vtkPolyDataMapper()
@@ -213,6 +270,12 @@ class vmtkDijkstraDistanceToPoints(pypes.pypeScript):
         self.ScalarBarActor.VisibilityOff()
         self.vmtkRenderer.Renderer.AddActor(self.ScalarBarActor)
         
+	self.ExamineText = vtk.vtkTextActor()
+	self.ExamineText.SetInput("Examine Mode")
+	self.ExamineText.GetPositionCoordinate().SetCoordinateSystemToNormalizedViewport()
+	self.ExamineText.SetPosition(0.05,0.95)
+	self.ExamineText.VisibilityOff()
+	self.vmtkRenderer.Renderer.AddActor2D(self.ExamineText)
         
         self.OutputText('Please position the mouse and press space to add points, \'u\' to undo\n')
         
