@@ -6,6 +6,9 @@ SET (VTK_VMTK_CONTRIB_SRCS
   vtkvmtkPolyBallLine2.cxx
   vtkvmtkPolyDataDijkstraDistanceToPoints.cxx
   vtkvmtkPolyDataDistanceToSpheres.cxx
+  vtkvmtkPolyDataGeodesicRBFInterpolation.cxx
+  vtkvmtkPolyDataSampleFunction.cxx
+  vtkvmtkRBFInterpolation2.cxx
   vtkvmtkSurfaceProjectCellArray.cxx
   )
 

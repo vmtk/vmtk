@@ -2,11 +2,13 @@ __all__ = [
     'vmtkboundarylayer2',
     'vmtkdijkstradistancetopoints',
     'vmtkdistancetospheres',
+    'vmtkgeodesicsurfaceresolution',
     'vmtkmeshaddexternallayer',
     'vmtkmeshclipcenterlines',
     'vmtkmeshtetrahedralize2',
     'vmtkmeshviewer2',
     'vmtkmeshwriter2',
+    'vmtksurfaceresolution',
     'vmtksurfacewriter2'
   ]
 

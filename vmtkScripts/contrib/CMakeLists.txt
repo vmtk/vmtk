@@ -4,11 +4,13 @@ SET(CONTRIB_SCRIPTS_SRCS
     vmtkboundarylayer2.py
     vmtkdijkstradistancetopoints.py
     vmtkdistancetospheres.py
+    vmtkgeodesicsurfaceresolution.py
     vmtkmeshaddexternallayer.py
     vmtkmeshclipcenterlines.py
     vmtkmeshtetrahedralize2.py
     vmtkmeshviewer2.py
     vmtkmeshwriter2.py
+    vmtksurfaceresolution.py
     vmtksurfacewriter2.py
   )
   
