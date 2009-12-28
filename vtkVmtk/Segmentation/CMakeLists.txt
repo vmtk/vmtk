@@ -1,10 +1,11 @@
 SET (VTK_VMTK_SEGMENTATION_SRCS
   vtkvmtkActiveTubeFilter.cxx
   vtkvmtkBoundedReciprocalImageFilter.cxx
-  vtkvmtkDanielssonDistanceMapImageFilter.cxx
+  vtkvmtkCardinalSpline.cxx
   vtkvmtkCollidingFrontsImageFilter.cxx
 #  vtkvmtkConstrainedLaplacianPolyDataFilter.cxx
   vtkvmtkCurvesLevelSetImageFilter.cxx
+  vtkvmtkDanielssonDistanceMapImageFilter.cxx
   vtkvmtkFastMarchingDirectionalFreezeImageFilter.cxx
   vtkvmtkFastMarchingUpwindGradientImageFilter.cxx
   vtkvmtkFWHMFeatureImageFilter.cxx

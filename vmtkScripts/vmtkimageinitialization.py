@@ -215,6 +215,7 @@ class vmtkImageInitialization(pypes.pypeScript):
         shiftScale.SetInput(thresholdedImage)
         shiftScale.SetShift(-scalarRange[0])
         shiftScale.SetScale(1/(scalarRange[1]-scalarRange[0]))
+        shiftScale.SetOutputScalarTypeToFloat()
         shiftScale.Update()
         
         speedImage = shiftScale.GetOutput()
@@ -288,6 +289,7 @@ class vmtkImageInitialization(pypes.pypeScript):
         shiftScale.SetInput(thresholdedImage)
         shiftScale.SetShift(-scalarRange[0])
         shiftScale.SetScale(1/(scalarRange[1]-scalarRange[0]))
+        shiftScale.SetOutputScalarTypeToFloat()
         shiftScale.Update()
         
         speedImage = shiftScale.GetOutput()

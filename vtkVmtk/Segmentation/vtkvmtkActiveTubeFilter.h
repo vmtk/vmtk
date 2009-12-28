@@ -50,33 +50,38 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkActiveTubeFilter : public vtkPolyDataA
   vtkSetStringMacro(RadiusArrayName);
   vtkGetStringMacro(RadiusArrayName);
 
-  vtkSetMacro(NumberOfIterations, int);
-  vtkGetMacro(NumberOfIterations, int);
+  vtkSetMacro(NumberOfIterations,int);
+  vtkGetMacro(NumberOfIterations,int);
 
-  vtkSetMacro(PotentialWeight, double);
-  vtkGetMacro(PotentialWeight, double);
+  vtkSetMacro(PotentialWeight,double);
+  vtkGetMacro(PotentialWeight,double);
 
-  vtkSetMacro(StiffnessWeight, double);
-  vtkGetMacro(StiffnessWeight, double);
+  vtkSetMacro(StiffnessWeight,double);
+  vtkGetMacro(StiffnessWeight,double);
 
-  vtkSetMacro(Convergence, double);
-  vtkGetMacro(Convergence, double);
+  vtkSetMacro(Convergence,double);
+  vtkGetMacro(Convergence,double);
 
-  // TODO: remove, automatically selected using CFL condition
-  // Instead, set CFL coefficient
-  vtkSetMacro(TimeStep, double);
-  vtkGetMacro(TimeStep, double);
+  vtkSetMacro(CFLCoefficient,double);
+  vtkGetMacro(CFLCoefficient,double);
  
-  vtkSetMacro(MinimumRadius, double);
-  vtkGetMacro(MinimumRadius, double);
+  vtkSetMacro(MinimumRadius,double);
+  vtkGetMacro(MinimumRadius,double);
  
-  vtkSetMacro(FixedEndpointCoordinates, int);
-  vtkGetMacro(FixedEndpointCoordinates, int);
-  vtkBooleanMacro(FixedEndpointCoordinates, int);
+  vtkSetMacro(FixedEndpointCoordinates,int);
+  vtkGetMacro(FixedEndpointCoordinates,int);
+  vtkBooleanMacro(FixedEndpointCoordinates,int);
  
-  vtkSetMacro(FixedEndpointRadius, int);
-  vtkGetMacro(FixedEndpointRadius, int);
-  vtkBooleanMacro(FixedEndpointRadius, int);
+  vtkSetMacro(FixedEndpointRadius,int);
+  vtkGetMacro(FixedEndpointRadius,int);
+  vtkBooleanMacro(FixedEndpointRadius,int);
+ 
+  vtkSetMacro(NumberOfAngularEvaluations,int);
+  vtkGetMacro(NumberOfAngularEvaluations,int);
+ 
+  vtkSetMacro(CardinalSplineInterpolation,int);
+  vtkGetMacro(CardinalSplineInterpolation,int);
+  vtkBooleanMacro(CardinalSplineInterpolation,int);
   
   protected:
   vtkvmtkActiveTubeFilter();
@@ -99,14 +104,17 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkActiveTubeFilter : public vtkPolyDataA
 
   void EvolveCell(vtkPolyData* lines, vtkIdType cellId);
 
+  void EvolveCellSpline(vtkPolyData* lines, vtkIdType cellId);
+
   char* RadiusArrayName;
 
   vtkImageData *PotentialImage;
   vtkImageData *PotentialGradientImage;
 
   int NumberOfIterations;
+  int NumberOfAngularEvaluations;
 
-  double TimeStep;
+  double CFLCoefficient;
   double Convergence;
 
   double PotentialWeight;
@@ -119,7 +127,9 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkActiveTubeFilter : public vtkPolyDataA
   int FixedEndpointCoordinates;
   int FixedEndpointRadius;
 
-  private:
+  int CardinalSplineInterpolation;
+
+private:
   vtkvmtkActiveTubeFilter(const vtkvmtkActiveTubeFilter&);  // Not implemented.
   void operator=(const vtkvmtkActiveTubeFilter&);  // Not implemented.
 };

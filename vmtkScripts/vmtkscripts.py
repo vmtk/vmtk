@@ -1,4 +1,5 @@
 __all__ = [
+  'vmtkactivetubes',
   'vmtkbifurcationprofiles',
   'vmtkbifurcationreferencesystems',
   'vmtkbifurcationsections',

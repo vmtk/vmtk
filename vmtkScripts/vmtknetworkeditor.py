@@ -22,7 +22,7 @@ from vmtk import vmtkrenderer
 from vmtk import vmtkimageviewer
 from vmtk import pypes
 
-#import vmtkactivetubes
+from vmtk import vmtkactivetubes
 
 vmtknetworkeditor = 'vmtkNetworkEditor'
 
@@ -39,8 +39,9 @@ class vmtkNetworkEditor(pypes.pypeScript):
         self.SplineInterpolation = 1
 
         self.UseActiveTubes = 0
-
-        self.TimeStep = 1.0
+        self.NumberOfIterations = 100
+        self.PotentialWeight = 1.0
+        self.StiffnessWeight = 1.0
 
         self.NetworkTube = None
 
@@ -96,7 +97,9 @@ class vmtkNetworkEditor(pypes.pypeScript):
             ['LabelsArrayName','labelsarray','str',1,''],
             ['SplineInterpolation','spline','bool',1,''],
             ['UseActiveTubes','activetubes','bool',1,''],
-            ['TimeStep','timestep','float',1,''],
+            ['NumberOfIterations','iterations','int',1,'(0,)'],
+            ['PotentialWeight','potentialweight','float',1,'(0.0,)'],
+            ['StiffnessWeight','stiffnessweight','float',1,'(0.0,)'],
             ['PlaneWidgetX','xplane','vtkImagePlaneWidget',1,'','the X image plane widget'],
             ['PlaneWidgetY','yplane','vtkImagePlaneWidget',1,'','the Y image plane widget'],
             ['PlaneWidgetZ','zplane','vtkImagePlaneWidget',1,'','the Z image plane widget'],
@@ -571,27 +574,26 @@ class vmtkNetworkEditor(pypes.pypeScript):
         self.vmtkRenderer.RenderWindow.Render()
 
     def RunActiveTube(self,segment):
-        #gradientMagnitude = vtk.vtkImageGradientMagnitude()
-        #gradientMagnitude.SetInput(self.Image)
-        #gradientMagnitude.SetDimensionality(3)
-        #gradientMagnitude.Update()
+        #TODO: use vmtkimagefeatures so that we can revert to negating force in vtkvmtkActiveTubeFilter
+        gradientMagnitude = vtk.vtkImageGradientMagnitude()
+        gradientMagnitude.SetInput(self.Image)
+        gradientMagnitude.SetDimensionality(3)
+        gradientMagnitude.Update()
 
         #gradientMagnitude = vtkvmtk.vtkvmtkUpwindGradientMagnitudeImageFilter()
         #gradientMagnitude.SetInput(self.Image)
         #gradientMagnitude.SetUpwindFactor(1.0)
         #gradientMagnitude.Update()
 
-        #activeTubes = vmtkactivetubes.vmtkActiveTubes()
-        #activeTubes.Centerline = segment
-        ##activeTubes.Image = self.Image
-        #activeTubes.Image = gradientMagnitude.GetOutput()
-        #activeTubes.NumberOfIterations = 100
-        #activeTubes.TimeStep = self.TimeStep
-        #activeTubes.RadiusArrayName = self.RadiusArrayName
-        #activeTubes.Execute()
-        #segment.DeepCopy(activeTubes.Centerline)
-
-        pass
+        activeTubes = vmtkactivetubes.vmtkActiveTubes()
+        activeTubes.Centerline = segment
+        activeTubes.Image = gradientMagnitude.GetOutput()
+        activeTubes.NumberOfIterations = self.NumberOfIterations
+        activeTubes.PotentialWeight = self.PotentialWeight
+        activeTubes.StiffnessWeight = self.StiffnessWeight
+        activeTubes.RadiusArrayName = self.RadiusArrayName
+        activeTubes.Execute()
+        segment.DeepCopy(activeTubes.Centerline)
 
     def Execute(self):
  
@@ -646,7 +648,7 @@ class vmtkNetworkEditor(pypes.pypeScript):
         self.NetworkTube = vtk.vtkTubeFilter()
         self.NetworkTube.SetInput(self.Network)
         self.NetworkTube.SetVaryRadiusToVaryRadiusByAbsoluteScalar()
-        self.NetworkTube.SetNumberOfSides(8)
+        self.NetworkTube.SetNumberOfSides(20)
         networkTubeMapper = vtk.vtkPolyDataMapper()
         networkTubeMapper.SetInput(self.NetworkTube.GetOutput())
         networkTubeMapper.ScalarVisibilityOff()
@@ -778,7 +780,7 @@ class vmtkNetworkEditor(pypes.pypeScript):
         
         self.LabelsActor = vtk.vtkActor2D()
         self.LabelsActor.SetMapper(labeledMapper)
-        self.LabelsActor.VisibilityOn()
+        self.LabelsActor.VisibilityOff()
         self.vmtkRenderer.Renderer.AddActor(self.LabelsActor)
 
         self.CellPicker = vtk.vtkCellPicker()
