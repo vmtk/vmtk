@@ -33,7 +33,7 @@ Version:   $Revision: 1.2 $
 
 #include "vtkCardinalSpline.h"
 
-class VTK_SEGMENTATION_EXPORT vtkvmtkCardinalSpline : public vtkCardinalSpline
+class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkCardinalSpline : public vtkCardinalSpline
 {
 public:
   static vtkvmtkCardinalSpline *New();
