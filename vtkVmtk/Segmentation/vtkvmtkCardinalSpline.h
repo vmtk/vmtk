@@ -32,6 +32,7 @@ Version:   $Revision: 1.2 $
 #define __vtkvmtkCardinalSpline_h
 
 #include "vtkCardinalSpline.h"
+#include "vtkvmtkWin32Header.h"
 
 class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkCardinalSpline : public vtkCardinalSpline
 {
