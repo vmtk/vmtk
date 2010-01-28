@@ -32,6 +32,8 @@
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 #include "vtkIOStream.h"
+#include "vtkFloatArray.h"
+#include "vtkDoubleArray.h"
 
 #include <vtkstd/vector>
 
