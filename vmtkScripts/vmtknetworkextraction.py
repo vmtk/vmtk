@@ -47,8 +47,8 @@ class vmtkNetworkExtraction(pypes.pypeScript):
             ['MarksArrayName','marksarray','str',1]
             ])
         self.SetOutputMembers([
-            ['Network','o','vtkPolyData',1,'','the output network','vmtksurfacewriter'],
-            ['GraphLayout','ograph','vtkPolyData',1,'','the output graph layout','vmtksurfacewriter']
+            ['Network','o','vtkPolyData',1,'','the output network','vmtknetworkwriter'],
+            ['GraphLayout','ograph','vtkPolyData',1,'','the output graph layout','vmtknetworkwriter']
             ])
 
     def PrintProgress(self,obj,event):

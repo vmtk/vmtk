@@ -18,12 +18,13 @@
 import vtk
 import sys
 
-from vmtk import vtkvmtk
-from vmtk import vmtkrenderer
-from vmtk import vmtkimageviewer
-from vmtk import pypes
+import vtkvmtk
+import vmtkrenderer
+import vmtkimageviewer
+import vmtkimagefeatures
+import pypes
 
-from vmtk import vmtkactivetubes
+import vmtkactivetubes
 
 vmtknetworkeditor = 'vmtkNetworkEditor'
 
@@ -42,7 +43,7 @@ class vmtkNetworkEditor(pypes.pypeScript):
         self.UseActiveTubes = 0
         self.NumberOfIterations = 100
         self.PotentialWeight = 1.0
-        self.StiffnessWeight = 1.0
+        self.StiffnessWeight = 0.0
 
         self.NetworkTube = None
 
@@ -74,6 +75,7 @@ class vmtkNetworkEditor(pypes.pypeScript):
         self.PlaneWidgetZ = None
 
         self.Image = None
+        self.FeatureImage = None
 
         self.CurrentRadius = 0.0
 
@@ -105,9 +107,11 @@ class vmtkNetworkEditor(pypes.pypeScript):
             ['PlaneWidgetY','yplane','vtkImagePlaneWidget',1,'','the Y image plane widget'],
             ['PlaneWidgetZ','zplane','vtkImagePlaneWidget',1,'','the Z image plane widget'],
             ['Image','image','vtkImageData',1,'','','vmtkimagereader'],
+            ['FeatureImage','featureimage','vtkImageData',1,'','','vmtkimagereader'],
             ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer']])
         self.SetOutputMembers([
-            ['Network','o','vtkPolyData',1,'','the output network','vmtksurfacewriter']])
+            ['Network','o','vtkPolyData',1,'','the output network','vmtknetworkwriter'],
+            ['Surface','osurface','vtkPolyData',1,'','the output surface','vmtksurfacewriter']])
 
     def TogglePickMode(self):
         if self.PickMode == 'image':
@@ -523,6 +527,11 @@ class vmtkNetworkEditor(pypes.pypeScript):
             pointId = cell.GetPointIds().GetId(subId)
         else:
             pointId = cell.GetPointIds().GetId(subId+1)
+        if self.vmtkRenderer.RenderWindowInteractor.GetShiftKey() == 1:
+            if subId < cell.GetNumberOfPoints()/2:
+                pointId = cell.GetPointIds().GetId(0)
+            else:
+                pointId = cell.GetPointIds().GetId(cell.GetNumberOfPoints()-1)
         point = self.Network.GetPoint(pointId)
         radius = self.NetworkRadiusArray.GetValue(pointId)
         if radius == 0.0:
@@ -567,28 +576,15 @@ class vmtkNetworkEditor(pypes.pypeScript):
         self.Render()
 
     def FirstRender(self):
-        #self.NetworkActor.GetMapper().SetScalarRange(self.NetworkActor.GetMapper().GetInput().GetCellData().GetScalars().GetRange(0))
         self.vmtkRenderer.Render()
 
     def Render(self):
-        #self.NetworkActor.GetMapper().SetScalarRange(self.NetworkActor.GetMapper().GetInput().GetCellData().GetScalars().GetRange(0))
         self.vmtkRenderer.RenderWindow.Render()
 
     def RunActiveTube(self,segment):
-        #TODO: use vmtkimagefeatures so that we can revert to negating force in vtkvmtkActiveTubeFilter
-        gradientMagnitude = vtk.vtkImageGradientMagnitude()
-        gradientMagnitude.SetInput(self.Image)
-        gradientMagnitude.SetDimensionality(3)
-        gradientMagnitude.Update()
-
-        #gradientMagnitude = vtkvmtk.vtkvmtkUpwindGradientMagnitudeImageFilter()
-        #gradientMagnitude.SetInput(self.Image)
-        #gradientMagnitude.SetUpwindFactor(1.0)
-        #gradientMagnitude.Update()
-
         activeTubes = vmtkactivetubes.vmtkActiveTubes()
         activeTubes.Centerline = segment
-        activeTubes.Image = gradientMagnitude.GetOutput()
+        activeTubes.Image = self.FeatureImage
         activeTubes.NumberOfIterations = self.NumberOfIterations
         activeTubes.PotentialWeight = self.PotentialWeight
         activeTubes.StiffnessWeight = self.StiffnessWeight
@@ -626,20 +622,21 @@ class vmtkNetworkEditor(pypes.pypeScript):
         if self.Image:
             spacing = self.Image.GetSpacing()
             self.CurrentRadius = min(spacing)
+
+        if self.UseActiveTubes and not self.FeatureImage:
+            imageFeatures = vmtkimagefeatures.vmtkImageFeatures()
+            imageFeatures.Image = self.Image
+            imageFeatures.FeatureImageType = 'vtkgradient'
+            imageFeatures.DerivativeSigma = 0.0
+            imageFeatures.Execute()
+            self.FeatureImage = imageFeatures.FeatureImage
  
         self.NetworkRadiusArray = self.Network.GetPointData().GetArray(self.RadiusArrayName)
 
         self.Network.GetPointData().SetActiveScalars(self.RadiusArrayName)
 
-        #idFilter = vtk.vtkIdFilter()
-        #idFilter.SetInput(self.Network)
-        #idFilter.PointIdsOff()
-        #idFilter.CellIdsOn()
-        #idFilter.Update()
-
         networkMapper = vtk.vtkPolyDataMapper()
         networkMapper.SetInput(self.Network)
-        #networkMapper.SetInput(idFilter.GetOutput())
         networkMapper.SetScalarModeToUseCellData()
 
         self.NetworkActor = vtk.vtkActor()
@@ -808,6 +805,8 @@ class vmtkNetworkEditor(pypes.pypeScript):
         self.PickMode = 'image'
 
         self.FirstRender()
+
+        self.Surface = self.NetworkTube.GetOutput()
 
         if self.OwnRenderer:
             self.vmtkRenderer.Deallocate()

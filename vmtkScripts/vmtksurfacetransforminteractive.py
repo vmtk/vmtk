@@ -21,8 +21,8 @@
 import vtk
 import sys
 
-from vmtk import vmtkrenderer
-from vmtk import pypes
+import vmtkrenderer
+import pypes
 
 vmtksurfacetransforminteractive = 'vmtkSurfaceTransformInteractive'
 

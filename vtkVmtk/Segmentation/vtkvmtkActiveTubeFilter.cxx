@@ -139,9 +139,9 @@ void vtkvmtkActiveTubeFilter::EvaluateForce(double point[3], double force[3], bo
     force[2] /= this->PotentialMaxNorm;
   }
 
-  //force[0] *= -1.0;
-  //force[1] *= -1.0;
-  //force[2] *= -1.0;
+  force[0] *= -1.0;
+  force[1] *= -1.0;
+  force[2] *= -1.0;
 }
 
 double vtkvmtkActiveTubeFilter::EvaluatePotential(double point[3])

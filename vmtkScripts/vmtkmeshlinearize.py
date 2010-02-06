@@ -19,7 +19,7 @@ import sys
 
 import pypes
 
-from vmtk import vtkvmtk
+import vtkvmtk
 
 vmtkmeshlinearize = 'vmtkMeshLinearize'
 
