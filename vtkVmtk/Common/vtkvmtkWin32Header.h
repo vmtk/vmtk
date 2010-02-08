@@ -99,7 +99,7 @@
 #endif
 
 #if defined(WIN32) && defined(VTK_VMTK_BUILD_SHARED_LIBS)
- #define VTK_EXPORT __declspec( dllexport )
+// #define VTK_EXPORT __declspec( dllexport )
 
  #if defined(vtkvmtkCommon_EXPORTS)
   #define VTK_VMTK_COMMON_EXPORT __declspec( dllexport ) 
@@ -162,9 +162,9 @@
 
 // this is exclusively for the tcl Init functions
 #if defined(WIN32)
- #define VTK_TK_EXPORT __declspec( dllexport )
+// #define VTK_TK_EXPORT __declspec( dllexport )
 #else
- #define VTK_TK_EXPORT
+// #define VTK_TK_EXPORT
 #endif
 
 #endif
