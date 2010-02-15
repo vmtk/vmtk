@@ -65,6 +65,8 @@ vtkvmtkActiveTubeFilter::vtkvmtkActiveTubeFilter()
   this->FixedEndpointRadius = 0;
 
   this->CardinalSplineInterpolation = 1;
+
+  this->NegativeNormWarnings = 0;
 }
 
 vtkvmtkActiveTubeFilter::~vtkvmtkActiveTubeFilter()
@@ -287,7 +289,10 @@ void vtkvmtkActiveTubeFilter::EvolveCell(vtkPolyData* lines, vtkIdType cellId)
     //if (tubeNormSquared < 0.0)
     if (tubeNormSquared <= 0.0)
       {
-      vtkWarningMacro("Negative tubeNormSquared. Skipping.");
+      if (this->NegativeNormWarnings)
+        {
+        vtkWarningMacro("Negative tubeNormSquared. Skipping.");
+        }
       continue;
       }
     
@@ -563,7 +568,10 @@ void vtkvmtkActiveTubeFilter::EvolveCellSpline(vtkPolyData* lines, vtkIdType cel
     //if (tubeNormSquared < 0.0)
     if (tubeNormSquared <= 0.0)
       {
-      vtkWarningMacro("Negative tubeNormSquared. Skipping.");
+      if (this->NegativeNormWarnings)
+        {
+        vtkWarningMacro("Negative tubeNormSquared. Skipping.");
+        }
       continue;
       }
     

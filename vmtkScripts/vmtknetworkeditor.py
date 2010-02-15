@@ -627,7 +627,6 @@ class vmtkNetworkEditor(pypes.pypeScript):
             imageFeatures = vmtkimagefeatures.vmtkImageFeatures()
             imageFeatures.Image = self.Image
             imageFeatures.FeatureImageType = 'vtkgradient'
-            imageFeatures.DerivativeSigma = 0.0
             imageFeatures.Execute()
             self.FeatureImage = imageFeatures.FeatureImage
  

@@ -42,6 +42,7 @@ class vmtkActiveTubes(pypes.pypeScript):
         self.CFLCoefficient = 0.1
         self.MinimumRadius = 0.0
         self.NumberOfAngularEvaluations = 16
+        self.NegativeNormWarnings = False
 
         self.SetScriptName('vmtkactivetubes')
         self.SetScriptDoc('')
@@ -55,6 +56,7 @@ class vmtkActiveTubes(pypes.pypeScript):
             ['Convergence','convergence','float',1,'(0.0,)'],
             ['CFLCoefficient','cfl','float',1,'(0.0,)'],
             ['MinimumRadius','minradius','float',1,'(0.0,)'],
+            ['NegativeNormWarnings','warnings','bool',1,''],
             ['NumberOfAngularEvaluations','angularevaluations','int',1,'(0,)']]
             )
         self.SetOutputMembers([
@@ -77,6 +79,7 @@ class vmtkActiveTubes(pypes.pypeScript):
         activeTubes.SetCFLCoefficient(self.CFLCoefficient)
         activeTubes.SetMinimumRadius(self.MinimumRadius)
         activeTubes.SetNumberOfAngularEvaluations(self.NumberOfAngularEvaluations)
+        activeTubes.SetNegativeNormWarnings(self.NegativeNormWarnings)
         activeTubes.Update()
 
         self.Centerline = activeTubes.GetOutput()
