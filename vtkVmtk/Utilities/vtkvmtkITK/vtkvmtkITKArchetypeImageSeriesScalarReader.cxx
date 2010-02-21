@@ -6,8 +6,8 @@
   or http://www.slicer.org/copyright/copyright.txt for details.
 
   Program:   vtkvmtkITK
-  Module:    $HeadURL: http://www.na-mic.org/svn/Slicer3/trunk/Libs/vtkvmtkITK/vtkvmtkITKArchetypeImageSeriesScalarReader.cxx $
-  Date:      $Date: 2007-01-19 13:21:56 -0500 (Fri, 19 Jan 2007) $
+  Module:    $HeadURL: http://svn.slicer.org/Slicer3/trunk/Libs/vtkvmtkITK/vtkvmtkITKArchetypeImageSeriesScalarReader.cxx $
+  Date:      $Date: 2007-01-19 19:21:56 +0100 (Fri, 19 Jan 2007) $
   Version:   $Revision: 2267 $
 
 ==========================================================================*/

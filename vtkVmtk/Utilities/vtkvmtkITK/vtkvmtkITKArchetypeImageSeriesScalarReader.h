@@ -6,9 +6,9 @@
   or http://www.slicer.org/copyright/copyright.txt for details.
 
   Program:   vtkvmtkITK
-  Module:    $HeadURL: http://www.na-mic.org/svn/Slicer3/trunk/Libs/vtkvmtkITK/vtkvmtkITKArchetypeImageSeriesScalarReader.h $
-  Date:      $Date: 2007-01-19 13:21:56 -0500 (Fri, 19 Jan 2007) $
-  Version:   $Revision: 2267 $
+  Module:    $HeadURL: http://svn.slicer.org/Slicer3/trunk/Libs/vtkvmtkITK/vtkvmtkITKArchetypeImageSeriesScalarReader.h $
+  Date:      $Date: 2010-01-22 20:45:00 +0100 (Fri, 22 Jan 2010) $
+  Version:   $Revision: 11747 $
 
 ==========================================================================*/
 
@@ -34,7 +34,7 @@ class VTK_VMTK_ITK_EXPORT vtkvmtkITKArchetypeImageSeriesScalarReader : public vt
 //BTX
   static void ReadProgressCallback(itk::ProcessObject* obj,const itk::ProgressEvent&, void* data);
 //ETX
-  // private:
+  /// private:
 };
 
 #endif

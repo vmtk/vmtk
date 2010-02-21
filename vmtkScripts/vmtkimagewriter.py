@@ -183,12 +183,13 @@ class vmtkImageWriter(pypes.pypeScript):
         writer = vtkvmtk.vtkvmtkITKImageWriter()
         writer.SetInput(self.Image)
         writer.SetFileName(self.OutputFileName)
+        writer.SetUseCompression(1)
         if self.ApplyTransform and self.RasToIjkMatrixCoefficients:
             matrix = vtk.vtkMatrix4x4()
             matrix.DeepCopy(self.RasToIjkMatrixCoefficients)
             writer.SetRasToIJKMatrix(matrix)
         writer.Write()
-
+ 
     def Execute(self):
 
         if self.Image == None:

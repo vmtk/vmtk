@@ -39,6 +39,7 @@ class vmtkImageViewer(pypes.pypeScript):
         self.PlaneWidgetY = None
         self.PlaneWidgetZ = None
 
+        self.Margins = 0
         self.TextureInterpolation = 1
         self.ContinuousCursor = 0
         self.WindowLevel = [0.0, 0.0]
@@ -51,6 +52,7 @@ class vmtkImageViewer(pypes.pypeScript):
             ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer'],
             ['WindowLevel','windowlevel','float',2,'','the window/level for displaying the image'],
             ['Display','display','bool',1,'','toggle rendering'],
+            ['Margins','margins','bool',1,'','toggle margins for tilting image planes'],
             ['TextureInterpolation','textureinterpolation','bool',1,'','toggle interpolation of graylevels on image planes'],
             ['ContinuousCursor','continuouscursor','bool',1,'','toggle use of physical continuous coordinates for the cursor']
             ])
@@ -96,6 +98,12 @@ class vmtkImageViewer(pypes.pypeScript):
         self.PlaneWidgetX.SetPicker(self.Picker)
         self.PlaneWidgetX.KeyPressActivationOff()
         self.PlaneWidgetX.SetInteractor(self.vmtkRenderer.RenderWindowInteractor)
+        if self.Margins:
+            self.PlaneWidgetX.SetMarginSizeX(0.05)
+            self.PlaneWidgetX.SetMarginSizeY(0.05)
+        else:
+            self.PlaneWidgetX.SetMarginSizeX(0.0)
+            self.PlaneWidgetX.SetMarginSizeY(0.0)
         if self.WindowLevel[0] != 0.0:
             self.PlaneWidgetX.SetWindowLevel(self.WindowLevel[0],self.WindowLevel[1])
         self.PlaneWidgetX.On()
@@ -111,6 +119,12 @@ class vmtkImageViewer(pypes.pypeScript):
         self.PlaneWidgetY.KeyPressActivationOff()
         self.PlaneWidgetY.SetLookupTable(self.PlaneWidgetX.GetLookupTable())
         self.PlaneWidgetY.SetInteractor(self.vmtkRenderer.RenderWindowInteractor)
+        if self.Margins:
+            self.PlaneWidgetY.SetMarginSizeX(0.05)
+            self.PlaneWidgetY.SetMarginSizeY(0.05)
+        else:
+            self.PlaneWidgetY.SetMarginSizeX(0.0)
+            self.PlaneWidgetY.SetMarginSizeY(0.0)
         if self.WindowLevel[0] != 0.0:
             self.PlaneWidgetY.SetWindowLevel(self.WindowLevel[0],self.WindowLevel[1])
         self.PlaneWidgetY.On()
@@ -126,6 +140,12 @@ class vmtkImageViewer(pypes.pypeScript):
         self.PlaneWidgetZ.KeyPressActivationOff()
         self.PlaneWidgetZ.SetLookupTable(self.PlaneWidgetX.GetLookupTable())
         self.PlaneWidgetZ.SetInteractor(self.vmtkRenderer.RenderWindowInteractor)
+        if self.Margins:
+            self.PlaneWidgetZ.SetMarginSizeX(0.05)
+            self.PlaneWidgetZ.SetMarginSizeY(0.05)
+        else:
+            self.PlaneWidgetZ.SetMarginSizeX(0.0)
+            self.PlaneWidgetZ.SetMarginSizeY(0.0)
         if self.WindowLevel[0] != 0.0:
             self.PlaneWidgetZ.SetWindowLevel(self.WindowLevel[0],self.WindowLevel[1])
         self.PlaneWidgetZ.On()

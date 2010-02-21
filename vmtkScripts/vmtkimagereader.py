@@ -30,7 +30,6 @@ class vmtkImageReader(pypes.pypeScript):
         self.Format = ''
         self.GuessFormat = 1
         self.UseITKIO = 1
-        self.ApplyTransform = 0
         self.InputFileName = ''
         self.InputFilePrefix = ''
         self.InputFilePattern = ''
@@ -48,7 +47,6 @@ class vmtkImageReader(pypes.pypeScript):
         self.Flip = [0, 0, 0]
         self.AutoOrientDICOMImage = 1
         self.RasToIjkMatrixCoefficients = [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1]
-        self.RasToLocalMatrixCoefficients = [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1]
 
         self.SetScriptName('vmtkimagereader')
         self.SetScriptDoc('read an image and stores it in a vtkImageData object')
@@ -56,7 +54,6 @@ class vmtkImageReader(pypes.pypeScript):
             ['Format','f','str',1,'["vtkxml","vtk","dicom","raw","meta","tiff","png"]','file format'],
             ['GuessFormat','guessformat','bool',1,'','guess file format from extension'],
             ['UseITKIO','useitk','bool',1,'','use ITKIO mechanism'],
-            ['ApplyTransform','transform','bool',1,'','apply transform on reading - ITKIO only'],
             ['Image','i','vtkImageData',1,'','the input image'],
             ['InputFileName','ifile','str',1,'','input file name'],
             ['InputFilePrefix','prefix','str',1,'','input file prefix (e.g. foo_)'],
@@ -74,8 +71,7 @@ class vmtkImageReader(pypes.pypeScript):
             ])
         self.SetOutputMembers([
             ['Image','o','vtkImageData',1,'','the output image','vmtkimagewriter'],
-            ['RasToIjkMatrixCoefficients','rastoijkmatrix','float',16],
-            ['RasToLocalMatrixCoefficients','rastolocalmatrix','float',16]
+            ['RasToIjkMatrixCoefficients','rastoijkmatrix','float',16]
             ])
 
     def ReadVTKXMLImageFile(self):
@@ -207,6 +203,7 @@ class vmtkImageReader(pypes.pypeScript):
         reader.SetArchetype(self.InputFileName)
         reader.SetOutputScalarTypeToNative()
         reader.SetDesiredCoordinateOrientationToNative()
+        reader.SetSingleFile(0)
         reader.Update()
         self.Image = vtk.vtkImageData()
         self.Image.DeepCopy(reader.GetOutput())
@@ -216,18 +213,6 @@ class vmtkImageReader(pypes.pypeScript):
             matrix.GetElement(1,0), matrix.GetElement(1,1), matrix.GetElement(1,2), matrix.GetElement(1,3),
             matrix.GetElement(2,0), matrix.GetElement(2,1), matrix.GetElement(2,2), matrix.GetElement(2,3),
             matrix.GetElement(3,0), matrix.GetElement(3,1), matrix.GetElement(3,2), matrix.GetElement(3,3)]
-#        matrix = reader.GetRasToLocalMatrix()
-#        self.RasToLocalMatrixCoefficients = [
-#            matrix.GetElement(0,0), matrix.GetElement(0,1), matrix.GetElement(0,2), matrix.GetElement(0,3),
-#            matrix.GetElement(1,0), matrix.GetElement(1,1), matrix.GetElement(1,2), matrix.GetElement(1,3),
-#            matrix.GetElement(2,0), matrix.GetElement(2,1), matrix.GetElement(2,2), matrix.GetElement(2,3),
-#            matrix.GetElement(3,0), matrix.GetElement(3,1), matrix.GetElement(3,2), matrix.GetElement(3,3)]
-        if self.ApplyTransform:
-            origin = self.Image.GetOrigin()
-            matrix = vtk.vtkMatrix4x4()
-            matrix.DeepCopy(self.RasToItkMatrixCoefficients)
-            localOrigin = matrix.MultiplyPoint([origin[0],origin[1],origin[2],0.0])
-            self.Image.SetOrigin(localOrigin[0],localOrigin[1],localOrigin[2])
 
     def Execute(self):
 

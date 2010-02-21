@@ -14,7 +14,6 @@ TEST_BIG_ENDIAN(CMAKE_WORDS_BIGENDIAN)
 SET(vtkvmtkITK_SRCS
     vtkvmtkITKArchetypeImageSeriesReader.cxx
     vtkvmtkITKArchetypeImageSeriesScalarReader.cxx
-    vtkvmtkITKArchetypeImageSeriesVectorReader.cxx
     vtkvmtkITKImageWriter.cxx
     vtkvmtkITKImageToImageFilter.h
     vtkvmtkITKImageToImageFilter2DFF.h
