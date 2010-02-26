@@ -47,6 +47,7 @@ class vmtkImageReader(pypes.pypeScript):
         self.Flip = [0, 0, 0]
         self.AutoOrientDICOMImage = 1
         self.RasToIjkMatrixCoefficients = [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1]
+        self.XyzToRasMatrixCoefficients = [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1]
 
         self.SetScriptName('vmtkimagereader')
         self.SetScriptDoc('read an image and stores it in a vtkImageData object')
@@ -71,7 +72,8 @@ class vmtkImageReader(pypes.pypeScript):
             ])
         self.SetOutputMembers([
             ['Image','o','vtkImageData',1,'','the output image','vmtkimagewriter'],
-            ['RasToIjkMatrixCoefficients','rastoijkmatrix','float',16]
+            ['RasToIjkMatrixCoefficients','rastoijkmatrix','float',16],
+            ['XyzToRasMatrixCoefficients','xyztorasmatrix','float',16]
             ])
 
     def ReadVTKXMLImageFile(self):
@@ -213,6 +215,34 @@ class vmtkImageReader(pypes.pypeScript):
             matrix.GetElement(1,0), matrix.GetElement(1,1), matrix.GetElement(1,2), matrix.GetElement(1,3),
             matrix.GetElement(2,0), matrix.GetElement(2,1), matrix.GetElement(2,2), matrix.GetElement(2,3),
             matrix.GetElement(3,0), matrix.GetElement(3,1), matrix.GetElement(3,2), matrix.GetElement(3,3)]
+
+        matrix.Invert()
+        origin = [matrix.GetElement(0,3), matrix.GetElement(1,3), matrix.GetElement(2,3)] 
+        translationToOrigin = [-origin[0], -origin[1], -origin[2]] 
+
+        for i in range(3):
+            direction = [matrix.GetElement(0,i), matrix.GetElement(1,i), matrix.GetElement(2,i)]
+            vtk.vtkMath.Normalize(direction)
+            matrix.SetElement(0,i,direction[0])
+            matrix.SetElement(1,i,direction[1])
+            matrix.SetElement(2,i,direction[2])
+        matrix.SetElement(0,3,0.0)
+        matrix.SetElement(1,3,0.0)
+        matrix.SetElement(2,3,0.0)
+ 
+        transform = vtk.vtkTransform()
+        transform.PostMultiply()
+        transform.Translate(translationToOrigin)
+        transform.Concatenate(matrix)
+        transform.Translate(origin)
+
+        matrix = transform.GetMatrix()
+        self.XyzToRasMatrixCoefficients = [
+            matrix.GetElement(0,0), matrix.GetElement(0,1), matrix.GetElement(0,2), matrix.GetElement(0,3),
+            matrix.GetElement(1,0), matrix.GetElement(1,1), matrix.GetElement(1,2), matrix.GetElement(1,3),
+            matrix.GetElement(2,0), matrix.GetElement(2,1), matrix.GetElement(2,2), matrix.GetElement(2,3),
+            matrix.GetElement(3,0), matrix.GetElement(3,1), matrix.GetElement(3,2), matrix.GetElement(3,3)]
+
 
     def Execute(self):
 

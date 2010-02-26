@@ -62,6 +62,8 @@ __all__ = [
   'vmtkmeshscaling',
   'vmtkmeshtetrahedralize',
   'vmtkmeshtosurface',
+  'vmtkmeshtransform',
+  'vmtkmeshtransformtoras',
   'vmtkmeshviewer',
   'vmtkmeshwriter',
   'vmtknetworkeditor',

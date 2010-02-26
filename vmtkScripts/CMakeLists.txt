@@ -65,6 +65,8 @@ SET(SCRIPTS_SRCS
   vmtkmeshscaling.py
   vmtkmeshtetrahedralize.py
   vmtkmeshtosurface.py
+  vmtkmeshtransform.py
+  vmtkmeshtransformtoras.py
   vmtkmeshviewer.py
   vmtkmeshwriter.py
   vmtknetworkextraction.py

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 ## Program:   VMTK
-## Module:    $RCSfile: vmtksurfacetransform.py,v $
+## Module:    $RCSfile: vmtkmeshtransform.py,v $
 ## Language:  Python
 ## Date:      $Date: 2005/09/14 09:49:59 $
 ## Version:   $Revision: 1.4 $
@@ -24,15 +24,15 @@ import sys
 
 import pypes
 
-vmtksurfacetransform = 'vmtkSurfaceTransform'
+vmtkmeshtransform = 'vmtkMeshTransform'
 
-class vmtkSurfaceTransform(pypes.pypeScript):
+class vmtkMeshTransform(pypes.pypeScript):
 
     def __init__(self):
 
         pypes.pypeScript.__init__(self)
 
-        self.Surface = None
+        self.Mesh = None
 
         self.MatrixCoefficients = []
         self.InvertMatrix = 0
@@ -43,10 +43,10 @@ class vmtkSurfaceTransform(pypes.pypeScript):
 
         #TODO: define covariant vector array names
 
-        self.SetScriptName('vmtksurfacetransform')
-        self.SetScriptDoc('transform a surface with a provided matrix')
+        self.SetScriptName('vmtkmeshtransform')
+        self.SetScriptDoc('transform a mesh with a provided matrix')
         self.SetInputMembers([
-            ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
+            ['Mesh','i','vtkPolyData',1,'','the input mesh','vmtkmeshreader'],
             ['Matrix4x4','matrix4x4','vtkMatrix4x4',1,'','the input transform matrix'],
             ['MatrixCoefficients','matrix','float',16,'','coefficients of transform matrix'],
             ['InvertMatrix','invert','bool',1,'','invert matrix before applying transformation'],
@@ -55,13 +55,13 @@ class vmtkSurfaceTransform(pypes.pypeScript):
             ['Scaling','scaling','float',3,'','scaling of the x-,y- and z-directions']
             ])
         self.SetOutputMembers([
-            ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter']
+            ['Mesh','o','vtkPolyData',1,'','the output mesh','vmtkmeshwriter']
             ])
 
     def Execute(self):
 
-        if (self.Surface == None):
-            self.PrintError('Error: no Surface.')
+        if (self.Mesh == None):
+            self.PrintError('Error: no Mesh.')
 
         if not self.Matrix4x4:
             self.Matrix4x4 = vtk.vtkMatrix4x4()
@@ -84,15 +84,15 @@ class vmtkSurfaceTransform(pypes.pypeScript):
         transform = vtk.vtkMatrixToLinearTransform()
         transform.SetInput(self.Matrix4x4)
 
-        transformFilter = vtk.vtkTransformPolyDataFilter()
-        transformFilter.SetInput(self.Surface)
+        transformFilter = vtk.vtkTransformFilter()
+        transformFilter.SetInput(self.Mesh)
         transformFilter.SetTransform(transform)
         transformFilter.Update()
 
-        self.Surface = transformFilter.GetOutput()
+        self.Mesh = transformFilter.GetOutput()
 
-        if self.Surface.GetSource():
-            self.Surface.GetSource().UnRegisterAllOutputs()
+        if self.Mesh.GetSource():
+            self.Mesh.GetSource().UnRegisterAllOutputs()
 
 
 if __name__=='__main__':
