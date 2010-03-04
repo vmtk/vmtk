@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   VMTK
-  Module:    $RCSfile: vtkvmtkCocoaGLView.h,v $
+  Module:    $RCSfile: vtkvmtkCocoaGLView.mm,v $
   Language:  C++
   Date:      $Date: 2010/01/08 16:46:43 $
   Version:   $Revision: 1.4 $

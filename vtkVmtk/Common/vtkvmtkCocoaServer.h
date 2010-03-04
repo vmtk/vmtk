@@ -37,6 +37,7 @@
 
 - (void)start;
 - (void)stop;
+- (void)close;
 
 @end
 

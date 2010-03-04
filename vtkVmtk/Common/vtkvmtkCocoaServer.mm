@@ -44,13 +44,16 @@
 }
 
 - (void)stop {
+  [NSApp stop:NSApp];
+}
+
+- (void)close {
   NSWindow  *win = nil;
   if (renWin != NULL)
     {
     win = reinterpret_cast<NSWindow *>(renWin->GetRootWindow());
     }
- 
-  [NSApp stop:NSApp];
+  [win close]; 
 }
 
 @end
