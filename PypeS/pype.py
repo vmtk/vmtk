@@ -166,7 +166,7 @@ class Pype(object):
                 if upstreamPipedModuleName:
                     candidateScriptObjectList = [candidateScriptObject for candidateScriptObject in self.ScriptObjectList if candidateScriptObject.ScriptName == upstreamPipedModuleName]
                     if upstreamPipedId:
-                        candidateScriptObjectList = [candidateScriptObject for candidateScriptObject in candidateScriptObjectList if int(upstreamPipedId) == candidateScriptObject.Id]
+                        candidateScriptObjectList = [candidateScriptObject for candidateScriptObject in candidateScriptObjectList if upstreamPipedId == candidateScriptObject.Id]
                      
                 if not candidateScriptObjectList:
                     self.PrintError('Error: invalid option piping: '+pipedArgument)
@@ -188,7 +188,7 @@ class Pype(object):
     def PipeScriptObject(self,scriptObject):
         for memberEntry in [member for member in scriptObject.InputMembers if member.MemberPipe and not member.MemberValue]:
             pipedScriptName = memberEntry.MemberPipe.split('.')[0].split('-')[0]
-            pipedScriptId = int(memberEntry.MemberPipe.split('.')[0].split('-')[1])
+            pipedScriptId = memberEntry.MemberPipe.split('.')[0].split('-')[1]
             pipedMemberName = memberEntry.MemberPipe.split('.')[1]
             previousScriptObjects = self.ScriptObjectList[:]
             if scriptObject in previousScriptObjects:

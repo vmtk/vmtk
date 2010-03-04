@@ -116,7 +116,7 @@ class pypeScript(object):
         self.Self = self
         self.Disabled = 0
 
-        idMember = pypeMember('Id','id','int',1,'','script id')
+        idMember = pypeMember('Id','id','str',1,'','script id')
         idMember.AutoPipe = 0
         self.InputMembers.append(idMember)
         self.OutputMembers.append(idMember)
