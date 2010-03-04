@@ -309,10 +309,18 @@ class vmtkOpenProfilesSeedSelector(vmtkSeedSelector):
         for seedIdString in seedIdList:
             self._SourceSeedIds.InsertNextId(int(seedIdString.strip()))
 
-        seedIdString = self.InputText("Please input list of outlet profile ids: ")
-        seedIdList = seedIdString.split(separator)
-        for seedIdString in seedIdList:
-            self._TargetSeedIds.InsertNextId(int(seedIdString.strip()))
+        seedIdString = self.InputText("Please input list of outlet profile ids (leave empty for all available profiles): ")
+        if seedIdString.strip() == '':
+            self.OutputText("Selected outlets: ")
+            for i in range(seedPoints.GetNumberOfPoints()):
+                if self._SourceSeedIds.IsId(i) == -1:
+                    self._TargetSeedIds.InsertNextId(i)
+                    self.OutputText("%d " % i)
+            self.OutputText("\n")
+        else:
+            seedIdList = seedIdString.split(separator)
+            for seedIdString in seedIdList:
+                self._TargetSeedIds.InsertNextId(int(seedIdString.strip()))
         
         if self.OwnRenderer:
             self.vmtkRenderer.Deallocate()

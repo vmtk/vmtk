@@ -112,7 +112,7 @@ class pypeScript(object):
         self.Arguments = []
         self.InputMembers = []
         self.OutputMembers = []
-        self.Id = 0
+        self.Id = '0'
         self.Self = self
         self.Disabled = 0
 
