@@ -18,6 +18,7 @@ import sys
 import os
 
 import pypes
+import vtkvmtk
 
 vmtkrenderer = 'vmtkRenderer'
 
@@ -100,15 +101,22 @@ class vmtkRenderer(pypes.pypeScript):
             self.RenderWindow.SetLineSmoothing(self.LineSmoothing)
             self.RenderWindow.SetPolygonSmoothing(self.PolygonSmoothing)
             self.RenderWindowInteractor = vtk.vtkRenderWindowInteractor()
+            if vtk.vtkCocoaRenderWindowInteractor.SafeDownCast(self.RenderWindowInteractor):
+                self.RenderWindowInteractor = vtkvmtk.vtkvmtkCocoaRenderWindowInteractor()
             self.RenderWindowInteractor.SetInteractorStyle(vtk.vtkInteractorStyleTrackballCamera())
             self.RenderWindow.SetInteractor(self.RenderWindowInteractor)
 
-            self.vmtkRenderer.RenderWindowInteractor.AddObserver("KeyPressEvent", self.KeyPressed)
-
     def Execute(self):
         self.Initialize()
- 
+
+    def Close(self,event,clientData):
+        self.RenderWindowInteractor.Close()
+
     def Deallocate(self):
+        if vtkvmtk.vtkvmtkCocoaRenderWindowInteractor.SafeDownCast(self.RenderWindowInteractor):
+            self.RenderWindowInteractor.AddObserver("TimerEvent", self.Close)
+            self.RenderWindowInteractor.CreateOneShotTimer(1)
+            self.RenderWindowInteractor.Start()
         self.RenderWindowInteractor = None
         self.RenderWindow = None
         self.Renderer = None

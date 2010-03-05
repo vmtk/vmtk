@@ -62,7 +62,7 @@ class vmtkMeshBoundaryInspector(pypes.pypeScript):
         if not self.CellEntityIdsArrayName:
             self.PrintError('Error: No input CellEntityIdsArrayName.')
             return
-       
+ 
         if not self.vmtkRenderer:
             self.vmtkRenderer = vmtkrenderer.vmtkRenderer()
             self.vmtkRenderer.Initialize()

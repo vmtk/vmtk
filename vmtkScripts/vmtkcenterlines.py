@@ -465,6 +465,9 @@ class vmtkCenterlines(pypes.pypeScript):
         self.SourcePoints = []
         self.TargetPoints = []
 
+        self.vmtkRenderer = None
+        self.OwnRenderer = 0
+
         self.SetScriptName('vmtkcenterlines')
         self.SetScriptDoc('compute centerlines from a branching tubular surface (see papers for details); seed points can be interactively selected on the surface, or specified as the barycenters of the open boundaries of the surface; if vmtk is compiled with support for TetGen, TetGen can be employed to compute the Delaunay tessellation of the input points')
         self.SetInputMembers([
@@ -486,7 +489,8 @@ class vmtkCenterlines(pypes.pypeScript):
             ['SimplifyVoronoi','simplifyvoronoi','bool',1,'','toggle simplification of Voronoi diagram'],
             ['UseTetGen','usetetgen','bool',1,'','toggle use TetGen to compute Delaunay tessellation'],
             ['TetGenDetectInter','tetgendetectinter','bool',1,'','TetGen option'],
-            ['CostFunction','costfunction','str',1,'','specify cost function to be minimized during centerline computation']])
+            ['CostFunction','costfunction','str',1,'','specify cost function to be minimized during centerline computation'],
+            ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer']])
         self.SetOutputMembers([
             ['Centerlines','o','vtkPolyData',1,'','the output centerlines','vmtksurfacewriter'],
             ['RadiusArrayName','radiusarray','str',1,'','name of the array where radius values of maximal inscribed spheres are stored'],
@@ -513,6 +517,11 @@ class vmtkCenterlines(pypes.pypeScript):
             if (nonManifoldChecker.NumberOfNonManifoldEdges > 0):
                 self.PrintLog(nonManifoldChecker.Report)
                 return
+
+        if not self.vmtkRenderer and self.SeedSelectorName in ['pickpoint','openprofiles']:
+            self.vmtkRenderer = vmtkrenderer.vmtkRenderer()
+            self.vmtkRenderer.Initialize()
+            self.OwnRenderer = 1
 
         self.PrintLog('Cleaning surface.')
         surfaceCleaner = vtk.vtkCleanPolyData()
@@ -545,11 +554,11 @@ class vmtkCenterlines(pypes.pypeScript):
         elif self.SeedSelectorName:
             if self.SeedSelectorName == 'pickpoint':
                 self.SeedSelector = vmtkPickPointSeedSelector()
+                self.SeedSelector.vmtkRenderer = self.vmtkRenderer
             elif self.SeedSelectorName == 'openprofiles':
                 self.SeedSelector = vmtkOpenProfilesSeedSelector()
+                self.SeedSelector.vmtkRenderer = self.vmtkRenderer
                 self.SeedSelector.SetSeedIds(surfaceCapper.GetCapCenterIds())
-                self.SeedSelector.OutputText = self.OutputText
-                self.SeedSelector.InputText = self.InputText
             elif self.SeedSelectorName == 'carotidprofiles':
                 self.SeedSelector = vmtkCarotidProfilesSeedSelector()
                 self.SeedSelector.SetSeedIds(surfaceCapper.GetCapCenterIds())
@@ -624,6 +633,9 @@ class vmtkCenterlines(pypes.pypeScript):
         self.EdgeArrayName = centerlineFilter.GetEdgeArrayName()
         self.EdgePCoordArrayName = centerlineFilter.GetEdgePCoordArrayName()
         self.CostFunctionArrayName = centerlineFilter.GetCostFunctionArrayName()
+
+        if self.OwnRenderer:
+            self.vmtkRenderer.Deallocate()
 
 
 if __name__=='__main__':
