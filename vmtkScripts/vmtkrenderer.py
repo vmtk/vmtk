@@ -101,7 +101,7 @@ class vmtkRenderer(pypes.pypeScript):
             self.RenderWindow.SetLineSmoothing(self.LineSmoothing)
             self.RenderWindow.SetPolygonSmoothing(self.PolygonSmoothing)
             self.RenderWindowInteractor = vtk.vtkRenderWindowInteractor()
-            if vtk.vtkCocoaRenderWindowInteractor.SafeDownCast(self.RenderWindowInteractor):
+            if 'vtkCocoaRenderWindowInteractor' in dir(vtk) and vtk.vtkCocoaRenderWindowInteractor.SafeDownCast(self.RenderWindowInteractor):
                 self.RenderWindowInteractor = vtkvmtk.vtkvmtkCocoaRenderWindowInteractor()
             self.RenderWindowInteractor.SetInteractorStyle(vtk.vtkInteractorStyleTrackballCamera())
             self.RenderWindow.SetInteractor(self.RenderWindowInteractor)
