@@ -113,7 +113,7 @@ class vmtkRenderer(pypes.pypeScript):
         self.RenderWindowInteractor.Close()
 
     def Deallocate(self):
-        if vtkvmtk.vtkvmtkCocoaRenderWindowInteractor.SafeDownCast(self.RenderWindowInteractor):
+        if 'vtkCocoaRenderWindowInteractor' in dir(vtk) and vtkvmtk.vtkvmtkCocoaRenderWindowInteractor.SafeDownCast(self.RenderWindowInteractor):
             self.RenderWindowInteractor.AddObserver("TimerEvent", self.Close)
             self.RenderWindowInteractor.CreateOneShotTimer(1)
             self.RenderWindowInteractor.Start()
