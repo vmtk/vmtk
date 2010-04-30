@@ -25,6 +25,7 @@ Version:   $Revision: 1.5 $
 #include "vtkUnstructuredGrid.h"
 #include "vtkIntArray.h"
 #include "vtkTetra.h"
+#include "vtkTriangle.h"
 #include "vtkMath.h"
 #include "vtkvmtkConstants.h"
 #include "vtkInformation.h"
@@ -40,6 +41,9 @@ vtkvmtkInternalTetrahedraExtractor::vtkvmtkInternalTetrahedraExtractor()
   this->CapCenterIds = NULL;
   this->OutwardNormalsArrayName = NULL;
   this->Tolerance = VTK_VMTK_DOUBLE_TOL;
+  this->RemoveSubresolutionTetrahedra = 0;
+  this->SubresolutionFactor = 1.0;
+  this->Surface = NULL;
 }
 
 vtkvmtkInternalTetrahedraExtractor::~vtkvmtkInternalTetrahedraExtractor()
@@ -53,6 +57,11 @@ vtkvmtkInternalTetrahedraExtractor::~vtkvmtkInternalTetrahedraExtractor()
     {
     delete [] this->OutwardNormalsArrayName;
     this->OutwardNormalsArrayName = NULL;
+    }
+  if (this->Surface)
+    {
+    this->Surface->Delete();
+    this->Surface = NULL;
     }
 }
 
@@ -112,6 +121,18 @@ int vtkvmtkInternalTetrahedraExtractor::RequestData(
   if ((this->UseCaps)&&(!this->CapCenterIds))
     {
     vtkErrorMacro(<< "UseCapsOn but no CapCenterIds specified !");
+    return 1;
+    }
+
+  if (this->RemoveSubresolutionTetrahedra && !this->Surface)
+    {
+    vtkErrorMacro(<< "RemoveSubresolutionTetrahedraOn but no Surface specified !");
+    return 1;
+    }
+
+  if (this->RemoveSubresolutionTetrahedra && this->Surface->GetNumberOfPoints() != input->GetNumberOfPoints())
+    {
+    vtkErrorMacro(<< "NumberOfPoints of Surface is different than that of input Delaunay tessellation, the Delaunay tessellation doesn't look like it has been produced from the Surface !");
     return 1;
     }
 
@@ -202,7 +223,75 @@ int vtkvmtkInternalTetrahedraExtractor::RequestData(
         }
       }
     }
-  
+    
+  if (this->RemoveSubresolutionTetrahedra)
+    {
+    this->Surface->BuildLinks();
+
+    vtkIdList* cellNeighbors = vtkIdList::New();
+    for (i=0; i<input->GetNumberOfCells(); i++)
+      {
+      if (keepCell->GetValue(i) == 0)
+        {
+        continue;
+        }
+
+      tetra = vtkTetra::SafeDownCast(input->GetCell(i));
+      if (!tetra)
+        {
+        continue;
+        }
+      bool onNewBoundary = false;
+      for (j=0; j<tetra->GetNumberOfFaces(); j++)
+        {
+        cellNeighbors->Initialize();
+        input->GetCellNeighbors(i,tetra->GetFace(j)->GetPointIds(),cellNeighbors);
+        if (cellNeighbors->GetNumberOfIds() == 0 || keepCell->GetValue(cellNeighbors->GetId(0)) == 0)
+          {
+          onNewBoundary = true;
+          }
+        }
+      if (!onNewBoundary)
+        {
+        continue;
+        }
+
+      tetra->GetPoints()->GetPoint(0,p0);
+      tetra->GetPoints()->GetPoint(1,p1);
+      tetra->GetPoints()->GetPoint(2,p2);
+      tetra->GetPoints()->GetPoint(3,p3);
+      double circumradius = vtkTetra::Circumsphere(p0,p1,p2,p3,circumcenter);
+
+      for (j=0; j<tetra->GetNumberOfPoints(); j++)
+        {
+        unsigned short ncells;
+        vtkIdType* cells;
+        this->Surface->GetPointCells(j,ncells,cells);
+        double minEdgeLength = VTK_VMTK_LARGE_DOUBLE;
+        int k;
+        for (k=0; k<ncells; k++)
+          {
+          vtkTriangle* triangle = vtkTriangle::SafeDownCast(this->Surface->GetCell(cells[k]));
+          if (!triangle)
+            {
+            continue;
+            }
+          double edgeLength = sqrt(2.0 * triangle->ComputeArea());
+          if (edgeLength < minEdgeLength)
+              {
+              minEdgeLength = edgeLength;
+              }
+          }
+        // TODO: set factor as a member variable.
+        if (circumradius < this->SubresolutionFactor * minEdgeLength)
+          {
+          keepCell->SetValue(i,0);
+          }
+        }
+      }
+    cellNeighbors->Delete();
+    }
+ 
   for (i=0; i<input->GetNumberOfCells(); i++)
     {
     if (keepCell->GetValue(i))

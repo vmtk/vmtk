@@ -194,6 +194,8 @@ double vtkvmtkNonManifoldSteepestDescent::GetSteepestDescent(vtkPolyData* input,
 
   steepestDescent = - VTK_VMTK_LARGE_DOUBLE * directionFactor;
   steepestDescentLength = VTK_VMTK_LARGE_DOUBLE;
+  steepestDescentEdge[0] = -1;
+  steepestDescentEdge[1] = -1;
   for (i=0; i<neighborCells->GetNumberOfIds(); i++)
     {
     cellId = neighborCells->GetId(i);

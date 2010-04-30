@@ -31,6 +31,7 @@ Version:   $Revision: 1.5 $
 #define __vtkvmtkInternalTetrahedraExtractor_h
 
 #include "vtkUnstructuredGridAlgorithm.h"
+#include "vtkPolyData.h"
 #include "vtkIdList.h"
 //#include "vtkvmtkComputationalGeometryWin32Header.h"
 #include "vtkvmtkWin32Header.h"
@@ -62,6 +63,18 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkInternalTetrahedraExtractor 
   vtkSetMacro(Tolerance,double);
   vtkGetMacro(Tolerance,double);
 
+  // Description:
+  // Turn on/off removal of surface slivers.
+  vtkSetMacro(RemoveSubresolutionTetrahedra,int);
+  vtkGetMacro(RemoveSubresolutionTetrahedra,int);
+  vtkBooleanMacro(RemoveSubresolutionTetrahedra,int);
+
+  vtkSetMacro(SubresolutionFactor,double);
+  vtkGetMacro(SubresolutionFactor,double);
+
+  vtkSetObjectMacro(Surface,vtkPolyData);
+  vtkGetObjectMacro(Surface,vtkPolyData);
+
   protected:
   vtkvmtkInternalTetrahedraExtractor();
   ~vtkvmtkInternalTetrahedraExtractor();
@@ -73,6 +86,10 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkInternalTetrahedraExtractor 
   char* OutwardNormalsArrayName;
 
   double Tolerance;
+
+  int RemoveSubresolutionTetrahedra;
+  vtkPolyData* Surface;
+  double SubresolutionFactor;
 
   private:
   vtkvmtkInternalTetrahedraExtractor(const vtkvmtkInternalTetrahedraExtractor&);  // Not implemented.

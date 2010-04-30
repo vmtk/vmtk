@@ -27,6 +27,7 @@ SET(SCRIPTS_SRCS
   vmtkcenterlinesections.py
   vmtkcenterlinesmoothing.py
   vmtkcenterlineviewer.py
+  vmtkdelaunayvoronoi.py
   vmtkdistancetocenterlines.py
   vmtkendpointextractor.py
   vmtkflowextensions.py
