@@ -226,6 +226,7 @@ int vtkvmtkInternalTetrahedraExtractor::RequestData(
     
   if (this->RemoveSubresolutionTetrahedra)
     {
+    double pt0[3], pt1[3], pt2[3];
     this->Surface->BuildLinks();
 
     vtkIdList* cellNeighbors = vtkIdList::New();
@@ -276,7 +277,11 @@ int vtkvmtkInternalTetrahedraExtractor::RequestData(
             {
             continue;
             }
-          double edgeLength = sqrt(2.0 * triangle->ComputeArea());
+          triangle->GetPoints()->GetPoint(0,pt0);
+          triangle->GetPoints()->GetPoint(1,pt1);
+          triangle->GetPoints()->GetPoint(2,pt2);
+          double triangleArea = triangle->TriangleArea(pt0,pt1,pt2);
+          double edgeLength = sqrt(2.0 * triangleArea);
           if (edgeLength < minEdgeLength)
               {
               minEdgeLength = edgeLength;
