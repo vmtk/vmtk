@@ -58,6 +58,10 @@ public:
   vtkSetStringMacro(CenterlineRadiusArrayName);
   vtkGetStringMacro(CenterlineRadiusArrayName);
 
+  vtkSetMacro(ProjectPointArrays,int);
+  vtkGetMacro(ProjectPointArrays,int);
+  vtkBooleanMacro(ProjectPointArrays,int);
+
 protected:
   vtkvmtkPolyDataDistanceToCenterlines();
   ~vtkvmtkPolyDataDistanceToCenterlines();
@@ -72,6 +76,7 @@ protected:
   int UseRadiusInformation;
   int EvaluateTubeFunction;
   int EvaluateCenterlineRadius;
+  int ProjectPointArrays;
 
 private:
   vtkvmtkPolyDataDistanceToCenterlines(const vtkvmtkPolyDataDistanceToCenterlines&);  // Not implemented.

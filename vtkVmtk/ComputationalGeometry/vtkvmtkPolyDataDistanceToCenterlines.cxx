@@ -42,6 +42,7 @@ vtkvmtkPolyDataDistanceToCenterlines::vtkvmtkPolyDataDistanceToCenterlines()
   this->UseRadiusInformation = 1;
   this->EvaluateTubeFunction = 0;
   this->EvaluateCenterlineRadius = 0;
+  this->ProjectPointArrays = 0;
 }
 
 vtkvmtkPolyDataDistanceToCenterlines::~vtkvmtkPolyDataDistanceToCenterlines()
@@ -144,6 +145,11 @@ int vtkvmtkPolyDataDistanceToCenterlines::RequestData(
     tube->SetPolyBallRadiusArrayName(this->CenterlineRadiusArrayName);
     }
 
+  if (this->ProjectPointArrays) 
+    {
+    output->GetPointData()->InterpolateAllocate(this->Centerlines->GetPointData(),numberOfInputPoints);
+    }
+
   double point[3], centerlinePoint[3];
   double distanceToCenterlines = 0.0;
   for (int i=0; i<numberOfInputPoints; i++)
@@ -163,6 +169,17 @@ int vtkvmtkPolyDataDistanceToCenterlines::RequestData(
     if (this->EvaluateCenterlineRadius)
       {
       surfaceCenterlineRadiusArray->SetComponent(i,0,tube->GetLastPolyBallCenterRadius());
+      }
+
+    if (this->ProjectPointArrays) 
+      {
+      vtkIdType cellId = tube->GetLastPolyBallCellId();
+      vtkIdType subId = tube->GetLastPolyBallCellSubId();
+      vtkIdType pcoord = tube->GetLastPolyBallCellPCoord();
+      vtkCell* cell = this->Centerlines->GetCell(cellId);
+      vtkIdType pointId0 = cell->GetPointId(subId);
+      vtkIdType pointId1 = cell->GetPointId(subId+1);
+      output->GetPointData()->InterpolateEdge(this->Centerlines->GetPointData(),i,pointId0,pointId1,pcoord);
       }
     }
 
