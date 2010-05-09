@@ -20,7 +20,7 @@ Version:   $Revision: 1.5 $
 =========================================================================*/
   // .NAME vtkvmtkPolyDataBoundaryExtractor - Extract boundary edges as poly lines.
   // .SECTION Description
-  // This class identifies boundary edges and organizes them into poly lines based on connectivity. It also provides the output with a point data vtkIntArray (set as active scalars) in which the ids of boundary points in the input dataset are stored.
+  // This class identifies boundary edges and organizes them into poly lines based on connectivity. It also provides the output with a point data vtkIdTypeArray (set as active scalars) in which the ids of boundary points in the input dataset are stored.
 
 #ifndef __vtkvmtkPolyDataBoundaryExtractor_h
 #define __vtkvmtkPolyDataBoundaryExtractor_h
