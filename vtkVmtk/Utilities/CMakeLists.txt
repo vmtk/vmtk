@@ -1,6 +1,5 @@
 SUBDIRS(
   Doxygen
-  laspack
   OpenNL
   vtkvmtkITK
   )
@@ -8,4 +7,8 @@ SUBDIRS(
 IF (VTK_VMTK_BUILD_TETGEN)
   SUBDIRS(tetgen1.4.3)
 ENDIF (VTK_VMTK_BUILD_TETGEN)
+
+IF (VTK_VMTK_BUILD_LASPACK)
+  SUBDIRS(laspack)
+ENDIF (VTK_VMTK_BUILD_LASPACK)
 
