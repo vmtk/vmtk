@@ -1,6 +1,7 @@
 SUBDIRS(
   Doxygen
   laspack
+  OpenNL
   vtkvmtkITK
   )
 
