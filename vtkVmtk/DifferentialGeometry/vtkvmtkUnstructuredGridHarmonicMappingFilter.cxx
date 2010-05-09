@@ -27,7 +27,7 @@
 #include "vtkvmtkUnstructuredGridFELaplaceAssembler.h"
 #include "vtkvmtkSparseMatrix.h"
 #include "vtkvmtkLinearSystem.h"
-#include "vtkvmtkLASPACKLinearSystemSolver.h"
+#include "vtkvmtkOpenNLLinearSystemSolver.h"
 
 #include "vtkvmtkDirichletBoundaryConditions.h"
 #include "vtkInformation.h"
@@ -128,12 +128,12 @@ int vtkvmtkUnstructuredGridHarmonicMappingFilter::RequestData(
   dirichetBoundaryConditions->SetBoundaryValues(this->BoundaryValues);
   dirichetBoundaryConditions->Apply();
 
-  vtkvmtkLASPACKLinearSystemSolver* solver = vtkvmtkLASPACKLinearSystemSolver::New();
+  vtkvmtkOpenNLLinearSystemSolver* solver = vtkvmtkOpenNLLinearSystemSolver::New();
   solver->SetLinearSystem(linearSystem);
   solver->SetConvergenceTolerance(this->ConvergenceTolerance);
   solver->SetMaximumNumberOfIterations(numberOfInputPoints);
-  solver->SetSolverType(vtkvmtkLASPACKLinearSystemSolver::VTK_VMTK_LASPACK_SOLVER_CG);
-  solver->SetPreconditionerType(vtkvmtkLASPACKLinearSystemSolver::VTK_VMTK_LASPACK_PRECONDITIONER_NONE);
+  solver->SetSolverTypeToCG();
+  solver->SetPreconditionerTypeToNone();
   solver->Solve();
 
   vtkDoubleArray* harmonicMappingArray = vtkDoubleArray::New();

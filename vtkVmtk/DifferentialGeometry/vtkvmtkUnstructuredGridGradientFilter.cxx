@@ -27,7 +27,7 @@
 #include "vtkvmtkUnstructuredGridFEGradientAssembler.h"
 #include "vtkvmtkSparseMatrix.h"
 #include "vtkvmtkLinearSystem.h"
-#include "vtkvmtkLASPACKLinearSystemSolver.h"
+#include "vtkvmtkOpenNLLinearSystemSolver.h"
 
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
@@ -132,12 +132,12 @@ int vtkvmtkUnstructuredGridGradientFilter::RequestData(
       linearSystem->SetB(rhsVector);
       linearSystem->SetX(solutionVector);
     
-      vtkvmtkLASPACKLinearSystemSolver* solver = vtkvmtkLASPACKLinearSystemSolver::New();
+      vtkvmtkOpenNLLinearSystemSolver* solver = vtkvmtkOpenNLLinearSystemSolver::New();
       solver->SetLinearSystem(linearSystem);
       solver->SetConvergenceTolerance(this->ConvergenceTolerance);
       solver->SetMaximumNumberOfIterations(numberOfInputPoints);
-      solver->SetSolverType(vtkvmtkLASPACKLinearSystemSolver::VTK_VMTK_LASPACK_SOLVER_CG);
-      solver->SetPreconditionerType(vtkvmtkLASPACKLinearSystemSolver::VTK_VMTK_LASPACK_PRECONDITIONER_JACOBI);
+      solver->SetSolverTypeToCG();
+      solver->SetPreconditionerTypeToJacobi();
       cout<<"Solving system"<<endl;
       solver->Solve();
       cout<<"Done"<<endl;
@@ -174,12 +174,12 @@ int vtkvmtkUnstructuredGridGradientFilter::RequestData(
         linearSystem->SetB(rhsVector);
         linearSystem->SetX(solutionVector);
       
-        vtkvmtkLASPACKLinearSystemSolver* solver = vtkvmtkLASPACKLinearSystemSolver::New();
+        vtkvmtkOpenNLLinearSystemSolver* solver = vtkvmtkOpenNLLinearSystemSolver::New();
         solver->SetLinearSystem(linearSystem);
         solver->SetConvergenceTolerance(this->ConvergenceTolerance);
         solver->SetMaximumNumberOfIterations(numberOfInputPoints);
-        solver->SetSolverType(vtkvmtkLASPACKLinearSystemSolver::VTK_VMTK_LASPACK_SOLVER_CG);
-        solver->SetPreconditionerType(vtkvmtkLASPACKLinearSystemSolver::VTK_VMTK_LASPACK_PRECONDITIONER_JACOBI);
+        solver->SetSolverTypeToCG();
+        solver->SetPreconditionerTypeToJacobi();
         cout<<"Solving system"<<endl;
         solver->Solve();
         cout<<"Done"<<endl;

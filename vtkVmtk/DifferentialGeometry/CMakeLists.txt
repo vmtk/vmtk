@@ -12,11 +12,11 @@ SET (VTK_VMTK_DIFFERENTIALGEOMETRY_SRCS
   vtkvmtkGaussQuadrature.cxx
   vtkvmtkItem.cxx
   vtkvmtkItems.cxx
-  vtkvmtkLASPACKLinearSystemSolver.cxx
   vtkvmtkLinearSystem.cxx
   vtkvmtkLinearSystemSolver.cxx
   vtkvmtkNeighborhood.cxx
   vtkvmtkNeighborhoods.cxx
+  vtkvmtkOpenNLLinearSystemSolver.cxx
   vtkvmtkPolyDataAreaWeightedUmbrellaStencil.cxx
   vtkvmtkPolyDataClampedSmoothingFilter.cxx
   vtkvmtkPolyDataCylinderHarmonicMappingFilter.cxx
@@ -66,12 +66,18 @@ SET_SOURCE_FILES_PROPERTIES (
   ABSTRACT
 )
 
-#INCLUDE_DIRECTORIES(${LASPACK_SOURCE_DIR})
-#LINK_DIRECTORIES(${LASPACK_LIB_DIR})
-INCLUDE_DIRECTORIES(${VTK_VMTK_SOURCE_DIR}/Utilities/laspack)
+INCLUDE_DIRECTORIES(${VTK_VMTK_SOURCE_DIR}/Utilities/OpenNL)
+
+SET(VTK_VMTK_DIFFERENTIALGEOMETRY_TARGET_LINK_LIBRARIES vtkvmtkDifferentialGeometry vtkCommon vtkFiltering vtkGraphics vtkvmtkComputationalGeometry nl)
+
+IF (VTK_VMTK_BUILD_LASPACK)
+  SET (VTK_VMTK_DIFFERENTIALGEOMETRY_SRCS ${VTK_VMTK_DIFFERENTIALGEOMETRY_SRCS} vtkvmtkLASPACKLinearSystemSolver.cxx)
+  INCLUDE_DIRECTORIES(${VTK_VMTK_SOURCE_DIR}/Utilities/laspack)
+  SET (VTK_VMTK_DIFFERENTIALGEOMETRY_TARGET_LINK_LIBRARIES ${VTK_VMTK_DIFFERENTIALGEOMETRY_TARGET_LINK_LIBRARIES} laspack)
+ENDIF (VTK_VMTK_BUILD_LASPACK)
 
 ADD_LIBRARY (vtkvmtkDifferentialGeometry ${VTK_VMTK_DIFFERENTIALGEOMETRY_SRCS})
-TARGET_LINK_LIBRARIES(vtkvmtkDifferentialGeometry vtkCommon vtkFiltering vtkGraphics vtkvmtkComputationalGeometry laspack)
+TARGET_LINK_LIBRARIES(vtkvmtkDifferentialGeometry ${VTK_VMTK_DIFFERENTIALGEOMETRY_TARGET_LINK_LIBRARIES})
   
 INSTALL(TARGETS vtkvmtkDifferentialGeometry
 LIBRARY DESTINATION ${VTK_VMTK_INSTALL_LIB_DIR} 

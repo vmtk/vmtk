@@ -35,6 +35,7 @@ vtkvmtkDoubleVector::vtkvmtkDoubleVector()
   this->NumberOfElementsPerVariable = 0;
   this->NumberOfVariables = 0;
   this->Array = NULL;
+  //this->Locked = NULL;
 }
 
 vtkvmtkDoubleVector::~vtkvmtkDoubleVector()
@@ -44,6 +45,11 @@ vtkvmtkDoubleVector::~vtkvmtkDoubleVector()
     delete [] this->Array;
     this->Array = NULL;
     }
+  //if (this->Locked != NULL)
+  //  {
+  //  delete [] this->Locked;
+  //  this->Locked = NULL;
+  //  }
 }
 
 void vtkvmtkDoubleVector::Allocate(vtkIdType numberOfElementsPerVariable, vtkIdType numberOfVariables)
@@ -58,6 +64,7 @@ void vtkvmtkDoubleVector::Allocate(vtkIdType numberOfElementsPerVariable, vtkIdT
   this->NumberOfElementsPerVariable = numberOfElementsPerVariable;
   this->NumberOfVariables = numberOfVariables;
   this->Array = new double[this->NumberOfElements];
+  //this->Locked = new bool[this->NumberOfElements];
 }
 
 void vtkvmtkDoubleVector::Fill(double value)
@@ -67,6 +74,14 @@ void vtkvmtkDoubleVector::Fill(double value)
     this->Array[i] = value;
     }
 }
+
+//void vtkvmtkDoubleVector::UnlockAll()
+//{
+//  for (vtkIdType i=0; i<this->NumberOfElements; i++)
+//    {
+//    this->Locked[i] = false;
+//    }
+//}
 
 void vtkvmtkDoubleVector::Assign(vtkvmtkDoubleVector *src)
 {
@@ -237,4 +252,5 @@ void vtkvmtkDoubleVector::DeepCopy(vtkvmtkDoubleVector *src)
 
   this->Array = new double[src->NumberOfElements];
   memcpy(this->Array, src->Array, src->NumberOfElements * sizeof(double));
+//  memcpy(this->Locked, src->Locked, src->NumberOfElements * sizeof(bool));
 }

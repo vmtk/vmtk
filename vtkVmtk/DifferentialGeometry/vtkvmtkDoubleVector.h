@@ -60,6 +60,10 @@ public:
   void SetElement(vtkIdType i, double value) {this->Array[i] = value;};
   void AddElement(vtkIdType i, double value) {this->Array[i] += value;};
 
+  //bool GetLocked(vtkIdType i) {return this->Locked[i];}
+  //void SetLocked(vtkIdType i, bool locked) {this->Locked[i] = locked;}
+  //void UnlockAll();
+
   const double* GetArray() {return this->Array;};
   void CopyIntoArrayComponent(vtkDataArray *array, int component);
   void CopyVariableIntoArrayComponent(vtkDataArray *array, int variable, int component);
@@ -83,6 +87,7 @@ protected:
   int NormType;
 
   double* Array;
+  //bool* Locked;
 
 private:
   vtkvmtkDoubleVector(const vtkvmtkDoubleVector&);  // Not implemented.

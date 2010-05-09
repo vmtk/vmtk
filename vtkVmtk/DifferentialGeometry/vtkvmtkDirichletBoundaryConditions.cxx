@@ -29,7 +29,7 @@ vtkCxxRevisionMacro(vtkvmtkDirichletBoundaryConditions, "$Revision: 1.2 $");
 vtkStandardNewMacro(vtkvmtkDirichletBoundaryConditions);
 
 void vtkvmtkDirichletBoundaryConditions::Apply()
-  {
+{
   vtkIdType i, j, k;
   vtkIdType systemSize;
   vtkIdType numberOfRowElements;
@@ -62,6 +62,7 @@ void vtkvmtkDirichletBoundaryConditions::Apply()
         systemMatrix->GetRow(j)->Initialize();
         systemMatrix->GetRow(j)->SetDiagonalElement(1.0);
         rhsVector->SetElement(j,boundaryValue);
+        //rhsVector->SetLocked(j,true);
         }
       else
         {
@@ -81,5 +82,5 @@ void vtkvmtkDirichletBoundaryConditions::Apply()
         }
       }
     }
-  }
+}
 
