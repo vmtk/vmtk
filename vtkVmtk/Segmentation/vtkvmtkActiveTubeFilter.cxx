@@ -65,6 +65,7 @@ vtkvmtkActiveTubeFilter::vtkvmtkActiveTubeFilter()
   this->FixedEndpointRadius = 0;
 
   this->CardinalSplineInterpolation = 1;
+  this->SplineResamplingWhileIterating = 1;
 
   this->NegativeNormWarnings = 0;
 }
@@ -515,6 +516,22 @@ void vtkvmtkActiveTubeFilter::EvolveCellSpline(vtkPolyData* lines, vtkIdType cel
     rSpline->AddPoint(t,radius);
     parametricCoordinates->SetValue(i,t);
     }
+
+  if (this->SplineResamplingWhileIterating)
+    {
+    double point[3];
+    for (i=0; i<numberOfPoints; i++)
+      {
+      t = (double)i / (numberOfPoints-1) * cellLength;
+      point[0] = xSpline->Evaluate(t);
+      point[1] = ySpline->Evaluate(t);
+      point[2] = zSpline->Evaluate(t);
+      radius = rSpline->Evaluate(t);
+      polyLinePoints->SetPoint(i,point);
+      radiusArray->SetTuple1(i,radius);
+      parametricCoordinates->SetValue(i,t);
+      }
+    }
  
   vtkDoubleArray* probedForces = vtkDoubleArray::New();
   probedForces->SetNumberOfComponents(3);
@@ -543,7 +560,7 @@ void vtkvmtkActiveTubeFilter::EvolveCellSpline(vtkPolyData* lines, vtkIdType cel
  
   for (i=0; i<numberOfLongitudinalEvaluations; i++)
     {
-    t = (double)i / numberOfLongitudinalEvaluations * cellLength;
+    t = (double)i / (numberOfLongitudinalEvaluations-1) * cellLength;
     double x = xSpline->Evaluate(t);
     double y = ySpline->Evaluate(t);
     double z = zSpline->Evaluate(t);

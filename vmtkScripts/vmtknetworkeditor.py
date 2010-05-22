@@ -111,6 +111,7 @@ class vmtkNetworkEditor(pypes.pypeScript):
             ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer']])
         self.SetOutputMembers([
             ['Network','o','vtkPolyData',1,'','the output network','vmtknetworkwriter'],
+            ['RadiusArrayName','oradiusarray','str',1,''],
             ['Surface','osurface','vtkPolyData',1,'','the output surface','vmtksurfacewriter']])
 
     def TogglePickMode(self):
@@ -728,7 +729,7 @@ class vmtkNetworkEditor(pypes.pypeScript):
             splineFilter = vtk.vtkSplineFilter()
             splineFilter.SetInput(self.ActiveSegment)
             splineFilter.SetSubdivideToLength()
-            splineFilter.SetLength(1.0)
+            splineFilter.SetLength(2.0*min(self.Image.GetSpacing()))
             activeSegmentMapper.SetInput(splineFilter.GetOutput())
         else:
             activeSegmentMapper.SetInput(self.ActiveSegment)

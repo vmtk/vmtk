@@ -85,10 +85,14 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkActiveTubeFilter : public vtkPolyDataA
   vtkGetMacro(CardinalSplineInterpolation,int);
   vtkBooleanMacro(CardinalSplineInterpolation,int);
  
+  vtkSetMacro(SplineResamplingWhileIterating,int);
+  vtkGetMacro(SplineResamplingWhileIterating,int);
+  vtkBooleanMacro(SplineResamplingWhileIterating,int);
+ 
   vtkSetMacro(NegativeNormWarnings,int);
   vtkGetMacro(NegativeNormWarnings,int);
   vtkBooleanMacro(NegativeNormWarnings,int);
-  
+ 
   protected:
   vtkvmtkActiveTubeFilter();
   ~vtkvmtkActiveTubeFilter();  
@@ -134,6 +138,7 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkActiveTubeFilter : public vtkPolyDataA
   int FixedEndpointRadius;
 
   int CardinalSplineInterpolation;
+  int SplineResamplingWhileIterating;
 
   bool NegativeNormWarnings;
 

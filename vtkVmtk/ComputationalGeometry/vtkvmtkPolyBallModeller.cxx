@@ -38,6 +38,7 @@ vtkStandardNewMacro(vtkvmtkPolyBallModeller);
 
 vtkvmtkPolyBallModeller::vtkvmtkPolyBallModeller()
 {
+  this->ReferenceImage = NULL;
   this->ModelBounds[0] = 0.0;
   this->ModelBounds[1] = 0.0;
   this->ModelBounds[2] = 0.0;
@@ -52,10 +53,17 @@ vtkvmtkPolyBallModeller::vtkvmtkPolyBallModeller()
   this->RadiusArrayName = NULL;
 
   this->UsePolyBallLine = 0;
+  this->NegateFunction = 0;
 }
 
 vtkvmtkPolyBallModeller::~vtkvmtkPolyBallModeller()
 {
+  if (this->ReferenceImage)
+    {
+    this->ReferenceImage->Delete();
+    this->ReferenceImage = NULL;
+    }
+
   if (this->RadiusArrayName)
     {
     delete[] this->RadiusArrayName;
@@ -87,32 +95,41 @@ int vtkvmtkPolyBallModeller::RequestInformation (
     return 1;
     }
 
-  double maxRadius = radiusArray->GetRange()[1]; 
- 
-  if ((this->ModelBounds[0] >= this->ModelBounds[1]) || (this->ModelBounds[2] >= this->ModelBounds[3]) || (this->ModelBounds[4] >= this->ModelBounds[5]))
+  if (this->ReferenceImage)
     {
-    double* bounds = input->GetBounds();
-    double maxDist = 2.0 * maxRadius;
+    this->ReferenceImage->GetOrigin(origin);
+    this->ReferenceImage->GetSpacing(origin);
+    this->ReferenceImage->GetDimensions(this->SampleDimensions);
+    }
+  else
+    {
+    double maxRadius = radiusArray->GetRange()[1]; 
+ 
+    if ((this->ModelBounds[0] >= this->ModelBounds[1]) || (this->ModelBounds[2] >= this->ModelBounds[3]) || (this->ModelBounds[4] >= this->ModelBounds[5]))
+      {
+      double* bounds = input->GetBounds();
+      double maxDist = 2.0 * maxRadius;
+
+      int i;
+      for (i=0; i<3; i++)
+        {
+        this->ModelBounds[2*i] = bounds[2*i] - maxDist;
+        this->ModelBounds[2*i+1] = bounds[2*i+1] + maxDist;
+        }
+      }
 
     int i;
     for (i=0; i<3; i++)
       {
-      this->ModelBounds[2*i] = bounds[2*i] - maxDist;
-      this->ModelBounds[2*i+1] = bounds[2*i+1] + maxDist;
-      }
-    }
-
-  int i;
-  for (i=0; i<3; i++)
-    {
-    origin[i] = this->ModelBounds[2*i];
-    if (this->SampleDimensions[i] <= 1)
-      {
-      spacing[i] = 1.0;
-      }
-    else
-      {
-      spacing[i] = (this->ModelBounds[2*i+1] - this->ModelBounds[2*i]) / (this->SampleDimensions[i] - 1);
+      origin[i] = this->ModelBounds[2*i];
+      if (this->SampleDimensions[i] <= 1)
+        {
+        spacing[i] = 1.0;
+        }
+      else
+        {
+        spacing[i] = (this->ModelBounds[2*i+1] - this->ModelBounds[2*i]) / (this->SampleDimensions[i] - 1);
+        }
       }
     }
 
@@ -267,6 +284,17 @@ int vtkvmtkPolyBallModeller::RequestData(
       output->GetPoint(i,point);
       double polyBallLineValue = polyBallLine->EvaluateFunction(point);
       functionArray->SetComponent(i,0,polyBallLineValue);
+      }
+    }
+
+  if (this->NegateFunction)
+    {
+    int i;
+    for (i=0; i<numberOfOutputPoints; i++)
+      {
+      double functionValue = functionArray->GetComponent(i,0);
+      functionValue *= -1.0;
+      functionArray->SetComponent(i,0,functionValue);
       }
     }
 

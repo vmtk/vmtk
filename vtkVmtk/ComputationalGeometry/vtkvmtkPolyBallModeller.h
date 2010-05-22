@@ -27,6 +27,7 @@ Version:   $Revision: 1.4 $
 #define __vtkvmtkPolyBallModeller_h
 
 #include "vtkImageAlgorithm.h"
+#include "vtkImageData.h"
 #include "vtkvmtkWin32Header.h"
 
 class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyBallModeller : public vtkImageAlgorithm 
@@ -47,12 +48,20 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyBallModeller : public vt
   vtkSetVectorMacro(ModelBounds,double,6);
   vtkGetVectorMacro(ModelBounds,double,6);
 
+  vtkSetObjectMacro(ReferenceImage,vtkImageData);
+  vtkGetObjectMacro(ReferenceImage,vtkImageData);
+ 
   vtkSetStringMacro(RadiusArrayName);
   vtkGetStringMacro(RadiusArrayName);
 
   vtkSetMacro(UsePolyBallLine,int);
   vtkGetMacro(UsePolyBallLine,int);
   vtkBooleanMacro(UsePolyBallLine,int);
+
+  vtkSetMacro(NegateFunction,int);
+  vtkGetMacro(NegateFunction,int);
+  vtkBooleanMacro(NegateFunction,int);
+
 
   protected:
   vtkvmtkPolyBallModeller();
@@ -68,6 +77,10 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyBallModeller : public vt
   char* RadiusArrayName;
 
   int UsePolyBallLine;
+
+  int NegateFunction;
+
+  vtkImageData* ReferenceImage;
 
   private:
   vtkvmtkPolyBallModeller(const vtkvmtkPolyBallModeller&);  // Not implemented.

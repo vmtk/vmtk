@@ -28,18 +28,22 @@ class vmtkCenterlineModeller(pypes.pypeScript):
         pypes.pypeScript.__init__(self)
         
         self.Centerlines = None
+        self.ReferenceImage = None
         self.RadiusArrayName = None
         self.Image = None
         self.ModelBounds = None 
         self.SampleDimensions = [64,64,64]
+        self.NegateFunction = 0
 
         self.SetScriptName('vmtkcenterlinemodeller')
         self.SetScriptDoc('converts a centerline to an image containing the tube function')
         self.SetInputMembers([
             ['Centerlines','i','vtkPolyData',1,'','the input centerlines','vmtksurfacereader'],
             ['RadiusArrayName','radiusarray','str',1,'','name of the array where radius values are stored'],
+            ['Image','image','vtkImageData',1,'','the input image to use as a reference','vmtkimagereader'],
             ['SampleDimensions','dimensions','int',3,'(0,)','dimensions of the output image'],
-            ['ModelBounds','bounds','float',6,'(0.0,)','model bounds in physical coordinates (if None, they are computed automatically)']
+            ['ModelBounds','bounds','float',6,'(0.0,)','model bounds in physical coordinates (if None, they are computed automatically)'],
+            ['NegateFunction','negate','bool',1,'','produce a function that is negative inside the tube']
             ])
         self.SetOutputMembers([
             ['Image','o','vtkImageData',1,'','the output image','vmtkimagewriter']])
@@ -56,9 +60,13 @@ class vmtkCenterlineModeller(pypes.pypeScript):
         modeller.SetInput(self.Centerlines)
         modeller.SetRadiusArrayName(self.RadiusArrayName)
         modeller.UsePolyBallLineOn()
-        modeller.SetSampleDimensions(self.SampleDimensions)
-        if self.ModelBounds:
-            modeller.SetModelBounds(self.ModelBounds)
+        if self.Image:
+            modeller.SetReferenceImage(self.Image)
+        else:
+            modeller.SetSampleDimensions(self.SampleDimensions)
+            if self.ModelBounds:
+                modeller.SetModelBounds(self.ModelBounds)
+        modeller.SetNegateFunction(self.NegateFunction)
         modeller.Update()
 
         self.Image = modeller.GetOutput()
