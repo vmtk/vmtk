@@ -556,7 +556,7 @@ void vtkvmtkActiveTubeFilter::EvolveCellSpline(vtkPolyData* lines, vtkIdType cel
 
   //TODO: choose numberOfLongitudinalEvaluations with a strategy 
   //      (fixed number, based on length, adaptive - higher curve or radius derivatives, more points)
-  int numberOfLongitudinalEvaluations = 100;
+  int numberOfLongitudinalEvaluations = numberOfPoints * 3 / 2;
  
   for (i=0; i<numberOfLongitudinalEvaluations; i++)
     {
