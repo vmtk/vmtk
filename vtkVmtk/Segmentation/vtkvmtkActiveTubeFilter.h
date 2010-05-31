@@ -81,10 +81,6 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkActiveTubeFilter : public vtkPolyDataA
   vtkSetMacro(NumberOfAngularEvaluations,int);
   vtkGetMacro(NumberOfAngularEvaluations,int);
  
-  vtkSetMacro(CardinalSplineInterpolation,int);
-  vtkGetMacro(CardinalSplineInterpolation,int);
-  vtkBooleanMacro(CardinalSplineInterpolation,int);
- 
   vtkSetMacro(SplineResamplingWhileIterating,int);
   vtkGetMacro(SplineResamplingWhileIterating,int);
   vtkBooleanMacro(SplineResamplingWhileIterating,int);
@@ -112,8 +108,6 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkActiveTubeFilter : public vtkPolyDataA
     return (ijk[0]>=extent[0]+border && ijk[0]<extent[1]-border) && (ijk[1]>=extent[2]+border && ijk[1]<extent[3]-border) && (ijk[2]>=extent[4]+border && ijk[2]<extent[5]-border) ? true : false;
     }
 
-  void EvolveCell(vtkPolyData* lines, vtkIdType cellId);
-
   void EvolveCellSpline(vtkPolyData* lines, vtkIdType cellId);
 
   char* RadiusArrayName;
@@ -137,7 +131,6 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkActiveTubeFilter : public vtkPolyDataA
   int FixedEndpointCoordinates;
   int FixedEndpointRadius;
 
-  int CardinalSplineInterpolation;
   int SplineResamplingWhileIterating;
 
   bool NegativeNormWarnings;

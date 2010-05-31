@@ -64,7 +64,6 @@ vtkvmtkActiveTubeFilter::vtkvmtkActiveTubeFilter()
   this->FixedEndpointCoordinates = 0;
   this->FixedEndpointRadius = 0;
 
-  this->CardinalSplineInterpolation = 1;
   this->SplineResamplingWhileIterating = 1;
 
   this->NegativeNormWarnings = 0;
@@ -190,268 +189,6 @@ double vtkvmtkActiveTubeFilter::EvaluatePotential(double point[3])
   return potential;
 }
 
-void vtkvmtkActiveTubeFilter::EvolveCell(vtkPolyData* lines, vtkIdType cellId)
-{
-  vtkErrorMacro("EvolveCell not implemented");
-#if 0
-  //TODO: whip strategy - from start to end of spline, create displacement field simulating
-  //inertia (i.e. force on a point dependent on displacement on previous point)
-
-  vtkDataArray* radiusArray = lines->GetPointData()->GetArray(this->RadiusArrayName);
-
-  vtkPolyLine* polyLine = vtkPolyLine::SafeDownCast(lines->GetCell(cellId));
-
-  if (!polyLine)
-    {
-    return;
-    }
-
-  vtkPoints* polyLinePoints = polyLine->GetPoints();
-
-  int numberOfPoints = polyLine->GetNumberOfPoints();
-  int numberOfSubIds = numberOfPoints - 1;
-
-  double cellLength = 0.0;
-  double point0[3], point1[3];
-  int i;
-  for (i=0; i<numberOfSubIds; i++)
-    {
-    polyLinePoints->GetPoint(i,point0);
-    polyLinePoints->GetPoint(i+1,point1);
-    cellLength += sqrt(vtkMath::Distance2BetweenPoints(point0,point1));
-    }
-
-  vtkDoubleArray* parametricCoordinates = vtkDoubleArray::New();
-  parametricCoordinates->SetNumberOfTuples(numberOfPoints);
-
-  double currentLength = 0.0; 
-  double t;
-  parametricCoordinates->SetValue(0,0.0);
-  for (i=1; i<numberOfPoints; i++)
-    {
-    polyLinePoints->GetPoint(i-1,point0);
-    polyLinePoints->GetPoint(i,point1);
-    currentLength += sqrt(vtkMath::Distance2BetweenPoints(point0,point1));
-    t = currentLength;
-    parametricCoordinates->SetValue(i,t);
-    }
- 
-  vtkDoubleArray* probedForces = vtkDoubleArray::New();
-  probedForces->SetNumberOfComponents(3);
-  probedForces->SetNumberOfTuples(this->NumberOfAngularEvaluations);
-
-  vtkDoubleArray* tubeNormals = vtkDoubleArray::New();
-  tubeNormals->SetNumberOfComponents(3);
-  tubeNormals->SetNumberOfTuples(this->NumberOfAngularEvaluations);
- 
-  vtkDoubleArray* dxArray = vtkDoubleArray::New();
-  dxArray->SetNumberOfTuples(numberOfPoints);
-  dxArray->FillComponent(0,0.0);
-  vtkDoubleArray* dyArray = vtkDoubleArray::New();
-  dyArray->SetNumberOfTuples(numberOfPoints);
-  dyArray->FillComponent(0,0.0);
-  vtkDoubleArray* dzArray = vtkDoubleArray::New();
-  dzArray->SetNumberOfTuples(numberOfPoints);
-  dzArray->FillComponent(0,0.0);
-  vtkDoubleArray* drArray = vtkDoubleArray::New();
-  drArray->SetNumberOfTuples(numberOfPoints);
-  drArray->FillComponent(0,0.0);
- 
-  double radius0, radius1;
-  double t0, t1;
-  double x, y, z, r, xp, yp, zp, rp;
-  for (i=0; i<numberOfSubIds; i++)
-    {
-    t0 = parametricCoordinates->GetValue(i);
-    t1 = parametricCoordinates->GetValue(i+1);
-    polyLinePoints->GetPoint(i,point0);
-    polyLinePoints->GetPoint(i+1,point1);
-    radius0 = radiusArray->GetTuple1(polyLine->GetPointId(i));
-    radius1 = radiusArray->GetTuple1(polyLine->GetPointId(i+1));
-
-    x = 0.5 * (point0[0] + point1[0]);
-    y = 0.5 * (point0[1] + point1[1]);
-    z = 0.5 * (point0[2] + point1[2]);
-    r = 0.5 * (radius0 + radius1);
-    xp = (point1[0] + point0[0]) / (t1 - t0);
-    yp = (point1[1] + point0[1]) / (t1 - t0);
-    zp = (point1[2] + point0[2]) / (t1 - t0);
-    rp = (radius1 + radius0) / (t1 - t0);
-  
-    double tangent[3], normal[3];
- 
-    tangent[0] = xp; 
-    tangent[1] = yp; 
-    tangent[2] = zp; 
-
-    //FIXME: check analytical expressions vs theory
-    double tubeNormSquared = xp * xp + yp * yp + zp * zp - rp * rp;
-
-    //if (tubeNormSquared < 0.0)
-    if (tubeNormSquared <= 0.0)
-      {
-      if (this->NegativeNormWarnings)
-        {
-        vtkWarningMacro("Negative tubeNormSquared. Skipping.");
-        }
-      continue;
-      }
-    
-    double tubeNorm = sqrt(tubeNormSquared);
-
-    double isotropicForce = 0.0;
-    double anisotropicForce[3];
-    anisotropicForce[0] = anisotropicForce[1] = anisotropicForce[2] = 0.0;
-
-    double tubeNormal[3], probePoint[3], probedForce[3];
-    double theta;
-    int j;
-    for (j=0; j<this->NumberOfAngularEvaluations; j++)
-      {
-      theta = j * 2.0 * vtkMath::Pi() / this->NumberOfAngularEvaluations;
-
-      vtkMath::Perpendiculars(tangent,normal,NULL,theta);
-
-      tubeNormal[0] = - tangent[0] * rp + normal[0] * tubeNorm;
-      tubeNormal[1] = - tangent[1] * rp + normal[1] * tubeNorm;
-      tubeNormal[2] = - tangent[2] * rp + normal[2] * tubeNorm;
-      //
-      vtkMath::Normalize(tubeNormal);
-      //
-
-      probePoint[0] = x + tubeNormal[0] * r;
-      probePoint[1] = y + tubeNormal[1] * r;
-      probePoint[2] = z + tubeNormal[2] * r;
-
-      //double probedPotential = this->EvaluatePotential(probePoint);
-
-      this->EvaluateForce(probePoint,probedForce,false);
-
-      probedForces->SetTuple(j,probedForce);
-      tubeNormals->SetTuple(j,tubeNormal);
-
-      isotropicForce += vtkMath::Dot(probedForce,tubeNormal);
-      }
-
-    isotropicForce /= this->NumberOfAngularEvaluations;
-
-    for (j=0; j<this->NumberOfAngularEvaluations; j++)
-      {
-      probedForces->GetTuple(j,probedForce);
-      tubeNormals->GetTuple(j,tubeNormal);
-      anisotropicForce[0] += probedForce[0] - tubeNormal[0] * isotropicForce;
-      anisotropicForce[1] += probedForce[1] - tubeNormal[1] * isotropicForce;
-      anisotropicForce[2] += probedForce[2] - tubeNormal[2] * isotropicForce;
-      }
-
-    anisotropicForce[0] /= this->NumberOfAngularEvaluations;
-    anisotropicForce[1] /= this->NumberOfAngularEvaluations;
-    anisotropicForce[2] /= this->NumberOfAngularEvaluations;
-
-    double dx, dy, dz, dr;
-    double weight = 0.5;
-    dx = dxArray->GetValue(i);
-    dy = dyArray->GetValue(i);
-    dz = dzArray->GetValue(i);
-    dr = drArray->GetValue(i);
-    dx += anisotropicForce[0] * weight;
-    dy += anisotropicForce[1] * weight;
-    dz += anisotropicForce[2] * weight;
-    dr += isotropicForce * weight;
-    dxArray->SetValue(i,dx); 
-    dyArray->SetValue(i,dy); 
-    dzArray->SetValue(i,dz); 
-    drArray->SetValue(i,dr); 
-
-    dx = dxArray->GetValue(i+1);
-    dy = dyArray->GetValue(i+1);
-    dz = dzArray->GetValue(i+1);
-    dr = drArray->GetValue(i+1);
-    dx += anisotropicForce[0] * weight;
-    dy += anisotropicForce[1] * weight;
-    dz += anisotropicForce[2] * weight;
-    dr += isotropicForce * weight;
-    dxArray->SetValue(i+1,dx); 
-    dyArray->SetValue(i+1,dy); 
-    dzArray->SetValue(i+1,dz); 
-    drArray->SetValue(i+1,dr); 
-    }
-
-  double spacing[3];
-#if 0
-  if (this->PotientialImage)
-    {
-    this->PotentialImage->GetSpacing(spacing);
-    }
-  else
-#endif
-    {
-    this->PotentialGradientImage->GetSpacing(spacing);
-    }
-
-  double minSpacing = VTK_VMTK_LARGE_DOUBLE;
-  for (i=0; i<3; i++)
-    {
-    minSpacing = spacing[i] < minSpacing ? spacing[i] : minSpacing;
-    }
-
-  double maxChange = 0.0;
-  for (i=0; i<numberOfPoints; i++)
-    {
-    double dx = dxArray->GetValue(i);
-    double dy = dyArray->GetValue(i);
-    double dz = dzArray->GetValue(i);
-    double dr = drArray->GetValue(i);
-    double change = sqrt(dx*dx + dy*dy + dz*dz) + dr;
-    maxChange = change > maxChange ? change : maxChange;
-    }
- 
-  double timeStep;
-  if (maxChange > 0.0)
-    {
-    timeStep = minSpacing / maxChange * this->CFLCoefficient;
-    }
-  else
-    {
-    timeStep = 0.0;
-    }
-  cout<<"Time step "<<timeStep<<endl;
-
-  vtkIdType pointId;
-  double point[3], radius;
-  for (i=0; i<numberOfPoints; i++)
-    {
-    pointId = polyLine->GetPointId(i);
-    polyLinePoints->GetPoint(i,point);
-    radius = radiusArray->GetTuple1(pointId);
-    point[0] += dxArray->GetValue(i) * timeStep;
-    point[1] += dyArray->GetValue(i) * timeStep;
-    point[2] += dzArray->GetValue(i) * timeStep;
-    radius += drArray->GetValue(i) * timeStep;
-    if (radius < this->MinimumRadius)
-      {
-      radius = this->MinimumRadius;
-      }
-    if (!(this->FixedEndpointCoordinates && (i==0 || i==numberOfPoints-1)))
-      {
-      lines->GetPoints()->SetPoint(pointId,point);
-      }
-    if (!(this->FixedEndpointRadius && (i==0 || i==numberOfPoints-1)))
-      {
-      radiusArray->SetTuple1(pointId,radius);
-      }
-    }
-
-  parametricCoordinates->Delete();
-  probedForces->Delete();
-  tubeNormals->Delete();
-  dxArray->Delete();
-  dyArray->Delete();
-  dzArray->Delete();
-  drArray->Delete();
-#endif
-}
-
 void vtkvmtkActiveTubeFilter::EvolveCellSpline(vtkPolyData* lines, vtkIdType cellId)
 {
   //TODO: whip strategy - from start to end of spline, create displacement field simulating
@@ -497,7 +234,7 @@ void vtkvmtkActiveTubeFilter::EvolveCellSpline(vtkPolyData* lines, vtkIdType cel
   double currentLength = 0.0; 
   polyLinePoints->GetPoint(0,point0);
   double radius = radiusArray->GetTuple1(polyLine->GetPointId(0));
-  double t;
+  double t = 0.0;
   xSpline->AddPoint(0.0,point0[0]);
   ySpline->AddPoint(0.0,point0[1]);
   zSpline->AddPoint(0.0,point0[2]);
@@ -737,6 +474,8 @@ void vtkvmtkActiveTubeFilter::EvolveCellSpline(vtkPolyData* lines, vtkIdType cel
       }
     }
 
+  //TODO: longitudinal evolution
+
   xSpline->Delete();
   ySpline->Delete();
   zSpline->Delete();
@@ -798,14 +537,7 @@ int vtkvmtkActiveTubeFilter::RequestData(vtkInformation *vtkNotUsed(request), vt
     int c;
     for (c=0; c<numberOfCells; c++)
       {
-      if (this->CardinalSplineInterpolation)
-        {
-        this->EvolveCellSpline(output,c);
-        }
-      else
-        {
-        this->EvolveCell(output,c);
-        }
+      this->EvolveCellSpline(output,c);
       }
     }
 
