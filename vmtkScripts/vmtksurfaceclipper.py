@@ -36,12 +36,14 @@ class vmtkSurfaceClipper(pypes.pypeScript):
         self.Actor = None
         self.ClipWidget = None
         self.ClipFunction = None
+        self.CleanOutput = 1
 
         self.SetScriptName('vmtksurfaceclipper')
         self.SetScriptDoc('interactively clip a surface with a box')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
             ['WidgetType','type','str',1,'["box","sphere"]','type of widget used for clipping'],
+            ['CleanOutput','cleanoutput','bool',1,'','toggle cleaning the unused points'],
             ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer']
             ])
         self.SetOutputMembers([
@@ -121,6 +123,12 @@ class vmtkSurfaceClipper(pypes.pypeScript):
 
         if self.OwnRenderer:
             self.vmtkRenderer.Deallocate()
+
+        if self.CleanOutput == 1:
+            cleaner = vtk.vtkCleanPolyData()
+            cleaner.SetInput(self.Surface)
+            cleaner.Update()
+            self.Surface = cleaner.GetOutput()
 
         if self.Surface.GetSource():
             self.Surface.GetSource().UnRegisterAllOutputs()
