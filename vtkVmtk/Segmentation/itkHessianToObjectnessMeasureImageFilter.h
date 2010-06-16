@@ -71,6 +71,8 @@ public:
   typedef typename Superclass::OutputImageType  OutputImageType;
   typedef typename InputImageType::PixelType    InputPixelType;
   typedef typename OutputImageType::PixelType   OutputPixelType;
+
+  typedef typename OutputImageType::RegionType  OutputImageRegionType;
   
   /** Image dimension */
   itkStaticConstMacro(ImageDimension, unsigned int, ::itk::GetImageDimension<InputImageType>::ImageDimension);
@@ -128,8 +130,10 @@ protected:
   ~HessianToObjectnessMeasureImageFilter() {};
   void PrintSelf(std::ostream& os, Indent indent) const;
   
-  /** Generate Data */
-  void GenerateData(void);
+  /** Threaded Generate Data */
+  void BeforeThreadedGenerateData ();
+  void ThreadedGenerateData
+    ( const OutputImageRegionType &outputRegionForThread, int threadId);
 
 private:
   HessianToObjectnessMeasureImageFilter(const Self&); //purposely not implemented
