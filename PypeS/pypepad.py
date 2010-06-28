@@ -15,7 +15,7 @@
 
 
 import sys
-import pypes
+from vmtk import pypes
 from Tkinter import *
 import tkFileDialog
 

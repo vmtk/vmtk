@@ -725,7 +725,7 @@ class vmtkNetworkEditor(pypes.pypeScript):
 
         activeSegmentMapper = vtk.vtkPolyDataMapper()
         activeSegmentMapper.ScalarVisibilityOff()
-        if self.SplineInterpolation:
+        if self.SplineInterpolation and self.Image != None:
             splineFilter = vtk.vtkSplineFilter()
             splineFilter.SetInput(self.ActiveSegment)
             splineFilter.SetSubdivideToLength()
