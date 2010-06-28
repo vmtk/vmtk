@@ -127,7 +127,10 @@ class PypeTkPad(object):
         self.ClearOutputCommand()
 
     def OutputFileCommand(self):
-        self.output_file_name = tkFileDialog.asksaveasfilename()
+        outputfilename = tkFileDialog.asksaveasfilename()
+        if sys.platform == 'win32' and len(outputfilename.split()) > 1:
+            outputfilename = '"%s"' % outputfilename
+        self.output_file_name = outputfilename
 
     def AboutCommand(self):
         self.OutputText('\n')
@@ -246,6 +249,8 @@ class PypeTkPad(object):
         openfilename = tkFileDialog.askopenfilename()
         if not openfilename:
             return
+        if sys.platform == 'win32' and len(openfilename.split()) > 1:
+            openfilename = '"%s"' % openfilename
         self.text_input.insert(INSERT,openfilename+' ')
     
     def QuitHandler(self,event):
