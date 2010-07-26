@@ -25,6 +25,7 @@ Version:   $Revision: 1.5 $
 #include "vtkPolyData.h"
 #include "vtkDoubleArray.h"
 #include "vtkPointData.h"
+#include "vtkCellData.h"
 #include "vtkPolyLine.h"
 #include "vtkMath.h"
 #include "vtkTransform.h"
@@ -37,8 +38,10 @@ vtkStandardNewMacro(vtkvmtkCenterlineGeometry);
 
 vtkvmtkCenterlineGeometry::vtkvmtkCenterlineGeometry()
 {
+  this->LengthArrayName = NULL;
   this->CurvatureArrayName = NULL;
   this->TorsionArrayName = NULL;
+  this->TortuosityArrayName = NULL;
   
   this->FrenetTangentArrayName = NULL;
   this->FrenetNormalArrayName = NULL;
@@ -52,6 +55,12 @@ vtkvmtkCenterlineGeometry::vtkvmtkCenterlineGeometry()
 
 vtkvmtkCenterlineGeometry::~vtkvmtkCenterlineGeometry()
 {
+  if (this->LengthArrayName)
+    {
+    delete[] this->LengthArrayName;
+    this->LengthArrayName = NULL;
+    }
+
   if (this->CurvatureArrayName)
     {
     delete[] this->CurvatureArrayName;
@@ -62,6 +71,12 @@ vtkvmtkCenterlineGeometry::~vtkvmtkCenterlineGeometry()
     {
     delete[] this->TorsionArrayName;
     this->TorsionArrayName = NULL;
+    }
+
+  if (this->TortuosityArrayName)
+    {
+    delete[] this->TortuosityArrayName;
+    this->TortuosityArrayName = NULL;
     }
 
   if (this->FrenetTangentArrayName)
@@ -98,6 +113,12 @@ int vtkvmtkCenterlineGeometry::RequestData(
   vtkPolyData *output = vtkPolyData::SafeDownCast(
     outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
+  if (!this->LengthArrayName)
+    {
+    vtkErrorMacro(<<"LengthArrayName not specified");
+    return 1;
+    }
+
   if (!this->CurvatureArrayName)
     {
     vtkErrorMacro(<<"CurvatureArrayName not specified");
@@ -105,6 +126,12 @@ int vtkvmtkCenterlineGeometry::RequestData(
     }
 
   if (!this->TorsionArrayName)
+    {
+    vtkErrorMacro(<<"TorsionArrayName not specified");
+    return 1;
+    }
+
+  if (!this->TortuosityArrayName)
     {
     vtkErrorMacro(<<"TorsionArrayName not specified");
     return 1;
@@ -131,6 +158,15 @@ int vtkvmtkCenterlineGeometry::RequestData(
   output->DeepCopy(input);
 
   int numberOfInputPoints = input->GetNumberOfPoints();
+  int numberOfInputCells = input->GetNumberOfCells();
+
+  vtkDoubleArray* lengthArray = vtkDoubleArray::New();
+  lengthArray->SetName(this->LengthArrayName);
+  lengthArray->SetNumberOfComponents(1);
+  lengthArray->SetNumberOfTuples(numberOfInputCells);
+  lengthArray->FillComponent(0,0.0);
+
+  output->GetCellData()->AddArray(lengthArray);
 
   vtkDoubleArray* curvatureArray = vtkDoubleArray::New();
   curvatureArray->SetName(this->CurvatureArrayName);
@@ -147,6 +183,14 @@ int vtkvmtkCenterlineGeometry::RequestData(
   torsionArray->FillComponent(0,0.0);
 
   output->GetPointData()->AddArray(torsionArray);
+
+  vtkDoubleArray* tortuosityArray = vtkDoubleArray::New();
+  tortuosityArray->SetName(this->TortuosityArrayName);
+  tortuosityArray->SetNumberOfComponents(1);
+  tortuosityArray->SetNumberOfTuples(numberOfInputCells);
+  tortuosityArray->FillComponent(0,0.0);
+
+  output->GetCellData()->AddArray(tortuosityArray);
 
   vtkDoubleArray* frenetTangentArray = vtkDoubleArray::New();
   frenetTangentArray->SetName(this->FrenetTangentArrayName);
@@ -209,12 +253,20 @@ int vtkvmtkCenterlineGeometry::RequestData(
     
     int numberOfLinePoints = linePoints->GetNumberOfPoints();
 
+    double length = 0.0;
+    double point0[3], point1[3];
     for (int j=0; j<numberOfLinePoints; j++)
       {
       vtkIdType pointId = line->GetPointId(j);
       if (this->OutputSmoothedLines)
         {
         output->GetPoints()->SetPoint(pointId,linePoints->GetPoint(j));
+        }
+      if (j>0)
+        {
+        linePoints->GetPoint(j-1,point0);
+        linePoints->GetPoint(j,point1);
+        length += sqrt(vtkMath::Distance2BetweenPoints(point0,point1));
         }
       curvatureArray->SetComponent(pointId,0,lineCurvatureArray->GetComponent(j,0));
       torsionArray->SetComponent(pointId,0,lineTorsionArray->GetComponent(j,0));
@@ -227,6 +279,13 @@ int vtkvmtkCenterlineGeometry::RequestData(
       frenetBinormalArray->SetTuple(pointId,tuple);
       }
 
+    linePoints->GetPoint(0,point0);
+    linePoints->GetPoint(numberOfLinePoints-1,point1);
+    double tortuosity = length / sqrt(vtkMath::Distance2BetweenPoints(point0,point1)) - 1.0;
+
+    lengthArray->SetComponent(i,0,length);
+    tortuosityArray->SetComponent(i,0,tortuosity);
+
     lineCurvatureArray->Delete();
     lineTorsionArray->Delete();
     linePoints->Delete();
@@ -235,8 +294,10 @@ int vtkvmtkCenterlineGeometry::RequestData(
     lineBinormalArray->Delete();
     }
 
+  lengthArray->Delete();
   curvatureArray->Delete();
   torsionArray->Delete();
+  tortuosityArray->Delete();
   frenetTangentArray->Delete();
   frenetNormalArray->Delete();
   frenetBinormalArray->Delete();

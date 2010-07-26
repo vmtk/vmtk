@@ -39,11 +39,17 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkCenterlineGeometry : public 
 
   static vtkvmtkCenterlineGeometry* New();
 
+  vtkSetStringMacro(LengthArrayName);
+  vtkGetStringMacro(LengthArrayName);
+
   vtkSetStringMacro(CurvatureArrayName);
   vtkGetStringMacro(CurvatureArrayName);
 
   vtkSetStringMacro(TorsionArrayName);
   vtkGetStringMacro(TorsionArrayName);
+
+  vtkSetStringMacro(TortuosityArrayName);
+  vtkGetStringMacro(TortuosityArrayName);
 
   vtkSetStringMacro(FrenetTangentArrayName);
   vtkGetStringMacro(FrenetTangentArrayName);
@@ -78,8 +84,10 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkCenterlineGeometry : public 
 
   virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
 
+  char* LengthArrayName;
   char* CurvatureArrayName;
   char* TorsionArrayName;
+  char* TortuosityArrayName;
   char* FrenetTangentArrayName;
   char* FrenetNormalArrayName;
   char* FrenetBinormalArrayName;

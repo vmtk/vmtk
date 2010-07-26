@@ -147,10 +147,10 @@ class PypeTkPad(object):
             self.output_stream.output_to_file = False
         pipe = pypes.Pype()
         pipe.ExitOnError = 0
-        pipe.Arguments = arguments.split()
         pipe.InputStream = self.input_stream
         pipe.OutputStream = self.output_stream
         pipe.LogOn = self.log_on.get()
+        pipe.SetArgumentsString(arguments)
         pipe.ParseArguments()
         try: 
             pipe.Execute() 
@@ -249,7 +249,7 @@ class PypeTkPad(object):
         openfilename = tkFileDialog.askopenfilename()
         if not openfilename:
             return
-        if sys.platform == 'win32' and len(openfilename.split()) > 1:
+        if len(openfilename.split()) > 1:
             openfilename = '"%s"' % openfilename
         self.text_input.insert(INSERT,openfilename+' ')
     

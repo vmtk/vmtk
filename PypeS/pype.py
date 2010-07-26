@@ -42,6 +42,7 @@ class Pype(object):
         self.ExitOnError = 1
         self.InputStream = sys.stdin
         self.OutputStream = sys.stdout
+        self.Arguments = None
 
     def GetUsageString(self):
         usageString = 'Usage: pype --nolog --noauto --query firstScriptName -scriptOptionName scriptOptionValue --pipe secondScriptName -scriptOptionName scriptOptionValue -scriptOptionName @firstScriptName.scriptOptionName -id 2 --pipe thirdScriptName -scriptOptionName @secondScriptName-2.scriptOptionName'
@@ -61,6 +62,24 @@ class Pype(object):
         
     def PrintError(self,logMessage):
         self.OutputStream.write(logMessage + '\n')
+
+    def SetArgumentsString(self,argumentsString):
+        if '"' not in argumentsString:
+            self.Arguments = argumentsString.split()
+        import re
+        quoteRe = re.compile('(\".*?\")')
+        splitArguments = quoteRe.split(argumentsString)
+        arguments = []
+        for splitArgument in splitArguments:
+            arg = splitArgument
+            if splitArgument.startswith('"') and splitArgument.endswith('"'):
+                arg = splitArgument[1:-1]
+                arguments.append(arg)
+            else:
+                arguments.extend(arg.strip().split())
+            if '"' in arg:
+                self.PrintError('Error: non-matching quote found')
+        self.Arguments = arguments
 
     def ParseArguments(self):
         self.ScriptList = []
@@ -250,8 +269,8 @@ class Pype(object):
 def PypeRun(arguments):
   
     pipe = Pype()
-    pipe.Arguments = arguments.split()
     pipe.ExitOnError = 0
+    pipe.SetArgumentsString(arguments)
     pipe.ParseArguments()
     pipe.Execute()
     return pipe
