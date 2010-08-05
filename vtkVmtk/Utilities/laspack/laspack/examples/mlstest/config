@@ -1,8 +1,0 @@
-#!/bin/csh
-#
-# set used libraries
-#
-rm -f mkmf.tmp
-sed -e '/^EXTLIBS		=/ s/=/= -llaspack/' makefile > mkmf.tmp
-rm -f makefile                
-mv mkmf.tmp makefile

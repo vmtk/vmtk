@@ -34,7 +34,7 @@ Version:   $Revision: 11747 $
 #include <string>
 
 #include "itkMetaDataDictionary.h"
-#include "gdcmDictSet.h"        /// access to dictionary
+//#include "gdcmDictSet.h"        /// access to dictionary
 #include "gdcmDict.h"           /// access to dictionary
 #include "gdcmDictEntry.h"      /// access to dictionary
 #include "gdcmGlobal.h"         /// access to dictionary
