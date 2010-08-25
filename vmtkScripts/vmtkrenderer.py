@@ -61,7 +61,7 @@ class vmtkRenderer(pypes.pypeScript):
 
         key = object.GetKeySym()
         ctrlPressed = self.RenderWindowInteractor.GetControlKey()
-        if key == 's' and  ctrlPressed:
+        if key == 's' and  ctrlPressed or key == 'x':
             filePrefix = 'vmtk-screenshot'
             fileNumber = 0
             fileName = "%s-%d.png" % (filePrefix,fileNumber)
@@ -105,6 +105,7 @@ class vmtkRenderer(pypes.pypeScript):
                 self.RenderWindowInteractor = vtkvmtk.vtkvmtkCocoaRenderWindowInteractor()
             self.RenderWindowInteractor.SetInteractorStyle(vtk.vtkInteractorStyleTrackballCamera())
             self.RenderWindow.SetInteractor(self.RenderWindowInteractor)
+            self.vmtkRenderer.RenderWindowInteractor.AddObserver("KeyPressEvent",self.KeyPressed)
 
     def Execute(self):
         self.Initialize()
