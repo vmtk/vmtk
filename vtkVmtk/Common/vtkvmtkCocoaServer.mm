@@ -29,7 +29,11 @@
   NSWindow *win = nil;
   if (renWin != NULL)
     {
+#if VTK_MAJOR_VERSION > 5 || (VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION > 5)
     win = reinterpret_cast<NSWindow *>(renWin->GetRootWindow());
+#else
+    win = reinterpret_cast<NSWindow *>(renWin->GetWindowId());
+#endif
     if (win != nil)
       {
       NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
@@ -51,7 +55,11 @@
   NSWindow  *win = nil;
   if (renWin != NULL)
     {
+#if VTK_MAJOR_VERSION > 5 || (VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION > 5)
     win = reinterpret_cast<NSWindow *>(renWin->GetRootWindow());
+#else
+    win = reinterpret_cast<NSWindow *>(renWin->GetWindowId());
+#endif
     }
   [win close]; 
 }
