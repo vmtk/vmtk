@@ -19,7 +19,6 @@ from vmtk import pypes
 from Tkinter import *
 import tkFileDialog
 
-
 class TkPadOutputStream(object):
 
     def __init__(self,tk_text_widget):
@@ -87,14 +86,16 @@ class PypeTkPad(object):
       
         self.master = master
         self.master.title('PypePad')
-
+        self.master.geometry("%dx%d%+d%+d" % (700, 400, 0, 0))
+        self.master.minsize(300, 100)
         self.output_file_name = None
         
         self.BuildMainFrame()
 
     def NewCommand(self):
         self.ClearAllCommand()
- 
+
+
     def OpenCommand(self):
         openfile = tkFileDialog.askopenfile()
         if not openfile:
@@ -167,6 +168,18 @@ class PypeTkPad(object):
         word = line[wordstart:wordend]
         return word
 
+    def GetWordIndex(self):
+        startindex = self.text_input.index("insert-1c wordstart")
+        endindex = self.text_input.index("insert-1c wordend")
+        if self.text_input.get(startindex+'-1c') == '-' and self.text_input.get(startindex+'-2c') == '-':
+           startindex = self.text_input.index("insert-1c wordstart -2c") 
+        elif self.text_input.get(startindex+'-1c') == '-' and self.text_input.get(startindex+'-2c') == ' ':
+           startindex = self.text_input.index("insert-1c wordstart -1c")
+        self.wordIndex[0] = startindex
+        self.wordIndex[1] = endindex
+        word = self.text_input.get(self.wordIndex[0],self.wordIndex[1])
+        return word
+
     def GetLogicalLine(self,physicallineid):
         indexes, lines = self.GetLogicalLines()
         return lines[indexes[physicallineid]]
@@ -234,6 +247,43 @@ class PypeTkPad(object):
         except TclError:
             pass
 
+    def GetSuggestionsList(self,word):
+        list = []
+        try:
+            exec('import vmtkscripts')
+        except ImportError:
+            return None
+        if word.startswith('--'):
+            list = ['--pipe','--help']
+        elif word.startswith('-'):
+            optionlist = []
+            scriptindex = self.text_input.search('vmtk',self.wordIndex[0],backwards=1)
+            moduleName  = self.text_input.get( scriptindex,scriptindex+' wordend' )
+            try:
+                exec('import '+moduleName)
+                exec('scriptObjectClassName =  '+moduleName+'.'+moduleName)
+                exec ('scriptObject = '+moduleName+'.'+scriptObjectClassName +'()') 
+                members = scriptObject.InputMembers + scriptObject.OutputMembers
+                for member in members:
+                    optionlist.append('-'+member.OptionName)
+                exec('list = [option for option in optionlist if option.count(word)]')
+            except:
+                return list
+        else:
+            exec('list = [scriptname for scriptname in vmtkscripts.__all__ if scriptname.count(word) ]')
+        return list
+
+    def FillSuggestionsList(self,word):
+        self.suggestionslist.delete(0,END)
+        suggestions = self.GetSuggestionsList(word)
+        for suggestion in suggestions:
+            self.suggestionslist.insert(END,suggestion)
+
+    def ReplaceTextCommand(self,word):
+        self.text_input.delete(self.wordIndex[0],self.wordIndex[1])
+        self.text_input.insert(self.wordIndex[0],word)
+        self.text_input.focus_set()
+
     def ShowHelpCommand(self):
         word = self.GetWordUnderCursor()
         self.OutputText(word)
@@ -241,7 +291,16 @@ class PypeTkPad(object):
             self.RunPype(word+' --help')
         else: 
             self.OutputText('Enter your vmtk Pype above and Run.\n')
-        
+
+    def AutoCompleteCommand(self):
+        word = self.GetWordIndex()
+        self.suggestionswindow.withdraw()
+        if word:
+            self.FillSuggestionsList(word)
+            self.suggestionswindow.geometry("%dx%d%+d%+d" % (400, 150, self.text_output.winfo_rootx(),self.text_output.winfo_rooty()))
+            self.suggestionswindow.deiconify()
+            self.suggestionswindow.lift()
+            
     def InsertScriptName(self,scriptname):
         self.text_input.insert(INSERT,scriptname+' ')
         
@@ -252,10 +311,51 @@ class PypeTkPad(object):
         if len(openfilename.split()) > 1:
             openfilename = '"%s"' % openfilename
         self.text_input.insert(INSERT,openfilename+' ')
+
+    def KeyPressHandler(self,event):
+        if event.keysym == "Tab" :
+            self.AutoCompleteCommand()
+            self.suggestionslist.focus_set()
+            self.suggestionslist.selection_set(0)
+            return "break"
+        else:
+            self.text_input.focus_set()
+
+    def TopKeyPressHandler(self,event):
+        if event.keysym in ['Down','Up'] :
+            self.suggestionslist.focus_set()
+        elif event.keysym == "Return":
+            word = self.suggestionslist.get(ACTIVE)
+            self.ReplaceTextCommand(word)
+            self.suggestionswindow.withdraw()
+            self.text_input.focus_set()
+        elif len(event.keysym) == 1 :
+            self.suggestionswindow.withdraw()
+            self.text_input.insert(INSERT,event.keysym)
+            self.text_input.focus_set()
+        else :
+            self.suggestionswindow.withdraw()
+            self.text_input.focus_set()
     
+    def NewHandler(self,event):
+        self.NewCommand() 
+
+    def OpenHandler(self,event):
+        self.OpenCommand()
+
+    def SaveHandler(self,event):
+        self.SaveCommand()
+
+    def InsertFileNameHandler(self,event):
+        self.InsertFileName()
+        return "break"
+ 
     def QuitHandler(self,event):
         self.QuitCommand()
- 
+
+    def ShowHelpHandler(self,event):
+        self.ShowHelpCommand()
+
     def RunKeyboardHandler(self,event):
         try: 
             self.text_input.index(SEL_FIRST)
@@ -279,7 +379,7 @@ class PypeTkPad(object):
         self.text_output["state"] = DISABLED
  
     def BuildScriptMenu(self,parentmenu,modulename):
-        menu = Menu(parentmenu)
+        menu = Menu(parentmenu,bg="#ffffff",bd=1,activeborderwidth=0,font='Verdana 8')
         try:
             exec('import '+ modulename)
         except ImportError:
@@ -293,16 +393,16 @@ class PypeTkPad(object):
         
     def BuildMainFrame(self): 
       
-        menu = Menu(self.master)
+        menu = Menu(self.master,activeborderwidth=0,bd=0,font='Verdana 8')
         self.master.config(menu=menu)
   
-        filemenu = Menu(menu)
-        menu.add_cascade(label="File", menu=filemenu)
-        filemenu.add_command(label="New", command=self.NewCommand)
-        filemenu.add_command(label="Open...", command=self.OpenCommand)
-        filemenu.add_command(label="Save as...", command=self.SaveCommand)
+        filemenu = Menu(menu,tearoff=0,bg="#ffffff",bd=1,activeborderwidth=0,font='Verdana 8')
+        menu.add_cascade(label="File", underline=0,  menu=filemenu)
+        filemenu.add_command(label="New", accelerator='Ctrl+N',command=self.NewCommand)
+        filemenu.add_command(label="Open...",accelerator='Ctrl+O', command=self.OpenCommand)
+        filemenu.add_command(label="Save as...",accelerator='Ctrl+S', command=self.SaveCommand)
         filemenu.add_separator()
-        filemenu.add_command(label="Quit", command=self.QuitCommand)
+        filemenu.add_command(label="Quit",accelerator='Ctrl+Q', command=self.QuitCommand)
 
         self.log_on = IntVar()
         self.log_on.set(1)
@@ -310,17 +410,17 @@ class PypeTkPad(object):
         self.output_to_file = StringVar()
         self.output_to_file.set('n')
  
-        scriptmenu = Menu(menu)
+        scriptmenu = Menu(menu,tearoff=0,bg="#ffffff",bd=1,activeborderwidth=0,font='Verdana 8')
         modulenames = ['vmtkscripts']
         for modulename in modulenames:
             scriptsubmenu = self.BuildScriptMenu(menu,modulename)
             if scriptsubmenu:
                 scriptmenu.add_cascade(label=modulename,menu=scriptsubmenu)
  
-        editmenu = Menu(menu)
-        menu.add_cascade(label="Edit", menu=editmenu)
+        editmenu = Menu(menu,tearoff=0,bg="#ffffff",bd=1,activeborderwidth=0,font='Verdana 8')
+        menu.add_cascade(label="Edit",underline=0,  menu=editmenu)
         editmenu.add_cascade(label="Insert script",menu=scriptmenu)
-        editmenu.add_command(label="Insert file name...", command=self.InsertFileName)
+        editmenu.add_command(label="Insert file name", accelerator='Ctrl+F',command=self.InsertFileName)
         editmenu.add_separator()
         editmenu.add_command(label="Clear input", command=self.ClearInputCommand)
         editmenu.add_command(label="Clear output", command=self.ClearOutputCommand)
@@ -333,29 +433,87 @@ class PypeTkPad(object):
         editmenu.add_radiobutton(label="Append output to file", variable=self.output_to_file,value='a')
         editmenu.add_command(label="Output file...", command=self.OutputFileCommand)
 
-        runmenu = Menu(menu)
-        menu.add_cascade(label="Run", menu=runmenu)
+        runmenu = Menu(menu,tearoff=0,bg="#ffffff",bd=1,activeborderwidth=0,font='Verdana 8')
+        menu.add_cascade(label="Run", underline=0, menu=runmenu)
         runmenu.add_command(label="Run all", command=self.RunAllCommand)
         runmenu.add_command(label="Run current line", command=self.RunLineCommand)
         runmenu.add_command(label="Run selection", command=self.RunSelectionCommand)
        
-        helpmenu = Menu(menu)
-        menu.add_cascade(label="Help", menu=helpmenu)
-        helpmenu.add_command(label="Help", command=self.ShowHelpCommand)
-        helpmenu.add_command(label="About", command=self.AboutCommand)
+        helpmenu = Menu(menu,tearoff=0,bg="#ffffff",bd=1,activeborderwidth=0,font='Verdana 8')
+        menu.add_cascade(label="Help", underline=0, menu=helpmenu)
+        helpmenu.add_command(label="Help", underline=0, accelerator='F1',command=self.ShowHelpCommand)
+        helpmenu.add_command(label="About", underline=0, command=self.AboutCommand)
 
         self.master.bind("<Control-KeyPress-q>", self.QuitHandler)
-       
-        self.panes = PanedWindow(self.master,orient=VERTICAL)
-        self.panes.pack(fill=BOTH,expand=1)
+        self.master.bind("<Control-KeyPress-n>", self.NewHandler)
+        self.master.bind("<Control-KeyPress-o>", self.OpenHandler)
+        self.master.bind("<Control-KeyPress-s>", self.SaveHandler)
+        self.master.bind("<Control-KeyPress-f>", self.InsertFileNameHandler)
+        self.master.bind("<KeyPress-F1>", self.ShowHelpHandler)
+        self.master.bind("<KeyPress>", self.KeyPressHandler)
         
-        self.frame1 = Frame(self.panes)
-        self.panes.add(self.frame1)
+        self.wordIndex = ['1.0','1.0']
+               
+        self.suggestionswindow = Toplevel(bg='#ffffff',bd=0,height=50,width=600,highlightthickness=0,takefocus=True)
+        self.suggestionswindow.overrideredirect(1)
+        self.suggestionslist = Listbox(self.suggestionswindow,bg='#ffffff',bd=1,fg='#336699',activestyle='none',highlightthickness=0,height=9)
+        self.suggestionslist.insert(END,"foo")
+        self.suggestionslist.pack(side=TOP,fill=X)
+        self.suggestionswindow.bind("<KeyPress>", self.TopKeyPressHandler)
+        self.suggestionswindow.withdraw()
 
-        self.text_input = Text(self.frame1,bg='#fff')
-        self.text_input.pack(side=LEFT,fill='both',expand=1)
+        self.master.rowconfigure(0,weight=1)
+        self.master.columnconfigure(0,weight=1)
+        content = Frame(self.master,bd=0,padx=2,pady=2) 
+        content.grid(row=0,column=0,sticky=N+S+W+E)
+        content.rowconfigure(0,weight=1,minsize=50)
+        content.rowconfigure(1,weight=0)
+        content.columnconfigure(0,weight=1)
 
-        self.popupmenu = Menu(self.text_input, tearoff=1, title="PypePad")
+        panes = PanedWindow(content,orient=VERTICAL,bd=1,sashwidth=8,sashpad=0,showhandle=False)
+        panes.grid(row=0,column=0,sticky=N+S+W+E)
+
+        frame1 = Frame(panes,bd=0) 
+        frame1.grid(row=0,column=0,sticky=N+S+W+E)
+        frame1.columnconfigure(0,weight=1)
+        frame1.columnconfigure(1,weight=0)
+        frame1.rowconfigure(0,weight=1)
+
+        panes.add(frame1,height=40,minsize=20)        
+
+        frame2 = Frame(panes,bd=0) 
+        frame2.grid(row=1,column=0,sticky=N+S+W+E)
+        frame2.columnconfigure(0,weight=1)
+        frame2.columnconfigure(1,weight=0)
+        frame2.rowconfigure(0,weight=1)
+        
+        panes.add(frame2,minsize=20) 
+ 
+        self.text_input = Text(frame1, bg='#ffffff',bd=1,highlightthickness=0)
+
+        self.text_input.bind("<KeyPress>", self.KeyPressHandler)
+        self.text_input.bind("<Button-3>", self.PopupHandler)
+        self.text_input.bind("<Control-Return>", self.RunKeyboardHandler)
+ 
+        self.input_scrollbar = Scrollbar(frame1,orient=VERTICAL,command=self.text_input.yview)
+        self.text_input["yscrollcommand"] = self.input_scrollbar.set    
+
+        self.text_output = Text(frame2,state=DISABLED,bd=1,bg='#ffffff',highlightthickness=0)
+        
+        self.output_scrollbar = Scrollbar(frame2,orient=VERTICAL,command=self.text_output.yview)
+        self.text_output["yscrollcommand"] = self.output_scrollbar.set    
+      
+        self.text_entry = Entry(content,bd=1,bg='#ffffff',state=DISABLED,highlightthickness=0)
+
+        self.text_input.focus_set()
+
+        self.text_input.grid(row=0,column=0,sticky=N+S+W+E)
+        self.input_scrollbar.grid(row=0,column=1,sticky=N+S+W+E)
+        self.text_output.grid(row=0,column=0,sticky=N+S+W+E)
+        self.output_scrollbar.grid(row=0,column=1,sticky=N+S+W+E)
+        self.text_entry.grid(row=1,column=0,sticky=N+S+W+E)
+
+        self.popupmenu = Menu(self.text_input, tearoff=1, bd=0,font='Verdana 8')
         self.popupmenu.add_command(label="Context help", command=self.ShowHelpCommand)
         self.popupmenu.add_cascade(label="Insert script",menu=scriptmenu)
         self.popupmenu.add_command(label="Insert file name...", command=self.InsertFileName)
@@ -363,36 +521,10 @@ class PypeTkPad(object):
         self.popupmenu.add_command(label="Run all", command=self.RunAllCommand)
         self.popupmenu.add_command(label="Run current line", command=self.RunLineCommand)
         self.popupmenu.add_command(label="Run selection", command=self.RunSelectionCommand)
-                       
-        self.text_input.bind("<Button-3>", self.PopupHandler)
-        self.text_input.bind("<Control-Return>", self.RunKeyboardHandler)
- 
-        self.input_scrollbar = Scrollbar(self.frame1,orient=VERTICAL,command=self.text_input.yview)
-        self.input_scrollbar.pack(side=RIGHT,fill=Y)
-        self.text_input["yscrollcommand"] = self.input_scrollbar.set    
-  
-        self.frame2 = Frame(self.panes)
-        self.panes.add(self.frame2)
-
-        self.text_output = Text(self.frame2,state=DISABLED,relief=GROOVE)
-        self.text_output.pack(side=LEFT,fill='both',expand=1)
-        
-        self.output_scrollbar = Scrollbar(self.frame2,orient=VERTICAL,command=self.text_output.yview)
-        self.output_scrollbar.pack(side=RIGHT,fill=Y)
-        self.text_output["yscrollcommand"] = self.output_scrollbar.set    
-        
-        self.frame3 = Frame(self.panes)
-        self.panes.add(self.frame3)
-      
-        self.text_entry = Entry(self.frame3,bg='#fff',state=DISABLED)
-        self.text_entry.pack(side=TOP,fill='both',expand=1)
-
-        self.text_input.focus_set()
 
         self.output_stream = TkPadOutputStream(self.text_output)
         self.input_stream = TkPadInputStream(self.text_entry,self.output_stream)
 
-  
 def RunPypeTkPad():
 
     root = Tk()
