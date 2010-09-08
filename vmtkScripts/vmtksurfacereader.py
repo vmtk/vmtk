@@ -183,8 +183,10 @@ class vmtkSurfaceReader(pypes.pypeScript):
 
         if self.InputFileName == 'BROWSER':
             import tkFileDialog
-            initialDir = '.'
+            import os.path
+            initialDir = pypes.pypeScript.lastVisitedPath
             self.InputFileName = tkFileDialog.askopenfilename(title="Input surface",initialdir=initialDir)
+            pypes.pypeScript.lastVisitedPath = os.path.dirname(self.InputFileName)
             if not self.InputFileName:
                 self.PrintError('Error: no InputFileName.')
 

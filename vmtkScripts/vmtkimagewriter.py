@@ -208,15 +208,18 @@ class vmtkImageWriter(pypes.pypeScript):
 
         if self.OutputFileName == 'BROWSER':
             import tkFileDialog
-            initialDir = '.'
+            import os.path
+            initialDir = pypes.pypeScript.lastVisitedPath
             self.OutputFileName = tkFileDialog.asksaveasfilename(title="Output image",initialdir=initialDir)
+            pypes.pypeScript.lastVisitedPath = os.path.dirname(self.OutputFileName)
             if not self.OutputFileName:
                 self.PrintError('Error: no OutputFileName.')
 
         if self.OutputDirectoryName == 'BROWSER':
             import tkFileDialog
-            initialDir = '.'
+            initialDir = pypes.pypeScript.lastVisitedPath
             self.OutputDirectoryName = tkFileDialog.askdirectory(title="Output directory",initialdir=initialDir)
+            pypes.pypeScript.lastVisitedPath = self.OutputDirectoryName
             if not self.OutputDirectoryName:
                 self.PrintError('Error: no OutputDirectoryName.')
 

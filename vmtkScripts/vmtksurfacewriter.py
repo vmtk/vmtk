@@ -180,8 +180,10 @@ class vmtkSurfaceWriter(pypes.pypeScript):
 
         if self.OutputFileName == 'BROWSER':
             import tkFileDialog
-            initialDir = '.'
+            import os.path
+            initialDir = pypes.pypeScript.lastVisitedPath
             self.OutputFileName = tkFileDialog.asksaveasfilename(title="Output surface",initialdir=initialDir)
+            pypes.pypeScript.lastVisitedPath = os.path.dirname(self.OutputFileName)
             if not self.OutputFileName:
                 self.PrintError('Error: no OutputFileName.')
 

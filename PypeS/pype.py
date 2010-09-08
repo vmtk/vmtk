@@ -108,6 +108,20 @@ class Pype(object):
                 return
             for arg in pypeArguments:
                 arguments.remove(arg)
+        if 'FILE' in arguments:
+            text = ''
+            self.OutputStream.write('\nThe current pype contains filename placeholders identified by the string FILE.')
+            self.OutputStream.write('\nEvery occcurence of FILE is meant to be replaced with an actual file path.\n')
+            self.OutputStream.write('\nPress \'c\' to continue and be authomatically prompted for the required filenames.')
+            self.OutputStream.write('\nPress \'e\' to exit. You can still edit your pype manually and run it back.\n\n')
+            while text not in ['c','e']:
+                self.OutputStream.write('> ')
+                text = self.InputStream.readline().rstrip('\n')
+            if text == 'e':
+                return
+            elif text =='c':
+                while 'FILE' in arguments:
+                    arguments[arguments.index('FILE')] = 'BROWSER'
         while '--pipe' in arguments:
             scriptSlice = arguments[:arguments.index('--pipe')]
             self.ScriptList.append([os.path.splitext(os.path.split(scriptSlice[0])[1])[0],scriptSlice[1:]])

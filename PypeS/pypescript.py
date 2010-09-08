@@ -99,7 +99,9 @@ class pypeMember(object):
             return representation
 
 class pypeScript(object):
-    
+
+    lastVisitedPath = '.'
+
     def __init__(self):
 
         self.BuiltinOptionTypes = ['int','str','float']
