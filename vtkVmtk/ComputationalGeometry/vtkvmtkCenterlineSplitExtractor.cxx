@@ -37,10 +37,15 @@ vtkvmtkCenterlineSplitExtractor::vtkvmtkCenterlineSplitExtractor()
   this->SplitPoint[1] = 0.0;
   this->SplitPoint[2] = 0.0;
 
+  this->SplitPoint2[0] = 0.0;
+  this->SplitPoint2[1] = 0.0;
+  this->SplitPoint2[2] = 0.0;
+
   this->Tolerance = 1E-4;
 
   this->GapLength = 1.0;
 
+  this->SplittingMode = POINTANDGAP;
   this->GroupingMode = FIRSTPOINT;
 }
 
@@ -48,18 +53,13 @@ vtkvmtkCenterlineSplitExtractor::~vtkvmtkCenterlineSplitExtractor()
 {
 }
 
-void vtkvmtkCenterlineSplitExtractor::ComputeCenterlineSplitting(vtkPolyData* input, vtkIdType cellId)
+void vtkvmtkCenterlineSplitExtractor::ComputePointAndGapCenterlineSplitting(vtkPolyData* input, vtkIdType cellId)
 {
   vtkvmtkPolyBallLine* tube = vtkvmtkPolyBallLine::New();
   tube->SetInput(input);
   tube->SetInputCellId(cellId);
   tube->UseRadiusInformationOff();
   double tubeFunctionValue = tube->EvaluateFunction(this->SplitPoint);
-//  tube->SetUseRadiusInformation(this->UseRadiusInformation);
-//  if (this->UseRadiusInformation)
-//    {
-//    tube->SetPolyBallRadiusArrayName(this->CenterlineRadiusArrayName);
-//    }
 
   if (tubeFunctionValue > this->Tolerance)
     {
@@ -171,6 +171,108 @@ void vtkvmtkCenterlineSplitExtractor::ComputeCenterlineSplitting(vtkPolyData* in
   this->TractBlanking[2] = 0;
 
   abscissas->Delete();
+}
+
+void vtkvmtkCenterlineSplitExtractor::ComputeBetweenPointsCenterlineSplitting(vtkPolyData* input, vtkIdType cellId)
+{
+  vtkvmtkPolyBallLine* tube = vtkvmtkPolyBallLine::New();
+  tube->SetInput(input);
+  tube->SetInputCellId(cellId);
+  tube->UseRadiusInformationOff();
+  double tubeFunctionValue = tube->EvaluateFunction(this->SplitPoint);
+
+  if (tubeFunctionValue > this->Tolerance)
+    {
+    this->NumberOfSplittingPoints = 0;
+    return;
+    }
+
+  vtkIdType centerlineSubId = tube->GetLastPolyBallCellSubId();
+  double centerlinePCoord = tube->GetLastPolyBallCellPCoord();
+  double centerlinePoint[3];
+  tube->GetLastPolyBallCenter(centerlinePoint);
+
+  double tubeFunctionValue2 = tube->EvaluateFunction(this->SplitPoint2);
+
+  if (tubeFunctionValue2 > this->Tolerance)
+    {
+    this->NumberOfSplittingPoints = 0;
+    return;
+    }
+
+  vtkIdType centerlineSubId2 = tube->GetLastPolyBallCellSubId();
+  double centerlinePCoord2 = tube->GetLastPolyBallCellPCoord();
+  double centerlinePoint2[3];
+  tube->GetLastPolyBallCenter(centerlinePoint2);
+
+  this->NumberOfSplittingPoints = 2;
+
+  if (this->SubIds)
+    {
+    delete[] this->SubIds;
+    this->SubIds = NULL;
+    }
+
+  if (this->PCoords)
+    {
+    delete[] this->PCoords;
+    this->PCoords = NULL;
+    }
+
+  if (this->TractBlanking)
+    {
+    delete[] this->TractBlanking;
+    this->TractBlanking = NULL;
+    }
+
+  vtkCell* centerline = input->GetCell(cellId);
+
+  if (centerline->GetCellType() != VTK_LINE && centerline->GetCellType() != VTK_POLY_LINE)
+    {
+    return;
+    }
+
+  this->SubIds = new vtkIdType[this->NumberOfSplittingPoints];
+  this->PCoords = new double[this->NumberOfSplittingPoints];
+
+  if (centerlineSubId > centerlineSubId2 || (centerlineSubId == centerlineSubId2 && centerlinePCoord > centerlinePCoord2))
+    {
+    this->SubIds[0] = centerlineSubId;
+    this->PCoords[0] = centerlinePCoord;
+
+    this->SubIds[1] = centerlineSubId2;
+    this->PCoords[1] = centerlinePCoord2;
+    }
+  else
+    {
+    this->SubIds[0] = centerlineSubId2;
+    this->PCoords[0] = centerlinePCoord2;
+
+    this->SubIds[1] = centerlineSubId;
+    this->PCoords[1] = centerlinePCoord;
+    }
+
+  this->TractBlanking = new int[this->NumberOfSplittingPoints+1];
+
+  this->TractBlanking[0] = 0;
+  this->TractBlanking[1] = 1;
+  this->TractBlanking[2] = 0;
+}
+
+void vtkvmtkCenterlineSplitExtractor::ComputeCenterlineSplitting(vtkPolyData* input, vtkIdType cellId)
+{
+  if (this->SplittingMode == POINTANDGAP)
+    {
+    this->ComputePointAndGapCenterlineSplitting(input,cellId);
+    }
+  else if (this->SplittingMode == BETWEENPOINTS)
+    {
+    this->ComputeBetweenPointsCenterlineSplitting(input,cellId);
+    }
+  else
+    {
+    vtkErrorMacro("Error: unsupported splitting mode");
+    }
 }
 
 void vtkvmtkCenterlineSplitExtractor::PrintSelf(ostream& os, vtkIndent indent)

@@ -39,6 +39,7 @@ class vmtkMeshGenerator(pypes.pypeScript):
         self.CellEntityIdsArrayName = 'CellEntityIds'
         self.ElementSizeMode = 'edgelength'
         self.VolumeElementScaleFactor = 0.8
+        self.CappingMethod = 'simple'
 
         self.BoundaryLayer = 0
         self.NumberOfSubLayers = 2
@@ -59,6 +60,7 @@ class vmtkMeshGenerator(pypes.pypeScript):
             ['MinEdgeLength','minedgelength','float',1,'(0.0,)'],
             ['CellEntityIdsArrayName','entityidsarray','str',1],
             ['ElementSizeMode','elementsizemode','str',1,'["edgelength","edgelengtharray"]'],
+            ['CappingMethod','cappingmethod','str',1,'["simple","annular"]'],
             ['VolumeElementScaleFactor','volumeelementfactor','float',1,'(0.0,)'],
             ['BoundaryLayer','boundarylayer','bool',1,''],
             ['NumberOfSubLayers','sublayers','int',1,'(0,)'],
@@ -79,7 +81,7 @@ class vmtkMeshGenerator(pypes.pypeScript):
         capper = vmtkscripts.vmtkSurfaceCapper()
         capper.Surface = self.Surface
         capper.Interactive = 0
-        capper.Method = 'simple'
+        capper.Method = self.CappingMethod
         capper.TriangleOutput = 0
         capper.CellEntityIdOffset = 1
         capper.Execute()

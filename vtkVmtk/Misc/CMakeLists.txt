@@ -1,4 +1,5 @@
 SET (VTK_VMTK_MISC_SRCS
+  vtkvmtkAnnularCapPolyData.cxx
   vtkvmtkAppendFilter.cxx
   vtkvmtkBoundaryLayerGenerator.cxx
   vtkvmtkCurvedMPRImageFilter.cxx

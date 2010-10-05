@@ -30,6 +30,7 @@ Version:   $Revision: 1.5 $
 #include "vtkvmtkWin32Header.h"
 
 class vtkPolyData;
+class vtkPoints;
 class vtkIdList;
 
 class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkCenterlineUtilities : public vtkObject
@@ -76,6 +77,8 @@ public:
     InterpolateTuple(centerlines,arrayName,cellId,subId,pcoord,interpolatedTuple3);
   }
  
+  static void FindMergingPoints(vtkPolyData* centerlines, vtkPoints* mergingPoints, double tolerance);
+
 protected:
   vtkvmtkCenterlineUtilities() {};
   ~vtkvmtkCenterlineUtilities() {};

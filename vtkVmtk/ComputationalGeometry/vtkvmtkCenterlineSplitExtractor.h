@@ -45,15 +45,37 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkCenterlineSplitExtractor : p
   vtkSetMacro(GapLength,double);
   vtkGetMacro(GapLength,double);
 
+  vtkSetVectorMacro(SplitPoint2,double,3);
+  vtkGetVectorMacro(SplitPoint2,double,3);
+
+  vtkSetMacro(SplittingMode,int);
+  vtkGetMacro(SplittingMode,int);
+  void SetSplittingModeToPointAndGap()
+  { this->SetSplittingMode(POINTANDGAP); }
+  void SetSplittingModeToBetweenPoints()
+  { this->SetGroupingMode(BETWEENPOINTS); }
+
+//BTX
+  enum {
+    POINTANDGAP,
+    BETWEENPOINTS
+  };
+//ETX
+
   protected:
   vtkvmtkCenterlineSplitExtractor();
   ~vtkvmtkCenterlineSplitExtractor();  
 
   virtual void ComputeCenterlineSplitting(vtkPolyData* input, vtkIdType cellId);
+  virtual void ComputePointAndGapCenterlineSplitting(vtkPolyData* input, vtkIdType cellId);
+  virtual void ComputeBetweenPointsCenterlineSplitting(vtkPolyData* input, vtkIdType cellId);
 
   double SplitPoint[3];
+  double SplitPoint2[3];
   double Tolerance;
   double GapLength;
+
+  int SplittingMode;
 
   private:
   vtkvmtkCenterlineSplitExtractor(const vtkvmtkCenterlineSplitExtractor&);  // Not implemented.

@@ -348,4 +348,47 @@ void vtkvmtkCenterlineUtilities::InterpolateTuple(vtkPolyData* centerlines, cons
   }
 }
 
+void vtkvmtkCenterlineUtilities::FindMergingPoints(vtkPolyData* centerlines, vtkPoints* mergingPoints, double tolerance=1E-8)
+{
+  mergingPoints->Initialize();
+  int numberOfCells = centerlines->GetNumberOfCells();
+  int i, j, k;
+  for (i=0; i<numberOfCells; i++)
+    {
+    vtkCell* centerline = centerlines->GetCell(i);
+    int numberOfCenterlinePoints = centerline->GetNumberOfPoints();
+    int previousMergeStatus = -1;
+    int mergeStatus = -1;
+    for (j=0; j<numberOfCenterlinePoints; j++)
+      {
+      double point[3];
+      centerline->GetPoints()->GetPoint(j,point);
+      for (k=i+1; k<numberOfCells; k++)
+        {
+        vtkCell* currentCenterline = centerlines->GetCell(k);
+        int numberOfCurrentCenterlinePoints = currentCenterline->GetNumberOfPoints();
+        double closestPoint[3];
+        int subId;
+        double pcoords[3];
+        double dist2;
+        double* weights = new double[numberOfCurrentCenterlinePoints];
+        currentCenterline->EvaluatePosition(point,closestPoint,subId,pcoords,dist2,weights);
+        if (dist2 < tolerance*tolerance)
+          {
+          mergeStatus = 1;
+          }
+        else
+          {
+          mergeStatus = 0;
+          }
+        if (j>0 && mergeStatus != previousMergeStatus)
+          {
+          mergingPoints->InsertNextPoint(point);
+          previousMergeStatus = mergeStatus;
+          }
+        delete[] weights;
+        }
+      } 
+    }
+}
 

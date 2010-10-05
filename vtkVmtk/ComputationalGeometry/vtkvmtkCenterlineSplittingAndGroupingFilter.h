@@ -59,6 +59,14 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkCenterlineSplittingAndGroupi
   void SetGroupingModeToPointInTube()
   { this->SetGroupingMode(POINTINTUBE); }
 
+//BTX
+  enum {
+    FIRSTPOINT,
+    LASTPOINT,
+    POINTINTUBE
+  };
+//ETX
+
   protected:
   vtkvmtkCenterlineSplittingAndGroupingFilter();
   ~vtkvmtkCenterlineSplittingAndGroupingFilter();  
@@ -77,14 +85,6 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkCenterlineSplittingAndGroupi
   void SplitCenterline(vtkPolyData* input, vtkIdType cellId, int numberOfSplittingPoints, const vtkIdType* subIds, const double* pcoords, const int* tractBlanking, vtkPolyData* splitCenterline);
 
   void MakeGroupIdsAdjacent(vtkPolyData* centerlineTracts);
-
-//BTX
-  enum {
-    FIRSTPOINT,
-    LASTPOINT,
-    POINTINTUBE
-  };
-//ETX
 
   char* RadiusArrayName;
   char* GroupIdsArrayName;
