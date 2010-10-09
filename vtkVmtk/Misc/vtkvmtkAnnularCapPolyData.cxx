@@ -123,14 +123,17 @@ int vtkvmtkAnnularCapPolyData::RequestData(
 
   vtkIdList* boundaryPairings = vtkIdList::New();
   boundaryPairings->SetNumberOfIds(numberOfBoundaries);
+  vtkIdList* visitedBoundaries = vtkIdList::New();
+  visitedBoundaries->SetNumberOfIds(numberOfBoundaries);
 
   double barycenter[3];
   for (int i=0; i<numberOfBoundaries; i++)
     {
-    vtkPolyLine* boundary = vtkPolyLine::SafeDownCast(boundaries->GetCell(i));
+    vtkCell* boundary = boundaries->GetCell(i);
     vtkvmtkBoundaryReferenceSystems::ComputeBoundaryBarycenter(boundary->GetPoints(),barycenter);
     barycenters->SetPoint(i,barycenter);
     boundaryPairings->SetId(i,-1);
+    visitedBoundaries->SetId(i,-1);
     }
 
   double currentBarycenter[3];
@@ -146,7 +149,7 @@ int vtkvmtkAnnularCapPolyData::RequestData(
     closestBoundaryId = -1;
     for (int j=i+1; j<numberOfBoundaries; j++)
       {
-      if (boundaryPairings->GetId(i) != -1 || boundaryPairings->IsId(i) != -1)
+      if (boundaryPairings->GetId(j) != -1 || boundaryPairings->IsId(j) != -1)
         {
         continue;
         }
@@ -159,6 +162,7 @@ int vtkvmtkAnnularCapPolyData::RequestData(
         }
       }
     boundaryPairings->SetId(i,closestBoundaryId);
+    boundaryPairings->SetId(closestBoundaryId,i);
     }
 
   for (int i=0; i<numberOfBoundaries; i++)
@@ -167,6 +171,14 @@ int vtkvmtkAnnularCapPolyData::RequestData(
       {
       continue;
       }
+
+    if (visitedBoundaries->GetId(i) != -1)
+      {
+      continue;
+      }
+  
+    visitedBoundaries->SetId(i,i);
+    visitedBoundaries->SetId(boundaryPairings->GetId(i),i);
 
     vtkIdTypeArray* boundaryPointIdsArray = vtkIdTypeArray::New();
     boundaryPointIdsArray->DeepCopy(boundaries->GetPointData()->GetScalars());
@@ -324,6 +336,7 @@ int vtkvmtkAnnularCapPolyData::RequestData(
   newPolys->Delete();
   boundaryExtractor->Delete();
   barycenters->Delete();
+  visitedBoundaries->Delete();
 
   return 1;
 }

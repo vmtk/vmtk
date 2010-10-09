@@ -348,7 +348,7 @@ int vtkvmtkSteepestDescentLineTracer::RequestData(
     }
   else
     {
-    this->DataArrayName = "Data Array";
+    this->SetDataArrayName("Data Array");
     this->LineDataArray = this->DescentArray;
     }
 
