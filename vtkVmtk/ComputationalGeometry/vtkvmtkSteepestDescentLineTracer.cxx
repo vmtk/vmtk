@@ -199,7 +199,7 @@ void vtkvmtkSteepestDescentLineTracer::Backtrace(vtkPolyData* input, vtkIdType s
 
     steepestDescent = this->GetSteepestDescent(input,currentEdge,currentS,steepestDescentEdge,steepestDescentS);
 
-    if (steepestDescentEdge[0] == -1 || steepestDescentEdge[0] == -1)
+    if (steepestDescentEdge[0] == -1 || steepestDescentEdge[1] == -1)
       {
       vtkWarningMacro(<<"Can't find a steepest descent edge. Target not reached.");
       done = true;
