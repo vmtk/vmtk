@@ -1,7 +1,6 @@
 PROJECT (PYPES)
 
 SET(PYPES_SRCS
-  pype.py
   pypebatch.py
   pypepad.py
   pypetest.py
@@ -10,6 +9,7 @@ SET(PYPES_SRCS
   )
 
 SET(PYPES_BASE_SRCS
+  pype.py
   pypescript.py
   pypes.py
   )

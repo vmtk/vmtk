@@ -84,7 +84,7 @@ class Pype(object):
     def ParseArguments(self):
         self.ScriptList = []
         arguments = self.Arguments[:]
-        if arguments[0].find('pype') != -1:
+        if os.path.basename(arguments[0]).strip() in ['pyperun']:
             arguments.remove(arguments[0])
             pypeArguments = []
             for arg in arguments:
