@@ -4,6 +4,7 @@ SET(PYPES_SRCS
   pypebatch.py
   pypepad.py
   pypetest.py
+  pypetestrunner.py
   pypewrapper.py
   pyperun.py
   )

@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
+import vtk
 import sys
 
 from vmtk import pypes 
-from vmtk import vmtkscripts 
 
 pypetest = 'pypeTest'
 
@@ -37,23 +37,76 @@ class pypeTest(pypes.pypeScript):
             ['PypeTestLog','log','str',1,'','log']
             ])
 
+    def meshHandler(self):
+
+        log = 'passed'
+        reader = vtk.vtkXMLUnstructuredGridReader()
+        reader.SetFileName(self.BaselineFileName)
+        reader.Update()
+        baseline = reader.GetOutput()
+
+        meshQuality = vtk.vtkMeshQuality()
+        meshQuality.SetInput(self.Mesh)
+        meshQuality.RatioOn()
+        meshQuality.Update()
+        meshQualityOutput = meshQuality.GetOutput()
+
+        baselineQuality = vtk.vtkMeshQuality()
+        baselineQuality.SetInput(baseline)
+        baselineQuality.RatioOn()
+        baselineQuality.Update()
+        baselineQualityOutput = baselineQuality.GetOutput()
+
+        self.PrintLog("Mesh points: "+ str(meshQualityOutput.GetNumberOfPoints()) +"\nBaseline Points: " +str(baselineQualityOutput.GetNumberOfPoints()))
+        meshQualityValue = 0.0
+        baselineQualityValue = 0.0
+        for i in range(meshQualityOutput.GetNumberOfPoints()):
+            meshQualityValue += meshQualityOutput.GetCellData().GetArray("Quality").GetTuple1(i)
+        meshQualityValue /= meshQualityOutput.GetNumberOfPoints()
+        for i in range(baselineQualityOutput.GetNumberOfPoints()):
+            baselineQualityValue += baselineQualityOutput.GetCellData().GetArray("Quality").GetTuple1(i)
+        baselineQualityValue /= baselineQualityOutput.GetNumberOfPoints()
+        diff = abs(meshQualityValue - baselineQualityValue)
+        if diff > self.Tolerance:
+            log = "failed"
+  	self.PrintLog("mesh: "+ str(meshQualityValue) +" baseline: "+ str(baselineQualityValue) + " diff: " + str(diff))
+
+        return log
+
+    def imageHandler(self):
+
+        log = 'failed'
+        return log
+
+    def surfaceHandler(self):
+
+        log = 'failed'
+        return log
+
     def CompareData(self):
 
         self.PrintLog('Comparing Data')
-        log = 'FAILED'
+        log = 'failed'
+        if self.Mesh:
+            log = self.meshHandler()
+        elif self.Image:
+            log = self.imageHandler()
+        elif self.Surface:
+            log = self.surfaceHandler()
+        else:
+            self.PrintError('Error: No data.')
         return log
 
     def Execute(self):
 
         self.PrintLog('Testing')
 
-        if self.BaselineFileName == None:
+        if not self.BaselineFileName:
             self.PrintError('Error: No baseline.')
-        if self.TestName == None:
+        if not self.TestName:
             self.PrintError('Error: No test name.')
 
         self.PypeTestLog = "%s.%s" % (self.TestName, self.CompareData())
-
 
 if __name__=='__main__':
     main = pypes.pypeMain()
