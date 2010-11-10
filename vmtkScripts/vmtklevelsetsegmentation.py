@@ -55,6 +55,8 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
         self.DerivativeSigma = 0.0
         self.FeatureDerivativeSigma = 0.0
 
+        self.NegateForInitialization = 0
+
         self.SigmoidRemapping = 0
 
         self.LevelSetsType = 'geodesic'
@@ -79,6 +81,7 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
             ['LevelSets','levelsets','vtkImageData',1,'','','vmtkimagereader'],
             ['LevelSetsType','levelsetstype','str',1,'["geodesic","curves","threshold","laplacian"]'],
             ['FeatureImageType','featureimagetype','str',1,'["vtkgradient","gradient","upwind","fwhm"]'],
+            ['NegateForInitialization','negate','bool',1],
             ['SigmoidRemapping','sigmoid','bool',1],
             ['IsoSurfaceValue','isosurfacevalue','float',1],
             ['DerivativeSigma','derivativesigma','float',1,'(0.0,)'],
@@ -313,6 +316,7 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
         self.vmtkImageInitialization.vmtkRenderer = self.vmtkRenderer
         self.vmtkImageInitialization.ImageSeeder = self.ImageSeeder
         self.vmtkImageInitialization.SurfaceViewer = self.SurfaceViewer
+        self.vmtkImageInitialization.NegateImage = self.NegateForInitialization
         self.vmtkImageInitialization.OwnRenderer = 0
  
         endSegmentation = 0

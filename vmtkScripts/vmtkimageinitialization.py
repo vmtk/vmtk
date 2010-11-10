@@ -43,6 +43,8 @@ class vmtkImageInitialization(pypes.pypeScript):
         self.UpperThreshold = 0.0
         self.LowerThreshold = 0.0
 
+        self.NegateImage = 0
+
         self.IsoSurfaceValue = 0.0
 
         self.ImageSeeder = None
@@ -51,6 +53,7 @@ class vmtkImageInitialization(pypes.pypeScript):
         self.SetScriptName('vmtkimageinitialization')
         self.SetInputMembers([
             ['Image','i','vtkImageData',1,'','','vmtkimagereader'],
+            ['NegateImage','negate','bool',1,'','negate image values before initializing'],
             ['vmtkRenderer','renderer','vmtkRenderer',1]
             ])
         self.SetOutputMembers([
@@ -396,6 +399,20 @@ class vmtkImageInitialization(pypes.pypeScript):
         cast.SetOutputScalarTypeToFloat()
         cast.Update()
         self.Image = cast.GetOutput()
+
+        if self.NegateImage:
+            scalarRange = self.Image.GetScalarRange()
+            negate = vtk.vtkImageMathematics()
+            negate.SetInput(self.Image)
+            negate.SetOperationToMultiplyByK()
+            negate.SetConstantK(-1.0)
+            negate.Update()
+            shiftScale = vtk.vtkImageShiftScale()
+            shiftScale.SetInput(negate.GetOutput())
+            shiftScale.SetShift(scalarRange[1]+scalarRange[0])
+            shiftScale.SetOutputScalarTypeToFloat()
+            shiftScale.Update()
+            self.Image = shiftScale.GetOutput()
 
         if not self.vmtkRenderer:
             self.vmtkRenderer = vmtkscripts.vmtkRenderer()
