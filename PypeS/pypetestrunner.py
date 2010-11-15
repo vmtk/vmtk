@@ -16,6 +16,7 @@ class PypeTestCase(unittest.TestCase):
         unittest.TestCase.__init__(self)
         self.Line = line
         self.LineNo = lineno
+        self.Name = 'unavailable'
 
     def setUp(self):
         self.Pipe = pypes.Pype()
@@ -24,7 +25,8 @@ class PypeTestCase(unittest.TestCase):
 
     def runTest(self):
         self.Pipe.ParseArguments()
-        self.Name = self.Pipe.Arguments[self.Pipe.Arguments.index('-name') + 1]
+        if self.Pipe.Arguments:
+            self.Name = self.Pipe.Arguments[self.Pipe.Arguments.index('-name') + 1]
         self.Pipe.Execute()
         self.Log = self.Pipe.GetScriptObject('pypetest','0').PypeTestLog
         splitLog = self.Log.split('.')
@@ -40,12 +42,13 @@ class PypeTestResult(unittest.TestResult):
             self.ResultList.append(logline)
 
     def startTest(self,test):
-        self.testLog = {'id':str(test.LineNo),'error':''}
+        self.testLog = {'id':str(test.LineNo),'error':'None'}
 
     def stopTest(self,test):
         self.testLog['name'] = test.Name
+        self.testLog['pype'] = test.Line
         self.testLog['date'] = datetime.datetime.now().strftime('%d-%m-%Y')
-        self.testLog['time'] = datetime.datetime.now().strftime('%H-%M-%S')
+        self.testLog['time'] = datetime.datetime.now().strftime('%H:%M:%S')
         self.appendLogLine(self.testLog)
         self.testsRun += 1
 
@@ -103,7 +106,7 @@ class PypeTestRunner(pypes.pypeScript):
 
         for case in self.Result.ResultList:
             xmlCase = xmlTestSuite.appendChild(xmlDocument.createElement('TestCase'))
-            if case['error'] :
+            if case['error'] != 'None':
                 caseError = case['error']
                 editedError = ''
                 caseException = traceback.format_exception(caseError[0],caseError[1],caseError[2])
@@ -113,7 +116,9 @@ class PypeTestRunner(pypes.pypeScript):
                 errorText = xmlDocument.createTextNode(editedError)
                 xmlCaseError.appendChild(errorText) 
                 del case['error']
-
+            xmlCasePype = xmlCase.appendChild(xmlDocument.createElement('CasePype'))
+            xmlCasePype.appendChild(xmlDocument.createTextNode(case['pype']))
+            del case['pype']
             for k,v in case.iteritems():
                 xmlCase.setAttribute(k,v)
 
@@ -145,8 +150,9 @@ class PypeTestRunner(pypes.pypeScript):
 
         with open(self.TestSuiteFileName) as suitefile:
             for line in suitefile.readlines():
-                self.Suite.addTest(PypeTestCase(line,lineno))
-                lineno += 1
+                if line.strip():
+                    self.Suite.addTest(PypeTestCase(line,lineno))
+                    lineno += 1
 
         self.Result = PypeTestResult()
         self.Suite.run(self.Result)

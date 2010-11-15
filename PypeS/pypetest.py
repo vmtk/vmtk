@@ -13,100 +13,73 @@ class pypeTest(pypes.pypeScript):
 
         pypes.pypeScript.__init__(self)
         
-        self.Image = None
-        self.Surface = None
-        self.Mesh = None
         self.TestName = None
-        self.BaselineFileName = None
-        self.Method = None
-	self.Tolerance = 1E-8
         self.PypeTestLog = ''
+        self.TestInput = None
+        self.Condition = None
+        self.ConditionValue = None
+        self.ConditionType = None
 
         self.SetScriptName('pypetest')
-        self.SetScriptDoc('tests a pype output against a baseline')
+        self.SetScriptDoc('tests a script property against a condition')
         self.SetInputMembers([
-            ['Image','image','vtkImageData',1,'','the input image','vmtkimagereader'],
-            ['Surface','surface','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
-            ['Mesh','mesh','vtkUnstructuredGrid',1,'','the input mesh','vmtkmeshreader'],
             ['TestName','name','str',1,'','name of the test'],
-            ['Method','method','str',1,'','method of the test'],
-            ['Tolerance','tolerance','float',1,'','tolerance for numerical comparisons'],
-            ['BaselineFileName','baselinefile','str',1,'','baseline filename'],
+            ['TestInput','i','test',1,'','log'],
+            ['Condition','condition','str',1,'["equalto","differentfrom","greaterthan","lessthan","nonnone"]','condition type'],
+            ['ConditionValue','value','str',1,'','condition value'],
+            ['ConditionType','type','str',1,'["str","int","float","bool"]','condition type']
             ])
         self.SetOutputMembers([
             ['PypeTestLog','log','str',1,'','log']
             ])
 
-    def meshHandler(self):
-
-        log = 'passed'
-        reader = vtk.vtkXMLUnstructuredGridReader()
-        reader.SetFileName(self.BaselineFileName)
-        reader.Update()
-        baseline = reader.GetOutput()
-
-        meshQuality = vtk.vtkMeshQuality()
-        meshQuality.SetInput(self.Mesh)
-        meshQuality.RatioOn()
-        meshQuality.Update()
-        meshQualityOutput = meshQuality.GetOutput()
-
-        baselineQuality = vtk.vtkMeshQuality()
-        baselineQuality.SetInput(baseline)
-        baselineQuality.RatioOn()
-        baselineQuality.Update()
-        baselineQualityOutput = baselineQuality.GetOutput()
-
-        self.PrintLog("Mesh points: "+ str(meshQualityOutput.GetNumberOfPoints()) +"\nBaseline Points: " +str(baselineQualityOutput.GetNumberOfPoints()))
-        meshQualityValue = 0.0
-        baselineQualityValue = 0.0
-        for i in range(meshQualityOutput.GetNumberOfPoints()):
-            meshQualityValue += meshQualityOutput.GetCellData().GetArray("Quality").GetTuple1(i)
-        meshQualityValue /= meshQualityOutput.GetNumberOfPoints()
-        for i in range(baselineQualityOutput.GetNumberOfPoints()):
-            baselineQualityValue += baselineQualityOutput.GetCellData().GetArray("Quality").GetTuple1(i)
-        baselineQualityValue /= baselineQualityOutput.GetNumberOfPoints()
-        diff = abs(meshQualityValue - baselineQualityValue)
-        if diff > self.Tolerance:
-            log = "failed"
-  	self.PrintLog("mesh: "+ str(meshQualityValue) +" baseline: "+ str(baselineQualityValue) + " diff: " + str(diff))
-
-        return log
-
-    def imageHandler(self):
-
-        log = 'failed'
-        return log
-
-    def surfaceHandler(self):
-
-        log = 'failed'
-        return log
-
-    def CompareData(self):
-
-        self.PrintLog('Comparing Data')
-        log = 'failed'
-        if self.Mesh:
-            log = self.meshHandler()
-        elif self.Image:
-            log = self.imageHandler()
-        elif self.Surface:
-            log = self.surfaceHandler()
-        else:
-            self.PrintError('Error: No data.')
-        return log
+    def castValue(self,val):
+        if not self.ConditionType:
+            self.PrintError('Error: No condition type.')
+        if self.ConditionType == 'str':
+            return str(val)
+        elif self.ConditionType == 'int':
+            return int(val)
+        elif self.ConditionType == 'float':
+            return float(val)
+        elif self.ConditionType == 'bool':
+            if val == True or val in ['1','True','true']:
+                return True
+            else:
+                return False
 
     def Execute(self):
 
         self.PrintLog('Testing')
 
-        if not self.BaselineFileName:
-            self.PrintError('Error: No baseline.')
         if not self.TestName:
             self.PrintError('Error: No test name.')
+        if self.TestInput == None:
+            self.PrintError('Error: No test input.')
 
-        self.PypeTestLog = "%s.%s" % (self.TestName, self.CompareData())
+        passed = False
+        self.CompareLog = 'failed'
+
+        if self.Condition == 'equalto':
+            if self.ConditionValue and self.castValue(self.TestInput) == self.castValue(self.ConditionValue):
+                passed = True
+        elif self.Condition == 'differentfrom':
+            if self.ConditionValue and self.castValue(self.TestInput) != self.castValue(self.ConditionValue):
+                passed = True
+        elif self.Condition == 'greaterthan':
+            if self.ConditionValue and self.castValue(self.TestInput) > self.castValue(self.ConditionValue):
+                passed = True
+        elif self.Condition == 'lessthan':
+            if self.ConditionValue and self.castValue(self.TestInput) < self.castValue(self.ConditionValue):
+                passed = True
+        elif self.Condition == 'nonnone':
+            if self.TestInput != None :
+                passed = True
+
+        if passed:
+            self.CompareLog = 'passed'
+
+        self.PypeTestLog = "%s.%s" % (self.TestName, self.CompareLog)
 
 if __name__=='__main__':
     main = pypes.pypeMain()
