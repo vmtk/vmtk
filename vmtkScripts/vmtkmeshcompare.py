@@ -27,7 +27,7 @@ class vmtkMeshCompare(pypes.pypeScript):
         self.SetInputMembers([
             ['Mesh','i','vtkUnstructuredGrid',1,'','the input mesh','vmtkmeshreader'],
             ['ReferenceMesh','r','vtkUnstructuredGrid',1,'','the reference mesh to compare against','vmtkmeshreader'],
-            ['Method','method','str',1,'["quality","array"]','method of the test'],
+            ['Method','method','str',1,'["quality","pointarray","cellarray"]','method of the test'],
             ['ArrayName','array','str',1,'','name of the array'],
             ['Tolerance','tolerance','float',1,'','tolerance for numerical comparisons'],
             ])
@@ -39,11 +39,24 @@ class vmtkMeshCompare(pypes.pypeScript):
 
     def arrayCompare(self):
 
+        calculator = vtk.vtkArrayCalculator() 
+
+        attributeData = None
+        referenceAttributeData = None
+        if self.Method == 'pointarray':
+            attributeData = self.Mesh.GetPointData()
+            referenceAttributeData = self.ReferenceMesh.GetPointData()
+            calculator.SetAttributeModeToUsePointData()
+        elif self.Method == 'cellarray':
+            attributeData = self.Mesh.GetCellData()
+            referenceAttributeData = self.ReferenceMesh.GetCellData()
+            calculator.SetAttributeModeToUseCellData()
+ 
         if not self.ArrayName:
             self.PrintError('Error: No ArrayName.') 
-        if not self.ReferenceMesh.GetCellData().GetArray(self.ArrayName):
+        if not referenceAttributeData.GetArray(self.ArrayName):
             self.PrintError('Error: Invalid ArrayName.')
-        if not self.Mesh.GetCellData().GetArray(self.ArrayName):
+        if not attributeData.GetArray(self.ArrayName):
             self.PrintError('Error: Invalid ArrayName.')
 
         referenceArrayName = 'Ref' + self.ArrayName
@@ -58,13 +71,11 @@ class vmtkMeshCompare(pypes.pypeScript):
             self.ResultLog = 'Uneven NumberOfPoints'
             return False
 
-        refArray = self.ReferenceMesh.GetCellData().GetArray(self.ArrayName) 
+        refArray = referenceAttributeData.GetArray(self.ArrayName) 
         refArray.SetName(referenceArrayName) 
-        self.Mesh.GetCellData().AddArray(refArray)
+        attributeData.AddArray(refArray)
 
-        calculator = vtk.vtkArrayCalculator() 
         calculator.SetInput(self.Mesh)
-        calculator.SetAttributeModeToUseCellData()
         calculator.AddScalarVariable('a',self.ArrayName,0)
         calculator.AddScalarVariable('b',referenceArrayName,0)
         calculator.SetFunction("a - b") 
@@ -72,7 +83,10 @@ class vmtkMeshCompare(pypes.pypeScript):
         calculator.Update()
 
         self.ResultData = calculator.GetOutput()
-        resultRange = self.ResultData.GetCellData().GetArray('ResultArray').GetRange()
+        if self.Method == 'pointarray':
+            resultRange = self.ResultData.GetPointData().GetArray('ResultArray').GetRange()
+        elif self.Method == 'cellarray':
+            resultRange = self.ResultData.GetCellData().GetArray('ResultArray').GetRange()
 
         self.PrintLog('Result Range: ' + str(resultRange))
 
@@ -122,7 +136,7 @@ class vmtkMeshCompare(pypes.pypeScript):
 
         if (self.Method == 'quality'):
             self.Result = self.qualityCompare()
-        elif (self.Method == 'array'):
+        elif (self.Method in ['pointarray','cellarray']):
             self.Result = self.arrayCompare()
 
         
