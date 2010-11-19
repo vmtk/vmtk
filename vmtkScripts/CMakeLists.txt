@@ -2,6 +2,8 @@ PROJECT(VMTK_SCRIPTS)
 
 SET(SCRIPTS_SRCS
   vmtkmeshcompare.py
+  vmtkimagecompare.py
+  vmtksurfacecompare.py
   vmtkactivetubes.py
   vmtkbifurcationprofiles.py
   vmtkbifurcationreferencesystems.py

@@ -2,8 +2,8 @@
 
 import sys
 import vtk
-from vmtk import vtkvmtk
-from vmtk import pypes
+import vtkvmtk
+import pypes
 
 vmtkmeshcompare = 'vmtkMeshCompare'
 
@@ -16,20 +16,70 @@ class vmtkMeshCompare(pypes.pypeScript):
         self.Mesh = None
         self.ReferenceMesh = None
         self.Method = ''
+        self.ArrayName = ''
 	self.Tolerance = 1E-8
         self.Result = ''
+        self.ResultLog = ''
+        self.ResultData = None
 
         self.SetScriptName('vmtkmeshcompare')
         self.SetScriptDoc('compares a  mesh against a reference')
         self.SetInputMembers([
             ['Mesh','i','vtkUnstructuredGrid',1,'','the input mesh','vmtkmeshreader'],
             ['ReferenceMesh','r','vtkUnstructuredGrid',1,'','the reference mesh to compare against','vmtkmeshreader'],
-            ['Method','method','str',1,'["quality","other"]','method of the test'],
+            ['Method','method','str',1,'["quality","array"]','method of the test'],
+            ['ArrayName','array','str',1,'','name of the array'],
             ['Tolerance','tolerance','float',1,'','tolerance for numerical comparisons'],
             ])
         self.SetOutputMembers([
-            ['Result','result','bool',1,'','Output boolean stating if meshes are equal or not']
+            ['Result','result','bool',1,'','Output boolean stating if meshes are equal or not'],
+            ['ResultData','o','vtkUnstructuredGrid',1,'','the output mesh','vmtkmeshwriter'],
+            ['ResultLog','log','str',1,'','Result Log']
             ])
+
+    def arrayCompare(self):
+
+        if not self.ArrayName:
+            self.PrintError('Error: No ArrayName.') 
+        if not self.ReferenceMesh.GetCellData().GetArray(self.ArrayName):
+            self.PrintError('Error: Invalid ArrayName.')
+        if not self.Mesh.GetCellData().GetArray(self.ArrayName):
+            self.PrintError('Error: Invalid ArrayName.')
+
+        referenceArrayName = 'Ref' + self.ArrayName
+        meshPoints = self.Mesh.GetNumberOfPoints()
+        referencePoints = self.ReferenceMesh.GetNumberOfPoints() 
+        pointsDifference = meshPoints - referencePoints
+
+        self.PrintLog("Mesh points: "+ str(meshPoints)) 
+        self.PrintLog("Reference Points: " +str(referencePoints))
+
+        if abs(pointsDifference) > 0:
+            self.ResultLog = 'Uneven NumberOfPoints'
+            return False
+
+        refArray = self.ReferenceMesh.GetCellData().GetArray(self.ArrayName) 
+        refArray.SetName(referenceArrayName) 
+        self.Mesh.GetCellData().AddArray(refArray)
+
+        calculator = vtk.vtkArrayCalculator() 
+        calculator.SetInput(self.Mesh)
+        calculator.SetAttributeModeToUseCellData()
+        calculator.AddScalarVariable('a',self.ArrayName,0)
+        calculator.AddScalarVariable('b',referenceArrayName,0)
+        calculator.SetFunction("a - b") 
+        calculator.SetResultArrayName('ResultArray')
+        calculator.Update()
+
+        self.ResultData = calculator.GetOutput()
+        resultRange = self.ResultData.GetCellData().GetArray('ResultArray').GetRange()
+
+        self.PrintLog('Result Range: ' + str(resultRange))
+
+        if max([abs(r) for r in resultRange]) < self.Tolerance:
+            return True
+
+        return False
 
     def qualityCompare(self):
         
@@ -45,22 +95,21 @@ class vmtkMeshCompare(pypes.pypeScript):
         referenceQuality.Update()
         referenceQualityOutput = referenceQuality.GetOutput()
 
-        self.PrintLog("Mesh points: "+ str(meshQualityOutput.GetNumberOfPoints()) +"\nReference Points: " +str(referenceQualityOutput.GetNumberOfPoints()))
-        meshQualityValue = 0.0
-        referenceQualityValue = 0.0
-        for i in range(meshQualityOutput.GetNumberOfPoints()):
-            meshQualityValue += meshQualityOutput.GetCellData().GetArray("Quality").GetTuple1(i)
-        meshQualityValue /= meshQualityOutput.GetNumberOfPoints()
-        for i in range(referenceQualityOutput.GetNumberOfPoints()):
-            referenceQualityValue += referenceQualityOutput.GetCellData().GetArray("Quality").GetTuple1(i)
-        referenceQualityValue /= referenceQualityOutput.GetNumberOfPoints()
-        diff = abs(meshQualityValue - referenceQualityValue)
-        if diff > self.Tolerance:
-            return False
-            log = "failed"
-  	self.PrintLog("mesh: "+ str(meshQualityValue) +" reference: "+ str(referenceQualityValue) + " diff: " + str(diff))
+        self.PrintLog("Mesh points: "+ str(meshQualityOutput.GetNumberOfPoints()))
+        self.PrintLog("Reference Points: " +str(referenceQualityOutput.GetNumberOfPoints()))
 
-        return True
+        meshQualityRange = meshQualityOutput.GetCellData().GetArray("Quality").GetRange()
+        referenceQualityRange = referenceQualityOutput.GetCellData().GetArray("Quality").GetRange()
+        qualityRangeDifference = (meshQualityRange[0] - referenceQualityRange[0],meshQualityRange[1] - referenceQualityRange[1])
+
+  	self.PrintLog("Mesh Quality Range: "+ str(meshQualityRange))
+  	self.PrintLog("Reference Quality Range: "+ str(referenceQualityRange))
+  	self.PrintLog("Quality Range Difference: "+ str(qualityRangeDifference))
+
+        if max(abs(d) for d in qualityRangeDifference) < self.Tolerance:
+            return True
+
+        return False
 
     def Execute(self):
 
@@ -73,8 +122,8 @@ class vmtkMeshCompare(pypes.pypeScript):
 
         if (self.Method == 'quality'):
             self.Result = self.qualityCompare()
-        elif (self.Method == 'other'):
-            pass
+        elif (self.Method == 'array'):
+            self.Result = self.arrayCompare()
 
         
 if __name__=='__main__':

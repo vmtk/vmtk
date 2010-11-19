@@ -56,6 +56,8 @@ class pypeTest(pypes.pypeScript):
             self.PrintError('Error: No test name.')
         if self.TestInput == None:
             self.PrintError('Error: No test input.')
+        if not self.Condition:
+            self.PrintError('Error: No condition.')
 
         passed = False
         self.CompareLog = 'failed'
