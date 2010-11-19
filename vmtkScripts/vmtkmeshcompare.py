@@ -134,11 +134,10 @@ class vmtkMeshCompare(pypes.pypeScript):
         if not self.Method:
             self.PrintError('Error: No method.')                 
 
-        if (self.Method == 'quality'):
+        if self.Method == 'quality':
             self.Result = self.qualityCompare()
-        elif (self.Method in ['pointarray','cellarray']):
+        elif self.Method in ['pointarray','cellarray']:
             self.Result = self.arrayCompare()
-
         
 if __name__=='__main__':
     main = pypes.pypeMain()
