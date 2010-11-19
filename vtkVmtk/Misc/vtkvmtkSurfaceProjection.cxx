@@ -106,7 +106,15 @@ int vtkvmtkSurfaceProjection::RequestData(
       }
     else
       {
-      outputPointData->CopyData(referencePointData,genericCell->GetPointId(subId),i);
+      double testPoint0[3], testPoint1[3];
+      vtkIdType pointId = genericCell->GetPointId(subId);
+      input->GetPoint(genericCell->GetPointId(subId),testPoint0);
+      input->GetPoint(genericCell->GetPointId(subId+1),testPoint1);
+      if (vtkMath::Distance2BetweenPoints(closestPoint,testPoint1) < vtkMath::Distance2BetweenPoints(closestPoint,testPoint0))
+        {
+        pointId = genericCell->GetPointId(subId+1);
+        }
+      outputPointData->CopyData(referencePointData,pointId,i);
       }
     }
 
