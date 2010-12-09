@@ -108,9 +108,22 @@ class vmtkImageLineTracer(pypes.pypeScript):
         if self.Line.GetSource():
             self.Line.GetSource().UnRegisterAllOutputs()
 
+    def ChangeSlice(self,obj,event):
+        currentSlice = self.SliceVOI[self.Axis*2]
+        slice = int(self.SliderWidget.GetRepresentation().GetValue())
+        self.SliceVOI[self.Axis*2] = slice
+        self.SliceVOI[self.Axis*2+1] = slice
+        origin = self.Image.GetOrigin()
+        spacing = self.Image.GetSpacing()
+        newOrigin = [origin[0], origin[1], origin[2]]
+        newOrigin[self.Axis] = origin[self.Axis] - (slice - currentSlice) * spacing[self.Axis]
+        self.Image.SetOrigin(newOrigin)
+        self.ImageActor.SetDisplayExtent(self.SliceVOI)
+        self.vmtkRenderer.Renderer.Render()
+ 
     def Display(self):
 
-        wholeExtent = self.Image.GetWholeExtent()
+        wholeExtent = self.Image.GetExtent()
 
         self.SliceVOI[0] = wholeExtent[0]
         self.SliceVOI[1] = wholeExtent[1]
@@ -146,6 +159,26 @@ class vmtkImageLineTracer(pypes.pypeScript):
         self.ImageTracerWidget.AddObserver("StartInteractionEvent",self.SetWidgetProjectionPosition)
         self.ImageTracerWidget.AddObserver("EndInteractionEvent",self.GetLineFromWidget)
 
+        sliderRep = vtk.vtkSliderRepresentation2D()
+        sliderRep.SetValue(0.5*(wholeExtent[self.Axis*2]+wholeExtent[self.Axis*2+1]))
+        sliderRep.SetMinimumValue(wholeExtent[self.Axis*2])
+        sliderRep.SetMaximumValue(wholeExtent[self.Axis*2+1])
+        sliderRep.SetTitleText("Slice")
+        sliderRep.GetPoint1Coordinate().SetCoordinateSystemToNormalizedDisplay()
+        sliderRep.GetPoint1Coordinate().SetValue(0.2,0.9)
+        sliderRep.GetPoint2Coordinate().SetCoordinateSystemToNormalizedDisplay()
+        sliderRep.GetPoint2Coordinate().SetValue(0.8,0.9)
+        sliderRep.SetSliderLength(0.02)
+        sliderRep.SetSliderWidth(0.03)
+        sliderRep.SetEndCapLength(0.01)
+        sliderRep.SetEndCapWidth(0.03)
+        sliderRep.SetTubeWidth(0.005)
+        sliderRep.SetLabelFormat("%.0f")
+
+        self.SliderWidget.AddObserver("InteractionEvent",self.ChangeSlice)
+        self.SliderWidget.SetRepresentation(sliderRep)
+        self.SliderWidget.EnabledOn()
+
         interactorStyle = vtk.vtkInteractorStyleImage()
         self.vmtkRenderer.RenderWindowInteractor.SetInteractorStyle(interactorStyle)
 
@@ -163,6 +196,9 @@ class vmtkImageLineTracer(pypes.pypeScript):
 
         self.ImageTracerWidget = vtk.vtkImageTracerWidget()
         self.ImageTracerWidget.SetInteractor(self.vmtkRenderer.RenderWindowInteractor)
+
+        self.SliderWidget = vtk.vtkSliderWidget()
+        self.SliderWidget.SetInteractor(self.vmtkRenderer.RenderWindowInteractor)
 
         self.ImageActor = vtk.vtkImageActor()
 

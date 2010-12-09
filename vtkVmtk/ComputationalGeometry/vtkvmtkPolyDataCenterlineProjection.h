@@ -18,7 +18,7 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkPolyDataCenterlineMetricFilter - ..
+// .NAME vtkvmtkPolyDataCenterlineProjection - ..
 // .SECTION Description
 // ..
 
