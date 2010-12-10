@@ -42,6 +42,7 @@ class vmtkImageLineTracer(pypes.pypeScript):
 
         self.SliceVOI = [0,0,0,0,0,0]
 
+        self.Type = 'freehand'
         self.Image = None
 
         self.SetScriptName('vmtkimagelinetracer')
@@ -50,7 +51,8 @@ class vmtkImageLineTracer(pypes.pypeScript):
             ['Image','i','vtkImageData',1,'','the input image','vmtkimagereader'],
             ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer'],
             ['Axis','axis','int',1,'','id of the drawing plane normal'],
-            ['AutoClose','autoclose','bool',1,'','toggle auto close line']
+            ['AutoClose','autoclose','bool',1,'','toggle auto close line'],
+            ['Type','type','str',1,'["freehand","contour"]','type of widget to use: freehand drawing or control point-based contour']
             ])
         self.SetOutputMembers([
             ['Line','line','vtkPolyData',1,'','the output line','vmtksurfacewriter']
@@ -87,8 +89,11 @@ class vmtkImageLineTracer(pypes.pypeScript):
 
     def GetLineFromWidget(self,obj,event):
 
-        path = vtk.vtkPolyData()
-        obj.GetPath(path)
+        if self.Type == 'freehand':
+            path = vtk.vtkPolyData()
+            obj.GetPath(path)
+        elif self.Type == 'contour':
+            path = self.ImageTracerWidget.GetRepresentation().GetContourRepresentationAsPolyData()
 
         spacing = self.Image.GetSpacing()
 
@@ -149,15 +154,19 @@ class vmtkImageLineTracer(pypes.pypeScript):
         self.ImageActor.SetDisplayExtent(self.SliceVOI)
         self.vmtkRenderer.Renderer.AddActor(self.ImageActor)
 
-        self.ImageTracerWidget.SetCaptureRadius(1.5)
-        self.ImageTracerWidget.SetViewProp(self.ImageActor)
-        self.ImageTracerWidget.SetInput(widgetImage)
-        self.ImageTracerWidget.ProjectToPlaneOn()
-        self.ImageTracerWidget.SetProjectionNormal(self.Axis)
-        self.ImageTracerWidget.PlaceWidget()
-        self.ImageTracerWidget.SetAutoClose(self.AutoClose)
-        self.ImageTracerWidget.AddObserver("StartInteractionEvent",self.SetWidgetProjectionPosition)
-        self.ImageTracerWidget.AddObserver("EndInteractionEvent",self.GetLineFromWidget)
+        if self.Type == 'freehand':
+            self.ImageTracerWidget.SetCaptureRadius(1.5)
+            self.ImageTracerWidget.SetViewProp(self.ImageActor)
+            self.ImageTracerWidget.SetInput(widgetImage)
+            self.ImageTracerWidget.ProjectToPlaneOn()
+            self.ImageTracerWidget.SetProjectionNormal(self.Axis)
+            self.ImageTracerWidget.PlaceWidget()
+            self.ImageTracerWidget.SetAutoClose(self.AutoClose)
+            self.ImageTracerWidget.AddObserver("StartInteractionEvent",self.SetWidgetProjectionPosition)
+            self.ImageTracerWidget.AddObserver("EndInteractionEvent",self.GetLineFromWidget)
+        elif self.Type == 'contour':
+            self.ImageTracerWidget.AddObserver("EndInteractionEvent",self.GetLineFromWidget)
+            self.ImageTracerWidget.ContinuousDrawOff()
 
         sliderRep = vtk.vtkSliderRepresentation2D()
         sliderRep.SetValue(0.5*(wholeExtent[self.Axis*2]+wholeExtent[self.Axis*2+1]))
@@ -194,7 +203,10 @@ class vmtkImageLineTracer(pypes.pypeScript):
             self.vmtkRenderer.Initialize()
             self.OwnRenderer = 1
 
-        self.ImageTracerWidget = vtk.vtkImageTracerWidget()
+        if self.Type == 'freehand':
+            self.ImageTracerWidget = vtk.vtkImageTracerWidget()
+        elif self.Type == 'contour':
+            self.ImageTracerWidget = vtk.vtkContourWidget()
         self.ImageTracerWidget.SetInteractor(self.vmtkRenderer.RenderWindowInteractor)
 
         self.SliderWidget = vtk.vtkSliderWidget()
