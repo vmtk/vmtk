@@ -269,7 +269,7 @@ class vmtkNetworkEditor(pypes.pypeScript):
                         id = networkPoints.InsertNextPoint(segment.GetPoint(i))
                         self.NetworkRadiusArray.InsertTuple1(id,segmentRadiusArray.GetTuple1(i))
                     networkCellArray.InsertCellPoint(id)
-                self.NetworkLabelsArray.InsertValue(cellId,'a')
+                self.NetworkLabelsArray.InsertValue(cellId,'')
                 self.Network.BuildCells()
                 self.Network.Modified()
                 self.NetworkTube.Modified()
@@ -760,7 +760,7 @@ class vmtkNetworkEditor(pypes.pypeScript):
             self.NetworkLabelsArray.SetName(self.LabelsArrayName)
             self.NetworkLabelsArray.SetNumberOfValues(self.Network.GetNumberOfCells())
             for i in range(self.Network.GetNumberOfCells()):
-                self.NetworkLabelsArray.SetValue(i,'a')
+                self.NetworkLabelsArray.SetValue(i,'')
             self.Network.GetCellData().AddArray(self.NetworkLabelsArray)
         self.CellCenters = vtk.vtkCellCenters()
         self.CellCenters.SetInput(self.Network)
