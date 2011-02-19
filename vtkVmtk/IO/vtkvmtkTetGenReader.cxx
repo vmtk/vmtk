@@ -101,13 +101,13 @@ int vtkvmtkTetGenReader::RequestData(
 
   if (!nodeStream.good())
     {
-    vtkErrorMacro(<<"Could not open .node file for writing.");
+    vtkErrorMacro(<<"Could not open .node file for reading.");
     return 0;
     }
 
   if (!eleStream.good())
     {
-    vtkErrorMacro(<<"Could not open .ele file for writing.");
+    vtkErrorMacro(<<"Could not open .ele file for reading.");
     return 0;
     }
 
@@ -152,16 +152,24 @@ int vtkvmtkTetGenReader::RequestData(
 
   double point[3], value;
   vtkIdType boundaryId;
+
+  int firstIndex = 0;
+
   int index;
   for (i=0; i<nodeCount; i++)
     {
     std::getline(nodeStream,line);
     this->Tokenize(line,tokens);
     index = atoi(tokens[0].c_str());
+    if (i==0)
+      {
+      // Here we make the assumption that node 0 or 1 appear in the first line
+      firstIndex = index;
+      }
     point[0] = atof(tokens[1].c_str());
     point[1] = atof(tokens[2].c_str());
     point[2] = atof(tokens[3].c_str());
-    outputPoints->SetPoint(index-1,point);
+    outputPoints->SetPoint(index-firstIndex,point);
     for (j=0; j<numberOfAttributes; j++)
       {
       value = atof(tokens[4+j].c_str());
@@ -237,10 +245,10 @@ int vtkvmtkTetGenReader::RequestData(
     for (j=0; j<nodesPerTet; j++)
       {
       pointId = atoi(tokens[j+1].c_str());
-      outputCellArray->InsertCellPoint(pointId-1);
+      outputCellArray->InsertCellPoint(pointId-firstIndex);
       if (boundaryMarkers)
         {
-        boundaryId = boundaryDataArray->GetValue(pointId-1);
+        boundaryId = boundaryDataArray->GetValue(pointId-firstIndex);
         if (j>0 && boundaryId > maxBoundaryId)
           {
           maxBoundaryId = boundaryId;
