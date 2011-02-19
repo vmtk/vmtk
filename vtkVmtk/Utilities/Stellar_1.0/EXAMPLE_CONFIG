@@ -1,0 +1,154 @@
+####################################
+# Stellar mesh improvement options #
+####################################
+
+# This file contains all the possible options that can currently be set for 
+# mesh improvement. Lines that begin with '#' are comments and are ignored.
+# Other lines take the form 'option intval floatval stringval', where option
+# is the name of the option, and intval floatval and stringval are the possible
+# fields that can be used to set that option. If an option takes an int, only
+# a value for int needs to be given. If it's a float, a dummy int should be
+# inserted before the float. If it's a string, a dummy int and a dummy float
+# should be inserted before the string. This clumsiness is because I don't like
+# coding string processing in C, and this is the easiest way. Any unset options
+# will assume their default values.
+
+# verbosity: bigger number means more verbose output of improvement.
+# default = 1
+verbosity 0
+
+# use color in verbose improvement output. default = 0
+usecolor 1
+
+# just output the mesh unchanged and quit. default = 0
+outputandquit 0
+
+## quality measure options
+# qualmeasure: selects which quality measure to use as an objective function
+# for optimizing the tetrahedra. The quality measures are described in
+# Chapter 2 of Bryan's dissertation. default = 0
+# 0 = minimum sine of the dihedral angles (default)
+# 1 = square root of radius ratio (circumradius divided by inradius)
+# 2 = V / l_rms^3 (volume divided by cube of root-mean-squared edge length)
+# 5 = minimum sine with biased obtuse angles
+qualmeasure 5
+
+# sinewarpfactor: float. for qualmeasure 5 only; sets the factor by which
+# obtuse angles are scaled relative to acute angles. Default is 0.75
+sinewarpfactor 0 0.75
+
+## termination options
+# BOTH goal angles must be reached to terminate improvement
+# goalanglemin: float. terminates improvement early if minimum angle reaches
+# this value. default = 90.0 (which precludes early termination)
+goalanglemin 0 90.0
+# goalanglemax: float. terminates improvement early if maximum angle reaches
+# this value. default = 90.0
+goalanglemax 0 90.0
+
+## smoothing options
+# nonsmooth: enable optimization-based smoothing. default = 1
+nonsmooth 1
+# facetsmooth: enable smoothing of facet vertices. default = 1
+facetsmooth 1
+# segmentsmooth: enable smoothing of segment vertices. default = 1
+segmentsmooth 1
+# usequadrics: enable use of surface quadric error for smoothing fixed boundary
+# vertices. WARNING: this will allow the domain shape to change slightly.  But
+# even a little play sometimes yields much better meshes. default = 0
+usequadrics 0
+# quadricoffset: amount to start quadric error at before subtracting.
+# See alpha in Section 3.2.5 of Bryan's dissertation. default = 0.8
+quadricoffset 0 0.8
+# quadricscale: amount to scale quadric error before subtracting from offset.
+# See beta in Section 3.2.5 of Bryan's dissertation. default = 300.0
+quadricscale 0 300.0
+
+## topological transformation options
+# flip22: enable 2-2 flips (for boundary tets). default = 1
+flip22 1
+# multifaceremoval: enable multi-face removal. singlefaceremoval might still
+# be on. default = 1
+multifaceremoval 1
+# singlefaceremoval: enable single face removal (2-3 and 2-2 flips). Has
+# no effect when multifaceremoval is enabled. default = 1
+singlefaceremoval 1
+# edgeremoval: enable edge removal. default = 1
+edgeremoval 1
+
+## edge contraction options
+# edgecontraction: enable edge contraction. default = 1
+edgecontraction 1
+
+## vertex insertion options
+# enableinsert: enable ALL vertex insertion (overrides others). default = 1
+enableinsert 1
+# insertbody: enable just vertex insertion in body (interior). default = 1
+insertbody 1
+# insertfacet: enable just insertion on facets. default = 1
+insertfacet 1
+# insertsegment: enable just insertion on segments. default = 1
+insertsegment 1
+# insertthreshold: on each insertion pass, try vertex insertion in this
+fraction of the tetrahedra. default = 0.031 (the worst 3.1%)
+insertthreshold 0 0.031
+
+## size control options
+# (See Chapter 6 of Bryan's dissertation.)
+# sizing: enable control of element sizes. default = 0
+sizing 0
+# sizingpass: enable edge length correction before quality improvement.
+# default = 0
+sizingpass 0
+# targetedgelength: the target edge length for this mesh. If set to 0.0, the
+# target edge length is initialized automatically to the initial mean edge
+# length. default = 0.0
+targetedgelength 0 0.0
+# longerfactor: factor by which an edge can be longer than the target edge
+# length before being considered "too long". default = 3.0
+longerfactor 0 2.0
+# shorterfactor: factor by which an edge can be shorter than the target edge
+# length before being considered "too short" default = 0.33
+shorterfactor 0 0.50
+
+## anisotropy options
+# (See Chapter 7 of Bryan's dissertation.)
+# anisotropic: enable anisotropic meshing. default = 0
+anisotropic 0
+# tensor: which size/anisotropy tensor to use. default = 0
+# 0 = identity
+# 1 = stretch x
+# 2 = stretch y
+# 3 = sink
+# 4 = swirl
+# 5 = center
+# 6 = perimeter
+# 7 = right
+# 8 = sine
+tensor 6
+
+## quality file output options
+# These files list, for each tetrahedron, the values of the quality measures
+# minsineout: enable output of .minsine quality file. default = 1
+minsineout 1
+# minangout: enable output of .minang quality file. default = 0
+minangout 0
+# maxangout: enable output of .maxang quality file. default = 0
+maxangout 0
+# vlrmsout: enable output of .vlrms quality file. default = 0
+vlrmsout 0
+# nrrout: enable output of the .nrr quality file. default = 0
+nrrout 0
+
+## animation options
+# animate: activate animation file output (a set of output files after each
+# pass). default = 0
+animate 0
+# timeseries: when animate = 1, only output .stats. default = 0
+timeseries 0
+
+## output filename option
+# fileprefix: filename prefix that distinguishes the output files from the
+# input files. If none specified, an iteration number is appended to the input
+# filenames.
+#fileprefix 0 5 ../output/testprefix
