@@ -141,14 +141,55 @@ void vtkvmtkTetGenWriter::WriteData()
 
   eleStream << numberOfOutputTetras << " " << pointsInTet << " 0" << std::endl;
 
+  double point0[3], point1[3], point2[3], point3[3];
+  double cross[3], vector01[3], vector21[3], vector31[3];
+  double dot;
+  int tmp;
+
+  int cellPointIds[10];
   for (i=0; i<numberOfOutputTetras; i++)
     {
     vtkIdType cellId = tetraCellIdArray->GetValue(i);
     vtkCell* cell = input->GetCell(cellId);
+    for (j=0; j<pointsInTet; j++)
+      {
+      cellPointIds[j] = cell->GetPointId(j);
+      }
+    input->GetPoint(cellPointIds[0],point0);
+    input->GetPoint(cellPointIds[1],point1);
+    input->GetPoint(cellPointIds[2],point2);
+    input->GetPoint(cellPointIds[3],point3);
+    vector01[0] = point0[0] - point1[0];
+    vector01[1] = point0[1] - point1[1];
+    vector01[2] = point0[2] - point1[2];
+    vector21[0] = point2[0] - point1[0];
+    vector21[1] = point2[1] - point1[1];
+    vector21[2] = point2[2] - point1[2];
+    vector31[0] = point3[0] - point1[0];
+    vector31[1] = point3[1] - point1[1];
+    vector31[2] = point3[2] - point1[2];
+    vtkMath::Cross(vector21,vector31,cross);
+    dot = vtkMath::Dot(cross,vector01);
+    if (dot < 0.0)
+      {
+      tmp = cellPointIds[2];
+      cellPointIds[2] = cellPointIds[3];
+      cellPointIds[3] = tmp;
+      if (pointsInTet == 10)
+        {
+        tmp = cellPointIds[6];
+        cellPointIds[6] = cellPointIds[7];
+        cellPointIds[7] = tmp;
+        tmp = cellPointIds[5];
+        cellPointIds[5] = cellPointIds[8];
+        cellPointIds[8] = tmp;
+        }
+      }
+ 
     eleStream << i+1 << " ";
     for (j=0; j<pointsInTet; j++)
       {
-      eleStream << cell->GetPointId(j)+1 << " ";
+      eleStream << cellPointIds[j]+1 << " ";
       }
     eleStream << std::endl;
     }
