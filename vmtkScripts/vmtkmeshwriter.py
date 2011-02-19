@@ -42,7 +42,7 @@ class vmtkMeshWriter(pypes.pypeScript):
         self.SetScriptDoc('write a mesh to disk')
         self.SetInputMembers([
             ['Mesh','i','vtkUnstructuredGrid',1,'','the input mesh','vmtkmeshreader'],
-            ['Format','f','str',1,'["vtkxml","vtk","xda","fdneut","tecplot","lifev","dolfin","fluent","pointdata"]','file format (xda - libmesh ASCII format, fdneut - FIDAP neutral format)'],
+            ['Format','f','str',1,'["vtkxml","vtk","xda","fdneut","tecplot","lifev","dolfin","fluent","tetgen","pointdata"]','file format (xda - libmesh ASCII format, fdneut - FIDAP neutral format)'],
             ['GuessFormat','guessformat','bool',1,'','guess file format from extension'],
             ['Compressed','compressed','bool',1,'','output gz compressed file (dolfin only)'],
             ['OutputFileName','ofile','str',1,'','output file name'],
@@ -68,6 +68,19 @@ class vmtkMeshWriter(pypes.pypeScript):
         writer = vtk.vtkXMLUnstructuredGridWriter()
         writer.SetInput(self.Mesh)
         writer.SetFileName(self.OutputFileName)
+        writer.Write()
+
+    def WriteTetGenMeshFile(self):
+        if (self.OutputFileName == ''):
+            self.PrintError('Error: no OutputFileName.')
+        self.PrintLog('Writing TetGen mesh file.')
+        import os.path
+        outputFileName = os.path.splitext(self.OutputFileName)[0]
+        writer = vtkvmtk.vtkvmtkTetGenWriter()
+        writer.SetInput(self.Mesh)
+        writer.SetFileName(outputFileName)
+        if self.CellEntityIdsArrayName != '':
+            writer.SetBoundaryDataArrayName(self.CellEntityIdsArrayName)
         writer.Write()
 
     def WriteXdaMeshFile(self):
@@ -302,6 +315,8 @@ class vmtkMeshWriter(pypes.pypeScript):
                             'xml':'dolfin',
                             'msh':'fluent',
                             'tec':'tecplot',
+                            'node':'tetgen',
+                            'ele':'tetgen',
                             'dat':'pointdata'}
 
         if self.OutputFileName == 'BROWSER':
@@ -337,6 +352,8 @@ class vmtkMeshWriter(pypes.pypeScript):
             self.WriteFluentMeshFile()
         elif (self.Format == 'tecplot'):
             self.WriteTecplotMeshFile()
+        elif (self.Format == 'tetgen'):
+            self.WriteTetGenMeshFile()
         elif (self.Format == 'pointdata'):
             self.WritePointDataMeshFile()
         else:
