@@ -1,6 +1,5 @@
 SET (VTK_VMTK_MISC_SRCS
   vtkvmtkAnnularCapPolyData.cxx
-  vtkvmtkAppendFilter.cxx
   vtkvmtkBoundaryLayerGenerator.cxx
   vtkvmtkCurvedMPRImageFilter.cxx
   vtkvmtkImageBoxPainter.cxx
@@ -28,7 +27,7 @@ SET (VTK_VMTK_MISC_SRCS
   vtkvmtkSurfaceProjection.cxx
   )
 
-SET (VTK_VMTK_MISC_TARGET_LINK_LIBRARIES vtkvmtkMisc vtkvmtkDifferentialGeometry vtkCommon vtkFiltering vtkGraphics vtkHybrid)
+SET (VTK_VMTK_MISC_TARGET_LINK_LIBRARIES vtkvmtkMisc vtkvmtkComputationalGeometry vtkvmtkDifferentialGeometry vtkCommon vtkFiltering vtkGraphics vtkHybrid)
 
 IF (VTK_VMTK_BUILD_TETGEN)
   SET (VTK_VMTK_MISC_SRCS ${VTK_VMTK_MISC_SRCS} vtkvmtkTetGenWrapper.cxx)
@@ -79,7 +78,7 @@ IF (VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
     SET_TARGET_PROPERTIES(vtkvmtkMiscPythonD PROPERTIES ${VMTK_LIBRARY_PROPERTIES})
   ENDIF(VMTK_LIBRARY_PROPERTIES)
   ADD_LIBRARY(vtkvmtkMiscPython MODULE vtkvmtkMiscPythonInit.cxx)
-  TARGET_LINK_LIBRARIES(vtkvmtkMiscPythonD vtkvmtkMisc vtkvmtkDifferentialGeometry vtkvmtkDifferentialGeometryPythonD vtkCommon vtkCommonPythonD vtkFiltering vtkFilteringPythonD vtkGraphics vtkGraphicsPythonD)
+  TARGET_LINK_LIBRARIES(vtkvmtkMiscPythonD vtkvmtkMisc vtkvmtkComputationalGeometry vtkvmtkComputationalGeometryPythonD vtkvmtkDifferentialGeometry vtkvmtkDifferentialGeometryPythonD vtkCommon vtkCommonPythonD vtkFiltering vtkFilteringPythonD vtkGraphics vtkGraphicsPythonD)
   TARGET_LINK_LIBRARIES (vtkvmtkMiscPython vtkvmtkMiscPythonD)
   IF(WIN32 AND NOT CYGWIN)
      SET_TARGET_PROPERTIES(vtkvmtkMiscPython PROPERTIES SUFFIX ".pyd")
@@ -101,7 +100,7 @@ IF (VTK_WRAP_TCL AND VTK_VMTK_WRAP_TCL)
   IF(VMTK_LIBRARY_PROPERTIES)
     SET_TARGET_PROPERTIES(vtkvmtkMiscTCL PROPERTIES ${VMTK_LIBRARY_PROPERTIES})
   ENDIF(VMTK_LIBRARY_PROPERTIES)
-  TARGET_LINK_LIBRARIES(vtkvmtkMiscTCL vtkvmtkMisc vtkvmtkDifferentialGeometryTCL vtkvmtkDifferentialGeometry vtkCommon vtkCommonTCL vtkFiltering vtkFilteringTCL vtkGraphics vtkGraphicsTCL)
+  TARGET_LINK_LIBRARIES(vtkvmtkMiscTCL vtkvmtkMisc vtkvmtkComputationalGeometryTCL vtkvmtkComputationalGeometry vtkvmtkDifferentialGeometryTCL vtkvmtkDifferentialGeometry vtkCommon vtkCommonTCL vtkFiltering vtkFilteringTCL vtkGraphics vtkGraphicsTCL)
 
   INSTALL(TARGETS vtkvmtkMiscTCL
     LIBRARY DESTINATION ${VTK_VMTK_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries

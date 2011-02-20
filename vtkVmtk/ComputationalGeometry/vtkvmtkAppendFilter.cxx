@@ -40,6 +40,7 @@ vtkStandardNewMacro(vtkvmtkAppendFilter);
 
 vtkvmtkAppendFilter::vtkvmtkAppendFilter()
 {
+  this->MergeDuplicatePoints = 1;
 }
 
 vtkvmtkAppendFilter::~vtkvmtkAppendFilter()
@@ -178,7 +179,10 @@ int vtkvmtkAppendFilter::RequestData(
   newPtIds = vtkIdList::New(); newPtIds->Allocate(VTK_CELL_SIZE);
   
   vtkMergePoints* locator = vtkMergePoints::New();
-  locator->InitPointInsertion(newPts,bounds);
+  if (this->MergeDuplicatePoints)
+    {
+    locator->InitPointInsertion(newPts,bounds);
+    }
 
   vtkIdList* ptIdMap = vtkIdList::New();
 
@@ -211,8 +215,16 @@ int vtkvmtkAppendFilter::RequestData(
       for (ptId=0; ptId < numPts && !abort; ptId++)
         {
         ds->GetPoint(ptId,point);
-        if (locator->InsertUniquePoint(point,newPtId))
+        if (this->MergeDuplicatePoints)
           {
+          if (locator->InsertUniquePoint(point,newPtId))
+            {
+            outputPD->CopyData(ptList,pd,inputCount,ptId,newPtId);
+            }
+          }
+        else
+          {
+          newPtId = newPts->InsertNextPoint(point);
           outputPD->CopyData(ptList,pd,inputCount,ptId,newPtId);
           }
         ptIdMap->SetId(ptId,newPtId);

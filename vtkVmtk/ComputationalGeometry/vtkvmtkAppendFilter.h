@@ -56,12 +56,18 @@ public:
   vtkTypeRevisionMacro(vtkvmtkAppendFilter,vtkAppendFilter);
   void PrintSelf(ostream& os, vtkIndent indent);
 
+  vtkSetMacro(MergeDuplicatePoints,int);
+  vtkGetMacro(MergeDuplicatePoints,int);
+  vtkBooleanMacro(MergeDuplicatePoints,int);
+
 protected:
   vtkvmtkAppendFilter();
   ~vtkvmtkAppendFilter();
 
   // Usual data generation method
   virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+
+  int MergeDuplicatePoints;
 
 private:
   vtkvmtkAppendFilter(const vtkvmtkAppendFilter&);  // Not implemented.

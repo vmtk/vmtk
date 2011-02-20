@@ -60,6 +60,7 @@ SET(SCRIPTS_SRCS
   vmtklocalgeometry.py
   vmtkmarchingcubes.py
   vmtkmeshboundaryinspector.py
+  vmtkmeshbranchclipper.py
   vmtkmeshclipper.py
   vmtkmeshdatareader.py
   vmtkmeshlinearize.py

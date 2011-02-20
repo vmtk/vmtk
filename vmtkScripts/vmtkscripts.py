@@ -54,6 +54,7 @@ __all__ = [
   'vmtklocalgeometry',
   'vmtkmarchingcubes',
   'vmtkmeshboundaryinspector',
+  'vmtkmeshbranchclipper',
   'vmtkmeshclipper',
   'vmtkmeshdatareader',
   'vmtkmeshlinearize',
