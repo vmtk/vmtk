@@ -70,6 +70,7 @@ __all__ = [
   'vmtkmeshvectorfromcomponents',
   'vmtkmeshviewer',
   'vmtkmeshvorticityhelicity',
+  'vmtkmeshwallshearrate',
   'vmtkmeshwriter',
   'vmtknetworkeditor',
   'vmtknetworkextraction',
