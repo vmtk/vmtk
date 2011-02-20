@@ -76,6 +76,7 @@ SET(SCRIPTS_SRCS
   vmtkmeshvectorfromcomponents.py
   vmtkmeshviewer.py
   vmtkmeshvorticityhelicity.py
+  vmtkmeshwallshearrate.py
   vmtkmeshwriter.py
   vmtknetworkextraction.py
   vmtknetworkeditor.py
