@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 ## Program:   VMTK
-## Module:    $RCSfile: vmtkmeshvorticityhelicity.py,v $
+## Module:    $RCSfile: vmtkmeshlambda2.py,v $
 ## Language:  Python
 ## Date:      $Date: 2005/09/14 09:49:59 $
 ## Version:   $Revision: 1.6 $
@@ -19,9 +19,9 @@ import sys
 
 import pypes
 
-vmtkmeshvorticityhelicity = 'vmtkMeshVorticityHelicity'
+vmtkmeshlambda2 = 'vmtkMeshLambda2'
 
-class vmtkMeshVorticityHelicity(pypes.pypeScript):
+class vmtkMeshLambda2(pypes.pypeScript):
 
     def __init__(self):
 
@@ -30,21 +30,17 @@ class vmtkMeshVorticityHelicity(pypes.pypeScript):
         self.Mesh = None
 
         self.VelocityArrayName = None
-        self.VorticityArrayName = 'Vorticity'
-        self.HelicityArrayName = 'Helicity'
+        self.Lambda2ArrayName = 'Lambda2'
 
-        self.ComputeHelicity = True
         self.ConvergenceTolerance = 1E-6
         self.QuadratureOrder = 3
 
-        self.SetScriptName('vmtkmeshvorticityhelicity')
-        self.SetScriptDoc('compute vorticity and helicity from a velocity field')
+        self.SetScriptName('vmtkmeshlambda2')
+        self.SetScriptDoc('compute lambda2 from a velocity field')
         self.SetInputMembers([
             ['Mesh','i','vtkUnstructuredGrid',1,'','the input mesh','vmtkmeshreader'],
-            ['ComputeHelicity','helicity','bool',1,'',''],
             ['VelocityArrayName','velocityarray','str',1,'',''],
-            ['VorticityArrayName','vorticityarray','str',1,'',''],
-            ['HelicityArrayName','helicityarray','str',1,'',''],
+            ['Lambda2ArrayName','lambda2array','str',1,'',''],
             ['ConvergenceTolerance','tolerance','float',1,'',''],
             ['QuadratureOrder','quadratureorder','int',1,'','']
             ])
@@ -57,20 +53,17 @@ class vmtkMeshVorticityHelicity(pypes.pypeScript):
         if (self.Mesh == None):
             self.PrintError('Error: no Mesh.')
 
-        vorticityFilter = vtkvmtk.vtkvmtkUnstructuredGridVorticityFilter()
-        vorticityFilter.SetInput(self.Mesh)
-        vorticityFilter.SetVelocityArrayName(self.VelocityArrayName)
-        vorticityFilter.SetVorticityArrayName(self.VorticityArrayName)
-        vorticityFilter.SetHelicityFactorArrayName(self.HelicityArrayName)
-        vorticityFilter.SetConvergenceTolerance(self.ConvergenceTolerance)
-        vorticityFilter.SetQuadratureOrder(self.QuadratureOrder)
-        if self.ComputeHelicity:
-            vorticityFilter.ComputeHelicityFactorOn()
-        else:
-            vorticityFilter.ComputeHelicityFactorOff()
-        vorticityFilter.Update()
+        lambda2Filter = vtkvmtk.vtkvmtkMeshLambda2()
+        lambda2Filter.SetInput(self.Mesh)
+        lambda2Filter.SetVelocityArrayName(self.VelocityArrayName)
+        lambda2Filter.SetLambda2ArrayName(self.Lambda2ArrayName)
+        lambda2Filter.SetConvergenceTolerance(self.ConvergenceTolerance)
+        lambda2Filter.SetQuadratureOrder(self.QuadratureOrder)
+        lambda2Filter.ComputeIndividualPartialDerivativesOn()
+        lambda2Filter.ForceBoundaryToNegativeOn()
+        lambda2Filter.Update()
 
-        self.Mesh = vorticityFilter.GetOutput()
+        self.Mesh = lambda2Filter.GetOutput()
 
         if self.Mesh.GetSource():
             self.Mesh.GetSource().UnRegisterAllOutputs()

@@ -63,6 +63,7 @@ SET(SCRIPTS_SRCS
   vmtkmeshbranchclipper.py
   vmtkmeshclipper.py
   vmtkmeshdatareader.py
+  vmtkmeshlambda2.py
   vmtkmeshlinearize.py
   vmtkmeshgenerator.py
   vmtkmeshprojection.py
