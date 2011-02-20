@@ -1,4 +1,5 @@
 SET (VTK_VMTK_COMPUTATIONALGEOMETRY_SRCS
+  vtkvmtkAppendFilter.cxx
   vtkvmtkCapPolyData.cxx
   vtkvmtkCenterlineAttributesFilter.cxx
   vtkvmtkCenterlineBifurcationVectors.cxx
@@ -46,6 +47,7 @@ SET (VTK_VMTK_COMPUTATIONALGEOMETRY_SRCS
   vtkvmtkSimplifyVoronoiDiagram.cxx
   vtkvmtkSteepestDescentLineTracer.cxx
   vtkvmtkSteepestDescentShooter.cxx
+  vtkvmtkUnstructuredGridCenterlineGroupsClipper.cxx
   vtkvmtkUnstructuredGridCenterlineSections.cxx
   vtkvmtkVoronoiDiagram3D.cxx
   )
