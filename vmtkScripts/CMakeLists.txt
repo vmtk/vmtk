@@ -72,7 +72,9 @@ SET(SCRIPTS_SRCS
   vmtkmeshtosurface.py
   vmtkmeshtransform.py
   vmtkmeshtransformtoras.py
+  vmtkmeshvectorfromcomponents.py
   vmtkmeshviewer.py
+  vmtkmeshvorticityhelicity.py
   vmtkmeshwriter.py
   vmtknetworkextraction.py
   vmtknetworkeditor.py
