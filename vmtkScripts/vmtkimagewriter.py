@@ -245,7 +245,7 @@ class vmtkImageWriter(pypes.pypeScript):
             cast.Update()
             self.Image = cast.GetOutput()
 
-        if self.UseITKIO and self.Format not in ['vtkxml','tiff','png','dat']:
+        if self.UseITKIO and self.Format not in ['vtkxml','vtk','tiff','png','dat']:
             self.WriteITKIO()
         else:	
             if (self.Format == 'vtkxml'):
