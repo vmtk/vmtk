@@ -10,14 +10,14 @@ MARK_AS_ADVANCED(LIBRARY_OUTPUT_PATH EXECUTABLE_OUTPUT_PATH)
 #
 # Try to find VTK and include its settings (otherwise complain)
 #
-FIND_PACKAGE(VTK REQUIRED)
-INCLUDE(${VTK_USE_FILE})
+#FIND_PACKAGE(VTK REQUIRED)
+#INCLUDE(${VTK_USE_FILE})
 
 #
 # Try to find ITK and include its settings (otherwise complain)
 #
-FIND_PACKAGE(ITK REQUIRED)
-INCLUDE(${ITK_USE_FILE})
+#FIND_PACKAGE(ITK REQUIRED)
+#INCLUDE(${ITK_USE_FILE})
 
 #
 # Build shared libs ?

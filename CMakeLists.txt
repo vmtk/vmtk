@@ -1,6 +1,6 @@
 PROJECT(VMTK)
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 IF(COMMAND cmake_policy)
   cmake_policy(SET CMP0003 NEW)
 ENDIF(COMMAND cmake_policy)
@@ -22,6 +22,44 @@ IF(VMTK_WITH_LIBRARY_VERSION)
       SOVERSION "${VMTK_VERSION_MAJOR}.${VMTK_VERSION_MINOR}"
      )
 ENDIF(VMTK_WITH_LIBRARY_VERSION)
+
+#-----------------------------------------------------------------------------
+# ITK Setup
+option( USE_SYSTEM_ITK
+  "Exclude ITK from SuperBuild and use an existing build instead." OFF )
+if( USE_SYSTEM_ITK )
+  find_package( ITK REQUIRED )
+  include( ${ITK_USE_FILE} )
+endif( USE_SYSTEM_ITK )
+
+#-----------------------------------------------------------------------------
+# VTK Setup
+option( USE_SYSTEM_VTK
+  "Exclude VTK from SuperBuild and use an existing build instead." OFF )
+if( USE_SYSTEM_VTK )
+  find_package( VTK REQUIRED )
+  include( ${VTK_USE_FILE} )
+endif( USE_SYSTEM_VTK )
+
+#-----------------------------------------------------------------------------
+# Superbuild setup
+option( VMTK_USE_SUPERBUILD
+  "Build VMTK and the projects it depends on via SuperBuild.cmake." ON )
+
+if( VMTK_USE_SUPERBUILD )
+
+  include( "${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild.cmake" )
+  return()
+
+else( VMTK_USE_SUPERBUILD )
+
+  find_package( ITK REQUIRED )
+  include( ${ITK_USE_FILE} )
+
+  find_package( VTK REQUIRED )
+  include( ${VTK_USE_FILE} )
+
+endif( VMTK_USE_SUPERBUILD )
 
 SUBDIRS(
   PypeS
@@ -103,15 +141,15 @@ IF(VMTK_ENABLE_DISTRIBUTION)
 ENDIF(VMTK_ENABLE_DISTRIBUTION)
 
 # Export Build settings and library dependencies
-  INCLUDE(CMakeExportBuildSettings)
-  
-  CMAKE_EXPORT_BUILD_SETTINGS(
-    ${VMTK_BINARY_DIR}/VMTKBuildSettings.cmake
-  )
-  
-  EXPORT_LIBRARY_DEPENDENCIES(
-    ${VMTK_BINARY_DIR}/VMTKLibraryDepends.cmake
-  )
+#  INCLUDE(CMakeExportBuildSettings)
+#  
+#  CMAKE_EXPORT_BUILD_SETTINGS(
+#    ${VMTK_BINARY_DIR}/VMTKBuildSettings.cmake
+#  )
+#  
+#  EXPORT_LIBRARY_DEPENDENCIES(
+#    ${VMTK_BINARY_DIR}/VMTKLibraryDepends.cmake
+#  )
 
   CONFIGURE_FILE(
     ${VMTK_SOURCE_DIR}/CMakeInput/VMTKConfig.cmake.in
