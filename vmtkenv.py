@@ -27,16 +27,18 @@ if not os.environ.has_key("VMTKHOME"):
     
     newEnviron["PATH"] = os.path.join(vmtkhome,'bin')    
 
-    newEnviron["LD_LIBRARY_PATH"] = os.path.join(vmtkhome,"lib") + os.path.pathsep + \
-                                    os.path.join(vmtkhome,"lib/vmtk") + os.path.pathsep + \
-                                    os.path.join(vmtkhome,"lib/InsightToolkit")
+    vtkdir = [el for el in os.listdir(os.path.join(vmtkhome,"lib")) if el.startswith('vtk')][0]
+
+    newEnviron["LD_LIBRARY_PATH"] = os.path.join(vmtkhome,"lib",vtkdir) + os.path.pathsep + \
+                                    os.path.join(vmtkhome,"lib","vmtk") + os.path.pathsep + \
+                                    os.path.join(vmtkhome,"lib","InsightToolkit")
     
-    newEnviron["DYLD_LIBRARY_PATH"] = os.path.join(vmtkhome,"lib") + os.path.pathsep + \
-                                      os.path.join(vmtkhome,"lib/vmtk") + os.path.pathsep + \
-                                      os.path.join(vmtkhome,"lib/InsightToolkit")
+    newEnviron["DYLD_LIBRARY_PATH"] = os.path.join(vmtkhome,"lib",vtkdir) + os.path.pathsep + \
+                                      os.path.join(vmtkhome,"lib","vmtk") + os.path.pathsep + \
+                                      os.path.join(vmtkhome,"lib","InsightToolkit")
     
-    newEnviron["PYTHONPATH"] =  os.path.join(vmtkhome,"lib/python2.3/site-packages") + os.path.pathsep + \
-                                os.path.join(vmtkhome,"lib/vmtk")
+    newEnviron["PYTHONPATH"] =  os.path.join(vmtkhome,"bin","Python") + os.path.pathsep + \
+                                os.path.join(vmtkhome,"lib","vmtk")
 
     if len(sys.argv) > 1:
 
