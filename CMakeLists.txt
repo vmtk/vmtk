@@ -53,11 +53,15 @@ if( VMTK_USE_SUPERBUILD )
 
 else( VMTK_USE_SUPERBUILD )
 
-  find_package( ITK REQUIRED )
-  include( ${ITK_USE_FILE} )
+  if ( NOT ITK_FOUND )
+    find_package( ITK REQUIRED )
+    include( ${ITK_USE_FILE} )
+  endif( NOT ITK_FOUND )
 
-  find_package( VTK REQUIRED )
-  include( ${VTK_USE_FILE} )
+  if ( NOT VTK_FOUND )
+    find_package( VTK REQUIRED )
+    include( ${VTK_USE_FILE} )
+  endif( NOT VTK_FOUND )
 
 endif( VMTK_USE_SUPERBUILD )
 

@@ -38,6 +38,7 @@ if not os.environ.has_key("VMTKHOME"):
                                       os.path.join(vmtkhome,"lib","InsightToolkit")
     
     newEnviron["PYTHONPATH"] =  os.path.join(vmtkhome,"bin","Python") + os.path.pathsep + \
+                                os.path.join(vmtkhome,"lib",vtkdir) + os.path.pathsep + \
                                 os.path.join(vmtkhome,"lib","vmtk")
 
     if len(sys.argv) > 1:
