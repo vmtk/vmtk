@@ -21,10 +21,10 @@ except:
 
     import os
 
-    if sys.platform = 'darwin':
+    if sys.platform == 'darwin':
         ldEnvironmentVariable = "DYLD_LIBRARY_PATH"
 
-    elif sys.platform = 'win32':
+    elif sys.platform == 'win32':
         ldEnvironmentVariable = "PATH"
 
     else:
