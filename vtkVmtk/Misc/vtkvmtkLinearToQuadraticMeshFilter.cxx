@@ -51,6 +51,7 @@ vtkvmtkLinearToQuadraticMeshFilter::vtkvmtkLinearToQuadraticMeshFilter()
   this->ProjectedCellEntityId = -1;
   this->QuadratureOrder = 10;
   this->NegativeJacobianTolerance = 0.0;
+  this->JacobianRelaxation = 1;
   this->TestFinalJacobians = 0;
 }
 
@@ -738,7 +739,7 @@ int vtkvmtkLinearToQuadraticMeshFilter::RequestData(
   int maxSignChangeIterations = 20;
   int signChangeCounter = 0;
   bool anySignChange = true;
-  if (!point || !locator)
+  if (!point || !locator || !this->JacobianRelaxation)
     {
     anySignChange = false;
     }

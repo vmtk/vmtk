@@ -36,6 +36,7 @@ class vmtkLinearToQuadratic(pypes.pypeScript):
         self.CapSurface = False
         self.CellEntityIdsArrayName = None
         self.ProjectedCellEntityId = 1
+        self.JacobianRelaxation = 0.0
         self.NegativeJacobianTolerance = 0.0
         self.QuadratureOrder = 10
 
@@ -48,6 +49,7 @@ class vmtkLinearToQuadratic(pypes.pypeScript):
             ['UseBiquadraticWedge','biquadraticwedge','bool',1,'','if on, convert linear wedges to 18-noded biquadratic quadratic wedges, otherwise use 15-noded quadratic wedges'],
             ['CapSurface','capsurface','bool',1,'','if on, cap the reference surface before projecting'],
             ['CellEntityIdsArrayName','entityidsarray','str',1,'','name of the array where entity ids relative to cells are stored'],
+            ['JacobianRelaxation','jacobianrelaxation','bool',1,'','if on, relax projected nodes until Jacobians are all positive'],
             ['ProjectedCellEntityId','projectedid','int',1,'','id of the entity that is to be projected onto the reference surface'],
             ['QuadratureOrder','quadratureorder','int',1,'','quadrature order for checking negative Jacobians'],
             ['NegativeJacobianTolerance','jacobiantolerance','float',1,'','tolerance for the evaluation of negative Jacobians'],
@@ -75,6 +77,7 @@ class vmtkLinearToQuadratic(pypes.pypeScript):
             linearToQuadraticFilter.SetReferenceSurface(surface)
             linearToQuadraticFilter.SetUseBiquadraticWedge(self.UseBiquadraticWedge)
             linearToQuadraticFilter.SetCellEntityIdsArrayName(self.CellEntityIdsArrayName)
+            linearToQuadraticFilter.SetJacobianRelaxation(self.JacobianRelaxation)
             linearToQuadraticFilter.SetProjectedCellEntityId(self.ProjectedCellEntityId)
             linearToQuadraticFilter.SetQuadratureOrder(self.QuadratureOrder)
             linearToQuadraticFilter.SetNegativeJacobianTolerance(self.NegativeJacobianTolerance)
