@@ -48,7 +48,7 @@ Version:   $Revision: 1.4 $
 
 class vtkDataSetCollection;
 
-class VTK_VMTK_MISC_EXPORT vtkvmtkAppendFilter : public vtkAppendFilter
+class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkAppendFilter : public vtkAppendFilter
 {
 public:
   static vtkvmtkAppendFilter *New();
