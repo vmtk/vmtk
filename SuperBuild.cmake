@@ -28,13 +28,13 @@ if( NOT USE_SYSTEM_ITK )
     find_package( Git REQUIRED )
   endif( NOT GIT_EXECUTABLE )
 
-  option( GIT_PROTOCOL_HTTP 
-    "Use HTTP for git access (useful if behind a firewall)" OFF )
-  if( GIT_PROTOCOL_HTTP )
-    set( GIT_PROTOCOL "http" CACHE STRING "Git protocol for file transfer" )
-  else( GIT_PROTOCOL_HTTP )
+  option( GIT_PROTOCOL_HTTPS 
+    "Use HTTPS for git access (useful if behind a firewall)" ON )
+  if( GIT_PROTOCOL_HTTPS )
+    set( GIT_PROTOCOL "https" CACHE STRING "Https protocol for file transfer" )
+  else( GIT_PROTOCOL_HTTPS )
     set( GIT_PROTOCOL "git" CACHE STRING "Git protocol for file transfer" )
-  endif( GIT_PROTOCOL_HTTP )
+  endif( GIT_PROTOCOL_HTTPS )
   mark_as_advanced( GIT_PROTOCOL )
 
   ##
@@ -77,13 +77,13 @@ if( NOT USE_SYSTEM_VTK )
     find_package( Git REQUIRED )
   endif( NOT GIT_EXECUTABLE )
 
-  option( GIT_PROTOCOL_HTTP 
-    "Use HTTP for git access (useful if behind a firewall)" OFF )
-  if( GIT_PROTOCOL_HTTP )
-    set( GIT_PROTOCOL "http" CACHE STRING "Git protocol for file transfer" )
-  else( GIT_PROTOCOL_HTTP )
+  option( GIT_PROTOCOL_HTTPS 
+    "Use HTTPS for git access (useful if behind a firewall)" ON )
+  if( GIT_PROTOCOL_HTTPS )
+    set( GIT_PROTOCOL "https" CACHE STRING "Https protocol for file transfer" )
+  else( GIT_PROTOCOL_HTTPS )
     set( GIT_PROTOCOL "git" CACHE STRING "Git protocol for file transfer" )
-  endif( GIT_PROTOCOL_HTTP )
+  endif( GIT_PROTOCOL_HTTPS )
   mark_as_advanced( GIT_PROTOCOL )
 
   ##
