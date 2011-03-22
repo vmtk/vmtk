@@ -29,7 +29,7 @@ if( NOT USE_SYSTEM_ITK )
   endif( NOT GIT_EXECUTABLE )
 
   option( GIT_PROTOCOL_HTTPS 
-    "Use HTTPS for git access (useful if behind a firewall)" ON )
+    "Use HTTPS for git access (useful if behind a firewall)" OFF )
   if( GIT_PROTOCOL_HTTPS )
     set( GIT_PROTOCOL "https" CACHE STRING "Https protocol for file transfer" )
   else( GIT_PROTOCOL_HTTPS )
@@ -78,7 +78,7 @@ if( NOT USE_SYSTEM_VTK )
   endif( NOT GIT_EXECUTABLE )
 
   option( GIT_PROTOCOL_HTTPS 
-    "Use HTTPS for git access (useful if behind a firewall)" ON )
+    "Use HTTPS for git access (useful if behind a firewall)" OFF )
   if( GIT_PROTOCOL_HTTPS )
     set( GIT_PROTOCOL "https" CACHE STRING "Https protocol for file transfer" )
   else( GIT_PROTOCOL_HTTPS )
