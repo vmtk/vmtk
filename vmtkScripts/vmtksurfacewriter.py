@@ -37,7 +37,7 @@ class vmtkSurfaceWriter(pypes.pypeScript):
         self.SetScriptDoc('write surface to disk')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
-            ['Format','f','str',1,'["vtkxml","vtk","stl","pointdata","tecplot"]','file format'],
+            ['Format','f','str',1,'["vtkxml","vtk","stl","ply","pointdata","tecplot"]','file format'],
             ['GuessFormat','guessformat','bool',1,'','guess file format from extension'],
             ['CellData','celldata','bool',1,'','write CellData when using pointdata format'],
             ['OutputFileName','ofile','str',1,'','output file name'],
@@ -69,6 +69,15 @@ class vmtkSurfaceWriter(pypes.pypeScript):
             self.PrintError('Error: no OutputFileName.')
         self.PrintLog('Writing STL surface file.')
         writer = vtk.vtkSTLWriter()
+        writer.SetInput(self.Surface)
+        writer.SetFileName(self.OutputFileName)
+        writer.Write()
+
+    def WritePLYSurfaceFile(self):
+        if (self.OutputFileName == ''):
+            self.PrintError('Error: no OutputFileName.')
+        self.PrintLog('Writing PLY surface file.')
+        writer = vtk.vtkPLYWriter()
         writer.SetInput(self.Surface)
         writer.SetFileName(self.OutputFileName)
         writer.Write()
@@ -175,6 +184,7 @@ class vmtkSurfaceWriter(pypes.pypeScript):
                             'vtkxml':'vtkxml',
                             'vtk':'vtk',
                             'stl':'stl',
+                            'ply':'ply',
                             'tec':'tecplot',
                             'dat':'pointdata'}
 
@@ -201,6 +211,8 @@ class vmtkSurfaceWriter(pypes.pypeScript):
             self.WriteVTKXMLSurfaceFile()
         elif (self.Format == 'stl'):
             self.WriteSTLSurfaceFile()
+        elif (self.Format == 'ply'):
+            self.WritePLYSurfaceFile()
         elif (self.Format == 'pointdata'):
             self.WritePointDataSurfaceFile()
         elif (self.Format == 'tecplot'):
