@@ -35,7 +35,7 @@ class vmtkSurfaceReader(pypes.pypeScript):
         self.SetScriptName('vmtksurfacereader')
         self.SetScriptDoc('read a surface and store it in a vtkPolyData object')
         self.SetInputMembers([
-            ['Format','f','str',1,'["vtkxml","vtk","stl","tecplot"]','file format'],
+            ['Format','f','str',1,'["vtkxml","vtk","stl","ply","tecplot"]','file format'],
             ['GuessFormat','guessformat','bool',1,'','guess file format from extension'],
             ['Surface','i','vtkPolyData',1,'','the input surface'],
             ['InputFileName','ifile','str',1,'','input file name']
@@ -67,6 +67,15 @@ class vmtkSurfaceReader(pypes.pypeScript):
             self.PrintError('Error: no InputFileName.')
         self.PrintLog('Reading STL surface file.')
         reader = vtk.vtkSTLReader()
+        reader.SetFileName(self.InputFileName)
+        reader.Update()
+        self.Surface = reader.GetOutput()
+
+    def ReadPLYSurfaceFile(self):
+        if (self.InputFileName == ''):
+            self.PrintError('Error: no InputFileName.')
+        self.PrintLog('Reading PLY surface file.')
+        reader = vtk.vtkPLYReader()
         reader.SetFileName(self.InputFileName)
         reader.Update()
         self.Surface = reader.GetOutput()
@@ -178,6 +187,7 @@ class vmtkSurfaceReader(pypes.pypeScript):
                             'vtkxml':'vtkxml',
                             'vtk':'vtk',
                             'stl':'stl',
+                            'ply':'ply',
                             'tec':'tecplot',
                             'dat':'tecplot'}
 
@@ -204,6 +214,8 @@ class vmtkSurfaceReader(pypes.pypeScript):
             self.ReadVTKXMLSurfaceFile()
         elif (self.Format == 'stl'):
             self.ReadSTLSurfaceFile()
+        elif (self.Format == 'ply'):
+            self.ReadPLYSurfaceFile()
         elif (self.Format == 'tecplot'):
             self.ReadTecplotSurfaceFile()
         else:
