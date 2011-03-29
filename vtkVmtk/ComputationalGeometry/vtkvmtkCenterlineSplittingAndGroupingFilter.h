@@ -85,6 +85,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkCenterlineSplittingAndGroupi
   void SplitCenterline(vtkPolyData* input, vtkIdType cellId, int numberOfSplittingPoints, const vtkIdType* subIds, const double* pcoords, const int* tractBlanking, vtkPolyData* splitCenterline);
 
   void MakeGroupIdsAdjacent(vtkPolyData* centerlineTracts);
+  void MakeTractIdsAdjacent(vtkPolyData* centerlineTracts);
 
   char* RadiusArrayName;
   char* GroupIdsArrayName;

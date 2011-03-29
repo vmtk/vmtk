@@ -307,6 +307,7 @@ void vtkvmtkCenterlineUtilities::FindAdjacentCenterlineGroupIds(vtkPolyData* cen
         continue;
         }
 
+      //WARNING: this assumes that tract ids are adjacent
       if (currentBranchCenterlineTractId == branchCenterlineTractId - 1)
         {
         upStreamGroupIds->InsertUniqueId(currentBranchCenterlineGroupId);
