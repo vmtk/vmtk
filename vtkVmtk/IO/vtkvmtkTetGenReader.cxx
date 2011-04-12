@@ -112,10 +112,11 @@ int vtkvmtkTetGenReader::RequestData(
     }
 
   std::string line;
+  std::string delimiter = " ";
   std::vector<std::string> tokens;
 
   std::getline(nodeStream,line);
-  this->Tokenize(line,tokens);
+  this->Tokenize(line,tokens,delimiter);
 
   int nodeCount, dim, numberOfAttributes, boundaryMarkers;
 
@@ -159,7 +160,7 @@ int vtkvmtkTetGenReader::RequestData(
   for (i=0; i<nodeCount; i++)
     {
     std::getline(nodeStream,line);
-    this->Tokenize(line,tokens);
+    this->Tokenize(line,tokens,delimiter);
     index = atoi(tokens[0].c_str());
     if (i==0)
       {
@@ -198,7 +199,7 @@ int vtkvmtkTetGenReader::RequestData(
     }
 
   std::getline(eleStream,line);
-  this->Tokenize(line,tokens);
+  this->Tokenize(line,tokens,delimiter);
 
   int tetCount, nodesPerTet, numberOfCellAttributes;
   tetCount = atoi(tokens[0].c_str());
@@ -238,7 +239,7 @@ int vtkvmtkTetGenReader::RequestData(
   for (i=0; i<tetCount; i++)
     {
     std::getline(eleStream,line);
-    this->Tokenize(line,tokens);
+    this->Tokenize(line,tokens,delimiter);
     index = atoi(tokens[0].c_str());
     outputCellArray->InsertNextCell(nodesPerTet);
     maxBoundaryId = 0;

@@ -739,7 +739,7 @@ int vtkvmtkLinearToQuadraticMeshFilter::RequestData(
   int maxSignChangeIterations = 20;
   int signChangeCounter = 0;
   bool anySignChange = true;
-  if (!point || !locator || !this->JacobianRelaxation)
+  if (!locator || !this->JacobianRelaxation)
     {
     anySignChange = false;
     }

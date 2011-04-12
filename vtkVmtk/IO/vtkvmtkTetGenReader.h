@@ -51,7 +51,7 @@ protected:
   virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
 
 //BTX
-  void Tokenize(const std::string& str, std::vector<std::string>& tokens, const std::string& delimiters = " ");
+  void Tokenize(const std::string& str, std::vector<std::string>& tokens, const std::string& delimiters);
 //ETX
 
   char* BoundaryDataArrayName;
