@@ -198,36 +198,41 @@ void vtkvmtkDolfinWriter::WriteData()
       faceCellPoints->Delete();
       }
 
-    out << "    <data>" << endl;
-    out << "      <array name=\"boundary facet cells\" type=\"uint\" size=\"" << numberOfTriangles << "\">" << endl;
+    out << "      <data>" << endl;
+    out << "        <data_entry name=\"boundary_facet_cells\">" << endl;
+    out << "          <array type=\"uint\" size=\"" << numberOfTriangles << "\">" << endl;
     for (i=0; i<numberOfTriangles; i++)
       {
-      out << "        <element index=\"" << i << "\" "; 
+      out << "            <element index=\"" << i << "\" "; 
       out << "value=\"" << boundaryFaceCells->GetId(i) << "\" "; 
       out << "/>" << endl;
       }
-    out << "      </array>" << endl;
-
-    out << "      <array name=\"boundary facet numbers\" type=\"uint\" size=\"" << numberOfTriangles << "\">" << endl;
+    out << "          </array>" << endl;
+    out << "        </data_entry>" << endl;
+    out << "        <data_entry name=\"boundary_facet_numbers\">" << endl;
+    out << "          <array type=\"uint\" size=\"" << numberOfTriangles << "\">" << endl;
     for (i=0; i<numberOfTriangles; i++)
       {
-      out << "        <element index=\"" << i << "\" "; 
+      out << "            <element index=\"" << i << "\" "; 
       out << "value=\"" << boundaryFaceIds->GetId(i) << "\" "; 
       out << "/>" << endl;
       }
-    out << "      </array>" << endl;
+    out << "          </array>" << endl;
+    out << "        </data_entry>" << endl;
 
-    out << "      <array name=\"boundary indicators\" type=\"uint\" size=\"" << numberOfTriangles << "\">" << endl;
+    out << "        <data_entry name=\"boundary_indicators\">" << endl;
+    out << "          <array type=\"uint\" size=\"" << numberOfTriangles << "\">" << endl;
     for (i=0; i<numberOfTriangles; i++)
       {
       triangleCellId = triangleCellIdArray->GetValue(i);
-      out << "        <element index=\"" << i << "\" "; 
+      out << "            <element index=\"" << i << "\" "; 
       out << "value=\"" << boundaryDataArray->GetValue(triangleCellId) + this->BoundaryDataIdOffset << "\" "; 
       out << "/>" << endl;
       }
-    out << "      </array>" << endl;
+    out << "          </array>" << endl;
+    out << "        </data_entry>" << endl;
   
-    out << "    </data>" << endl;
+    out << "      </data>" << endl;
   
     triangleCellIdArray->Delete();
     boundaryFaceCells->Delete();
