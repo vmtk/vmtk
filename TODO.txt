@@ -3,6 +3,7 @@
 - write script for computing eikonal solution on the Voronoi diagram starting from centerlines (it's useful for incrementally adding more detail to the tube description). The code is there in vtkvmtkNonManifoldFastMarching but it initializes from interseceted edge endpoints, not from the actual intersection points. 
 - write class with Voronoi saliency measurements (not using centerlines, like sphere ratios etc)
 - write selective smoothing filter
+- implement image orientation strategy
 
 - use concrete array types (vtkIntArray, vtkDoubleArray) and call DeepCopy when fetching the array from PointData or CellData: DeepCopy handles eventual type casting.
 
