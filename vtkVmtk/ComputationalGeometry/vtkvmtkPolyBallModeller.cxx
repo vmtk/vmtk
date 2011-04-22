@@ -98,7 +98,7 @@ int vtkvmtkPolyBallModeller::RequestInformation (
   if (this->ReferenceImage)
     {
     this->ReferenceImage->GetOrigin(origin);
-    this->ReferenceImage->GetSpacing(origin);
+    this->ReferenceImage->GetSpacing(spacing);
     this->ReferenceImage->GetDimensions(this->SampleDimensions);
     }
   else
