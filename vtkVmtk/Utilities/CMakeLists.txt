@@ -1,9 +1,12 @@
 SUBDIRS(
   Doxygen
   OpenNL
-  Stellar_1.0
   vtkvmtkITK
   )
+
+IF (VTK_VMTK_BUILD_STELLAR)
+  SUBDIRS(Stellar_1.0)
+ENDIF (VTK_VMTK_BUILD_STELLAR)
 
 IF (VTK_VMTK_BUILD_TETGEN)
   SUBDIRS(tetgen1.4.3)
