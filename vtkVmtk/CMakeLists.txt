@@ -34,7 +34,6 @@ if(APPLE)
 endif(APPLE)
 
 OPTION(VTK_VMTK_BUILD_TETGEN "Build TetGen and TetGen wrapper." ON)
-OPTION(VTK_VMTK_BUILD_STELLAR "Build Stellar." ON)
 
 IF (VTK_USE_COCOA)
   OPTION(VTK_VMTK_USE_COCOA "Build the Cocoa vmtk classes." ON)
