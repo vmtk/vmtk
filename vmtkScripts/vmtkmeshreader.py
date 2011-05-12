@@ -41,7 +41,7 @@ class vmtkMeshReader(pypes.pypeScript):
         self.SetScriptName('vmtkmeshreader')
         self.SetScriptDoc('read a mesh and stores it in a vtkUnstructuredGrid object')
         self.SetInputMembers([
-            ['Format','f','str',1,'["vtkxml","vtk","fdneut","ngneut","tecplot","tetgen"]','file format (fdneut - FIDAP neutral format, ngneut - Netgen neutral format)'],
+            ['Format','f','str',1,'["vtkxml","vtk","fdneut","ngneut","tecplot","tetgen","gambit"]','file format (fdneut - FIDAP neutral format, ngneut - Netgen neutral format)'],
             ['GuessFormat','guessformat','bool',1,'','guess file format from extension'],
             ['Mesh','i','vtkUnstructuredGrid',1,'','the input mesh'],
             ['InputFileName','ifile','str',1,'','input file name'],
@@ -63,6 +63,15 @@ class vmtkMeshReader(pypes.pypeScript):
         reader = vtkvmtk.vtkvmtkTetGenReader()
         reader.SetFileName(inputFileName)
         reader.SetBoundaryDataArrayName(self.CellEntityIdsArrayName)
+        reader.Update()
+        self.Mesh = reader.GetOutput()
+
+    def ReadGAMBITMeshFile(self):
+        if (self.InputFileName == ''):
+            self.PrintError('Error: no InputFileName.')
+        self.PrintLog('Reading GAMBIT mesh file.')
+        reader = vtk.vtkGAMBITReader()
+        reader.SetFileName(self.InputFileName)
         reader.Update()
         self.Mesh = reader.GetOutput()
 
@@ -268,6 +277,7 @@ class vmtkMeshReader(pypes.pypeScript):
                             'FDNEUT':'fdneut',
                             'xda':'xda',
                             'neu':'ngneut',
+                            'gneu':'gambit',
                             'tec':'tecplot',
                             'node':'tetgen',
                             'ele':'tetgen'}
@@ -293,6 +303,8 @@ class vmtkMeshReader(pypes.pypeScript):
             self.ReadVTKMeshFile()
         elif (self.Format == 'vtkxml'):
             self.ReadVTKXMLMeshFile()
+        elif (self.Format == 'gambit'):
+            self.ReadGAMBITMeshFile()
         elif (self.Format == 'fdneut'):
             self.ReadFDNEUTMeshFile()
         elif (self.Format == 'ngneut'):
