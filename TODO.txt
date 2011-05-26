@@ -7,5 +7,6 @@
 
 - use concrete array types (vtkIntArray, vtkDoubleArray) and call DeepCopy when fetching the array from PointData or CellData: DeepCopy handles eventual type casting.
 
-- turn vmtkenv.py into vmtkenv.py.in, configurable by CMake. 
+- implement support for oriented images
 
+- offset attributes on unsplit centerlines

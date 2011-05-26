@@ -51,6 +51,7 @@ vtkvmtkLinearToQuadraticMeshFilter::vtkvmtkLinearToQuadraticMeshFilter()
   this->ProjectedCellEntityId = -1;
   this->QuadratureOrder = 10;
   this->NegativeJacobianTolerance = 0.0;
+  this->JacobianRelaxation = 1;
   this->TestFinalJacobians = 0;
 }
 
