@@ -34,6 +34,7 @@ class vmtkSurfaceSmoothing(pypes.pypeScript):
         self.PassBand = 1.0
         self.RelaxationFactor = 0.01
         self.BoundarySmoothing = 1
+        self.NormalizeCoordinates = 1
        
         self.Method = 'taubin' 
 
@@ -45,7 +46,8 @@ class vmtkSurfaceSmoothing(pypes.pypeScript):
             ['Method','method','str',1,'["taubin","laplace"]','smoothing method'],
             ['PassBand','passband','float',1,'','pass band (e.g. 0.1) - taubin only'],
             ['RelaxationFactor','relaxation','float',1,'(0.0,)','relaxation factor (e.g. 0.01) - laplace only'],
-            ['BoundarySmoothing','boundarysmoothing','bool',1,'','toggle allow change of position of boundary points']
+            ['BoundarySmoothing','boundarysmoothing','bool',1,'','toggle allow change of position of boundary points'],
+            ['NormalizeCoordinates','normalize','bool',1,'','toggle normalization of coordinates prior to filtering to minimize spurious translation effects - taubin only']
             ])
         self.SetOutputMembers([
             ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter']
@@ -64,7 +66,7 @@ class vmtkSurfaceSmoothing(pypes.pypeScript):
             smoothingFilter.SetNumberOfIterations(self.NumberOfIterations)
             smoothingFilter.SetPassBand(self.PassBand)
             smoothingFilter.SetBoundarySmoothing(self.BoundarySmoothing)
-##            smoothingFilter.NormalizeCoordinatesOn()
+            smoothingFilter.SetNormalizeCoordinates(self.NormalizeCoordinates)
             smoothingFilter.Update()
         elif self.Method is 'laplace':
             smoothingFilter = vtk.vtkSmoothPolyDataFilter()
