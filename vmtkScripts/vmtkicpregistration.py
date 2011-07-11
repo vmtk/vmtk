@@ -38,6 +38,7 @@ class vmtkICPRegistration(pypes.pypeScript):
         self.MaximumNumberOfLandmarks = 1000
         self.MaximumNumberOfIterations = 100
         self.Matrix4x4 = None
+        self.MatrixCoefficients = None
 
         self.FlipNormals = 0
 
@@ -56,6 +57,7 @@ class vmtkICPRegistration(pypes.pypeScript):
             ])
         self.SetOutputMembers([
             ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter'],
+            ['MatrixCoefficients','omatrixcoefficients','float',16,'','the output transform matrix coefficients'],
             ['Matrix4x4','omatrix4x4','vtkMatrix4x4',1,'','the output transform matrix']
             ])
 
@@ -104,6 +106,14 @@ class vmtkICPRegistration(pypes.pypeScript):
 
         self.Surface = transformFilter.GetOutput()
         self.Matrix4x4 = icpTransform.GetMatrix()
+
+        matrix = self.Matrix4x4
+        self.MatrixCoefficients = [
+            matrix.GetElement(0,0), matrix.GetElement(0,1), matrix.GetElement(0,2), matrix.GetElement(0,3),
+            matrix.GetElement(1,0), matrix.GetElement(1,1), matrix.GetElement(1,2), matrix.GetElement(1,3),
+            matrix.GetElement(2,0), matrix.GetElement(2,1), matrix.GetElement(2,2), matrix.GetElement(2,3),
+            matrix.GetElement(3,0), matrix.GetElement(3,1), matrix.GetElement(3,2), matrix.GetElement(3,3)]
+        self.PrintLog('Transform matrix:\n  %f %f %f %f\n  %f %f %f %f\n  %f %f %f %f\n  %f %f %f %f' % tuple(self.MatrixCoefficients))
 
         if (self.DistanceArrayName != '') | (self.SignedDistanceArrayName != ''):
             self.PrintLog('Computing distance.')

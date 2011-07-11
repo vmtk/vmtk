@@ -328,9 +328,9 @@ class vmtkImageReader(pypes.pypeScript):
                 temp2 = flipFilter.GetOutput()
             self.Image = temp2
 
-        print 'Spacing ', self.Image.GetSpacing()
-        print 'Origin ', self.Image.GetOrigin()
-        print 'Dimensions ', self.Image.GetDimensions()
+        self.PrintLog('Spacing %f %f %f' % self.Image.GetSpacing())
+        self.PrintLog('Origin %f %f %f' % self.Image.GetOrigin())
+        self.PrintLog('Dimensions %d %d %d' % self.Image.GetDimensions())
 
         if self.Image.GetSource():
             self.Image.GetSource().UnRegisterAllOutputs()
