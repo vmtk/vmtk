@@ -42,6 +42,7 @@ class vmtkImageReader(pypes.pypeScript):
         self.DataOrigin = [0.0, 0.0, 0.0]
         self.DataByteOrder = 'littleendian'
         self.DataScalarType = 'float'
+        self.DesiredOrientation = 'native'
         self.HeaderSize = 0
         self.FileDimensionality = 3
         self.Flip = [0, 0, 0]
@@ -62,8 +63,9 @@ class vmtkImageReader(pypes.pypeScript):
             ['InputDirectoryName','d','str',1,'','input directory name - dicom only'],
             ['DataExtent','extent','int',6,'','3D extent of the image - raw and png'],
             ['HeaderSize','headersize','int',1,'(0,)','size of the image header - raw only'],
-            ['DataSpacing','spacing','float',3,'','spacing of the image - raw, tiff, png'],
-            ['DataOrigin','origin','float',3,'','origin of the image - raw, tiff, png'],
+            ['DataSpacing','spacing','float',3,'','spacing of the image - raw, tiff, png, itk'],
+            ['DataOrigin','origin','float',3,'','origin of the image - raw, tiff, png, itk'],
+            ['DesiredOrientation','orientation','str',1,'["native","axial","coronal","sagittal"]','desired data orientation - itk only'],
             ['DataByteOrder','byteorder','str',1,'["littleendian","bigendian"]','byte ordering - raw only'],
             ['DataScalarType','scalartype','str',1,'["float","double","int","short","ushort","uchar"]','scalar type - raw only'],
             ['FileDimensionality','filedimensionality','int',1,'(2,3)','dimensionality of the file to read - raw only'],
@@ -203,8 +205,17 @@ class vmtkImageReader(pypes.pypeScript):
             self.PrintError('Error: no InputFileName.')
         reader = vtkvmtk.vtkvmtkITKArchetypeImageSeriesScalarReader()
         reader.SetArchetype(self.InputFileName)
+        reader.SetDefaultDataSpacing(self.DataSpacing)
+        reader.SetDefaultDataOrigin(self.DataOrigin)
         reader.SetOutputScalarTypeToNative()
-        reader.SetDesiredCoordinateOrientationToNative()
+        if self.DesiredOrientation == 'native':
+            reader.SetDesiredCoordinateOrientationToNative()
+        elif self.DesiredOrientation == 'axial':
+            reader.SetDesiredCoordinateOrientationToAxial()
+        elif self.DesiredOrientation == 'coronal':
+            reader.SetDesiredCoordinateOrientationToCoronal()
+        elif self.DesiredOrientation == 'sagittal':
+            reader.SetDesiredCoordinateOrientationToSagittal()
         reader.SetSingleFile(0)
         reader.Update()
         self.Image = vtk.vtkImageData()
