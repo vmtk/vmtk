@@ -95,11 +95,14 @@ int vtkvmtkPolyBallModeller::RequestInformation (
     return 1;
     }
 
+  int extent[6];
+
   if (this->ReferenceImage)
     {
     this->ReferenceImage->GetOrigin(origin);
     this->ReferenceImage->GetSpacing(spacing);
     this->ReferenceImage->GetDimensions(this->SampleDimensions);
+    this->ReferenceImage->GetExtent(extent);
     }
   else
     {
@@ -131,13 +134,21 @@ int vtkvmtkPolyBallModeller::RequestInformation (
         spacing[i] = (this->ModelBounds[2*i+1] - this->ModelBounds[2*i]) / (this->SampleDimensions[i] - 1);
         }
       }
+
+    extent[0] = 0;
+    extent[1] = this->SampleDimensions[0]-1;
+    extent[2] = 0;
+    extent[3] = this->SampleDimensions[1]-1;
+    extent[4] = 0;
+    extent[5] = this->SampleDimensions[2]-1;
     }
 
   outInfo->Set(vtkDataObject::ORIGIN(),origin,3);
   outInfo->Set(vtkDataObject::SPACING(),spacing,3);
 
   vtkDataObject::SetPointDataActiveScalarInfo(outInfo, VTK_DOUBLE, 1);
-  outInfo->Set(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(),0, this->SampleDimensions[0]-1, 0, this->SampleDimensions[1]-1, 0, this->SampleDimensions[2]-1);
+  //outInfo->Set(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(),0, this->SampleDimensions[0]-1, 0, this->SampleDimensions[1]-1, 0, this->SampleDimensions[2]-1);
+  outInfo->Set(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(),extent[0],extent[1],extent[2],extent[3],extent[4],extent[5]);
 
   return 1;
 }

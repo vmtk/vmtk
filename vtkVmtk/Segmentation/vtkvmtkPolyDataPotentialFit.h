@@ -48,6 +48,12 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkPolyDataPotentialFit : public vtkPolyD
   virtual void SetPotentialImage(vtkImageData *);
   vtkGetObjectMacro(PotentialImage, vtkImageData);
 
+  virtual void SetInflationImage(vtkImageData *);
+  vtkGetObjectMacro(InflationImage, vtkImageData);
+
+  vtkSetMacro(InflationThreshold, double);
+  vtkGetMacro(InflationThreshold, double);
+
   vtkSetMacro(NumberOfIterations, int);
   vtkGetMacro(NumberOfIterations, int);
 
@@ -86,6 +92,10 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkPolyDataPotentialFit : public vtkPolyD
   vtkGetMacro(FlipNormals, int);
   vtkBooleanMacro(FlipNormals, int);
 
+  vtkSetMacro(UsePotentialInInflation, int);
+  vtkGetMacro(UsePotentialInInflation, int);
+  vtkBooleanMacro(UsePotentialInInflation, int);
+
   vtkSetMacro(Dimensionality, int);
   vtkGetMacro(Dimensionality, int);
 
@@ -97,6 +107,7 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkPolyDataPotentialFit : public vtkPolyD
 
   void EvaluateForce(double point[3], double force[3], bool normalize = true);
   double EvaluatePotential(double point[3]);
+  double EvaluateInflation(double point[3]);
   void ComputeDisplacements(bool potential, bool stiffness, bool inflation);
   void ComputePotentialDisplacement(vtkIdType pointId, double potentialDisplacement[3]);
   void ComputeStiffnessDisplacement(vtkIdType pointId, double stiffnessDisplacement[3]);
@@ -119,6 +130,7 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkPolyDataPotentialFit : public vtkPolyD
     }
 
   vtkImageData *PotentialImage;
+  vtkImageData *InflationImage;
   vtkImageData *PotentialGradientImage;
 
   int NumberOfIterations;
@@ -137,7 +149,9 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkPolyDataPotentialFit : public vtkPolyD
   double StiffnessWeight;
   double InflationWeight;
 
+  double InflationThreshold;
   double PotentialMaxNorm;
+  int UsePotentialInInflation;
   
   double MaxTimeStep;
   int AdaptiveTimeStep;

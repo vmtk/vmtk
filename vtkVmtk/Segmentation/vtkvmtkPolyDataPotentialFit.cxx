@@ -48,6 +48,7 @@ vtkStandardNewMacro(vtkvmtkPolyDataPotentialFit);
 vtkvmtkPolyDataPotentialFit::vtkvmtkPolyDataPotentialFit()
 {
   this->PotentialImage = NULL;
+  this->InflationImage = NULL;
   this->PotentialGradientImage = NULL;
   this->NumberOfIterations = VTK_VMTK_LARGE_INTEGER;
   this->TimeStep = 0.0;
@@ -61,6 +62,8 @@ vtkvmtkPolyDataPotentialFit::vtkvmtkPolyDataPotentialFit()
   this->StiffnessWeight = 0.0;
   this->InflationWeight = 0.0;
   this->PotentialMaxNorm = 0.0;
+  this->UsePotentialInInflation = 1;
+  this->InflationThreshold = 0.0;
 
   this->MaxTimeStep = 1.0; // pixels per time step
   this->AdaptiveTimeStep = 1;
@@ -80,6 +83,12 @@ vtkvmtkPolyDataPotentialFit::~vtkvmtkPolyDataPotentialFit()
     {
     this->PotentialImage->Delete();
     this->PotentialImage = NULL;
+    }
+
+  if (this->InflationImage)
+    {
+    this->InflationImage->Delete();
+    this->InflationImage = NULL;
     }
 
   if (this->PotentialGradientImage)
@@ -102,6 +111,7 @@ vtkvmtkPolyDataPotentialFit::~vtkvmtkPolyDataPotentialFit()
 }
 
 vtkCxxSetObjectMacro(vtkvmtkPolyDataPotentialFit,PotentialImage,vtkImageData);
+vtkCxxSetObjectMacro(vtkvmtkPolyDataPotentialFit,InflationImage,vtkImageData);
 
 void vtkvmtkPolyDataPotentialFit::EvaluateForce(double point[3], double force[3], bool normalize)
 {
@@ -210,6 +220,58 @@ double vtkvmtkPolyDataPotentialFit::EvaluatePotential(double point[3])
   return potential;
 }
 
+double vtkvmtkPolyDataPotentialFit::EvaluateInflation(double point[3])
+{
+  if (this->InflationImage == NULL) {
+    return 1.0;
+  }
+
+  int ijk[3];
+  double pcoords[3];
+  double weights[8];
+  int inBounds;
+  int i;
+
+  double inflation = 0.0;
+
+  inBounds = this->InflationImage->ComputeStructuredCoordinates(point,ijk,pcoords);
+
+  if (!inBounds)
+//  if (!inBounds || !this->IsCellInExtent(this->PotentialImage->GetExtent(),ijk,0))
+    {
+    vtkWarningMacro("Point out of extent.");
+    return 0.0;
+    }
+
+  vtkCell* cell = this->InflationImage->GetCell(this->InflationImage->ComputeCellId(ijk));
+
+  if (cell->GetCellType() == VTK_VOXEL)
+  {
+    vtkVoxel::InterpolationFunctions(pcoords,weights);
+  }
+  else if (cell->GetCellType() == VTK_PIXEL)
+  {
+    vtkPixel::InterpolationFunctions(pcoords,weights);
+  }
+  else
+  {
+    vtkErrorMacro("Non voxel or pixel cell found in PotentialImage");
+    return 0.0;
+  }
+
+  int numberOfCellPoints = cell->GetNumberOfPoints();
+
+  vtkDataArray* inflationArray = this->InflationImage->GetPointData()->GetScalars();
+
+  for (i=0; i<numberOfCellPoints; i++)
+  {
+    double value = inflationArray->GetTuple1(cell->GetPointId(i));
+    inflation += weights[i] * value;
+  }
+
+  return inflation - this->InflationThreshold;
+}
+
 void vtkvmtkPolyDataPotentialFit::ComputePotentialDisplacement(vtkIdType pointId, double potentialDisplacement[3])
 {
   double point[3];
@@ -295,7 +357,11 @@ void vtkvmtkPolyDataPotentialFit::ComputeInflationDisplacement(vtkIdType pointId
   output->GetPoint(pointId,point);
   this->Normals->GetTuple(pointId,inputOutwardNormal);
 
-  double potential = this->EvaluatePotential(point);
+  double inflation = this->EvaluateInflation(point);
+  double potential = 1.0;
+  if (this->UsePotentialInInflation) {
+    potential = this->EvaluatePotential(point);
+  }
 
   neighborhoodNormal[0] = 0.0;
   neighborhoodNormal[1] = 0.0;
@@ -329,9 +395,9 @@ void vtkvmtkPolyDataPotentialFit::ComputeInflationDisplacement(vtkIdType pointId
     neighborhoodNormal[2] *= -1.0;
   }
 
-  inflationDisplacement[0] = potential * neighborhoodNormal[0];
-  inflationDisplacement[1] = potential * neighborhoodNormal[1];
-  inflationDisplacement[2] = potential * neighborhoodNormal[2];
+  inflationDisplacement[0] = inflation * potential * neighborhoodNormal[0];
+  inflationDisplacement[1] = inflation * potential * neighborhoodNormal[1];
+  inflationDisplacement[2] = inflation * potential * neighborhoodNormal[2];
 }
 
 void vtkvmtkPolyDataPotentialFit::ComputeDisplacements(bool potential, bool stiffness, bool inflation)
