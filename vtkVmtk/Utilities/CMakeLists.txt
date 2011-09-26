@@ -1,7 +1,7 @@
 SUBDIRS(
   Doxygen
   OpenNL
-  Stellar_1.0
+  #Stellar_1.0
   vtkvmtkITK
   )
 

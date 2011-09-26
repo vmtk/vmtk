@@ -81,7 +81,6 @@ class vmtkNetworkWriter(pypes.pypeScript):
         labelsArray = None
         if self.LabelsArrayName != '':
             labelsArray = vtk.vtkStringArray.SafeDownCast(self.Network.GetCellData().GetAbstractArray(self.LabelsArrayName))
-        print labelsArray
 
         from xml.dom import minidom
         xmlDocument = minidom.Document()
@@ -119,7 +118,7 @@ class vmtkNetworkWriter(pypes.pypeScript):
         for node in nodes:
             xmlNode = xmlNodes.appendChild(xmlDocument.createElement('node'))
             xmlNode.setAttribute('id','%d' % node)
-            xmlNodeClassification = xmlNode.appendChild(xmlDocument.createElement('node_classification'))
+            #xmlNodeClassification = xmlNode.appendChild(xmlDocument.createElement('node_classification'))
 
         xmlEdges = xmlNetworkGraph.appendChild(xmlDocument.createElement('edges'))
 
@@ -129,15 +128,22 @@ class vmtkNetworkWriter(pypes.pypeScript):
             xmlEdge.setAttribute('id','%d' % i)
             xmlEdge.setAttribute('node1_id','%d' % edge[0])
             xmlEdge.setAttribute('node2_id','%d' % edge[1])
-            
-            xmlEdgeClassification = xmlEdge.appendChild(xmlDocument.createElement('edge_classification'))
             if labelsArray:
-                label = labelsArray.GetValue(edgeCellIds[i])
-                if 'aorta' in label or 'artery' in label or 'art' in label or 'a.' in label:
-                    xmlEdgeClassification.setAttribute('side','arterial')
-                if 'vena' in label or 'vein' in label or 'v.' in label:
-                    xmlEdgeClassification.setAttribute('side','venous')
-                xmlEdgeClassification.appendChild(xmlDocument.createTextNode(label))
+               label = labelsArray.GetValue(edgeCellIds[i])
+               if 'aorta' in label or 'artery' in label or 'art' in label or 'a.' in label:
+                   xmlEdge.setAttribute('side','arterial')
+               if 'vena' in label or 'vein' in label or 'v.' in label:
+                   xmlEdge.setAttribute('side','venous')
+               xmlEdge.setAttribute('name',label)
+            
+            #xmlEdgeClassification = xmlEdge.appendChild(xmlDocument.createElement('edge_classification'))
+            #if labelsArray:
+            #    label = labelsArray.GetValue(edgeCellIds[i])
+            #    if 'aorta' in label or 'artery' in label or 'art' in label or 'a.' in label:
+            #        xmlEdgeClassification.setAttribute('side','arterial')
+            #    if 'vena' in label or 'vein' in label or 'v.' in label:
+            #        xmlEdgeClassification.setAttribute('side','venous')
+            #    xmlEdgeClassification.appendChild(xmlDocument.createTextNode(label))
             xmlGeometry = xmlEdge.appendChild(xmlDocument.createElement('geometry'))
 
             length = 0.0
