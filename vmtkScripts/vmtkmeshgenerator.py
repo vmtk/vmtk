@@ -50,6 +50,10 @@ class vmtkMeshGenerator(pypes.pypeScript):
 
         self.SizingFunctionArrayName = 'VolumeSizingFunction'
 
+        # Output objects
+        self.Mesh = None
+        self.RemeshedSurface = None
+
         self.SetScriptName('vmtkmeshgenerator')
         self.SetScriptDoc('generate a mesh suitable for CFD from a surface')
         self.SetInputMembers([
@@ -71,7 +75,8 @@ class vmtkMeshGenerator(pypes.pypeScript):
             ])
         self.SetOutputMembers([
             ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh','vmtkmeshwriter'],
-            ['CellEntityIdsArrayName','entityidsarray','str',1]
+            ['CellEntityIdsArrayName','entityidsarray','str',1],
+            ['RemeshedSurface','remeshedsurface','vtkPolyData',1,'','the output surface','vmtksurfacewriter'],
             ])
 
     def Execute(self):
@@ -236,6 +241,7 @@ class vmtkMeshGenerator(pypes.pypeScript):
 
             self.Mesh = tetrahedralize.GetOutput()
 
+        self.RemeshedSurface = remeshing.Surface
 
 if __name__=='__main__':
 
