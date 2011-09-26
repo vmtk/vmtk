@@ -40,6 +40,7 @@ class vmtkMeshGenerator(pypes.pypeScript):
         self.ElementSizeMode = 'edgelength'
         self.VolumeElementScaleFactor = 0.8
         self.CappingMethod = 'simple'
+        self.SkipCapping = 0
 
         self.BoundaryLayer = 0
         self.NumberOfSubLayers = 2
@@ -61,6 +62,7 @@ class vmtkMeshGenerator(pypes.pypeScript):
             ['CellEntityIdsArrayName','entityidsarray','str',1],
             ['ElementSizeMode','elementsizemode','str',1,'["edgelength","edgelengtharray"]'],
             ['CappingMethod','cappingmethod','str',1,'["simple","annular"]'],
+            ['SkipCapping','skipcapping','bool',1,''],
             ['VolumeElementScaleFactor','volumeelementfactor','float',1,'(0.0,)'],
             ['BoundaryLayer','boundarylayer','bool',1,''],
             ['NumberOfSubLayers','sublayers','int',1,'(0,)'],
@@ -78,18 +80,22 @@ class vmtkMeshGenerator(pypes.pypeScript):
             self.PrintError('Error: No input surface.')
 
         self.PrintLog("Capping surface")
-        capper = vmtkscripts.vmtkSurfaceCapper()
-        capper.Surface = self.Surface
-        capper.Interactive = 0
-        capper.Method = self.CappingMethod
-        capper.TriangleOutput = 0
-        capper.CellEntityIdOffset = 1
-        capper.Execute()
+        if self.SkipCapping:
+            surface = self.Surface
+        else:
+            capper = vmtkscripts.vmtkSurfaceCapper()
+            capper.Surface = self.Surface
+            capper.Interactive = 0
+            capper.Method = self.CappingMethod
+            capper.TriangleOutput = 0
+            capper.CellEntityIdOffset = 1
+            capper.Execute()
+            surface = capper.Surface
 
         self.PrintLog("Remeshing surface")
         remeshing = vmtkscripts.vmtkSurfaceRemeshing()
-        remeshing.Surface = capper.Surface
-        remeshing.CellEntityIdsArrayName = capper.CellEntityIdsArrayName
+        remeshing.Surface = surface
+        remeshing.CellEntityIdsArrayName = self.CellEntityIdsArrayName
         remeshing.TargetEdgeLength = self.TargetEdgeLength
         remeshing.MaxEdgeLength = self.MaxEdgeLength
         remeshing.MinEdgeLength = self.MinEdgeLength
@@ -102,7 +108,7 @@ class vmtkMeshGenerator(pypes.pypeScript):
 
             projection = vmtkscripts.vmtkSurfaceProjection()
             projection.Surface = remeshing.Surface
-            projection.ReferenceSurface = capper.Surface
+            projection.ReferenceSurface = surface
             projection.Execute()
 
             normals = vmtkscripts.vmtkSurfaceNormals()
