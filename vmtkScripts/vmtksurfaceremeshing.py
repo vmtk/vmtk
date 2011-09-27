@@ -51,6 +51,7 @@ class vmtkSurfaceRemeshing(pypes.pypeScript):
         self.CollapseAngleThreshold = 0.2
         self.Relaxation = 0.5
         self.PreserveBoundaryEdges = 0
+        self.ExcludeEntityIds = []
 
         self.SetScriptName('vmtksurfaceremeshing')
         self.SetScriptDoc('remesh a surface using quality triangles')
@@ -74,6 +75,7 @@ class vmtkSurfaceRemeshing(pypes.pypeScript):
             ['NormalAngleTolerance','normalangletolerance','float',1,'(0.0,)'],
             ['CollapseAngleThreshold','collapseangle','float',1,'(0.0,)'],
             ['Relaxation','relaxation','float',1,'(0.5,)'],
+            ['ExcludeEntityIds','exclude','int',-1,''],
             ['PreserveBoundaryEdges','preserveboundary','bool',1]
             ])
         self.SetOutputMembers([
@@ -108,6 +110,11 @@ class vmtkSurfaceRemeshing(pypes.pypeScript):
             self.MinArea = 0.25 * 3.0**0.5 * self.MinEdgeLength**2
             self.Surface = calculator.GetOutput()
 
+        excludedIds = vtk.vtkIdList()
+        if self.ExcludeEntityIds:
+            for excludedId in self.ExcludeEntityIds:
+                excludedIds.InsertNextId(excludedId)
+
         surfaceRemeshing = vtkvmtk.vtkvmtkPolyDataSurfaceRemeshing()
         surfaceRemeshing.SetInput(self.Surface)
         if self.CellEntityIdsArrayName:
@@ -132,6 +139,7 @@ class vmtkSurfaceRemeshing(pypes.pypeScript):
         surfaceRemeshing.SetNormalAngleTolerance(self.NormalAngleTolerance)
         surfaceRemeshing.SetCollapseAngleThreshold(self.CollapseAngleThreshold)
         surfaceRemeshing.SetPreserveBoundaryEdges(self.PreserveBoundaryEdges)
+        surfaceRemeshing.SetExcludedEntityIds(excludedIds)
         surfaceRemeshing.Update()
 
         self.Surface = surfaceRemeshing.GetOutput()
