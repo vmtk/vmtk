@@ -9,7 +9,11 @@ __all__ = [
     'vmtkmeshviewer2',
     'vmtkmeshwriter2',
     'vmtksurfaceresolution',
-    'vmtksurfacewriter2'
+    'vmtksurfacewriter2',
+    'vmtksurfaceextractinnercylinder',
+    'vmtkthreshold',
+    'vmtkmeshmerge',
+    'vmtkentityrenumber',
   ]
 
 for item in __all__:
