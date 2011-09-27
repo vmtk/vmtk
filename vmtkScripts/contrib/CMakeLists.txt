@@ -12,6 +12,10 @@ SET(CONTRIB_SCRIPTS_SRCS
     vmtkmeshwriter2.py
     vmtksurfaceresolution.py
     vmtksurfacewriter2.py
+    vmtksurfaceextractinnercylinder.py
+    vmtkthreshold.py
+    vmtkmeshmerge.py
+    vmtkentityrenumber.py
   )
   
 SET(CONTRIB_MODULE_SRCS
