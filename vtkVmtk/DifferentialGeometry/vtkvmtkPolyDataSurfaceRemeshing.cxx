@@ -65,6 +65,8 @@ vtkvmtkPolyDataSurfaceRemeshing::vtkvmtkPolyDataSurfaceRemeshing()
   this->Locator = NULL;
   this->BoundaryLocator = NULL;
   this->EntityBoundaryLocator = NULL;
+
+  this->ExcludedEntityIds = NULL;
 }
 
 vtkvmtkPolyDataSurfaceRemeshing::~vtkvmtkPolyDataSurfaceRemeshing()
@@ -122,6 +124,12 @@ vtkvmtkPolyDataSurfaceRemeshing::~vtkvmtkPolyDataSurfaceRemeshing()
     this->CellEntityIdsArray->Delete();
     this->CellEntityIdsArray = NULL;
     } 
+
+  if (this->ExcludedEntityIds)
+    {
+    this->ExcludedEntityIds->Delete();
+    this->ExcludedEntityIds = NULL;
+    }
 }
 
 int vtkvmtkPolyDataSurfaceRemeshing::RequestData(
@@ -595,6 +603,22 @@ int vtkvmtkPolyDataSurfaceRemeshing::PointRelocationIteration(bool projectToSurf
   return RELOCATE_SUCCESS;
 }
 
+int vtkvmtkPolyDataSurfaceRemeshing::IsElementExcluded(vtkIdType cellId)
+{
+  int isElementExcluded = 0;
+  if (this->ExcludedEntityIds == NULL)
+    {
+    return isElementExcluded;
+    }
+
+  vtkIdType cellEntityId = this->CellEntityIdsArray->GetValue(cellId);
+  if (this->ExcludedEntityIds->IsId(cellEntityId) != -1)
+    {
+    isElementExcluded = 1;
+    }
+  return isElementExcluded;
+}
+
 int vtkvmtkPolyDataSurfaceRemeshing::IsPointOnEntityBoundary(vtkIdType pointId)
 {
   vtkIdList* ptCells = vtkIdList::New();
@@ -758,6 +782,23 @@ int vtkvmtkPolyDataSurfaceRemeshing::FindOneRingNeighbors(vtkIdType pointId, vtk
 #define USE_STENCIL
 int vtkvmtkPolyDataSurfaceRemeshing::RelocatePoint(vtkIdType pointId, bool projectToSurface)
 {
+  vtkIdList* cellIds = vtkIdList::New();
+  this->Mesh->GetPointCells(pointId,cellIds);
+  int pointOnExcludedEntity = 0;
+  for (int i=0; i<cellIds->GetNumberOfIds(); i++)
+    {
+    if (this->IsElementExcluded(cellIds->GetId(i)))
+      {
+      pointOnExcludedEntity = 1;
+      }
+    }
+  cellIds->Delete();
+
+  if (pointOnExcludedEntity)
+    {
+    return RELOCATE_SUCCESS;
+    }
+
 #ifndef USE_STENCIL
   vtkIdList* neighborIds = vtkIdList::New();
   int pointLocation = this->FindOneRingNeighbors(pointId,neighborIds);
@@ -1009,6 +1050,11 @@ int vtkvmtkPolyDataSurfaceRemeshing::SplitTriangle(vtkIdType cellId)
     return NOT_TRIANGLES;
     }
 
+  if (this->IsElementExcluded(cellId))
+    {
+    return TRIANGLE_LOCKED;
+    }
+
   vtkIdType npts, *pts;
   this->Mesh->GetCellPoints(cellId,npts,pts);
   vtkIdType pt1 = pts[0];
@@ -1061,6 +1107,11 @@ int vtkvmtkPolyDataSurfaceRemeshing::SplitEdge(vtkIdType pt1, vtkIdType pt2)
 {
   vtkIdType cell1, cell2, pt3, pt4;
   int success = vtkvmtkPolyDataSurfaceRemeshing::GetEdgeCellsAndOppositeEdge(pt1,pt2,cell1,cell2,pt3,pt4);
+
+  if (this->IsElementExcluded(cell1) || this->IsElementExcluded(cell2))
+    {
+    return EDGE_LOCKED;
+    }
 
   bool proceed = false;
 
@@ -1171,6 +1222,11 @@ int vtkvmtkPolyDataSurfaceRemeshing::CollapseEdge(vtkIdType pt1, vtkIdType pt2)
 {
   vtkIdType cell1, cell2, pt3, pt4;
   int success = vtkvmtkPolyDataSurfaceRemeshing::GetEdgeCellsAndOppositeEdge(pt1,pt2,cell1,cell2,pt3,pt4);
+
+  if (this->IsElementExcluded(cell1) || this->IsElementExcluded(cell2))
+    {
+    return EDGE_LOCKED;
+    }
 
   bool proceed = false;
 
@@ -1284,6 +1340,11 @@ int vtkvmtkPolyDataSurfaceRemeshing::FlipEdge(vtkIdType pt1, vtkIdType pt2)
 {
   vtkIdType cell1, cell2, pt3, pt4;
   int success = vtkvmtkPolyDataSurfaceRemeshing::GetEdgeCellsAndOppositeEdge(pt1,pt2,cell1,cell2,pt3,pt4);
+
+  if (this->IsElementExcluded(cell1) || this->IsElementExcluded(cell2))
+    {
+    return EDGE_LOCKED;
+    }
 
   if (success != SUCCESS)
     {

@@ -28,6 +28,7 @@
 #include "vtkObject.h"
 #include "vtkPolyDataAlgorithm.h"
 #include "vtkvmtkWin32Header.h"
+#include "vtkIdList.h"
 
 class vtkCellLocator;
 class vtkIntArray;
@@ -93,6 +94,9 @@ public:
   vtkSetStringMacro(CellEntityIdsArrayName);
   vtkGetStringMacro(CellEntityIdsArrayName);
 
+  vtkSetObjectMacro(ExcludedEntityIds,vtkIdList);
+  vtkGetObjectMacro(ExcludedEntityIds,vtkIdList);
+
   //BTX
   enum {
     SUCCESS = 0,
@@ -102,7 +106,8 @@ public:
     NOT_EDGE,
     NON_MANIFOLD,
     NOT_TRIANGLES,
-    DEGENERATE_TRIANGLES
+    DEGENERATE_TRIANGLES,
+    TRIANGLE_LOCKED
   };
 
   enum {
@@ -147,6 +152,7 @@ protected:
   int TestAspectRatioCollapseEdge(vtkIdType cellId, vtkIdType& pt1, vtkIdType& pt2);
   int TestAreaSplitEdge(vtkIdType cellId, vtkIdType& pt1, vtkIdType& pt2);
   
+  int IsElementExcluded(vtkIdType cellId);
   int GetEdgeCellsAndOppositeEdge(vtkIdType pt1, vtkIdType pt2, vtkIdType& cell1, vtkIdType& cell2, vtkIdType& pt3, vtkIdType& pt4);
 
   int SplitEdge(vtkIdType pt1, vtkIdType pt2);
@@ -175,6 +181,7 @@ protected:
   vtkCellLocator* EntityBoundaryLocator;
   vtkIntArray* CellEntityIdsArray;
   vtkDataArray* TargetAreaArray;
+  vtkIdList* ExcludedEntityIds;
 
   double AspectRatioThreshold;
   double InternalAngleTolerance;
