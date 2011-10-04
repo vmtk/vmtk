@@ -33,10 +33,49 @@ Version:   $Revision: 1.6 $
 vtkCxxRevisionMacro(vtkvmtkDolfinWriter, "$Revision: 1.6 $");
 vtkStandardNewMacro(vtkvmtkDolfinWriter);
 
+static void GetDolfinConnectivity(int cellType, vtkIdList* dolfinConnectivity)
+{
+  dolfinConnectivity->Initialize();
+
+  switch(cellType)
+    {
+    case VTK_TETRA:
+      dolfinConnectivity->SetNumberOfIds(4);
+      dolfinConnectivity->SetId(0,0);
+      dolfinConnectivity->SetId(1,1);
+      dolfinConnectivity->SetId(2,2);
+      dolfinConnectivity->SetId(3,3);
+      break;
+    default:
+      cerr << "Element type not currently supported in dolfin. Skipping element for connectivity." << endl;
+      break;
+    }
+}
+
+static void GetDolfinFaceOrder(int cellType, vtkIdList* dolfinFaceOrder)
+{
+  dolfinFaceOrder->Initialize();
+
+  switch(cellType)
+    {
+    case VTK_TETRA:
+      dolfinFaceOrder->SetNumberOfIds(4);
+      dolfinFaceOrder->SetId(0,2);
+      dolfinFaceOrder->SetId(1,0);
+      dolfinFaceOrder->SetId(2,1);
+      dolfinFaceOrder->SetId(3,3);
+      break;
+    default:
+      cerr << "Element type not currently supported in dolfin. Skipping element for face ordering." << endl;
+      break;
+    }
+}
+
 vtkvmtkDolfinWriter::vtkvmtkDolfinWriter()
 {
   this->BoundaryDataArrayName = NULL;
   this->BoundaryDataIdOffset = 0;
+  this->StoreCellMarkers = 0;
 }
 
 vtkvmtkDolfinWriter::~vtkvmtkDolfinWriter()
@@ -68,8 +107,8 @@ void vtkvmtkDolfinWriter::WriteData()
   
   input->BuildLinks();
 
-  int numberOfPoints = input->GetNumberOfPoints();
-  int numberOfCells = input->GetNumberOfCells();
+  const int numberOfPoints = input->GetNumberOfPoints();
+  const int numberOfCells = input->GetNumberOfCells();
 
   vtkIdTypeArray* boundaryDataArray = NULL;
   if (this->BoundaryDataArrayName)
@@ -87,7 +126,7 @@ void vtkvmtkDolfinWriter::WriteData()
 
   vtkIdTypeArray* tetraCellIdArray = vtkIdTypeArray::New();
   input->GetIdsOfCellsOfType(VTK_TETRA,tetraCellIdArray);
-  int numberOfTetras = tetraCellIdArray->GetNumberOfTuples();
+  const int numberOfTetras = tetraCellIdArray->GetNumberOfTuples();
 
   out << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" << endl << endl;
   out << "<dolfin xmlns:dolfin=\"http://www.phi.chalmers.se/dolfin/\">" << endl;
@@ -110,19 +149,21 @@ void vtkvmtkDolfinWriter::WriteData()
   out << "    <cells size=\"" << numberOfTetras << "\">" << endl;
 
   vtkIdList* dolfinConnectivity = vtkIdList::New();
-  this->GetDolfinConnectivity(VTK_TETRA,dolfinConnectivity);
+  GetDolfinConnectivity(VTK_TETRA,dolfinConnectivity);
 
   vtkIdList* volumeCellIdMap = vtkIdList::New();
   volumeCellIdMap->SetNumberOfIds(numberOfCells);
-  int numberOfCellPoints = 4;
-  int k;
+  
+  const int numberOfCellPoints = 4;
   for (i=0; i<numberOfTetras; i++)
     {
     vtkIdType tetraCellId = tetraCellIdArray->GetValue(i);
+
     volumeCellIdMap->SetId(tetraCellId,i);
+
     vtkIdList* cellPointIds = input->GetCell(tetraCellId)->GetPointIds();
     out << "      <tetrahedron index=\"" << i << "\" "; 
-    for (k=0; k<numberOfCellPoints; k++)
+    for (int k=0; k<numberOfCellPoints; k++)
       {
       out << "v" << k << "=\"" << cellPointIds->GetId(dolfinConnectivity->GetId(k)) << "\" ";
       }
@@ -135,16 +176,18 @@ void vtkvmtkDolfinWriter::WriteData()
     {
     vtkIdTypeArray* triangleCellIdArray = vtkIdTypeArray::New();
     input->GetIdsOfCellsOfType(VTK_TRIANGLE,triangleCellIdArray);
-    int numberOfTriangles = triangleCellIdArray->GetNumberOfTuples();
+    const int numberOfTriangles = triangleCellIdArray->GetNumberOfTuples();
+
     vtkIdList* boundaryFaceCells = vtkIdList::New();
     boundaryFaceCells->SetNumberOfIds(numberOfTriangles);
+
     vtkIdList* boundaryFaceIds = vtkIdList::New();
     boundaryFaceIds->SetNumberOfIds(numberOfTriangles);
 
-    vtkIdType triangleCellId;
     for (i=0; i<numberOfTriangles; i++)
       {
-      triangleCellId = triangleCellIdArray->GetValue(i);
+      const vtkIdType triangleCellId = triangleCellIdArray->GetValue(i);
+
       vtkIdList* faceCellPoints = vtkIdList::New();
       input->GetCellPoints(triangleCellId,faceCellPoints);
 
@@ -153,13 +196,15 @@ void vtkvmtkDolfinWriter::WriteData()
 
       if (cellIds->GetNumberOfIds() != 1)
         {
-        vtkWarningMacro("Boundary cell not on boundary!");
+        vtkWarningMacro("Boundary cell not on boundary! Defining facet relative to first cell found (arbitrary).");
         }
 
+      // Get neighbor cell to facet
       vtkIdType cellId = cellIds->GetId(0);
       vtkCell* cell = input->GetCell(cellId);
       int cellType = cell->GetCellType();
 
+      // Check that all neighbor cells are tets
       if (cellType != VTK_TETRA)
         {
         vtkErrorMacro(<<"Volume cell adjacent to triangle is not tetrahedron (volume cell id: "<<cellId <<") and it is unsupported by Dolfin. Skipping face.");
@@ -167,35 +212,49 @@ void vtkvmtkDolfinWriter::WriteData()
         cellIds->Delete();
         continue;
         }
+      if (cellIds->GetNumberOfIds() == 2)
+	{
+        vtkIdType cellId2 = cellIds->GetId(0);
+        vtkCell* cell2 = input->GetCell(cellId2);
+        int cellType2 = cell2->GetCellType();
+	if (cellType2 != VTK_TETRA)
+	  {
+          vtkErrorMacro(<<"Volume cell number two adjacent to triangle is not tetrahedron (volume cell id: "<<cellId2 <<") and it is unsupported by Dolfin. Not skipping face!");
+          }
+        }
 
-      int numberOfFaces = cell->GetNumberOfFaces();
+      // Find faceId
       vtkIdType faceId = -1;
-      int j;
-      for (j=0; j<numberOfFaces; j++)
+      for (int j=0; j<cell->GetNumberOfFaces(); j++)
         {
         vtkCell* face = cell->GetFace(j);
         vtkIdList* matchingPointIds = vtkIdList::New();
         matchingPointIds->DeepCopy(face->GetPointIds());
         matchingPointIds->IntersectWith(*faceCellPoints);
-        int numberOfNonMatching = face->GetNumberOfPoints() - matchingPointIds->GetNumberOfIds();
+        const int numberOfNonMatching = face->GetNumberOfPoints() - matchingPointIds->GetNumberOfIds();
         matchingPointIds->Delete();
 
-        if (numberOfNonMatching==0)
+        if (numberOfNonMatching == 0)
           {
           faceId = j;
           break;
           }
         }
 
+      // Find dolfinFaceId
       vtkIdList* dolfinFaceOrder = vtkIdList::New();
-      this->GetDolfinFaceOrder(cellType,dolfinFaceOrder);
+      GetDolfinFaceOrder(cellType,dolfinFaceOrder);
       vtkIdType dolfinFaceId = dolfinFaceOrder->GetId(faceId);
       dolfinFaceOrder->Delete();
 
-      boundaryFaceCells->SetId(i,volumeCellIdMap->GetId(cellId));
-      boundaryFaceIds->SetId(i,dolfinFaceId);
+      // Store tetrahedron number for vtk triangle i
+      boundaryFaceCells->SetId(i, volumeCellIdMap->GetId(cellId));
+      // Store local dolfin facet number for vtk triangle i
+      boundaryFaceIds->SetId(i, dolfinFaceId);
 
+      // Cleanup
       faceCellPoints->Delete();
+      cellIds->Delete();
       }
 
     bool old=false;
@@ -227,7 +286,7 @@ void vtkvmtkDolfinWriter::WriteData()
       out << "          <array type=\"uint\" size=\"" << numberOfTriangles << "\">" << endl;
       for (i=0; i<numberOfTriangles; i++)
         {
-        triangleCellId = triangleCellIdArray->GetValue(i);
+        const vtkIdType triangleCellId = triangleCellIdArray->GetValue(i);
         out << "            <element index=\"" << i << "\" "; 
         out << "value=\"" << boundaryDataArray->GetValue(triangleCellId) + this->BoundaryDataIdOffset << "\" "; 
         out << "/>" << endl;
@@ -244,22 +303,38 @@ void vtkvmtkDolfinWriter::WriteData()
     else 
       {
       out << "      <domains>" << endl;
+
       out << "        <mesh_value_collection type=\"uint\" dim=\"2\" size=\""<< numberOfTriangles<< "\">" << endl;
       for (i=0; i<numberOfTriangles; i++)
         {
-        triangleCellId = triangleCellIdArray->GetValue(i);
+        const vtkIdType triangleCellId = triangleCellIdArray->GetValue(i);
         out << "            <value cell_index=\"" << boundaryFaceCells->GetId(i) <<"\"" 
             << " local_entity=\"" << boundaryFaceIds->GetId(i) << "\" " 
             << " value=\""  <<  boundaryDataArray->GetValue(triangleCellId) + this->BoundaryDataIdOffset << "\" " 
             << "/>" << endl;
         }
       out << "        </mesh_value_collection>" << endl;
-      out << "      </domains>" << endl;
 
+      if (this->StoreCellMarkers)
+        {
+        out << "        <mesh_value_collection type=\"uint\" dim=\"3\" size=\""<< numberOfTetras << "\">" << endl;
+        for (i=0; i<numberOfTetras; i++)
+          {
+          vtkIdType cellId = tetraCellIdArray->GetValue(i);
+	  int value = boundaryDataArray->GetValue(cellId);
+
+          out << "            <value cell_index=\"" << i << "\"" 
+              << " local_entity=\"" << 0 << "\" " 
+              << " value=\""  <<  value << "\" " 
+              << "/>" << endl;
+          }
+        out << "        </mesh_value_collection>" << endl;
+        }
+
+      out << "      </domains>" << endl;
       triangleCellIdArray->Delete();
       boundaryFaceCells->Delete();
       boundaryFaceIds->Delete();
-
     }
   }
 
@@ -273,44 +348,6 @@ void vtkvmtkDolfinWriter::WriteData()
   if (boundaryDataArray)
     {
     boundaryDataArray->Delete();
-    }
-}
-
-void vtkvmtkDolfinWriter::GetDolfinConnectivity(int cellType, vtkIdList* dolfinConnectivity)
-{
-  dolfinConnectivity->Initialize();
-
-  switch(cellType)
-    {
-    case VTK_TETRA:
-      dolfinConnectivity->SetNumberOfIds(4);
-      dolfinConnectivity->SetId(0,0);
-      dolfinConnectivity->SetId(1,1);
-      dolfinConnectivity->SetId(2,2);
-      dolfinConnectivity->SetId(3,3);
-      break;
-    default:
-      cerr<<"Element type not currently supported in dolfin. Skipping element for connectivity."<<endl;
-      break;
-    }
-}
-
-void vtkvmtkDolfinWriter::GetDolfinFaceOrder(int cellType, vtkIdList* dolfinFaceOrder)
-{
-  dolfinFaceOrder->Initialize();
-
-  switch(cellType)
-    {
-    case VTK_TETRA:
-      dolfinFaceOrder->SetNumberOfIds(4);
-      dolfinFaceOrder->SetId(0,2);
-      dolfinFaceOrder->SetId(1,0);
-      dolfinFaceOrder->SetId(2,1);
-      dolfinFaceOrder->SetId(3,3);
-      break;
-    default:
-      cerr<<"Element type not currently supported in dolfin. Skipping element for face ordering."<<endl;
-      break;
     }
 }
 
