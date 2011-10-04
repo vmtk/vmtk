@@ -20,6 +20,7 @@ Version:   $Revision: 1.6 $
 =========================================================================*/
 
 // #include <fstream>
+#include <cassert>
 
 #include "vtkvmtkDolfinWriter.h"
 #include "vtkUnstructuredGrid.h"
@@ -129,14 +130,13 @@ void vtkvmtkDolfinWriter::WriteData()
   const int numberOfTetras = tetraCellIdArray->GetNumberOfTuples();
 
   out << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" << endl << endl;
-  out << "<dolfin xmlns:dolfin=\"http://www.phi.chalmers.se/dolfin/\">" << endl;
+  out << "<dolfin xmlns:dolfin=\"http://www.fenicsproject.org\">" << endl;
   out << "  <mesh celltype=\"tetrahedron\" dim=\"3\">" << endl;
-  out << "    <vertices size=\""<< numberOfPoints << "\">" << endl;
 
-  int i;
-  double point[3];
-  for (i=0; i<numberOfPoints; i++)
+  out << "    <vertices size=\""<< numberOfPoints << "\">" << endl;
+  for (int i=0; i<numberOfPoints; i++)
     {
+    double point[3];
     input->GetPoint(i,point);
     out << "      <vertex index=\"" << i << "\" ";
     out << "x=\"" << point[0] << "\" ";
@@ -144,18 +144,16 @@ void vtkvmtkDolfinWriter::WriteData()
     out << "z=\"" << point[2] << "\" ";
     out << "/>" <<endl;
     }
-
   out << "    </vertices>" << endl;
-  out << "    <cells size=\"" << numberOfTetras << "\">" << endl;
 
   vtkIdList* dolfinConnectivity = vtkIdList::New();
   GetDolfinConnectivity(VTK_TETRA,dolfinConnectivity);
 
   vtkIdList* volumeCellIdMap = vtkIdList::New();
   volumeCellIdMap->SetNumberOfIds(numberOfCells);
-  
-  const int numberOfCellPoints = 4;
-  for (i=0; i<numberOfTetras; i++)
+
+  out << "    <cells size=\"" << numberOfTetras << "\">" << endl;
+  for (int i=0; i<numberOfTetras; i++)
     {
     vtkIdType tetraCellId = tetraCellIdArray->GetValue(i);
 
@@ -163,6 +161,8 @@ void vtkvmtkDolfinWriter::WriteData()
 
     vtkIdList* cellPointIds = input->GetCell(tetraCellId)->GetPointIds();
     out << "      <tetrahedron index=\"" << i << "\" "; 
+
+    const int numberOfCellPoints = 4; // Points in a tetrahedron
     for (int k=0; k<numberOfCellPoints; k++)
       {
       out << "v" << k << "=\"" << cellPointIds->GetId(dolfinConnectivity->GetId(k)) << "\" ";
@@ -184,7 +184,9 @@ void vtkvmtkDolfinWriter::WriteData()
     vtkIdList* boundaryFaceIds = vtkIdList::New();
     boundaryFaceIds->SetNumberOfIds(numberOfTriangles);
 
-    for (i=0; i<numberOfTriangles; i++)
+    int interiorBoundaryFacetsFound = 0;
+    int exteriorBoundaryFacetsFound = 0;
+    for (int i=0; i<numberOfTriangles; i++)
       {
       const vtkIdType triangleCellId = triangleCellIdArray->GetValue(i);
 
@@ -196,7 +198,11 @@ void vtkvmtkDolfinWriter::WriteData()
 
       if (cellIds->GetNumberOfIds() != 1)
         {
-        vtkWarningMacro("Boundary cell not on boundary! Defining facet relative to first cell found (arbitrary).");
+        interiorBoundaryFacetsFound++;
+        }
+      else
+        {
+        exteriorBoundaryFacetsFound++;
         }
 
       // Get neighbor cell to facet
@@ -223,7 +229,7 @@ void vtkvmtkDolfinWriter::WriteData()
           }
         }
 
-      // Find faceId
+      // Find match points to local faceId on vtk cell
       vtkIdType faceId = -1;
       for (int j=0; j<cell->GetNumberOfFaces(); j++)
         {
@@ -241,7 +247,7 @@ void vtkvmtkDolfinWriter::WriteData()
           }
         }
 
-      // Find dolfinFaceId
+      // Find dolfinFaceId from vtk faceId
       vtkIdList* dolfinFaceOrder = vtkIdList::New();
       GetDolfinFaceOrder(cellType,dolfinFaceOrder);
       vtkIdType dolfinFaceId = dolfinFaceOrder->GetId(faceId);
@@ -263,7 +269,7 @@ void vtkvmtkDolfinWriter::WriteData()
       out << "      <data>" << endl;
       out << "        <data_entry name=\"boundary_facet_cells\">" << endl;
       out << "          <array type=\"uint\" size=\"" << numberOfTriangles << "\">" << endl;
-      for (i=0; i<numberOfTriangles; i++)
+      for (int i=0; i<numberOfTriangles; i++)
         {
         out << "            <element index=\"" << i << "\" "; 
         out << "value=\"" << boundaryFaceCells->GetId(i) << "\" "; 
@@ -273,7 +279,7 @@ void vtkvmtkDolfinWriter::WriteData()
       out << "        </data_entry>" << endl;
       out << "        <data_entry name=\"boundary_facet_numbers\">" << endl;
       out << "          <array type=\"uint\" size=\"" << numberOfTriangles << "\">" << endl;
-      for (i=0; i<numberOfTriangles; i++)
+      for (int i=0; i<numberOfTriangles; i++)
         {
         out << "            <element index=\"" << i << "\" "; 
         out << "value=\"" << boundaryFaceIds->GetId(i) << "\" "; 
@@ -284,7 +290,7 @@ void vtkvmtkDolfinWriter::WriteData()
   
       out << "        <data_entry name=\"boundary_indicators\">" << endl;
       out << "          <array type=\"uint\" size=\"" << numberOfTriangles << "\">" << endl;
-      for (i=0; i<numberOfTriangles; i++)
+      for (int i=0; i<numberOfTriangles; i++)
         {
         const vtkIdType triangleCellId = triangleCellIdArray->GetValue(i);
         out << "            <element index=\"" << i << "\" "; 
@@ -295,22 +301,19 @@ void vtkvmtkDolfinWriter::WriteData()
       out << "        </data_entry>" << endl;
   
       out << "      </data>" << endl;
-  
-      triangleCellIdArray->Delete();
-      boundaryFaceCells->Delete();
-      boundaryFaceIds->Delete();
       }
     else 
       {
       out << "      <domains>" << endl;
 
       out << "        <mesh_value_collection type=\"uint\" dim=\"2\" size=\""<< numberOfTriangles<< "\">" << endl;
-      for (i=0; i<numberOfTriangles; i++)
+      for (int i=0; i<numberOfTriangles; i++)
         {
         const vtkIdType triangleCellId = triangleCellIdArray->GetValue(i);
+	const vtkIdType value = boundaryDataArray->GetValue(triangleCellId) + this->BoundaryDataIdOffset;
         out << "            <value cell_index=\"" << boundaryFaceCells->GetId(i) <<"\"" 
             << " local_entity=\"" << boundaryFaceIds->GetId(i) << "\" " 
-            << " value=\""  <<  boundaryDataArray->GetValue(triangleCellId) + this->BoundaryDataIdOffset << "\" " 
+            << " value=\""  << value << "\" " 
             << "/>" << endl;
         }
       out << "        </mesh_value_collection>" << endl;
@@ -318,11 +321,10 @@ void vtkvmtkDolfinWriter::WriteData()
       if (this->StoreCellMarkers)
         {
         out << "        <mesh_value_collection type=\"uint\" dim=\"3\" size=\""<< numberOfTetras << "\">" << endl;
-        for (i=0; i<numberOfTetras; i++)
+        for (int i=0; i<numberOfTetras; i++)
           {
-          vtkIdType cellId = tetraCellIdArray->GetValue(i);
-	  int value = boundaryDataArray->GetValue(cellId);
-
+          const vtkIdType cellId = tetraCellIdArray->GetValue(i);
+	  const vtkIdType value = boundaryDataArray->GetValue(cellId);
           out << "            <value cell_index=\"" << i << "\"" 
               << " local_entity=\"" << 0 << "\" " 
               << " value=\""  <<  value << "\" " 
@@ -332,10 +334,16 @@ void vtkvmtkDolfinWriter::WriteData()
         }
 
       out << "      </domains>" << endl;
-      triangleCellIdArray->Delete();
-      boundaryFaceCells->Delete();
-      boundaryFaceIds->Delete();
-    }
+      }
+
+    if (exteriorBoundaryFacetsFound)
+      {
+      vtkWarningMacro("Found boundary cells not on boundary!");
+      }
+
+    triangleCellIdArray->Delete();
+    boundaryFaceCells->Delete();
+    boundaryFaceIds->Delete();
   }
 
   out << "  </mesh>" << endl;
