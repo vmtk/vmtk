@@ -2,6 +2,7 @@
 
 import sys
 from vmtk import pypes
+import vtk
 
 vmtkentityrenumber = 'VmtkEntityRenumber'
 
@@ -16,6 +17,7 @@ class VmtkEntityRenumber(pypes.pypeScript):
         self.CellEntityIdsArrayName = "CellEntityIds"
         self.CellEntityIdOffset = 0
         self.CellEntityIdRenumbering = []
+        self.InteriorFacetsOffset = 0
 
         # Member info: name, cmdlinename, typename, num, default, desc[, defaultpipetoscript]
         self.SetInputMembers([
@@ -24,9 +26,11 @@ class VmtkEntityRenumber(pypes.pypeScript):
                 ['CellEntityIdsArrayName', 'entityidsarray', 'str', 1, 'CellEntityIds',
                  'name of the array where entity ids have been stored'],
                 ['CellEntityIdOffset', 'offset', 'int', 1, '',
-                 'offset added to cell entity ids from mesh', ''],
+                 'offset added to cell entity ids that are not mapped explicitly', ''],
                 ['CellEntityIdRenumbering', 'renumbering', 'int', -1, '',
                  '[from1 to1] [from2 to2] ...', ''],
+                ['InteriorFacetsOffset', 'interiorfacetsoffset', 'int', 1, '',
+                 'offset added to ids of interior facets after renumbering mapping, to separate them from interior facets'],
                 ])
         self.SetOutputMembers([
                 ['Mesh', 'o', 'vtkUnstructuredGrid', 1, '',
@@ -51,8 +55,31 @@ class VmtkEntityRenumber(pypes.pypeScript):
         cellids = self.Mesh.GetCellData().GetScalars(self.CellEntityIdsArrayName)
         for i in range(cellids.GetNumberOfTuples()):
             v = cellids.GetValue(i)
+
+            # Renumber or add offset
             v = renumbering.get(v, v + self.CellEntityIdOffset)
+
+            # TODO: This is triangles/tets only
+            volumeTypes = (vtk.VTK_TETRA,)
+            faceTypes = (vtk.VTK_TRIANGLE,)
+
+            # Add offset if cell is an interior facet
+            if self.InteriorFacetsOffset:
+                if self.Mesh.GetCell(i).GetCellType() in faceTypes:
+                    pIds = vtk.vtkIdList()
+                    cIds = vtk.vtkIdList()
+                    self.Mesh.GetCellPoints(i, pIds)
+                    self.Mesh.GetCellNeighbors(i, pIds, cIds)
+
+                    nIds = cIds.GetNumberOfIds()
+                    if nIds == 2:
+                        def getCellType(j):
+                            return self.Mesh.GetCell(cIds.GetId(j)).GetCellType()
+                        if all(getCellType(j) in volumeTypes for j in range(nIds)):
+                            v += self.InteriorFacetsOffset
+
             cellids.SetValue(i, v)
+
 
 if __name__ == '__main__':
     main = pypes.pypeMain()
