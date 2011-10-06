@@ -242,7 +242,7 @@ void vtkvmtkDolfinWriter::WriteData()
     // Start subdomains section in file
     if (numberOfTriangles || this->StoreCellMarkers)
       {
-      out << "      <domains>" << endl;
+      out << "    <domains>" << endl;
       }
 
     // Write facet subdomains
@@ -256,10 +256,10 @@ void vtkvmtkDolfinWriter::WriteData()
 	const vtkIdType value = cellEntityIds->GetValue(triangleCellId) + this->BoundaryDataIdOffset;
 	const vtkIdType localEntity = triangleToLocalFacetId->GetId(i);
 
-	out << "            <value cell_index=\"" << tetrahedronCellId <<"\"" 
-	    << " local_entity=\"" << localEntity << "\" " 
-	    << " value=\""  << value << "\" " 
-	    << "/>" << endl;
+	out << "        <value cell_index=\"" << tetrahedronCellId <<"\"" 
+	    << " local_entity=\"" << localEntity << "\""
+	    << " value=\""  << value << "\""
+	    << " />" << endl;
 	}
       out << "        </mesh_value_collection>" << endl;
       }
@@ -267,23 +267,23 @@ void vtkvmtkDolfinWriter::WriteData()
     // Write cell subdomains
     if (this->StoreCellMarkers)
       {
-      out << "        <mesh_value_collection type=\"uint\" dim=\"3\" size=\""<< numberOfTetras << "\">" << endl;
+      out << "      <mesh_value_collection type=\"uint\" dim=\"3\" size=\""<< numberOfTetras << "\">" << endl;
       for (int i=0; i<numberOfTetras; i++)
 	{
         const vtkIdType cellId = tetraCellIdArray->GetValue(i);
 	const vtkIdType value = cellEntityIds->GetValue(cellId);
-	out << "            <value cell_index=\"" << i << "\"" 
-	    << " local_entity=\"" << 0 << "\" " 
-	    << " value=\""  <<  value << "\" " 
-	    << "/>" << endl;
+	out << "        <value cell_index=\"" << i << "\"" 
+	    << " local_entity=\"" << 0 << "\"" 
+	    << " value=\""  <<  value << "\"" 
+	    << " />" << endl;
 	}
-      out << "        </mesh_value_collection>" << endl;
+      out << "      </mesh_value_collection>" << endl;
       }
 
     // End subdomains section in file
     if (numberOfTriangles || this->StoreCellMarkers)
       {
-      out << "      </domains>" << endl;
+      out << "    </domains>" << endl;
       }
 
     if (exteriorFacetsFound)
