@@ -184,9 +184,9 @@ void vtkvmtkDolfinWriter::WriteData()
       // Get neighbor cell to facet, pick the one with smallest index if two (interior facet)
       vtkIdType cellId = cellIds->GetId(0);
       if (cellIds->GetNumberOfIds() == 2  &&  cellIds->GetId(1) < cellId)
-	{
+        {
         cellId = cellIds->GetId(1);
-	}
+        }
       vtkCell* cell = input->GetCell(cellId);
       int cellType = cell->GetCellType();
       vtkIdList* cellPointIds = cell->GetPointIds();
@@ -203,31 +203,31 @@ void vtkvmtkDolfinWriter::WriteData()
       // Sort point ids in cell, the way dolfin likes it (this works only for simplices!)
       vtkIdType dolfinCellPointIds[numberOfTetraPoints];
       for (int k=0; k<numberOfTetraPoints; k++)
-	{
+        {
         dolfinCellPointIds[k] = cellPointIds->GetId(k);
-	}
+        }
       std::sort(dolfinCellPointIds, dolfinCellPointIds+numberOfTetraPoints);
 
       // Find local facet id in dolfin numbering, opposite of point in cell that is not part of facet
       vtkIdType dolfinFaceId = -1;
       for (int k=0; k<numberOfTetraPoints; k++)
-	{
-	bool found = false;
-	const int numberOfTrianglePoints = 3;
-	for (int j=0; j<numberOfTrianglePoints; j++)
-	  {
-	    if (dolfinCellPointIds[k] == faceCellPoints->GetId(j))
-	      {
+        {
+        bool found = false;
+        const int numberOfTrianglePoints = 3;
+        for (int j=0; j<numberOfTrianglePoints; j++)
+          {
+            if (dolfinCellPointIds[k] == faceCellPoints->GetId(j))
+              {
               found = true;
-	      break;
-	      }
-	  }
-	if (!found)
-	  {
+              break;
+              }
+          }
+        if (!found)
+          {
           dolfinFaceId = k;
           break;
-	  }
-	}
+          }
+        }
 
       // Store tetrahedron number for vtk triangle i
       triangleToTetrahedron->SetId(i, volumeCellIdMap->GetId(cellId));
@@ -250,17 +250,17 @@ void vtkvmtkDolfinWriter::WriteData()
       {
       out << "        <mesh_value_collection type=\"uint\" dim=\"2\" size=\""<< numberOfTriangles<< "\">" << endl;
       for (int i=0; i<numberOfTriangles; i++)
-	{
+        {
         const vtkIdType triangleCellId = triangleCellIdArray->GetValue(i);
-	const vtkIdType tetrahedronCellId = triangleToTetrahedron->GetId(i);
-	const vtkIdType value = cellEntityIds->GetValue(triangleCellId) + this->BoundaryDataIdOffset;
-	const vtkIdType localEntity = triangleToLocalFacetId->GetId(i);
+        const vtkIdType tetrahedronCellId = triangleToTetrahedron->GetId(i);
+        const vtkIdType value = cellEntityIds->GetValue(triangleCellId) + this->BoundaryDataIdOffset;
+        const vtkIdType localEntity = triangleToLocalFacetId->GetId(i);
 
-	out << "        <value cell_index=\"" << tetrahedronCellId <<"\"" 
-	    << " local_entity=\"" << localEntity << "\""
-	    << " value=\""  << value << "\""
-	    << " />" << endl;
-	}
+        out << "        <value cell_index=\"" << tetrahedronCellId <<"\"" 
+            << " local_entity=\"" << localEntity << "\""
+            << " value=\""  << value << "\""
+            << " />" << endl;
+        }
       out << "        </mesh_value_collection>" << endl;
       }
 
@@ -269,14 +269,14 @@ void vtkvmtkDolfinWriter::WriteData()
       {
       out << "      <mesh_value_collection type=\"uint\" dim=\"3\" size=\""<< numberOfTetras << "\">" << endl;
       for (int i=0; i<numberOfTetras; i++)
-	{
+        {
         const vtkIdType cellId = tetraCellIdArray->GetValue(i);
-	const vtkIdType value = cellEntityIds->GetValue(cellId);
-	out << "        <value cell_index=\"" << i << "\"" 
-	    << " local_entity=\"" << 0 << "\"" 
-	    << " value=\""  <<  value << "\"" 
-	    << " />" << endl;
-	}
+        const vtkIdType value = cellEntityIds->GetValue(cellId);
+        out << "        <value cell_index=\"" << i << "\"" 
+            << " local_entity=\"" << 0 << "\"" 
+            << " value=\""  <<  value << "\"" 
+            << " />" << endl;
+        }
       out << "      </mesh_value_collection>" << endl;
       }
 
