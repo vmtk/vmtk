@@ -104,7 +104,7 @@ void vtkvmtkDolfinWriter::WriteData()
     }
 
   // Write out dolfin mesh header
-  out << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" << endl << endl;
+  out << "<?xml version=\"1.0\"?>" << endl << endl;
   out << "<dolfin xmlns:dolfin=\"http://www.fenicsproject.org\">" << endl;
   out << "  <mesh celltype=\"tetrahedron\" dim=\"3\">" << endl;
 
@@ -248,7 +248,7 @@ void vtkvmtkDolfinWriter::WriteData()
     // Write facet subdomains
     if (numberOfTriangles)
       {
-      out << "        <mesh_value_collection type=\"uint\" dim=\"2\" size=\""<< numberOfTriangles<< "\">" << endl;
+      out << "      <mesh_value_collection type=\"uint\" dim=\"2\" size=\""<< numberOfTriangles<< "\">" << endl;
       for (int i=0; i<numberOfTriangles; i++)
         {
         const vtkIdType triangleCellId = triangleCellIdArray->GetValue(i);
@@ -261,7 +261,7 @@ void vtkvmtkDolfinWriter::WriteData()
             << " value=\""  << value << "\""
             << " />" << endl;
         }
-      out << "        </mesh_value_collection>" << endl;
+      out << "      </mesh_value_collection>" << endl;
       }
 
     // Write cell subdomains
