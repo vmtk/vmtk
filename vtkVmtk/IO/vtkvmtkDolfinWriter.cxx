@@ -104,7 +104,7 @@ void vtkvmtkDolfinWriter::WriteData()
     }
 
   // Write out dolfin mesh header
-  out << "<?xml version=\"1.0\"?>" << endl << endl;
+  out << "<?xml version=\"1.0\"?>" << endl;
   out << "<dolfin xmlns:dolfin=\"http://www.fenicsproject.org\">" << endl;
   out << "  <mesh celltype=\"tetrahedron\" dim=\"3\">" << endl;
 
