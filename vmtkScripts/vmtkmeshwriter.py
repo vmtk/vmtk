@@ -35,6 +35,7 @@ class vmtkMeshWriter(pypes.pypeScript):
 
         self.Compressed = 1
         self.CellEntityIdsOffset = -1
+        self.WriteRegionMarkers = 0
 
         self.CellEntityIdsArrayName = ''
 
@@ -42,13 +43,16 @@ class vmtkMeshWriter(pypes.pypeScript):
         self.SetScriptDoc('write a mesh to disk')
         self.SetInputMembers([
             ['Mesh','i','vtkUnstructuredGrid',1,'','the input mesh','vmtkmeshreader'],
-            ['Format','f','str',1,'["vtkxml","vtk","xda","fdneut","tecplot","lifev","dolfin","fluent","tetgen","pointdata"]','file format (xda - libmesh ASCII format, fdneut - FIDAP neutral format)'],
+            ['Format','f','str',1,
+             '["vtkxml","vtk","xda","fdneut","tecplot","lifev","dolfin","fluent","tetgen","pointdata"]',
+             'file format (xda - libmesh ASCII format, fdneut - FIDAP neutral format)'],
             ['GuessFormat','guessformat','bool',1,'','guess file format from extension'],
             ['Compressed','compressed','bool',1,'','output gz compressed file (dolfin only)'],
             ['OutputFileName','ofile','str',1,'','output file name'],
             ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh'],
             ['CellEntityIdsArrayName','entityidsarray','str',1,'','name of the array where entity ids are stored'],
-            ['CellEntityIdsOffset','entityidsoffset','int',1,'','add this number to entity ids in output (dolfin only)']
+            ['CellEntityIdsOffset','entityidsoffset','int',1,'','add this number to entity ids in output (dolfin only)'],
+            ['WriteRegionMarkers','writeregionmarkers','bool',1,'','write entity ids for volume regions to file (dolfin only)'],
             ])
         self.SetOutputMembers([])
 
@@ -243,6 +247,7 @@ class vmtkMeshWriter(pypes.pypeScript):
         if self.CellEntityIdsArrayName != '':
             writer.SetBoundaryDataArrayName(self.CellEntityIdsArrayName)
             writer.SetBoundaryDataIdOffset(self.CellEntityIdsOffset)
+            writer.SetStoreCellMarkers(self.WriteRegionMarkers)
         writer.Write()
         if self.Compressed:
             file = open(self.OutputFileName,'r')
