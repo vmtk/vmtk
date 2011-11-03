@@ -34,7 +34,7 @@ Version:   $Revision: 1.3 $
 #include "vtkDoubleArray.h"
 #include "vtkvmtkWin32Header.h"
 
-class VTK_VMTK_MISC_EXPORT vtkvmtkRBFInterpolation2 : public vtkImplicitFunction
+class VTK_VMTK_CONTRIB_EXPORT vtkvmtkRBFInterpolation2 : public vtkImplicitFunction
 {
   public:
   vtkTypeRevisionMacro(vtkvmtkRBFInterpolation2,vtkImplicitFunction);
