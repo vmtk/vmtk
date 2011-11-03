@@ -100,6 +100,7 @@ SET(SCRIPTS_SRCS
   vmtksurfacekiteremoval.py
   vmtksurfacemodeller.py
   vmtksurfacenormals.py
+  vmtksurfacepointdatatocelldata.py
   vmtksurfaceprojection.py
   vmtksurfacereader.py
   vmtksurfacereferencesystemtransform.py

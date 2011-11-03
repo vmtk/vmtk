@@ -94,6 +94,7 @@ __all__ = [
   'vmtksurfacekiteremoval',
   'vmtksurfacemodeller',
   'vmtksurfacenormals',
+  'vmtksurfacepointdatatocelldata',
   'vmtksurfaceprojection',
   'vmtksurfacereader',
   'vmtksurfacereferencesystemtransform',
