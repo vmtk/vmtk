@@ -67,6 +67,8 @@ vtkvmtkTetGenWrapper::vtkvmtkTetGenWrapper()
 
   this->OutputSurfaceElements = 1;
   this->OutputVolumeElements = 1;
+
+  this->LastRunExitStatus = -1;
 }
 
 vtkvmtkTetGenWrapper::~vtkvmtkTetGenWrapper()
@@ -427,8 +429,11 @@ int vtkvmtkTetGenWrapper::RequestData(
   catch ( ... )
     {
     vtkErrorMacro(<<"TetGen quit with an exception.");
+    this->LastRunExitStatus = 1;
     return 1;
     }
+    
+  this->LastRunExitStatus = 0;
 
   //TODO
 //  out_tetgenio.edgelist; //int* 
