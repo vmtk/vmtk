@@ -286,7 +286,7 @@ void vtkvmtkDolfinWriter::WriteData()
       out << "    </domains>" << endl;
       }
 
-    if (exteriorFacetsFound)
+    if (interiorFacetsFound)
       {
       vtkWarningMacro("Found boundary cells not on boundary!");
       }
