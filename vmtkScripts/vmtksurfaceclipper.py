@@ -37,17 +37,20 @@ class vmtkSurfaceClipper(pypes.pypeScript):
         self.ClipWidget = None
         self.ClipFunction = None
         self.CleanOutput = 1
+        self.Transform = None
 
         self.SetScriptName('vmtksurfaceclipper')
         self.SetScriptDoc('interactively clip a surface with a box')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
             ['WidgetType','type','str',1,'["box","sphere"]','type of widget used for clipping'],
+            ['Transform','transform','vtkTransform',1,'','the widget transform, useful in case of piping of multiple clipping scripts'],
             ['CleanOutput','cleanoutput','bool',1,'','toggle cleaning the unused points'],
             ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer']
             ])
         self.SetOutputMembers([
-            ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter']
+            ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter'],
+            ['Transform','otransform','vtkTransform',1,'','the output widget transform']
             ])
 
     def KeyPressed(self,object,event):
@@ -70,6 +73,10 @@ class vmtkSurfaceClipper(pypes.pypeScript):
       	self.ClipWidget.SetInput(self.Surface)
       	self.ClipWidget.PlaceWidget()
 
+        if self.Transform:
+            self.ClipWidget.SetTransform(self.Transform)
+            self.ClipWidget.On()
+
       	self.vmtkRenderer.RenderWindowInteractor.Initialize()
 
         self.vmtkRenderer.RenderWindowInteractor.AddObserver("KeyPressEvent", self.KeyPressed)
@@ -78,7 +85,7 @@ class vmtkSurfaceClipper(pypes.pypeScript):
 
     def Execute(self):
 
-        if (self.Surface == None):
+        if self.Surface == None:
             self.PrintError('Error: no Surface.')
 
         if self.WidgetType == "box":
@@ -120,6 +127,9 @@ class vmtkSurfaceClipper(pypes.pypeScript):
 
         self.ClipWidget.SetInteractor(self.vmtkRenderer.RenderWindowInteractor)
         self.Display()
+
+        self.Transform = vtk.vtkTransform()
+        self.ClipWidget.GetTransform(self.Transform)
 
         if self.OwnRenderer:
             self.vmtkRenderer.Deallocate()
