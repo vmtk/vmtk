@@ -379,7 +379,7 @@ class PypeTkPad(object):
         self.text_output["state"] = DISABLED
  
     def BuildScriptMenu(self,parentmenu,modulename):
-        menu = Menu(parentmenu,bg="#ffffff",bd=1,activeborderwidth=0,font='Verdana 8')
+        menu = Menu(parentmenu,bd=1,activeborderwidth=0)
         try:
             exec('import '+ modulename)
         except ImportError:
@@ -393,10 +393,10 @@ class PypeTkPad(object):
         
     def BuildMainFrame(self): 
       
-        menu = Menu(self.master,activeborderwidth=0,bd=0,font='Verdana 8')
+        menu = Menu(self.master,activeborderwidth=0,bd=0)
         self.master.config(menu=menu)
   
-        filemenu = Menu(menu,tearoff=0,bg="#ffffff",bd=1,activeborderwidth=0,font='Verdana 8')
+        filemenu = Menu(menu,tearoff=0,bd=1,activeborderwidth=0)
         menu.add_cascade(label="File", underline=0,  menu=filemenu)
         filemenu.add_command(label="New", accelerator='Ctrl+N',command=self.NewCommand)
         filemenu.add_command(label="Open...",accelerator='Ctrl+O', command=self.OpenCommand)
@@ -410,14 +410,14 @@ class PypeTkPad(object):
         self.output_to_file = StringVar()
         self.output_to_file.set('n')
  
-        scriptmenu = Menu(menu,tearoff=0,bg="#ffffff",bd=1,activeborderwidth=0,font='Verdana 8')
+        scriptmenu = Menu(menu,tearoff=0,bd=1,activeborderwidth=0)
         modulenames = ['vmtkscripts']
         for modulename in modulenames:
             scriptsubmenu = self.BuildScriptMenu(menu,modulename)
             if scriptsubmenu:
                 scriptmenu.add_cascade(label=modulename,menu=scriptsubmenu)
  
-        editmenu = Menu(menu,tearoff=0,bg="#ffffff",bd=1,activeborderwidth=0,font='Verdana 8')
+        editmenu = Menu(menu,tearoff=0,bd=1,activeborderwidth=0)
         menu.add_cascade(label="Edit",underline=0,  menu=editmenu)
         editmenu.add_cascade(label="Insert script",menu=scriptmenu)
         editmenu.add_command(label="Insert file name", accelerator='Ctrl+F',command=self.InsertFileName)
@@ -433,13 +433,13 @@ class PypeTkPad(object):
         editmenu.add_radiobutton(label="Append output to file", variable=self.output_to_file,value='a')
         editmenu.add_command(label="Output file...", command=self.OutputFileCommand)
 
-        runmenu = Menu(menu,tearoff=0,bg="#ffffff",bd=1,activeborderwidth=0,font='Verdana 8')
+        runmenu = Menu(menu,tearoff=0,bd=1,activeborderwidth=0)
         menu.add_cascade(label="Run", underline=0, menu=runmenu)
         runmenu.add_command(label="Run all", command=self.RunAllCommand)
         runmenu.add_command(label="Run current line", command=self.RunLineCommand)
         runmenu.add_command(label="Run selection", command=self.RunSelectionCommand)
        
-        helpmenu = Menu(menu,tearoff=0,bg="#ffffff",bd=1,activeborderwidth=0,font='Verdana 8')
+        helpmenu = Menu(menu,tearoff=0,bd=1,activeborderwidth=0)
         menu.add_cascade(label="Help", underline=0, menu=helpmenu)
         helpmenu.add_command(label="Help", underline=0, accelerator='F1',command=self.ShowHelpCommand)
         helpmenu.add_command(label="About", underline=0, command=self.AboutCommand)
@@ -470,7 +470,7 @@ class PypeTkPad(object):
         content.rowconfigure(1,weight=0)
         content.columnconfigure(0,weight=1)
 
-        panes = PanedWindow(content,orient=VERTICAL,bd=1,sashwidth=8,sashpad=0,showhandle=False)
+        panes = PanedWindow(content,orient=VERTICAL,bd=1,sashwidth=8,sashpad=0,sashrelief=RELIEF,showhandle=True)
         panes.grid(row=0,column=0,sticky=N+S+W+E)
 
         frame1 = Frame(panes,bd=0) 
@@ -513,7 +513,7 @@ class PypeTkPad(object):
         self.output_scrollbar.grid(row=0,column=1,sticky=N+S+W+E)
         self.text_entry.grid(row=1,column=0,sticky=N+S+W+E)
 
-        self.popupmenu = Menu(self.text_input, tearoff=1, bd=0,font='Verdana 8')
+        self.popupmenu = Menu(self.text_input, tearoff=1, bd=0)
         self.popupmenu.add_command(label="Context help", command=self.ShowHelpCommand)
         self.popupmenu.add_cascade(label="Insert script",menu=scriptmenu)
         self.popupmenu.add_command(label="Insert file name...", command=self.InsertFileName)
