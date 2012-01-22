@@ -33,7 +33,7 @@ if(APPLE)
   set(CMAKE_EXE_LINKER_FLAGS "-Wl,-dylib_file,/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib")
 endif(APPLE)
 
-OPTION(VTK_VMTK_BUILD_TETGEN "Build TetGen and TetGen wrapper." ON)
+OPTION(VTK_VMTK_BUILD_TETGEN "Build TetGen and TetGen wrapper. Check TetGen license before you activate this." ON)
 
 IF (VTK_USE_COCOA)
   OPTION(VTK_VMTK_USE_COCOA "Build the Cocoa vmtk classes." ON)

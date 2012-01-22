@@ -48,6 +48,12 @@ option( VMTK_USE_SUPERBUILD
 
 if( VMTK_USE_SUPERBUILD )
 
+  option ( VTK_VMTK_WRAP_PYTHON "Generate Python wrappings for C++ classes." ON )
+  option ( VMTK_CONTRIB_SCRIPTS "Install modules from the vmtkScripts/contrib directory." ON )
+  option ( VTK_VMTK_CONTRIB "Build and install classes in the vtkVmtk/Contrib directory." ON )
+  option ( VMTK_ENABLE_DISTRIBUTION "Enable distribution targets." ON )
+  option ( VMTK_BUILD_TETGEN "Build TetGen and TetGen wrapper. Check TetGen license before you activate this." ON )
+
   include( "${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild.cmake" )
   return()
 
