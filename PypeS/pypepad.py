@@ -470,7 +470,7 @@ class PypeTkPad(object):
         content.rowconfigure(1,weight=0)
         content.columnconfigure(0,weight=1)
 
-        panes = PanedWindow(content,orient=VERTICAL,bd=1,sashwidth=8,sashpad=0,sashrelief=RELIEF,showhandle=True)
+        panes = PanedWindow(content,orient=VERTICAL,bd=1,sashwidth=8,sashpad=0,sashrelief=RAISED,showhandle=True)
         panes.grid(row=0,column=0,sticky=N+S+W+E)
 
         frame1 = Frame(panes,bd=0) 
