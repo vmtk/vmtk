@@ -132,7 +132,7 @@ IF(WIN32)
 
   IF(MSVC)
 
-    macro(_FIND_MSVC_REDIST)
+    #macro(_FIND_MSVC_REDIST)
       message(STATUS "Looking for MSVC Redistributable Executable for MSVC Version ${MSVC_VERSION}")
       set(SDKVERS "2.0")
       if(${MSVC_VERSION} EQUAL 1400)
@@ -161,7 +161,7 @@ IF(WIN32)
     '\\\"$INSTDIR\\\\bin\\\\${vcredist_name}\\\"'")
         message(STATUS "MSVC_REDIST: ${MSVC_REDIST}")
       ENDIF(${MSVC_VERSION})
-    endmacro()
+    #endmacro()
 
     #IF(${CMAKE_MSVC_ARCH} STREQUAL "amd64")
     #  SET(VCREDIST_EXECUTABLE "vcredist_x64.exe")
