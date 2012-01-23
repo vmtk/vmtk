@@ -132,22 +132,22 @@ IF(WIN32)
 
   IF(MSVC)
     IF(${CMAKE_MSVC_ARCH} STREQUAL "amd64")
-      SET(VCREDIST_EXECUTABLE "vcredist_x64_2008.exe")
+      SET(VCREDIST_EXECUTABLE "vcredist_x64.exe")
     ELSE(${CMAKE_MSVC_ARCH} STREQUAL "amd64")
-      SET(VCREDIST_EXECUTABLE "vcredist_x86_2008.exe")
+      SET(VCREDIST_EXECUTABLE "vcredist_x86.exe")
     ENDIF(${CMAKE_MSVC_ARCH} STREQUAL "amd64")
 
-    FIND_PROGRAM(VCREDIST_2008_EXE
+    FIND_PROGRAM(VCREDIST_EXE
       ${VCREDIST_EXECUTABLE}
-      DOC "Path to the Visual Studio C++ 2008 SP1 redistributable"
+      DOC "Path to the Visual Studio C++ redistributable"
       )
 
-    IF(NOT VCREDIST_2008_EXE)
+    IF(NOT VCREDIST_EXE)
       MESSAGE(SEND_ERROR "Could not locate ${VCREDIST_EXECUTABLE}.")
-    ENDIF(NOT VCREDIST_2008_EXE)
+    ENDIF(NOT VCREDIST_EXE)
 
     INSTALL(FILES
-      ${VCREDIST_2008_EXE}
+      ${VCREDIST_EXE}
       DESTINATION redist
       COMPONENT RuntimeExecutables
       )
