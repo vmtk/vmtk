@@ -131,30 +131,63 @@ IF(WIN32)
   ENDIF(MINGW)
 
   IF(MSVC)
-    IF(${CMAKE_MSVC_ARCH} STREQUAL "amd64")
-      SET(VCREDIST_EXECUTABLE "vcredist_x64.exe")
-    ELSE(${CMAKE_MSVC_ARCH} STREQUAL "amd64")
-      SET(VCREDIST_EXECUTABLE "vcredist_x86.exe")
-    ENDIF(${CMAKE_MSVC_ARCH} STREQUAL "amd64")
 
-    FIND_PROGRAM(VCREDIST_EXE
-      ${VCREDIST_EXECUTABLE}
-      DOC "Path to the Visual Studio C++ redistributable"
-      )
+    macro(_FIND_MSVC_REDIST)
+      message(STATUS "Looking for MSVC Redistributable Executable for MSVC Version ${MSVC_VERSION}")
+      set(SDKVERS "2.0")
+      if(${MSVC_VERSION} EQUAL 1400)
+        set(SDKVERS "2.0")
+        set(VCVERS "8")
+      endif()
+      if(${MSVC_VERSION} EQUAL 1500)
+        set(SDKVERS "3.5")
+        set(VCVERS "9")
+      endif()
+      if(${MSVC_VERSION} EQUAL 1600)
+        set(SDKVERS "3.5")
+        set(VCVERS "10")
+      endif()
+      IF(${MSVC_VERSION})
+        FIND_PROGRAM(MSVC_REDIST NAMES
+    vcredist_${CMAKE_MSVC_ARCH}/vcredist_${CMAKE_MSVC_ARCH}.exe
+          PATHS
+          "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\VCExpress\\${VCVERS}.0;InstallDir]/../../SDK/v${SDKVERS}/BootStrapper/Packages/"
+          "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\VisualStudio\\${VCVERS}.0;InstallDir]/../../SDK/v${SDKVERS}/BootStrapper/Packages/"
+          "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\Microsoft\\VisualStudio\\${VCVERS}.0;InstallDir]/../../SDK/v${SDKVERS}/BootStrapper/Packages/"
+          )
+        GET_FILENAME_COMPONENT(vcredist_name "${MSVC_REDIST}" NAME)
+        INSTALL(PROGRAMS ${MSVC_REDIST} COMPONENT SupportFiles DESTINATION bin)
+        SET(CPACK_NSIS_EXTRA_INSTALL_COMMANDS "ExecWait
+    '\\\"$INSTDIR\\\\bin\\\\${vcredist_name}\\\"'")
+        message(STATUS "MSVC_REDIST: ${MSVC_REDIST}")
+      ENDIF(${MSVC_VERSION})
+    endmacro()
 
-    IF(NOT VCREDIST_EXE)
-      MESSAGE(SEND_ERROR "Could not locate ${VCREDIST_EXECUTABLE}.")
-    ENDIF(NOT VCREDIST_EXE)
+    #IF(${CMAKE_MSVC_ARCH} STREQUAL "amd64")
+    #  SET(VCREDIST_EXECUTABLE "vcredist_x64.exe")
+    #ELSE(${CMAKE_MSVC_ARCH} STREQUAL "amd64")
+    #  SET(VCREDIST_EXECUTABLE "vcredist_x86.exe")
+    #ENDIF(${CMAKE_MSVC_ARCH} STREQUAL "amd64")
 
-    INSTALL(FILES
-      ${VCREDIST_EXE}
-      DESTINATION redist
-      COMPONENT RuntimeExecutables
-      )
+    #FIND_PROGRAM(VCREDIST_EXE
+    #  ${VCREDIST_EXECUTABLE}
+    #  PATHS 
+    #  DOC "Path to the Visual Studio C++ redistributable"
+    #  )
 
-    SET(CPACK_NSIS_EXTRA_INSTALL_COMMANDS
-      "${CPACK_NSIS_EXTRA_INSTALL_COMMANDS}
-      ExecWait '\\\"$INSTDIR\\\\redist\\\\${VCREDIST_EXECUTABLE}\\\"'")
+    #IF(NOT VCREDIST_EXE)
+    #  MESSAGE(SEND_ERROR "Could not locate ${VCREDIST_EXECUTABLE}.")
+    #ENDIF(NOT VCREDIST_EXE)
+
+    #INSTALL(FILES
+    #  ${VCREDIST_EXE}
+    #  DESTINATION redist
+    #  COMPONENT RuntimeExecutables
+    #  )
+
+    #SET(CPACK_NSIS_EXTRA_INSTALL_COMMANDS
+    #  "${CPACK_NSIS_EXTRA_INSTALL_COMMANDS}
+    #  ExecWait '\\\"$INSTDIR\\\\redist\\\\${VCREDIST_EXECUTABLE}\\\"'")
   ENDIF(MSVC)
 
   INSTALL(FILES
