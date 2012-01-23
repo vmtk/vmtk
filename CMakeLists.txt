@@ -7,7 +7,7 @@ ENDIF(COMMAND cmake_policy)
 
 # vmtk versions number
 SET(VMTK_VERSION_MAJOR 0)
-SET(VMTK_VERSION_MINOR 9)
+SET(VMTK_VERSION_MINOR 10)
 SET(VMTK_VERSION_PATCH 0)
 SET(VMTK_VERSION 
     "${VMTK_VERSION_MAJOR}.${VMTK_VERSION_MINOR}.${VMTK_VERSION_PATCH}")
@@ -51,7 +51,7 @@ if( VMTK_USE_SUPERBUILD )
   option ( VTK_VMTK_WRAP_PYTHON "Generate Python wrappings for C++ classes." ON )
   option ( VMTK_CONTRIB_SCRIPTS "Install modules from the vmtkScripts/contrib directory." ON )
   option ( VTK_VMTK_CONTRIB "Build and install classes in the vtkVmtk/Contrib directory." ON )
-  option ( VMTK_ENABLE_DISTRIBUTION "Enable distribution targets." ON )
+  option ( VMTK_ENABLE_DISTRIBUTION "Enable distribution targets." OFF )
   option ( VMTK_BUILD_TETGEN "Build TetGen and TetGen wrapper. Check TetGen license before you activate this." ON )
 
   include( "${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild.cmake" )
