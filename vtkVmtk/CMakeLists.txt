@@ -35,6 +35,8 @@ endif(APPLE)
 
 OPTION(VTK_VMTK_BUILD_TETGEN "Build TetGen and TetGen wrapper. Check TetGen license before you activate this." ON)
 
+OPTION(VTK_VMTK_BUILD_STREAMTRACER "Build static temporal stream tracer." ON)
+
 IF (VTK_USE_COCOA)
   OPTION(VTK_VMTK_USE_COCOA "Build the Cocoa vmtk classes." ON)
 ENDIF (VTK_USE_COCOA)
