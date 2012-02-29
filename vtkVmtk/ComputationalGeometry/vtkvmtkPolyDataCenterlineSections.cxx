@@ -58,6 +58,8 @@ vtkvmtkPolyDataCenterlineSections::vtkvmtkPolyDataCenterlineSections()
   this->CenterlineSectionMaxSizeArrayName = NULL;
   this->CenterlineSectionShapeArrayName = NULL;
   this->CenterlineSectionClosedArrayName = NULL;
+
+  this->SectionShapeRelativeToCenter = 1;
 }
 
 vtkvmtkPolyDataCenterlineSections::~vtkvmtkPolyDataCenterlineSections()
@@ -312,7 +314,7 @@ void vtkvmtkPolyDataCenterlineSections::ComputeCenterlineSections(vtkPolyData* i
     
     double area = vtkvmtkPolyDataBranchSections::ComputeBranchSectionArea(section);
     double sizeRange[2];
-    double shape = vtkvmtkPolyDataBranchSections::ComputeBranchSectionShape(section,point,sizeRange);
+    double shape = vtkvmtkPolyDataBranchSections::ComputeBranchSectionShape(section,point,sizeRange,this->SectionShapeRelativeToCenter);
 
     centerlineSectionAreaArray->InsertNextValue(area);
     centerlineSectionMinSizeArray->InsertNextValue(sizeRange[0]);

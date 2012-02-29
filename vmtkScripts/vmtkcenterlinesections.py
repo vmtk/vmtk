@@ -32,6 +32,8 @@ class vmtkCenterlineSections(pypes.pypeScript):
         self.Centerlines = None
         self.CenterlineSections = None
 
+        self.ShapeRelativeToCenter = 1
+
         self.CenterlineSectionAreaArrayName = 'CenterlineSectionArea'
         self.CenterlineSectionMinSizeArrayName = 'CenterlineSectionMinSize'
         self.CenterlineSectionMaxSizeArrayName = 'CenterlineSectionMaxSize'
@@ -43,6 +45,7 @@ class vmtkCenterlineSections(pypes.pypeScript):
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
             ['Centerlines','centerlines','vtkPolyData',1,'','the input centerlines','vmtksurfacereader'],
+            ['ShapeRelativeToCenter','shaperelativetocenter','bool',1,'','compute section min size, max size and shape factor relative to the center of the section'],
       	    ['CenterlineSectionAreaArrayName','branchsectionarea','str',1,'','name of the array where the area of bifurcation sections have to be stored'],
       	    ['CenterlineSectionMinSizeArrayName','branchsectionminsize','str',1,'','name of the array where the minimum diameter of each section has to be stored'],
       	    ['CenterlineSectionMaxSizeArrayName','branchsectionmaxsize','str',1,'','name of the array where the maximum diameter of each bifurcation sections has to be stored'],
@@ -70,6 +73,7 @@ class vmtkCenterlineSections(pypes.pypeScript):
         centerlineSections = vtkvmtk.vtkvmtkPolyDataCenterlineSections()
         centerlineSections.SetInput(self.Surface)
         centerlineSections.SetCenterlines(self.Centerlines)
+        centerlineSections.SetSectionShapeRelativeToCenter(self.ShapeRelativeToCenter)
         centerlineSections.SetCenterlineSectionAreaArrayName(self.CenterlineSectionAreaArrayName)
         centerlineSections.SetCenterlineSectionMinSizeArrayName(self.CenterlineSectionMinSizeArrayName)
         centerlineSections.SetCenterlineSectionMaxSizeArrayName(self.CenterlineSectionMaxSizeArrayName)

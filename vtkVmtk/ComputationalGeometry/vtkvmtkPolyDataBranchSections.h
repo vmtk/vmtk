@@ -87,8 +87,12 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataBranchSections : pub
   vtkGetMacro(ReverseDirection,int);
   vtkBooleanMacro(ReverseDirection,int);
 
+  vtkSetMacro(SectionShapeRelativeToCenter,int);
+  vtkGetMacro(SectionShapeRelativeToCenter,int);
+  vtkBooleanMacro(SectionShapeRelativeToCenter,int);
+
   static double ComputeBranchSectionArea(vtkPolyData* branchSection);
-  static double ComputeBranchSectionShape(vtkPolyData* branchSection, double center[3], double sizeRange[2]);
+  static double ComputeBranchSectionShape(vtkPolyData* branchSection, double center[3], double sizeRange[2], int relativeToCenter);
 
   static void ExtractCylinderSection(vtkPolyData* cylinder, double origin[3], double normal[3], vtkPolyData* section, bool & closed);
 
@@ -119,6 +123,8 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataBranchSections : pub
 
   int NumberOfDistanceSpheres;
   int ReverseDirection;
+
+  int SectionShapeRelativeToCenter;
 
   private:
   vtkvmtkPolyDataBranchSections(const vtkvmtkPolyDataBranchSections&);  // Not implemented.

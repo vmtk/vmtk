@@ -56,6 +56,10 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataCenterlineSections :
   vtkSetStringMacro(CenterlineSectionClosedArrayName);
   vtkGetStringMacro(CenterlineSectionClosedArrayName);
 
+  vtkSetMacro(SectionShapeRelativeToCenter,int);
+  vtkGetMacro(SectionShapeRelativeToCenter,int);
+  vtkBooleanMacro(SectionShapeRelativeToCenter,int);
+
   protected:
   vtkvmtkPolyDataCenterlineSections();
   ~vtkvmtkPolyDataCenterlineSections();  
@@ -71,6 +75,8 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataCenterlineSections :
   char* CenterlineSectionMaxSizeArrayName;
   char* CenterlineSectionShapeArrayName;
   char* CenterlineSectionClosedArrayName;
+
+  int SectionShapeRelativeToCenter;
 
   private:
   vtkvmtkPolyDataCenterlineSections(const vtkvmtkPolyDataCenterlineSections&);  // Not implemented.
