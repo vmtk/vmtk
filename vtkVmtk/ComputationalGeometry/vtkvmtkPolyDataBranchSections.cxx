@@ -30,6 +30,7 @@ Version:   $Revision: 1.1 $
 #include "vtkDoubleArray.h"
 #include "vtkIntArray.h"
 #include "vtkPlane.h"
+#include "vtkLine.h"
 #include "vtkCutter.h"
 #include "vtkStripper.h"
 #include "vtkPolyDataConnectivityFilter.h"
@@ -676,6 +677,7 @@ double vtkvmtkPolyDataBranchSections::ComputeBranchSectionArea(vtkPolyData* bran
   return polygonArea;
 }
 
+#ifdef VMTK_ONE_SIDED_SECTION_SHAPE
 double vtkvmtkPolyDataBranchSections::ComputeBranchSectionShape(vtkPolyData* branchSection, double center[3], double sizeRange[2])
 {
   branchSection->BuildCells();
@@ -717,6 +719,186 @@ double vtkvmtkPolyDataBranchSections::ComputeBranchSectionShape(vtkPolyData* bra
 
   return sectionShape;
 }
+#else
+double vtkvmtkPolyDataBranchSections::ComputeBranchSectionShape(vtkPolyData* branchSection, double center[3], double sizeRange[2])
+{
+  branchSection->BuildCells();
+  
+  if (branchSection->GetNumberOfCells() == 0)
+    {
+    sizeRange[0] = sizeRange[1] = 0.0;
+    return 0.0;
+    }
+
+  vtkPolygon* sectionPolygon = vtkPolygon::SafeDownCast(branchSection->GetCell(0));
+
+  int numberOfSectionPolygonPoints = sectionPolygon->GetNumberOfPoints();
+
+  double minDistance = VTK_VMTK_LARGE_DOUBLE;
+  double maxDistance = 0.0;
+
+  vtkIdType minDistanceId = -1;
+  vtkIdType maxDistanceId = -1;
+  double point[3];
+
+  for (int i=0; i<numberOfSectionPolygonPoints; i++)
+    {
+    sectionPolygon->GetPoints()->GetPoint(i,point);
+    double distance = sqrt(vtkMath::Distance2BetweenPoints(point,center));
+
+    if (distance > maxDistance)
+      {
+      maxDistance = distance;
+      maxDistanceId = i;
+      }
+
+    if (distance < minDistance)
+      {
+      minDistance = distance;
+      minDistanceId = i;
+      }
+    }
+
+  if (minDistance == -1 || maxDistance == -1)
+    {
+    sizeRange[0] = 0.0;
+    sizeRange[1] = 0.0;
+    return 0.0;
+    }
+
+  double point0[3];
+  double point1[3];
+
+  double planeNormal[3];
+  double radialVector0[3];
+  double radialVector1[3];
+  double cross[3];
+
+  planeNormal[0] = 0.0;
+  planeNormal[1] = 0.0;
+  planeNormal[2] = 0.0;
+
+  for (int i=0; i<numberOfSectionPolygonPoints; i++)
+    {
+    sectionPolygon->GetPoints()->GetPoint(i,point0);
+    sectionPolygon->GetPoints()->GetPoint((i+numberOfSectionPolygonPoints/4)%numberOfSectionPolygonPoints,point1);
+
+    radialVector0[0] = point0[0] - center[0];
+    radialVector0[1] = point0[1] - center[1];
+    radialVector0[2] = point0[2] - center[2];
+ 
+    radialVector1[0] = point1[0] - center[0];
+    radialVector1[1] = point1[1] - center[1];
+    radialVector1[2] = point1[2] - center[2];
+ 
+    vtkMath::Cross(point0,point1,cross); 
+
+    planeNormal[0] += cross[0];
+    planeNormal[1] += cross[1];
+    planeNormal[2] += cross[2];
+    }
+
+  vtkMath::Normalize(planeNormal);
+
+  double minDistancePoint[3];
+  sectionPolygon->GetPoints()->GetPoint(minDistanceId,minDistancePoint);
+
+  double maxDistancePoint[3];
+  sectionPolygon->GetPoints()->GetPoint(maxDistanceId,maxDistancePoint);
+
+  double minDistanceNormal[3];
+  double maxDistanceNormal[3];
+
+  minDistanceNormal[0] = minDistancePoint[0] - center[0];
+  minDistanceNormal[1] = minDistancePoint[1] - center[1];
+  minDistanceNormal[2] = minDistancePoint[2] - center[2];
+
+  vtkMath::Normalize(minDistanceNormal);
+
+  maxDistanceNormal[0] = maxDistancePoint[0] - center[0];
+  maxDistanceNormal[1] = maxDistancePoint[1] - center[1];
+  maxDistanceNormal[2] = maxDistancePoint[2] - center[2];
+
+  vtkMath::Normalize(maxDistanceNormal);
+
+  double minDistanceOppositePoint[3];
+  double maxDistanceOppositePoint[3];
+
+  minDistanceOppositePoint[0] = center[0] - 2.0 * maxDistance * minDistanceNormal[0];
+  minDistanceOppositePoint[1] = center[1] - 2.0 * maxDistance * minDistanceNormal[1];
+  minDistanceOppositePoint[2] = center[2] - 2.0 * maxDistance * minDistanceNormal[2];
+
+  maxDistanceOppositePoint[0] = center[0] - 2.0 * maxDistance * maxDistanceNormal[0];
+  maxDistanceOppositePoint[1] = center[1] - 2.0 * maxDistance * maxDistanceNormal[1];
+  maxDistanceOppositePoint[2] = center[2] - 2.0 * maxDistance * maxDistanceNormal[2];
+
+  double intersectionPoint[3];
+  double maxIntersectionDistance = 0.0;
+
+  int intersection;
+  double u,v;
+  for (int i=0; i<numberOfSectionPolygonPoints; i++)
+    {
+    sectionPolygon->GetPoints()->GetPoint(i,point0);
+    sectionPolygon->GetPoints()->GetPoint((i+1)%numberOfSectionPolygonPoints,point1);
+
+    intersection = vtkLine::Intersection(minDistanceOppositePoint,center,point0,point1,u,v);
+
+    if (intersection == 0)
+      {
+      continue;
+      }
+
+    intersectionPoint[0] = (1.0 - u) * minDistanceOppositePoint[0] + u * center[0];
+    intersectionPoint[1] = (1.0 - u) * minDistanceOppositePoint[1] + u * center[1];
+    intersectionPoint[2] = (1.0 - u) * minDistanceOppositePoint[2] + u * center[2];
+
+    double intersectionDistance = sqrt(vtkMath::Distance2BetweenPoints(intersectionPoint,center));
+
+    if (intersectionDistance > maxIntersectionDistance)
+      {
+      maxIntersectionDistance = intersectionDistance;
+      }
+    }
+
+  minDistance += maxIntersectionDistance;
+
+  maxIntersectionDistance = 0.0;
+
+  for (int i=0; i<numberOfSectionPolygonPoints; i++)
+    {
+    sectionPolygon->GetPoints()->GetPoint(i,point0);
+    sectionPolygon->GetPoints()->GetPoint((i+1)%numberOfSectionPolygonPoints,point1);
+
+    intersection = vtkLine::Intersection(maxDistanceOppositePoint,center,point0,point1,u,v);
+
+    if (intersection == 0)
+      {
+      continue;
+      }
+
+    intersectionPoint[0] = (1.0 - u) * maxDistanceOppositePoint[0] + u * center[0];
+    intersectionPoint[1] = (1.0 - u) * maxDistanceOppositePoint[1] + u * center[1];
+    intersectionPoint[2] = (1.0 - u) * maxDistanceOppositePoint[2] + u * center[2];
+
+    double intersectionDistance = sqrt(vtkMath::Distance2BetweenPoints(intersectionPoint,center));
+
+    if (intersectionDistance > maxIntersectionDistance)
+      {
+      maxIntersectionDistance = intersectionDistance;
+      }
+    }
+
+  maxDistance += maxIntersectionDistance;
+
+  sizeRange[0] = minDistance;
+  sizeRange[1] = maxDistance;
+
+  double sectionShape = minDistance / maxDistance;
+
+  return sectionShape;
+}
+#endif
 
 void vtkvmtkPolyDataBranchSections::PrintSelf(ostream& os, vtkIndent indent)
 {
