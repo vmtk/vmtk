@@ -33,7 +33,6 @@ class vmtkBifurcationSections(pypes.pypeScript):
         self.BifurcationSections = None
 
         self.NumberOfDistanceSpheres = 1
-        self.ShapeRelativeToCenter = 1
 
         self.RadiusArrayName = ''
         self.GroupIdsArrayName = ''
@@ -65,7 +64,6 @@ class vmtkBifurcationSections(pypes.pypeScript):
             ['Surface','i','vtkPolyData',1,'','the input surface, already split into branches','vmtksurfacereader'],
             ['Centerlines','centerlines','vtkPolyData',1,'','the input centerlines, already split into branches','vmtksurfacereader'],
       	    ['NumberOfDistanceSpheres','distancespheres','int',1,'','distance from the bifurcation at which the sections have to be taken; the distance is expressed in number of inscribed spheres, where each sphere touches the center of the previous one'],
-      	    ['ShapeRelativeToCenter','shaperelativetocenter','bool',1,'','compute section min size, max size and shape factor relative to the center of the section'],
       	    ['RadiusArrayName','radiusarray','str',1,'','name of the array where centerline radius is stored'],
       	    ['GroupIdsArrayName','groupidsarray','str',1,'','name of the array where centerline group ids are stored'],
       	    ['CenterlineIdsArrayName','centerlineidsarray','str',1,'','name of the array where centerline ids are stored'],
@@ -115,7 +113,6 @@ class vmtkBifurcationSections(pypes.pypeScript):
         bifurcationSections.SetInput(self.Surface)
         bifurcationSections.SetGroupIdsArrayName(self.GroupIdsArrayName)
         bifurcationSections.SetCenterlines(self.Centerlines)
-        bifurcationSections.SetSectionShapeRelativeToCenter(self.ShapeRelativeToCenter)
         bifurcationSections.SetNumberOfDistanceSpheres(self.NumberOfDistanceSpheres)
         bifurcationSections.SetCenterlineRadiusArrayName(self.RadiusArrayName)
         bifurcationSections.SetCenterlineGroupIdsArrayName(self.GroupIdsArrayName)

@@ -70,8 +70,6 @@ vtkvmtkPolyDataBranchSections::vtkvmtkPolyDataBranchSections()
 
   this->NumberOfDistanceSpheres = 1;
   this->ReverseDirection = 0;
-
-  this->SectionShapeRelativeToCenter = 1;
 }
 
 vtkvmtkPolyDataBranchSections::~vtkvmtkPolyDataBranchSections()
@@ -486,7 +484,7 @@ void vtkvmtkPolyDataBranchSections::ComputeBranchSections(vtkPolyData* input, in
     
     double area = this->ComputeBranchSectionArea(section);
     double sizeRange[2];
-    double shape = this->ComputeBranchSectionShape(section,averagePoint,sizeRange,this->SectionShapeRelativeToCenter);
+    double shape = this->ComputeBranchSectionShape(section,averagePoint,sizeRange);
 
     branchSectionGroupIdsArray->InsertNextValue(groupId);
     branchSectionAreaArray->InsertNextValue(area);
@@ -678,7 +676,7 @@ double vtkvmtkPolyDataBranchSections::ComputeBranchSectionArea(vtkPolyData* bran
   return polygonArea;
 }
 
-double vtkvmtkPolyDataBranchSections::ComputeBranchSectionShape(vtkPolyData* branchSection, double center[3], double sizeRange[2], int relativeToCenter)
+double vtkvmtkPolyDataBranchSections::ComputeBranchSectionShape(vtkPolyData* branchSection, double center[3], double sizeRange[2])
 {
   branchSection->BuildCells();
   

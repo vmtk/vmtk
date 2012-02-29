@@ -65,8 +65,6 @@ vtkvmtkPolyDataBifurcationSections::vtkvmtkPolyDataBifurcationSections()
   this->BifurcationSectionDistanceSpheresArrayName = NULL;
 
   this->NumberOfDistanceSpheres = 1;
-
-  this->SectionShapeRelativeToCenter = 1;
 }
 
 vtkvmtkPolyDataBifurcationSections::~vtkvmtkPolyDataBifurcationSections()
@@ -603,7 +601,7 @@ void vtkvmtkPolyDataBifurcationSections::ComputeBifurcationSections(vtkPolyData*
     
     double area = vtkvmtkPolyDataBranchSections::ComputeBranchSectionArea(section);
     double sizeRange[2];
-    double shape = vtkvmtkPolyDataBranchSections::ComputeBranchSectionShape(section,averagePoint,sizeRange,this->SectionShapeRelativeToCenter);
+    double shape = vtkvmtkPolyDataBranchSections::ComputeBranchSectionShape(section,averagePoint,sizeRange);
     int closedValue = closed ? 1 : 0;
 
     bifurcationSectionGroupIdsArray->InsertNextValue(bifurcationSectionGroupId);

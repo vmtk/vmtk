@@ -95,10 +95,6 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataBifurcationSections 
   vtkSetMacro(NumberOfDistanceSpheres,int);
   vtkGetMacro(NumberOfDistanceSpheres,int);
 
-  vtkSetMacro(SectionShapeRelativeToCenter,int);
-  vtkGetMacro(SectionShapeRelativeToCenter,int);
-  vtkBooleanMacro(SectionShapeRelativeToCenter,int);
-
   protected:
   vtkvmtkPolyDataBifurcationSections();
   ~vtkvmtkPolyDataBifurcationSections();  
@@ -129,8 +125,6 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataBifurcationSections 
   char* BifurcationSectionClosedArrayName;
 
   int NumberOfDistanceSpheres;
-
-  int SectionShapeRelativeToCenter;
 
   private:
   vtkvmtkPolyDataBifurcationSections(const vtkvmtkPolyDataBifurcationSections&);  // Not implemented.
