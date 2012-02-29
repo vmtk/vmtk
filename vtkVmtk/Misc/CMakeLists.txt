@@ -20,6 +20,8 @@ SET (VTK_VMTK_MISC_SRCS
   vtkvmtkRBFInterpolation.cxx
   vtkvmtkSimpleCapPolyData.cxx
   vtkvmtkSmoothCapPolyData.cxx
+  vtkvmtkStaticTemporalInterpolatedVelocityField.cxx
+  vtkvmtkStaticTemporalStreamTracer.cxx
   vtkvmtkStreamlineClusteringFilter.cxx
   vtkvmtkStreamlineOsculatingCentersFilter.cxx
   vtkvmtkStreamlineToParticlesFilter.cxx
@@ -38,6 +40,11 @@ IF (VTK_VMTK_BUILD_TETGEN)
 
   SET (VTK_VMTK_MISC_TARGET_LINK_LIBRARIES ${VTK_VMTK_MISC_TARGET_LINK_LIBRARIES} tet)
 ENDIF (VTK_VMTK_BUILD_TETGEN)
+
+IF (VTK_VMTK_BUILD_STREAMTRACER)
+  SET (VTK_VMTK_MISC_SRCS ${VTK_VMTK_MISC_SRCS} vtkvmtkStaticTemporalInterpolatedVelocityField.cxx vtkvmtkStaticTemporalStreamTracer.cxx)
+
+ENDIF (VTK_VMTK_BUILD_STREAMTRACER)
 
 ADD_LIBRARY (vtkvmtkMisc ${VTK_VMTK_MISC_SRCS})
 IF(VMTK_LIBRARY_PROPERTIES)
