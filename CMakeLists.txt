@@ -85,6 +85,7 @@ if( VMTK_USE_SUPERBUILD )
     option ( VMTK_ENABLE_DISTRIBUTION "Enable distribution targets." OFF )
     option ( VMTK_BUILD_TETGEN "Build TetGen and TetGen wrapper. Check TetGen license before you activate this." ON )
     option ( VMTK_BUILD_STREAMTRACER "Build static temporal stream tracer." ON )
+    option ( BUILD_SHARED_LIBS "Build shared libraries." ON )
   endif (VMTK_BUNJEE_BUILD)
 
   include( "${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild.cmake" )
