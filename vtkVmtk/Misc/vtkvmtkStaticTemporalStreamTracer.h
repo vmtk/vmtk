@@ -41,6 +41,7 @@ Language:  C++
 #define __vtkvmtkStaticTemporalStreamTracer_h
 
 #include "vtkStreamTracer.h"
+#include "vtkvmtkWin32Header.h"
 
 class vtkTable;
 

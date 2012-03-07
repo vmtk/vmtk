@@ -38,6 +38,7 @@ Language:  C++
 #define __vtkvmtkStaticTemporalInterpolatedVelocityField_h
 
 #include "vtkAbstractInterpolatedVelocityField.h"
+#include "vtkvmtkWin32Header.h"
 
 class vtkTable;
 
