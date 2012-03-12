@@ -294,6 +294,54 @@ class pypeScript(object):
         usageString += '\n'
         return usageString
 
+    def GetMarkdownUsageString(self):
+        usageString = ''
+        usageString += '---' + '\n'
+        usageString += 'layout: default' + '\n'
+        usageString += '---' + '\n'
+        usageString += '<h1>'
+        usageString += self.ScriptName
+        usageString += '</h1>'
+        usageString += '\n'
+        if self.ScriptDoc != '':
+            usageString += '<h2>Description</h2>' + '\n'
+            usageString += self.ScriptDoc + '\n'
+        for memberList in [self.InputMembers, self.OutputMembers]:
+            if memberList == self.InputMembers :
+                 usageString += '<h3>Input arguments</h3>' + '\n'
+            elif memberList == self.OutputMembers :
+                 usageString += '<h3>Output arguments</h3>' + '\n'
+            usageString += '<table class="vmtkscripts">' + '\n'
+            usageString += '<tr>' + '\n'
+            usageString += '<th>Argument</th><th>Variable</th><th>Type</th><th>Length</th><th>Range</th><th>Default</th><th>Description</th>\n'
+            usageString += '</tr>' + '\n'
+            for memberEntry in memberList:
+                memberUsageString = ''
+                memberName  = memberEntry.MemberName
+                option = memberEntry.OptionName
+                memberType = memberEntry.MemberType
+                memberLength = memberEntry.MemberLength
+                memberRange = memberEntry.MemberRange
+                memberDoc = memberEntry.MemberDoc
+                if option!='':
+                    default = 0
+                    if memberLength == 0:
+                        memberUsageString += '<td>' + option + '</td><td>' + memberName + '</td><td></td><td></td><td></td><td></td>'
+                    elif memberType in self.BuiltinOptionTypes + ["bool"]:
+                        default = self.__getattribute__(memberName)
+                        memberUsageString += '<td>' + option + '</td><td>' + memberName + '</td><td>' + memberType + '</td><td>' + str(memberLength) + '</td><td>' + str(memberRange) + '</td><td>' + str(default) + '</td>'
+                    else:
+                        memberUsageString += '<td>' + option + '</td><td>' + memberName + '</td><td>' + memberType + '</td><td>' + str(memberLength) + '</td><td></td><td></td>'
+                    if not memberDoc:
+                        memberDoc = ''
+                    memberUsageString += '<td>' + memberDoc + '</td>'
+                    #memberUsageString += ' | '
+                memberUsageString += '\n'
+                usageString += '<tr>' + memberUsageString + '</tr>' + '\n'
+            usageString += '</table>'
+        usageString += '\n'
+        return usageString
+
     def GetDokuWikiUsageString(self):
         usageString = ''
         usageString = '======'
@@ -382,6 +430,11 @@ class pypeScript(object):
             if arg == '--help':
                 self.PrintLog('')
                 self.OutputText(self.GetUsageString())
+                self.PrintLog('')
+                return 0
+            if arg == '--markdown':
+                self.PrintLog('')
+                self.OutputText(self.GetMarkdownUsageString())
                 self.PrintLog('')
                 return 0
             if arg == '--dokuwiki':
