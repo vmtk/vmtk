@@ -51,6 +51,19 @@ option( VMTK_BUNJEE_BUILD
 
 if( VMTK_USE_SUPERBUILD )
 
+  if( NOT GIT_EXECUTABLE )
+    find_package( Git REQUIRED )
+  endif( NOT GIT_EXECUTABLE )
+  
+  option( GIT_PROTOCOL_HTTPS 
+    "Use HTTPS for git access (useful if behind a firewall)" OFF )
+  if( GIT_PROTOCOL_HTTPS )
+    set( GIT_PROTOCOL "https" CACHE STRING "Https protocol for file transfer" FORCE )
+  else( GIT_PROTOCOL_HTTPS )
+    set( GIT_PROTOCOL "git" CACHE STRING "Git protocol for file transfer" FORCE )
+  endif( GIT_PROTOCOL_HTTPS )
+  mark_as_advanced( GIT_PROTOCOL )
+
   if( VMTK_BUNJEE_BUILD )
     set ( VTK_VMTK_WRAP_PYTHON OFF CACHE BOOL "" FORCE )
     set ( VMTK_CONTRIB_SCRIPTS OFF CACHE BOOL "" FORCE )
