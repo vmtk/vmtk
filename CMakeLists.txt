@@ -105,6 +105,8 @@ if( VMTK_USE_SUPERBUILD )
     option ( BUILD_SHARED_LIBS "Build shared libraries." ON )
     option ( VTK_USE_RENDERING "Build VTK rendering classes." ON )
     option ( VTK_USE_HYBRID "Build VTK Hybrid classes." ON )
+    OPTION(VMTK_SCRIPTS_ENABLED "Build and install vmtkScripts and Pypes" ON)
+    OPTION(VMTK_MINIMAL_INSTALL "Do not install individual scripts, only vmtk.py" OFF)
   endif (VMTK_BUNJEE_BUILD)
 
   include( "${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild.cmake" )
