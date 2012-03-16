@@ -22,6 +22,20 @@ import vtkvmtk
 
 vmtkrenderer = 'vmtkRenderer'
 
+
+class vmtkRendererInputStream(object):
+
+    def __init__(self,renderer):
+        self.renderer = renderer
+
+    def readline(self):
+        self.renderer.EnterTextInputMode(exitAfter=True)
+        return self.renderer.CurrentTextInput
+
+    def prompt(self,text):
+        self.renderer.TextInputQuery = text
+
+
 class vmtkRenderer(pypes.pypeScript):
 
     def __init__(self):
@@ -43,7 +57,17 @@ class vmtkRenderer(pypes.pypeScript):
         self.LineSmoothing = 1
         self.PolygonSmoothing = 0
 
+        self.TextInputMode = 0
+
+        self.TextInputActor = None
+        self.TextInputQuery = None
+
+        self.CurrentTextInput = None
+        self.InputPosition = [150.0, 150.0]
+
         self.ScreenshotMagnification = 4
+
+        self.UseRendererInputStream = True
 
         self.SetScriptName('vmtkrenderer')
         self.SetScriptDoc('renderer used to make several viewers use the same rendering window')
@@ -57,9 +81,30 @@ class vmtkRenderer(pypes.pypeScript):
         self.SetOutputMembers([
             ['vmtkRenderer','o','vmtkRenderer',1,'','the renderer']])
 
-    def KeyPressed(self,object,event):
+    def UpdateTextInput(self):
+        self.TextInputActor.SetInput(self.TextInputQuery+self.CurrentTextInput+'_')
+        self.RenderWindow.Render()
 
-        key = object.GetKeySym()
+    def CharCallback(self, obj, event):
+        key = self.RenderWindowInteractor.GetKeySym()
+
+        if self.TextInputMode:
+            if key == 'Return':
+                self.ExitTextInputMode()
+                return
+            if key == 'space':
+                key = ' '
+            elif len(key) > 1 and key != 'Backspace':
+                key = None
+            if key == 'Backspace':
+                textInput = self.CurrentTextInput
+                if len(textInput) > 0:
+                    self.CurrentTextInput = textInput[:-1]
+            elif key:
+                self.CurrentTextInput += key
+            self.UpdateTextInput()
+            return
+
         ctrlPressed = self.RenderWindowInteractor.GetControlKey()
         if key == 's' and  ctrlPressed or key == 'x':
             filePrefix = 'vmtk-screenshot'
@@ -79,6 +124,24 @@ class vmtkRenderer(pypes.pypeScript):
             writer.SetInput(windowToImage.GetOutput())
             writer.SetFileName(fileName)
             writer.Write()
+        if key == 'q':
+            self.RenderWindowInteractor.ExitCallback()
+
+    def EnterTextInputMode(self, exitAfter=False):
+        self.CurrentTextInput = ''
+        self.Renderer.AddActor(self.TextInputActor)
+        self.UpdateTextInput()
+        self.TextInputMode = 1
+        self.ExitAfterTextInput = exitAfter
+        self.Render()
+    
+    def ExitTextInputMode(self):
+        self.Renderer.RemoveActor(self.TextInputActor)
+        self.RenderWindow.Render()
+        self.TextInputMode = 0
+        if self.ExitAfterTextInput:
+            self.RenderWindowInteractor.ExitCallback()
+            self.ExitAfterTextInput = False
 
     def Render(self,interactive=1):
 
@@ -88,6 +151,9 @@ class vmtkRenderer(pypes.pypeScript):
         self.RenderWindow.Render()
         if interactive:
             self.RenderWindowInteractor.Start()
+
+    def OnCharCallback(self, obj, event):
+        pass
 
     def Initialize(self):
 
@@ -103,9 +169,20 @@ class vmtkRenderer(pypes.pypeScript):
             self.RenderWindowInteractor = vtk.vtkRenderWindowInteractor()
             if 'vtkCocoaRenderWindowInteractor' in dir(vtk) and vtk.vtkCocoaRenderWindowInteractor.SafeDownCast(self.RenderWindowInteractor):
                 self.RenderWindowInteractor = vtkvmtk.vtkvmtkCocoaRenderWindowInteractor()
-            self.RenderWindowInteractor.SetInteractorStyle(vtk.vtkInteractorStyleTrackballCamera())
             self.RenderWindow.SetInteractor(self.RenderWindowInteractor)
-            self.vmtkRenderer.RenderWindowInteractor.AddObserver("KeyPressEvent",self.KeyPressed)
+            self.RenderWindowInteractor.SetInteractorStyle(vtk.vtkInteractorStyleTrackballCamera())
+            self.RenderWindowInteractor.GetInteractorStyle().AddObserver("CharEvent",self.CharCallback)
+
+            self.TextInputActor = vtk.vtkTextActor()
+            self.TextInputActor.SetPosition(self.InputPosition)
+        
+        if self.UseRendererInputStream:
+            self.InputStream = vmtkRendererInputStream(self)
+
+    def RegisterScript(self, script):
+
+        if self.UseRendererInputStream:
+            script.InputStream = vmtkRendererInputStream(self)
 
     def Execute(self):
         self.Initialize()

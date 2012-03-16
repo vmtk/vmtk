@@ -76,6 +76,8 @@ class vmtkCenterlineLabeler(pypes.pypeScript):
             self.vmtkRenderer = vmtkrenderer.vmtkRenderer()
             self.vmtkRenderer.Initialize()
             self.OwnRenderer = 1
+
+        self.vmtkRenderer.RegisterScript(self)
         
         groupIdsArray = self.Centerlines.GetCellData().GetArray(self.GroupIdsArrayName)
         groupIds = []
@@ -95,10 +97,12 @@ class vmtkCenterlineLabeler(pypes.pypeScript):
             viewer.Centerlines = self.Centerlines
             viewer.CellDataArrayName = self.GroupIdsArrayName
             viewer.vmtkRenderer = self.vmtkRenderer
-            viewer.InputText = self.InputText
-            viewer.OutputText = self.OutputText
-            viewer.PrintError = self.PrintError
-            viewer.PringLog = self.PrintLog
+            viewer.InputStream = self.InputStream
+            viewer.OutputStream = self.OutputStream
+            #viewer.InputText = self.InputText
+            #viewer.OutputText = self.OutputText
+            #viewer.PrintError = self.PrintError
+            #viewer.PringLog = self.PrintLog
             viewer.Execute()
            
             ok = False
@@ -122,7 +126,6 @@ class vmtkCenterlineLabeler(pypes.pypeScript):
                 if not groupId in uniqueGroupIds:
                     self.PrintError('Error: groupId %d does not exist' % groupId)
                 labelMap[groupId] = labelId
- 
  
         labelIdsArray = vtk.vtkIntArray()
         labelIdsArray.SetName(self.LabelIdsArrayName)

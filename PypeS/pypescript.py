@@ -170,6 +170,10 @@ class pypeScript(object):
         
     def InputText(self,prompt='',validator=None):
         self.OutputText(prompt)
+        try:
+            self.InputStream.prompt(prompt)
+        except:
+            pass
         text = self.InputStream.readline().rstrip('\n')
         if validator:
             while not validator(text):
