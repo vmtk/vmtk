@@ -45,7 +45,7 @@ class vmtkMeshClipper(pypes.pypeScript):
             ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh','vmtkmeshwriter']
             ])
 
-    def ClipCallback(self):
+    def ClipCallback(self, obj):
         if self.BoxWidget.GetEnabled() != 1:
             return
         self.BoxWidget.GetPlanes(self.Planes)

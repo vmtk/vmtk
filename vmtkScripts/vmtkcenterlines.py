@@ -145,12 +145,12 @@ class vmtkPickPointSeedSelector(vmtkSeedSelector):
         self.vmtkRenderer = None
         self.OwnRenderer = 0
 
-    def UndoCallback(self):
+    def UndoCallback(self, obj):
         self.InitializeSeeds()
         self.PickedSeeds.Modified()
         self.vmtkRenderer.RenderWindow.Render()
 
-    def PickCallback(self,obj):
+    def PickCallback(self, obj):
         picker = vtk.vtkCellPicker()
         picker.SetTolerance(1E-4 * self._Surface.GetLength())
         eventPosition = obj.GetEventPosition()

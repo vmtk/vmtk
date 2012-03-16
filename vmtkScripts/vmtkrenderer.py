@@ -92,7 +92,7 @@ class vmtkRenderer(pypes.pypeScript):
         self.SetOutputMembers([
             ['vmtkRenderer','o','vmtkRenderer',1,'','the renderer']])
 
-    def ScreenshotCallback(self):
+    def ScreenshotCallback(self, obj):
         filePrefix = 'vmtk-screenshot'
         fileNumber = 0
         fileName = "%s-%d.png" % (filePrefix,fileNumber)
@@ -111,7 +111,7 @@ class vmtkRenderer(pypes.pypeScript):
         writer.SetFileName(fileName)
         writer.Write()
 
-    def QuitRendererCallback(self):
+    def QuitRendererCallback(self, obj):
         print 'Exiting'
         self.Renderer.RemoveActor(self.TextActor)
         self.RenderWindowInteractor.ExitCallback()
@@ -191,18 +191,18 @@ class vmtkRenderer(pypes.pypeScript):
     
         if len(self.KeyBindings.keys()) != 0:
             sortedKeys = self.KeyBindings.keys()
-                sortedKeys.sort()
+            sortedKeys.sort()
             textActorInputs = ['%s: %s' % (key, self.KeyBindings[key]['text']) for key in sortedKeys]
-                self.TextActor.SetInput('\n'.join(textActorInputs))
-                self.Renderer.AddActor(self.TextActor)
+            self.TextActor.SetInput('\n'.join(textActorInputs))
+            self.Renderer.AddActor(self.TextActor)
 
         if len(self.KeyBindingsOpmode.keys()) != 0:
             sortedKeysOpmode = self.KeyBindingsOpmode.keys()
-                sortedKeysOpmode.sort()
+            sortedKeysOpmode.sort()
             textActorInputsOpmode = ['%s: %s' % (key, self.KeyBindingsOpmode[key]['text']) for key in sortedKeysOpmode]
-                self.TextActorOpmode.SetInput('\n'.join(textActorInputsOpmode))
+            self.TextActorOpmode.SetInput('\n'.join(textActorInputsOpmode))
             self.TextActorOpmode.GetProperty().SetColor(1.0, 0.75, 0.32)
-                self.Renderer.AddActor(self.TextActorOpmode)
+            self.Renderer.AddActor(self.TextActorOpmode)
         else:
             self.TextActorOpmode.SetInput('.')
             self.Renderer.AddActor(self.TextActorOpmode)

@@ -159,7 +159,7 @@ class vmtkNetworkEditor(pypes.pypeScript):
             if self.PlaneWidgetZ:
                 self.PlaneWidgetZ.InteractionOff()
 
-    def KeyReleaseCallback(self,object,event):
+    def KeyReleaseCallback(self,obj,event):
         pass
         #key = object.GetKeySym()
         #if self.OperationMode == 'add':
@@ -167,10 +167,10 @@ class vmtkNetworkEditor(pypes.pypeScript):
         #        if self.PickMode == 'network':
         #            self.SetPickMode('image')
 
-    def ShowLabelCallback(self):
+    def ShowLabelCallback(self, obj):
         self.ToggleLabels()
 
-    def AddCallback(self):
+    def AddCallback(self, obj):
         self.PrintLog('Add mode')
         self.OperationMode = 'add'
         self.InitializeActiveSegment()
@@ -183,7 +183,7 @@ class vmtkNetworkEditor(pypes.pypeScript):
         self.vmtkRenderer.AddKeyBinding('b','return',self.ReturnAddCallback,'opmode')
         self.vmtkRenderer.Render()
 
-    def DeleteCallback(self):
+    def DeleteCallback(self, obj):
         self.PrintLog('Delete mode')
         self.OperationMode = 'delete'
         self.InitializeActiveSegment()
@@ -199,7 +199,7 @@ class vmtkNetworkEditor(pypes.pypeScript):
             self.InitializeActiveSegment()
         self.vmtkRenderer.Render()
 
-    def SplitCallback(self):
+    def SplitCallback(self, obj):
         self.PrintLog('Split mode')
         self.OperationMode = 'split'
         self.InitializeActiveSegment()
@@ -215,7 +215,7 @@ class vmtkNetworkEditor(pypes.pypeScript):
             self.InitializeActiveSegment()
         self.vmtkRenderer.Render()
 
-    def LabelCallback(self):
+    def LabelCallback(self, obj):
         self.PrintLog('Label mode')
         self.OperationMode = 'label'
         self.InitializeActiveSegment()
@@ -231,7 +231,7 @@ class vmtkNetworkEditor(pypes.pypeScript):
             self.InitializeActiveSegment()
         self.vmtkRenderer.Render()
 
-    def MergeCallback(self):
+    def MergeCallback(self, obj):
         self.PrintLog('Merge mode')
         self.OperationMode = 'merge'
         self.InitializeActiveSegment()
@@ -249,18 +249,18 @@ class vmtkNetworkEditor(pypes.pypeScript):
         self.vmtkRenderer.AddKeyBinding('b','return',self.ReturnCallback,'opmode')
         self.vmtkRenderer.Render()
 
-    def SpaceCallback(self):
+    def SpaceCallback(self, obj):
         self.PrintLog('space')
         self.TogglePickMode()
         self.TogglePlaneWidget(self.PlaneWidgetX)
         self.TogglePlaneWidget(self.PlaneWidgetY)
         self.TogglePlaneWidget(self.PlaneWidgetZ)		
 
-    def CancelCallback(self):
+    def CancelCallback(self, obj):
         self.PrintLog('c')
         self.InitializeActiveSegment()
 
-    def UndoCallback(self):
+    def UndoCallback(self, obj):
         numberOfSeeds = self.ActiveSegmentSeedsPoints.GetNumberOfPoints()
         if numberOfSeeds > 0:
             self.ActiveSegmentSeedsPoints.SetNumberOfPoints(numberOfSeeds-1)
@@ -289,7 +289,7 @@ class vmtkNetworkEditor(pypes.pypeScript):
             self.ActiveSegment.Modified()
         self.Render()
 
-    def PlusCallback(self):
+    def PlusCallback(self, obj):
         numberOfSeeds = self.ActiveSegmentSeedsPoints.GetNumberOfPoints()
         if numberOfSeeds > 0:
             radius = self.ActiveSegmentSeedsRadiusArray.GetValue(numberOfSeeds-1)
@@ -305,7 +305,7 @@ class vmtkNetworkEditor(pypes.pypeScript):
             self.ActiveSegment.Modified()
         self.Render()
 
-    def MinusCallback(self):
+    def MinusCallback(self, obj):
         numberOfSeeds = self.ActiveSegmentSeedsPoints.GetNumberOfPoints()
         if numberOfSeeds > 0:
             radius = self.ActiveSegmentSeedsRadiusArray.GetValue(numberOfSeeds-1)
@@ -321,7 +321,7 @@ class vmtkNetworkEditor(pypes.pypeScript):
             self.ActiveSegment.Modified()
         self.Render()
 
-    def ReturnAddCallback(self):
+    def ReturnAddCallback(self, obj):
         attachedPointId0 = -1
         attachedPointId1 = -1
         cellIdsToRemove = []
@@ -363,7 +363,7 @@ class vmtkNetworkEditor(pypes.pypeScript):
         self.InitializeSelection()
         self.InitializeActiveSegment()
 
-    def ReturnCallback(self):
+    def ReturnCallback(self, obj):
         numberOfActiveCells = self.ActiveSegment.GetNumberOfCells()
         if numberOfActiveCells != 2 or len(self.CellIdsToMerge) != 2:
             return
@@ -461,7 +461,7 @@ class vmtkNetworkEditor(pypes.pypeScript):
         self.Network.BuildCells()
         return splitPointId, True
 
-    def LeftButtonPressCallback(self,object,event):
+    def LeftButtonPressCallback(self,obj,event):
         if self.PickMode != 'network':
             return
         if self.vmtkRenderer.RenderWindowInteractor.GetControlKey() == 0:
@@ -575,7 +575,7 @@ class vmtkNetworkEditor(pypes.pypeScript):
         self.AttachedPCoords = [0.0,0.0]
         self.Render()
 
-    def MouseMoveCallback(self,object,event):
+    def MouseMoveCallback(self,obj,event):
         if self.PickMode != 'network':
             return
         if self.vmtkRenderer.RenderWindowInteractor.GetControlKey() == 0:
@@ -584,7 +584,7 @@ class vmtkNetworkEditor(pypes.pypeScript):
             return
         if self.Network.GetNumberOfCells() == 0:
             return
-        eventPosition = object.GetEventPosition()
+        eventPosition = obj.GetEventPosition()
         result = self.CellPicker.Pick(float(eventPosition[0]),float(eventPosition[1]),0.0,self.vmtkRenderer.Renderer)
         if result == 0:
             return
@@ -613,12 +613,12 @@ class vmtkNetworkEditor(pypes.pypeScript):
         self.Selection.Modified()
         self.Render()
 
-    def PlaneStartInteractionCallback(self,object,event):
+    def PlaneStartInteractionCallback(self,obj,event):
         if self.PickMode != 'image':
             return
         if self.vmtkRenderer.RenderWindowInteractor.GetControlKey() == 0:
             return
-        point = object.GetCurrentCursorPosition()
+        point = obj.GetCurrentCursorPosition()
         radius = self.CurrentRadius
         if self.ActiveSegmentSeeds.GetNumberOfPoints() == 0:
             self.ActiveSegmentSeedsPoints.InsertNextPoint(point)

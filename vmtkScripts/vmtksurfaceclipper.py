@@ -53,7 +53,7 @@ class vmtkSurfaceClipper(pypes.pypeScript):
             ['Transform','otransform','vtkTransform',1,'','the output widget transform']
             ])
 
-    def ClipCallback(self):
+    def ClipCallback(self, obj):
         if self.ClipWidget.GetEnabled() != 1:
             return
         if self.WidgetType == "box":
