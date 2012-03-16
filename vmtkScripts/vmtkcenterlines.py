@@ -145,36 +145,34 @@ class vmtkPickPointSeedSelector(vmtkSeedSelector):
         self.vmtkRenderer = None
         self.OwnRenderer = 0
 
-    def KeyPressed(self,obj,event):
-        key = obj.GetKeySym()
-        if key == 'u':
-            self.InitializeSeeds()
-            self.PickedSeeds.Modified()
-            self.vmtkRenderer.RenderWindow.Render()
+    def UndoCallback(self):
+        self.InitializeSeeds()
+        self.PickedSeeds.Modified()
+        self.vmtkRenderer.RenderWindow.Render()
+
+    def PickCallback(self,obj):
+        picker = vtk.vtkCellPicker()
+        picker.SetTolerance(1E-4 * self._Surface.GetLength())
+        eventPosition = obj.GetEventPosition()
+        result = picker.Pick(float(eventPosition[0]),float(eventPosition[1]),0.0,self.vmtkRenderer.Renderer)
+        if result == 0:
             return
-        elif key == 'space':
-            picker = vtk.vtkCellPicker()
-            picker.SetTolerance(1E-4 * self._Surface.GetLength())
-            eventPosition = obj.GetEventPosition()
-            result = picker.Pick(float(eventPosition[0]),float(eventPosition[1]),0.0,self.vmtkRenderer.Renderer)
-            if result == 0:
-                return
-            pickPosition = picker.GetPickPosition()
-            pickedCellPointIds = self._Surface.GetCell(picker.GetCellId()).GetPointIds()
-            minDistance = 1E10
-            pickedSeedId = -1
-            for i in range(pickedCellPointIds.GetNumberOfIds()):
-                distance = vtk.vtkMath.Distance2BetweenPoints(pickPosition,self._Surface.GetPoint(pickedCellPointIds.GetId(i)))
-                if distance < minDistance:
-                    minDistance = distance
-                    pickedSeedId = pickedCellPointIds.GetId(i)
-            if pickedSeedId == -1:
-                pickedSeedId = pickedCellPointIds.GetId(0)
-            self.PickedSeedIds.InsertNextId(pickedSeedId)
-            point = self._Surface.GetPoint(pickedSeedId)
-            self.PickedSeeds.GetPoints().InsertNextPoint(point)
-            self.PickedSeeds.Modified()
-            self.vmtkRenderer.RenderWindow.Render()
+        pickPosition = picker.GetPickPosition()
+        pickedCellPointIds = self._Surface.GetCell(picker.GetCellId()).GetPointIds()
+        minDistance = 1E10
+        pickedSeedId = -1
+        for i in range(pickedCellPointIds.GetNumberOfIds()):
+            distance = vtk.vtkMath.Distance2BetweenPoints(pickPosition,self._Surface.GetPoint(pickedCellPointIds.GetId(i)))
+            if distance < minDistance:
+                minDistance = distance
+                pickedSeedId = pickedCellPointIds.GetId(i)
+        if pickedSeedId == -1:
+            pickedSeedId = pickedCellPointIds.GetId(0)
+        self.PickedSeedIds.InsertNextId(pickedSeedId)
+        point = self._Surface.GetPoint(pickedSeedId)
+        self.PickedSeeds.GetPoints().InsertNextPoint(point)
+        self.PickedSeeds.Modified()
+        self.vmtkRenderer.RenderWindow.Render()
 
     def InitializeSeeds(self):
         self.PickedSeedIds.Initialize()
@@ -196,6 +194,8 @@ class vmtkPickPointSeedSelector(vmtkSeedSelector):
             self.vmtkRenderer.Initialize()
             self.OwnRenderer = 1
 
+        self.vmtkRenderer.RegisterScript(self) 
+
         glyphs = vtk.vtkGlyph3D()
         glyphSource = vtk.vtkSphereSource()
         glyphs.SetInput(self.PickedSeeds)
@@ -210,8 +210,9 @@ class vmtkPickPointSeedSelector(vmtkSeedSelector):
         self.SeedActor.PickableOff()
         self.vmtkRenderer.Renderer.AddActor(self.SeedActor)
 
-        self.vmtkRenderer.RenderWindowInteractor.AddObserver("KeyPressEvent", self.KeyPressed)
-
+        ##self.vmtkRenderer.RenderWindowInteractor.AddObserver("KeyPressEvent", self.KeyPressed)
+        self.vmtkRenderer.AddKeyBinding('u','Undo.',self.UndoCallback)
+        self.vmtkRenderer.AddKeyBinding('space','Add points.',self.PickCallback)
         surfaceMapper = vtk.vtkPolyDataMapper()
         surfaceMapper.SetInput(self._Surface)
         surfaceMapper.ScalarVisibilityOff()
@@ -272,6 +273,8 @@ class vmtkOpenProfilesSeedSelector(vmtkSeedSelector):
             self.vmtkRenderer = vmtkrenderer.vmtkRenderer()
             self.vmtkRenderer.Initialize()
             self.OwnRenderer = 1
+
+        self.vmtkRenderer.RegisterScript(self) 
 
         seedPoints = vtk.vtkPoints()
         for i in range(self._SeedIds.GetNumberOfIds()):

@@ -65,6 +65,8 @@ class vmtkMeshViewer(pypes.pypeScript):
             self.vmtkRenderer.Initialize()
             self.OwnRenderer = 1
 
+        self.vmtkRenderer.RegisterScript(self) 
+
         if self.Actor != None:
             self.vmtkRenderer.Renderer.RemoveActor(self.Actor)
 

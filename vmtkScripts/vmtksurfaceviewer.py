@@ -73,6 +73,8 @@ class vmtkSurfaceViewer(pypes.pypeScript):
             self.vmtkRenderer.Initialize()
             self.OwnRenderer = 1
 
+        self.vmtkRenderer.RegisterScript(self) 
+
         if self.Actor:
             self.vmtkRenderer.Renderer.RemoveActor(self.Actor)
 

@@ -99,7 +99,9 @@ class vmtkFlowExtensions(pypes.pypeScript):
                 self.vmtkRenderer = vmtkrenderer.vmtkRenderer()
                 self.vmtkRenderer.Initialize()
                 self.OwnRenderer = 1
- 
+
+            self.vmtkRenderer.RegisterScript(self)  
+
             boundaryExtractor = vtkvmtk.vtkvmtkPolyDataBoundaryExtractor()
             boundaryExtractor.SetInput(self.Surface)
             boundaryExtractor.Update()

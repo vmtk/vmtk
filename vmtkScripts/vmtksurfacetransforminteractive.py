@@ -57,11 +57,8 @@ class vmtkSurfaceTransformInteractive(pypes.pypeScript):
             ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter'],
             ['Matrix4x4','omatrix4x4','vtkMatrix4x4',1,'','the output transform matrix']
             ])
- 
-    def KeyPressed(self,object,event):
-        key = object.GetKeySym()
-        if key != 'space':
-            return
+
+    def MoveCallback(self):
         if self.BoxWidget.GetEnabled() != 1:
             return
         self.BoxWidget.GetTransform(self.Transform)
@@ -74,6 +71,23 @@ class vmtkSurfaceTransformInteractive(pypes.pypeScript):
             self.TransformedSurface.GetSource().UnregisterAllOutputs()
  
         self.vmtkRenderer.RenderWindow.Render()     
+
+    ##def KeyPressed(self,obj,event):
+      ##  key = obj.GetKeySym()
+        ##if key != 'space':
+          ##  return
+        ##if self.BoxWidget.GetEnabled() != 1:
+          ##  return
+        ##self.BoxWidget.GetTransform(self.Transform)
+        ##self.TransformFilter.Update()
+ 
+        ##self.TransformedSurface.ShallowCopy(self.TransformFilter.GetOutput())
+        ##self.TransformedSurface.Update()
+ 
+        ##if self.TransformedSurface.GetSource():
+          ##  self.TransformedSurface.GetSource().UnregisterAllOutputs()
+ 
+        ##self.vmtkRenderer.RenderWindow.Render()     
  
     def Display(self):
  
@@ -82,8 +96,8 @@ class vmtkSurfaceTransformInteractive(pypes.pypeScript):
  
       	self.vmtkRenderer.RenderWindowInteractor.Initialize()
  
-        self.vmtkRenderer.RenderWindowInteractor.AddObserver("KeyPressEvent", self.KeyPressed)
-        self.vmtkRenderer.RenderWindow.Render()
+        self.vmtkRenderer.AddKeyBinding('i','Interact.')
+        self.vmtkRenderer.Render()
         self.vmtkRenderer.RenderWindowInteractor.Start()
  
     def Execute(self):
@@ -98,6 +112,8 @@ class vmtkSurfaceTransformInteractive(pypes.pypeScript):
             self.vmtkRenderer = vmtkrenderer.vmtkRenderer()
             self.vmtkRenderer.Initialize()
             self.OwnRenderer = 1
+
+        self.vmtkRenderer.RegisterScript(self) 
  
         if self.Transform == None:   
             self.Transform = vtk.vtkTransform()
@@ -154,7 +170,9 @@ class vmtkSurfaceTransformInteractive(pypes.pypeScript):
         self.OutputText('Use the middle-mouse-button to move the box \n')
         self.OutputText('Press space to move the surface to its new postion \n')
         self.OutputText('Press \'q\' to quit and apply the transform \n')
- 
+        
+        self.vmtkRenderer.AddKeyBinding('space','Move the surface.',self.MoveCallback)
+        self.vmtkRenderer.AddKeyBinding('i','Interact.')
         self.Display()
  
         self.Surface = self.TransformedSurface

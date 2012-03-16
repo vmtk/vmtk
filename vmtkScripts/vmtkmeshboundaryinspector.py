@@ -68,6 +68,8 @@ class vmtkMeshBoundaryInspector(pypes.pypeScript):
             self.vmtkRenderer.Initialize()
             self.OwnRenderer = 1
 
+        self.vmtkRenderer.RegisterScript(self) 
+
         threshold = vtk.vtkThreshold()
         threshold.SetInput(self.Mesh)
         threshold.ThresholdByUpper(self.VolumeCellEntityId+0.5)
