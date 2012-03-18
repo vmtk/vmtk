@@ -153,7 +153,7 @@ class vmtkPickPointSeedSelector(vmtkSeedSelector):
     def PickCallback(self, obj):
         picker = vtk.vtkCellPicker()
         picker.SetTolerance(1E-4 * self._Surface.GetLength())
-        eventPosition = obj.GetEventPosition()
+        eventPosition = self.vmtkRenderer.RenderWindowInteractor.GetEventPosition()
         result = picker.Pick(float(eventPosition[0]),float(eventPosition[1]),0.0,self.vmtkRenderer.Renderer)
         if result == 0:
             return

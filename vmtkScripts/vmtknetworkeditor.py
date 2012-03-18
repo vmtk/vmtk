@@ -174,13 +174,13 @@ class vmtkNetworkEditor(pypes.pypeScript):
         self.PrintLog('Add mode')
         self.OperationMode = 'add'
         self.InitializeActiveSegment()
-        self.vmtkRenderer.AddKeyBinding('space','go',self.SpaceCallback, 'opmode')
-        self.vmtkRenderer.AddKeyBinding('c','cancel',self.CancelCallback,'opmode')
-        self.vmtkRenderer.AddKeyBinding('u','undo',self.UndoCallback,'opmode')
-        self.vmtkRenderer.AddKeyBinding('plus','plus',self.PlusCallback,'opmode')
-        self.vmtkRenderer.AddKeyBinding('minus','minus',self.MinusCallback,'opmode')
-        self.vmtkRenderer.AddKeyBinding('equal','equal',self.PlusCallback,'opmode')
-        self.vmtkRenderer.AddKeyBinding('b','return',self.ReturnAddCallback,'opmode')
+        self.vmtkRenderer.AddKeyBinding('space','go',self.SpaceCallback, '2')
+        self.vmtkRenderer.AddKeyBinding('c','cancel',self.CancelCallback,'2')
+        self.vmtkRenderer.AddKeyBinding('u','undo',self.UndoCallback,'2')
+        self.vmtkRenderer.AddKeyBinding('plus','plus',self.PlusCallback,'2')
+        self.vmtkRenderer.AddKeyBinding('minus','minus',self.MinusCallback,'2')
+        self.vmtkRenderer.AddKeyBinding('equal','equal',self.PlusCallback,'2')
+        self.vmtkRenderer.AddKeyBinding('b','return',self.ReturnAddCallback,'2')
         self.vmtkRenderer.Render()
 
     def DeleteCallback(self, obj):
@@ -246,7 +246,7 @@ class vmtkNetworkEditor(pypes.pypeScript):
             self.SetPickMode('network')
             self.InitializeActiveSegment()
             self.CellIdsToMerge = []
-        self.vmtkRenderer.AddKeyBinding('b','return',self.ReturnCallback,'opmode')
+        self.vmtkRenderer.AddKeyBinding('b','return',self.ReturnCallback,'2')
         self.vmtkRenderer.Render()
 
     def SpaceCallback(self, obj):
@@ -584,7 +584,7 @@ class vmtkNetworkEditor(pypes.pypeScript):
             return
         if self.Network.GetNumberOfCells() == 0:
             return
-        eventPosition = obj.GetEventPosition()
+        eventPosition = self.vmtkRenderer.RenderWindowInteractor.GetEventPosition()
         result = self.CellPicker.Pick(float(eventPosition[0]),float(eventPosition[1]),0.0,self.vmtkRenderer.Renderer)
         if result == 0:
             return

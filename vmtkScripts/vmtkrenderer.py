@@ -66,15 +66,15 @@ class vmtkRenderer(pypes.pypeScript):
         self.InputPosition = [150.0, 150.0]
 
         self.TextActor = None
-        self.Position = [5.0, 150.0]
-        self.TextActorStd = None
-        self.PositionStd = [5.0, 40.0]
-        self.TextActorOpmode = None
-        self.PositionOpmode = [5.0, 250.0]
+        self.Position = [5.0, 40.0]
+        #self.TextActorStd = None
+        #self.PositionStd = [5.0, 40.0]
+        #self.TextActorOpmode = None
+        #self.PositionOpmode = [5.0, 250.0]
 
         self.KeyBindings = {}
-        self.KeyBindingsStd = {}
-        self.KeyBindingsOpmode = {}
+        #self.KeyBindingsStd = {}
+        #self.KeyBindingsOpmode = {}
  
         self.ScreenshotMagnification = 4
 
@@ -96,7 +96,7 @@ class vmtkRenderer(pypes.pypeScript):
         filePrefix = 'vmtk-screenshot'
         fileNumber = 0
         fileName = "%s-%d.png" % (filePrefix,fileNumber)
-        existingFiles = os.listdir('.')
+        existingFiles = os.li0ir('.')
         while fileName in existingFiles:
             fileNumber += 1
             fileName = "%s-%d.png" % (filePrefix,fileNumber)
@@ -112,7 +112,7 @@ class vmtkRenderer(pypes.pypeScript):
         writer.Write()
 
     def QuitRendererCallback(self, obj):
-        print 'Exiting'
+        self.PrintLog('Quit renderer')
         self.Renderer.RemoveActor(self.TextActor)
         self.RenderWindowInteractor.ExitCallback()
 
@@ -142,28 +142,18 @@ class vmtkRenderer(pypes.pypeScript):
 
         if key in self.KeyBindings and self.KeyBindings[key]['callback'] != None:
             self.KeyBindings[key]['callback'](obj)
-        if key in self.KeyBindingsStd and self.KeyBindingsStd[key]['callback'] != None:
-            self.KeyBindingsStd[key]['callback'](obj)
-        if key in self.KeyBindingsOpmode and self.KeyBindingsOpmode[key]['callback'] != None:
-            self.KeyBindingsOpmode[key]['callback'](obj)
 
-    def AddKeyBinding(self, key, text, callback=None, group=None):
-        if group == 'std':
-            self.KeyBindingsStd[key] = {'text': text, 'callback': callback}
-        elif group == 'opmode': 
-            self.KeyBindingsOpmode[key] = {'text': text, 'callback': callback}
-        else:
-            self.KeyBindings[key] = {'text': text, 'callback': callback}
+    def AddKeyBinding(self, key, text, callback=None, group='1'):
+        self.KeyBindings[key] = {'text': text, 'callback': callback, 'group': group}
 
     def RemoveKeyBinding(self, key):
         if key in self.KeyBindings:    
             del self.KeyBindings[key]
-        elif key in self.KeyBindingsOpmode:
-            del self.KeyBindingsOpmode[key]
 
     def EnterTextInputMode(self, exitAfter=False):
         self.CurrentTextInput = ''
         self.Renderer.AddActor(self.TextInputActor)
+        self.Renderer.RemoveActor(self.TextActor)
         self.UpdateTextInput()
         self.TextInputMode = 1
         self.ExitAfterTextInput = exitAfter
@@ -171,6 +161,7 @@ class vmtkRenderer(pypes.pypeScript):
     
     def ExitTextInputMode(self):
         self.Renderer.RemoveActor(self.TextInputActor)
+        self.Renderer.AddActor(self.TextActor)
         self.RenderWindow.Render()
         self.TextInputMode = 0
         if self.ExitAfterTextInput:
@@ -183,29 +174,36 @@ class vmtkRenderer(pypes.pypeScript):
             self.RenderWindowInteractor.Initialize()
         self.RenderWindow.SetWindowName("vmtk - the Vascular Modeling Toolkit")
 
-        sortedKeysStd = self.KeyBindingsStd.keys()
-        sortedKeysStd.sort()
-        textActorInputsStd = ['%s: %s' % (key, self.KeyBindingsStd[key]['text']) for key in sortedKeysStd]
-        self.TextActorStd.SetInput('\n'.join(textActorInputsStd))
-        self.Renderer.AddActor(self.TextActorStd)
+        #sortedKeysStd = self.KeyBindingsStd.keys()
+        #sortedKeysStd.sort()
+        #textActorInputsStd = ['%s: %s' % (key, self.KeyBindingsStd[key]['text']) for key in sortedKeysStd]
+        #self.TextActorStd.SetInput('\n'.join(textActorInputsStd))
+        #self.Renderer.AddActor(self.TextActorStd)
     
-        if len(self.KeyBindings.keys()) != 0:
-            sortedKeys = self.KeyBindings.keys()
+        groups = list(set([self.KeyBindings[el]['group'] for el in self.KeyBindings]))
+        groups.sort(reverse=True)
+
+        textActorInputsList = []
+
+        for group in groups:
+            sortedKeys = [key for key in self.KeyBindings.keys() if self.KeyBindings[key]['group'] == group]
             sortedKeys.sort()
             textActorInputs = ['%s: %s' % (key, self.KeyBindings[key]['text']) for key in sortedKeys]
-            self.TextActor.SetInput('\n'.join(textActorInputs))
-            self.Renderer.AddActor(self.TextActor)
+            textActorInputsList.append('\n'.join(textActorInputs))
 
-        if len(self.KeyBindingsOpmode.keys()) != 0:
-            sortedKeysOpmode = self.KeyBindingsOpmode.keys()
-            sortedKeysOpmode.sort()
-            textActorInputsOpmode = ['%s: %s' % (key, self.KeyBindingsOpmode[key]['text']) for key in sortedKeysOpmode]
-            self.TextActorOpmode.SetInput('\n'.join(textActorInputsOpmode))
-            self.TextActorOpmode.GetProperty().SetColor(1.0, 0.75, 0.32)
-            self.Renderer.AddActor(self.TextActorOpmode)
-        else:
-            self.TextActorOpmode.SetInput('.')
-            self.Renderer.AddActor(self.TextActorOpmode)
+        self.TextActor.SetInput('\n\n'.join(textActorInputsList))
+        self.Renderer.AddActor(self.TextActor)
+
+        #if len(self.KeyBindingsOpmode.keys()) != 0:
+        #    sortedKeysOpmode = self.KeyBindingsOpmode.keys()
+        #    sortedKeysOpmode.sort()
+        #    textActorInputsOpmode = ['%s: %s' % (key, self.KeyBindingsOpmode[key]['text']) for key in sortedKeysOpmode]
+        #    self.TextActorOpmode.SetInput('\n'.join(textActorInputsOpmode))
+        #    self.TextActorOpmode.GetProperty().SetColor(1.0, 0.75, 0.32)
+        #    self.Renderer.AddActor(self.TextActorOpmode)
+        #else:
+        #    self.TextActorOpmode.SetInput('.')
+        #    self.Renderer.AddActor(self.TextActorOpmode)
  
         self.RenderWindow.Render()
 
@@ -230,25 +228,25 @@ class vmtkRenderer(pypes.pypeScript):
             self.RenderWindowInteractor.SetInteractorStyle(vtk.vtkInteractorStyleTrackballCamera())
             self.RenderWindowInteractor.GetInteractorStyle().AddObserver("CharEvent",self.CharCallback)
 
-            self.AddKeyBinding('x','Take screenshot.',self.ScreenshotCallback,'std')
-            #self.AddKeyBinding('w','Show wideframe.',None,'std')
-            #self.AddKeyBinding('r','Resize.',None, 'std')
-            #self.AddKeyBinding('s','Show surface.', None,'std')
-            #self.AddKeyBinding('e','Quit renderer.',self.QuitRendererCallback,'std')
-            self.AddKeyBinding('q','Quit renderer and proceed.',self.QuitRendererCallback,'std')
-            #self.AddKeyBinding('3','3D.', None,'std')
+            self.AddKeyBinding('x','Take screenshot.',self.ScreenshotCallback,'0')
+            #self.AddKeyBinding('w','Show wireframe.',None,'0')
+            #self.AddKeyBinding('r','Resize.',None, '0')
+            #self.AddKeyBinding('s','Show surface.', None,'0')
+            #self.AddKeyBinding('e','Quit renderer.',self.QuitRendererCallback,'0')
+            self.AddKeyBinding('q','Quit renderer and proceed.',self.QuitRendererCallback,'0')
+            #self.AddKeyBinding('3','3D.', None,'0')
 
-            self.TextActorStd = vtk.vtkTextActor()
-            self.TextActorStd.SetPosition(self.PositionStd)
-            self.Renderer.AddActor(self.TextActorStd)
+            #self.TextActorStd = vtk.vtkTextActor()
+            #self.TextActorStd.SetPosition(self.PositionStd)
+            #self.Renderer.AddActor(self.TextActorStd)
 
             self.TextActor = vtk.vtkTextActor()
             self.TextActor.SetPosition(self.Position)
             self.Renderer.AddActor(self.TextActor)
 
-            self.TextActorOpmode = vtk.vtkTextActor()
-            self.TextActorOpmode.SetPosition(self.PositionOpmode)
-            self.Renderer.AddActor(self.TextActorOpmode)
+            #self.TextActorOpmode = vtk.vtkTextActor()
+            #self.TextActorOpmode.SetPosition(self.PositionOpmode)
+            #self.Renderer.AddActor(self.TextActorOpmode)
 
             self.TextInputActor = vtk.vtkTextActor()
             self.TextInputActor.SetPosition(self.InputPosition)
