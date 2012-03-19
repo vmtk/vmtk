@@ -199,6 +199,8 @@ class vmtkImageVOISelector(pypes.pypeScript):
 
             self.vmtkRenderer.AddKeyBinding('i','Interact.')
 
+            self.InputInfo("Press 'i' to activate interactor")
+
             self.Display()
             while (self.BoxActive == 1):
                 self.ExtractVOI()

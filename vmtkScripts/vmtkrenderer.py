@@ -34,6 +34,7 @@ class vmtkRendererInputStream(object):
 
     def prompt(self,text):
         self.renderer.TextInputQuery = text
+        self.renderer.UpdateTextInput()
 
 
 class vmtkRenderer(pypes.pypeScript):
@@ -63,18 +64,12 @@ class vmtkRenderer(pypes.pypeScript):
         self.TextInputQuery = None
 
         self.CurrentTextInput = None
-        self.InputPosition = [150.0, 150.0]
+        self.InputPosition = [200.0, 50.0]
 
         self.TextActor = None
-        self.Position = [5.0, 40.0]
-        #self.TextActorStd = None
-        #self.PositionStd = [5.0, 40.0]
-        #self.TextActorOpmode = None
-        #self.PositionOpmode = [5.0, 250.0]
+        self.Position = [5.0, 100.0]
 
         self.KeyBindings = {}
-        #self.KeyBindingsStd = {}
-        #self.KeyBindingsOpmode = {}
  
         self.ScreenshotMagnification = 4
 
@@ -117,7 +112,11 @@ class vmtkRenderer(pypes.pypeScript):
         self.RenderWindowInteractor.ExitCallback()
 
     def UpdateTextInput(self):
-        self.TextInputActor.SetInput(self.TextInputQuery+self.CurrentTextInput+'_')
+        if self.CurrentTextInput:
+            self.TextInputActor.SetInput(self.TextInputQuery+self.CurrentTextInput+'_')
+        else:
+            self.TextInputActor.SetInput(self.TextInputQuery)
+        self.Renderer.AddActor(self.TextInputActor)
         self.RenderWindow.Render()
 
     def CharCallback(self, obj, event):
@@ -250,7 +249,7 @@ class vmtkRenderer(pypes.pypeScript):
 
             self.TextInputActor = vtk.vtkTextActor()
             self.TextInputActor.SetPosition(self.InputPosition)
-        
+ 
         if self.UseRendererInputStream:
             self.InputStream = vmtkRendererInputStream(self)
 
