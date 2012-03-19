@@ -143,6 +143,8 @@ class vmtkImageSeeder(pypes.pypeScript):
         self.WidgetsOn()
 
         if (self.Display == 1):
+            self.vmtkRenderer.AddKeyBinding('Ctrl','Add Seed.')
+
             self.vmtkRenderer.Render()
 
 
@@ -156,6 +158,9 @@ class vmtkImageSeeder(pypes.pypeScript):
             self.vmtkRenderer.Initialize()
             self.OwnRenderer = 1
 
+        self.vmtkRenderer.RegisterScript(self) 
+
+        self.PrintLog('Ctrl +  left click to add seed.')
         self.Picker = vtk.vtkCellPicker()
         self.Picker.SetTolerance(0.005)
 

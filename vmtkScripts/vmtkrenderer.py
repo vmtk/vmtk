@@ -22,6 +22,21 @@ import vtkvmtk
 
 vmtkrenderer = 'vmtkRenderer'
 
+
+class vmtkRendererInputStream(object):
+
+    def __init__(self,renderer):
+        self.renderer = renderer
+
+    def readline(self):
+        self.renderer.EnterTextInputMode(exitAfter=True)
+        return self.renderer.CurrentTextInput
+
+    def prompt(self,text):
+        self.renderer.TextInputQuery = text
+        self.renderer.UpdateTextInput()
+
+
 class vmtkRenderer(pypes.pypeScript):
 
     def __init__(self):
@@ -43,7 +58,22 @@ class vmtkRenderer(pypes.pypeScript):
         self.LineSmoothing = 1
         self.PolygonSmoothing = 0
 
+        self.TextInputMode = 0
+
+        self.TextInputActor = None
+        self.TextInputQuery = None
+
+        self.CurrentTextInput = None
+        self.InputPosition = [200.0, 50.0]
+
+        self.TextActor = None
+        self.Position = [5.0, 100.0]
+
+        self.KeyBindings = {}
+ 
         self.ScreenshotMagnification = 4
+
+        self.UseRendererInputStream = True
 
         self.SetScriptName('vmtkrenderer')
         self.SetScriptDoc('renderer used to make several viewers use the same rendering window')
@@ -57,35 +87,131 @@ class vmtkRenderer(pypes.pypeScript):
         self.SetOutputMembers([
             ['vmtkRenderer','o','vmtkRenderer',1,'','the renderer']])
 
-    def KeyPressed(self,object,event):
-
-        key = object.GetKeySym()
-        ctrlPressed = self.RenderWindowInteractor.GetControlKey()
-        if key == 's' and  ctrlPressed or key == 'x':
-            filePrefix = 'vmtk-screenshot'
-            fileNumber = 0
+    def ScreenshotCallback(self, obj):
+        filePrefix = 'vmtk-screenshot'
+        fileNumber = 0
+        fileName = "%s-%d.png" % (filePrefix,fileNumber)
+        existingFiles = os.li0ir('.')
+        while fileName in existingFiles:
+            fileNumber += 1
             fileName = "%s-%d.png" % (filePrefix,fileNumber)
-            existingFiles = os.listdir('.')
-            while fileName in existingFiles:
-                fileNumber += 1
-                fileName = "%s-%d.png" % (filePrefix,fileNumber)
-            self.PrintLog('Saving screenshot to ' + fileName)
-            windowToImage = vtk.vtkWindowToImageFilter()
-            windowToImage.SetInput(self.RenderWindow)
-            windowToImage.SetMagnification(self.ScreenshotMagnification)
-            windowToImage.Update()
-            self.RenderWindow.Render()
-            writer = vtk.vtkPNGWriter()
-            writer.SetInput(windowToImage.GetOutput())
-            writer.SetFileName(fileName)
-            writer.Write()
+        self.PrintLog('Saving screenshot to ' + fileName)
+        windowToImage = vtk.vtkWindowToImageFilter()
+        windowToImage.SetInput(self.RenderWindow)
+        windowToImage.SetMagnification(self.ScreenshotMagnification)
+        windowToImage.Update()
+        self.RenderWindow.Render()
+        writer = vtk.vtkPNGWriter()
+        writer.SetInput(windowToImage.GetOutput())
+        writer.SetFileName(fileName)
+        writer.Write()
+
+    def QuitRendererCallback(self, obj):
+        self.PrintLog('Quit renderer')
+        self.Renderer.RemoveActor(self.TextActor)
+        self.RenderWindowInteractor.ExitCallback()
+
+    def UpdateTextInput(self):
+        if self.CurrentTextInput:
+            self.TextInputActor.SetInput(self.TextInputQuery+self.CurrentTextInput+'_')
+        else:
+            self.TextInputActor.SetInput(self.TextInputQuery)
+        self.Renderer.AddActor(self.TextInputActor)
+        self.RenderWindow.Render()
+
+    def CharCallback(self, obj, event):
+        key = self.RenderWindowInteractor.GetKeySym()
+
+        if self.TextInputMode:
+            if key == 'Return':
+                self.ExitTextInputMode()
+                return
+            if key == 'space':
+                key = ' '
+            elif len(key) > 1 and key != 'Backspace':
+                key = None
+            if key == 'Backspace':
+                textInput = self.CurrentTextInput
+                if len(textInput) > 0:
+                    self.CurrentTextInput = textInput[:-1]
+            elif key:
+                self.CurrentTextInput += key
+            self.UpdateTextInput()
+            return
+
+        if key in self.KeyBindings and self.KeyBindings[key]['callback'] != None:
+            self.KeyBindings[key]['callback'](obj)
+
+    def AddKeyBinding(self, key, text, callback=None, group='1'):
+        if key == '+':
+            key = 'plus'
+        if key == '-':
+            key = 'minus'
+        if key == '=':
+            key = 'equal'
+        self.KeyBindings[key] = {'text': text, 'callback': callback, 'group': group}
+
+    def RemoveKeyBinding(self, key):
+        if key in self.KeyBindings:    
+            del self.KeyBindings[key]
+
+    def EnterTextInputMode(self, exitAfter=False):
+        self.CurrentTextInput = ''
+        self.Renderer.AddActor(self.TextInputActor)
+        self.Renderer.RemoveActor(self.TextActor)
+        self.UpdateTextInput()
+        self.TextInputMode = 1
+        self.ExitAfterTextInput = exitAfter
+        self.Render()
+    
+    def ExitTextInputMode(self):
+        self.Renderer.RemoveActor(self.TextInputActor)
+        self.Renderer.AddActor(self.TextActor)
+        self.RenderWindow.Render()
+        self.TextInputMode = 0
+        if self.ExitAfterTextInput:
+            self.RenderWindowInteractor.ExitCallback()
+            self.ExitAfterTextInput = False
 
     def Render(self,interactive=1):
 
         if interactive:
             self.RenderWindowInteractor.Initialize()
         self.RenderWindow.SetWindowName("vmtk - the Vascular Modeling Toolkit")
+
+        #sortedKeysStd = self.KeyBindingsStd.keys()
+        #sortedKeysStd.sort()
+        #textActorInputsStd = ['%s: %s' % (key, self.KeyBindingsStd[key]['text']) for key in sortedKeysStd]
+        #self.TextActorStd.SetInput('\n'.join(textActorInputsStd))
+        #self.Renderer.AddActor(self.TextActorStd)
+    
+        groups = list(set([self.KeyBindings[el]['group'] for el in self.KeyBindings]))
+        groups.sort(reverse=True)
+
+        textActorInputsList = []
+
+        for group in groups:
+            sortedKeys = [key for key in self.KeyBindings.keys() if self.KeyBindings[key]['group'] == group]
+            sortedKeys.sort()
+            textActorInputs = ['%s: %s' % (key, self.KeyBindings[key]['text']) for key in sortedKeys]
+            textActorInputsList.append('\n'.join(textActorInputs))
+
+        self.TextActor.SetInput('\n\n'.join(textActorInputsList))
+        self.Renderer.AddActor(self.TextActor)
+
+        #if len(self.KeyBindingsOpmode.keys()) != 0:
+        #    sortedKeysOpmode = self.KeyBindingsOpmode.keys()
+        #    sortedKeysOpmode.sort()
+        #    textActorInputsOpmode = ['%s: %s' % (key, self.KeyBindingsOpmode[key]['text']) for key in sortedKeysOpmode]
+        #    self.TextActorOpmode.SetInput('\n'.join(textActorInputsOpmode))
+        #    self.TextActorOpmode.GetProperty().SetColor(1.0, 0.75, 0.32)
+        #    self.Renderer.AddActor(self.TextActorOpmode)
+        #else:
+        #    self.TextActorOpmode.SetInput('.')
+        #    self.Renderer.AddActor(self.TextActorOpmode)
+ 
         self.RenderWindow.Render()
+
         if interactive:
             self.RenderWindowInteractor.Start()
 
@@ -103,9 +229,39 @@ class vmtkRenderer(pypes.pypeScript):
             self.RenderWindowInteractor = vtk.vtkRenderWindowInteractor()
             if 'vtkCocoaRenderWindowInteractor' in dir(vtk) and vtk.vtkCocoaRenderWindowInteractor.SafeDownCast(self.RenderWindowInteractor):
                 self.RenderWindowInteractor = vtkvmtk.vtkvmtkCocoaRenderWindowInteractor()
-            self.RenderWindowInteractor.SetInteractorStyle(vtk.vtkInteractorStyleTrackballCamera())
             self.RenderWindow.SetInteractor(self.RenderWindowInteractor)
-            self.vmtkRenderer.RenderWindowInteractor.AddObserver("KeyPressEvent",self.KeyPressed)
+            self.RenderWindowInteractor.SetInteractorStyle(vtk.vtkInteractorStyleTrackballCamera())
+            self.RenderWindowInteractor.GetInteractorStyle().AddObserver("CharEvent",self.CharCallback)
+
+            self.AddKeyBinding('x','Take screenshot.',self.ScreenshotCallback,'0')
+            #self.AddKeyBinding('w','Show wireframe.',None,'0')
+            #self.AddKeyBinding('r','Resize.',None, '0')
+            #self.AddKeyBinding('s','Show surface.', None,'0')
+            #self.AddKeyBinding('e','Quit renderer.',self.QuitRendererCallback,'0')
+            self.AddKeyBinding('q','Quit renderer and proceed.',self.QuitRendererCallback,'0')
+            #self.AddKeyBinding('3','3D.', None,'0')
+
+            #self.TextActorStd = vtk.vtkTextActor()
+            #self.TextActorStd.SetPosition(self.PositionStd)
+            #self.Renderer.AddActor(self.TextActorStd)
+
+            self.TextActor = vtk.vtkTextActor()
+            self.TextActor.SetPosition(self.Position)
+            self.Renderer.AddActor(self.TextActor)
+
+            #self.TextActorOpmode = vtk.vtkTextActor()
+            #self.TextActorOpmode.SetPosition(self.PositionOpmode)
+            #self.Renderer.AddActor(self.TextActorOpmode)
+
+            self.TextInputActor = vtk.vtkTextActor()
+            self.TextInputActor.SetPosition(self.InputPosition)
+ 
+        if self.UseRendererInputStream:
+            self.InputStream = vmtkRendererInputStream(self)
+
+    def RegisterScript(self, script):
+        if self.UseRendererInputStream:
+            script.InputStream = vmtkRendererInputStream(self)
 
     def Execute(self):
         self.Initialize()

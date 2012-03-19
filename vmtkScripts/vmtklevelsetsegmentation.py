@@ -294,7 +294,9 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
             self.vmtkRenderer = vmtkscripts.vmtkRenderer()
             self.vmtkRenderer.Initialize()
             self.OwnRenderer = 1
-  
+ 
+        self.vmtkRenderer.RegisterScript(self)  
+
         self.ImageSeeder = vmtkscripts.vmtkImageSeeder()
         self.ImageSeeder.vmtkRenderer = self.vmtkRenderer
         #self.ImageSeeder.Image = self.Image
