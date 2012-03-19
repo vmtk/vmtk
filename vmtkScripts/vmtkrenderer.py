@@ -29,7 +29,7 @@ class vmtkRendererInputStream(object):
         self.renderer = renderer
 
     def readline(self):
-        self.renderer.EnterTextInputMode(exitAfter=True)
+        self.renderer.EnterTextInputMode()
         return self.renderer.CurrentTextInput
 
     def prompt(self,text):
@@ -59,15 +59,16 @@ class vmtkRenderer(pypes.pypeScript):
         self.PolygonSmoothing = 0
 
         self.TextInputMode = 0
+        self.ExitAfterTextInputMode = True
 
         self.TextInputActor = None
         self.TextInputQuery = None
 
         self.CurrentTextInput = None
-        self.InputPosition = [200.0, 50.0]
+        self.InputPosition = [0.25, 0.1]
 
         self.TextActor = None
-        self.Position = [5.0, 100.0]
+        self.Position = [0.001, 0.05]
 
         self.KeyBindings = {}
  
@@ -112,25 +113,30 @@ class vmtkRenderer(pypes.pypeScript):
         self.RenderWindowInteractor.ExitCallback()
 
     def UpdateTextInput(self):
-        if self.CurrentTextInput:
-            self.TextInputActor.SetInput(self.TextInputQuery+self.CurrentTextInput+'_')
+        if self.TextInputQuery:
+            if self.CurrentTextInput:
+                self.TextInputActor.SetInput(self.TextInputQuery+self.CurrentTextInput+'_')
+            else:
+                self.TextInputActor.SetInput(self.TextInputQuery)
+            self.Renderer.AddActor(self.TextInputActor)
         else:
-            self.TextInputActor.SetInput(self.TextInputQuery)
-        self.Renderer.AddActor(self.TextInputActor)
+            self.Renderer.RemoveActor(self.TextInputActor)
         self.RenderWindow.Render()
+
+    def KeyPressCallback(self, obj, event):
+        return
 
     def CharCallback(self, obj, event):
         key = self.RenderWindowInteractor.GetKeySym()
-
         if self.TextInputMode:
             if key == 'Return':
                 self.ExitTextInputMode()
                 return
             if key == 'space':
                 key = ' '
-            elif len(key) > 1 and key != 'Backspace':
+            elif len(key) > 1 and key not in ['Backspace','BackSpace']:
                 key = None
-            if key == 'Backspace':
+            if key in ['Backspace','BackSpace']:
                 textInput = self.CurrentTextInput
                 if len(textInput) > 0:
                     self.CurrentTextInput = textInput[:-1]
@@ -155,13 +161,12 @@ class vmtkRenderer(pypes.pypeScript):
         if key in self.KeyBindings:    
             del self.KeyBindings[key]
 
-    def EnterTextInputMode(self, exitAfter=False):
+    def EnterTextInputMode(self):
         self.CurrentTextInput = ''
         self.Renderer.AddActor(self.TextInputActor)
         self.Renderer.RemoveActor(self.TextActor)
         self.UpdateTextInput()
         self.TextInputMode = 1
-        self.ExitAfterTextInput = exitAfter
         self.Render()
     
     def ExitTextInputMode(self):
@@ -169,9 +174,8 @@ class vmtkRenderer(pypes.pypeScript):
         self.Renderer.AddActor(self.TextActor)
         self.RenderWindow.Render()
         self.TextInputMode = 0
-        if self.ExitAfterTextInput:
+        if self.ExitAfterTextInputMode:
             self.RenderWindowInteractor.ExitCallback()
-            self.ExitAfterTextInput = False
 
     def Render(self,interactive=1):
 
@@ -232,6 +236,7 @@ class vmtkRenderer(pypes.pypeScript):
             self.RenderWindow.SetInteractor(self.RenderWindowInteractor)
             self.RenderWindowInteractor.SetInteractorStyle(vtk.vtkInteractorStyleTrackballCamera())
             self.RenderWindowInteractor.GetInteractorStyle().AddObserver("CharEvent",self.CharCallback)
+            #self.RenderWindowInteractor.GetInteractorStyle().AddObserver("KeyPressEvent",self.KeyPressCallback)
 
             self.AddKeyBinding('x','Take screenshot.',self.ScreenshotCallback,'0')
             #self.AddKeyBinding('w','Show wireframe.',None,'0')
@@ -246,6 +251,8 @@ class vmtkRenderer(pypes.pypeScript):
             #self.Renderer.AddActor(self.TextActorStd)
 
             self.TextActor = vtk.vtkTextActor()
+            self.TextActor.GetPositionCoordinate().SetCoordinateSystemToNormalizedViewport()
+            self.TextActor.GetPosition2Coordinate().SetCoordinateSystemToNormalizedViewport()
             self.TextActor.SetPosition(self.Position)
             self.Renderer.AddActor(self.TextActor)
 
@@ -254,6 +261,8 @@ class vmtkRenderer(pypes.pypeScript):
             #self.Renderer.AddActor(self.TextActorOpmode)
 
             self.TextInputActor = vtk.vtkTextActor()
+            self.TextInputActor.GetPositionCoordinate().SetCoordinateSystemToNormalizedViewport()
+            self.TextInputActor.GetPosition2Coordinate().SetCoordinateSystemToNormalizedViewport()
             self.TextInputActor.SetPosition(self.InputPosition)
  
         if self.UseRendererInputStream:
