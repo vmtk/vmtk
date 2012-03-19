@@ -143,6 +143,12 @@ class vmtkRenderer(pypes.pypeScript):
             self.KeyBindings[key]['callback'](obj)
 
     def AddKeyBinding(self, key, text, callback=None, group='1'):
+        if key == '+':
+            key = 'plus'
+        if key == '-':
+            key = 'minus'
+        if key == '=':
+            key = 'equal'
         self.KeyBindings[key] = {'text': text, 'callback': callback, 'group': group}
 
     def RemoveKeyBinding(self, key):
