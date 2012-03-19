@@ -167,9 +167,20 @@ class pypeScript(object):
  
     def EndProgress(self):
         self.OutputStream.write('\n')
-        
+ 
+    def InputInfo(self,prompt=''):
+        self.OutputText(prompt)
+        try:
+            self.InputStream.prompt(prompt)
+        except:
+            pass
+ 
     def InputText(self,prompt='',validator=None):
         self.OutputText(prompt)
+        try:
+            self.InputStream.prompt(prompt)
+        except:
+            pass
         text = self.InputStream.readline().rstrip('\n')
         if validator:
             while not validator(text):

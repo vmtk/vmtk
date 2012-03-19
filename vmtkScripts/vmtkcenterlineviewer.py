@@ -59,6 +59,8 @@ class vmtkCenterlineViewer(pypes.pypeScript):
             self.vmtkRenderer.Initialize()
             self.OwnRenderer = 1
 
+        self.vmtkRenderer.RegisterScript(self) 
+
         if self.CellDataArrayName:
             cellCenters = vtk.vtkCellCenters()
             cellCenters.SetInput(self.Centerlines)

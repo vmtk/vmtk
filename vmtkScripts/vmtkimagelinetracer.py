@@ -58,10 +58,8 @@ class vmtkImageLineTracer(pypes.pypeScript):
             ['Line','line','vtkPolyData',1,'','the output line','vmtksurfacewriter']
             ])
 
-    def Keypress(self,obj,event):
-        key = obj.GetKeySym()
-        if key == 'n':
-            if self.SliceVOI[self.Axis*2+1] < self.Image.GetWholeExtent()[self.Axis*2+1]:
+    def NextCallback(self, obj):
+           if self.SliceVOI[self.Axis*2+1] < self.Image.GetWholeExtent()[self.Axis*2+1]:
                 self.SliceVOI[self.Axis*2+1] += 1
                 self.SliceVOI[self.Axis*2] = self.SliceVOI[self.Axis*2+1]
                 origin = self.Image.GetOrigin()
@@ -70,9 +68,10 @@ class vmtkImageLineTracer(pypes.pypeScript):
                 newOrigin[self.Axis] = origin[self.Axis]-spacing[self.Axis]
                 self.Image.SetOrigin(newOrigin)
                 self.ImageActor.SetDisplayExtent(self.SliceVOI)
-            obj.Render()
-        elif key == 'p':
-            if self.SliceVOI[self.Axis*2] > self.Image.GetWholeExtent()[self.Axis*2]:
+           obj.Render()
+
+    def PreviousCallback(self, obj):
+	   if self.SliceVOI[self.Axis*2] > self.Image.GetWholeExtent()[self.Axis*2]:
                 self.SliceVOI[self.Axis*2] -= 1
                 self.SliceVOI[self.Axis*2+1] = self.SliceVOI[self.Axis*2]
                 origin = self.Image.GetOrigin()
@@ -81,7 +80,9 @@ class vmtkImageLineTracer(pypes.pypeScript):
                 newOrigin[self.Axis] = origin[self.Axis]+spacing[self.Axis]
                 self.Image.SetOrigin(newOrigin)
                 self.ImageActor.SetDisplayExtent(self.SliceVOI)
-            obj.Render()
+           obj.Render()
+
+
 
     def SetWidgetProjectionPosition(self,obj,event):
         self.ImageTracerWidget.SetProjectionPosition(self.SliceVOI[self.Axis*2]*self.Image.GetSpacing()[self.Axis]+self.Image.GetOrigin()[self.Axis])
@@ -203,6 +204,8 @@ class vmtkImageLineTracer(pypes.pypeScript):
             self.vmtkRenderer.Initialize()
             self.OwnRenderer = 1
 
+        self.vmtkRenderer.RegisterScript(self) 
+
         if self.Type == 'freehand':
             self.ImageTracerWidget = vtk.vtkImageTracerWidget()
         elif self.Type == 'contour':
@@ -214,7 +217,9 @@ class vmtkImageLineTracer(pypes.pypeScript):
 
         self.ImageActor = vtk.vtkImageActor()
 
-        self.vmtkRenderer.RenderWindowInteractor.AddObserver("KeyPressEvent", self.Keypress)
+        self.vmtkRenderer.AddKeyBinding('n','Next.',self.NextCallback)
+        self.vmtkRenderer.AddKeyBinding('p','Previous.',self.PreviousCallback)
+        self.vmtkRenderer.AddKeyBinding('i','Interact.')
 
         self.Display()
 

@@ -45,10 +45,7 @@ class vmtkMeshClipper(pypes.pypeScript):
             ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh','vmtkmeshwriter']
             ])
 
-    def KeyPressed(self,object,event):
-        key = object.GetKeySym()
-        if key != 'space':
-            return
+    def ClipCallback(self, obj):
         if self.BoxWidget.GetEnabled() != 1:
             return
         self.BoxWidget.GetPlanes(self.Planes)
@@ -64,8 +61,10 @@ class vmtkMeshClipper(pypes.pypeScript):
 
       	self.vmtkRenderer.RenderWindowInteractor.Initialize()
 
-        self.vmtkRenderer.RenderWindowInteractor.AddObserver("KeyPressEvent", self.KeyPressed)
-        self.vmtkRenderer.RenderWindow.Render()
+        self.vmtkRenderer.AddKeyBinding('i','Interact.')
+        self.vmtkRenderer.AddKeyBinding('space','Clip.', self.ClipCallback)
+
+        self.vmtkRenderer.Render()
         self.vmtkRenderer.RenderWindowInteractor.Start()
 
     def Execute(self):
@@ -84,6 +83,8 @@ class vmtkMeshClipper(pypes.pypeScript):
             self.vmtkRenderer = vmtkrenderer.vmtkRenderer()
             self.vmtkRenderer.Initialize()
             self.OwnRenderer = 1
+
+        self.vmtkRenderer.RegisterScript(self) 
 
         mapper = vtk.vtkDataSetMapper()
         mapper.SetInput(self.Mesh)

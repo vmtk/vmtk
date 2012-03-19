@@ -15,9 +15,10 @@
 
 
 import sys
-from vmtk import pypes
-from Tkinter import *
-import tkFileDialog
+
+from vmtk import pypeserver
+
+from multiprocessing import Process, Manager
 
 class TkPadOutputStream(object):
 
@@ -27,6 +28,7 @@ class TkPadOutputStream(object):
         self.output_file = None
   
     def write(self,text):
+        from Tkinter import NORMAL, END, DISABLED
         self.text_widget["state"] = NORMAL
         if text[0] == '\r':
             endline = str(int(self.text_widget.index(END).split('.')[0])-1)
@@ -55,6 +57,7 @@ class TkPadInputStream(object):
         self.input_stream = input_stream
  
     def EntryReturnHandler(self,event):
+        from Tkinter import END, DISABLED
         self.text = self.entry_widget.get()
         self.entry_widget.delete(0,END)
         self.entry_widget.quit()
@@ -62,6 +65,7 @@ class TkPadInputStream(object):
         self.input_stream.write(self.text+'\n')
        
     def readline(self):
+        from Tkinter import NORMAL
         self.entry_widget["state"] = NORMAL
         self.entry_widget.focus_set()
         self.entry_widget.grab_set()
@@ -82,8 +86,11 @@ class CallbackShim:
 
 class PypeTkPad(object):
 
-    def __init__(self, master):
+    def __init__(self, master, queue, pypeOutput):
       
+        self.queue = queue
+        self.pypeOutput = pypeOutput
+
         self.master = master
         self.master.title('PypePad')
         self.master.geometry("%dx%d%+d%+d" % (700, 400, 0, 0))
@@ -91,12 +98,14 @@ class PypeTkPad(object):
         self.output_file_name = None
         
         self.BuildMainFrame()
+        self.UpdateOutput()
 
     def NewCommand(self):
         self.ClearAllCommand()
 
-
     def OpenCommand(self):
+        import tkFileDialog
+        from Tkinter import END
         openfile = tkFileDialog.askopenfile()
         if not openfile:
             return
@@ -104,6 +113,8 @@ class PypeTkPad(object):
             self.text_input.insert(END,line)
  
     def SaveCommand(self):
+        import tkFileDialog
+        from Tkinter import END
         saveasfile = tkFileDialog.asksaveasfile()
         if not saveasfile:
             return
@@ -114,9 +125,11 @@ class PypeTkPad(object):
         self.master.quit()
 
     def ClearInputCommand(self):
+        from Tkinter import END
         self.text_input.delete("1.0",END)
         
     def ClearOutputCommand(self):
+        from Tkinter import NORMAL, END, DISABLED
         self.text_output["state"] = NORMAL
         self.text_output.delete("1.0",END)
         self.text_output["state"] = DISABLED
@@ -128,6 +141,7 @@ class PypeTkPad(object):
         self.ClearOutputCommand()
 
     def OutputFileCommand(self):
+        import tkFileDialog
         outputfilename = tkFileDialog.asksaveasfilename()
         if sys.platform == 'win32' and len(outputfilename.split()) > 1:
             outputfilename = '"%s"' % outputfilename
@@ -138,6 +152,12 @@ class PypeTkPad(object):
         self.OutputText('* PypePad, Copyright (c) Luca Antiga, David Steinman. *\n')
         self.OutputText('\n')
 
+    def UpdateOutput(self):
+        if self.pypeOutput:
+            text = self.pypeOutput.pop(0)
+            self.output_stream.write(text)
+        self.master.after(10,self.UpdateOutput)
+
     def RunPype(self,arguments):
         if not arguments:
             return
@@ -146,19 +166,22 @@ class PypeTkPad(object):
             self.output_stream.output_file = open(self.output_file_name,self.output_to_file.get())
         else:
             self.output_stream.output_to_file = False
-        pipe = pypes.Pype()
-        pipe.ExitOnError = 0
-        pipe.InputStream = self.input_stream
-        pipe.OutputStream = self.output_stream
-        pipe.LogOn = self.log_on.get()
-        pipe.SetArgumentsString(arguments)
-        pipe.ParseArguments()
-        try: 
-            pipe.Execute() 
-        except Exception:
-            return
+        self.queue.append(arguments)
+
+        #pipe = pypes.Pype()
+        #pipe.ExitOnError = 0
+        #pipe.InputStream = self.input_stream
+        #pipe.OutputStream = self.output_stream
+        #pipe.LogOn = self.log_on.get()
+        #pipe.SetArgumentsString(arguments)
+        #pipe.ParseArguments()
+        #try: 
+        #    pipe.Execute() 
+        #except Exception:
+        #    return
  
     def GetWordUnderCursor(self):
+        from Tkinter import CURRENT
         splitindex = self.text_input.index(CURRENT).split('.')
         line = self.text_input.get(splitindex[0]+".0",splitindex[0]+".end")
         wordstart = line.rfind(' ',0,int(splitindex[1])-1)+1
@@ -192,6 +215,7 @@ class PypeTkPad(object):
         return self.GetLogicalLines()[1]
    
     def GetLogicalLines(self):
+        from Tkinter import END
         physicallines = self.text_input.get("1.0",END).split('\n')
         lines = []
         indexes = [0] * len(physicallines)
@@ -223,6 +247,7 @@ class PypeTkPad(object):
         return indexes, lines
 
     def GetLineUnderCursor(self):
+        from Tkinter import INSERT
         currentlineid = int(self.text_input.index(INSERT).split('.')[0]) - 1
         return self.GetLogicalLine(currentlineid)
 
@@ -238,6 +263,7 @@ class PypeTkPad(object):
             self.RunPype(line)
       
     def RunSelectionCommand(self):
+        from Tkinter import TclError, SEL_FIRST, SEL_LAST
         try:
             firstlineid = int(self.text_input.index(SEL_FIRST).split('.')[0]) - 1
             lastlineid = int(self.text_input.index(SEL_LAST).split('.')[0]) - 1
@@ -274,6 +300,7 @@ class PypeTkPad(object):
         return list
 
     def FillSuggestionsList(self,word):
+        from Tkinter import END
         self.suggestionslist.delete(0,END)
         suggestions = self.GetSuggestionsList(word)
         for suggestion in suggestions:
@@ -302,9 +329,12 @@ class PypeTkPad(object):
             self.suggestionswindow.lift()
             
     def InsertScriptName(self,scriptname):
+        from Tkinter import INSERT
         self.text_input.insert(INSERT,scriptname+' ')
         
     def InsertFileName(self):
+        from Tkinter import INSERT
+        import tkFileDialog
         openfilename = tkFileDialog.askopenfilename()
         if not openfilename:
             return
@@ -322,6 +352,7 @@ class PypeTkPad(object):
             self.text_input.focus_set()
 
     def TopKeyPressHandler(self,event):
+        from Tkinter import ACTIVE, INSERT
         if event.keysym in ['Down','Up'] :
             self.suggestionslist.focus_set()
         elif event.keysym == "Return":
@@ -357,6 +388,7 @@ class PypeTkPad(object):
         self.ShowHelpCommand()
 
     def RunKeyboardHandler(self,event):
+        from Tkinter import SEL_FIRST, TclError
         try: 
             self.text_input.index(SEL_FIRST)
             self.RunSelectionCommand()
@@ -374,11 +406,13 @@ class PypeTkPad(object):
             self.popupmenu.grab_release()
 
     def OutputText(self,text):
+        from Tkinter import NORMAL, END, DISABLED
         self.text_output["state"] = NORMAL
         self.text_output.insert(END,text)
         self.text_output["state"] = DISABLED
  
     def BuildScriptMenu(self,parentmenu,modulename):
+        from Tkinter import Menu
         menu = Menu(parentmenu,bd=1,activeborderwidth=0)
         try:
             exec('import '+ modulename)
@@ -392,7 +426,9 @@ class PypeTkPad(object):
         return menu
         
     def BuildMainFrame(self): 
-      
+        from Tkinter import Menu, IntVar, StringVar, Toplevel, Listbox, Frame, PanedWindow, Text, Scrollbar, Entry
+        from Tkinter import X, N, S, W, E, VERTICAL, TOP, END, DISABLED, RAISED
+
         menu = Menu(self.master,activeborderwidth=0,bd=0)
         self.master.config(menu=menu)
   
@@ -527,10 +563,20 @@ class PypeTkPad(object):
 
 def RunPypeTkPad():
 
+    manager = Manager()
+    queue = manager.list()
+    output = manager.list()
+    pypeProcess = Process(target=pypeserver.PypeServer, args=(queue,output))
+    pypeProcess.start()
+
+    from Tkinter import Tk
+
     root = Tk()
-    app = PypeTkPad(root)
+    app = PypeTkPad(root,queue,output)
     root.mainloop()
-  
+
+    pypeProcess.terminate()
+ 
 if __name__=='__main__':
 
     RunPypeTkPad()

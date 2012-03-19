@@ -102,6 +102,8 @@ class vmtkCenterlineOffsetAttributes(pypes.pypeScript):
  
         if self.Interactive:
 
+            self.vmtkRenderer.RegisterScript(self) 
+
             viewer = vmtkcenterlineviewer.vmtkCenterlineViewer()
             viewer.Centerlines = self.Centerlines
             viewer.CellDataArrayName = self.GroupIdsArrayName

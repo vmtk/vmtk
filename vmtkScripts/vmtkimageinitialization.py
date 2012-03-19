@@ -418,6 +418,8 @@ class vmtkImageInitialization(pypes.pypeScript):
             self.vmtkRenderer = vmtkscripts.vmtkRenderer()
             self.vmtkRenderer.Initialize()
             self.OwnRenderer = 1
+
+        self.vmtkRenderer.RegisterScript(self) 
  
         if not self.ImageSeeder: 
             self.ImageSeeder = vmtkscripts.vmtkImageSeeder()

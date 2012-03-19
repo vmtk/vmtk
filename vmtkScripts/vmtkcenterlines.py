@@ -36,6 +36,7 @@ class vmtkSeedSelector(object):
         self.PrintLog = None
         self.InputText = None
         self.OutputText = None
+        self.InputInfo = None
 
     def SetSurface(self,surface):
         self._Surface = surface
@@ -144,37 +145,36 @@ class vmtkPickPointSeedSelector(vmtkSeedSelector):
         self.PickedSeeds = vtk.vtkPolyData()
         self.vmtkRenderer = None
         self.OwnRenderer = 0
+        self.Script = None
 
-    def KeyPressed(self,obj,event):
-        key = obj.GetKeySym()
-        if key == 'u':
-            self.InitializeSeeds()
-            self.PickedSeeds.Modified()
-            self.vmtkRenderer.RenderWindow.Render()
+    def UndoCallback(self, obj):
+        self.InitializeSeeds()
+        self.PickedSeeds.Modified()
+        self.vmtkRenderer.RenderWindow.Render()
+
+    def PickCallback(self, obj):
+        picker = vtk.vtkCellPicker()
+        picker.SetTolerance(1E-4 * self._Surface.GetLength())
+        eventPosition = self.vmtkRenderer.RenderWindowInteractor.GetEventPosition()
+        result = picker.Pick(float(eventPosition[0]),float(eventPosition[1]),0.0,self.vmtkRenderer.Renderer)
+        if result == 0:
             return
-        elif key == 'space':
-            picker = vtk.vtkCellPicker()
-            picker.SetTolerance(1E-4 * self._Surface.GetLength())
-            eventPosition = obj.GetEventPosition()
-            result = picker.Pick(float(eventPosition[0]),float(eventPosition[1]),0.0,self.vmtkRenderer.Renderer)
-            if result == 0:
-                return
-            pickPosition = picker.GetPickPosition()
-            pickedCellPointIds = self._Surface.GetCell(picker.GetCellId()).GetPointIds()
-            minDistance = 1E10
-            pickedSeedId = -1
-            for i in range(pickedCellPointIds.GetNumberOfIds()):
-                distance = vtk.vtkMath.Distance2BetweenPoints(pickPosition,self._Surface.GetPoint(pickedCellPointIds.GetId(i)))
-                if distance < minDistance:
-                    minDistance = distance
-                    pickedSeedId = pickedCellPointIds.GetId(i)
-            if pickedSeedId == -1:
-                pickedSeedId = pickedCellPointIds.GetId(0)
-            self.PickedSeedIds.InsertNextId(pickedSeedId)
-            point = self._Surface.GetPoint(pickedSeedId)
-            self.PickedSeeds.GetPoints().InsertNextPoint(point)
-            self.PickedSeeds.Modified()
-            self.vmtkRenderer.RenderWindow.Render()
+        pickPosition = picker.GetPickPosition()
+        pickedCellPointIds = self._Surface.GetCell(picker.GetCellId()).GetPointIds()
+        minDistance = 1E10
+        pickedSeedId = -1
+        for i in range(pickedCellPointIds.GetNumberOfIds()):
+            distance = vtk.vtkMath.Distance2BetweenPoints(pickPosition,self._Surface.GetPoint(pickedCellPointIds.GetId(i)))
+            if distance < minDistance:
+                minDistance = distance
+                pickedSeedId = pickedCellPointIds.GetId(i)
+        if pickedSeedId == -1:
+            pickedSeedId = pickedCellPointIds.GetId(0)
+        self.PickedSeedIds.InsertNextId(pickedSeedId)
+        point = self._Surface.GetPoint(pickedSeedId)
+        self.PickedSeeds.GetPoints().InsertNextPoint(point)
+        self.PickedSeeds.Modified()
+        self.vmtkRenderer.RenderWindow.Render()
 
     def InitializeSeeds(self):
         self.PickedSeedIds.Initialize()
@@ -196,6 +196,8 @@ class vmtkPickPointSeedSelector(vmtkSeedSelector):
             self.vmtkRenderer.Initialize()
             self.OwnRenderer = 1
 
+        self.vmtkRenderer.RegisterScript(self.Script) 
+
         glyphs = vtk.vtkGlyph3D()
         glyphSource = vtk.vtkSphereSource()
         glyphs.SetInput(self.PickedSeeds)
@@ -210,8 +212,9 @@ class vmtkPickPointSeedSelector(vmtkSeedSelector):
         self.SeedActor.PickableOff()
         self.vmtkRenderer.Renderer.AddActor(self.SeedActor)
 
-        self.vmtkRenderer.RenderWindowInteractor.AddObserver("KeyPressEvent", self.KeyPressed)
-
+        ##self.vmtkRenderer.RenderWindowInteractor.AddObserver("KeyPressEvent", self.KeyPressed)
+        self.vmtkRenderer.AddKeyBinding('u','Undo.',self.UndoCallback)
+        self.vmtkRenderer.AddKeyBinding('space','Add points.',self.PickCallback)
         surfaceMapper = vtk.vtkPolyDataMapper()
         surfaceMapper.SetInput(self._Surface)
         surfaceMapper.ScalarVisibilityOff()
@@ -221,7 +224,7 @@ class vmtkPickPointSeedSelector(vmtkSeedSelector):
 
         self.vmtkRenderer.Renderer.AddActor(surfaceActor)
 
-        self.OutputText('Please position the mouse and press space to add source points, \'u\' to undo\n')
+        self.InputInfo('Please position the mouse and press space to add source points, \'u\' to undo\n')
 
         any = 0
         while any == 0:
@@ -230,7 +233,7 @@ class vmtkPickPointSeedSelector(vmtkSeedSelector):
             any = self.PickedSeedIds.GetNumberOfIds()
         self._SourceSeedIds.DeepCopy(self.PickedSeedIds)
 
-        self.OutputText('Please position the mouse and press space to add target points, \'u\' to undo\n')
+        self.InputInfo('Please position the mouse and press space to add target points, \'u\' to undo\n')
 
         any = 0
         while any == 0:
@@ -249,6 +252,7 @@ class vmtkOpenProfilesSeedSelector(vmtkSeedSelector):
         vmtkSeedSelector.__init__(self)
         self.vmtkRenderer = None
         self.OwnRenderer = 0
+        self.Script = None
         
     def SetSeedIds(self,seedIds):
         self._SeedIds = seedIds
@@ -272,6 +276,8 @@ class vmtkOpenProfilesSeedSelector(vmtkSeedSelector):
             self.vmtkRenderer = vmtkrenderer.vmtkRenderer()
             self.vmtkRenderer.Initialize()
             self.OwnRenderer = 1
+
+        self.vmtkRenderer.RegisterScript(self.Script) 
 
         seedPoints = vtk.vtkPoints()
         for i in range(self._SeedIds.GetNumberOfIds()):
@@ -555,9 +561,11 @@ class vmtkCenterlines(pypes.pypeScript):
             if self.SeedSelectorName == 'pickpoint':
                 self.SeedSelector = vmtkPickPointSeedSelector()
                 self.SeedSelector.vmtkRenderer = self.vmtkRenderer
+                self.SeedSelector.Script = self
             elif self.SeedSelectorName == 'openprofiles':
                 self.SeedSelector = vmtkOpenProfilesSeedSelector()
                 self.SeedSelector.vmtkRenderer = self.vmtkRenderer
+                self.SeedSelector.Script = self
                 self.SeedSelector.SetSeedIds(surfaceCapper.GetCapCenterIds())
             elif self.SeedSelectorName == 'carotidprofiles':
                 self.SeedSelector = vmtkCarotidProfilesSeedSelector()
@@ -578,6 +586,7 @@ class vmtkCenterlines(pypes.pypeScript):
             return
 
         self.SeedSelector.SetSurface(centerlineInputSurface)
+        self.SeedSelector.InputInfo = self.InputInfo
         self.SeedSelector.InputText = self.InputText
         self.SeedSelector.OutputText = self.OutputText
         self.SeedSelector.PrintError = self.PrintError
