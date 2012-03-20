@@ -152,9 +152,9 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
         elif self.LevelSetsType == "threshold":
             levelSets = vtkvmtk.vtkvmtkThresholdSegmentationLevelSetImageFilter()
             levelSets.SetFeatureImage(self.Image)
-            queryString = "Please input lower threshold (\'i\' to activate image, \'n\' for none): "
+            queryString = "Please input lower threshold (\'n\' for none): "
             self.LowerThreshold = self.ThresholdInput(queryString)
-            queryString = "Please input upper threshold (\'i\' to activate image, \'n\' for none): "
+            queryString = "Please input upper threshold (\'n\' for none): "
             self.UpperThreshold = self.ThresholdInput(queryString)
             scalarRange = self.Image.GetScalarRange()
             if self.LowerThreshold != None:
@@ -222,11 +222,11 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
         marchingCubes.Update()
 
         self.OutputText('Displaying.\n')
-  
+
         self.SurfaceViewer.Surface = marchingCubes.GetOutput()
         if self.SurfaceViewer.Surface.GetSource():
             self.SurfaceViewer.Surface.GetSource().UnRegisterAllOutputs()
-        self.SurfaceViewer.Display = 1
+        self.SurfaceViewer.Display = 0
         self.SurfaceViewer.Opacity = 0.5
         self.SurfaceViewer.BuildView()
 
@@ -253,8 +253,7 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
             return 0
         return 1
 
-    def Execute(self):
-          
+    def Execute(self): 
         if self.Image == None:
             self.PrintError('Error: no Image.')
 
@@ -303,7 +302,7 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
         self.ImageSeeder.Image = self.InitializationImage
         self.ImageSeeder.Display = 0
         self.ImageSeeder.Execute()
-        self.ImageSeeder.Display = 1
+        ##self.ImageSeeder.Display = 1
         self.ImageSeeder.BuildView()
  
         self.SurfaceViewer = vmtkscripts.vmtkSurfaceViewer()

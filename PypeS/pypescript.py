@@ -164,6 +164,7 @@ class pypeScript(object):
         self.OutputStream.write('\r')
         self.OutputStream.write('Progress: '+str(int(100 * self.Progress))+'%')
         self.OutputStream.flush()
+        self.InputInfo('Progress: '+str(int(100 * self.Progress))+'%')
  
     def EndProgress(self):
         self.OutputStream.write('\n')
