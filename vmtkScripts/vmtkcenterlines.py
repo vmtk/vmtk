@@ -507,6 +507,9 @@ class vmtkCenterlines(pypes.pypeScript):
             ['DelaunayTessellation','delaunaytessellation','vtkUnstructuredGrid',1,'','','vmtkmeshwriter'],
             ['VoronoiDiagram','voronoidiagram','vtkPolyData',1,'','','vmtksurfacewriter'],
             ['PoleIds','poleids','vtkIdList',1]])
+    
+    def PrintProgress(self,obj,event):
+        self.OutputProgress(obj.GetProgress(),10)
 
     def Execute(self):
 
@@ -597,6 +600,8 @@ class vmtkCenterlines(pypes.pypeScript):
         outletSeedIds = self.SeedSelector.GetTargetSeedIds()
 
         self.PrintLog('Computing centerlines.')
+	self.InputInfo('Computing centerlines...')
+
         centerlineFilter = vtkvmtk.vtkvmtkPolyDataCenterlines()
         centerlineFilter.SetInput(centerlineInputSurface)
         if (self.SeedSelectorName == 'openprofiles') | (self.SeedSelectorName == 'carotidprofiles'):

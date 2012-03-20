@@ -134,7 +134,6 @@ class vmtkSurfaceViewer(pypes.pypeScript):
 
 
     def Execute(self):
-
         if (not self.Surface) and self.Display:
             self.PrintError('Error: no Surface.')
 
