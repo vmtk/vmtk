@@ -33,12 +33,12 @@ class vmtkMeshBranchClipper(pypes.pypeScript):
         
         self.Mesh = None
         self.Centerlines = None
-
+		
         self.RadiusArrayName = ''
         self.CutoffRadiusFactor = 1E16
         
         self.ClipValue = 0.0
-	
+
         self.BlankingArrayName = ''
         self.GroupIdsArrayName = ''
 
@@ -108,6 +108,7 @@ class vmtkMeshBranchClipper(pypes.pypeScript):
             viewer.OutputText = self.OutputText
             viewer.PrintError = self.PrintError
             viewer.PringLog = self.PrintLog
+	    viewer.Display = 0
             viewer.Execute()
            
             groupIdsString = self.InputText("Please input groupIds to clip:\n",self.GroupIdsValidator)

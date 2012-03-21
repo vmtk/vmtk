@@ -88,6 +88,9 @@ class vmtkRenderer(pypes.pypeScript):
         self.SetOutputMembers([
             ['vmtkRenderer','o','vmtkRenderer',1,'','the renderer']])
 
+    def ResetCameraCallback(self,obj):
+	self.Renderer.ResetCamera()
+
     def ScreenshotCallback(self, obj):
         filePrefix = 'vmtk-screenshot'
         fileNumber = 0
@@ -146,7 +149,7 @@ class vmtkRenderer(pypes.pypeScript):
             return
 
         if key in self.KeyBindings and self.KeyBindings[key]['callback'] != None:
-            self.KeyBindings[key]['callback'](obj)
+	    self.KeyBindings[key]['callback'](obj)
 
     def AddKeyBinding(self, key, text, callback=None, group='1'):
         if key == '+':
@@ -158,7 +161,7 @@ class vmtkRenderer(pypes.pypeScript):
         self.KeyBindings[key] = {'text': text, 'callback': callback, 'group': group}
 
     def RemoveKeyBinding(self, key):
-        if key in self.KeyBindings:    
+        if key in self.KeyBindings:   
             del self.KeyBindings[key]
 
     def EnterTextInputMode(self):
@@ -240,7 +243,7 @@ class vmtkRenderer(pypes.pypeScript):
 
             self.AddKeyBinding('x','Take screenshot.',self.ScreenshotCallback,'0')
             #self.AddKeyBinding('w','Show wireframe.',None,'0')
-            #self.AddKeyBinding('r','Resize.',None, '0')
+            self.AddKeyBinding('r','Resize.',self.ResetCameraCallback, '0')
             #self.AddKeyBinding('s','Show surface.', None,'0')
             #self.AddKeyBinding('e','Quit renderer.',self.QuitRendererCallback,'0')
             self.AddKeyBinding('q','Quit renderer and proceed.',self.QuitRendererCallback,'0')
