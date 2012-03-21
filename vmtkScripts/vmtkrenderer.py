@@ -88,6 +88,9 @@ class vmtkRenderer(pypes.pypeScript):
         self.SetOutputMembers([
             ['vmtkRenderer','o','vmtkRenderer',1,'','the renderer']])
 
+    def ResetCameraCallback(self,obj):
+	self.Renderer.ResetCamera()
+
     def ScreenshotCallback(self, obj):
         filePrefix = 'vmtk-screenshot'
         fileNumber = 0
@@ -240,7 +243,7 @@ class vmtkRenderer(pypes.pypeScript):
 
             self.AddKeyBinding('x','Take screenshot.',self.ScreenshotCallback,'0')
             #self.AddKeyBinding('w','Show wireframe.',None,'0')
-            #self.AddKeyBinding('r','Resize.',None, '0')
+            self.AddKeyBinding('r','Resize.',self.ResetCameraCallback, '0')
             #self.AddKeyBinding('s','Show surface.', None,'0')
             #self.AddKeyBinding('e','Quit renderer.',self.QuitRendererCallback,'0')
             self.AddKeyBinding('q','Quit renderer and proceed.',self.QuitRendererCallback,'0')

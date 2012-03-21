@@ -73,11 +73,10 @@ class vmtkSurfaceClipper(pypes.pypeScript):
         if self.Transform:
             self.ClipWidget.SetTransform(self.Transform)
             self.ClipWidget.On()
-
-      	self.vmtkRenderer.RenderWindowInteractor.Initialize()
-
+      	
+	#self.vmtkRenderer.RenderWindowInteractor.Initialize()
         self.vmtkRenderer.Render()
-        self.vmtkRenderer.RenderWindowInteractor.Start()
+        #self.vmtkRenderer.RenderWindowInteractor.Start()
 
     def Execute(self):
 

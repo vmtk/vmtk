@@ -58,7 +58,7 @@ class vmtkSurfaceTransformInteractive(pypes.pypeScript):
             ['Matrix4x4','omatrix4x4','vtkMatrix4x4',1,'','the output transform matrix']
             ])
 
-    def MoveCallback(self):
+    def MoveCallback(self,obj):
         if self.BoxWidget.GetEnabled() != 1:
             return
         self.BoxWidget.GetTransform(self.Transform)
@@ -99,9 +99,9 @@ class vmtkSurfaceTransformInteractive(pypes.pypeScript):
     def Display(self):
         self.Surface.ComputeBounds()
       	self.BoxWidget.PlaceWidget(self.Surface.GetBounds()) 
-      	self.vmtkRenderer.RenderWindowInteractor.Initialize() 
+      	#self.vmtkRenderer.RenderWindowInteractor.Initialize() 
         self.vmtkRenderer.Render()
-        self.vmtkRenderer.RenderWindowInteractor.Start()
+        #self.vmtkRenderer.RenderWindowInteractor.Start()
  
     def Execute(self):
  
