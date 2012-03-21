@@ -146,7 +146,7 @@ class vmtkRenderer(pypes.pypeScript):
             return
 
         if key in self.KeyBindings and self.KeyBindings[key]['callback'] != None:
-            self.KeyBindings[key]['callback'](obj)
+	    self.KeyBindings[key]['callback'](obj)
 
     def AddKeyBinding(self, key, text, callback=None, group='1'):
         if key == '+':
@@ -158,7 +158,7 @@ class vmtkRenderer(pypes.pypeScript):
         self.KeyBindings[key] = {'text': text, 'callback': callback, 'group': group}
 
     def RemoveKeyBinding(self, key):
-        if key in self.KeyBindings:    
+        if key in self.KeyBindings:   
             del self.KeyBindings[key]
 
     def EnterTextInputMode(self):
