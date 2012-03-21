@@ -53,10 +53,7 @@ class vmtkSurfaceClipper(pypes.pypeScript):
             ['Transform','otransform','vtkTransform',1,'','the output widget transform']
             ])
 
-    def KeyPressed(self,object,event):
-        key = object.GetKeySym()
-        if key != 'space':
-            return
+    def ClipCallback(self, obj):
         if self.ClipWidget.GetEnabled() != 1:
             return
         if self.WidgetType == "box":
@@ -76,12 +73,10 @@ class vmtkSurfaceClipper(pypes.pypeScript):
         if self.Transform:
             self.ClipWidget.SetTransform(self.Transform)
             self.ClipWidget.On()
-
-      	self.vmtkRenderer.RenderWindowInteractor.Initialize()
-
-        self.vmtkRenderer.RenderWindowInteractor.AddObserver("KeyPressEvent", self.KeyPressed)
-        self.vmtkRenderer.RenderWindow.Render()
-        self.vmtkRenderer.RenderWindowInteractor.Start()
+      	
+	#self.vmtkRenderer.RenderWindowInteractor.Initialize()
+        self.vmtkRenderer.Render()
+        #self.vmtkRenderer.RenderWindowInteractor.Start()
 
     def Execute(self):
 
@@ -103,6 +98,8 @@ class vmtkSurfaceClipper(pypes.pypeScript):
             self.vmtkRenderer = vmtkrenderer.vmtkRenderer()
             self.vmtkRenderer.Initialize()
             self.OwnRenderer = 1
+
+        self.vmtkRenderer.RegisterScript(self) 
 
         mapper = vtk.vtkPolyDataMapper()
         mapper.SetInput(self.Surface)
@@ -126,6 +123,9 @@ class vmtkSurfaceClipper(pypes.pypeScript):
             self.ClipWidget.SetThetaResolution(20)
 
         self.ClipWidget.SetInteractor(self.vmtkRenderer.RenderWindowInteractor)
+        
+        self.vmtkRenderer.AddKeyBinding('space','Clip.',self.ClipCallback)
+        self.vmtkRenderer.AddKeyBinding('i','Interact.')
         self.Display()
 
         self.Transform = vtk.vtkTransform()

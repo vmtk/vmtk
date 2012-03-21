@@ -73,6 +73,8 @@ class vmtkSurfaceViewer(pypes.pypeScript):
             self.vmtkRenderer.Initialize()
             self.OwnRenderer = 1
 
+        self.vmtkRenderer.RegisterScript(self) 
+
         if self.Actor:
             self.vmtkRenderer.Renderer.RemoveActor(self.Actor)
 
@@ -132,7 +134,6 @@ class vmtkSurfaceViewer(pypes.pypeScript):
 
 
     def Execute(self):
-
         if (not self.Surface) and self.Display:
             self.PrintError('Error: no Surface.')
 

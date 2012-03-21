@@ -159,188 +159,246 @@ class vmtkNetworkEditor(pypes.pypeScript):
             if self.PlaneWidgetZ:
                 self.PlaneWidgetZ.InteractionOff()
 
-    def KeyReleaseCallback(self,object,event):
+    def KeyReleaseCallback(self,obj,event):
         pass
         #key = object.GetKeySym()
         #if self.OperationMode == 'add':
         #    if key == 'Shift_L' or key == 'Shift_R':
         #        if self.PickMode == 'network':
         #            self.SetPickMode('image')
+    
+    def CheckMenu(self):
+	self.vmtkRenderer.RemoveKeyBinding('space')
+        self.vmtkRenderer.RemoveKeyBinding('c')
+        self.vmtkRenderer.RemoveKeyBinding('u')
+        self.vmtkRenderer.RemoveKeyBinding('plus')
+        self.vmtkRenderer.RemoveKeyBinding('minus')
+        self.vmtkRenderer.RemoveKeyBinding('equal')
+        self.vmtkRenderer.RemoveKeyBinding('Return')
 
-    def KeyPressCallback(self,object,event):
-        key = object.GetKeySym()
-        operationModesDict = {'a':'add','d':'delete', 's':'split', 'm':'merge', 'l':'label'}
-        if key in operationModesDict.keys():
-            self.PrintLog('%s mode' % operationModesDict[key])
-            self.OperationMode = operationModesDict[key]
+    def ShowLabelCallback(self, obj):
+        self.ToggleLabels()
+
+    def AddCallback(self, obj):
+	self.InputInfo('Switched to add mode.')
+        self.PrintLog('Add mode')
+        self.OperationMode = 'add'
+        self.InitializeActiveSegment()
+        self.vmtkRenderer.AddKeyBinding('space','start interaction',self.SpaceCallback, '2')
+        self.vmtkRenderer.AddKeyBinding('c','cancel',self.CancelCallback,'2')
+        self.vmtkRenderer.AddKeyBinding('u','undo',self.UndoCallback,'2')
+        self.vmtkRenderer.AddKeyBinding('plus','plus',self.PlusCallback,'2')
+        self.vmtkRenderer.AddKeyBinding('minus','minus',self.MinusCallback,'2')
+        self.vmtkRenderer.AddKeyBinding('equal','equal',self.PlusCallback,'2')
+        self.vmtkRenderer.AddKeyBinding('Return','return',self.ReturnAddCallback,'2')
+        self.vmtkRenderer.Render()
+
+    def DeleteCallback(self, obj):
+	self.InputInfo('Switched to delete mode.')
+        self.PrintLog('Delete mode')
+        self.OperationMode = 'delete'
+        self.InitializeActiveSegment()
+	self.CheckMenu()
+        if self.PickMode == 'image':
+            self.SetPickMode('network')
             self.InitializeActiveSegment()
+        self.vmtkRenderer.Render()
+
+    def SplitCallback(self, obj):
+	self.InputInfo('Switched to split mode.')
+        self.PrintLog('Split mode')
+        self.OperationMode = 'split'
+        self.InitializeActiveSegment()
+	self.CheckMenu()
+        if self.PickMode == 'image':
+            self.SetPickMode('network')
+            self.InitializeActiveSegment()
+        self.vmtkRenderer.Render()
+
+    def LabelCallback(self, obj):
+        self.PrintLog('Label mode')
+	self.InputInfo('Switched to label mode.\nCtrl + left click to add label.')
+        self.OperationMode = 'label'
+        self.InitializeActiveSegment()
+	self.CheckMenu()
+        if self.PickMode == 'image':
+            self.SetPickMode('network')
+            self.InitializeActiveSegment()
+        self.vmtkRenderer.Render()
+
+    def MergeCallback(self, obj):
+	self.InputInfo('Switched to merge mode.')
+        self.PrintLog('Merge mode')
+        self.OperationMode = 'merge'
+        self.InitializeActiveSegment()
+	self.CheckMenu()
+        if self.PickMode == 'image':
+            self.SetPickMode('network')
+            self.InitializeActiveSegment()
+            self.CellIdsToMerge = []
+        self.vmtkRenderer.AddKeyBinding('Return','return',self.ReturnCallback,'2')
+        self.vmtkRenderer.Render()
+
+    def SpaceCallback(self, obj):
+        self.TogglePickMode()
+        self.TogglePlaneWidget(self.PlaneWidgetX)
+        self.TogglePlaneWidget(self.PlaneWidgetY)
+        self.TogglePlaneWidget(self.PlaneWidgetZ)
+	self.InputInfo('Ctrl + left click to add seeds.')	
+
+    def CancelCallback(self, obj):
+        self.PrintLog('c')
+        self.InitializeActiveSegment()
+
+    def UndoCallback(self, obj):
+        numberOfSeeds = self.ActiveSegmentSeedsPoints.GetNumberOfPoints()
+        if numberOfSeeds > 0:
+            self.ActiveSegmentSeedsPoints.SetNumberOfPoints(numberOfSeeds-1)
+            self.ActiveSegmentSeedsRadiusArray.SetNumberOfValues(numberOfSeeds-1)
+            self.ActiveSegmentSeeds.Modified()
+            self.AttachedCellIds[1] = -1
+            self.AttachedSubIds[1] = -1
+            self.AttachedPCoords[1] = 0.0
+        else:
+            self.AttachedCellIds[0] = -1
+            self.AttachedSubIds[0] = -1
+            self.AttachedPCoords[0] = 0.0
+        numberOfPoints = self.ActiveSegmentPoints.GetNumberOfPoints()
+        if numberOfPoints > 2:
+            self.ActiveSegmentPoints.SetNumberOfPoints(numberOfPoints-1)
+            self.ActiveSegmentRadiusArray.SetNumberOfValues(numberOfPoints-1)
+            self.ActiveSegmentCellArray.Initialize()
+            self.ActiveSegmentCellArray.InsertNextCell(numberOfPoints-1)
+            for i in range(numberOfPoints-1):
+                self.ActiveSegmentCellArray.InsertCellPoint(i)
+            self.ActiveSegment.Modified()
+        else:
+            self.ActiveSegmentPoints.SetNumberOfPoints(0)
+            self.ActiveSegmentCellArray.Initialize()
+            self.ActiveSegmentRadiusArray.SetNumberOfValues(0)
+            self.ActiveSegment.Modified()
+        self.Render()
+
+    def PlusCallback(self, obj):
+        numberOfSeeds = self.ActiveSegmentSeedsPoints.GetNumberOfPoints()
+        if numberOfSeeds > 0:
+            radius = self.ActiveSegmentSeedsRadiusArray.GetValue(numberOfSeeds-1)
+            radius += 0.1
+            self.ActiveSegmentSeedsRadiusArray.SetValue(numberOfSeeds-1,radius)
+            self.CurrentRadius = radius
+            self.ActiveSegmentSeeds.Modified()
+        numberOfPoints = self.ActiveSegmentPoints.GetNumberOfPoints()
+        if numberOfPoints > 0:
+            radius = self.ActiveSegmentRadiusArray.GetValue(numberOfPoints-1)
+            radius += 0.1
+            self.ActiveSegmentRadiusArray.SetValue(numberOfPoints-1,radius)
+            self.ActiveSegment.Modified()
+        self.Render()
+
+    def MinusCallback(self, obj):
+        numberOfSeeds = self.ActiveSegmentSeedsPoints.GetNumberOfPoints()
+        if numberOfSeeds > 0:
+            radius = self.ActiveSegmentSeedsRadiusArray.GetValue(numberOfSeeds-1)
+            radius -= 0.1
+            self.ActiveSegmentSeedsRadiusArray.SetValue(numberOfSeeds-1,radius)
+            self.CurrentRadius = radius
+            self.ActiveSegmentSeeds.Modified()
+        numberOfPoints = self.ActiveSegmentPoints.GetNumberOfPoints()
+        if numberOfPoints > 0:
+            radius = self.ActiveSegmentRadiusArray.GetValue(numberOfPoints-1)
+            radius -= 0.1
+            self.ActiveSegmentRadiusArray.SetValue(numberOfPoints-1,radius)
+            self.ActiveSegment.Modified()
+        self.Render()
+
+    def ReturnAddCallback(self, obj):
+        attachedPointId0 = -1
+        attachedPointId1 = -1
+        cellIdsToRemove = []
+        if self.AttachedCellIds[0] != -1:
+            attachedPointId0, hasSplit = self.SplitCellNoRemove(self.AttachedCellIds[0],self.AttachedSubIds[0],self.AttachedPCoords[0])
+            if hasSplit:
+                cellIdsToRemove.append(self.AttachedCellIds[0])
+        if self.AttachedCellIds[1] != -1:
+            attachedPointId1, hasSplit = self.SplitCellNoRemove(self.AttachedCellIds[1],self.AttachedSubIds[1],self.AttachedPCoords[1])
+            if hasSplit:
+                cellIdsToRemove.append(self.AttachedCellIds[1])
+        if cellIdsToRemove:
+            self.RemoveCells(cellIdsToRemove)
+        segment = self.ActiveSegmentActor.GetMapper().GetInput()
+        if self.UseActiveTubes:
+            self.RunActiveTube(segment)
+        segmentRadiusArray = segment.GetPointData().GetArray(self.RadiusArrayName)
+        numberOfSegmentPoints = segment.GetNumberOfPoints()
+        networkPoints = self.Network.GetPoints()
+        networkCellArray = self.Network.GetLines()
+        cellId = networkCellArray.InsertNextCell(numberOfSegmentPoints)
+        for i in range(numberOfSegmentPoints):
+            id = -1
+            if i == 0 and attachedPointId0 != -1:
+                id = attachedPointId0
+            elif i == numberOfSegmentPoints-1 and attachedPointId1 != -1:
+                id = attachedPointId1
+            else:
+                id = networkPoints.InsertNextPoint(segment.GetPoint(i))
+                self.NetworkRadiusArray.InsertTuple1(id,segmentRadiusArray.GetTuple1(i))
+            networkCellArray.InsertCellPoint(id)
+        self.NetworkLabelsArray.InsertValue(cellId,'')
+        self.Network.BuildCells()
+        self.Network.Modified()
+        self.NetworkTube.Modified()
+        self.UpdateLabels()
+        #if self.Image and self.PickMode == 'network':
+        #    self.SetPickMode('image')
+        self.InitializeSelection()
+        self.InitializeActiveSegment()
+
+    def ReturnCallback(self, obj):
+        numberOfActiveCells = self.ActiveSegment.GetNumberOfCells()
+        if numberOfActiveCells != 2 or len(self.CellIdsToMerge) != 2:
             return
-        if key == 'Tab':
-            self.ToggleLabels()
-        if self.OperationMode == 'add':
-            if key == 'space':
-                self.TogglePickMode()
-                self.TogglePlaneWidget(self.PlaneWidgetX)
-                self.TogglePlaneWidget(self.PlaneWidgetY)
-                self.TogglePlaneWidget(self.PlaneWidgetZ)
-            #elif key == 'Shift_L' or key == 'Shift_R':
-            #    if self.PickMode == 'image':
-            #        self.SetPickMode('network')
-            elif key == 'c':
-                self.InitializeActiveSegment()
-            elif key == 'u':
-                numberOfSeeds = self.ActiveSegmentSeedsPoints.GetNumberOfPoints()
-                if numberOfSeeds > 0:
-                    self.ActiveSegmentSeedsPoints.SetNumberOfPoints(numberOfSeeds-1)
-                    self.ActiveSegmentSeedsRadiusArray.SetNumberOfValues(numberOfSeeds-1)
-                    self.ActiveSegmentSeeds.Modified()
-                    self.AttachedCellIds[1] = -1
-                    self.AttachedSubIds[1] = -1
-                    self.AttachedPCoords[1] = 0.0
-                else:
-                    self.AttachedCellIds[0] = -1
-                    self.AttachedSubIds[0] = -1
-                    self.AttachedPCoords[0] = 0.0
-                numberOfPoints = self.ActiveSegmentPoints.GetNumberOfPoints()
-                if numberOfPoints > 2:
-                    self.ActiveSegmentPoints.SetNumberOfPoints(numberOfPoints-1)
-                    self.ActiveSegmentRadiusArray.SetNumberOfValues(numberOfPoints-1)
-                    self.ActiveSegmentCellArray.Initialize()
-                    self.ActiveSegmentCellArray.InsertNextCell(numberOfPoints-1)
-                    for i in range(numberOfPoints-1):
-                        self.ActiveSegmentCellArray.InsertCellPoint(i)
-                    self.ActiveSegment.Modified()
-                else:
-                    self.ActiveSegmentPoints.SetNumberOfPoints(0)
-                    self.ActiveSegmentCellArray.Initialize()
-                    self.ActiveSegmentRadiusArray.SetNumberOfValues(0)
-                    self.ActiveSegment.Modified()
-                self.Render()
-            elif key in ['equal','plus','minus']:
-                numberOfSeeds = self.ActiveSegmentSeedsPoints.GetNumberOfPoints()
-                if numberOfSeeds > 0:
-                    radius = self.ActiveSegmentSeedsRadiusArray.GetValue(numberOfSeeds-1)
-                    if key in ['equal','plus']:
-                        radius += 0.1
-                    else:
-                        radius -= 0.1
-                    self.ActiveSegmentSeedsRadiusArray.SetValue(numberOfSeeds-1,radius)
-                    self.CurrentRadius = radius
-                    self.ActiveSegmentSeeds.Modified()
-                numberOfPoints = self.ActiveSegmentPoints.GetNumberOfPoints()
-                if numberOfPoints > 0:
-                    radius = self.ActiveSegmentRadiusArray.GetValue(numberOfPoints-1)
-                    if key in ['equal','plus']:
-                        radius += 0.1
-                    else:
-                        radius -= 0.1
-                    self.ActiveSegmentRadiusArray.SetValue(numberOfPoints-1,radius)
-                    self.ActiveSegment.Modified()
-                self.Render()
-            elif key == 'Return':
-                attachedPointId0 = -1
-                attachedPointId1 = -1
-                cellIdsToRemove = []
-                if self.AttachedCellIds[0] != -1:
-                    attachedPointId0, hasSplit = self.SplitCellNoRemove(self.AttachedCellIds[0],self.AttachedSubIds[0],self.AttachedPCoords[0])
-                    if hasSplit:
-                        cellIdsToRemove.append(self.AttachedCellIds[0])
-                if self.AttachedCellIds[1] != -1:
-                    attachedPointId1, hasSplit = self.SplitCellNoRemove(self.AttachedCellIds[1],self.AttachedSubIds[1],self.AttachedPCoords[1])
-                    if hasSplit:
-                        cellIdsToRemove.append(self.AttachedCellIds[1])
-                if cellIdsToRemove:
-                    self.RemoveCells(cellIdsToRemove)
-                segment = self.ActiveSegmentActor.GetMapper().GetInput()
-                if self.UseActiveTubes:
-                    self.RunActiveTube(segment)
-                segmentRadiusArray = segment.GetPointData().GetArray(self.RadiusArrayName)
-                numberOfSegmentPoints = segment.GetNumberOfPoints()
-                networkPoints = self.Network.GetPoints()
-                networkCellArray = self.Network.GetLines()
-                cellId = networkCellArray.InsertNextCell(numberOfSegmentPoints)
-                for i in range(numberOfSegmentPoints):
-                    id = -1
-                    if i == 0 and attachedPointId0 != -1:
-                        id = attachedPointId0
-                    elif i == numberOfSegmentPoints-1 and attachedPointId1 != -1:
-                        id = attachedPointId1
-                    else:
-                        id = networkPoints.InsertNextPoint(segment.GetPoint(i))
-                        self.NetworkRadiusArray.InsertTuple1(id,segmentRadiusArray.GetTuple1(i))
-                    networkCellArray.InsertCellPoint(id)
-                self.NetworkLabelsArray.InsertValue(cellId,'')
-                self.Network.BuildCells()
-                self.Network.Modified()
-                self.NetworkTube.Modified()
-                self.UpdateLabels()
-                #if self.Image and self.PickMode == 'network':
-                #    self.SetPickMode('image')
-                self.InitializeSelection()
-                self.InitializeActiveSegment()
-        elif self.OperationMode == 'delete':
-            if self.PickMode == 'image':
-                self.SetPickMode('network')
-                self.InitializeActiveSegment()
-        elif self.OperationMode == 'split':
-            if self.PickMode == 'image':
-                self.SetPickMode('network')
-                self.InitializeActiveSegment()
-        elif self.OperationMode == 'label':
-            if self.PickMode == 'image':
-                self.SetPickMode('network')
-                self.InitializeActiveSegment()
-        elif self.OperationMode == 'merge':
-            if self.PickMode == 'image':
-                self.SetPickMode('network')
-                self.InitializeActiveSegment()
-                self.CellIdsToMerge = []
-            if key == 'Return':
-                numberOfActiveCells = self.ActiveSegment.GetNumberOfCells()
-                if numberOfActiveCells != 2 or len(self.CellIdsToMerge) != 2:
-                    return
-                cell0ToMerge = self.Network.GetCell(self.CellIdsToMerge[0])
-                cell0PointIds = vtk.vtkIdList()
-                cell0PointIds.DeepCopy(cell0ToMerge.GetPointIds())
-                numberOfCell0Points = cell0PointIds.GetNumberOfIds()
-                cell1ToMerge = self.Network.GetCell(self.CellIdsToMerge[1])
-                cell1PointIds = vtk.vtkIdList()
-                cell1PointIds.DeepCopy(cell1ToMerge.GetPointIds())
-                numberOfCell1Points = cell1PointIds.GetNumberOfIds()
-                reverse = [False,False] 
-                if cell0PointIds.GetId(numberOfCell0Points-1) == cell1PointIds.GetId(0):
-                    reverse = [False,False]
-                elif cell0PointIds.GetId(numberOfCell0Points-1) == cell1PointIds.GetId(numberOfCell1Points-1):
-                    reverse = [False,True]
-                elif cell0PointIds.GetId(0) == cell1PointIds.GetId(numberOfCell1Points-1):
-                    reverse = [True,True]
-                elif cell0PointIds.GetId(0) == cell1PointIds.GetId(0):
-                    reverse = [True,False]
-                else:
-                    self.PrintLog('Error: trying to merge non-adjacent segments.')
-                    return
-                mergedLabel = self.NetworkLabelsArray.GetValue(self.CellIdsToMerge[0])
-                self.RemoveCells(self.CellIdsToMerge)
-                networkCellArray = self.Network.GetLines()
-                cellId = networkCellArray.InsertNextCell(numberOfCell0Points+numberOfCell1Points-1)
-                for i in range(numberOfCell0Points):
-                    loc = i
-                    if reverse[0]:
-                        loc = numberOfCell0Points - 1 - i
-                    networkCellArray.InsertCellPoint(cell0PointIds.GetId(loc))
-                for i in range(1,numberOfCell1Points):
-                    loc = i
-                    if reverse[1]:
-                        loc = numberOfCell1Points - 1 - i
-                    networkCellArray.InsertCellPoint(cell1PointIds.GetId(loc))
-                self.NetworkLabelsArray.InsertValue(cellId,mergedLabel)
-                self.Network.SetLines(networkCellArray)
-                self.Network.BuildCells()
-                self.Network.Modified()
-                self.NetworkTube.Modified()
-                self.UpdateLabels()
-                self.InitializeActiveSegment()
-                self.CellIdsToMerge = []
+        cell0ToMerge = self.Network.GetCell(self.CellIdsToMerge[0])
+        cell0PointIds = vtk.vtkIdList()
+        cell0PointIds.DeepCopy(cell0ToMerge.GetPointIds())
+        numberOfCell0Points = cell0PointIds.GetNumberOfIds()
+        cell1ToMerge = self.Network.GetCell(self.CellIdsToMerge[1])
+        cell1PointIds = vtk.vtkIdList()
+        cell1PointIds.DeepCopy(cell1ToMerge.GetPointIds())
+        numberOfCell1Points = cell1PointIds.GetNumberOfIds()
+        reverse = [False,False] 
+        if cell0PointIds.GetId(numberOfCell0Points-1) == cell1PointIds.GetId(0):
+            reverse = [False,False]
+        elif cell0PointIds.GetId(numberOfCell0Points-1) == cell1PointIds.GetId(numberOfCell1Points-1):
+            reverse = [False,True]
+        elif cell0PointIds.GetId(0) == cell1PointIds.GetId(numberOfCell1Points-1):
+            reverse = [True,True]
+        elif cell0PointIds.GetId(0) == cell1PointIds.GetId(0):
+            reverse = [True,False]
+        else:
+            self.PrintLog('Error: trying to merge non-adjacent segments.')
+            return
+        mergedLabel = self.NetworkLabelsArray.GetValue(self.CellIdsToMerge[0])
+        self.RemoveCells(self.CellIdsToMerge)
+        networkCellArray = self.Network.GetLines()
+        cellId = networkCellArray.InsertNextCell(numberOfCell0Points+numberOfCell1Points-1)
+        for i in range(numberOfCell0Points):
+            loc = i
+            if reverse[0]:
+                loc = numberOfCell0Points - 1 - i
+            networkCellArray.InsertCellPoint(cell0PointIds.GetId(loc))
+        for i in range(1,numberOfCell1Points):
+            loc = i
+            if reverse[1]:
+                loc = numberOfCell1Points - 1 - i
+            networkCellArray.InsertCellPoint(cell1PointIds.GetId(loc))
+        self.NetworkLabelsArray.InsertValue(cellId,mergedLabel)
+        self.Network.SetLines(networkCellArray)
+        self.Network.BuildCells()
+        self.Network.Modified()
+        self.NetworkTube.Modified()
+        self.UpdateLabels()
+        self.InitializeActiveSegment()
+        self.CellIdsToMerge = []
 
     def RemoveCell(self,cellId):
         self.RemoveCells([cellId])
@@ -393,7 +451,7 @@ class vmtkNetworkEditor(pypes.pypeScript):
         self.Network.BuildCells()
         return splitPointId, True
 
-    def LeftButtonPressCallback(self,object,event):
+    def LeftButtonPressCallback(self,obj,event):
         if self.PickMode != 'network':
             return
         if self.vmtkRenderer.RenderWindowInteractor.GetControlKey() == 0:
@@ -507,7 +565,7 @@ class vmtkNetworkEditor(pypes.pypeScript):
         self.AttachedPCoords = [0.0,0.0]
         self.Render()
 
-    def MouseMoveCallback(self,object,event):
+    def MouseMoveCallback(self,obj,event):
         if self.PickMode != 'network':
             return
         if self.vmtkRenderer.RenderWindowInteractor.GetControlKey() == 0:
@@ -516,7 +574,7 @@ class vmtkNetworkEditor(pypes.pypeScript):
             return
         if self.Network.GetNumberOfCells() == 0:
             return
-        eventPosition = object.GetEventPosition()
+        eventPosition = self.vmtkRenderer.RenderWindowInteractor.GetEventPosition()
         result = self.CellPicker.Pick(float(eventPosition[0]),float(eventPosition[1]),0.0,self.vmtkRenderer.Renderer)
         if result == 0:
             return
@@ -545,12 +603,12 @@ class vmtkNetworkEditor(pypes.pypeScript):
         self.Selection.Modified()
         self.Render()
 
-    def PlaneStartInteractionCallback(self,object,event):
+    def PlaneStartInteractionCallback(self,obj,event):
         if self.PickMode != 'image':
             return
         if self.vmtkRenderer.RenderWindowInteractor.GetControlKey() == 0:
             return
-        point = object.GetCurrentCursorPosition()
+        point = obj.GetCurrentCursorPosition()
         radius = self.CurrentRadius
         if self.ActiveSegmentSeeds.GetNumberOfPoints() == 0:
             self.ActiveSegmentSeedsPoints.InsertNextPoint(point)
@@ -609,6 +667,9 @@ class vmtkNetworkEditor(pypes.pypeScript):
             self.vmtkRenderer = vmtkrenderer.vmtkRenderer()
             self.vmtkRenderer.Initialize()
             self.OwnRenderer = 1
+
+        self.vmtkRenderer.ExitAfterTextInputMode = False
+        self.vmtkRenderer.RegisterScript(self) 
 
         if self.Image and (not self.PlaneWidgetX or not self.PlaneWidgetY or not self.PlaneWidgetZ):
             imageViewer = vmtkimageviewer.vmtkImageViewer()
@@ -787,7 +848,12 @@ class vmtkNetworkEditor(pypes.pypeScript):
         self.CellPicker.AddPickList(self.NetworkActor)
         self.CellPicker.PickFromListOn()
 
-        self.vmtkRenderer.RenderWindowInteractor.AddObserver("KeyPressEvent", self.KeyPressCallback)
+        self.vmtkRenderer.AddKeyBinding('a','Activate add mode.',self.AddCallback)
+        self.vmtkRenderer.AddKeyBinding('d','Activate delete mode.',self.DeleteCallback)
+        self.vmtkRenderer.AddKeyBinding('m','Activate merge mode.',self.MergeCallback)
+        self.vmtkRenderer.AddKeyBinding('s','Activate split mode.',self.SplitCallback)
+        self.vmtkRenderer.AddKeyBinding('l','Activate label mode.',self.LabelCallback)
+        self.vmtkRenderer.AddKeyBinding('Tab','Show labels.',self.ShowLabelCallback)
         self.vmtkRenderer.RenderWindowInteractor.AddObserver("KeyReleaseEvent", self.KeyReleaseCallback)
         self.vmtkRenderer.RenderWindowInteractor.AddObserver("LeftButtonPressEvent", self.LeftButtonPressCallback)
         self.vmtkRenderer.RenderWindowInteractor.AddObserver("MouseMoveEvent", self.MouseMoveCallback)

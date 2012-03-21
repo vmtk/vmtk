@@ -15,7 +15,9 @@
 
 
 import sys
+from multiprocessing import Process, Manager
 try:
+    from vmtk import pypeserver
     from vmtk import pypes
 except:
 
@@ -55,10 +57,23 @@ except:
     os.environ[ldEnvironmentVariable] = newEnviron[ldEnvironmentVariable] + os.path.pathsep + currentEnviron[ldEnvironmentVariable]
     os.environ["PYTHONPATH"] = newEnviron["PYTHONPATH"] + os.path.pathsep + currentEnviron["PYTHONPATH"]
 
+    from vmtk import pypeserver
     from vmtk import pypes
 
 
 if __name__=='__main__':
+    #manager = Manager()
+    #queue = manager.list()
+    #pypeProcess = Process(target=pypeserver.PypeServer, args=(queue,None))
+    #pypeProcess.start()
+
+    #queue.append(' '.join(sys.argv))
+
+    #try:
+    #    pypeProcess.join()
+    #except KeyboardInterrupt:
+    #    pypeProcess.terminate()
+
     main = pypes.pypeMain()
     main.Arguments = sys.argv
     main.Execute()

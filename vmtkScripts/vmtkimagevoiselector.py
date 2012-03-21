@@ -126,6 +126,8 @@ class vmtkImageVOISelector(pypes.pypeScript):
         self.CubeActor.GetProperty().SetOpacity(0.25)
         self.CubeActor.VisibilityOff()
         self.vmtkRenderer.Renderer.AddActor(self.CubeActor)
+	    
+        self.vmtkRenderer.Renderer.ResetCamera()
 
         self.vmtkRenderer.Render()
 
@@ -173,7 +175,7 @@ class vmtkImageVOISelector(pypes.pypeScript):
             self.CroppedImage.GetSource().UnregisterAllOutputs()
 
     def Execute(self):
-
+	
         if self.Image == None:
             self.PrintError('Error: no Image.')
 
@@ -185,7 +187,8 @@ class vmtkImageVOISelector(pypes.pypeScript):
                 self.vmtkRenderer = vmtkrenderer.vmtkRenderer()
                 self.vmtkRenderer.Initialize()
                 self.OwnRenderer = 1
-                
+
+            self.vmtkRenderer.RegisterScript(self)
             self.PlaneWidgetX = vtk.vtkImagePlaneWidget()
             self.PlaneWidgetX.SetInteractor(self.vmtkRenderer.RenderWindowInteractor)
             self.PlaneWidgetY = vtk.vtkImagePlaneWidget()
@@ -194,6 +197,9 @@ class vmtkImageVOISelector(pypes.pypeScript):
             self.PlaneWidgetZ.SetInteractor(self.vmtkRenderer.RenderWindowInteractor)
             self.BoxWidget = vtk.vtkBoxWidget()
             self.BoxWidget.SetInteractor(self.vmtkRenderer.RenderWindowInteractor)
+
+            self.vmtkRenderer.AddKeyBinding('i','Interact.')
+            self.InputInfo("Press 'i' to activate interactor")
 
             self.Display()
             while (self.BoxActive == 1):
@@ -207,7 +213,6 @@ class vmtkImageVOISelector(pypes.pypeScript):
             self.vmtkRenderer.Deallocate()
 
         self.Image = self.CroppedImage
-
 
 if __name__=='__main__':
     main = pypes.pypeMain()
