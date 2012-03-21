@@ -166,50 +166,50 @@ class vmtkNetworkEditor(pypes.pypeScript):
         #    if key == 'Shift_L' or key == 'Shift_R':
         #        if self.PickMode == 'network':
         #            self.SetPickMode('image')
-
-    def ShowLabelCallback(self, obj):
-        self.ToggleLabels()
-
-    def AddCallback(self, obj):
-        self.PrintLog('Add mode')
-        self.OperationMode = 'add'
-        self.InitializeActiveSegment()
-        self.vmtkRenderer.AddKeyBinding('space','go',self.SpaceCallback, '2')
-        self.vmtkRenderer.AddKeyBinding('c','cancel',self.CancelCallback,'2')
-        self.vmtkRenderer.AddKeyBinding('u','undo',self.UndoCallback,'2')
-        self.vmtkRenderer.AddKeyBinding('plus','plus',self.PlusCallback,'2')
-        self.vmtkRenderer.AddKeyBinding('minus','minus',self.MinusCallback,'2')
-        self.vmtkRenderer.AddKeyBinding('equal','equal',self.PlusCallback,'2')
-        self.vmtkRenderer.AddKeyBinding('b','return',self.ReturnAddCallback,'2')
-        self.vmtkRenderer.Render()
-
-    def DeleteCallback(self, obj):
-        self.PrintLog('Delete mode')
-        self.OperationMode = 'delete'
-        self.InitializeActiveSegment()
-        self.vmtkRenderer.RemoveKeyBinding('space')
+    
+    def CheckMenu(self):
+	self.vmtkRenderer.RemoveKeyBinding('space')
         self.vmtkRenderer.RemoveKeyBinding('c')
         self.vmtkRenderer.RemoveKeyBinding('u')
         self.vmtkRenderer.RemoveKeyBinding('plus')
         self.vmtkRenderer.RemoveKeyBinding('minus')
         self.vmtkRenderer.RemoveKeyBinding('equal')
-        self.vmtkRenderer.RemoveKeyBinding('b')
+        self.vmtkRenderer.RemoveKeyBinding('Return')
+
+    def ShowLabelCallback(self, obj):
+        self.ToggleLabels()
+
+    def AddCallback(self, obj):
+	self.InputInfo('Switched to add mode.')
+        self.PrintLog('Add mode')
+        self.OperationMode = 'add'
+        self.InitializeActiveSegment()
+        self.vmtkRenderer.AddKeyBinding('space','start interaction',self.SpaceCallback, '2')
+        self.vmtkRenderer.AddKeyBinding('c','cancel',self.CancelCallback,'2')
+        self.vmtkRenderer.AddKeyBinding('u','undo',self.UndoCallback,'2')
+        self.vmtkRenderer.AddKeyBinding('plus','plus',self.PlusCallback,'2')
+        self.vmtkRenderer.AddKeyBinding('minus','minus',self.MinusCallback,'2')
+        self.vmtkRenderer.AddKeyBinding('equal','equal',self.PlusCallback,'2')
+        self.vmtkRenderer.AddKeyBinding('Return','return',self.ReturnAddCallback,'2')
+        self.vmtkRenderer.Render()
+
+    def DeleteCallback(self, obj):
+	self.InputInfo('Switched to delete mode.')
+        self.PrintLog('Delete mode')
+        self.OperationMode = 'delete'
+        self.InitializeActiveSegment()
+	self.CheckMenu()
         if self.PickMode == 'image':
             self.SetPickMode('network')
             self.InitializeActiveSegment()
         self.vmtkRenderer.Render()
 
     def SplitCallback(self, obj):
+	self.InputInfo('Switched to split mode.')
         self.PrintLog('Split mode')
         self.OperationMode = 'split'
         self.InitializeActiveSegment()
-        self.vmtkRenderer.RemoveKeyBinding('space')
-        self.vmtkRenderer.RemoveKeyBinding('c')
-        self.vmtkRenderer.RemoveKeyBinding('u')
-        self.vmtkRenderer.RemoveKeyBinding('plus')
-        self.vmtkRenderer.RemoveKeyBinding('minus')
-        self.vmtkRenderer.RemoveKeyBinding('equal')
-        self.vmtkRenderer.RemoveKeyBinding('b')
+	self.CheckMenu()
         if self.PickMode == 'image':
             self.SetPickMode('network')
             self.InitializeActiveSegment()
@@ -217,44 +217,34 @@ class vmtkNetworkEditor(pypes.pypeScript):
 
     def LabelCallback(self, obj):
         self.PrintLog('Label mode')
+	self.InputInfo('Switched to label mode.\nCtrl + left click to add label.')
         self.OperationMode = 'label'
         self.InitializeActiveSegment()
-        self.vmtkRenderer.RemoveKeyBinding('space')
-        self.vmtkRenderer.RemoveKeyBinding('c')
-        self.vmtkRenderer.RemoveKeyBinding('u')
-        self.vmtkRenderer.RemoveKeyBinding('plus')
-        self.vmtkRenderer.RemoveKeyBinding('minus')
-        self.vmtkRenderer.RemoveKeyBinding('equal')
-        self.vmtkRenderer.RemoveKeyBinding('b')
+	self.CheckMenu()
         if self.PickMode == 'image':
             self.SetPickMode('network')
             self.InitializeActiveSegment()
         self.vmtkRenderer.Render()
 
     def MergeCallback(self, obj):
+	self.InputInfo('Switched to merge mode.')
         self.PrintLog('Merge mode')
         self.OperationMode = 'merge'
         self.InitializeActiveSegment()
-        self.vmtkRenderer.RemoveKeyBinding('space')
-        self.vmtkRenderer.RemoveKeyBinding('c')
-        self.vmtkRenderer.RemoveKeyBinding('u')
-        self.vmtkRenderer.RemoveKeyBinding('plus')
-        self.vmtkRenderer.RemoveKeyBinding('minus')
-        self.vmtkRenderer.RemoveKeyBinding('equal')
-        self.vmtkRenderer.RemoveKeyBinding('b')
+	self.CheckMenu()
         if self.PickMode == 'image':
             self.SetPickMode('network')
             self.InitializeActiveSegment()
             self.CellIdsToMerge = []
-        self.vmtkRenderer.AddKeyBinding('b','return',self.ReturnCallback,'2')
+        self.vmtkRenderer.AddKeyBinding('Return','return',self.ReturnCallback,'2')
         self.vmtkRenderer.Render()
 
     def SpaceCallback(self, obj):
-        self.PrintLog('space')
         self.TogglePickMode()
         self.TogglePlaneWidget(self.PlaneWidgetX)
         self.TogglePlaneWidget(self.PlaneWidgetY)
-        self.TogglePlaneWidget(self.PlaneWidgetZ)		
+        self.TogglePlaneWidget(self.PlaneWidgetZ)
+	self.InputInfo('Ctrl + left click to add seeds.')	
 
     def CancelCallback(self, obj):
         self.PrintLog('c')
@@ -678,6 +668,7 @@ class vmtkNetworkEditor(pypes.pypeScript):
             self.vmtkRenderer.Initialize()
             self.OwnRenderer = 1
 
+        self.vmtkRenderer.ExitAfterTextInputMode = False
         self.vmtkRenderer.RegisterScript(self) 
 
         if self.Image and (not self.PlaneWidgetX or not self.PlaneWidgetY or not self.PlaneWidgetZ):
@@ -860,7 +851,7 @@ class vmtkNetworkEditor(pypes.pypeScript):
         self.vmtkRenderer.AddKeyBinding('a','Activate add mode.',self.AddCallback)
         self.vmtkRenderer.AddKeyBinding('d','Activate delete mode.',self.DeleteCallback)
         self.vmtkRenderer.AddKeyBinding('m','Activate merge mode.',self.MergeCallback)
-        self.vmtkRenderer.AddKeyBinding('p','Activate split mode.',self.SplitCallback)
+        self.vmtkRenderer.AddKeyBinding('s','Activate split mode.',self.SplitCallback)
         self.vmtkRenderer.AddKeyBinding('l','Activate label mode.',self.LabelCallback)
         self.vmtkRenderer.AddKeyBinding('Tab','Show labels.',self.ShowLabelCallback)
         self.vmtkRenderer.RenderWindowInteractor.AddObserver("KeyReleaseEvent", self.KeyReleaseCallback)
