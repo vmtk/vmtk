@@ -151,6 +151,7 @@ class vmtkRenderer(pypes.pypeScript):
         if key in self.KeyBindings and self.KeyBindings[key]['callback'] != None:
 	    self.KeyBindings[key]['callback'](obj)
 
+
     def AddKeyBinding(self, key, text, callback=None, group='1'):
         if key == '+':
             key = 'plus'

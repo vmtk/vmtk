@@ -132,7 +132,8 @@ class vmtkNetworkEditor(pypes.pypeScript):
     def UpdateLabels(self):
         self.CellCenters.Modified()
         self.CellCenters.Update()
-        self.Render()
+        #self.Render()
+	self.vmtkRenderer.Render()
 
     def ToggleLabels(self):
         if self.LabelsActor.GetVisibility() == 1:
@@ -181,7 +182,7 @@ class vmtkNetworkEditor(pypes.pypeScript):
 
     def AddCallback(self, obj):
 	self.InputInfo('Switched to add mode.')
-        self.PrintLog('Add mode')
+        #self.PrintLog('Add mode')
         self.OperationMode = 'add'
         self.InitializeActiveSegment()
         self.vmtkRenderer.AddKeyBinding('space','start interaction',self.SpaceCallback, '2')
@@ -195,7 +196,7 @@ class vmtkNetworkEditor(pypes.pypeScript):
 
     def DeleteCallback(self, obj):
 	self.InputInfo('Switched to delete mode.')
-        self.PrintLog('Delete mode')
+        #self.PrintLog('Delete mode')
         self.OperationMode = 'delete'
         self.InitializeActiveSegment()
 	self.CheckMenu()
@@ -206,17 +207,17 @@ class vmtkNetworkEditor(pypes.pypeScript):
 
     def SplitCallback(self, obj):
 	self.InputInfo('Switched to split mode.')
-        self.PrintLog('Split mode')
+        #self.PrintLog('Split mode')
         self.OperationMode = 'split'
         self.InitializeActiveSegment()
 	self.CheckMenu()
         if self.PickMode == 'image':
             self.SetPickMode('network')
             self.InitializeActiveSegment()
-        self.vmtkRenderer.Render()
+        self.Render()
 
     def LabelCallback(self, obj):
-        self.PrintLog('Label mode')
+        #self.PrintLog('Label mode')
 	self.InputInfo('Switched to label mode.\nCtrl + left click to add label.')
         self.OperationMode = 'label'
         self.InitializeActiveSegment()
@@ -224,11 +225,11 @@ class vmtkNetworkEditor(pypes.pypeScript):
         if self.PickMode == 'image':
             self.SetPickMode('network')
             self.InitializeActiveSegment()
-        self.vmtkRenderer.Render()
+        self.Render()
 
     def MergeCallback(self, obj):
 	self.InputInfo('Switched to merge mode.')
-        self.PrintLog('Merge mode')
+        #self.PrintLog('Merge mode')
         self.OperationMode = 'merge'
         self.InitializeActiveSegment()
 	self.CheckMenu()
@@ -237,7 +238,7 @@ class vmtkNetworkEditor(pypes.pypeScript):
             self.InitializeActiveSegment()
             self.CellIdsToMerge = []
         self.vmtkRenderer.AddKeyBinding('Return','return',self.ReturnCallback,'2')
-        self.vmtkRenderer.Render()
+        self.Render()
 
     def SpaceCallback(self, obj):
         self.TogglePickMode()
@@ -247,7 +248,6 @@ class vmtkNetworkEditor(pypes.pypeScript):
 	self.InputInfo('Ctrl + left click to add seeds.')	
 
     def CancelCallback(self, obj):
-        self.PrintLog('c')
         self.InitializeActiveSegment()
 
     def UndoCallback(self, obj):
@@ -514,7 +514,7 @@ class vmtkNetworkEditor(pypes.pypeScript):
             self.UpdateLabels()
         elif self.OperationMode == 'label':
             label = self.NetworkLabelsArray.GetValue(cellId)
-            if label:
+	    if label:
                 self.PrintLog("Current label: %s" % label)
             newLabel = self.InputText("Please input new label: ")
             self.NetworkLabelsArray.SetValue(cellId,newLabel)
