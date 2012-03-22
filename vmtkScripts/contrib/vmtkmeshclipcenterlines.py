@@ -304,68 +304,106 @@ class vmtkMeshClipCenterlines(pypes.pypeScript):
         
         return appendFilter.GetOutput()
 
-    def KeyPressed(self,obj,event):
-        key = obj.GetKeySym()
-        if key == 'l':
-            self.DisplayedMesh = (self.DisplayedMesh+1)%3
-            if self.DisplayedMesh == 0:
-                self.MeshActor.GetMapper().SetInput(self.Mesh)
-            elif self.DisplayedMesh == 1:
-                self.MeshActor.GetMapper().SetInput(self.PreviewMesh)
-            elif self.DisplayedMesh == 2:
-                self.MeshActor.GetMapper().SetInput(self.ClippedMesh)
-            self.vmtkRenderer.RenderWindow.Render()
-        elif key =='c':
-            self.ClipMesh()
-            if self.DisplayedMesh == 1:
-                self.MeshActor.GetMapper().SetInput(self.PreviewMesh)
-            elif self.DisplayedMesh == 2:
-                self.MeshActor.GetMapper().SetInput(self.ClippedMesh)
-            self.vmtkRenderer.RenderWindow.Render()
-        #elif key =='m':
-            #self.ClipMeshLine()
-            #if self.DisplayedMesh == 1:
-                #self.MeshActor.GetMapper().SetInput(self.PreviewMesh)
-            #elif self.DisplayedMesh == 2:
-                #self.MeshActor.GetMapper().SetInput(self.ClippedMesh)
-            #self.vmtkRenderer.RenderWindow.Render()
-        elif key == 'space':
-            #Disable the sphere Widget so as not to pick it
-            self.SphereWidget.Off()
-            #add a new sphere
-            picker = vtk.vtkPointPicker()
-            picker.SetTolerance(1E-3 * self.Centerlines.GetLength())
-            eventPosition = obj.GetEventPosition()
-            result = picker.Pick(float(eventPosition[0]),float(eventPosition[1]),0.0,self.vmtkRenderer.Renderer)
-            if result == 0:
-                #Reenable the sphere widget
-                self.SphereWidget.On()
-                return
-            pickId = picker.GetPointId()
-            #Only insert a new sphere if this id is not already in the list
-            if self.SpheresIndices.IsId(pickId) == -1:
-                self.CurrentSphereId = self.Spheres.GetPoints().InsertNextPoint(self.Centerlines.GetPoint(pickId))
-                self.SpheresIndices.InsertNextId(pickId)
-                interpolatedArray = self.Centerlines.GetPointData().GetArray("InterpolatedRadius")
-                if interpolatedArray and (interpolatedArray.GetValue(pickId) != 0.):
-                    self.SpheresRadii.InsertNextValue(interpolatedArray.GetValue(pickId))
-                elif self.RadiusArray:
-                    self.SpheresRadii.InsertNextValue(self.RadiusArray.GetValue(pickId))
-                else:
-                    self.SpheresRadii.InsertNextValue(self.Centerlines.GetLength()*0.01)
-                self.Spheres.Modified()
-                self.PlaceSphere()
+    def LCallback(self,obj):
+	self.DisplayedMesh = (self.DisplayedMesh+1)%3
+        if self.DisplayedMesh == 0:
+            self.MeshActor.GetMapper().SetInput(self.Mesh)
+        elif self.DisplayedMesh == 1:
+            self.MeshActor.GetMapper().SetInput(self.PreviewMesh)
+        elif self.DisplayedMesh == 2:
+            self.MeshActor.GetMapper().SetInput(self.ClippedMesh)
+        self.vmtkRenderer.RenderWindow.Render()
+
+    def ClipCallback(self, obj):
+	self.ClipMesh()
+        if self.DisplayedMesh == 1:
+            self.MeshActor.GetMapper().SetInput(self.PreviewMesh)
+        elif self.DisplayedMesh == 2:
+           self.MeshActor.GetMapper().SetInput(self.ClippedMesh)
+        self.vmtkRenderer.RenderWindow.Render()
+
+    #def MCallback(self, obj)
+	#self.ClipMeshLine()
+        #if self.DisplayedMesh == 1:
+            #self.MeshActor.GetMapper().SetInput(self.PreviewMesh)
+        #elif self.DisplayedMesh == 2:
+            #self.MeshActor.GetMapper().SetInput(self.ClippedMesh)
+        #self.vmtkRenderer.RenderWindow.Render()
+
+    def SpaceCallback(self, obj):
+        #Disable the sphere Widget so as not to pick it
+        self.SphereWidget.Off()
+        #add a new sphere
+        picker = vtk.vtkPointPicker()
+        picker.SetTolerance(1E-3 * self.Centerlines.GetLength())
+        eventPosition = self.vmtkRenderer.RenderWindowInteractor.GetEventPosition()
+	#eventPosition = obj.GetEventPosition()
+        result = picker.Pick(float(eventPosition[0]),float(eventPosition[1]),0.0,self.vmtkRenderer.Renderer)
+        if result == 0:
             #Reenable the sphere widget
             self.SphereWidget.On()
-            self.vmtkRenderer.RenderWindow.Render()
-        elif key == 'KP_Add' and self.CurrentSphereId != -1:
+            return
+        pickId = picker.GetPointId()
+        #Only insert a new sphere if this id is not already in the list
+        if self.SpheresIndices.IsId(pickId) == -1:
+            self.CurrentSphereId = self.Spheres.GetPoints().InsertNextPoint(self.Centerlines.GetPoint(pickId))
+            self.SpheresIndices.InsertNextId(pickId)
+            interpolatedArray = self.Centerlines.GetPointData().GetArray("InterpolatedRadius")
+            if interpolatedArray and (interpolatedArray.GetValue(pickId) != 0.):
+                self.SpheresRadii.InsertNextValue(interpolatedArray.GetValue(pickId))
+            elif self.RadiusArray:
+                self.SpheresRadii.InsertNextValue(self.RadiusArray.GetValue(pickId))
+            else:
+                self.SpheresRadii.InsertNextValue(self.Centerlines.GetLength()*0.01)
+            self.Spheres.Modified()
+            self.PlaceSphere()
+        #Reenable the sphere widget
+        self.SphereWidget.On()
+        self.vmtkRenderer.RenderWindow.Render()
+
+    def KeyPressed(self,obj,event):
+         key = obj.GetKeySym()
+	 if key == 'space':
+             #Disable the sphere Widget so as not to pick it
+             self.SphereWidget.Off()
+             #add a new sphere
+             picker = vtk.vtkPointPicker()
+             picker.SetTolerance(1E-3 * self.Centerlines.GetLength())
+             eventPosition = obj.GetEventPosition()
+             result = picker.Pick(float(eventPosition[0]),float(eventPosition[1]),0.0,self.vmtkRenderer.Renderer)
+             if result == 0:
+                 #Reenable the sphere widget
+                 self.SphereWidget.On()
+                 return
+             pickId = picker.GetPointId()
+             #Only insert a new sphere if this id is not already in the list
+             if self.SpheresIndices.IsId(pickId) == -1:
+                 self.CurrentSphereId = self.Spheres.GetPoints().InsertNextPoint(self.Centerlines.GetPoint(pickId))
+                 self.SpheresIndices.InsertNextId(pickId)
+                 interpolatedArray = self.Centerlines.GetPointData().GetArray("InterpolatedRadius")
+                 if interpolatedArray and (interpolatedArray.GetValue(pickId) != 0.):
+                     self.SpheresRadii.InsertNextValue(interpolatedArray.GetValue(pickId))
+                 elif self.RadiusArray:
+                     self.SpheresRadii.InsertNextValue(self.RadiusArray.GetValue(pickId))
+                 else:
+                     self.SpheresRadii.InsertNextValue(self.Centerlines.GetLength()*0.01)
+                 self.Spheres.Modified()
+                 self.PlaceSphere()
+            #Reenable the sphere widget
+             self.SphereWidget.On()
+             self.vmtkRenderer.RenderWindow.Render()
+
+    def PlusCallback(self, obj):
+	if self.CurrentSphereId != -1:
             #increase sphere radius
             newval = self.Spheres.GetPointData().GetScalars().GetValue(self.CurrentSphereId) + self.Centerlines.GetLength()*0.01
             self.Spheres.GetPointData().GetScalars().SetValue(self.CurrentSphereId,newval)
             self.Spheres.Modified()
             self.PlaceSphere()
             self.vmtkRenderer.RenderWindow.Render()
-        elif key == 'KP_Subtract' and self.CurrentSphereId != -1:
+
+    def MinusCallback(self, obj):
+	if self.CurrentSphereId != -1:
             #decrease sphere radius
             newval = self.Spheres.GetPointData().GetScalars().GetValue(self.CurrentSphereId) - self.Centerlines.GetLength()*0.01
             if newval> 0:
@@ -373,22 +411,29 @@ class vmtkMeshClipCenterlines(pypes.pypeScript):
                 self.Spheres.Modified()
                 self.PlaceSphere()
                 self.vmtkRenderer.RenderWindow.Render()
-        elif key == 'n' and self.CurrentSphereId != -1:
+
+    def NextSphereCallback(self, obj):
+	if self.CurrentSphereId != -1:
             #skip to next sphere
             self.CurrentSphereId = (self.CurrentSphereId + 1) % self.Spheres.GetNumberOfPoints();
             self.PlaceSphere()
             self.vmtkRenderer.RenderWindow.Render()
-        elif key == 'v' and self.CurrentSphereId != -1:
+
+    def ProviousSphereCallback(self, obj):
+ 	if self.CurrentSphereId != -1:
             #skip to previous sphere
             self.CurrentSphereId = (self.CurrentSphereId - 1) % self.Spheres.GetNumberOfPoints();
             self.PlaceSphere()
             self.vmtkRenderer.RenderWindow.Render()
-        elif key == 'u':
-            #undo
-            self.InitializeSpheres()
-            self.Spheres.Modified()
-            self.vmtkRenderer.RenderWindow.Render()
-        elif key == 'd' and self.CurrentSphereId != -1:
+
+    def UndoCallback(self, obj):
+	#undo
+        self.InitializeSpheres()
+        self.Spheres.Modified()
+        self.vmtkRenderer.RenderWindow.Render()
+
+    def DeleteSphereCallback(self, obj):
+	if self.CurrentSphereId != -1:
             #delete the current sphere
             #if no spheres would be left initialize
             if self.Spheres.GetNumberOfPoints() == 1:
@@ -409,48 +454,65 @@ class vmtkMeshClipCenterlines(pypes.pypeScript):
                 self.CurrentSphereId = (self.CurrentSphereId + 1) % self.Spheres.GetNumberOfPoints()
                 self.PlaceSphere()
             self.vmtkRenderer.RenderWindow.Render()
-            
-        elif key == 'o':
-            #Display the interpolated spheres
-            self.InterpolatedSpheresActor.SetVisibility(not self.InterpolatedSpheresActor.GetVisibility())
+
+    def InterpolatedSphereCallback(self, obj):
+	#Display the interpolated spheres
+        self.InterpolatedSpheresActor.SetVisibility(not self.InterpolatedSpheresActor.GetVisibility())
+        self.vmtkRenderer.RenderWindow.Render()
+
+    def PolyballSurfaceCallback(self, obj):
+	#Display/hide the polyball surface
+        if self.PolyBallActor.GetVisibility():
+            self.PolyBallActor.VisibilityOff()
+        elif self.PolyBall != None:
+            self.BuildPolyBallSurface()
+            self.PolyBallActor.VisibilityOn()
             self.vmtkRenderer.RenderWindow.Render()
-        elif key=='b':
-            #Display/hide the polyball surface
-            if self.PolyBallActor.GetVisibility():
-                self.PolyBallActor.VisibilityOff()
-            elif self.PolyBall != None:
-                self.BuildPolyBallSurface()
-                self.PolyBallActor.VisibilityOn()
-                self.vmtkRenderer.RenderWindow.Render()
-        elif key == 'x':
-            #Switch between transparent/opaque mesh for better visualisation
-            if self.MeshActor.GetProperty().GetOpacity() == 0.25:
-                self.MeshActor.GetProperty().SetOpacity(1.)
-            else:
-                self.MeshActor.GetProperty().SetOpacity(0.25)
-            self.vmtkRenderer.RenderWindow.Render()
-        elif key == 'y':
-            #Switch between transparent/opaque polyball for better visualisation
-            if self.PolyBallActor.GetProperty().GetOpacity() == 0.25:
-                self.PolyBallActor.GetProperty().SetOpacity(1.)
-                self.MeshActor.VisibilityOff()
-            else:
-                self.PolyBallActor.GetProperty().SetOpacity(0.25)
-                self.MeshActor.VisibilityOn()
-            self.vmtkRenderer.RenderWindow.Render()
-        elif key == 'f':
-            self.PolyBallType = (self.PolyBallType + 1)%2
-            
-        
-        
+    
+    def MeshVisalizationCallback(self, obj):
+	#Switch between transparent/opaque mesh for better visualisation
+        if self.MeshActor.GetProperty().GetOpacity() == 0.25:
+            self.MeshActor.GetProperty().SetOpacity(1.)
+        else:
+            self.MeshActor.GetProperty().SetOpacity(0.25)
+        self.vmtkRenderer.RenderWindow.Render()
+
+    def PolyballVisualizationCallback(self, obj):
+	#Switch between transparent/opaque polyball for better visualisation
+        if self.PolyBallActor.GetProperty().GetOpacity() == 0.25:
+            self.PolyBallActor.GetProperty().SetOpacity(1.)
+            self.MeshActor.VisibilityOff()
+        else:
+            self.PolyBallActor.GetProperty().SetOpacity(0.25)
+            self.MeshActor.VisibilityOn()
+        self.vmtkRenderer.RenderWindow.Render()
+
+    def PolyballTypeCallback(self, obj):
+	self.PolyBallType = (self.PolyBallType + 1)%2
+
 
     def Display(self):
 
       	self.vmtkRenderer.RenderWindowInteractor.Initialize()
 
-        self.vmtkRenderer.RenderWindowInteractor.AddObserver("KeyPressEvent", self.KeyPressed)
-        self.vmtkRenderer.RenderWindow.Render()
-        self.vmtkRenderer.RenderWindowInteractor.Start()
+        #self.vmtkRenderer.RenderWindowInteractor.AddObserver("KeyPressEvent", self.KeyPressed)
+	self.vmtkRenderer.AddKeyBinding('f','Change Polyball type',self.PolyballTypeCallback)
+	self.vmtkRenderer.AddKeyBinding('y','Switch between transparent/opaque polyball',self.PolyballVisualizationCallback)
+	self.vmtkRenderer.AddKeyBinding('w','Switch between transparent/opaque mesh',self.MeshVisalizationCallback)
+	self.vmtkRenderer.AddKeyBinding('b','Display/hide the polyball surface',self.PolyballSurfaceCallback)
+	self.vmtkRenderer.AddKeyBinding('o','Display the interpolated spheres',self.InterpolatedSphereCallback)
+	self.vmtkRenderer.AddKeyBinding('d','Delete the current sphere',self.DeleteSphereCallback)
+	self.vmtkRenderer.AddKeyBinding('u','Undo',self.UndoCallback)
+	self.vmtkRenderer.AddKeyBinding('v','Skip to previous sphere',self.ProviousSphereCallback)
+	self.vmtkRenderer.AddKeyBinding('n','skip to next sphere',self.NextSphereCallback)
+	self.vmtkRenderer.AddKeyBinding('minus','Decrease sphere radius',self.MinusCallback)
+	self.vmtkRenderer.AddKeyBinding('plus','Increase sphere radius',self.PlusCallback)
+	self.vmtkRenderer.AddKeyBinding('space','Disable the sphere Widget',self.SpaceCallback)
+	self.vmtkRenderer.AddKeyBinding('c','Clip Mesh',self.ClipCallback)
+	self.vmtkRenderer.AddKeyBinding('l','Change Displayed Mesh',self.LCallback)
+
+        self.vmtkRenderer.Render()
+        #self.vmtkRenderer.RenderWindowInteractor.Start()
 
     def Execute(self):
 
