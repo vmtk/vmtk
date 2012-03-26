@@ -65,6 +65,12 @@ class vmtkSurfaceClipper(pypes.pypeScript):
         self.Surface.Update()
         self.ClipWidget.Off()
 
+    def InteractCallback(self):
+	if self.BoxWidget.GetEnabled() == 1:
+	    self.BoxWidget.SetEnabled(0)
+	else:
+	    self.BoxWidget.SetEnabled(1)
+
     def Display(self):
 
       	self.ClipWidget.SetInput(self.Surface)
@@ -73,11 +79,10 @@ class vmtkSurfaceClipper(pypes.pypeScript):
         if self.Transform:
             self.ClipWidget.SetTransform(self.Transform)
             self.ClipWidget.On()
-
-      	self.vmtkRenderer.RenderWindowInteractor.Initialize()
-
+      	
+	#self.vmtkRenderer.RenderWindowInteractor.Initialize()
         self.vmtkRenderer.Render()
-        self.vmtkRenderer.RenderWindowInteractor.Start()
+        #self.vmtkRenderer.RenderWindowInteractor.Start()
 
     def Execute(self):
 
@@ -126,7 +131,7 @@ class vmtkSurfaceClipper(pypes.pypeScript):
         self.ClipWidget.SetInteractor(self.vmtkRenderer.RenderWindowInteractor)
         
         self.vmtkRenderer.AddKeyBinding('space','Clip.',self.ClipCallback)
-        self.vmtkRenderer.AddKeyBinding('i','Interact.')
+        self.vmtkRenderer.AddKeyBinding('i','Interact.',self.InteractCallback)
         self.Display()
 
         self.Transform = vtk.vtkTransform()

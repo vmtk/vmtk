@@ -112,8 +112,9 @@ class vmtkCenterlineOffsetAttributes(pypes.pypeScript):
             viewer.OutputText = self.OutputText
             viewer.PrintError = self.PrintError
             viewer.PringLog = self.PrintLog
-            viewer.Execute()
-           
+            viewer.Display = 0
+	    viewer.Execute()
+            
             groupIdString = self.InputText("Please input the reference groupId:\n",self.GroupIdValidator)
             self.ReferenceGroupId = int(groupIdString)
 

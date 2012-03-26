@@ -32,7 +32,7 @@ class vmtkCenterlineViewer(pypes.pypeScript):
         self.Centerlines = None
         self.PointDataArrayName = ''
         self.CellDataArrayName = ''
-
+	self.Display = 1
         self.Legend = 1
         self.vmtkRenderer = None
         self.OwnRenderer = 0
@@ -101,8 +101,9 @@ class vmtkCenterlineViewer(pypes.pypeScript):
             scalarBarActor.SetLabelFormat('%.2f')
             scalarBarActor.SetTitle(self.PointDataArrayName)
             self.vmtkRenderer.Renderer.AddActor(scalarBarActor)
-
-        self.vmtkRenderer.Render()
+	
+	if self.Display:
+            self.vmtkRenderer.Render()
 
         if self.OwnRenderer:
             self.vmtkRenderer.Deallocate()

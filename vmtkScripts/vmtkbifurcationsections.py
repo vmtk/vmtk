@@ -142,9 +142,9 @@ class vmtkBifurcationSections(pypes.pypeScript):
                     self.OutputSectionPoint = self.BifurcationSections.GetCellData().GetArray(self.BifurcationSectionPointArrayName).GetTuple3(i)
                     self.OutputSectionNormal = self.BifurcationSections.GetCellData().GetArray(self.BifurcationSectionNormalArrayName).GetTuple3(i)
                     self.OutputSectionArea = self.BifurcationSections.GetCellData().GetArray(self.BifurcationSectionAreaArrayName).GetTuple1(i)
-                    self.PrintLog('SectionPoint: '+str(self.OutputSectionPoint))
-                    self.PrintLog('SectionNormal: '+str(self.OutputSectionNormal))
-                    self.PrintLog('SectionArea: '+str(self.OutputSectionArea))
+                    self.InputInfo('SectionPoint: '+str(self.OutputSectionPoint))
+                    self.InputInfo('SectionNormal: '+str(self.OutputSectionNormal))
+                    self.InputInfo('SectionArea: '+str(self.OutputSectionArea))
 
 
 if __name__=='__main__':
