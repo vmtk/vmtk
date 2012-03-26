@@ -99,8 +99,9 @@ void vtkvmtkSteepestDescentLineTracer::Backtrace(vtkPolyData* input, vtkIdType s
   double startingPoint[3], endingPoint[3], currentPoint[3], currentScalar;
   double currentS;
   double currentRadius;
-  vtkIdType currentEdge[2], steepestDescentEdge[2], previousEdge[2];
+  vtkIdType currentEdge[2], steepestDescentEdge[2], previousEdge[2], previousEdge2[2];
   double steepestDescentS, steepestDescent;
+  double previousS, previousS2;
   double previousPoint[3];
   double directionFactor;
   vtkIdList* neighborCells;
@@ -145,6 +146,9 @@ void vtkvmtkSteepestDescentLineTracer::Backtrace(vtkPolyData* input, vtkIdType s
   currentEdge[0] = seedId;
   currentEdge[1] = seedId;
   currentS = 0.0;
+
+  previousS = 0.0;
+  previousS2 = 0.0;
 
   newScalars->InsertComponent(pointId,0,currentRadius);
   this->Edges->InsertComponent(pointId,0,currentEdge[0]);
@@ -221,6 +225,14 @@ void vtkvmtkSteepestDescentLineTracer::Backtrace(vtkPolyData* input, vtkIdType s
     currentEdge[1] = steepestDescentEdge[1];
     currentS = steepestDescentS;
 
+    if ((currentEdge[0] == previousEdge2[0] && currentEdge[1] == previousEdge2[1] && fabs(previousS2 - currentS) < VTK_VMTK_DOUBLE_TOL) ||
+        (currentEdge[0] == previousEdge2[1] && currentEdge[1] == previousEdge2[0]) && fabs(1.0 - previousS2 - currentS) < VTK_VMTK_DOUBLE_TOL)
+      {
+      vtkWarningMacro(<<"Degenerate descent detected. Target not reached.");
+      done = true;
+      break;
+      }
+
     previousPoint[0] = currentPoint[0];
     previousPoint[1] = currentPoint[1]; 
     previousPoint[2] = currentPoint[2];
@@ -262,8 +274,13 @@ void vtkvmtkSteepestDescentLineTracer::Backtrace(vtkPolyData* input, vtkIdType s
     this->Edges->InsertComponent(pointId,1,currentEdge[1]);
     this->EdgeParCoords->InsertValue(pointId,currentS);
 
+    previousEdge2[0] = previousEdge[0];
+    previousEdge2[1] = previousEdge[1];
+    previousS2 = previousS;
+
     previousEdge[0] = currentEdge[0];
     previousEdge[1] = currentEdge[1];
+    previousS = currentS;
     }
 
   newLines->InsertNextCell(lineIds);
