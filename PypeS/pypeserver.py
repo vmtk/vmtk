@@ -38,10 +38,11 @@ def RunPypeProcess(arguments, inputStream=None, outputStream=None, logOn=True):
     pipe.ParseArguments()
     try: 
         pipe.Execute() 
-    except Exception:
+    except BaseException, e:
+        print e
         return
 
-def PypeServer(queue,output):
+def PypeServer(queue, output, returnIfEmptyQueue=False):
     outputStream = None
     if output != None:
         outputStream = OutputStream(output)
@@ -49,6 +50,8 @@ def PypeServer(queue,output):
         if queue:
             arguments = queue.pop(0)
             RunPypeProcess(arguments,outputStream=outputStream)
+        elif returnIfEmptyQueue:
+            return
         else:
             time.sleep(0.5)
 
