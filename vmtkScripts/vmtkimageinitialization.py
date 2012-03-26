@@ -72,7 +72,7 @@ class vmtkImageInitialization(pypes.pypeScript):
 
             if numberOfSeeds > 0:
                 if self.ImageSeeder.Seeds.GetNumberOfPoints() != numberOfSeeds:
-                    self.OutputText('Invalid selection. Please place exactly '+str(numberOfSeeds)+' seeds.\n')
+                    self.InputInfo('Invalid selection. Please place exactly '+str(numberOfSeeds)+' seeds.\n')
                     invalid = 1
                     continue
 

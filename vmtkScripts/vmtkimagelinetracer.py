@@ -82,7 +82,11 @@ class vmtkImageLineTracer(pypes.pypeScript):
                 self.ImageActor.SetDisplayExtent(self.SliceVOI)
            obj.Render()
 
-
+    def InteractCallback(self):
+	if self.BoxWidget.GetEnabled() == 1:
+	    self.BoxWidget.SetEnabled(0)
+	else:
+	    self.BoxWidget.SetEnabled(1)
 
     def SetWidgetProjectionPosition(self,obj,event):
         self.ImageTracerWidget.SetProjectionPosition(self.SliceVOI[self.Axis*2]*self.Image.GetSpacing()[self.Axis]+self.Image.GetOrigin()[self.Axis])
@@ -219,7 +223,7 @@ class vmtkImageLineTracer(pypes.pypeScript):
 
         self.vmtkRenderer.AddKeyBinding('n','Next.',self.NextCallback)
         self.vmtkRenderer.AddKeyBinding('p','Previous.',self.PreviousCallback)
-        self.vmtkRenderer.AddKeyBinding('i','Interact.')
+        self.vmtkRenderer.AddKeyBinding('i','Interact.', self.InteractCallback)
 
         self.Display()
 
