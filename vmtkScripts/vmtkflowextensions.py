@@ -19,6 +19,7 @@ import sys
 
 import vtkvmtk
 import pypes
+import vmtkrenderer
 
 vmtkflowextensions = 'vmtkFlowExtensions'
 
@@ -95,7 +96,6 @@ class vmtkFlowExtensions(pypes.pypeScript):
 
         if self.Interactive:
             if not self.vmtkRenderer:
-                import vmtkrenderer
                 self.vmtkRenderer = vmtkrenderer.vmtkRenderer()
                 self.vmtkRenderer.Initialize()
                 self.OwnRenderer = 1
@@ -132,10 +132,10 @@ class vmtkFlowExtensions(pypes.pypeScript):
     
             self.vmtkRenderer.Renderer.AddActor(surfaceActor)
     
-            self.vmtkRenderer.Render()
+            #self.vmtkRenderer.Render()
     
-            self.vmtkRenderer.Renderer.RemoveActor(labelsActor)
-            self.vmtkRenderer.Renderer.RemoveActor(surfaceActor)
+            #self.vmtkRenderer.Renderer.RemoveActor(labelsActor)
+            #self.vmtkRenderer.Renderer.RemoveActor(surfaceActor)
             
             ok = False
             while not ok:
