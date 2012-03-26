@@ -46,10 +46,10 @@ class vmtkMeshClipper(pypes.pypeScript):
             ])
 
     def InteractCallback(self):
-	if self.BoxWidget.GetEnabled() == 1:
-	    self.BoxWidget.SetEnabled(0)
-	else:
-	    self.BoxWidget.SetEnabled(1)
+        if self.BoxWidget.GetEnabled() == 1:
+            self.BoxWidget.SetEnabled(0)
+        else:
+            self.BoxWidget.SetEnabled(1)
 
     def ClipCallback(self, obj):
         if self.BoxWidget.GetEnabled() != 1:
@@ -57,7 +57,10 @@ class vmtkMeshClipper(pypes.pypeScript):
         self.BoxWidget.GetPlanes(self.Planes)
         self.Clipper.Update()
         self.Mesh.DeepCopy(self.Clipper.GetClippedOutput())
-        self.Mesh.Update()
+        mapper = vtk.vtkDataSetMapper()
+        mapper.SetInput(self.Mesh)
+        mapper.ScalarVisibilityOff()
+        self.Actor.SetMapper(mapper)
         self.BoxWidget.Off()
 
     def Display(self):
@@ -65,13 +68,7 @@ class vmtkMeshClipper(pypes.pypeScript):
       	self.BoxWidget.SetInput(self.Mesh)
       	self.BoxWidget.PlaceWidget()
 
-      	self.vmtkRenderer.RenderWindowInteractor.Initialize()
-
-        self.vmtkRenderer.AddKeyBinding('i','Interact.', self.InteractCallback)
-        self.vmtkRenderer.AddKeyBinding('space','Clip.', self.ClipCallback)
-
         self.vmtkRenderer.Render()
-        self.vmtkRenderer.RenderWindowInteractor.Start()
 
     def Execute(self):
 
@@ -103,6 +100,9 @@ class vmtkMeshClipper(pypes.pypeScript):
         self.BoxWidget.SetInteractor(self.vmtkRenderer.RenderWindowInteractor)
         self.BoxWidget.GetFaceProperty().SetColor(0.6,0.6,0.2)
         self.BoxWidget.GetFaceProperty().SetOpacity(0.25)
+
+        self.vmtkRenderer.AddKeyBinding('i','Interact.', self.InteractCallback)
+        self.vmtkRenderer.AddKeyBinding('space','Clip.', self.ClipCallback)
 
         self.Display()
 
