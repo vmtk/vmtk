@@ -112,6 +112,10 @@ class vmtkRenderer(pypes.pypeScript):
         self.Renderer.RemoveActor(self.TextActor)
         self.RenderWindowInteractor.ExitCallback()
 
+    def ResetCameraCallback(self, obj):
+        self.Renderer.ResetCamera()
+        self.RenderWindow.Render()
+
     def UpdateTextInput(self):
         if self.TextInputQuery:
             if self.CurrentTextInput:
@@ -239,6 +243,7 @@ class vmtkRenderer(pypes.pypeScript):
             #self.RenderWindowInteractor.GetInteractorStyle().AddObserver("KeyPressEvent",self.KeyPressCallback)
 
             self.AddKeyBinding('x','Take screenshot.',self.ScreenshotCallback,'0')
+            self.AddKeyBinding('r','Reset camera.',self.ResetCameraCallback,'0')
             #self.AddKeyBinding('w','Show wireframe.',None,'0')
             #self.AddKeyBinding('r','Resize.',None, '0')
             #self.AddKeyBinding('s','Show surface.', None,'0')
