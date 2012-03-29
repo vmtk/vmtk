@@ -27,6 +27,8 @@ Version:   $Revision: 1.1 $
 #include "vtkImageData.h"
 #include "vtkObjectFactory.h"
 
+#include "vtkvmtkITKFilterUtilities.h"
+
 #include "itkMultiScaleHessianBasedMeasureImageFilter.h"
 #include "itkHessian3DToVesselnessMeasureImageFilter.h"
 
@@ -49,26 +51,11 @@ vtkvmtkSatoVesselnessMeasureImageFilter::~vtkvmtkSatoVesselnessMeasureImageFilte
 
 void vtkvmtkSatoVesselnessMeasureImageFilter::SimpleExecute(vtkImageData *input, vtkImageData *output)
 {
-  int dims[3];
-  input->GetDimensions(dims);
-  double spacing[3];
-  input->GetSpacing(spacing);
-
   typedef itk::Image<float,3> ImageType;
+
   ImageType::Pointer inImage = ImageType::New();
-  inImage->GetPixelContainer()->SetImportPointer(static_cast<float*>(input->GetScalarPointer()),dims[0]*dims[1]*dims[2],false);
-  ImageType::RegionType region;
-  ImageType::IndexType index;
-  ImageType::SizeType size;
-  index[0] = index[1] = index[2] = 0;
-  size[0] = dims[0];
-  size[1] = dims[1];
-  size[2] = dims[2];
-  region.SetIndex(index);
-  region.SetSize(size);
-  inImage->SetLargestPossibleRegion(region);
-  inImage->SetBufferedRegion(region);
-  inImage->SetSpacing(spacing);
+
+  vtkvmtkITKFilterUtilities::VTKToITKImage<ImageType>(input,inImage);
 
   typedef itk::SymmetricSecondRankTensor<double,3> HessianPixelType;
   typedef itk::Image<HessianPixelType,3> HessianImageType;
@@ -97,6 +84,6 @@ void vtkvmtkSatoVesselnessMeasureImageFilter::SimpleExecute(vtkImageData *input,
   imageFilter->SetInput(inImage);
   imageFilter->Update();
 
-  memcpy(static_cast<float*>(output->GetScalarPointer()),imageFilter->GetOutput()->GetBufferPointer(),imageFilter->GetOutput()->GetBufferedRegion().GetNumberOfPixels()*sizeof(float));
+  vtkvmtkITKFilterUtilities::ITKToVTKImage<ImageType>(imageFilter->GetOutput(),output);
 }
 
