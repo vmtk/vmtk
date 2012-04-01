@@ -95,7 +95,7 @@ class vmtkRenderer(pypes.pypeScript):
         filePrefix = 'vmtk-screenshot'
         fileNumber = 0
         fileName = "%s-%d.png" % (filePrefix,fileNumber)
-        existingFiles = os.li0ir('.')
+        existingFiles = os.listdir('.')
         while fileName in existingFiles:
             fileNumber += 1
             fileName = "%s-%d.png" % (filePrefix,fileNumber)
