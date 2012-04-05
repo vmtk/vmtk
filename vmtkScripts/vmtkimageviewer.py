@@ -63,6 +63,9 @@ class vmtkImageViewer(pypes.pypeScript):
             ['PlaneWidgetZ','zplane','vtkImagePlaneWidget',1,'','the Z image plane widget']
             ])
 
+    def CharCallback(self, obj):
+        return
+
     def BuildView(self):
 
         if not self.vmtkRenderer:
