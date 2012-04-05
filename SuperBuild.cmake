@@ -73,7 +73,7 @@ if( NOT USE_SYSTEM_VTK )
   set( proj VTK )
   ExternalProject_Add( VTK
     GIT_REPOSITORY "${GIT_PROTOCOL}://github.com/lantiga/VTK.git"
-    GIT_TAG "v5.8.0"
+    GIT_TAG "origin/release"
     SOURCE_DIR "${CMAKE_BINARY_DIR}/VTK"
     BINARY_DIR VTK-Build
     CMAKE_GENERATOR ${gen}
