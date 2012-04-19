@@ -16,6 +16,7 @@
 
 import sys
 
+from vmtk import pypes
 from vmtk import pypeserver
 
 from multiprocessing import Process, Manager
