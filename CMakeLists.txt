@@ -49,6 +49,10 @@ option( VMTK_USE_SUPERBUILD
 option( VMTK_BUNJEE_BUILD
   "Build VMTK and the projects it depends on ready for being linked from Bunjee." OFF )
 
+if( APPLE )
+  set ( CMAKE_CXX_COMPILER "/usr/bin/g++" CACHE STRING "CXX compiler." FORCE)
+endif( APPLE )
+
 if( VMTK_USE_SUPERBUILD )
 
   if( NOT GIT_EXECUTABLE )
@@ -86,7 +90,7 @@ if( VMTK_USE_SUPERBUILD )
     set ( VTK_WRAP_PYTHON OFF )
     set ( VTK_WRAP_TCL OFF )
     set ( ITK_USE_FLAT_DIRECTORY_INSTALL ON )
-    set ( CMAKE_OSX_ARCHITECTURES "x86_64" CACHE STRING "" FORCE )
+    #set ( CMAKE_OSX_ARCHITECTURES "x86_64" CACHE STRING "" FORCE )
     set ( CMAKE_BUILD_TYPE "Release" CACHE STRING "" FORCE )
     set ( ITK_NO_LIBRARY_VERSION ON )
     set ( VTK_NO_LIBRARY_VERSION ON )

@@ -44,18 +44,25 @@ except:
 
     newEnviron = {}
 
+    vmtkhome = os.path.dirname(os.path.abspath(__file__))
+
+    if vmtkhome.endswith('bin'):
+        vmtkhome = os.path.join(os.path.dirname(os.path.abspath(__file__)),"..")
+    else:
+        vmtkhome = os.path.join(os.path.dirname(os.path.abspath(__file__)),"..","..","..")
+	
     vtkdir = [el for el in os.listdir(os.path.join(vmtkhome,"lib")) if el.startswith('vtk')][0]
 
-    newEnviron[ldEnvironmentVariable] = os.path.join(vmtkhome,"lib",vtkdir) + os.path.pathsep + \
+    newEnviron[ldEnvironmentVariable] = os.path.join(vmtkhome,"bin") + os.path.pathsep + \
+	                                os.path.join(vmtkhome,"lib",vtkdir) + os.path.pathsep + \
                                     os.path.join(vmtkhome,"lib","vmtk") + os.path.pathsep + \
                                     os.path.join(vmtkhome,"lib","InsightToolkit")
 
-    newEnviron["PYTHONPATH"] =  os.path.join(vmtkhome,"bin","Python") + os.path.pathsep + \
-                                os.path.join(vmtkhome,"lib",vtkdir) + os.path.pathsep + \
-                                os.path.join(vmtkhome,"lib","vmtk")
-
     os.environ[ldEnvironmentVariable] = newEnviron[ldEnvironmentVariable] + os.path.pathsep + currentEnviron[ldEnvironmentVariable]
-    os.environ["PYTHONPATH"] = newEnviron["PYTHONPATH"] + os.path.pathsep + currentEnviron["PYTHONPATH"]
+
+    sys.path.append(os.path.join(vmtkhome,"bin","Python"))
+    sys.path.append(os.path.join(vmtkhome,"lib",vtkdir))
+    sys.path.append(os.path.join(vmtkhome,"lib","vmtk"))
 
     from vmtk import pypeserver
     from vmtk import pypes
@@ -67,7 +74,11 @@ if __name__=='__main__':
     pypeProcess = Process(target=pypeserver.PypeServer, args=(queue,None), kwargs={"returnIfEmptyQueue":True})
     pypeProcess.start()
 
-    queue.append(' '.join(sys.argv))
+    args = sys.argv[:]
+    if sys.argv[0].startswith('pyperun'):
+        args = sys.argv[1:]
+
+    queue.append(' '.join(args))
 
     try:
         pypeProcess.join()
