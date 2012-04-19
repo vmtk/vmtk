@@ -95,7 +95,7 @@ class vmtkRenderer(pypes.pypeScript):
         filePrefix = 'vmtk-screenshot'
         fileNumber = 0
         fileName = "%s-%d.png" % (filePrefix,fileNumber)
-        existingFiles = os.li0ir('.')
+        existingFiles = os.listdir('.')
         while fileName in existingFiles:
             fileNumber += 1
             fileName = "%s-%d.png" % (filePrefix,fileNumber)
@@ -242,14 +242,14 @@ class vmtkRenderer(pypes.pypeScript):
             if 'vtkCocoaRenderWindowInteractor' in dir(vtk) and vtk.vtkCocoaRenderWindowInteractor.SafeDownCast(self.RenderWindowInteractor):
                 self.RenderWindowInteractor = vtkvmtk.vtkvmtkCocoaRenderWindowInteractor()
             self.RenderWindow.SetInteractor(self.RenderWindowInteractor)
-            self.RenderWindowInteractor.SetInteractorStyle(vtk.vtkInteractorStyleTrackballCamera())
+            self.RenderWindowInteractor.SetInteractorStyle(vtkvmtk.vtkvmtkInteractorStyleTrackballCamera())
             self.RenderWindowInteractor.GetInteractorStyle().AddObserver("CharEvent",self.CharCallback)
-            #self.RenderWindowInteractor.GetInteractorStyle().AddObserver("KeyPressEvent",self.KeyPressCallback)
+            self.RenderWindowInteractor.GetInteractorStyle().AddObserver("KeyPressEvent",self.KeyPressCallback)
 
             self.AddKeyBinding('x','Take screenshot.',self.ScreenshotCallback,'0')
             self.AddKeyBinding('r','Reset camera.',self.ResetCameraCallback,'0')
             #self.AddKeyBinding('w','Show wireframe.',None,'0')
-            self.AddKeyBinding('r','Resize.',self.ResetCameraCallback, '0')
+            self.AddKeyBinding('r','Reset camera.',self.ResetCameraCallback, '0')
             #self.AddKeyBinding('s','Show surface.', None,'0')
             #self.AddKeyBinding('e','Quit renderer.',self.QuitRendererCallback,'0')
             self.AddKeyBinding('q','Quit renderer and proceed.',self.QuitRendererCallback,'0')
