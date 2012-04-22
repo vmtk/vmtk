@@ -84,6 +84,8 @@ if __name__=='__main__':
         pypeProcess.join()
     except KeyboardInterrupt:
         pypeProcess.terminate()
+    except BaseException, e:
+        print e
 
     #main = pypes.pypeMain()
     #main.Arguments = sys.argv
