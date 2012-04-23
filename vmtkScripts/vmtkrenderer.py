@@ -34,6 +34,7 @@ class vmtkRendererInputStream(object):
 
     def prompt(self,text):
         self.renderer.TextInputQuery = text
+        self.renderer.CurrentTextInput = None
         self.renderer.UpdateTextInput()
 
 
@@ -121,7 +122,7 @@ class vmtkRenderer(pypes.pypeScript):
 
     def UpdateTextInput(self):
         if self.TextInputQuery:
-            if self.CurrentTextInput:
+            if self.CurrentTextInput or self.CurrentTextInput == '':
                 self.TextInputActor.SetInput(self.TextInputQuery+self.CurrentTextInput+'_')
             else:
                 self.TextInputActor.SetInput(self.TextInputQuery)
@@ -249,10 +250,10 @@ class vmtkRenderer(pypes.pypeScript):
             self.AddKeyBinding('x','Take screenshot.',self.ScreenshotCallback,'0')
             self.AddKeyBinding('r','Reset camera.',self.ResetCameraCallback,'0')
             #self.AddKeyBinding('w','Show wireframe.',None,'0')
-            self.AddKeyBinding('r','Reset camera.',self.ResetCameraCallback, '0')
+            #self.AddKeyBinding('r','Reset camera.',self.ResetCameraCallback, '0')
             #self.AddKeyBinding('s','Show surface.', None,'0')
             #self.AddKeyBinding('e','Quit renderer.',self.QuitRendererCallback,'0')
-            self.AddKeyBinding('q','Quit renderer and proceed.',self.QuitRendererCallback,'0')
+            self.AddKeyBinding('q','Quit renderer/proceed.',self.QuitRendererCallback,'0')
             #self.AddKeyBinding('3','3D.', None,'0')
 
             #self.TextActorStd = vtk.vtkTextActor()
