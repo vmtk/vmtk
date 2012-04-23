@@ -182,11 +182,15 @@ class pypeScript(object):
             self.InputStream.prompt(prompt)
         except:
             pass
-        text = self.InputStream.readline().rstrip('\n')
+        text = self.InputStream.readline()
+        if text:
+            text = text.rstrip('\n')
         if validator:
             while not validator(text):
                 self.OutputText(prompt)
-                text = self.InputStream.readline().rstrip('\n')
+                text = self.InputStream.readline()
+                if text:
+                    text = text.rstrip('\n')
         return text
 
     def PrintMembers(self,members):

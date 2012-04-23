@@ -86,7 +86,7 @@ class vmtkNetworkEditor(pypes.pypeScript):
 
         self.CellIdsToMerge = []
 
-        self.OperationMode = 'add'
+        self.OperationMode = None
         self.PickMode = 'image'
 
         self.vmtkRenderer = None
@@ -132,8 +132,7 @@ class vmtkNetworkEditor(pypes.pypeScript):
     def UpdateLabels(self):
         self.CellCenters.Modified()
         self.CellCenters.Update()
-        #self.Render()
-	self.vmtkRenderer.Render()
+        self.Render()
 
     def ToggleLabels(self):
         if self.LabelsActor.GetVisibility() == 1:
@@ -169,83 +168,83 @@ class vmtkNetworkEditor(pypes.pypeScript):
         #            self.SetPickMode('image')
     
     def CheckMenu(self):
-	self.vmtkRenderer.RemoveKeyBinding('space')
+        self.vmtkRenderer.RemoveKeyBinding('space')
         self.vmtkRenderer.RemoveKeyBinding('c')
         self.vmtkRenderer.RemoveKeyBinding('u')
-        self.vmtkRenderer.RemoveKeyBinding('plus')
-        self.vmtkRenderer.RemoveKeyBinding('minus')
-        self.vmtkRenderer.RemoveKeyBinding('equal')
+        self.vmtkRenderer.RemoveKeyBinding('+')
+        self.vmtkRenderer.RemoveKeyBinding('-')
+        self.vmtkRenderer.RemoveKeyBinding('=')
         self.vmtkRenderer.RemoveKeyBinding('Return')
 
     def ShowLabelCallback(self, obj):
         self.ToggleLabels()
 
     def AddCallback(self, obj):
-	self.InputInfo('Switched to add mode.')
+        self.InputInfo('Switched to add mode.\nCtrl + left click to add tubes.')
         #self.PrintLog('Add mode')
         self.OperationMode = 'add'
         self.InitializeActiveSegment()
-        self.vmtkRenderer.AddKeyBinding('space','start interaction',self.SpaceCallback, '2')
-        self.vmtkRenderer.AddKeyBinding('c','cancel',self.CancelCallback,'2')
-        self.vmtkRenderer.AddKeyBinding('u','undo',self.UndoCallback,'2')
-        self.vmtkRenderer.AddKeyBinding('plus','plus',self.PlusCallback,'2')
-        self.vmtkRenderer.AddKeyBinding('minus','minus',self.MinusCallback,'2')
-        self.vmtkRenderer.AddKeyBinding('equal','equal',self.PlusCallback,'2')
-        self.vmtkRenderer.AddKeyBinding('Return','return',self.ReturnAddCallback,'2')
-        self.vmtkRenderer.Render()
+        self.vmtkRenderer.AddKeyBinding('space','Toggle image/tube interaction',self.SpaceCallback, '2')
+        self.vmtkRenderer.AddKeyBinding('c','Cancel',self.CancelCallback,'2')
+        self.vmtkRenderer.AddKeyBinding('u','Undo',self.UndoCallback,'2')
+        self.vmtkRenderer.AddKeyBinding('+','Increase radius',self.PlusCallback,'2')
+        self.vmtkRenderer.AddKeyBinding('=','Increase radius',self.PlusCallback,'2')
+        self.vmtkRenderer.AddKeyBinding('-','Decrease radius',self.MinusCallback,'2')
+        self.vmtkRenderer.AddKeyBinding('Return','Accept tube',self.ReturnAddCallback,'2')
+        self.UpdateAndRender()
 
     def DeleteCallback(self, obj):
-	self.InputInfo('Switched to delete mode.')
+        self.InputInfo('Switched to delete mode.\nCtrl + left click to delete tubes.')
         #self.PrintLog('Delete mode')
         self.OperationMode = 'delete'
         self.InitializeActiveSegment()
-	self.CheckMenu()
+        self.CheckMenu()
         if self.PickMode == 'image':
             self.SetPickMode('network')
             self.InitializeActiveSegment()
-        self.vmtkRenderer.Render()
+        self.UpdateAndRender()
 
     def SplitCallback(self, obj):
-	self.InputInfo('Switched to split mode.')
+        self.InputInfo('Switched to split mode.\nCtrl + left click to split tubes.')
         #self.PrintLog('Split mode')
         self.OperationMode = 'split'
         self.InitializeActiveSegment()
-	self.CheckMenu()
+        self.CheckMenu()
         if self.PickMode == 'image':
             self.SetPickMode('network')
             self.InitializeActiveSegment()
-        self.Render()
+        self.UpdateAndRender()
 
     def LabelCallback(self, obj):
         #self.PrintLog('Label mode')
-	self.InputInfo('Switched to label mode.\nCtrl + left click to add label.')
+        self.InputInfo('Switched to label mode.\nCtrl + left click to add label.')
         self.OperationMode = 'label'
         self.InitializeActiveSegment()
-	self.CheckMenu()
+        self.CheckMenu()
         if self.PickMode == 'image':
             self.SetPickMode('network')
             self.InitializeActiveSegment()
-        self.Render()
+        self.UpdateAndRender()
 
     def MergeCallback(self, obj):
-	self.InputInfo('Switched to merge mode.')
+        self.InputInfo('Switched to merge mode.\nCtrl + left click to select two tubes to merge.')
         #self.PrintLog('Merge mode')
         self.OperationMode = 'merge'
         self.InitializeActiveSegment()
-	self.CheckMenu()
+        self.CheckMenu()
         if self.PickMode == 'image':
             self.SetPickMode('network')
             self.InitializeActiveSegment()
             self.CellIdsToMerge = []
-        self.vmtkRenderer.AddKeyBinding('Return','return',self.ReturnCallback,'2')
-        self.Render()
+        self.vmtkRenderer.AddKeyBinding('Return','Accept merge',self.ReturnCallback,'2')
+        self.UpdateAndRender()
 
     def SpaceCallback(self, obj):
         self.TogglePickMode()
         self.TogglePlaneWidget(self.PlaneWidgetX)
         self.TogglePlaneWidget(self.PlaneWidgetY)
         self.TogglePlaneWidget(self.PlaneWidgetZ)
-	self.InputInfo('Ctrl + left click to add seeds.')	
+        self.InputInfo('Ctrl + left click to add seeds.')	
 
     def CancelCallback(self, obj):
         self.InitializeActiveSegment()
@@ -277,7 +276,7 @@ class vmtkNetworkEditor(pypes.pypeScript):
             self.ActiveSegmentCellArray.Initialize()
             self.ActiveSegmentRadiusArray.SetNumberOfValues(0)
             self.ActiveSegment.Modified()
-        self.Render()
+        self.UpdateAndRender()
 
     def PlusCallback(self, obj):
         numberOfSeeds = self.ActiveSegmentSeedsPoints.GetNumberOfPoints()
@@ -293,23 +292,25 @@ class vmtkNetworkEditor(pypes.pypeScript):
             radius += 0.1
             self.ActiveSegmentRadiusArray.SetValue(numberOfPoints-1,radius)
             self.ActiveSegment.Modified()
-        self.Render()
+        self.UpdateAndRender()
 
     def MinusCallback(self, obj):
         numberOfSeeds = self.ActiveSegmentSeedsPoints.GetNumberOfPoints()
         if numberOfSeeds > 0:
             radius = self.ActiveSegmentSeedsRadiusArray.GetValue(numberOfSeeds-1)
             radius -= 0.1
-            self.ActiveSegmentSeedsRadiusArray.SetValue(numberOfSeeds-1,radius)
-            self.CurrentRadius = radius
-            self.ActiveSegmentSeeds.Modified()
+            if radius > 0.0:
+                self.ActiveSegmentSeedsRadiusArray.SetValue(numberOfSeeds-1,radius)
+                self.CurrentRadius = radius
+                self.ActiveSegmentSeeds.Modified()
         numberOfPoints = self.ActiveSegmentPoints.GetNumberOfPoints()
         if numberOfPoints > 0:
             radius = self.ActiveSegmentRadiusArray.GetValue(numberOfPoints-1)
             radius -= 0.1
-            self.ActiveSegmentRadiusArray.SetValue(numberOfPoints-1,radius)
-            self.ActiveSegment.Modified()
-        self.Render()
+            if radius > 0.0:
+                self.ActiveSegmentRadiusArray.SetValue(numberOfPoints-1,radius)
+                self.ActiveSegment.Modified()
+        self.UpdateAndRender()
 
     def ReturnAddCallback(self, obj):
         attachedPointId0 = -1
@@ -513,14 +514,11 @@ class vmtkNetworkEditor(pypes.pypeScript):
             self.NetworkTube.Modified()
             self.UpdateLabels()
         elif self.OperationMode == 'label':
+            self.LabelCellId = cellId
             label = self.NetworkLabelsArray.GetValue(cellId)
-	    if label:
+            if label:
                 self.PrintLog("Current label: %s" % label)
-            newLabel = self.InputText("Please input new label: ")
-            self.NetworkLabelsArray.SetValue(cellId,newLabel)
-            self.InitializeSelection()
-            self.Network.Modified()
-            self.UpdateLabels()
+            self.vmtkRenderer.PromptAsync("Please input new label: ",self.QueryLabelCallback)
         elif self.OperationMode == 'merge':
             if self.ActiveSegment.GetNumberOfCells() > 1:
                 self.InitializeActiveSegment()
@@ -541,6 +539,13 @@ class vmtkNetworkEditor(pypes.pypeScript):
             self.ActiveSegment.Modified()
             self.NetworkTube.Modified()
             self.Render()
+
+    def QueryLabelCallback(self,newLabel):
+        self.NetworkLabelsArray.SetValue(self.LabelCellId,newLabel)
+        self.LabelCellId = None
+        self.InitializeSelection()
+        self.Network.Modified()
+        self.UpdateLabels()
 
     def InitializeSelection(self):
         self.SelectionPoints.SetNumberOfPoints(0)
@@ -606,6 +611,8 @@ class vmtkNetworkEditor(pypes.pypeScript):
     def PlaneStartInteractionCallback(self,obj,event):
         if self.PickMode != 'image':
             return
+        if self.OperationMode != 'add':
+            return
         if self.vmtkRenderer.RenderWindowInteractor.GetControlKey() == 0:
             return
         point = obj.GetCurrentCursorPosition()
@@ -639,6 +646,9 @@ class vmtkNetworkEditor(pypes.pypeScript):
 
     def Render(self):
         self.vmtkRenderer.RenderWindow.Render()
+
+    def UpdateAndRender(self):
+        self.vmtkRenderer.Render(interactive=0)
 
     def RunActiveTube(self,segment):
         activeTubes = vmtkactivetubes.vmtkActiveTubes()
@@ -848,11 +858,11 @@ class vmtkNetworkEditor(pypes.pypeScript):
         self.CellPicker.AddPickList(self.NetworkActor)
         self.CellPicker.PickFromListOn()
 
-        self.vmtkRenderer.AddKeyBinding('a','Activate add mode.',self.AddCallback)
-        self.vmtkRenderer.AddKeyBinding('d','Activate delete mode.',self.DeleteCallback)
-        self.vmtkRenderer.AddKeyBinding('m','Activate merge mode.',self.MergeCallback)
-        self.vmtkRenderer.AddKeyBinding('s','Activate split mode.',self.SplitCallback)
-        self.vmtkRenderer.AddKeyBinding('l','Activate label mode.',self.LabelCallback)
+        self.vmtkRenderer.AddKeyBinding('a','Add mode.',self.AddCallback)
+        self.vmtkRenderer.AddKeyBinding('d','Delete mode.',self.DeleteCallback)
+        self.vmtkRenderer.AddKeyBinding('m','Merge mode.',self.MergeCallback)
+        self.vmtkRenderer.AddKeyBinding('s','Split mode.',self.SplitCallback)
+        self.vmtkRenderer.AddKeyBinding('l','Label mode.',self.LabelCallback)
         self.vmtkRenderer.AddKeyBinding('Tab','Show labels.',self.ShowLabelCallback)
         self.vmtkRenderer.RenderWindowInteractor.AddObserver("KeyReleaseEvent", self.KeyReleaseCallback)
         self.vmtkRenderer.RenderWindowInteractor.AddObserver("LeftButtonPressEvent", self.LeftButtonPressCallback)
@@ -867,8 +877,6 @@ class vmtkNetworkEditor(pypes.pypeScript):
         if self.PlaneWidgetZ:
             self.PlaneWidgetZ.UseContinuousCursorOn()
             self.PlaneWidgetZ.AddObserver("StartInteractionEvent", self.PlaneStartInteractionCallback)
-
-        self.PickMode = 'image'
 
         self.FirstRender()
 
