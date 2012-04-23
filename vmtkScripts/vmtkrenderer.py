@@ -61,6 +61,7 @@ class vmtkRenderer(pypes.pypeScript):
 
         self.TextInputMode = 0
         self.ExitAfterTextInputMode = True
+        self.ExitTextInputCallback = None
 
         self.TextInputActor = None
         self.TextInputQuery = None
@@ -154,35 +155,47 @@ class vmtkRenderer(pypes.pypeScript):
             return
 
         if key in self.KeyBindings and self.KeyBindings[key]['callback'] != None:
-	    self.KeyBindings[key]['callback'](obj)
-
+            self.KeyBindings[key]['callback'](obj)
+        else:
+            if key == 'plus':
+                key = '+'
+            if key == 'minus':
+                key = '-'
+            if key == 'equal':
+                key = '='
+            if key in self.KeyBindings and self.KeyBindings[key]['callback'] != None:
+                self.KeyBindings[key]['callback'](obj)
 
     def AddKeyBinding(self, key, text, callback=None, group='1'):
-        if key == '+':
-            key = 'plus'
-        if key == '-':
-            key = 'minus'
-        if key == '=':
-            key = 'equal'
         self.KeyBindings[key] = {'text': text, 'callback': callback, 'group': group}
 
     def RemoveKeyBinding(self, key):
         if key in self.KeyBindings:   
             del self.KeyBindings[key]
 
-    def EnterTextInputMode(self):
+    def PromptAsync(self, queryText, callback):
+        self.TextInputQuery = queryText
+        self.CurrentTextInput = None
+        self.ExitTextInputCallback = callback
+        self.UpdateTextInput()
+        self.EnterTextInputMode(interactive=0)
+
+    def EnterTextInputMode(self,interactive=1):
         self.CurrentTextInput = ''
         self.Renderer.AddActor(self.TextInputActor)
         self.Renderer.RemoveActor(self.TextActor)
         self.UpdateTextInput()
         self.TextInputMode = 1
-        self.Render()
+        self.Render(interactive)
     
     def ExitTextInputMode(self):
         self.Renderer.RemoveActor(self.TextInputActor)
         self.Renderer.AddActor(self.TextActor)
         self.RenderWindow.Render()
         self.TextInputMode = 0
+        if self.ExitTextInputCallback:
+            self.ExitTextInputCallback(self.CurrentTextInput)
+            self.ExitTextInputCallback = None
         if self.ExitAfterTextInputMode:
             self.RenderWindowInteractor.ExitCallback()
 
