@@ -29,6 +29,7 @@ SET (VTK_VMTK_SEGMENTATION_SRCS
   )
 
 SET (VTK_VMTK_SEGMENTATION_ITK_HEADERS
+  vtkvmtkITKFilterUtilities.h
   itkFWHMFeatureImageFilter.h
   itkFWHMFeatureImageFilter.txx
   itkFastMarchingDirectionalFreezeImageFilter.h

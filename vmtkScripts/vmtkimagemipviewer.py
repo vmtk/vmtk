@@ -63,6 +63,8 @@ class vmtkImageMIPViewer(pypes.pypeScript):
             self.vmtkRenderer.Initialize()
             self.OwnRenderer = 1
 
+        self.vmtkRenderer.RegisterScript(self) 
+
         if self.Volume:
             self.vmtkRenderer.Renderer.RemoveVolume(self.Volume)
 

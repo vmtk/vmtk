@@ -93,6 +93,8 @@ class vmtkSurfaceCapper(pypes.pypeScript):
                 self.vmtkRenderer.Initialize()
                 self.OwnRenderer = 1
 
+	    self.vmtkRenderer.RegisterScript(self)
+
             boundaryExtractor = vtkvmtk.vtkvmtkPolyDataBoundaryExtractor()
             boundaryExtractor.SetInput(self.Surface)
             boundaryExtractor.Update()
@@ -124,11 +126,11 @@ class vmtkSurfaceCapper(pypes.pypeScript):
     
             self.vmtkRenderer.Renderer.AddActor(surfaceActor)
     
-            self.vmtkRenderer.Render()
-    
-            self.vmtkRenderer.Renderer.RemoveActor(labelsActor)
-            self.vmtkRenderer.Renderer.RemoveActor(surfaceActor)
-            
+            #self.vmtkRenderer.Render()
+    	    
+            #self.vmtkRenderer.Renderer.RemoveActor(labelsActor)
+            #self.vmtkRenderer.Renderer.RemoveActor(surfaceActor)
+
             ok = False
             while not ok:
                 labelString = self.InputText("Please input boundary ids: ",self.LabelValidator)
