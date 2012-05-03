@@ -1,7 +1,7 @@
 COPYRIGHT
 ---------
 
-Copyright (C) 2004-2011, Luca Antiga, David Steinman 
+Copyright (C) 2004-2012, Luca Antiga, David Steinman 
 
 
 APPLICABLE LICENSES

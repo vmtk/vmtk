@@ -63,12 +63,17 @@ class vmtkImageViewer(pypes.pypeScript):
             ['PlaneWidgetZ','zplane','vtkImagePlaneWidget',1,'','the Z image plane widget']
             ])
 
+    def CharCallback(self, obj):
+        return
+
     def BuildView(self):
 
         if not self.vmtkRenderer:
             self.vmtkRenderer = vmtkrenderer.vmtkRenderer()
             self.vmtkRenderer.Initialize()
             self.OwnRenderer = 1
+
+        self.vmtkRenderer.RegisterScript(self) 
 
         if (self.ArrayName != ''):
             self.Image.GetPointData().SetActiveScalars(self.ArrayName)

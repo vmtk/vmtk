@@ -164,17 +164,33 @@ class pypeScript(object):
         self.OutputStream.write('\r')
         self.OutputStream.write('Progress: '+str(int(100 * self.Progress))+'%')
         self.OutputStream.flush()
+        self.InputInfo('Progress: '+str(int(100 * self.Progress))+'%')
  
     def EndProgress(self):
         self.OutputStream.write('\n')
-        
+ 
+    def InputInfo(self,prompt=''):
+        self.OutputText(prompt)
+        try:
+            self.InputStream.prompt(prompt)
+        except:
+            pass
+ 
     def InputText(self,prompt='',validator=None):
         self.OutputText(prompt)
-        text = self.InputStream.readline().rstrip('\n')
+        try:
+            self.InputStream.prompt(prompt)
+        except:
+            pass
+        text = self.InputStream.readline()
+        if text:
+            text = text.rstrip('\n')
         if validator:
             while not validator(text):
                 self.OutputText(prompt)
-                text = self.InputStream.readline().rstrip('\n')
+                text = self.InputStream.readline()
+                if text:
+                    text = text.rstrip('\n')
         return text
 
     def PrintMembers(self,members):

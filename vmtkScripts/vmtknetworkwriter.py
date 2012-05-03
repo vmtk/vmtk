@@ -33,6 +33,7 @@ class vmtkNetworkWriter(pypes.pypeScript):
         self.OutputFileName = ''
         self.Network = None
         self.Input = None
+        self.InputUnits = 'mm'
 
         self.RadiusArrayName = 'Radius'
         self.LabelsArrayName = 'Labels'
@@ -42,6 +43,7 @@ class vmtkNetworkWriter(pypes.pypeScript):
         self.SetInputMembers([
             ['Network','i','vtkPolyData',1,'','the input network','vmtksurfacereader'],
             ['Format','f','str',1,'["vtkxml","vtk","arch"]','file format'],
+            ['InputUnits','u','str',1,'["mm","cm","m"]','units in which the input network is represented'],
             ['GuessFormat','guessformat','bool',1,'','guess file format from extension'],
             ['RadiusArrayName','radiusarray','str',1,'','name of the point data array where radius is stored (arch format)'],
             ['LabelsArrayName','labelsarray','str',1,'','name of the cell data array where labels are stored (arch format)'],
@@ -74,6 +76,12 @@ class vmtkNetworkWriter(pypes.pypeScript):
             self.PrintError('Error: no OutputFileName.')
         self.PrintLog('Writing ARCH network file.')
 
+        factor = 1.0
+        if self.InputUnits == 'cm':
+          factor = 0.01
+        elif self.InputUnits == 'mm':
+          factor = 0.001
+
         radiusArray = None
         if self.RadiusArrayName:
             radiusArray = self.Network.GetPointData().GetArray(self.RadiusArrayName)
@@ -85,12 +93,15 @@ class vmtkNetworkWriter(pypes.pypeScript):
         from xml.dom import minidom
         xmlDocument = minidom.Document()
         xmlNetworkGraph = xmlDocument.appendChild(xmlDocument.createElement('NetworkGraph'))
-        xmlNetworkGraph.setAttribute('id',self.OutputFileName)
+        xmlNetworkGraph.setAttribute('id','1')
+        xmlNetworkGraph.setAttribute('version','3.0')
         xmlNetworkGraph.setAttribute('xmlns:xsi','http://www.w3.org/2001/XMLSchema-instance')
-        xmlNetworkGraph.setAttribute('xsi:noNamespaceSchemaLocation','vascular_network_v2.1.xsd')
+        xmlNetworkGraph.setAttribute('xsi:noNamespaceSchemaLocation','vascular_network_v2.3.xsd')
         xmlCase = xmlNetworkGraph.appendChild(xmlDocument.createElement('case'))
         xmlPatientId = xmlCase.appendChild(xmlDocument.createElement('patient_id'))
+        xmlPatientId.appendChild(xmlDocument.createTextNode('00000'))
         xmlVisit = xmlCase.appendChild(xmlDocument.createElement('visit'))
+        xmlVisit.appendChild(xmlDocument.createTextNode('other'))
 
         nodeMap = {}
         edgeCellIds = []
@@ -135,6 +146,9 @@ class vmtkNetworkWriter(pypes.pypeScript):
                if 'vena' in label or 'vein' in label or 'v.' in label:
                    xmlEdge.setAttribute('side','venous')
                xmlEdge.setAttribute('name',label)
+            else:
+               xmlEdge.setAttribute('side','arterial')
+               xmlEdge.setAttribute('name','edge%d' % i)
             
             #xmlEdgeClassification = xmlEdge.appendChild(xmlDocument.createElement('edge_classification'))
             #if labelsArray:
@@ -151,16 +165,16 @@ class vmtkNetworkWriter(pypes.pypeScript):
             cellPoints = cell.GetPoints()
             prevPoint = cellPoints.GetPoint(0)
             abscissas = [0.0]
-            coordinates = [prevPoint]
+            coordinates = [[factor*el for el in prevPoint]]
             for j in range(1,cell.GetNumberOfPoints()):
                 point = cellPoints.GetPoint(j)
-                length += vtk.vtkMath.Distance2BetweenPoints(prevPoint,point)**0.5
+                length += factor * vtk.vtkMath.Distance2BetweenPoints(prevPoint,point)**0.5
                 abscissas.append(length)
-                coordinates.append(point)
+                coordinates.append([factor*el for el in point])
                 prevPoint = point
 
             xmlLength = xmlGeometry.appendChild(xmlDocument.createElement('length'))
-            xmlLength.setAttribute('unit','mm')
+            xmlLength.setAttribute('unit','m')
             xmlScalar = xmlLength.appendChild(xmlDocument.createElement('scalar'))
             xmlScalar.appendChild(xmlDocument.createTextNode('%f' % length))
             xmlCoordinatesArray = xmlGeometry.appendChild(xmlDocument.createElement('coordinates_array'))
@@ -176,16 +190,16 @@ class vmtkNetworkWriter(pypes.pypeScript):
 
             if radiusArray:
                 xmlRadiusArray = xmlProperties.appendChild(xmlDocument.createElement('radius_array'))
-                xmlRadiusArray.setAttribute('unit','mm')
+                xmlRadiusArray.setAttribute('unit','m')
                 for j in range(cell.GetNumberOfPoints()):
                     pointId = cell.GetPointId(j)
-                    radius = radiusArray.GetTuple1(pointId)
+                    radius = factor * radiusArray.GetTuple1(pointId)
                     xmlValue = xmlRadiusArray.appendChild(xmlDocument.createElement('value'))
                     xmlValue.setAttribute('s','%f' % (abscissas[j]/length))
                     xmlScalar = xmlValue.appendChild(xmlDocument.createElement('scalar'))
                     xmlScalar.appendChild(xmlDocument.createTextNode('%f' % radius))
 
-        xmlTransformations = xmlNetworkGraph.appendChild(xmlDocument.createElement('transformations'))
+        #xmlTransformations = xmlNetworkGraph.appendChild(xmlDocument.createElement('transformations'))
 
         xmlFile = open(self.OutputFileName,'w')
         xmlFile.write(xmlDocument.toprettyxml())
