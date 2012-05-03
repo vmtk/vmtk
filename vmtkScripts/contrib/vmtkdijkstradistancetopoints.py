@@ -116,19 +116,16 @@ class vmtkDijkstraDistanceToPoints(pypes.pypeScript):
 	    sphereRadii = vtk.vtkDoubleArray()
 	    self.ExamineSpheres.GetPointData().SetScalars(sphereRadii)
         
-    
-    
-    def KeyPressed(self,obj,event):
-        key = obj.GetKeySym()
-        if key == 'u':
-            self.InitializeSeeds()
+    def UndoCallback(self, obj):
+	    self.InitializeSeeds()
             self.SeedPoints.Modified()
             self.vmtkRenderer.RenderWindow.Render()
-            return
-        elif key == 'space':
-            picker = vtk.vtkCellPicker()
+
+    def SpaceCallback(self,obj):
+	    picker = vtk.vtkCellPicker()
             picker.SetTolerance(1E-4 * self.Surface.GetLength())
-            eventPosition = obj.GetEventPosition()
+	    eventPosition = self.vmtkRenderer.RenderWindowInteractor.GetEventPosition()
+            #eventPosition = obj.GetEventPosition()
             result = picker.Pick(float(eventPosition[0]),float(eventPosition[1]),0.0,self.vmtkRenderer.Renderer)
             if result == 0:
                 return
@@ -158,8 +155,9 @@ class vmtkDijkstraDistanceToPoints(pypes.pypeScript):
 		self.ExamineSpheres.GetPointData().GetScalars().InsertNextValue(length)
 		self.ExamineSpheres.Modified()
             self.vmtkRenderer.RenderWindow.Render()
-        elif key == 'd':
-            self.DisplayArray = not self.DisplayArray
+
+    def DisplayDistanceCallback(self,obj):
+	    self.DisplayArray = not self.DisplayArray
             if self.DisplayArray:
                 newSurface = self.ComputeDistances()
                 self.SurfaceMapper.SetInput(newSurface)
@@ -173,8 +171,9 @@ class vmtkDijkstraDistanceToPoints(pypes.pypeScript):
                 self.ScalarBarActor.VisibilityOff()
             self.SurfaceMapper.SetScalarVisibility(self.DisplayArray)
             self.vmtkRenderer.RenderWindow.Render()
-        elif key == 'a':
-            queryString = 'Please input new parameters :\nDistanceOffset('+str(self.DistanceOffset)+') [DistanceScale('+str(self.DistanceScale)+') MinDistance('+str(self.MinDistance)+') MaxDistance('+str(self.MaxDistance)+'): '
+
+    def AddCallback(self, obj):
+	    queryString = 'Please input new parameters :\nDistanceOffset('+str(self.DistanceOffset)+') [DistanceScale('+str(self.DistanceScale)+') MinDistance('+str(self.MinDistance)+') MaxDistance('+str(self.MaxDistance)+'): '
             inputString = self.InputText(queryString,self.DistanceParametersValidator)
             splitInputString = inputString.strip().split(' ')
             if len(splitInputString) >= 1 and splitInputString[0] != '':
@@ -185,7 +184,8 @@ class vmtkDijkstraDistanceToPoints(pypes.pypeScript):
                 self.MinDistance = float(splitInputString[2])
             if len(splitInputString) >= 4:
                 self.MaxDistance = float(splitInputString[3])
-	elif key == 'x':
+
+    def ExamineCallback(self, obj):
 	    #Switch beetween examien and interact mode
 	    if self.InteractionMode == 0:
 		self.InteractionMode = 1
@@ -202,9 +202,6 @@ class vmtkDijkstraDistanceToPoints(pypes.pypeScript):
 		self.ExamineText.VisibilityOff()
 	    self.vmtkRenderer.RenderWindow.Render()
 
-    
-        
-
     def Execute(self):
 
         if self.Surface == None:
@@ -215,6 +212,9 @@ class vmtkDijkstraDistanceToPoints(pypes.pypeScript):
           self.vmtkRenderer.Initialize()
           self.OwnRenderer = 1
           
+
+	self.vmtkRenderer.RegisterScript(self) 
+	
         glyphs = vtk.vtkGlyph3D()
         glyphSource = vtk.vtkSphereSource()
         glyphSource.SetRadius(1)
@@ -250,7 +250,12 @@ class vmtkDijkstraDistanceToPoints(pypes.pypeScript):
 	self.ExamineSpheresActor.VisibilityOff()
         self.vmtkRenderer.Renderer.AddActor(self.ExamineSpheresActor)
 	
-        self.vmtkRenderer.RenderWindowInteractor.AddObserver("KeyPressEvent", self.KeyPressed)
+        #self.vmtkRenderer.RenderWindowInteractor.AddObserver("KeyPressEvent", self.KeyPressed)
+	self.vmtkRenderer.AddKeyBinding('u','Undo.',self.UndoCallback)
+	self.vmtkRenderer.AddKeyBinding('space','Pick points.',self.SpaceCallback)
+	self.vmtkRenderer.AddKeyBinding('w','Examine mode.',self.ExamineCallback)
+	self.vmtkRenderer.AddKeyBinding('d','Display Distance.',self.DisplayDistanceCallback)
+	self.vmtkRenderer.AddKeyBinding('a','Add.',self.AddCallback)
         
         self.SurfaceMapper = vtk.vtkPolyDataMapper()
         self.SurfaceMapper.SetInput(self.Surface)
@@ -277,9 +282,8 @@ class vmtkDijkstraDistanceToPoints(pypes.pypeScript):
 	self.ExamineText.VisibilityOff()
 	self.vmtkRenderer.Renderer.AddActor2D(self.ExamineText)
         
-        self.OutputText('Please position the mouse and press space to add points, \'u\' to undo\n')
-        
-        
+        self.InputInfo('Please position the mouse and press space to add points, \'u\' to undo\n')
+
         any = 0
         while any == 0:
             self.InitializeSeeds()

@@ -41,6 +41,7 @@ class vmtkSurfaceViewer(pypes.pypeScript):
         self.DisplayCellData = 0
         self.Color = [-1.0, -1.0, -1.0]
         self.LineWidth = 1
+        self.Representation = 'surface'
 
         self.Actor = None
         self.ScalarBarActor = None
@@ -66,12 +67,37 @@ class vmtkSurfaceViewer(pypes.pypeScript):
             ['Actor','oactor','vtkActor',1,'','the output actor']
             ])
 
+    def RepresentationCallback(self, obj):
+        if not self.Actor:
+            return
+
+        if self.Representation == 'surface':
+            self.Representation = 'edges'
+        elif self.Representation == 'edges':
+            self.Representation = 'wireframe'
+        elif self.Representation == 'wireframe':
+            self.Representation = 'surface'
+
+        if self.Representation == 'surface':
+            self.Actor.GetProperty().SetRepresentationToSurface()
+            self.Actor.GetProperty().EdgeVisibilityOff()
+        elif self.Representation == 'edges':
+            self.Actor.GetProperty().SetRepresentationToSurface()
+            self.Actor.GetProperty().EdgeVisibilityOn()
+        elif self.Representation == 'wireframe':
+            self.Actor.GetProperty().SetRepresentationToWireframe()
+            self.Actor.GetProperty().EdgeVisibilityOff()
+
+        self.vmtkRenderer.RenderWindow.Render()
+
     def BuildView(self):
 
         if not self.vmtkRenderer:
             self.vmtkRenderer = vmtkrenderer.vmtkRenderer()
             self.vmtkRenderer.Initialize()
             self.OwnRenderer = 1
+
+        self.vmtkRenderer.RegisterScript(self) 
 
         if self.Actor:
             self.vmtkRenderer.Renderer.RemoveActor(self.Actor)
@@ -110,6 +136,7 @@ class vmtkSurfaceViewer(pypes.pypeScript):
             if self.FlatInterpolation:
                 self.Actor.GetProperty().SetInterpolationToFlat()
             self.vmtkRenderer.Renderer.AddActor(self.Actor)
+            self.vmtkRenderer.AddKeyBinding('w','Change surface representation.',self.RepresentationCallback)
 
         if self.Legend and self.Actor:
             self.ScalarBarActor = vtk.vtkScalarBarActor()
@@ -132,7 +159,6 @@ class vmtkSurfaceViewer(pypes.pypeScript):
 
 
     def Execute(self):
-
         if (not self.Surface) and self.Display:
             self.PrintError('Error: no Surface.')
 

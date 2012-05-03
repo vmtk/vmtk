@@ -3,6 +3,7 @@ PROJECT (PYPES)
 SET(PYPES_SRCS
   pypebatch.py
   pypepad.py
+  pypeserver.py
   pypetest.py
   pypetestrunner.py
   pypewrapper.py

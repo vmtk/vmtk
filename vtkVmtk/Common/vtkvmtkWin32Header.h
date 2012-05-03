@@ -149,6 +149,12 @@
   #define VTK_VMTK_CONTRIB_EXPORT __declspec( dllimport ) 
  #endif
 
+ #if defined(vtkvmtkRendering_EXPORTS)
+  #define VTK_VMTK_RENDERING_EXPORT __declspec( dllexport ) 
+ #else
+  #define VTK_VMTK_RENDERING_EXPORT __declspec( dllimport ) 
+ #endif
+
 #else
  #define VTK_VMTK_COMMON_EXPORT
  #define VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT
@@ -158,6 +164,7 @@
  #define VTK_VMTK_ITK_EXPORT
  #define VTK_VMTK_SEGMENTATION_EXPORT
  #define VTK_VMTK_CONTRIB_EXPORT
+ #define VTK_VMTK_RENDERING_EXPORT
 #endif
 
 // this is exclusively for the tcl Init functions

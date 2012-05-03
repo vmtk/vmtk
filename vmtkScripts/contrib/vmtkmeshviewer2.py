@@ -121,25 +121,34 @@ class vmtkMeshViewer2(pypes.pypeScript):
             self.Actor.GetMapper().SetInput(self.ExtractMesh())
         else:
             self.Actor.GetMapper().SetInput(self.ClipMesh())
+    
+    def InteractCallback(self,obj):
+	if self.BoxWidget.GetEnabled() == 1:
+	    self.BoxWidget.SetEnabled(0)
+	else:
+	    self.BoxWidget.SetEnabled(1)
 
-    def KeyPressed(self,obj,event):
-        key = obj.GetKeySym()
-        if key == 'c' and self.Mesh != None:
-            self.ClipExtract = False
+    def ClipCallback(self,obj):
+	if self.Mesh != None:
+	    self.ClipExtract = False
             if self.PlaneWidget.GetEnabled():
                 self.Actor.GetMapper().SetInput(self.ClipMesh())
             else:
                 self.Actor.GetMapper().SetInput(self.Mesh)
             self.vmtkRenderer.RenderWindow.Render()
-        elif key == 'x' and self.Mesh:
-            self.ClipExtract = True
+
+    def ExtractCallback(self,obj):
+	if self.Mesh:
+	    self.ClipExtract = True
             if self.PlaneWidget.GetEnabled():
                 self.Actor.GetMapper().SetInput(self.ExtractMesh())
             else:
                 self.Actor.GetMapper().SetInput(self.Mesh)
             self.vmtkRenderer.RenderWindow.Render()
-        elif key == 'n' and self.Actor.GetMapper() != None:
-            self.InteractiveClip = not self.InteractiveClip
+
+    def NCallback(self,obj):
+	if self.Actor.GetMapper() != None:
+	    self.InteractiveClip = not self.InteractiveClip
             if self.InteractiveClip:
                 self.ObserverId = self.PlaneWidget.AddObserver("InteractionEvent",self.PlaneCallback)
                 self.PlaneWidget.On()
@@ -150,12 +159,16 @@ class vmtkMeshViewer2(pypes.pypeScript):
                 self.PlaneWidget.Off()
                 self.Actor.GetMapper().SetInput(self.Mesh)
             self.vmtkRenderer.RenderWindow.Render()
-        elif key == 'd' and self.PlaneWidget.GetEnabled():
-            self.InsideOut = not self.InsideOut
+
+    def DCallback(self,obj):
+	if self.PlaneWidget.GetEnabled():
+ 	    self.InsideOut = not self.InsideOut
             self.PlaneWidget.InvokeEvent('InteractionEvent')
             self.vmtkRenderer.RenderWindow.Render()
-        elif key == 't' and self.Mesh and self.ArrayName != '':
-            #has the mesh been clipped?
+
+    def TCallback(self,obj):
+	if self.Mesh and self.ArrayName != '':
+	    #has the mesh been clipped?
             isClipped = (self.Actor.GetMapper().GetInput() != self.Mesh)
             self.DoThreshold = not self.DoThreshold
             if self.DoThreshold:
@@ -171,8 +184,9 @@ class vmtkMeshViewer2(pypes.pypeScript):
             else:
                 self.Actor.GetMapper().SetInput(self.Mesh)
             self.vmtkRenderer.RenderWindow.Render()
-        elif key == 'u':
-            self.ThresholdUpper = not self.ThresholdUpper
+
+    def UndoCallback(self,obj):
+	    self.ThresholdUpper = not self.ThresholdUpper
             if self.DoThreshold:
                 isClipped = (self.Actor.GetMapper().GetInput() != self.Mesh)
                 self.ThresholdMesh()
@@ -244,8 +258,14 @@ class vmtkMeshViewer2(pypes.pypeScript):
             self.ScalarBarActor.SetLabelFormat('%.2f')
             self.vmtkRenderer.Renderer.AddActor(self.ScalarBarActor)
 
-        self.vmtkRenderer.RenderWindowInteractor.AddObserver("KeyPressEvent", self.KeyPressed)
-        
+        #self.vmtkRenderer.RenderWindowInteractor.AddObserver("KeyPressEvent", self.KeyPressed)
+        self.vmtkRenderer.AddKeyBinding('i','Interact.',self.InteractCallback)
+	self.vmtkRenderer.AddKeyBinding('c','Clip.',self.ClipCallback)
+	self.vmtkRenderer.AddKeyBinding('e','Extract.',self.ExtractCallback)
+	self.vmtkRenderer.AddKeyBinding('n','Show clipped area.',self.NCallback)
+	self.vmtkRenderer.AddKeyBinding('d','Switch clipped/unclipped area.',self.DCallback)
+	self.vmtkRenderer.AddKeyBinding('t','Redo.',self.TCallback)
+	self.vmtkRenderer.AddKeyBinding('u','Undo.',self.UndoCallback)
         self.PlaneWidget = vtk.vtkImplicitPlaneWidget()
         self.PlaneWidget.SetInteractor(self.vmtkRenderer.RenderWindowInteractor)
         self.PlaneWidget.SetPlaceFactor(1.25)

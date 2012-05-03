@@ -39,9 +39,9 @@ class vmtkImageCompare(pypes.pypeScript):
         referenceRange = self.ReferenceImage.GetPointData().GetScalars().GetRange()
         rangeDiff = (imageRange[0] - referenceRange[0], imageRange[1] - referenceRange[1])
 
-        self.PrintLog('Image Range: '+ str(imageRange))
-        self.PrintLog('Reference Image Range: '+ str(referenceRange))
-        self.PrintLog('Range Difference: '+ str(rangeDiff))
+        self.InputInfo('Image Range: '+ str(imageRange))
+        self.InputInfo('Reference Image Range: '+ str(referenceRange))
+        self.InputInfo('Range Difference: '+ str(rangeDiff))
 
         if max([abs(d) for d in rangeDiff]) < self.Tolerance:
             return True
@@ -53,8 +53,8 @@ class vmtkImageCompare(pypes.pypeScript):
         imagePoints = self.Image.GetNumberOfPoints()
         referencePoints = self.ReferenceImage.GetNumberOfPoints()
 
-        self.PrintLog('Image Points: ' + str(imagePoints))
-        self.PrintLog('Reference Image Points: ' + str(referencePoints))
+        self.InputInfo('Image Points: ' + str(imagePoints))
+        self.InputInfo('Reference Image Points: ' + str(referencePoints))
 
         if abs(imagePoints - referencePoints) > 0 :
             self.ResultLog = 'Uneven NumberOfPoints'
@@ -74,7 +74,7 @@ class vmtkImageCompare(pypes.pypeScript):
         differenceImage = imageMath.GetOutput()
         differenceRange = differenceImage.GetPointData().GetScalars().GetRange()
 
-        self.PrintLog('Difference Range: ' + str(differenceRange))
+        self.InputInfo('Difference Range: ' + str(differenceRange))
  
         if max([abs(d) for d in differenceRange]) < self.Tolerance:
             return True
