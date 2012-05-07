@@ -304,9 +304,6 @@ class vmtkOpenProfilesSeedSelector(vmtkSeedSelector):
 
         self.vmtkRenderer.Render()
         
-        self.vmtkRenderer.Renderer.RemoveActor(labelsActor)
-        self.vmtkRenderer.Renderer.RemoveActor(surfaceActor)
-
         seedIdString = self.InputText("Please input list of inlet profile ids: ")
         separator = ' '
         if seedIdString.find(',') != -1:
