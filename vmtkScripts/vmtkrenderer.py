@@ -143,6 +143,8 @@ class vmtkRenderer(pypes.pypeScript):
                 return
             if key == 'space':
                 key = ' '
+            elif key == 'minus':
+                key = '-'
             elif len(key) > 1 and key not in ['Backspace','BackSpace']:
                 key = None
             if key in ['Backspace','BackSpace']:
