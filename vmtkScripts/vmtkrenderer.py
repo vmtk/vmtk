@@ -97,7 +97,7 @@ class vmtkRenderer(pypes.pypeScript):
         filePrefix = 'vmtk-screenshot'
         fileNumber = 0
         fileName = "%s-%d.png" % (filePrefix,fileNumber)
-        existingFiles = os.listdir('.')
+        existingFiles = os.listdir(os.getenv("HOME"))
         while fileName in existingFiles:
             fileNumber += 1
             fileName = "%s-%d.png" % (filePrefix,fileNumber)
@@ -109,7 +109,7 @@ class vmtkRenderer(pypes.pypeScript):
         self.RenderWindow.Render()
         writer = vtk.vtkPNGWriter()
         writer.SetInput(windowToImage.GetOutput())
-        writer.SetFileName(fileName)
+        writer.SetFileName(os.path.join(os.getenv("HOME"),fileName))
         writer.Write()
 
     def QuitRendererCallback(self, obj):
@@ -143,6 +143,10 @@ class vmtkRenderer(pypes.pypeScript):
                 return
             if key == 'space':
                 key = ' '
+            elif key == 'minus':
+                key = '-'
+            elif key.startswith("KP_"):
+                key = key[3:]
             elif len(key) > 1 and key not in ['Backspace','BackSpace']:
                 key = None
             if key in ['Backspace','BackSpace']:
