@@ -145,6 +145,8 @@ class vmtkRenderer(pypes.pypeScript):
                 key = ' '
             elif key == 'minus':
                 key = '-'
+            elif key == 'period':
+                key = '.'
             elif len(key) > 1 and key not in ['Backspace','BackSpace']:
                 key = None
             if key in ['Backspace','BackSpace']:
