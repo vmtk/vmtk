@@ -94,7 +94,7 @@ class PypeTkPad(object):
 
         self.master = master
         self.master.title('PypePad')
-        self.master.geometry("%dx%d%+d%+d" % (700, 400, 0, 0))
+        self.master.geometry("%dx%d%+d%+d" % (700, 700, 0, 0))
         self.master.minsize(300, 100)
         self.output_file_name = None
         
@@ -400,7 +400,7 @@ class PypeTkPad(object):
         self.text_output["state"] = NORMAL
         self.text_output.insert(END,text)
         self.text_output["state"] = DISABLED
- 
+
     def BuildScriptMenu(self,parentmenu,modulename):
         from Tkinter import Menu
         menu = Menu(parentmenu,bd=1,activeborderwidth=0)
@@ -409,12 +409,19 @@ class PypeTkPad(object):
         except ImportError:
             return None
         scriptnames = []
-        exec ('scriptnames = [scriptname for scriptname in '+modulename+'.__all__]') 
-        for scriptname in scriptnames:
-            callback = CallbackShim(self.InsertScriptName,scriptname)
-            menu.add_command(label=scriptname,command=callback)
-        return menu
-        
+        exec ('scriptnames = [scriptname for scriptname in '+modulename+'.__all__]')
+        menulength = 20
+        for i in range(len(scriptnames)/menulength+1):
+            subscriptnames = scriptnames[i*menulength:(i+1)*menulength]
+            if not subscriptnames:
+                break 
+            submenu = Menu(menu,bd=1,activeborderwidth=0)
+            menu.add_cascade(label=subscriptnames[0]+"...",menu=submenu)
+            for scriptname in subscriptnames:
+                callback = CallbackShim(self.InsertScriptName,scriptname)
+                submenu.add_command(label=scriptname,command=callback)
+        return menu 
+
     def BuildMainFrame(self): 
         from Tkinter import Menu, IntVar, StringVar, Toplevel, Listbox, Frame, PanedWindow, Text, Scrollbar, Entry
         from Tkinter import X, N, S, W, E, VERTICAL, TOP, END, DISABLED, RAISED
@@ -505,7 +512,7 @@ class PypeTkPad(object):
         frame1.columnconfigure(1,weight=0)
         frame1.rowconfigure(0,weight=1)
 
-        panes.add(frame1,height=40,minsize=20)        
+        panes.add(frame1,height=300,minsize=20)        
 
         frame2 = Frame(panes,bd=0) 
         frame2.grid(row=1,column=0,sticky=N+S+W+E)
