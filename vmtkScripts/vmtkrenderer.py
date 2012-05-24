@@ -139,16 +139,16 @@ class vmtkRenderer(pypes.pypeScript):
     def CharCallback(self, obj, event):
         key = self.RenderWindowInteractor.GetKeySym()
         if self.TextInputMode:
-            if key == 'Return':
+            if key in ['Return','Enter']:
                 self.ExitTextInputMode()
                 return
             if key.startswith('KP_'):
                 key = key[3:]
             if key == 'space':
                 key = ' '
-            elif key == 'minus':
+            elif key in ['minus','Subtract']:
                 key = '-'
-            elif key == 'period':
+            elif key in ['period','Decimal']:
                 key = '.'
             elif len(key) > 1 and key not in ['Backspace','BackSpace']:
                 key = None
