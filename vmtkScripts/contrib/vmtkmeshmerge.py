@@ -8,13 +8,13 @@ from vmtk import pypes
 from vmtk import vmtkscripts
 from vmtk import vtkvmtk
 
-vmtkmeshmerge = 'VmtkMeshMerge'
+vmtkmeshmerge = 'vmtkMeshMerge'
 
-class VmtkMeshMerge(pypes.pypeScript):
+class vmtkMeshMerge(pypes.pypeScript):
     def __init__(self):
         pypes.pypeScript.__init__(self)
 
-        self.SetScriptName(vmtkmeshmerge)
+        self.SetScriptName("vmtkmeshmerge")
         self.SetScriptDoc('Merge two or three meshes into one.')
 
         self.Mesh1 = None
@@ -34,7 +34,7 @@ class VmtkMeshMerge(pypes.pypeScript):
                  'the second of meshes to merge', 'vmtkmeshreader'],
                 ['Mesh3', 'mesh3', 'vtkUnstructuredGrid', 1, '',
                  '(optional) the third of meshes to merge', 'vmtkmeshreader'],
-                ['CellEntityIdsArrayName', 'entityidsarray', 'str', 1, 'CellEntityIds',
+                ['CellEntityIdsArrayName', 'entityidsarray', 'str', 1, '',
                  'name of the array where entity ids have been stored'],
                 ['CellEntityIdOffset1', 'cellentityidoffset1', 'int', 1, '',
                  'offset added to cell entity ids from mesh1', ''],
@@ -46,7 +46,7 @@ class VmtkMeshMerge(pypes.pypeScript):
         self.SetOutputMembers([
                 ['Mesh', 'o', 'vtkUnstructuredGrid', 1, '',
                  'the output mesh', 'vmtkmeshwriter'],
-                ['CellEntityIdsArrayName', 'entityidsarray', 'str', 1, 'CellEntityIds',
+                ['CellEntityIdsArrayName', 'entityidsarray', 'str', 1, '',
                  'name of the array where entity ids have been stored'],
                 ])
 

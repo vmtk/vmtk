@@ -34,7 +34,7 @@ class VmtkSurfaceExtractInnerCylinder(pypes.pypeScript):
         self.SetInputMembers([
                 ['Surface', 'i', 'vtkPolyData', 1, '',
                  'the input surface', 'vmtksurfacereader'],
-                ['CellEntityIdsArrayName', 'entityidsarray', 'str', 1, 'CellEntityIds',
+                ['CellEntityIdsArrayName', 'entityidsarray', 'str', 1, '',
                  'name of the array where entity ids have been stored'],
                 ['EndcapsThresholdLow', 'lowthreshold', 'int', 1, '',
                  'lower threshold for encaps filtering', ''],
@@ -48,7 +48,7 @@ class VmtkSurfaceExtractInnerCylinder(pypes.pypeScript):
                  'the colored surface', 'vmtksurfacewriter'],
                 ['InnerSurface', 'o', 'vtkPolyData', 1, '',
                  'the innermost surface', 'vmtksurfacewriter'],
-                ['CellEntityIdsArrayName', 'entityidsarray', 'str', 1, 'CellEntityIds',
+                ['CellEntityIdsArrayName', 'entityidsarray', 'str', 1, '',
                  'name of the array where entity ids have been stored'],
                 ])
 
