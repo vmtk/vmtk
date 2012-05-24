@@ -256,7 +256,7 @@ class pypeScript(object):
     def GetUsageString(self):
         usageString = ''
         scriptUsageString = os.path.splitext(self.ScriptName)[0]
-        if self.ScriptDoc != '':
+        if self.ScriptDoc:
             scriptUsageString += ' : ' + self.ScriptDoc
         useTextWrap = 1
         try:
