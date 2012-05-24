@@ -34,7 +34,7 @@ def RunPypeProcess(arguments, inputStream=None, outputStream=None, logOn=True):
         pipe.OutputStream = outputStream
     pipe.LogOn = logOn
     pipe.LogOn = True
-    pipe.SetArgumentsString(arguments)
+    pipe.Arguments = arguments
     pipe.ParseArguments()
     try: 
         pipe.Execute() 

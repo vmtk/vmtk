@@ -78,7 +78,7 @@ if __name__=='__main__':
     if sys.argv[0].startswith('pyperun'):
         args = sys.argv[1:]
 
-    queue.append(' '.join(args))
+    queue.append(args)
 
     try:
         pypeProcess.join()
@@ -86,8 +86,4 @@ if __name__=='__main__':
         pypeProcess.terminate()
     except BaseException, e:
         print e
-
-    #main = pypes.pypeMain()
-    #main.Arguments = sys.argv
-    #main.Execute()
 
