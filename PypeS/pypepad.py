@@ -99,7 +99,7 @@ class PypeTkPad(object):
         self.output_file_name = None
         
         self.BuildMainFrame()
-        #self.UpdateOutput()
+        self.UpdateOutput()
 
     def NewCommand(self):
         self.ClearAllCommand()
@@ -167,19 +167,8 @@ class PypeTkPad(object):
             self.output_stream.output_file = open(self.output_file_name,self.output_to_file.get())
         else:
             self.output_stream.output_to_file = False
-        #self.queue.append(arguments)
 
-        pipe = pypes.Pype()
-        pipe.ExitOnError = 0
-        pipe.InputStream = self.input_stream
-        pipe.OutputStream = self.output_stream
-        pipe.LogOn = self.log_on.get()
-        pipe.SetArgumentsString(arguments)
-        pipe.ParseArguments()
-        try: 
-            pipe.Execute() 
-        except Exception:
-            return
+        self.queue.append(arguments)
  
     def GetWordUnderCursor(self):
         from Tkinter import CURRENT
@@ -564,14 +553,12 @@ class PypeTkPad(object):
 
 def RunPypeTkPad():
 
-    #manager = Manager()
-    #queue = manager.list()
-    #output = manager.list()
-    #pypeProcess = Process(target=pypeserver.PypeServer, args=(queue,output))
-    #pypeProcess.start()
+    manager = Manager()
+    queue = manager.list()
+    output = manager.list()
 
-    queue = None
-    output = None
+    pypeProcess = Process(target=pypeserver.PypeServer, args=(queue,output))
+    pypeProcess.start()
 
     from Tkinter import Tk
 
@@ -579,7 +566,7 @@ def RunPypeTkPad():
     app = PypeTkPad(root,queue,output)
     root.mainloop()
 
-    #pypeProcess.terminate()
+    pypeProcess.terminate()
  
 if __name__=='__main__':
 
