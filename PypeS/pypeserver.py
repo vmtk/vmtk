@@ -34,12 +34,15 @@ def RunPypeProcess(arguments, inputStream=None, outputStream=None, logOn=True):
         pipe.OutputStream = outputStream
     pipe.LogOn = logOn
     pipe.LogOn = True
-    pipe.Arguments = arguments
+    if type(arguments) in [str,unicode]:
+        pipe.SetArgumentsString(arguments)
+    else:
+        pipe.Arguments = arguments
     pipe.ParseArguments()
     try: 
         pipe.Execute() 
     except BaseException, e:
-        print e
+        print "Error from pype:", e
     del pipe
 
 def PypeServer(queue, output, returnIfEmptyQueue=False):
