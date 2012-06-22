@@ -49,13 +49,16 @@ def PypeServer(queue, output, returnIfEmptyQueue=False):
     outputStream = None
     if output != None:
         outputStream = OutputStream(output)
+    ranOnce = False
     while True:
         try:
             if queue:
                 arguments = queue.pop(0)
                 RunPypeProcess(arguments,outputStream=outputStream)
+                ranOnce = True
             elif returnIfEmptyQueue:
-                return
+                if ranOnce:
+                    return
             else:
                 time.sleep(0.5)
         except IOError, e:
