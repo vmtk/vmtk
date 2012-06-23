@@ -24,8 +24,6 @@ Version:   $Revision: 1.6 $
 #include "vtkObjectFactory.h"
 
 #include <math.h>
-//#include <stdint.h>
-//#include <stdlib.h>
 
 vtkCxxRevisionMacro(vtkvmtkPNGWriter, "$Revision: 1.6 $");
 vtkStandardNewMacro(vtkvmtkPNGWriter);
