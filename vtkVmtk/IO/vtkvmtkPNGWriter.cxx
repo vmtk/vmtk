@@ -115,6 +115,8 @@ void vtkvmtkPNGWriter::Write()
   int output_length = base64_encode(encoded_data,data,length);
   this->SetBase64Image(encoded_data);
 
+  delete[] encoded_data;
+
   this->SetWriteToMemory(previousWriteToMemory);
 } 
 
