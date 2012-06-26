@@ -25,6 +25,59 @@ Version:   $Revision: 1.6 $
 
 #include <math.h>
 
+#include <string.h>
+
+//Ari Edelkind, http://episec.com/people/edelkind/
+
+char b64string[] =
+  "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+
+long base64_encode (char* to, char* from, unsigned int len)
+{
+  char *fromp = from;
+  char *top = to;
+  unsigned char cbyte;
+  unsigned char obyte;
+  char end[3];
+
+  for (; len >= 3; len -= 3) {
+    cbyte = *fromp++;
+    *top++ = b64string[(int)(cbyte >> 2)];
+    obyte = (cbyte << 4) & 0x30;    /* 0011 0000 */
+
+    cbyte = *fromp++;
+    obyte |= (cbyte >> 4);      /* 0000 1111 */
+    *top++ = b64string[(int)obyte];
+    obyte = (cbyte << 2) & 0x3C;    /* 0011 1100 */
+
+    cbyte = *fromp++;
+    obyte |= (cbyte >> 6);      /* 0000 0011 */
+    *top++ = b64string[(int)obyte];
+    *top++ = b64string[(int)(cbyte & 0x3F)];/* 0011 1111 */
+  }
+
+  if (len) {
+    end[0] = *fromp++;
+    if (--len) end[1] = *fromp++; else end[1] = 0;
+    end[2] = 0;
+
+    cbyte = end[0];
+    *top++ = b64string[(int)(cbyte >> 2)];
+    obyte = (cbyte << 4) & 0x30;    /* 0011 0000 */
+
+    cbyte = end[1];
+    obyte |= (cbyte >> 4);
+    *top++ = b64string[(int)obyte];
+    obyte = (cbyte << 2) & 0x3C;    /* 0011 1100 */
+
+    if (len) *top++ = b64string[(int)obyte];
+    else *top++ = '=';
+    *top++ = '=';
+  }
+  *top = 0;
+  return top - to;
+}
+
 vtkCxxRevisionMacro(vtkvmtkPNGWriter, "$Revision: 1.6 $");
 vtkStandardNewMacro(vtkvmtkPNGWriter);
 
@@ -55,46 +108,16 @@ void vtkvmtkPNGWriter::Write()
   Superclass::Write();
 
   vtkUnsignedCharArray* result = this->GetResult();
-  unsigned char* data = result->GetPointer(0);
+  char* data = (char*)result->GetPointer(0);
   int length = result->GetNumberOfTuples() * result->GetNumberOfComponents();
 
-  char encoding_table[] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
-                           'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
-                           'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
-                           'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f',
-                           'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
-                           'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
-                           'w', 'x', 'y', 'z', '0', '1', '2', '3',
-                           '4', '5', '6', '7', '8', '9', '+', '/'};
-  int mod_table[] = {0, 2, 1};
-
-  size_t output_length = (size_t) (4.0 * ceil((double) length / 3.0));
-
-  char* encoded_data = new char[output_length];
-
-  for (int i = 0, j = 0; i < length;) {
-      uint32_t octet_a = i < length ? data[i++] : 0;
-      uint32_t octet_b = i < length ? data[i++] : 0;
-      uint32_t octet_c = i < length ? data[i++] : 0;
-
-      uint32_t triple = (octet_a << 0x10) + (octet_b << 0x08) + octet_c;
-
-      encoded_data[j++] = encoding_table[(triple >> 3 * 6) & 0x3F];
-      encoded_data[j++] = encoding_table[(triple >> 2 * 6) & 0x3F];
-      encoded_data[j++] = encoding_table[(triple >> 1 * 6) & 0x3F];
-      encoded_data[j++] = encoding_table[(triple >> 0 * 6) & 0x3F];
-  }
-
-  for (int i = 0; i < mod_table[length % 3]; i++) {
-      encoded_data[output_length - 1 - i] = '=';
-  }
-  
+  char* encoded_data = new char[2*length];
+  int output_length = base64_encode(encoded_data,data,length);
   this->SetBase64Image(encoded_data);
-
-  //NSString *base64String = [NSString stringWithFormat:@"data:image/png;base64,%@",[self base64forData:pixelData]];
 
   this->SetWriteToMemory(previousWriteToMemory);
 } 
+
 
 void vtkvmtkPNGWriter::PrintSelf(ostream& os, vtkIndent indent)
 {
