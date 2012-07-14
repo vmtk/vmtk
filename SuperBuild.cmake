@@ -33,8 +33,8 @@ if( NOT USE_SYSTEM_ITK )
   ##
   set( proj ITK )
   ExternalProject_Add( ${proj}
-    GIT_REPOSITORY "${GIT_PROTOCOL}://github.com/Kitware/ITK.git"
-    GIT_TAG "v3.20.1"
+    GIT_REPOSITORY "${GIT_PROTOCOL}://github.com/vmtk/ITK.git"
+    GIT_TAG "v3.20.1-vmtk"
     SOURCE_DIR "${CMAKE_BINARY_DIR}/ITK"
     BINARY_DIR ITK-Build
     CMAKE_GENERATOR ${gen}
@@ -73,7 +73,7 @@ if( NOT USE_SYSTEM_VTK )
   ##
   set( proj VTK )
   ExternalProject_Add( VTK
-    GIT_REPOSITORY "${GIT_PROTOCOL}://github.com/lantiga/VTK.git"
+    GIT_REPOSITORY "${GIT_PROTOCOL}://github.com/vmtk/VTK.git"
     GIT_TAG "v5.10.0-vmtk"
     SOURCE_DIR "${CMAKE_BINARY_DIR}/VTK"
     BINARY_DIR VTK-Build
