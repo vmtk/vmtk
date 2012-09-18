@@ -10,11 +10,11 @@ Version:   $Revision: 1.6 $
   See LICENCE file for details.
 
   Portions of this code are covered under the VTK copyright.
-  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
+  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm
   for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -176,7 +176,7 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
       {
       continue;
       }
-  
+
     visitedBoundaries->SetId(i,i);
     visitedBoundaries->SetId(boundaryPairings->GetId(i),i);
 
@@ -252,6 +252,21 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
       {
       backward = true;
       }
+
+
+    // FIXME: Try vtkPolygon::Triangulate to build surface!
+    // - First find the two closest vertices ij,oj in the inner and outer polygons
+    // - Initialize a vtkPolygon instance
+    // - Add all vertices from the inner polygon in a clockwise direction,
+    //   starting and ending with ij.
+    // - Continue by adding all vertices from the outer polygon in a
+    //   counterclockwise direction, starting and ending with oj.
+    // - vtkIdList * outTris = vtkIdList::New();
+    // - vtkPoints * outPoints = vtkPoints::New();
+    // - Call polygon->Triangulate(0, outTris, outPoints);
+    // - Output is outTris, outPoints, use as appropriate in this code
+    // - Make sure to clean up afterwards
+
 
     double point0[3], nextPoint0[3];
     double point1[3], nextPoint1[3];
