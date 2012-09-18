@@ -44,7 +44,7 @@ class vmtkSurfaceCapper(pypes.pypeScript):
         self.SetScriptDoc('add caps to the holes of a surface, assigning an id to each cap for easy specification of boundary conditions ("simple" method only).')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
-            ['Method','method','str',1,'["simple","centerpoint","smooth","annular"]','capping method'],
+            ['Method','method','str',1,'["simple","centerpoint","smooth","annular","concaveannular"]','capping method'],
             ['TriangleOutput','triangle','bool',1,'','toggle triangulation of the output'],
             ['CellEntityIdsArrayName','entityidsarray','str',1,'','name of the array where the id of the caps have to be stored'],
             ['CellEntityIdOffset','entityidoffset','int',1,'(0,)','offset for entity ids ("simple" method only")'],
@@ -177,6 +177,14 @@ class vmtkSurfaceCapper(pypes.pypeScript):
             self.Surface = capper.GetOutput()
         elif self.Method == 'annular':
             capper = vtkvmtk.vtkvmtkAnnularCapPolyData()
+            capper.SetInput(self.Surface)
+            capper.SetCellEntityIdsArrayName(self.CellEntityIdsArrayName)
+            capper.SetCellEntityIdOffset(self.CellEntityIdOffset)
+            capper.Update()
+            self.Surface = capper.GetOutput()
+        elif self.Method == 'concaveannular':
+            import vtkvmtkcontrib
+            capper = vtkvmtkcontrib.vtkvmtkConcaveAnnularCapPolyData()
             capper.SetInput(self.Surface)
             capper.SetCellEntityIdsArrayName(self.CellEntityIdsArrayName)
             capper.SetCellEntityIdOffset(self.CellEntityIdOffset)
