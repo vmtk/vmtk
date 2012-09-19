@@ -38,6 +38,7 @@ Version:   $Revision: 1.0 $
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 #include "vtkSmartPointer.h"
+#include <limits>
 
 vtkCxxRevisionMacro(vtkvmtkConcaveAnnularCapPolyData, "$Revision: 1.0 $");
 vtkStandardNewMacro(vtkvmtkConcaveAnnularCapPolyData);
@@ -95,62 +96,72 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
     cellEntityIdsArray->FillComponent(0,static_cast<double>(this->CellEntityIdOffset));
     }
 
+  // Find all boundaries (polylines) in input mesh
   vtkSmartPointer<vtkvmtkPolyDataBoundaryExtractor> boundaryExtractor =
       vtkSmartPointer<vtkvmtkPolyDataBoundaryExtractor>::New();
   boundaryExtractor->SetInput(input);
   boundaryExtractor->Update();
-
   vtkPolyData* boundaries = boundaryExtractor->GetOutput();
   int numberOfBoundaries = boundaries->GetNumberOfCells();
-
   if (numberOfBoundaries % 2 != 0)
     {
     vtkErrorMacro(<< "Error: the number of boundaries must be even.");
     }
 
+  // Initialize barycenters and boundary pairing arrays
   vtkSmartPointer<vtkPoints> barycenters = vtkSmartPointer<vtkPoints>::New();
   barycenters->SetNumberOfPoints(numberOfBoundaries);
   vtkSmartPointer<vtkIdList> boundaryPairings = vtkSmartPointer<vtkIdList>::New();
   boundaryPairings->SetNumberOfIds(numberOfBoundaries);
   vtkSmartPointer<vtkIdList> visitedBoundaries = vtkSmartPointer<vtkIdList>::New();
   visitedBoundaries->SetNumberOfIds(numberOfBoundaries);
-
   for (int i=0; i<numberOfBoundaries; i++)
     {
     double barycenter[3];
-    vtkCell* boundary = boundaries->GetCell(i);
-    vtkvmtkBoundaryReferenceSystems::ComputeBoundaryBarycenter(boundary->GetPoints(),barycenter);
-    barycenters->SetPoint(i,barycenter);
-    boundaryPairings->SetId(i,-1);
-    visitedBoundaries->SetId(i,-1);
+    vtkvmtkBoundaryReferenceSystems::ComputeBoundaryBarycenter(boundaries->GetCell(i)->GetPoints(), barycenter);
+    barycenters->SetPoint(i, barycenter);
+
+    boundaryPairings->SetId(i, -1);
+    visitedBoundaries->SetId(i, -1);
     }
 
-  double currentBarycenter[3];
-  double minDistance2 = 0.0;
-  vtkIdType closestBoundaryId;
+  // Find the closest pairs of boundaries by comparing barycenter distances
+  double minDistance2 = std::numeric_limits<double>::max();
   for (int i=0; i<numberOfBoundaries-1; i++)
     {
+    // Skip boundary i if already visited
     if (boundaryPairings->GetId(i) != -1 || boundaryPairings->IsId(i) != -1)
       {
       continue;
       }
+
+    // Fetch barycenter i
     double barycenter[3];
-    barycenters->GetPoint(i,barycenter);
-    closestBoundaryId = -1;
+    barycenters->GetPoint(i, barycenter);
+
+    // Find which boundary j is closest to boundary i
+    vtkIdType closestBoundaryId = -1;
     for (int j=i+1; j<numberOfBoundaries; j++)
       {
+      // Skip boundary j if already visited
       if (boundaryPairings->GetId(j) != -1 || boundaryPairings->IsId(j) != -1)
         {
         continue;
         }
-      barycenters->GetPoint(j,currentBarycenter);
+
+      // Fetch barycenter j
+      double currentBarycenter[3];
+      barycenters->GetPoint(j, currentBarycenter);
+
+      // Pick boundary j if the distance to boundary i is the smallest so far
       double distance2 = vtkMath::Distance2BetweenPoints(barycenter,currentBarycenter);
-      if (closestBoundaryId == -1 || distance2 < minDistance2)
+      if (distance2 < minDistance2)
         {
         minDistance2 = distance2;
         closestBoundaryId = j;
         }
       }
+    // Store bidirectional boundary pairing
     boundaryPairings->SetId(i,closestBoundaryId);
     boundaryPairings->SetId(closestBoundaryId,i);
     }
