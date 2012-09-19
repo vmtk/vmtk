@@ -3,8 +3,8 @@
 Program:   VMTK
 Module:    $RCSfile: vtkvmtkConcaveAnnularCapPolyData.cxx,v $
 Language:  C++
-Date:      $Date: 2006/07/17 09:53:14 $
-Version:   $Revision: 1.6 $
+Date:      $Date: 2012/09/19 $
+Version:   $Revision: 1.0 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENCE file for details.
@@ -16,6 +16,11 @@ Version:   $Revision: 1.6 $
      This software is distributed WITHOUT ANY WARRANTY; without even
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
+
+  Note: this class was contributed by
+    Martin Sandve Alnaes
+	Simula Research Laboratory
+  Based on vtkvmtkAnnularCapPolyData by Tangui Morvan.
 
 =========================================================================*/
 
@@ -32,8 +37,9 @@ Version:   $Revision: 1.6 $
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
+#include "vtkSmartPointer.h"
 
-vtkCxxRevisionMacro(vtkvmtkConcaveAnnularCapPolyData, "$Revision: 1.6 $");
+vtkCxxRevisionMacro(vtkvmtkConcaveAnnularCapPolyData, "$Revision: 1.0 $");
 vtkStandardNewMacro(vtkvmtkConcaveAnnularCapPolyData);
 
 vtkvmtkConcaveAnnularCapPolyData::vtkvmtkConcaveAnnularCapPolyData()
@@ -64,42 +70,33 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
   vtkPolyData *output = vtkPolyData::SafeDownCast(
     outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
+  // TODO: One point is not sufficient I think?
   if ( input->GetNumberOfPoints() < 1 )
     {
     return 1;
     }
 
-  bool markCells = true;
-
-  if (!this->CellEntityIdsArrayName)
-    {
-    markCells = false;
-    }
-
-  if (strcmp(this->CellEntityIdsArrayName,"") == 0)
-    {
-    markCells = false;
-    }
-
   input->BuildLinks();
 
-  vtkPoints* newPoints = vtkPoints::New();
+  vtkSmartPointer<vtkPoints> newPoints = vtkSmartPointer<vtkPoints>::New();
   newPoints->DeepCopy(input->GetPoints());
 
-  vtkCellArray* newPolys = vtkCellArray::New();
+  vtkSmartPointer<vtkCellArray> newPolys = vtkSmartPointer<vtkCellArray>::New();
   newPolys->DeepCopy(input->GetPolys());
 
-  vtkIntArray* cellEntityIdsArray = NULL;
-
+  // Mark cells if we have a nonempty name
+  bool markCells = this->CellEntityIdsArrayName && this->CellEntityIdsArrayName[0];
+  vtkSmartPointer<vtkIntArray> cellEntityIdsArray;
   if (markCells)
     {
-    cellEntityIdsArray = vtkIntArray::New();
+    cellEntityIdsArray = vtkSmartPointer<vtkIntArray>::New();
     cellEntityIdsArray->SetName(this->CellEntityIdsArrayName);
     cellEntityIdsArray->SetNumberOfTuples(newPolys->GetNumberOfCells());
     cellEntityIdsArray->FillComponent(0,static_cast<double>(this->CellEntityIdOffset));
     }
 
-  vtkvmtkPolyDataBoundaryExtractor* boundaryExtractor = vtkvmtkPolyDataBoundaryExtractor::New();
+  vtkSmartPointer<vtkvmtkPolyDataBoundaryExtractor> boundaryExtractor =
+      vtkSmartPointer<vtkvmtkPolyDataBoundaryExtractor>::New();
   boundaryExtractor->SetInput(input);
   boundaryExtractor->Update();
 
@@ -109,26 +106,18 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
   if (numberOfBoundaries % 2 != 0)
     {
     vtkErrorMacro(<< "Error: the number of boundaries must be even.");
-    newPoints->Delete();
-    newPolys->Delete();
-    if (markCells)
-      {
-      cellEntityIdsArray->Delete();
-      }
-    boundaryExtractor->Delete();
     }
 
-  vtkPoints* barycenters = vtkPoints::New();
+  vtkSmartPointer<vtkPoints> barycenters = vtkSmartPointer<vtkPoints>::New();
   barycenters->SetNumberOfPoints(numberOfBoundaries);
-
-  vtkIdList* boundaryPairings = vtkIdList::New();
+  vtkSmartPointer<vtkIdList> boundaryPairings = vtkSmartPointer<vtkIdList>::New();
   boundaryPairings->SetNumberOfIds(numberOfBoundaries);
-  vtkIdList* visitedBoundaries = vtkIdList::New();
+  vtkSmartPointer<vtkIdList> visitedBoundaries = vtkSmartPointer<vtkIdList>::New();
   visitedBoundaries->SetNumberOfIds(numberOfBoundaries);
 
-  double barycenter[3];
   for (int i=0; i<numberOfBoundaries; i++)
     {
+    double barycenter[3];
     vtkCell* boundary = boundaries->GetCell(i);
     vtkvmtkBoundaryReferenceSystems::ComputeBoundaryBarycenter(boundary->GetPoints(),barycenter);
     barycenters->SetPoint(i,barycenter);
@@ -137,7 +126,7 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
     }
 
   double currentBarycenter[3];
-  double distance2, minDistance2 = 0.0;
+  double minDistance2 = 0.0;
   vtkIdType closestBoundaryId;
   for (int i=0; i<numberOfBoundaries-1; i++)
     {
@@ -145,6 +134,7 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
       {
       continue;
       }
+    double barycenter[3];
     barycenters->GetPoint(i,barycenter);
     closestBoundaryId = -1;
     for (int j=i+1; j<numberOfBoundaries; j++)
@@ -154,7 +144,7 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
         continue;
         }
       barycenters->GetPoint(j,currentBarycenter);
-      distance2 = vtkMath::Distance2BetweenPoints(barycenter,currentBarycenter);
+      double distance2 = vtkMath::Distance2BetweenPoints(barycenter,currentBarycenter);
       if (closestBoundaryId == -1 || distance2 < minDistance2)
         {
         minDistance2 = distance2;
@@ -176,16 +166,18 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
       {
       continue;
       }
+    else
+      {
+      visitedBoundaries->SetId(i,i);
+      visitedBoundaries->SetId(boundaryPairings->GetId(i),i);
+      }
 
-    visitedBoundaries->SetId(i,i);
-    visitedBoundaries->SetId(boundaryPairings->GetId(i),i);
-
-    vtkIdTypeArray* boundaryPointIdsArray = vtkIdTypeArray::New();
+    vtkSmartPointer<vtkIdTypeArray> boundaryPointIdsArray = vtkSmartPointer<vtkIdTypeArray>::New();
     boundaryPointIdsArray->DeepCopy(boundaries->GetPointData()->GetScalars());
 
     vtkPolyLine* boundary0 = vtkPolyLine::SafeDownCast(boundaries->GetCell(i));
     vtkIdType numberOfBoundaryPoints0 = boundary0->GetNumberOfPoints();
-    vtkIdList* boundaryPointIds0 = vtkIdList::New();
+    vtkSmartPointer<vtkIdList> boundaryPointIds0 = vtkSmartPointer<vtkIdList>::New();
     boundaryPointIds0->SetNumberOfIds(numberOfBoundaryPoints0);
     for (int j=0; j<numberOfBoundaryPoints0; j++)
       {
@@ -194,21 +186,22 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
 
     vtkPolyLine* boundary1 = vtkPolyLine::SafeDownCast(boundaries->GetCell(boundaryPairings->GetId(i)));
     vtkIdType numberOfBoundaryPoints1 = boundary1->GetNumberOfPoints();
-    vtkIdList* boundaryPointIds1 = vtkIdList::New();
+    vtkSmartPointer<vtkIdList> boundaryPointIds1 = vtkSmartPointer<vtkIdList>::New();
     boundaryPointIds1->SetNumberOfIds(numberOfBoundaryPoints1);
     for (int j=0; j<numberOfBoundaryPoints1; j++)
       {
       boundaryPointIds1->SetId(j,boundaryPointIdsArray->GetValue(boundary1->GetPointId(j)));
       }
 
-    double startingPoint[3], currentPoint[3];
+    double startingPoint[3];
     input->GetPoint(boundaryPointIds0->GetId(0),startingPoint);
 
     vtkIdType offset = -1;
     for (int j=0; j<numberOfBoundaryPoints1; j++)
       {
+      double currentPoint[3];
       input->GetPoint(boundaryPointIds1->GetId(j),currentPoint);
-      distance2 = vtkMath::Distance2BetweenPoints(startingPoint,currentPoint);
+      double distance2 = vtkMath::Distance2BetweenPoints(startingPoint,currentPoint);
       if (offset == -1 || distance2 < minDistance2)
         {
         offset = j;
@@ -219,6 +212,7 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
     double vectorToStart[3], vectorToForward[3], cross0[3], cross1[3];
     double pointForward[3];
 
+    double barycenter[3];
     barycenters->GetPoint(i,barycenter);
     input->GetPoint(boundaryPointIds0->GetId(0),startingPoint);
     input->GetPoint(boundaryPointIds0->GetId(numberOfBoundaryPoints0/8),pointForward);
@@ -330,10 +324,6 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
         cellEntityIdsArray->InsertNextValue(i+1+this->CellEntityIdOffset);
         }
       }
-
-    boundaryPointIdsArray->Delete();
-    boundaryPointIds0->Delete();
-    boundaryPointIds1->Delete();
     }
 
   output->SetPoints(newPoints);
@@ -344,14 +334,7 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
   if (markCells)
     {
     output->GetCellData()->AddArray(cellEntityIdsArray);
-    cellEntityIdsArray->Delete();
     }
-
-  newPoints->Delete();
-  newPolys->Delete();
-  boundaryExtractor->Delete();
-  barycenters->Delete();
-  visitedBoundaries->Delete();
 
   return 1;
 }

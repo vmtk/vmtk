@@ -3,24 +3,29 @@
 Program:   VMTK
 Module:    $RCSfile: vtkvmtkConcaveAnnularCapPolyData.h,v $
 Language:  C++
-Date:      $Date: 2006/07/17 09:53:14 $
-Version:   $Revision: 1.5 $
+Date:      $Date: 2012/09/19 $
+Version:   $Revision: 1.0 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENCE file for details.
 
   Portions of this code are covered under the VTK copyright.
-  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
+  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm
   for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
+
+  Note: this class was contributed by
+    Martin Sandve Alnaes
+	Simula Research Laboratory
+  Based on vtkvmtkAnnularCapPolyData by Tangui Morvan.
 
 =========================================================================*/
   // .NAME vtkvmtkConcaveAnnularCapPolyData - Add annular caps between the boundaries of a walled surface.
   // .SECTION Description
-  // This class closes the boundaries between the surfaces of a walled surface with caps. The 
+  // This class closes the boundaries between the surfaces of a walled surface with caps. The
   // surfaces are required to be dense for the algorithm to produce legal caps.
 
 #ifndef __vtkvmtkConcaveAnnularCapPolyData_h
@@ -32,12 +37,12 @@ Version:   $Revision: 1.5 $
 
 class VTK_VMTK_MISC_EXPORT vtkvmtkConcaveAnnularCapPolyData : public vtkPolyDataAlgorithm
 {
-  public: 
+  public:
   vtkTypeRevisionMacro(vtkvmtkConcaveAnnularCapPolyData,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent); 
+  void PrintSelf(ostream& os, vtkIndent indent);
 
   static vtkvmtkConcaveAnnularCapPolyData *New();
-  
+
   vtkSetStringMacro(CellEntityIdsArrayName);
   vtkGetStringMacro(CellEntityIdsArrayName);
 
@@ -46,7 +51,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkConcaveAnnularCapPolyData : public vtkPolyData
 
   protected:
   vtkvmtkConcaveAnnularCapPolyData();
-  ~vtkvmtkConcaveAnnularCapPolyData();  
+  ~vtkvmtkConcaveAnnularCapPolyData();
 
   virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
 
