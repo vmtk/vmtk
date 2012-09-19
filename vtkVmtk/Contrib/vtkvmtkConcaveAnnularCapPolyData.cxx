@@ -263,17 +263,17 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
         }
       }
 
+    int i0start = 0; // FIXME: this should be the two closest vertices between the boundaries
+    int i1start = 0;
+    int i0forward = (i0start + 1) % numberOfBoundaryPoints0; // FIXME: Why was this numBP0/8 in annular case?
+    int i1forward = (i1start + 1) % numberOfBoundaryPoints1; // FIXME: Why was this numBP1/8 in annular case?
+
     // Compute direction of paired boundaries
     // FIXME: This logic assumes convexity in both boundaries, right?
     double cross[2][3];
     double barycenter[3];
     //double startingPoint[3]; // Reuse from above
     double pointForward[3];
-
-    int i0start = 0;
-    int i0forward = numberOfBoundaryPoints0 / 8; // FIXME: Why /8?
-    int i1start = 0;
-    int i1forward = numberOfBoundaryPoints1 / 8; // FIXME: Why /8?
 
     barycenters->GetPoint(i0, barycenter);
     input->GetPoint(boundaryPointIds0->GetId(i0start), startingPoint);
@@ -296,7 +296,7 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
     int j0 = 0; // FIXME this is assumed 0 above, not sufficient
     int j1 = 0; // FIXME this is computed as 'offset' above, not sufficient
     int dir0 = 1; // FIXME direction?
-    int dir1 = 1; // FIXME direction?
+    int dir1 = backward ? 1: -1; // FIXME direction?
     // - Initialize a list of points to make up polygon
     int npts = numberOfBoundaryPoints0 + numberOfBoundaryPoints1 + 2;
     vtkIdType * polygonIds = new vtkIdType[npts];
