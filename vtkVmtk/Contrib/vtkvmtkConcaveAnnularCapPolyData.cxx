@@ -31,6 +31,7 @@ Version:   $Revision: 1.0 $
 #include "vtkCellArray.h"
 #include "vtkPointData.h"
 #include "vtkCellData.h"
+#include "vtkPolygon.h"
 #include "vtkPolyLine.h"
 #include "vtkIntArray.h"
 #include "vtkMath.h"
@@ -268,14 +269,20 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
     double barycenter[3];
     //double startingPoint[3]; // Reuse from above
     double pointForward[3];
+
+    int i0start = 0;
+    int i0forward = numberOfBoundaryPoints0 / 8; // FIXME: Why /8?
+    int i1start = 0;
+    int i1forward = numberOfBoundaryPoints1 / 8; // FIXME: Why /8?
+
     barycenters->GetPoint(i0, barycenter);
-    input->GetPoint(boundaryPointIds0->GetId(0), startingPoint);
-    input->GetPoint(boundaryPointIds0->GetId(numberOfBoundaryPoints0 / 8),pointForward); // FIXME: Why /8?
+    input->GetPoint(boundaryPointIds0->GetId(i0start), startingPoint);
+    input->GetPoint(boundaryPointIds0->GetId(i0forward), pointForward);
     cross_diff(startingPoint, pointForward, barycenter, cross[0]);
 
     barycenters->GetPoint(i1, barycenter);
-    input->GetPoint(boundaryPointIds1->GetId(0), startingPoint);
-    input->GetPoint(boundaryPointIds1->GetId(numberOfBoundaryPoints1 / 8),pointForward); // FIXME: Why /8?
+    input->GetPoint(boundaryPointIds1->GetId(i1start), startingPoint);
+    input->GetPoint(boundaryPointIds1->GetId(i1forward), pointForward);
     cross_diff(startingPoint, pointForward, barycenter, cross[1]);
 
     bool backward = false;
@@ -284,18 +291,39 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
       backward = true;
       }
 
-    // FIXME: Try vtkPolygon::Triangulate to build surface!
-    // - First find the two closest vertices ij,oj in the inner and outer polygons
-    // - Initialize a vtkPolygon instance
+    // Use vtkPolygon::Triangulate to mesh between boundary pair
+    // - First find the two closest vertices j0,j1 in the inner and outer polygons
+    int j0 = 0; // FIXME this is assumed 0 above, not sufficient
+    int j1 = 0; // FIXME this is computed as 'offset' above, not sufficient
+    int dir0 = 1; // FIXME direction?
+    int dir1 = 1; // FIXME direction?
+    // - Initialize a list of points to make up polygon
+    int npts = numberOfBoundaryPoints0 + numberOfBoundaryPoints1 + 2;
+    vtkIdType * polygonIds = new vtkIdType[npts];
     // - Add all vertices from the inner polygon in a clockwise direction,
-    //   starting and ending with ij.
+    //   starting and ending with j0.
+    int kk = 0;
+    for (int k=0; k<numberOfBoundaryPoints0; k++)
+      {
+      polygonIds[kk++] = (j0 + dir0*k + numberOfBoundaryPoints0) % numberOfBoundaryPoints0;
+      }
+    polygonIds[kk++] = (j0 + 0) % numberOfBoundaryPoints0; // repeat first point
     // - Continue by adding all vertices from the outer polygon in a
-    //   counterclockwise direction, starting and ending with oj.
-    // - vtkIdList * outTris = vtkIdList::New();
-    // - vtkPoints * outPoints = vtkPoints::New();
-    // - Call polygon->Triangulate(0, outTris, outPoints);
+    //   counterclockwise direction, starting and ending with j1.
+    for (int k=0; k<numberOfBoundaryPoints0; k++)
+      {
+      polygonIds[kk++] = (j1 + dir1*k + numberOfBoundaryPoints1) % numberOfBoundaryPoints1;
+      }
+    polygonIds[kk++] = (j1 + 0) % numberOfBoundaryPoints1; // repeat first point
+    // - Initialize a vtkPolygon instance
+    vtkSmartPointer<vtkPolygon> polygon = vtkSmartPointer<vtkPolygon>::New();
+    polygon->Initialize(npts, polygonIds, newPoints);
+    // - Call polygon->Triangulate(...)
+    vtkSmartPointer<vtkIdList> outTris = vtkSmartPointer<vtkIdList>::New();
+    vtkSmartPointer<vtkPoints> outPoints = vtkSmartPointer<vtkPoints>::New();
+    polygon->Triangulate(0, outTris, outPoints);
     // - Output is outTris, outPoints, use as appropriate in this code
-    // - Make sure to clean up afterwards
+    // FIXME: Need to add outTris/outPoints to newPolys/newPoints? Is this straightforward?
 
     // Loop through all points on both boundaries,
     // and add triangles to endcaps mesh as we go
@@ -344,20 +372,24 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
         next1 = true;
         }
 
-      // Insert new triangle in endcaps mesh!
-      newPolys->InsertNextCell(3);
-      newPolys->InsertCellPoint(boundaryPointIds0->GetId(pointId0));
-      newPolys->InsertCellPoint(boundaryPointIds1->GetId(pointId1));
+      // Figure out point ids for new triangle
+      vtkIdType triangleIds[3] = {
+          boundaryPointIds0->GetId(pointId0),
+          boundaryPointIds1->GetId(pointId1),
+          -2 };
       if (next1)
         {
-        newPolys->InsertCellPoint(boundaryPointIds1->GetId(nextPointId1));
+        triangleIds[2] = boundaryPointIds1->GetId(nextPointId1);
         k1++;
         }
       else
         {
-        newPolys->InsertCellPoint(boundaryPointIds0->GetId(nextPointId0));
+        triangleIds[2] = boundaryPointIds0->GetId(nextPointId0);
         k0++;
         }
+
+      // Insert new triangle in endcaps mesh!
+      newPolys->InsertNextCell(3, triangleIds);
 
       // Mark this new triangle with the pairing number (starting from 1) + given offset
       if (markCells)
