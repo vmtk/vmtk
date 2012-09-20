@@ -224,6 +224,15 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
 
   // Allocate boundary pairing array
   vector<IdPair> boundaryPairs = build_closest_pairs(barycenters);
+  vector< pair< vtkSmartPointer<vtkIdList>, vtkSmartPointer<vtkPoints> > > endcaps(boundaryPairs.size());
+
+  /* DEBUGGING
+  std::cout << "Pairs: " << boundaryPairs.size() << std::endl;
+  for (size_t pairingCount=0; pairingCount<boundaryPairs.size(); ++pairingCount)
+    {
+        std::cout << pairingCount << ": " << boundaryPairs[pairingCount].first << ", " << boundaryPairs[pairingCount].second << std::endl;
+    }
+  */
 
   // Loop over all boundary pairings uniquely
   for (size_t pairingCount=0; pairingCount<boundaryPairs.size(); ++pairingCount)
@@ -295,7 +304,7 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
       backward = true;
       }
     int dir0 = 1; // FIXME direction?
-    int dir1 = backward ? 1: -1; // FIXME direction?
+    int dir1 = backward ? -1: 1; // FIXME direction?
 
     // Use vtkPolygon::Triangulate to mesh between boundary pair
     // Initialize a list of points to make up final polygon
@@ -326,31 +335,58 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
     vtkSmartPointer<vtkPoints> outPoints = vtkSmartPointer<vtkPoints>::New();
     polygon->Triangulate(0, outTris, outPoints);
     // Output is outTris, outPoints, use as appropriate in this code
-    // FIXME: Need to add outTris/outPoints to newPolys/newPoints? Is this straightforward?
+    /* DEBUGGING
+    std::cout << "OUT* SIZE " << outTris->GetNumberOfIds() << ", " << outPoints->GetNumberOfPoints() << std::endl;
+    std::cout << "BP01 SIZE " << numberOfBoundaryPoints0 << ", " << numberOfBoundaryPoints1 << std::endl;
+    std::cout << "NEW* SIZE " << newPolys->GetNumberOfCells() << ", " << newPoints->GetNumberOfPoints() << std::endl;
+    */
 
+    // FIXME: Need to add outTris/outPoints to newPolys/newPoints? Is this straightforward?
+    endcaps[pairingCount].first = outTris;
+    endcaps[pairingCount].second = outPoints;
+
+    size_t np = outPoints->GetNumberOfPoints();
+    vector<vtkIdType> outPointIdMapping(np);
+    for (size_t ip=0; ip<np; ++ip)
+      {
+      outPointIdMapping[ip] = newPoints->InsertNextPoint(outPoints->GetPoint(ip));
+      }
+    size_t nt = outTris->GetNumberOfIds();
+    for (size_t it=0; it<nt; ++it)
+      {
+      // Get mapped point ids for new triangle
+      vtkIdType triangleIds[3] = { outPointIdMapping[outTris->GetId(3*it+0)],
+                                   outPointIdMapping[outTris->GetId(3*it+1)],
+                                   outPointIdMapping[outTris->GetId(3*it+2)] };
+      // Insert new triangle in endcaps mesh!
+      newPolys->InsertNextCell(3, triangleIds);
+      // Mark this new triangle with the pairing number (starting from 1) + given offset
+      if (markCells)
+        {
+        cellEntityIdsArray->InsertNextValue(pairingCount + 1 + this->CellEntityIdOffset);
+        }
+      }
+    } // end for loop over boundary pairs
+
+/*
     // Loop through all points on both boundaries,
     // and add triangles to endcaps mesh as we go
-    /*
     int k0 = 0;
     int k1 = 0;
     while (k0 < numberOfBoundaryPoints0 || k1 < numberOfBoundaryPoints1)
       {
       // Advance point on boundary 0
-      vtkIdType pointId0 = k0 % numberOfBoundaryPoints0;
-      vtkIdType nextPointId0 = (pointId0 + 1) % numberOfBoundaryPoints0;
+      vtkIdType pointId0     = (i0start  + dir0*k0 + numberOfBoundaryPoints0) % numberOfBoundaryPoints0;
+      vtkIdType nextPointId0 = (pointId0 + dir0    + numberOfBoundaryPoints0) % numberOfBoundaryPoints0;
 
-      // Advance point on boundary 1, possibly backwards
-      vtkIdType pointId1, nextPointId1;
-      if (backward)
-        {
-        pointId1 = (numberOfBoundaryPoints1 - k1 + offset + numberOfBoundaryPoints1) % numberOfBoundaryPoints1;
-        nextPointId1 = (pointId1 - 1 + numberOfBoundaryPoints1) % numberOfBoundaryPoints1;
-        }
-      else
-        {
-        pointId1 = (k1 + offset) % numberOfBoundaryPoints1;
-        nextPointId1 = (pointId1 + 1) % numberOfBoundaryPoints1;
-        }
+      // Advance point on boundary 1
+      vtkIdType pointId1     = (i1start  + dir1*k1 + numberOfBoundaryPoints1) % numberOfBoundaryPoints1;
+      vtkIdType nextPointId1 = (pointId1 + dir1    + numberOfBoundaryPoints1) % numberOfBoundaryPoints1;
+
+      std::cout << "k0, k1 " << k0 << ", " << k1
+                << " : " << " p0 " << pointId0 << " np0 " << nextPointId0
+                << " : " << " p1 " << pointId1 << " np1 " << nextPointId1
+                << std::endl;
 
       // Get coordinates for current and next points on each boundary
       double point0[3], nextPoint0[3];
@@ -398,10 +434,19 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
       // Mark this new triangle with the pairing number (starting from 1) + given offset
       if (markCells)
         {
-        cellEntityIdsArray->InsertNextValue(pairingCount + this->CellEntityIdOffset);
+        cellEntityIdsArray->InsertNextValue(pairingCount + 1 + this->CellEntityIdOffset);
         }
-      }*/
-    }
+      }
+    } // end for loop over boundary pairs
+*/
+
+/* Datatypes here:
+  vtkPolyData * input;
+  vtkPolyData * output;
+  vtkPoints * newPoints;
+  vtkCellArray * newPolys;
+*/
+
   // Collect output datastructures
   output->SetPoints(newPoints);
   output->SetPolys(newPolys);
