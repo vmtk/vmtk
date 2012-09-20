@@ -72,11 +72,100 @@ vtkvmtkConcaveAnnularCapPolyData::~vtkvmtkConcaveAnnularCapPolyData()
     }
 }
 
+#include <vector>
+#include <utility>
+using std::vector;
+using std::pair;
+using std::make_pair;
+typedef pair<vtkIdType,vtkIdType> IdPair;
+
+vector<IdPair> build_closest_pairs(vtkSmartPointer<vtkPoints> barycenters)
+{
+  int numberOfBoundaries = barycenters->GetNumberOfPoints();
+
+  vector<IdPair> pairs;
+
+  // Allocate array for marking visited boundaries
+  vector<bool> visited(numberOfBoundaries);
+  for (int i=0; i<numberOfBoundaries; i++)
+    {
+      visited[i] = false; // TODO: I think this is unnecessary?
+    }
+
+  // Find the closest pairs of boundaries by comparing barycenter distances
+  double minBarycenterDistance2 = std::numeric_limits<double>::max();
+  for (int i=0; i<numberOfBoundaries; i++)
+    {
+    if (visited[i])
+      {
+        continue;
+      }
+    double barycenter[3];
+    barycenters->GetPoint(i, barycenter);
+
+    // Find which boundary j is closest to boundary i
+    vtkIdType closest = -1;
+    for (int j=i+1; j<numberOfBoundaries; j++)
+      {
+      if (visited[j])
+        {
+        continue;
+        }
+
+      // Fetch barycenter j
+      double currentBarycenter[3];
+      barycenters->GetPoint(j, currentBarycenter);
+
+      // Pick boundary j if the distance to boundary i is the smallest so far
+      double distance2 = vtkMath::Distance2BetweenPoints(barycenter,currentBarycenter);
+      if (distance2 < minBarycenterDistance2)
+        {
+        minBarycenterDistance2 = distance2;
+        closest = j;
+        }
+      }
+
+    // Mark as visited and add pair
+    visited[i] = true;
+    visited[closest] = true;
+    pairs.push_back(make_pair(i, closest));
+    }
+  return pairs;
+}
+
+IdPair find_closest_points(vtkPolyData * points, vtkSmartPointer<vtkIdList> pointIds0, vtkSmartPointer<vtkIdList> pointIds1)
+{
+  vtkIdType i0 = -1;
+  vtkIdType i1 = -1;
+  double minPointDistance2 = std::numeric_limits<double>::max();
+  int n0 = pointIds0->GetNumberOfIds();
+  int n1 = pointIds1->GetNumberOfIds();
+  for (int j0=0; j0<n0; j0++)
+    {
+    double point0[3];
+    points->GetPoint(pointIds0->GetId(j0), point0);
+    for (int j1=0; j1<n1; j1++)
+      {
+      double point1[3];
+      points->GetPoint(pointIds1->GetId(j1), point1);
+      double distance2 = vtkMath::Distance2BetweenPoints(point0, point1);
+      if (distance2 < minPointDistance2)
+        {
+        i0 = j0;
+        i1 = j1;
+        minPointDistance2 = distance2;
+        }
+      }
+    }
+  return make_pair(i0, i1);
+}
+
 int vtkvmtkConcaveAnnularCapPolyData::RequestData(
   vtkInformation *vtkNotUsed(request),
   vtkInformationVector **inputVector,
   vtkInformationVector *outputVector)
 {
+  // Administrative data type wrestling
   vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
   vtkInformation *outInfo = outputVector->GetInformationObject(0);
 
@@ -85,17 +174,17 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
   vtkPolyData *output = vtkPolyData::SafeDownCast(
     outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
-  // TODO: One point is not sufficient I think?
-  if ( input->GetNumberOfPoints() < 1 )
+  // Minimal check that we get at least some data
+  if ( input->GetNumberOfPoints() < 6 )
     {
+    vtkErrorMacro(<< "Error: too few input points.");
     return 1;
     }
-
   input->BuildLinks();
 
+  // Allocate output objects
   vtkSmartPointer<vtkPoints> newPoints = vtkSmartPointer<vtkPoints>::New();
   newPoints->DeepCopy(input->GetPoints());
-
   vtkSmartPointer<vtkCellArray> newPolys = vtkSmartPointer<vtkCellArray>::New();
   newPolys->DeepCopy(input->GetPolys());
 
@@ -110,12 +199,13 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
     cellEntityIdsArray->FillComponent(0,static_cast<double>(this->CellEntityIdOffset));
     }
 
-  // Find all boundaries (polylines) in input mesh
+  // Extract all boundaries (polylines) from input mesh
   vtkSmartPointer<vtkvmtkPolyDataBoundaryExtractor> boundaryExtractor =
       vtkSmartPointer<vtkvmtkPolyDataBoundaryExtractor>::New();
   boundaryExtractor->SetInput(input);
   boundaryExtractor->Update();
   vtkPolyData* boundaries = boundaryExtractor->GetOutput();
+
   int numberOfBoundaries = boundaries->GetNumberOfCells();
   if (numberOfBoundaries % 2 != 0)
     {
@@ -133,82 +223,13 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
     }
 
   // Allocate boundary pairing array
-  vtkSmartPointer<vtkIdList> boundaryPairings = vtkSmartPointer<vtkIdList>::New();
-  boundaryPairings->SetNumberOfIds(numberOfBoundaries);
-  for (int i=0; i<numberOfBoundaries; i++)
-    {
-    boundaryPairings->SetId(i, -1);
-    }
+  vector<IdPair> boundaryPairs = build_closest_pairs(barycenters);
 
-  // Find the closest pairs of boundaries by comparing barycenter distances
-  double minBarycenterDistance2 = std::numeric_limits<double>::max();
-  for (int i=0; i<numberOfBoundaries-1; i++)
-    {
-    // Skip boundary i if already visited
-    if (boundaryPairings->GetId(i) != -1 || boundaryPairings->IsId(i) != -1)
-      {
-      continue;
-      }
-
-    // Fetch barycenter i
-    double barycenter[3];
-    barycenters->GetPoint(i, barycenter);
-
-    // Find which boundary j is closest to boundary i
-    vtkIdType closestBoundaryId = -1;
-    for (int j=i+1; j<numberOfBoundaries; j++)
-      {
-      // Skip boundary j if already visited
-      if (boundaryPairings->GetId(j) != -1 || boundaryPairings->IsId(j) != -1)
-        {
-        continue;
-        }
-
-      // Fetch barycenter j
-      double currentBarycenter[3];
-      barycenters->GetPoint(j, currentBarycenter);
-
-      // Pick boundary j if the distance to boundary i is the smallest so far
-      double distance2 = vtkMath::Distance2BetweenPoints(barycenter,currentBarycenter);
-      if (distance2 < minBarycenterDistance2)
-        {
-        minBarycenterDistance2 = distance2;
-        closestBoundaryId = j;
-        }
-      }
-    // Store bidirectional boundary pairing
-    boundaryPairings->SetId(i, closestBoundaryId);
-    boundaryPairings->SetId(closestBoundaryId, i);
-    }
-
-  // Allocate array for marking visited boundaries // TODO: What's wrong with just a vector<bool>?
-  vtkSmartPointer<vtkIdList> visitedBoundaries = vtkSmartPointer<vtkIdList>::New();
-  visitedBoundaries->SetNumberOfIds(numberOfBoundaries);
-  for (int i=0; i<numberOfBoundaries; i++)
-    {
-    visitedBoundaries->SetId(i, -1);
-    }
   // Loop over all boundary pairings uniquely
-  int pairingCount = 0;
-  for (int i0=0; i0<numberOfBoundaries; i0++)
+  for (size_t pairingCount=0; pairingCount<boundaryPairs.size(); ++pairingCount)
     {
-    int i1 = boundaryPairings->GetId(i0);
-    // Skip if we have no no pairing for i0
-    if (i1 == -1)
-      {
-      continue;
-      }
-    // Skip if already visited as part of earlier pairing
-    if (visitedBoundaries->GetId(i0) != -1)
-      {
-      continue;
-      }
-    else
-      {
-      visitedBoundaries->SetId(i0,i0);
-      visitedBoundaries->SetId(i1,i0);
-      pairingCount++;
-      }
+    vtkIdType i0 = boundaryPairs[pairingCount].first;
+    vtkIdType i1 = boundaryPairs[pairingCount].second;
 
     // These are point ids for all boundaries globally, pointing into global vertex array
     vtkIdTypeArray * boundaryPointIdsArray = vtkIdTypeArray::SafeDownCast(boundaries->GetPointData()->GetScalars());
@@ -243,38 +264,21 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
       boundaryPointIds1->SetId(j, boundaryPointIdsArray->GetValue(boundary1->GetPointId(j)));
       }
 
-    // FIXME: Need arbitrary point to be chosen on the inner boundary, or a
-    //        double loop finding the minimal distance between _all_ points
-    // Pick arbitrary point in boundary 0
-    double startingPoint[3];
-    input->GetPoint(boundaryPointIds0->GetId(0), startingPoint);
-    // Find nearest point in boundary 1
-    vtkIdType offset = -1;
-    double minPointDistance2 = std::numeric_limits<double>::max();
-    for (int j=0; j<numberOfBoundaryPoints1; j++)
-      {
-      double currentPoint[3];
-      input->GetPoint(boundaryPointIds1->GetId(j),currentPoint);
-      double distance2 = vtkMath::Distance2BetweenPoints(startingPoint, currentPoint);
-      if (distance2 < minPointDistance2)
-        {
-        offset = j;
-        minPointDistance2 = distance2;
-        }
-      }
-
-    int i0start = 0; // FIXME: this should be the two closest vertices between the boundaries
-    int i1start = 0;
-    int i0forward = (i0start + 1) % numberOfBoundaryPoints0; // FIXME: Why was this numBP0/8 in annular case?
-    int i1forward = (i1start + 1) % numberOfBoundaryPoints1; // FIXME: Why was this numBP1/8 in annular case?
+    // Find the two closest vertices between the boundaries
+    IdPair starts = find_closest_points(input, boundaryPointIds0, boundaryPointIds1);
+    vtkIdType i0start = starts.first;
+    vtkIdType i1start = starts.second;
 
     // Compute direction of paired boundaries
-    // FIXME: This logic assumes convexity in both boundaries, right?
+    // FIXME: Why was this numBP0/8 in annular case? Numerical robustness or something?
+    int i0forward = (i0start + 1) % numberOfBoundaryPoints0;
+    int i1forward = (i1start + 1) % numberOfBoundaryPoints1;
     double cross[2][3];
     double barycenter[3];
-    //double startingPoint[3]; // Reuse from above
+    double startingPoint[3];
     double pointForward[3];
 
+    // FIXME: Does this logic assume convexity in both boundaries?
     barycenters->GetPoint(i0, barycenter);
     input->GetPoint(boundaryPointIds0->GetId(i0start), startingPoint);
     input->GetPoint(boundaryPointIds0->GetId(i0forward), pointForward);
@@ -290,43 +294,43 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
       {
       backward = true;
       }
-
-    // Use vtkPolygon::Triangulate to mesh between boundary pair
-    // - First find the two closest vertices j0,j1 in the inner and outer polygons
-    int j0 = 0; // FIXME this is assumed 0 above, not sufficient
-    int j1 = 0; // FIXME this is computed as 'offset' above, not sufficient
     int dir0 = 1; // FIXME direction?
     int dir1 = backward ? 1: -1; // FIXME direction?
-    // - Initialize a list of points to make up polygon
+
+    // Use vtkPolygon::Triangulate to mesh between boundary pair
+    // Initialize a list of points to make up final polygon
     int npts = numberOfBoundaryPoints0 + numberOfBoundaryPoints1 + 2;
     vtkIdType * polygonIds = new vtkIdType[npts];
-    // - Add all vertices from the inner polygon in a clockwise direction,
-    //   starting and ending with j0.
+    // Add all vertices from the inner polygon in one
+    // direction, starting and ending with i0start.
     int kk = 0;
     for (int k=0; k<numberOfBoundaryPoints0; k++)
       {
-      polygonIds[kk++] = (j0 + dir0*k + numberOfBoundaryPoints0) % numberOfBoundaryPoints0;
+      polygonIds[kk++] = (i0start + dir0*k + numberOfBoundaryPoints0) % numberOfBoundaryPoints0;
       }
-    polygonIds[kk++] = (j0 + 0) % numberOfBoundaryPoints0; // repeat first point
-    // - Continue by adding all vertices from the outer polygon in a
-    //   counterclockwise direction, starting and ending with j1.
+    // Repeat first point
+    polygonIds[kk++] = (i0start + 0) % numberOfBoundaryPoints0;
+    // Continue by adding all vertices from the outer polygon in the
+    // opposite direction, starting and ending with i1start.
     for (int k=0; k<numberOfBoundaryPoints0; k++)
       {
-      polygonIds[kk++] = (j1 + dir1*k + numberOfBoundaryPoints1) % numberOfBoundaryPoints1;
+      polygonIds[kk++] = (i1start + dir1*k + numberOfBoundaryPoints1) % numberOfBoundaryPoints1;
       }
-    polygonIds[kk++] = (j1 + 0) % numberOfBoundaryPoints1; // repeat first point
-    // - Initialize a vtkPolygon instance
+    // Repeat first point
+    polygonIds[kk++] = (i1start + 0) % numberOfBoundaryPoints1;
+    // Initialize a vtkPolygon instance with list of boundary points
     vtkSmartPointer<vtkPolygon> polygon = vtkSmartPointer<vtkPolygon>::New();
     polygon->Initialize(npts, polygonIds, newPoints);
-    // - Call polygon->Triangulate(...)
+    // Call polygon->Triangulate(...) to mesh the interior of the concave polygon
     vtkSmartPointer<vtkIdList> outTris = vtkSmartPointer<vtkIdList>::New();
     vtkSmartPointer<vtkPoints> outPoints = vtkSmartPointer<vtkPoints>::New();
     polygon->Triangulate(0, outTris, outPoints);
-    // - Output is outTris, outPoints, use as appropriate in this code
+    // Output is outTris, outPoints, use as appropriate in this code
     // FIXME: Need to add outTris/outPoints to newPolys/newPoints? Is this straightforward?
 
     // Loop through all points on both boundaries,
     // and add triangles to endcaps mesh as we go
+    /*
     int k0 = 0;
     int k1 = 0;
     while (k0 < numberOfBoundaryPoints0 || k1 < numberOfBoundaryPoints1)
@@ -396,9 +400,8 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
         {
         cellEntityIdsArray->InsertNextValue(pairingCount + this->CellEntityIdOffset);
         }
-      }
+      }*/
     }
-
   // Collect output datastructures
   output->SetPoints(newPoints);
   output->SetPolys(newPolys);
