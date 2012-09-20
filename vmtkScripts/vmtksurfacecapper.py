@@ -9,8 +9,8 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENCE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
 
@@ -27,7 +27,7 @@ class vmtkSurfaceCapper(pypes.pypeScript):
     def __init__(self):
 
         pypes.pypeScript.__init__(self)
-        
+
         self.Surface = None
         self.TriangleOutput = 1
         self.CellEntityIdsArrayName = 'CellEntityIds'
@@ -93,7 +93,7 @@ class vmtkSurfaceCapper(pypes.pypeScript):
                 self.vmtkRenderer.Initialize()
                 self.OwnRenderer = 1
 
-	    self.vmtkRenderer.RegisterScript(self)
+            self.vmtkRenderer.RegisterScript(self)
 
             boundaryExtractor = vtkvmtk.vtkvmtkPolyDataBoundaryExtractor()
             boundaryExtractor.SetInput(self.Surface)
@@ -114,20 +114,19 @@ class vmtkSurfaceCapper(pypes.pypeScript):
             labelsMapper.SetLabelModeToLabelIds()
             labelsActor = vtk.vtkActor2D()
             labelsActor.SetMapper(labelsMapper)
-    
+
             self.vmtkRenderer.Renderer.AddActor(labelsActor)
-    
+
             surfaceMapper = vtk.vtkPolyDataMapper()
             surfaceMapper.SetInput(self.Surface)
             surfaceMapper.ScalarVisibilityOff()
             surfaceActor = vtk.vtkActor()
             surfaceActor.SetMapper(surfaceMapper)
             surfaceActor.GetProperty().SetOpacity(0.25)
-    
+
             self.vmtkRenderer.Renderer.AddActor(surfaceActor)
-    
+
             #self.vmtkRenderer.Render()
-    	    
             #self.vmtkRenderer.Renderer.RemoveActor(labelsActor)
             #self.vmtkRenderer.Renderer.RemoveActor(surfaceActor)
 
@@ -202,8 +201,8 @@ class vmtkSurfaceCapper(pypes.pypeScript):
         normals = vtk.vtkPolyDataNormals()
         normals.SetInput(self.Surface)
         normals.AutoOrientNormalsOn()
-      	normals.SplittingOff()
-      	normals.ConsistencyOn()
+        normals.SplittingOff()
+        normals.ConsistencyOn()
         normals.Update()
         self.Surface = normals.GetOutput()
 
