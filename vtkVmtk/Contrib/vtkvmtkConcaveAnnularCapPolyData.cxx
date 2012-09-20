@@ -274,6 +274,7 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
       }
 
 
+    /* Here's the stuff to export, if we choose that approach instead:
     // FIXME: Export pairingCount
     // FIXME: Export numberOfBoundaryPoints0
     for (vtkIdType iloc=0; iloc<numberOfBoundaryPoints0; ++iloc)
@@ -291,6 +292,7 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
       input->GetPoints()->GetPoint(iglob, point);
       // FIXME: Export point
       }
+    */
 
 
     // Find the two closest vertices between the boundaries
@@ -318,13 +320,13 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
     input->GetPoint(boundaryPointIds1->GetId(i1forward), pointForward);
     cross_diff(startingPoint, pointForward, barycenter, cross[1]);
 
-    bool backward = false;
+    // FIXME: Does the absolute direction matter?
+    int dir0 = -1;
+    int dir1 = 1;
     if (vtkMath::Dot(cross[0], cross[1]) < 0.0)
       {
-      backward = true;
+      dir1 = -dir1;
       }
-    int dir0 = 1; // FIXME direction?
-    int dir1 = backward ? dir0: -dir0; // FIXME direction?
 
     // Use vtkPolygon::Triangulate to mesh between boundary pair
     // Initialize a vtkPolygon instance with list of boundary points
@@ -387,8 +389,9 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
     //vtkSmartPointer<vtkPoints> outPoints = vtkSmartPointer<vtkPoints>::New();
     //polygon->Triangulate(0, outTris, outPoints);
     vtkPoints * outPoints = polygonPoints;
-    polygon->Triangulate(outTris); // FIXME: Is this sufficient?
-    std::cout << "TRIANGULATE DONE" << std::endl;
+    //int triRes = polygon->Triangulate(outTris); // FIXME: Is this sufficient?
+    int triRes = polygon->NonDegenerateTriangulate(outTris); // FIXME: Is this sufficient?
+    std::cout << "TRIANGULATE DONE, ok=" << triRes << std::endl;
 
     // Output is outTris, outPoints, use as appropriate in this code
     std::cout << "OUT* SIZE " << outTris->GetNumberOfIds()/3 << ", " << outPoints->GetNumberOfPoints() << std::endl;
