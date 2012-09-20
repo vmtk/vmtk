@@ -388,27 +388,7 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
       polygonPoints->InsertPoint(kk, point);
       kk++;
       }
-
     std::cout << "POLYGON " << polygon->GetPoints()->GetNumberOfPoints() << " " << polygon->GetPointIds()->GetNumberOfIds() << " " << std::endl;
-
-/*    std::cout << "INIT START" << std::endl;
-    polygon->Initialize(npts, polygonIds, newPoints);
-    std::cout << "INIT DONE" << std::endl;
-*/
-/*
- 216 polygonPoints = vtk.vtkPoints()
- 217 polygonPoints.SetNumberOfPoints(4)
- 218 polygonPoints.InsertPoint(0, 0, 0, 0)
- 219 polygonPoints.InsertPoint(1, 1, 0, 0)
- 220 polygonPoints.InsertPoint(2, 1, 1, 0)
- 221 polygonPoints.InsertPoint(3, 0, 1, 0)
- 222 aPolygon = vtk.vtkPolygon()
- 223 aPolygon.GetPointIds().SetNumberOfIds(4)
- 224 aPolygon.GetPointIds().SetId(0, 0)
- 225 aPolygon.GetPointIds().SetId(1, 1)
- 226 aPolygon.GetPointIds().SetId(2, 2)
- 227 aPolygon.GetPointIds().SetId(3, 3)
-*/
 
     // Call polygon->Triangulate(...) to mesh the interior of the concave polygon
     std::cout << "TRIANGULATE npts = " << npts << std::endl;
@@ -425,16 +405,22 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
     std::cout << "BP01 SIZE " << numberOfBoundaryPoints0 << ", " << numberOfBoundaryPoints1 << std::endl;
     std::cout << "NEW* SIZE " << newPolys->GetNumberOfCells() << ", " << newPoints->GetNumberOfPoints() << std::endl;
 
-    // FIXME: Need to add outTris/outPoints to newPolys/newPoints? Is this straightforward?
-    //endcaps[pairingCount].first = outTris;
-    //endcaps[pairingCount].second = outPoints;
-
     size_t np = outPoints->GetNumberOfPoints();
-    vector<vtkIdType> outPointIdMapping(np);
-    for (size_t ip=0; ip<np; ++ip)
+    if (np != numberOfBoundaryPoints0+numberOfBoundaryPoints1+2)
       {
+      vtkErrorMacro(<< "Unexpected number of points in endcaps triangulation!");
+      }
+    vector<vtkIdType> outPointIdMapping(np);
+    for (size_t ip=1; ip<np-1; ++ip)
+      {
+      // Replace all non-nudged point ids with ids gotten from inserting point in newPoints
+      // FIXME: Can probably skip adding these points and map directly through boundaryPointIds0/1?
       outPointIdMapping[ip] = newPoints->InsertNextPoint(outPoints->GetPoint(ip));
       }
+    // Replace id 0 with non-nudged point numberOfBoundaryPoints0
+    outPointIdMapping[0] = outPointIdMapping[numberOfBoundaryPoints0];
+    // Replace id (numberOfBoundaryPoints0+numberOfBoundaryPoints1+1) with non-nudged point (numberOfBoundaryPoints0+1)
+    outPointIdMapping[numberOfBoundaryPoints0+numberOfBoundaryPoints1+1] = outPointIdMapping[numberOfBoundaryPoints0+1];
 
     size_t nt = outTris->GetNumberOfIds()/3;
     for (size_t it=0; it<nt; ++it)
