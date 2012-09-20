@@ -273,6 +273,26 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
       boundaryPointIds1->SetId(j, boundaryPointIdsArray->GetValue(boundary1->GetPointId(j)));
       }
 
+
+    // FIXME: Export pairingCount
+    // FIXME: Export numberOfBoundaryPoints0
+    for (vtkIdType iloc=0; iloc<numberOfBoundaryPoints0; ++iloc)
+      {
+      double point[3];
+      vtkIdType iglob = boundaryPointIds0->GetId(iloc);
+      input->GetPoints()->GetPoint(iglob, point);
+      // FIXME: Export point
+      }
+    // FIXME: Export numberOfBoundaryPoints1
+    for (vtkIdType iloc=0; iloc<numberOfBoundaryPoints1; ++iloc)
+      {
+      double point[3];
+      vtkIdType iglob = boundaryPointIds1->GetId(iloc);
+      input->GetPoints()->GetPoint(iglob, point);
+      // FIXME: Export point
+      }
+
+
     // Find the two closest vertices between the boundaries
     IdPair starts = find_closest_points(input, boundaryPointIds0, boundaryPointIds1);
     vtkIdType i0start = starts.first;
@@ -303,7 +323,7 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
       {
       backward = true;
       }
-    int dir0 = -1; // FIXME direction?
+    int dir0 = 1; // FIXME direction?
     int dir1 = backward ? dir0: -dir0; // FIXME direction?
 
     // Use vtkPolygon::Triangulate to mesh between boundary pair
@@ -341,6 +361,7 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
       }
 
     std::cout << "POLYGON " << polygon->GetPoints()->GetNumberOfPoints() << " " << polygon->GetPointIds()->GetNumberOfIds() << " " << std::endl;
+
 /*    std::cout << "INIT START" << std::endl;
     polygon->Initialize(npts, polygonIds, newPoints);
     std::cout << "INIT DONE" << std::endl;
@@ -361,17 +382,18 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
 */
 
     // Call polygon->Triangulate(...) to mesh the interior of the concave polygon
+    std::cout << "TRIANGULATE npts = " << npts << std::endl;
     vtkSmartPointer<vtkIdList> outTris = vtkSmartPointer<vtkIdList>::New();
-    vtkSmartPointer<vtkPoints> outPoints = vtkSmartPointer<vtkPoints>::New();
-    //std::cout << "THEI" << std::endl;
-    polygon->Triangulate(0, outTris, outPoints);
-    //std::cout << "TTHEI" << std::endl;
+    //vtkSmartPointer<vtkPoints> outPoints = vtkSmartPointer<vtkPoints>::New();
+    //polygon->Triangulate(0, outTris, outPoints);
+    vtkPoints * outPoints = polygonPoints;
+    polygon->Triangulate(outTris); // FIXME: Is this sufficient?
+    std::cout << "TRIANGULATE DONE" << std::endl;
+
     // Output is outTris, outPoints, use as appropriate in this code
-    /* DEBUGGING
-    std::cout << "OUT* SIZE " << outTris->GetNumberOfIds() << ", " << outPoints->GetNumberOfPoints() << std::endl;
+    std::cout << "OUT* SIZE " << outTris->GetNumberOfIds()/3 << ", " << outPoints->GetNumberOfPoints() << std::endl;
     std::cout << "BP01 SIZE " << numberOfBoundaryPoints0 << ", " << numberOfBoundaryPoints1 << std::endl;
     std::cout << "NEW* SIZE " << newPolys->GetNumberOfCells() << ", " << newPoints->GetNumberOfPoints() << std::endl;
-    */
 
     // FIXME: Need to add outTris/outPoints to newPolys/newPoints? Is this straightforward?
     //endcaps[pairingCount].first = outTris;
@@ -399,9 +421,9 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
         cellEntityIdsArray->InsertNextValue(pairingCount + 1 + this->CellEntityIdOffset);
         }
       }
-    //std::cout << "BOTTOM" << std::endl;
+    std::cout << "BOTTOM" << std::endl;
     } // end for loop over boundary pairs
-  //std::cout << "END" << std::endl;
+  std::cout << "END" << std::endl;
 
 /* Datatypes here:
   vtkPolyData * input;
