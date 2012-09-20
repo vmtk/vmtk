@@ -320,13 +320,28 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
     input->GetPoint(boundaryPointIds1->GetId(i1forward), pointForward);
     cross_diff(startingPoint, pointForward, barycenter, cross[1]);
 
-    // FIXME: Does the absolute direction matter?
-    int dir0 = -1;
-    int dir1 = 1;
+    // Does the absolute direction matter?
+    int dir0 = +1;
+    int dir1 = -1;
     if (vtkMath::Dot(cross[0], cross[1]) < 0.0)
       {
       dir1 = -dir1;
       }
+
+    // Compute vectors in directions away from endpoints of polygon
+    double nudgeFactor = 0.01;
+    i0forward = (i0start + dir0 + numberOfBoundaryPoints0) % numberOfBoundaryPoints0;
+    input->GetPoint(boundaryPointIds0->GetId(i0start), startingPoint);
+    input->GetPoint(boundaryPointIds0->GetId(i0forward), pointForward);
+    double nudgeVector0[3] = { nudgeFactor*(pointForward[0] - startingPoint[0]),
+                               nudgeFactor*(pointForward[1] - startingPoint[1]),
+                               nudgeFactor*(pointForward[2] - startingPoint[2]) };
+    i1forward = (i1start - dir1 + numberOfBoundaryPoints1) % numberOfBoundaryPoints1;
+    input->GetPoint(boundaryPointIds1->GetId(i1start), startingPoint);
+    input->GetPoint(boundaryPointIds1->GetId(i1forward), pointForward);
+    double nudgeVector1[3] = { nudgeFactor*(pointForward[0] - startingPoint[0]),
+                               nudgeFactor*(pointForward[1] - startingPoint[1]),
+                               nudgeFactor*(pointForward[2] - startingPoint[2]) };
 
     // Use vtkPolygon::Triangulate to mesh between boundary pair
     // Initialize a vtkPolygon instance with list of boundary points
@@ -346,6 +361,12 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
       vtkIdType pid = boundaryPointIds0->GetId( (i0start + dir0*k + numberOfBoundaryPoints0) % numberOfBoundaryPoints0 );
       double point[3];
       input->GetPoint(pid, point);
+      if (k == 0)
+        {
+        point[0] += nudgeVector0[0];
+        point[1] += nudgeVector0[1];
+        point[2] += nudgeVector0[2];
+        }
       polygonPointIds->SetId(kk,kk);
       polygonPoints->InsertPoint(kk, point);
       kk++;
@@ -357,6 +378,12 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
       vtkIdType pid = boundaryPointIds1->GetId( (i1start + dir1*k + numberOfBoundaryPoints1) % numberOfBoundaryPoints1 );
       double point[3];
       input->GetPoint(pid, point);
+      if (k == numberOfBoundaryPoints1)
+        {
+        point[0] += nudgeVector1[0];
+        point[1] += nudgeVector1[1];
+        point[2] += nudgeVector1[2];
+        }
       polygonPointIds->SetId(kk,kk);
       polygonPoints->InsertPoint(kk, point);
       kk++;
