@@ -315,25 +315,47 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
     int kk = 0;
     for (int k=0; k<numberOfBoundaryPoints0; k++)
       {
-      polygonIds[kk++] = (i0start + dir0*k + numberOfBoundaryPoints0) % numberOfBoundaryPoints0;
+      polygonIds[kk++] = boundaryPointIds0->GetId( (i0start + dir0*k + numberOfBoundaryPoints0) % numberOfBoundaryPoints0 );
       }
     // Repeat first point
-    polygonIds[kk++] = (i0start + 0) % numberOfBoundaryPoints0;
+    polygonIds[kk++] = boundaryPointIds0->GetId( (i0start + 0) % numberOfBoundaryPoints0 );
     // Continue by adding all vertices from the outer polygon in the
     // opposite direction, starting and ending with i1start.
     for (int k=0; k<numberOfBoundaryPoints0; k++)
       {
-      polygonIds[kk++] = (i1start + dir1*k + numberOfBoundaryPoints1) % numberOfBoundaryPoints1;
+      polygonIds[kk++] = boundaryPointIds1->GetId( (i1start + dir1*k + numberOfBoundaryPoints1) % numberOfBoundaryPoints1 );
       }
     // Repeat first point
-    polygonIds[kk++] = (i1start + 0) % numberOfBoundaryPoints1;
+    polygonIds[kk++] = boundaryPointIds1->GetId( (i1start + 0) % numberOfBoundaryPoints1 );
     // Initialize a vtkPolygon instance with list of boundary points
     vtkSmartPointer<vtkPolygon> polygon = vtkSmartPointer<vtkPolygon>::New();
+
+    std::cout << "HEI" << std::endl;
     polygon->Initialize(npts, polygonIds, newPoints);
+    std::cout << "HEI" << std::endl;
+
+/*
+ 216 polygonPoints = vtk.vtkPoints()
+ 217 polygonPoints.SetNumberOfPoints(4)
+ 218 polygonPoints.InsertPoint(0, 0, 0, 0)
+ 219 polygonPoints.InsertPoint(1, 1, 0, 0)
+ 220 polygonPoints.InsertPoint(2, 1, 1, 0)
+ 221 polygonPoints.InsertPoint(3, 0, 1, 0)
+ 222 aPolygon = vtk.vtkPolygon()
+ 223 aPolygon.GetPointIds().SetNumberOfIds(4)
+ 224 aPolygon.GetPointIds().SetId(0, 0)
+ 225 aPolygon.GetPointIds().SetId(1, 1)
+ 226 aPolygon.GetPointIds().SetId(2, 2)
+ 227 aPolygon.GetPointIds().SetId(3, 3)
+*/
+
+
     // Call polygon->Triangulate(...) to mesh the interior of the concave polygon
     vtkSmartPointer<vtkIdList> outTris = vtkSmartPointer<vtkIdList>::New();
     vtkSmartPointer<vtkPoints> outPoints = vtkSmartPointer<vtkPoints>::New();
+    std::cout << "THEI" << std::endl;
     polygon->Triangulate(0, outTris, outPoints);
+    std::cout << "TTHEI" << std::endl;
     // Output is outTris, outPoints, use as appropriate in this code
     /* DEBUGGING
     std::cout << "OUT* SIZE " << outTris->GetNumberOfIds() << ", " << outPoints->GetNumberOfPoints() << std::endl;
@@ -351,7 +373,8 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
       {
       outPointIdMapping[ip] = newPoints->InsertNextPoint(outPoints->GetPoint(ip));
       }
-    size_t nt = outTris->GetNumberOfIds();
+
+    size_t nt = outTris->GetNumberOfIds()/3;
     for (size_t it=0; it<nt; ++it)
       {
       // Get mapped point ids for new triangle
@@ -366,7 +389,9 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
         cellEntityIdsArray->InsertNextValue(pairingCount + 1 + this->CellEntityIdOffset);
         }
       }
+    std::cout << "BOTTOM" << std::endl;
     } // end for loop over boundary pairs
+  std::cout << "END" << std::endl;
 
 /*
     // Loop through all points on both boundaries,
