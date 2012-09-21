@@ -9,8 +9,8 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENCE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
 
@@ -28,7 +28,7 @@ class vmtkMeshGenerator(pypes.pypeScript):
     def __init__(self):
 
         pypes.pypeScript.__init__(self)
-        
+
         self.Surface = None
 
         self.TargetEdgeLength = 1.0
@@ -66,7 +66,7 @@ class vmtkMeshGenerator(pypes.pypeScript):
             ['MinEdgeLength','minedgelength','float',1,'(0.0,)'],
             ['CellEntityIdsArrayName','entityidsarray','str',1],
             ['ElementSizeMode','elementsizemode','str',1,'["edgelength","edgelengtharray"]'],
-            ['CappingMethod','cappingmethod','str',1,'["simple","annular"]'],
+            ['CappingMethod','cappingmethod','str',1,'["simple","annular","concaveannular"]'],
             ['SkipCapping','skipcapping','bool',1,''],
             ['VolumeElementScaleFactor','volumeelementfactor','float',1,'(0.0,)'],
             ['BoundaryLayer','boundarylayer','bool',1,''],
@@ -128,7 +128,7 @@ class vmtkMeshGenerator(pypes.pypeScript):
             normals.Surface = projection.Surface
             normals.NormalsArrayName = 'Normals'
             normals.Execute()
-    
+
             surfaceToMesh = vmtkscripts.vmtkSurfaceToMesh()
             surfaceToMesh.Surface = normals.Surface
             surfaceToMesh.Execute()
@@ -141,7 +141,7 @@ class vmtkMeshGenerator(pypes.pypeScript):
             boundaryLayer.ThicknessArrayName = self.TargetEdgeLengthArrayName
             if self.ElementSizeMode == 'edgelength':
                 boundaryLayer.ConstantThickness = True
-            else: 
+            else:
                 boundaryLayer.ConstantThickness = False
             boundaryLayer.IncludeSurfaceCells = 0
             boundaryLayer.NumberOfSubLayers = self.NumberOfSubLayers
@@ -213,7 +213,7 @@ class vmtkMeshGenerator(pypes.pypeScript):
             sizingFunction.SetSizingFunctionArrayName(self.SizingFunctionArrayName)
             sizingFunction.SetScaleFactor(self.VolumeElementScaleFactor)
             sizingFunction.Update()
-    
+
             self.PrintLog("Converting surface to mesh")
             surfaceToMesh = vmtkscripts.vmtkSurfaceToMesh()
             surfaceToMesh.Surface = sizingFunction.GetOutput()
