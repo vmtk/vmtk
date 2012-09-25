@@ -46,7 +46,7 @@ class VmtkSurfaceExtractAnnularWalls(pypes.pypeScript):
         self.SetOutputMembers([
                 ['DoubleSurface', 'doublesurface', 'vtkPolyData', 1, '',
                  'the double surface without caps', 'vmtksurfacewriter'],
-                ['ColoredSurface', 'coloredsurface', 'vtkPolyData', 1, '',
+                ['ColoredSurface', 'o', 'vtkPolyData', 1, '',
                  'the colored surface', 'vmtksurfacewriter'],
                 ['InnerSurface', 'innersurface', 'vtkPolyData', 1, '',
                  'the innermost surface', 'vmtksurfacewriter'],
@@ -62,7 +62,7 @@ class VmtkSurfaceExtractAnnularWalls(pypes.pypeScript):
 
         self.removeEndCaps()
         self.colorSurfaceRegions()
-        self.extractInnerSurface()
+        self.extractSurfaces()
 
     def removeEndCaps(self):
         self.PrintLog("Using thresholding to remove endcaps.")
@@ -92,8 +92,8 @@ class VmtkSurfaceExtractAnnularWalls(pypes.pypeScript):
 
         self.ColoredSurface = connectivityFilter.GetOutput()
 
-    def extractInnerSurface(self):
-        self.PrintLog("Extracting inner surface.")
+    def extractSurfaces(self):
+        self.PrintLog("Extracting surfaces.")
 
         def bnorm(data):
             bounds = data.GetBounds()
