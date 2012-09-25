@@ -224,15 +224,6 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
 
   // Allocate boundary pairing array
   vector<IdPair> boundaryPairs = build_closest_pairs(barycenters);
-  //vector< pair< vtkSmartPointer<vtkIdList>, vtkSmartPointer<vtkPoints> > > endcaps(boundaryPairs.size());
-
-  /* DEBUGGING
-  std::cout << "Pairs: " << boundaryPairs.size() << std::endl;
-  for (size_t pairingCount=0; pairingCount<boundaryPairs.size(); ++pairingCount)
-    {
-        std::cout << pairingCount << ": " << boundaryPairs[pairingCount].first << ", " << boundaryPairs[pairingCount].second << std::endl;
-    }
-  */
 
   // Loop over all boundary pairings uniquely
   for (size_t pairingCount=0; pairingCount<boundaryPairs.size(); ++pairingCount)
@@ -273,35 +264,13 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
       boundaryPointIds1->SetId(j, boundaryPointIdsArray->GetValue(boundary1->GetPointId(j)));
       }
 
-
-    /* Here's the stuff to export, if we choose that approach instead:
-    // FIXME: Export pairingCount
-    // FIXME: Export numberOfBoundaryPoints0
-    for (vtkIdType iloc=0; iloc<numberOfBoundaryPoints0; ++iloc)
-      {
-      double point[3];
-      vtkIdType iglob = boundaryPointIds0->GetId(iloc);
-      input->GetPoints()->GetPoint(iglob, point);
-      // FIXME: Export point
-      }
-    // FIXME: Export numberOfBoundaryPoints1
-    for (vtkIdType iloc=0; iloc<numberOfBoundaryPoints1; ++iloc)
-      {
-      double point[3];
-      vtkIdType iglob = boundaryPointIds1->GetId(iloc);
-      input->GetPoints()->GetPoint(iglob, point);
-      // FIXME: Export point
-      }
-    */
-
-
     // Find the two closest vertices between the boundaries
     IdPair starts = find_closest_points(input, boundaryPointIds0, boundaryPointIds1);
     vtkIdType i0start = starts.first;
     vtkIdType i1start = starts.second;
 
     // Compute direction of paired boundaries
-    // FIXME: Why was this numBP0/8 in annular case? Numerical robustness or something?
+    // TODO: Why was this numBP0/8 in annular case? Numerical robustness or something?
     int i0forward = (i0start + 1) % numberOfBoundaryPoints0;
     int i1forward = (i1start + 1) % numberOfBoundaryPoints1;
     double cross[2][3];
@@ -309,7 +278,6 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
     double startingPoint[3];
     double pointForward[3];
 
-    // FIXME: Does this logic assume convexity in both boundaries?
     barycenters->GetPoint(i0, barycenter);
     input->GetPoint(boundaryPointIds0->GetId(i0start), startingPoint);
     input->GetPoint(boundaryPointIds0->GetId(i0forward), pointForward);
@@ -320,13 +288,9 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
     input->GetPoint(boundaryPointIds1->GetId(i1forward), pointForward);
     cross_diff(startingPoint, pointForward, barycenter, cross[1]);
 
-    // Does the absolute direction matter?
-    int dir0 = +1;
-    int dir1 = -1;
-    if (vtkMath::Dot(cross[0], cross[1]) < 0.0)
-      {
-      dir1 = -dir1;
-      }
+    int dir0 = +1; // TODO: Does the absolute direction matter?
+    bool backwards = vtkMath::Dot(cross[0], cross[1]) < 0.0;
+    int dir1 = backwards ? dir0: -dir0;
 
     // Compute vectors in directions away from endpoints of polygon
     double nudgeFactor = 0.01;
@@ -351,6 +315,7 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
     vtkIdList * polygonPointIds = polygon->GetPointIds();
     polygonPoints->SetNumberOfPoints(npts);
     polygonPointIds->SetNumberOfIds(npts);
+    vector<vtkIdType> polygonPointIdToGlobalPointId(npts);
     // Initialize a list of points to make up final polygon
     vtkIdType * polygonIds = new vtkIdType[npts];
     // Add all vertices from the inner polygon in one
@@ -367,6 +332,7 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
         point[1] += nudgeVector0[1];
         point[2] += nudgeVector0[2];
         }
+      polygonPointIdToGlobalPointId[kk] = pid;
       polygonPointIds->SetId(kk,kk);
       polygonPoints->InsertPoint(kk, point);
       kk++;
@@ -384,51 +350,26 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
         point[1] += nudgeVector1[1];
         point[2] += nudgeVector1[2];
         }
+      polygonPointIdToGlobalPointId[kk] = pid;
       polygonPointIds->SetId(kk,kk);
       polygonPoints->InsertPoint(kk, point);
       kk++;
       }
-    std::cout << "POLYGON " << polygon->GetPoints()->GetNumberOfPoints() << " " << polygon->GetPointIds()->GetNumberOfIds() << " " << std::endl;
 
     // Call polygon->Triangulate(...) to mesh the interior of the concave polygon
-    std::cout << "TRIANGULATE npts = " << npts << std::endl;
     vtkSmartPointer<vtkIdList> outTris = vtkSmartPointer<vtkIdList>::New();
-    //vtkSmartPointer<vtkPoints> outPoints = vtkSmartPointer<vtkPoints>::New();
-    //polygon->Triangulate(0, outTris, outPoints);
     vtkPoints * outPoints = polygonPoints;
-    //int triRes = polygon->Triangulate(outTris); // FIXME: Is this sufficient?
-    int triRes = polygon->NonDegenerateTriangulate(outTris); // FIXME: Is this sufficient?
-    std::cout << "TRIANGULATE DONE, ok=" << triRes << std::endl;
-
-    // Output is outTris, outPoints, use as appropriate in this code
-    std::cout << "OUT* SIZE " << outTris->GetNumberOfIds()/3 << ", " << outPoints->GetNumberOfPoints() << std::endl;
-    std::cout << "BP01 SIZE " << numberOfBoundaryPoints0 << ", " << numberOfBoundaryPoints1 << std::endl;
-    std::cout << "NEW* SIZE " << newPolys->GetNumberOfCells() << ", " << newPoints->GetNumberOfPoints() << std::endl;
-
-    size_t np = outPoints->GetNumberOfPoints();
-    if (np != numberOfBoundaryPoints0+numberOfBoundaryPoints1+2)
-      {
-      vtkErrorMacro(<< "Unexpected number of points in endcaps triangulation!");
-      }
-    vector<vtkIdType> outPointIdMapping(np);
-    for (size_t ip=1; ip<np-1; ++ip)
-      {
-      // Replace all non-nudged point ids with ids gotten from inserting point in newPoints
-      // FIXME: Can probably skip adding these points and map directly through boundaryPointIds0/1?
-      outPointIdMapping[ip] = newPoints->InsertNextPoint(outPoints->GetPoint(ip));
-      }
-    // Replace id 0 with non-nudged point numberOfBoundaryPoints0
-    outPointIdMapping[0] = outPointIdMapping[numberOfBoundaryPoints0];
-    // Replace id (numberOfBoundaryPoints0+numberOfBoundaryPoints1+1) with non-nudged point (numberOfBoundaryPoints0+1)
-    outPointIdMapping[numberOfBoundaryPoints0+numberOfBoundaryPoints1+1] = outPointIdMapping[numberOfBoundaryPoints0+1];
+    int triRes = polygon->NonDegenerateTriangulate(outTris);
+    // Output of triangulation is now in outTris, outPoints.
 
     size_t nt = outTris->GetNumberOfIds()/3;
     for (size_t it=0; it<nt; ++it)
       {
       // Get mapped point ids for new triangle
-      vtkIdType triangleIds[3] = { outPointIdMapping[outTris->GetId(3*it+0)],
-                                   outPointIdMapping[outTris->GetId(3*it+1)],
-                                   outPointIdMapping[outTris->GetId(3*it+2)] };
+      vtkIdType triangleIds[3] = { polygonPointIdToGlobalPointId[outTris->GetId(3*it+0)],
+                                   polygonPointIdToGlobalPointId[outTris->GetId(3*it+1)],
+                                   polygonPointIdToGlobalPointId[outTris->GetId(3*it+2)] };
+
       // Insert new triangle in endcaps mesh!
       newPolys->InsertNextCell(3, triangleIds);
       // Mark this new triangle with the pairing number (starting from 1) + given offset
@@ -437,16 +378,8 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
         cellEntityIdsArray->InsertNextValue(pairingCount + 1 + this->CellEntityIdOffset);
         }
       }
-    std::cout << "BOTTOM" << std::endl;
     } // end for loop over boundary pairs
-  std::cout << "END" << std::endl;
 
-/* Datatypes here:
-  vtkPolyData * input;
-  vtkPolyData * output;
-  vtkPoints * newPoints;
-  vtkCellArray * newPolys;
-*/
   // Collect output datastructures
   output->SetPoints(newPoints);
   output->SetPolys(newPolys);
