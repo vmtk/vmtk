@@ -107,6 +107,7 @@ class VmtkSurfaceExtractAnnularWalls(pypes.pypeScript):
         region_ids = (0, 1)
 
         # Extract each surface in turn to find the smallest one
+        subsurfaces = {}
         for k in region_ids:
             connectivityFilter = vtk.vtkPolyDataConnectivityFilter()
             connectivityFilter.SetInput(self.ColoredSurface)
@@ -115,18 +116,17 @@ class VmtkSurfaceExtractAnnularWalls(pypes.pypeScript):
             connectivityFilter.ColorRegionsOff()
             connectivityFilter.SetScalarConnectivity(0)
             connectivityFilter.Update()
-            subsurface = connectivityFilter.GetOutput()
+            subsurfaces[k] = connectivityFilter.GetOutput()
 
-            # The inner surface has smaller bounds
-            if bnorm(subsurface) < bounds_norm - 1e-12:
-                self.InnerRegionId = k
-                self.InnerSurface = subsurface
-            else:
-                self.OuterRegionId = k
-                self.OuterSurface = subsurface
-
-        assert self.InnerRegionId in region_ids
-        assert self.OuterRegionId in region_ids
+        # The inner surface has smaller bounds
+        if bnorm(subsurfaces[region_ids[0]]) < bnorm(subsurfaces[region_ids[1]]):
+            self.InnerRegionId = region_ids[0]
+            self.OuterRegionId = region_ids[1]
+        else:
+            self.InnerRegionId = region_ids[1]
+            self.OuterRegionId = region_ids[0]
+        self.InnerSurface = subsurfaces[self.InnerRegionId]
+        self.OuterSurface = subsurfaces[self.OuterRegionId]
 
 if __name__ == '__main__':
     main = pypes.pypeMain()
