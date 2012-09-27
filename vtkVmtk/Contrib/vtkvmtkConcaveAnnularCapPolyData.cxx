@@ -45,6 +45,11 @@ vtkCxxRevisionMacro(vtkvmtkConcaveAnnularCapPolyData, "$Revision: 1.0 $");
 vtkStandardNewMacro(vtkvmtkConcaveAnnularCapPolyData);
 
 namespace {
+void info(const std::string & s)
+{
+  std::cout << s << std::endl;
+}
+
 void cross_diff(const double start[3], const double forward[3], const double center[3], double cross[3])
 {
   double vectorToStart[3] = { start[0] - center[0],
@@ -93,7 +98,6 @@ vector<IdPair> build_closest_pairs(vtkSmartPointer<vtkPoints> barycenters)
     }
 
   // Find the closest pairs of boundaries by comparing barycenter distances
-  double minBarycenterDistance2 = std::numeric_limits<double>::max();
   for (int i=0; i<numberOfBoundaries; i++)
     {
     if (visited[i])
@@ -104,6 +108,7 @@ vector<IdPair> build_closest_pairs(vtkSmartPointer<vtkPoints> barycenters)
     barycenters->GetPoint(i, barycenter);
 
     // Find which boundary j is closest to boundary i
+    double minBarycenterDistance2 = std::numeric_limits<double>::max();
     vtkIdType closest = -1;
     for (int j=i+1; j<numberOfBoundaries; j++)
       {
@@ -126,6 +131,7 @@ vector<IdPair> build_closest_pairs(vtkSmartPointer<vtkPoints> barycenters)
       }
 
     // Mark as visited and add pair
+    //std::cout << "i, closest = " << i << ", " << closest << std::endl;
     visited[i] = true;
     visited[closest] = true;
     pairs.push_back(make_pair(i, closest));
@@ -200,6 +206,7 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
     }
 
   // Extract all boundaries (polylines) from input mesh
+  info("Finding boundaries of input surface...");
   vtkSmartPointer<vtkvmtkPolyDataBoundaryExtractor> boundaryExtractor =
       vtkSmartPointer<vtkvmtkPolyDataBoundaryExtractor>::New();
   boundaryExtractor->SetInput(input);
@@ -207,12 +214,14 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
   vtkPolyData* boundaries = boundaryExtractor->GetOutput();
 
   int numberOfBoundaries = boundaries->GetNumberOfCells();
+  std::cout << "Found " << numberOfBoundaries << " boundaries." << std::endl;
   if (numberOfBoundaries % 2 != 0)
     {
     vtkErrorMacro(<< "Error: the number of boundaries must be even.");
     }
 
   // Compute barycenters for all boundaries
+  info("Computing boundary barycenters...");
   vtkSmartPointer<vtkPoints> barycenters = vtkSmartPointer<vtkPoints>::New();
   barycenters->SetNumberOfPoints(numberOfBoundaries);
   for (int i=0; i<numberOfBoundaries; i++)
@@ -223,6 +232,7 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
     }
 
   // Allocate boundary pairing array
+  info("Pairing boundaries...");
   vector<IdPair> boundaryPairs = build_closest_pairs(barycenters);
 
   // Loop over all boundary pairings uniquely
@@ -232,6 +242,7 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
     vtkIdType i1 = boundaryPairs[pairingCount].second;
 
     // These are point ids for all boundaries globally, pointing into global vertex array
+    info("Finding boundary point ids...");
     vtkIdTypeArray * boundaryPointIdsArray = vtkIdTypeArray::SafeDownCast(boundaries->GetPointData()->GetScalars());
 
     // Collect (global!) point ids for boundary 0 in current pairing into a contiguous array
@@ -239,7 +250,7 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
     vtkIdType numberOfBoundaryPoints0 = boundary0->GetNumberOfPoints();
     if (numberOfBoundaryPoints0 < 8)
       {
-      vtkErrorMacro(<< "Assuming at least 8 boundary points!");
+      vtkErrorMacro(<< "Error: Assuming at least 8 boundary points!");
       }
     vtkSmartPointer<vtkIdList> boundaryPointIds0 = vtkSmartPointer<vtkIdList>::New();
     boundaryPointIds0->SetNumberOfIds(numberOfBoundaryPoints0);
@@ -254,7 +265,7 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
     vtkIdType numberOfBoundaryPoints1 = boundary1->GetNumberOfPoints();
     if (numberOfBoundaryPoints1 < 8)
       {
-      vtkErrorMacro(<< "Assuming at least 8 boundary points!");
+      vtkErrorMacro(<< "Error: Assuming at least 8 boundary points!");
       }
     vtkSmartPointer<vtkIdList> boundaryPointIds1 = vtkSmartPointer<vtkIdList>::New();
     boundaryPointIds1->SetNumberOfIds(numberOfBoundaryPoints1);
@@ -265,6 +276,7 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
       }
 
     // Find the two closest vertices between the boundaries
+    info("Finding closest vertices...");
     IdPair starts = find_closest_points(input, boundaryPointIds0, boundaryPointIds1);
     vtkIdType i0start = starts.first;
     vtkIdType i1start = starts.second;
@@ -308,6 +320,7 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
                                nudgeFactor*(pointForward[2] - startingPoint[2]) };
 
     // Use vtkPolygon::Triangulate to mesh between boundary pair
+    info("Setting up n-sided polygon...");
     // Initialize a vtkPolygon instance with list of boundary points
     int npts = numberOfBoundaryPoints0 + numberOfBoundaryPoints1 + 2;
     vtkSmartPointer<vtkPolygon> polygon = vtkSmartPointer<vtkPolygon>::New();
@@ -316,14 +329,13 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
     polygonPoints->SetNumberOfPoints(npts);
     polygonPointIds->SetNumberOfIds(npts);
     vector<vtkIdType> polygonPointIdToGlobalPointId(npts);
-    // Initialize a list of points to make up final polygon
-    vtkIdType * polygonIds = new vtkIdType[npts];
     // Add all vertices from the inner polygon in one
     // direction, starting and ending with i0start.
     int kk = 0;
     for (int k=0; k<=numberOfBoundaryPoints0; k++) // NB! Using <= to repeat first point.
       {
-      vtkIdType pid = boundaryPointIds0->GetId( (i0start + dir0*k + numberOfBoundaryPoints0) % numberOfBoundaryPoints0 );
+      vtkIdType bp0id = (i0start + dir0*k + numberOfBoundaryPoints0) % numberOfBoundaryPoints0;
+      vtkIdType pid = boundaryPointIds0->GetId(bp0id);
       double point[3];
       input->GetPoint(pid, point);
       if (k == 0)
@@ -341,7 +353,8 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
     // opposite direction, starting and ending with i1start.
     for (int k=0; k<=numberOfBoundaryPoints1; k++) // NB! Using <= to repeat first point.
       {
-      vtkIdType pid = boundaryPointIds1->GetId( (i1start + dir1*k + numberOfBoundaryPoints1) % numberOfBoundaryPoints1 );
+      vtkIdType bp1id = (i1start + dir1*k + numberOfBoundaryPoints1) % numberOfBoundaryPoints1;
+      vtkIdType pid = boundaryPointIds1->GetId(bp1id);
       double point[3];
       input->GetPoint(pid, point);
       if (k == numberOfBoundaryPoints1)
@@ -357,11 +370,16 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
       }
 
     // Call polygon->Triangulate(...) to mesh the interior of the concave polygon
+    info("Triangulating...");
     vtkSmartPointer<vtkIdList> outTris = vtkSmartPointer<vtkIdList>::New();
-    vtkPoints * outPoints = polygonPoints;
     int triRes = polygon->NonDegenerateTriangulate(outTris);
-    // Output of triangulation is now in outTris, outPoints.
+    if (triRes == 0)
+      {
+      vtkErrorMacro(<< "Error: Numerical degeneracy when triangulating endcaps surface! Code: " << triRes);
+      }
 
+    // Output of triangulation is now in outTris, outPoints, append to newPolys
+    info("Appending datasets...");
     size_t nt = outTris->GetNumberOfIds()/3;
     for (size_t it=0; it<nt; ++it)
       {
@@ -388,6 +406,7 @@ int vtkvmtkConcaveAnnularCapPolyData::RequestData(
     {
     output->GetCellData()->AddArray(cellEntityIdsArray);
     }
+  info("Done!");
 
   return 1;
 }
