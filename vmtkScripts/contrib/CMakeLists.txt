@@ -17,6 +17,8 @@ SET(CONTRIB_SCRIPTS_SRCS
     vmtkthreshold.py
     vmtkmeshmerge.py
     vmtkentityrenumber.py
+    vmtkthinplatesplinedeformation.py
+    vmtkimagepainter.py
   )
   
 SET(CONTRIB_MODULE_SRCS

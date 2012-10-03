@@ -14,6 +14,8 @@ __all__ = [
     'vmtkthreshold',
     'vmtkmeshmerge',
     'vmtkentityrenumber',
+    'vmtkthinplatesplinedeformation',
+    'vmtkimagepainter'
   ]
 
 for item in __all__:
