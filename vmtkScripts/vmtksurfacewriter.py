@@ -32,6 +32,7 @@ class vmtkSurfaceWriter(pypes.pypeScript):
         self.Surface = None
         self.Input = None
         self.CellData = 0
+        self.Mode = "binary"
 
         self.SetScriptName('vmtksurfacewriter')
         self.SetScriptDoc('write surface to disk')
@@ -40,6 +41,7 @@ class vmtkSurfaceWriter(pypes.pypeScript):
             ['Format','f','str',1,'["vtkxml","vtk","stl","ply","pointdata","tecplot"]','file format'],
             ['GuessFormat','guessformat','bool',1,'','guess file format from extension'],
             ['CellData','celldata','bool',1,'','write CellData when using pointdata format'],
+            ['Mode','mode','str',1,'["ascii","binary"]','write files in ASCII or binary mode'],
             ['OutputFileName','ofile','str',1,'','output file name'],
             ['OutputFileName','o','str',1,'','output file name (deprecated: use -ofile)']
             ])
@@ -52,6 +54,10 @@ class vmtkSurfaceWriter(pypes.pypeScript):
         writer = vtk.vtkPolyDataWriter()
         writer.SetInput(self.Surface)
         writer.SetFileName(self.OutputFileName)
+        if self.Mode == "binary":
+            writer.SetFileTypeToBinary()
+        elif self.Mode == "ascii":
+            writer.SetFileTypeToASCII()
         writer.Write()
 
     def WriteVTKXMLSurfaceFile(self):
@@ -61,7 +67,10 @@ class vmtkSurfaceWriter(pypes.pypeScript):
         writer = vtk.vtkXMLPolyDataWriter()
         writer.SetInput(self.Surface)
         writer.SetFileName(self.OutputFileName)
-        #writer.SetDataModeToAscii()
+        if self.Mode == "binary":
+            writer.SetDataModeToBinary()
+        elif self.Mode == "ascii":
+            writer.SetDataModeToAscii()
         writer.Write()
 
     def WriteSTLSurfaceFile(self):
@@ -71,6 +80,10 @@ class vmtkSurfaceWriter(pypes.pypeScript):
         writer = vtk.vtkSTLWriter()
         writer.SetInput(self.Surface)
         writer.SetFileName(self.OutputFileName)
+        if self.Mode == "binary":
+            writer.SetFileTypeToBinary()
+        elif self.Mode == "ascii":
+            writer.SetFileTypeToASCII()
         writer.Write()
 
     def WritePLYSurfaceFile(self):
@@ -80,6 +93,10 @@ class vmtkSurfaceWriter(pypes.pypeScript):
         writer = vtk.vtkPLYWriter()
         writer.SetInput(self.Surface)
         writer.SetFileName(self.OutputFileName)
+        if self.Mode == "binary":
+            writer.SetFileTypeToBinary()
+        elif self.Mode == "ascii":
+            writer.SetFileTypeToASCII()
         writer.Write()
 
     def WritePointDataSurfaceFile(self):
