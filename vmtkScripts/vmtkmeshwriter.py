@@ -32,6 +32,7 @@ class vmtkMeshWriter(pypes.pypeScript):
         self.OutputFileName = ''
         self.Mesh = None
         self.Input = None
+        self.Mode = "binary"
 
         self.Compressed = 1
         self.CellEntityIdsOffset = -1
@@ -50,6 +51,7 @@ class vmtkMeshWriter(pypes.pypeScript):
             ['Compressed','compressed','bool',1,'','output gz compressed file (dolfin only)'],
             ['OutputFileName','ofile','str',1,'','output file name'],
             ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh'],
+            ['Mode','mode','str',1,'["ascii","binary"]','write files in ASCII or binary mode (vtk and vtu only)'],
             ['CellEntityIdsArrayName','entityidsarray','str',1,'','name of the array where entity ids are stored'],
             ['CellEntityIdsOffset','entityidsoffset','int',1,'','add this number to entity ids in output (dolfin only)'],
             ['WriteRegionMarkers','writeregionmarkers','bool',1,'','write entity ids for volume regions to file (dolfin only)'],
@@ -63,6 +65,10 @@ class vmtkMeshWriter(pypes.pypeScript):
         writer = vtk.vtkUnstructuredGridWriter()
         writer.SetInput(self.Mesh)
         writer.SetFileName(self.OutputFileName)
+        if self.Mode == "binary":
+            writer.SetFileTypeToBinary()
+        elif self.Mode == "ascii":
+            writer.SetFileTypeToASCII()
         writer.Write()
 
     def WriteVTKXMLMeshFile(self):
@@ -72,6 +78,10 @@ class vmtkMeshWriter(pypes.pypeScript):
         writer = vtk.vtkXMLUnstructuredGridWriter()
         writer.SetInput(self.Mesh)
         writer.SetFileName(self.OutputFileName)
+        if self.Mode == "binary":
+            writer.SetDataModeToBinary()
+        elif self.Mode == "ascii":
+            writer.SetDataModeToAscii()
         writer.Write()
 
     def WriteTetGenMeshFile(self):
