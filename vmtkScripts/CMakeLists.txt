@@ -43,6 +43,7 @@ SET(SCRIPTS_SRCS
   vmtkimageinitialization.py
   vmtkimagelinetracer.py
   vmtkimagemipviewer.py
+  vmtkimagemorphology.py
   vmtkimageobjectenhancement.py
   vmtkimagereader.py
   vmtkimagereslice.py
@@ -90,6 +91,7 @@ SET(SCRIPTS_SRCS
   vmtkrendertoimage.py
   vmtkrbfinterpolation.py
   vmtksurfaceappend.py
+  vmtksurfacebooleanoperation.py
   vmtksurfacecapper.py
   vmtksurfacecelldatatopointdata.py
   vmtksurfacecenterlineprojection.py
