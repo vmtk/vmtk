@@ -44,7 +44,9 @@ SET(SCRIPTS_SRCS
   vmtkimagelinetracer.py
   vmtkimagemipviewer.py
   vmtkimagemorphology.py
+  vmtkimagenormalize.py
   vmtkimageobjectenhancement.py
+  vmtkimageotsuthresholds.py
   vmtkimagereader.py
   vmtkimagereslice.py
   vmtkimageseeder.py

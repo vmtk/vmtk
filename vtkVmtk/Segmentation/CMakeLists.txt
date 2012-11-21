@@ -16,7 +16,9 @@ SET (VTK_VMTK_SEGMENTATION_SRCS
   vtkvmtkGradientMagnitudeRecursiveGaussian2DImageFilter.cxx
   vtkvmtkGrayscaleMorphologyImageFilter.cxx
   vtkvmtkLaplacianSegmentationLevelSetImageFilter.cxx
+  vtkvmtkNormalizeImageFilter.cxx
   vtkvmtkObjectnessMeasureImageFilter.cxx
+  vtkvmtkOtsuMultipleThresholdsImageFilter.cxx
   vtkvmtkPolyDataPotentialFit.cxx
   vtkvmtkRecursiveGaussianImageFilter.cxx
   vtkvmtkRecursiveGaussian2DImageFilter.cxx
@@ -59,7 +61,7 @@ IF(VMTK_LIBRARY_PROPERTIES)
   SET_TARGET_PROPERTIES(vtkvmtkSegmentation PROPERTIES ${VMTK_LIBRARY_PROPERTIES})
 ENDIF(VMTK_LIBRARY_PROPERTIES)
 SET_TARGET_PROPERTIES(vtkvmtkSegmentation PROPERTIES LINKER_LANGUAGE CXX)
-TARGET_LINK_LIBRARIES(vtkvmtkSegmentation vtkvmtkDifferentialGeometry vtkCommon vtkFiltering vtkGraphics vtkImaging vtkvmtkITK ITKCommon ITKBasicFilters)
+TARGET_LINK_LIBRARIES(vtkvmtkSegmentation vtkvmtkDifferentialGeometry vtkCommon vtkFiltering vtkGraphics vtkImaging vtkvmtkITK ITKCommon ITKBasicFilters ITKStatistics)
 
 
 INSTALL(TARGETS vtkvmtkSegmentation
