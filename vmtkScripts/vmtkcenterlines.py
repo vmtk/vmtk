@@ -475,7 +475,7 @@ class vmtkCenterlines(pypes.pypeScript):
         self.SetScriptDoc('compute centerlines from a branching tubular surface (see papers for details); seed points can be interactively selected on the surface, or specified as the barycenters of the open boundaries of the surface; if vmtk is compiled with support for TetGen, TetGen can be employed to compute the Delaunay tessellation of the input points')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
-            ['SeedSelectorName','seedselector','str',1,'["pickpoint","openprofiles","carotidprofiles","idlist","pointlist"]','seed point selection method (pickpoint: interactive; openprofiles: choose among barycenters of open profiles of the surface; carotidprofiles: open profiles are automatically selected based on their z-axis coordinate (lower to higher: CCA, ECA, ICA)); idlist: list of surface point ids (specified as argument to -sourceids and -targetids); pointlist: list of surface points (specified as argument to -sourcepoints and -targetpoints)'],
+            ['SeedSelectorName','seedselector','str',1,'["pickpoint","openprofiles","carotidprofiles","profileidlist","idlist","pointlist"]','seed point selection method (pickpoint: interactive; openprofiles: choose among barycenters of open profiles of the surface; carotidprofiles: open profiles are automatically selected based on their z-axis coordinate (lower to higher: CCA, ECA, ICA)); profileidlist: list of open profile ids (specified as argument to -sourceids and -targetids); idlist: list of surface point ids (specified as argument to -sourceids and -targetids); pointlist: list of surface points (specified as argument to -sourcepoints and -targetpoints)'],
             ['SourceIds','sourceids','int',-1,'','list of source point ids'],
             ['TargetIds','targetids','int',-1,'','list of target point ids'],
             ['SourcePoints','sourcepoints','float',-1,'','list of source point coordinates'],
@@ -545,7 +545,7 @@ class vmtkCenterlines(pypes.pypeScript):
 
         capCenterIds = None
 
-        if (self.SeedSelectorName == 'openprofiles') | (self.SeedSelectorName == 'carotidprofiles') | (self.SeedSelectorName == 'pickpoint'):
+        if self.SeedSelectorName in ['openprofiles', 'carotidprofiles', 'pickpoint', 'profileidlist']:
             self.PrintLog('Capping surface.')
             surfaceCapper = vtkvmtk.vtkvmtkCapPolyData()
             surfaceCapper.SetInput(surfaceTriangulator.GetOutput())
@@ -570,38 +570,51 @@ class vmtkCenterlines(pypes.pypeScript):
             elif self.SeedSelectorName == 'carotidprofiles':
                 self.SeedSelector = vmtkCarotidProfilesSeedSelector()
                 self.SeedSelector.SetSeedIds(surfaceCapper.GetCapCenterIds())
-            elif (self.SeedSelectorName == 'idlist'):
+            elif self.SeedSelectorName == 'idlist':
                 self.SeedSelector = vmtkIdListSeedSelector()
                 self.SeedSelector.SourceIds = self.SourceIds
                 self.SeedSelector.TargetIds = self.TargetIds
-            elif (self.SeedSelectorName == 'pointlist'):
+            elif self.SeedSelectorName == 'pointlist':
                 self.SeedSelector = vmtkPointListSeedSelector()
                 self.SeedSelector.SourcePoints = self.SourcePoints
                 self.SeedSelector.TargetPoints = self.TargetPoints
-            else:
-                self.PrintError("SeedSelectorName unknown (available: pickpoint | openprofiles | carotidprofiles | idlist | pointlist)")
+            elif self.SeedSelectorName != 'profileidlist':
+                self.PrintError("SeedSelectorName unknown (available: pickpoint, openprofiles, carotidprofiles, profileidlist, idlist, pointlist)")
                 return
         else:
             self.PrintError('vmtkCenterlines error: either SeedSelector or SeedSelectorName must be specified')
             return
 
-        self.SeedSelector.SetSurface(centerlineInputSurface)
-        self.SeedSelector.InputInfo = self.InputInfo
-        self.SeedSelector.InputText = self.InputText
-        self.SeedSelector.OutputText = self.OutputText
-        self.SeedSelector.PrintError = self.PrintError
-        self.SeedSelector.PrintLog = self.PrintLog
-        self.SeedSelector.Execute()
+        if self.SeedSelector:
+            self.SeedSelector.SetSurface(centerlineInputSurface)
+            self.SeedSelector.InputInfo = self.InputInfo
+            self.SeedSelector.InputText = self.InputText
+            self.SeedSelector.OutputText = self.OutputText
+            self.SeedSelector.PrintError = self.PrintError
+            self.SeedSelector.PrintLog = self.PrintLog
+            self.SeedSelector.Execute()
 
-        inletSeedIds = self.SeedSelector.GetSourceSeedIds()
-        outletSeedIds = self.SeedSelector.GetTargetSeedIds()
+            inletSeedIds = self.SeedSelector.GetSourceSeedIds()
+            outletSeedIds = self.SeedSelector.GetTargetSeedIds()
+        else:
+            inletSeedIds = vtk.vtkIdList()
+            outletSeedIds = vtk.vtkIdList()
+            for id in self.SourceIds:
+                inletSeedIds.InsertNextId(id)
+            if self.TargetIds:
+                for id in self.TargetIds:
+                    outletSeedIds.InsertNextId(id)
+            else:
+                for i in range(capCenterIds.GetNumberOfIds()):
+                    if i not in self.SourceIds:
+                        outletSeedIds.InsertNextId(i)
 
         self.PrintLog('Computing centerlines.')
-	self.InputInfo('Computing centerlines...')
+        self.InputInfo('Computing centerlines...')
 
         centerlineFilter = vtkvmtk.vtkvmtkPolyDataCenterlines()
         centerlineFilter.SetInput(centerlineInputSurface)
-        if (self.SeedSelectorName == 'openprofiles') | (self.SeedSelectorName == 'carotidprofiles'):
+        if self.SeedSelectorName in ['openprofiles','carotidprofiles','profileidlist']:
             centerlineFilter.SetCapCenterIds(capCenterIds)
         centerlineFilter.SetSourceSeedIds(inletSeedIds)
         centerlineFilter.SetTargetSeedIds(outletSeedIds)
