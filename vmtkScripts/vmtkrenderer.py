@@ -54,6 +54,8 @@ class vmtkRenderer(pypes.pypeScript):
 
         self.WindowSize = [800, 600]
         self.Background = [0.1, 0.1, 0.2]
+        #Solarized base03
+        #self.Background = [0.02734375, 0.16796875, 0.2109375]
 
         self.PointSmoothing = 1
         self.LineSmoothing = 1
