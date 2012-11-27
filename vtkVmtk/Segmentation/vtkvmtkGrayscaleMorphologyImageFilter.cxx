@@ -98,6 +98,7 @@ void vtkvmtkGrayscaleMorphologyImageFilter::SimpleExecute(vtkImageData *input, v
     ClosingFilterType::Pointer imageFilter = ClosingFilterType::New();
     imageFilter->SetKernel(ball);
     imageFilter->SetInput(inImage);
+    imageFilter->SafeBorderOff();
     try {
       imageFilter->Update();
     }
@@ -113,6 +114,7 @@ void vtkvmtkGrayscaleMorphologyImageFilter::SimpleExecute(vtkImageData *input, v
     OpeningFilterType::Pointer imageFilter = OpeningFilterType::New();
     imageFilter->SetKernel(ball);
     imageFilter->SetInput(inImage);
+    imageFilter->SafeBorderOff();
     try {
       imageFilter->Update();
     }
