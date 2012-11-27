@@ -98,7 +98,14 @@ void vtkvmtkGrayscaleMorphologyImageFilter::SimpleExecute(vtkImageData *input, v
     ClosingFilterType::Pointer imageFilter = ClosingFilterType::New();
     imageFilter->SetKernel(ball);
     imageFilter->SetInput(inImage);
-    imageFilter->Update();
+    try {
+      imageFilter->Update();
+    }
+    catch( itk::ExceptionObject & excep )
+    {
+      std::cerr << "Exception catched !" << std::endl;
+      std::cerr << excep << std::endl;
+    }
     outputImage = imageFilter->GetOutput();
     }
   if (this->Operation == OPEN)
@@ -106,7 +113,14 @@ void vtkvmtkGrayscaleMorphologyImageFilter::SimpleExecute(vtkImageData *input, v
     OpeningFilterType::Pointer imageFilter = OpeningFilterType::New();
     imageFilter->SetKernel(ball);
     imageFilter->SetInput(inImage);
-    imageFilter->Update();
+    try {
+      imageFilter->Update();
+    }
+    catch( itk::ExceptionObject & excep )
+    {
+      std::cerr << "Exception catched !" << std::endl;
+      std::cerr << excep << std::endl;
+    }
     outputImage = imageFilter->GetOutput();
     }
   if (this->Operation == DILATE)
@@ -114,7 +128,14 @@ void vtkvmtkGrayscaleMorphologyImageFilter::SimpleExecute(vtkImageData *input, v
     DilateFilterType::Pointer imageFilter = DilateFilterType::New();
     imageFilter->SetKernel(ball);
     imageFilter->SetInput(inImage);
-    imageFilter->Update();
+    try {
+      imageFilter->Update();
+    }
+    catch( itk::ExceptionObject & excep )
+    {
+      std::cerr << "Exception catched !" << std::endl;
+      std::cerr << excep << std::endl;
+    }
     outputImage = imageFilter->GetOutput();
     }
   if (this->Operation == ERODE)
@@ -122,7 +143,14 @@ void vtkvmtkGrayscaleMorphologyImageFilter::SimpleExecute(vtkImageData *input, v
     ErodeFilterType::Pointer imageFilter = ErodeFilterType::New();
     imageFilter->SetKernel(ball);
     imageFilter->SetInput(inImage);
-    imageFilter->Update();
+    try {
+      imageFilter->Update();
+    }
+    catch( itk::ExceptionObject & excep )
+    {
+      std::cerr << "Exception catched !" << std::endl;
+      std::cerr << excep << std::endl;
+    }
     outputImage = imageFilter->GetOutput();
     }
 
