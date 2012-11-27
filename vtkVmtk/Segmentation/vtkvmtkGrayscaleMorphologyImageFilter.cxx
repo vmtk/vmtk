@@ -67,8 +67,6 @@ void vtkvmtkGrayscaleMorphologyImageFilter::SimpleExecute(vtkImageData *input, v
   const int Dimension = 3;
   typedef itk::Image<PixelType, Dimension> ImageType;
 
-  std::cout<<"DEBUG A"<<std::endl;
-
   ImageType::Pointer inImage = ImageType::New();
 
   vtkvmtkITKFilterUtilities::VTKToITKImage<ImageType>(input,inImage);
@@ -79,8 +77,6 @@ void vtkvmtkGrayscaleMorphologyImageFilter::SimpleExecute(vtkImageData *input, v
   typedef itk::GrayscaleErodeImageFilter<ImageType, ImageType, KernelType> ErodeFilterType;
   typedef itk::GrayscaleDilateImageFilter<ImageType, ImageType, KernelType> DilateFilterType;
 
-  std::cout<<"DEBUG B"<<std::endl;
-
   KernelType ball;
   KernelType::SizeType ballRadius;
   ballRadius[0] = this->BallRadius[0];
@@ -88,8 +84,6 @@ void vtkvmtkGrayscaleMorphologyImageFilter::SimpleExecute(vtkImageData *input, v
   ballRadius[2] = this->BallRadius[2];
   ball.SetRadius(ballRadius);
   ball.CreateStructuringElement();
-
-  std::cout<<"DEBUG C"<<std::endl;
 
   ImageType::Pointer outputImage;
 
@@ -156,10 +150,6 @@ void vtkvmtkGrayscaleMorphologyImageFilter::SimpleExecute(vtkImageData *input, v
     outputImage = imageFilter->GetOutput();
     }
 
-  std::cout<<"DEBUG D"<<std::endl;
-
   vtkvmtkITKFilterUtilities::ITKToVTKImage<ImageType>(outputImage,output);
-
-  std::cout<<"DEBUG E"<<std::endl;
 }
 
