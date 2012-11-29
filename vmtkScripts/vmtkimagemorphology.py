@@ -38,7 +38,7 @@ class vmtkImageMorphology(pypes.pypeScript):
         self.SetScriptDoc('apply binary or grayscale morphology filter to the input image')
         self.SetInputMembers([
             ['Image','i','vtkImageData',1,'','the input image','vmtkimagereader'],
-            ['BallRadius','radius','int',3,'(1,)','the radius of the structuring element'],
+            ['BallRadius','radius','int',3,'(0,)','the radius of the structuring element'],
             ['Operation','operation','str',1,'["dilate","erode","open","close"]','the morphological operation to perform'],
             ['Grayscale','grayscale','bool',1,'','perform binary or grayscale morphology']
             ])
