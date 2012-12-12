@@ -30,7 +30,7 @@ class vmtkSurfaceAppend(pypes.pypeScript):
         self.Surface2 = None
 
         self.SetScriptName('vmtksurfaceappend')
-        self.SetScriptDoc('scale a surface by an isotropic factor')
+        self.SetScriptDoc('append two surfaces into a single vtkPolyData. The script does not merge coincident points, consider using vmtksurfacetriangle for this.')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
             ['Surface2','i2','vtkPolyData',1,'','the second input surface','vmtksurfacereader'],
