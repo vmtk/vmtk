@@ -36,7 +36,7 @@ class vmtkLinearToQuadratic(pypes.pypeScript):
         self.CapSurface = False
         self.CellEntityIdsArrayName = None
         self.ProjectedCellEntityId = 1
-        self.JacobianRelaxation = 0
+        self.JacobianRelaxation = 0.0
         self.NegativeJacobianTolerance = 0.0
         self.QuadratureOrder = 10
 

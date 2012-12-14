@@ -4,7 +4,6 @@ SET (VTK_VMTK_IO_SRCS
   vtkvmtkFDNEUTReader.cxx
   vtkvmtkFDNEUTWriter.cxx
   vtkvmtkFluentWriter.cxx
-  vtkvmtkPNGWriter.cxx
   vtkvmtkTetGenReader.cxx
   vtkvmtkTetGenWriter.cxx
   vtkvmtkXdaReader.cxx

@@ -80,12 +80,12 @@ class vmtkIdListSeedSelector(vmtkSeedSelector):
         maxId = self._Surface.GetNumberOfPoints()-1
 
         for id in self.SourceIds:
-            if id > maxId:
+            if id >= maxId:
               self.PrintError('vmtkIdListSeedSelector Error: invalid SourceId.')
             self._SourceSeedIds.InsertNextId(id)
 
         for id in self.TargetIds:
-            if id > maxId:
+            if id >= maxId:
               self.PrintError('vmtkIdListSeedSelector Error: invalid TargetId.')
             self._TargetSeedIds.InsertNextId(id)
 

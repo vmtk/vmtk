@@ -94,7 +94,7 @@ class PypeTkPad(object):
 
         self.master = master
         self.master.title('PypePad')
-        self.master.geometry("%dx%d%+d%+d" % (700, 500, 0, 0))
+        self.master.geometry("%dx%d%+d%+d" % (700, 700, 0, 0))
         self.master.minsize(300, 100)
         self.output_file_name = None
         

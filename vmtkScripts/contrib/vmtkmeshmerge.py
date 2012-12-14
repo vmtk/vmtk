@@ -17,25 +17,32 @@ class vmtkMeshMerge(pypes.pypeScript):
         self.SetScriptName("vmtkmeshmerge")
         self.SetScriptDoc('Merge two or three meshes into one.')
 
+        self.Mesh1 = None
+        self.Mesh2 = None
+        self.Mesh3 = None
         self.Mesh = None
         self.CellEntityIdsArrayName = "CellEntityIds"
-
-        self.max_meshes = 7
-        members = []
-        for i in range(1, self.max_meshes+1):
-            setattr(self, 'Mesh%d'%i, None)
-            members.append(['Mesh%d'%i, 'mesh%d'%i, 'vtkUnstructuredGrid', 1, '',
-                 'mesh number %d to merge'%i, 'vmtkmeshreader'])
-        for i in range(1, self.max_meshes+1):
-            setattr(self, 'CellEntityIdOffset%d'%i, None)
-            members.append(['CellEntityIdOffset%d'%i, 'cellentityidoffset%d'%i, 'int', 1, '',
-                 'offset added to cell entity ids from mesh%d'%i, ''])
+        self.CellEntityIdOffset1 = 0
+        self.CellEntityIdOffset2 = 0
+        self.CellEntityIdOffset3 = 0
 
         # Member info: name, cmdlinename, typename, num, default, desc[, defaultpipetoscript]
         self.SetInputMembers([
+                ['Mesh1', 'mesh1', 'vtkUnstructuredGrid', 1, '',
+                 'the first of meshes to merge', 'vmtkmeshreader'],
+                ['Mesh2', 'mesh2', 'vtkUnstructuredGrid', 1, '',
+                 'the second of meshes to merge', 'vmtkmeshreader'],
+                ['Mesh3', 'mesh3', 'vtkUnstructuredGrid', 1, '',
+                 '(optional) the third of meshes to merge', 'vmtkmeshreader'],
                 ['CellEntityIdsArrayName', 'entityidsarray', 'str', 1, '',
                  'name of the array where entity ids have been stored'],
-                ] + members)
+                ['CellEntityIdOffset1', 'cellentityidoffset1', 'int', 1, '',
+                 'offset added to cell entity ids from mesh1', ''],
+                ['CellEntityIdOffset2', 'cellentityidoffset2', 'int', 1, '',
+                 'offset added to cell entity ids from mesh2', ''],
+                ['CellEntityIdOffset3', 'cellentityidoffset3', 'int', 1, '',
+                 'offset added to cell entity ids from mesh3', ''],
+                ])
         self.SetOutputMembers([
                 ['Mesh', 'o', 'vtkUnstructuredGrid', 1, '',
                  'the output mesh', 'vmtkmeshwriter'],
@@ -44,23 +51,27 @@ class vmtkMeshMerge(pypes.pypeScript):
                 ])
 
     def Execute(self):
-        data = [(getattr(self, 'Mesh%d'%i), getattr(self, 'CellEntityIdOffset%d'%i))
-                for i in range(1,self.max_meshes+1)]
-        n = sum(0 if d[0] is None else 1 for d in data)
-        if n < 2:
-            self.PrintError('Error: Need at least 2 meshes to merge.')
+        if self.Mesh1 == None:
+            self.PrintError('Error: No Mesh1.')
+        if self.Mesh2 == None:
+            self.PrintError('Error: No Mesh2.')
 
         def addIds(mesh, offset):
-            if mesh is not None and offset != 0:
+            if offset != 0:
                 cellids = mesh.GetCellData().GetScalars(self.CellEntityIdsArrayName)
                 for i in range(cellids.GetNumberOfTuples()):
                     cellids.SetValue(i, cellids.GetValue(i) + offset)
 
+        addIds(self.Mesh1, self.CellEntityIdOffset1)
+        addIds(self.Mesh2, self.CellEntityIdOffset2)
+        if self.Mesh3 != None:
+            addIds(self.Mesh3, self.CellEntityIdOffset3)
+
         merger = vtkvmtk.vtkvmtkAppendFilter()
-        for mesh, offsets in data:
-            addIds(mesh, offsets)
-            if mesh != None:
-                merger.AddInput(mesh)
+        merger.AddInput(self.Mesh1)
+        merger.AddInput(self.Mesh2)
+        if self.Mesh3 != None:
+            merger.AddInput(self.Mesh3)
         merger.SetMergeDuplicatePoints(1)
         merger.Update()
 

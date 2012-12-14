@@ -18,7 +18,6 @@ else:
     from vtkvmtkComputationalGeometryPython import *
     from vtkvmtkDifferentialGeometryPython import *
     from vtkvmtkIOPython import *
-    from vtkvmtkMiscPython import *
     from vtkvmtkRenderingPython import *
     from vtkvmtkSegmentationPython import *
     from vtkvmtkITKPython import *
