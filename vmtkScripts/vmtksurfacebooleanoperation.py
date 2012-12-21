@@ -39,7 +39,7 @@ class vmtkSurfaceBooleanOperation(pypes.pypeScript):
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
             ['Surface2','i2','vtkPolyData',1,'','the second input surface','vmtksurfacereader'],
-            ['Tolerance','tolerance','bool',1,'(0.0,)','tolerance for considering two points coincident'],
+            ['Tolerance','tolerance','float',1,'(0.0,)','tolerance for considering two points coincident'],
             ['Operation','operation','str',1,'["union","intersection","difference"]','the boolean operation to be performed']
             ])
         self.SetOutputMembers([
@@ -63,6 +63,7 @@ class vmtkSurfaceBooleanOperation(pypes.pypeScript):
             booleanOperationFilter.SetOperationToIntersection()
         elif self.Operation == 'difference':
             booleanOperationFilter.SetOperationToDifference()
+        booleanOperationFilter.SetTolerance(self.Tolerance)
         booleanOperationFilter.Update()
 
         self.Surface = booleanOperationFilter.GetOutput()
