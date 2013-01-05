@@ -29,6 +29,7 @@ class vmtkMeshClipper(pypes.pypeScript):
 
         self.Mesh = None
         self.ClippedMesh = None
+        self.Surface = None
         self.vmtkRenderer = None
         self.OwnRenderer = 0
 
@@ -54,6 +55,7 @@ class vmtkMeshClipper(pypes.pypeScript):
             ])
         self.SetOutputMembers([
             ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh','vmtkmeshwriter'],
+            ['Surface','osurface','vtkPolyData',1,'','the output surface corresponding to the cut','vmtksurfacewriter'],
             ['ClippedMesh','oclipped','vtkUnstructuredGrid',1,'','the clipped mesh','vmtkmeshwriter']
             ])
 
@@ -70,6 +72,8 @@ class vmtkMeshClipper(pypes.pypeScript):
         self.Clipper.Update()
         self.Mesh.DeepCopy(self.Clipper.GetOutput())
         self.ClippedMesh.DeepCopy(self.Clipper.GetClippedOutput())
+        self.Cutter.Update()
+        self.Surface.DeepCopy(self.Cutter.GetOutput())
         mapper = vtk.vtkDataSetMapper()
         mapper.SetInput(self.Mesh)
         mapper.ScalarVisibilityOff()
@@ -97,6 +101,13 @@ class vmtkMeshClipper(pypes.pypeScript):
 
             self.Planes = vtk.vtkPlanes()
             self.Clipper.SetClipFunction(self.Planes)
+
+            self.Cutter = vtk.vtkCutter()
+            self.Cutter.SetInput(self.Mesh)
+            self.Cutter.SetCutFunction(self.Planes)
+
+            self.ClippedMesh = vtk.vtkUnstructuredGrid()
+            self.Surface = vtk.vtkPolyData()
 
             if not self.vmtkRenderer:
                 self.vmtkRenderer = vmtkrenderer.vmtkRenderer()
@@ -128,11 +139,18 @@ class vmtkMeshClipper(pypes.pypeScript):
         else:
 
             self.Mesh.GetPointData().SetActiveScalars(self.ClipArrayName)
+
             self.Clipper.GenerateClipScalarsOff()
             self.Clipper.SetValue(self.ClipValue)
             self.Clipper.Update()
 
+            self.Cutter = vtk.vtkContourFilter()
+            self.Cutter.SetInput(self.Mesh)
+            self.Cutter.SetValue(0,self.ClipValue)
+            self.Cutter.Update()
+
             self.Mesh = self.Clipper.GetOutput()
+            self.Surface = self.Cutter.GetOutput()
             self.ClippedMesh = self.Clipper.GetClippedOutput()
         
         if self.Mesh.GetSource():
