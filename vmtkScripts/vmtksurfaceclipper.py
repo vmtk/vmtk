@@ -29,6 +29,7 @@ class vmtkSurfaceClipper(pypes.pypeScript):
 
         self.Surface = None
         self.ClippedSurface = None
+        self.CutLines = None
         self.vmtkRenderer = None
         self.OwnRenderer = 0
 
@@ -62,6 +63,7 @@ class vmtkSurfaceClipper(pypes.pypeScript):
         self.SetOutputMembers([
             ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter'],
             ['ClippedSurface','oclipped','vtkPolyData',1,'','the clipped surface','vmtksurfacewriter'],
+            ['CutLines','ocutlines','vtkPolyData',1,'','the cutlines','vmtksurfacewriter'],
             ['Transform','otransform','vtkTransform',1,'','the output widget transform']
             ])
 
@@ -77,6 +79,8 @@ class vmtkSurfaceClipper(pypes.pypeScript):
         self.Surface.Update()
         self.ClippedSurface.DeepCopy(self.Clipper.GetClippedOutput())
         self.ClippedSurface.Update()
+        self.Cutter.Update()
+        self.CutLines.DeepCopy(self.Cutter.GetOutput())
         self.ClipWidget.Off()
 
     def InteractCallback(self):
@@ -116,6 +120,13 @@ class vmtkSurfaceClipper(pypes.pypeScript):
                 self.ClipFunction = vtk.vtkSphere()
        
             self.Clipper.SetClipFunction(self.ClipFunction)
+
+            self.Cutter = vtk.vtkCutter()
+            self.Cutter.SetInput(self.Surface)
+            self.Cutter.SetCutFunction(self.ClipFunction)
+
+            self.ClippedSurface = vtk.vtkPolyData()
+            self.CutLines = vtk.vtkPolyData()
 
             if not self.vmtkRenderer:
                 self.vmtkRenderer = vmtkrenderer.vmtkRenderer()
@@ -160,22 +171,40 @@ class vmtkSurfaceClipper(pypes.pypeScript):
         else:
 
             self.Surface.GetPointData().SetActiveScalars(self.ClipArrayName)
+
             self.Clipper.GenerateClipScalarsOff()
             self.Clipper.SetValue(self.ClipValue)
             self.Clipper.Update()
 
+            self.Cutter = vtk.vtkContourFilter()
+            self.Cutter.SetInput(self.Surface)
+            self.Cutter.SetValue(0,self.ClipValue)
+            self.Cutter.Update()
+
             self.Surface = self.Clipper.GetOutput()
             self.ClippedSurface = self.Clipper.GetClippedOutput()
 
+            self.CutLines = self.Cutter.GetOutput()
+
         if self.CleanOutput == 1:
+
             cleaner = vtk.vtkCleanPolyData()
             cleaner.SetInput(self.Surface)
             cleaner.Update()
             self.Surface = cleaner.GetOutput()
+
             cleaner = vtk.vtkCleanPolyData()
             cleaner.SetInput(self.ClippedSurface)
             cleaner.Update()
             self.ClippedSurface = cleaner.GetOutput()
+
+            cleaner = vtk.vtkCleanPolyData()
+            cleaner.SetInput(self.CutLines)
+            cleaner.Update()
+            stripper = vtk.vtkStripper()
+            stripper.SetInput(cleaner.GetOutput())
+            stripper.Update()
+            self.CutLines = stripper.GetOutput()
 
         if self.Surface.GetSource():
             self.Surface.GetSource().UnRegisterAllOutputs()
