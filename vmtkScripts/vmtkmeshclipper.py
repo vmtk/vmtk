@@ -28,6 +28,7 @@ class vmtkMeshClipper(pypes.pypeScript):
         pypes.pypeScript.__init__(self)
 
         self.Mesh = None
+        self.ClippedMesh = None
         self.vmtkRenderer = None
         self.OwnRenderer = 0
 
@@ -35,14 +36,25 @@ class vmtkMeshClipper(pypes.pypeScript):
         self.BoxWidget = None
         self.Planes = None
 
+        self.InsideOut = 0
+
+        self.Interactive = 1
+        self.ClipArrayName = None
+        self.ClipValue = 0.0
+
         self.SetScriptName('vmtkmeshclipper')
         self.SetScriptDoc('interactively clip a mesh with a box')
         self.SetInputMembers([
             ['Mesh','i','vtkUnstructuredGrid',1,'','the input mesh','vmtkmeshreader'],
+            ['InsideOut','insideout','bool',1,'','toggle switching output and clipped surfaces'],
+            ['Interactive','interactive','bool',1,'','toggle clipping with a widget or with a pre-defined scalar field'],
+            ['ClipArrayName','array','str',1,'','name of the array with which to clip in case of non-interactive clipping'],
+            ['ClipValue','value','float',1,'','scalar value at which to perform clipping in case of non-interactive clipping'],
             ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer']
             ])
         self.SetOutputMembers([
-            ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh','vmtkmeshwriter']
+            ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh','vmtkmeshwriter'],
+            ['ClippedMesh','oclipped','vtkUnstructuredGrid',1,'','the clipped mesh','vmtkmeshwriter']
             ])
 
     def InteractCallback(self):
@@ -56,7 +68,8 @@ class vmtkMeshClipper(pypes.pypeScript):
             return
         self.BoxWidget.GetPlanes(self.Planes)
         self.Clipper.Update()
-        self.Mesh.DeepCopy(self.Clipper.GetClippedOutput())
+        self.Mesh.DeepCopy(self.Clipper.GetOutput())
+        self.ClippedMesh.DeepCopy(self.Clipper.GetClippedOutput())
         mapper = vtk.vtkDataSetMapper()
         mapper.SetInput(self.Mesh)
         mapper.ScalarVisibilityOff()
@@ -75,39 +88,52 @@ class vmtkMeshClipper(pypes.pypeScript):
         if (self.Mesh == None):
             self.PrintError('Error: no Mesh.')
 
-        self.Planes = vtk.vtkPlanes()
         self.Clipper = vtk.vtkClipDataSet()
         self.Clipper.SetInput(self.Mesh)
-        self.Clipper.SetClipFunction(self.Planes)
         self.Clipper.GenerateClippedOutputOn()
-        self.Clipper.InsideOutOn()
+        self.Clipper.SetInsideOut(self.InsideOut)
         
-        if not self.vmtkRenderer:
-            self.vmtkRenderer = vmtkrenderer.vmtkRenderer()
-            self.vmtkRenderer.Initialize()
-            self.OwnRenderer = 1
+        if self.Interactive:
 
-        self.vmtkRenderer.RegisterScript(self) 
+            self.Planes = vtk.vtkPlanes()
+            self.Clipper.SetClipFunction(self.Planes)
 
-        mapper = vtk.vtkDataSetMapper()
-        mapper.SetInput(self.Mesh)
-        mapper.ScalarVisibilityOff()
-        self.Actor = vtk.vtkActor()
-        self.Actor.SetMapper(mapper)
-        self.vmtkRenderer.Renderer.AddActor(self.Actor)
+            if not self.vmtkRenderer:
+                self.vmtkRenderer = vmtkrenderer.vmtkRenderer()
+                self.vmtkRenderer.Initialize()
+                self.OwnRenderer = 1
 
-        self.BoxWidget = vtk.vtkBoxWidget()
-        self.BoxWidget.SetInteractor(self.vmtkRenderer.RenderWindowInteractor)
-        self.BoxWidget.GetFaceProperty().SetColor(0.6,0.6,0.2)
-        self.BoxWidget.GetFaceProperty().SetOpacity(0.25)
+            self.vmtkRenderer.RegisterScript(self) 
 
-        self.vmtkRenderer.AddKeyBinding('i','Interact.', self.InteractCallback)
-        self.vmtkRenderer.AddKeyBinding('space','Clip.', self.ClipCallback)
+            mapper = vtk.vtkDataSetMapper()
+            mapper.SetInput(self.Mesh)
+            mapper.ScalarVisibilityOff()
+            self.Actor = vtk.vtkActor()
+            self.Actor.SetMapper(mapper)
+            self.vmtkRenderer.Renderer.AddActor(self.Actor)
 
-        self.Display()
+            self.BoxWidget = vtk.vtkBoxWidget()
+            self.BoxWidget.SetInteractor(self.vmtkRenderer.RenderWindowInteractor)
+            self.BoxWidget.GetFaceProperty().SetColor(0.6,0.6,0.2)
+            self.BoxWidget.GetFaceProperty().SetOpacity(0.25)
 
-        if self.OwnRenderer:
-            self.vmtkRenderer.Deallocate()
+            self.vmtkRenderer.AddKeyBinding('i','Interact.', self.InteractCallback)
+            self.vmtkRenderer.AddKeyBinding('space','Clip.', self.ClipCallback)
+
+            self.Display()
+
+            if self.OwnRenderer:
+                self.vmtkRenderer.Deallocate()
+
+        else:
+
+            self.Mesh.GetPointData().SetActiveScalars(self.ClipArrayName)
+            self.Clipper.GenerateClipScalarsOff()
+            self.Clipper.SetValue(self.ClipValue)
+            self.Clipper.Update()
+
+            self.Mesh = self.Clipper.GetOutput()
+            self.ClippedMesh = self.Clipper.GetClippedOutput()
         
         if self.Mesh.GetSource():
             self.Mesh.GetSource().UnRegisterAllOutputs()

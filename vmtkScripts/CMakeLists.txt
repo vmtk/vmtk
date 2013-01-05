@@ -69,6 +69,7 @@ SET(SCRIPTS_SRCS
   vmtkmeshlambda2.py
   vmtkmeshlinearize.py
   vmtkmeshgenerator.py
+  vmtkmeshpolyballevaluation.py
   vmtkmeshprojection.py
   vmtkmeshreader.py
   vmtkmeshscaling.py
@@ -93,6 +94,7 @@ SET(SCRIPTS_SRCS
   vmtkrendertoimage.py
   vmtkrbfinterpolation.py
   vmtksurfaceappend.py
+  vmtksurfacearrayoperation.py
   vmtksurfacebooleanoperation.py
   vmtksurfacecapper.py
   vmtksurfacecelldatatopointdata.py
@@ -102,9 +104,11 @@ SET(SCRIPTS_SRCS
   vmtksurfacedecimation.py
   vmtksurfacedistance.py
   vmtksurfacekiteremoval.py
+  vmtksurfacemassproperties.py
   vmtksurfacemodeller.py
   vmtksurfacenormals.py
   vmtksurfacepointdatatocelldata.py
+  vmtksurfacepolyballevaluation.py
   vmtksurfaceprojection.py
   vmtksurfacereader.py
   vmtksurfacereferencesystemtransform.py
