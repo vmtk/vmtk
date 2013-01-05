@@ -30,16 +30,16 @@ class vmtkMeshPolyBallEvaluation(pypes.pypeScript):
         
         self.Mesh = None
         self.PolyBall = None
-        self.Centerlines = None
         self.RadiusArrayName = None
         self.EvaluationArrayName = 'PolyBall'
+        self.Type = "polyball"
 
         self.SetScriptName('vmtkmeshpolyballevaluation')
         self.SetScriptDoc('evaluate the polyball function on the vertices of a mesh.')
         self.SetInputMembers([
             ['Mesh','i','vtkUnstructuredGrid',1,'','the input mesh','vmtkmeshreader'],
-            ['PolyBall','polyball','vtkPolyData',1,'','the input polyball, considered as a set of disjoint balls','vmtksurfacereader'],
-            ['Centerlines','centerlines','vtkPolyData',1,'','the input polyball, considered as a set of tubes, like a centerline dataset','vmtksurfacereader'],
+            ['PolyBall','polyball','vtkPolyData',1,'','the input polyball','vmtksurfacereader'],
+            ['Type','type','str',1,'["polyball","tubes"]','type of evaluation, polyball (set of disjoint spheres) or tubes (set of continuous tubes, e.g. centerlines)'],
             ['RadiusArrayName','radiusarray','str',1,'','name of the array where the radius of polyballs is stored'],
             ['EvaluationArrayName','evaluationarray','str',1,'','name of the array where the result of the polyball evaluation has to be stored']
             ])
@@ -52,8 +52,8 @@ class vmtkMeshPolyBallEvaluation(pypes.pypeScript):
         if self.Mesh == None:
             self.PrintError('Error: No input mesh.')
 
-        if self.PolyBall == None and self.Centerlines == None:
-            self.PrintError('Error: No input polyball or centerline, one of the two must be provided.')
+        if self.PolyBall == None:
+            self.PrintError('Error: No input polyball.')
 
         evaluationArray = vtk.vtkDoubleArray()
         evaluationArray.SetName(self.EvaluationArrayName)
@@ -61,14 +61,12 @@ class vmtkMeshPolyBallEvaluation(pypes.pypeScript):
         evaluationArray.SetNumberOfTuples(self.Mesh.GetNumberOfPoints())
 
         polyball = None
-        if self.PolyBall:
+        if self.Type == "polyball":
             polyball = vtkvmtk.vtkvmtkPolyBall()
-            polyball.SetInput(self.PolyBall)
-            polyball.SetPolyBallRadiusArrayName(self.RadiusArrayName)
-        elif self.Centerlines:
+        elif self.Type == "tubes":
             polyball = vtkvmtk.vtkvmtkPolyBallLine()
-            polyball.SetInput(self.Centerlines)
-            polyball.SetPolyBallRadiusArrayName(self.RadiusArrayName)
+        polyball.SetInput(self.PolyBall)
+        polyball.SetPolyBallRadiusArrayName(self.RadiusArrayName)
  
         for i in xrange(self.Mesh.GetNumberOfPoints()):
             point = self.Mesh.GetPoint(i)
