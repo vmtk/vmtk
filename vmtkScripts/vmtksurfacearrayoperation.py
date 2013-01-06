@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 ## Program:   VMTK
-## Module:    $RCSfile: vmtksurfacebooleanOperation.py,v $
+## Module:    $RCSfile: vmtksurfacearrayoperation.py,v $
 ## Language:  Python
 ## Date:      $Date: 2005/09/14 09:49:59 $
 ## Version:   $Revision: 1.7 $
@@ -45,7 +45,7 @@ class vmtkSurfaceArrayOperation(pypes.pypeScript):
             ['Operation','operation','str',1,'["multiplybyc","addc","add","subtract","min","max"]','the operation to be performed on the array; multiplybyc and addc only require the first input Surface to be specified'],
             ['Constant','constant','float',1,'','the value of the constant for multiplybyc and addc'],
             ['InputArrayName','iarray','str',1,'','the name of the array on the first surface'],
-            ['Input2ArrayName','iarray2','str',1,'','the name of the array on the second surface; if unspecified, InputArrayName is used'],
+            ['Input2ArrayName','i2array','str',1,'','the name of the array on the second surface; if unspecified, InputArrayName is used'],
             ['ResultArrayName','resultarray','str',1,'','the name of the array where the result of the operation is stored']
             ])
         self.SetOutputMembers([
