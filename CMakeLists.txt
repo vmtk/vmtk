@@ -1,3 +1,7 @@
+if( APPLE )
+  set ( CMAKE_CXX_COMPILER "/usr/bin/g++" CACHE STRING "CXX compiler." FORCE)
+endif( APPLE )
+
 PROJECT(VMTK)
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
@@ -49,9 +53,9 @@ option( VMTK_USE_SUPERBUILD
 option( VMTK_BUNJEE_BUILD
   "Build VMTK and the projects it depends on ready for being linked from Bunjee." OFF )
 
-if( APPLE )
-  set ( CMAKE_CXX_COMPILER "/usr/bin/g++" CACHE STRING "CXX compiler." FORCE)
-endif( APPLE )
+#if( APPLE )
+#  set ( CMAKE_CXX_COMPILER "/usr/bin/g++" CACHE STRING "CXX compiler." FORCE)
+#endif( APPLE )
 
 if( VMTK_USE_SUPERBUILD )
 
