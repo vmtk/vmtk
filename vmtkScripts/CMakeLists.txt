@@ -20,6 +20,7 @@ SET(SCRIPTS_SRCS
   vmtkbranchsections.py
   vmtkcenterlineattributes.py
   vmtkcenterlinegeometry.py
+  vmtkcenterlineinterpolation.py
   vmtkcenterlinelabeler.py
   vmtkcenterlinemeshsections.py
   vmtkcenterlinemerge.py
