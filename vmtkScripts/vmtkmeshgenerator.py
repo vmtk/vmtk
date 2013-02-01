@@ -49,9 +49,10 @@ class vmtkMeshGenerator(pypes.pypeScript):
 
         self.Tetrahedralize = 0
 
+        self.BoundaryLayerOnCaps = 1
+
         self.SizingFunctionArrayName = 'VolumeSizingFunction'
 
-        # Output objects
         self.Mesh = None
         self.RemeshedSurface = None
 
@@ -71,8 +72,9 @@ class vmtkMeshGenerator(pypes.pypeScript):
             ['VolumeElementScaleFactor','volumeelementfactor','float',1,'(0.0,)'],
             ['BoundaryLayer','boundarylayer','bool',1,''],
             ['NumberOfSubLayers','sublayers','int',1,'(0,)'],
-            ['BoundaryLayerThicknessFactor','thicknessfactor','float',1,'(0.0,1.0)'],
+            ['BoundaryLayerThicknessFactor','thicknessfactor','float',1,'(0.0,)'],
             ['RemeshCapsOnly','remeshcapsonly','bool',1,''],
+            ['BoundaryLayerOnCaps','boundarylayeroncaps','bool',1,''],
             ['Tetrahedralize','tetrahedralize','bool',1,'']
             ])
         self.SetOutputMembers([
@@ -88,9 +90,14 @@ class vmtkMeshGenerator(pypes.pypeScript):
 
         wallEntityOffset = 1
 
-        if self.SkipCapping:
+        if self.SkipCapping or not self.BoundaryLayerOnCaps:
             self.PrintLog("Not capping surface")
             surface = self.Surface
+            cellEntityIdsArray = vtk.vtkIntArray()
+            cellEntityIdsArray.SetName(self.CellEntityIdsArrayName)
+            cellEntityIdsArray.SetNumberOfTuples(surface.GetNumberOfCells())
+            cellEntityIdsArray.FillComponent(0,0.0)
+            surface.GetCellData().AddArray(cellEntityIdsArray)
         else:
             self.PrintLog("Capping surface")
             capper = vmtkscripts.vmtkSurfaceCapper()
@@ -134,6 +141,7 @@ class vmtkMeshGenerator(pypes.pypeScript):
             surfaceToMesh.Execute()
 
             self.PrintLog("Generating boundary layer")
+            placeholderCellEntityId = 9999
             boundaryLayer = vmtkscripts.vmtkBoundaryLayer()
             boundaryLayer.Mesh = surfaceToMesh.Mesh
             boundaryLayer.WarpVectorsArrayName = 'Normals'
@@ -149,27 +157,46 @@ class vmtkMeshGenerator(pypes.pypeScript):
             boundaryLayer.Thickness = self.BoundaryLayerThicknessFactor * self.TargetEdgeLength
             boundaryLayer.ThicknessRatio = self.BoundaryLayerThicknessFactor * self.TargetEdgeLengthFactor
             boundaryLayer.MaximumThickness = self.BoundaryLayerThicknessFactor * self.MaxEdgeLength
+            if not self.BoundaryLayerOnCaps:
+                boundaryLayer.SidewallCellEntityId = placeholderCellEntityId
             boundaryLayer.Execute()
-
-            cellEntityIdsArray = vtk.vtkIntArray()
-            cellEntityIdsArray.SetName(self.CellEntityIdsArrayName)
-            cellEntityIdsArray.SetNumberOfTuples(boundaryLayer.Mesh.GetNumberOfCells())
-            cellEntityIdsArray.FillComponent(0,0.0)
-            boundaryLayer.Mesh.GetCellData().AddArray(cellEntityIdsArray)
-
-            innerCellEntityIdsArray = vtk.vtkIntArray()
-            innerCellEntityIdsArray.SetName(self.CellEntityIdsArrayName)
-            innerCellEntityIdsArray.SetNumberOfTuples(boundaryLayer.InnerSurfaceMesh.GetNumberOfCells())
-            innerCellEntityIdsArray.FillComponent(0,0.0)
-            boundaryLayer.InnerSurfaceMesh.GetCellData().AddArray(cellEntityIdsArray)
 
             meshToSurface = vmtkscripts.vmtkMeshToSurface()
             meshToSurface.Mesh = boundaryLayer.InnerSurfaceMesh
             meshToSurface.Execute()
 
+            innerSurface = meshToSurface.Surface
+
+            if not self.BoundaryLayerOnCaps:
+
+                self.PrintLog("Capping inner surface")
+                capper = vmtkscripts.vmtkSurfaceCapper()
+                capper.Surface = innerSurface
+                capper.Interactive = 0
+                capper.Method = self.CappingMethod
+                capper.TriangleOutput = 1
+                capper.CellEntityIdOffset = 1
+                capper.CellEntityIdOffset = wallEntityOffset
+                capper.Execute()
+
+                self.PrintLog("Remeshing endcaps")
+                remeshing = vmtkscripts.vmtkSurfaceRemeshing()
+                remeshing.Surface = capper.Surface
+                remeshing.CellEntityIdsArrayName = self.CellEntityIdsArrayName
+                remeshing.TargetEdgeLength = self.TargetEdgeLength
+                remeshing.MaxEdgeLength = self.MaxEdgeLength
+                remeshing.MinEdgeLength = self.MinEdgeLength
+                remeshing.TargetEdgeLengthFactor = self.TargetEdgeLengthFactor
+                remeshing.TargetEdgeLengthArrayName = self.TargetEdgeLengthArrayName
+                remeshing.ElementSizeMode = self.ElementSizeMode
+                remeshing.ExcludeEntityIds = [wallEntityOffset]
+                remeshing.Execute()
+
+                innerSurface = remeshing.Surface
+
             self.PrintLog("Computing sizing function")
             sizingFunction = vtkvmtk.vtkvmtkPolyDataSizingFunction()
-            sizingFunction.SetInput(meshToSurface.Surface)
+            sizingFunction.SetInput(innerSurface)
             sizingFunction.SetSizingFunctionArrayName(self.SizingFunctionArrayName)
             sizingFunction.SetScaleFactor(self.VolumeElementScaleFactor)
             sizingFunction.Update()
@@ -177,7 +204,7 @@ class vmtkMeshGenerator(pypes.pypeScript):
             surfaceToMesh2 = vmtkscripts.vmtkSurfaceToMesh()
             surfaceToMesh2.Surface = sizingFunction.GetOutput()
             surfaceToMesh2.Execute()
-
+            
             self.PrintLog("Generating volume mesh")
             tetgen = vmtkscripts.vmtkTetGen()
             tetgen.Mesh = surfaceToMesh2.Mesh
@@ -197,13 +224,61 @@ class vmtkMeshGenerator(pypes.pypeScript):
             if tetgen.Mesh.GetNumberOfCells() == 0 and surfaceToMesh.Mesh.GetNumberOfCells() > 0:
                 self.PrintLog('An error occurred during tetrahedralization. Will only output surface mesh and boundary layer.')
 
+            self.PrintLog("Assembling final mesh")
             appendFilter = vtkvmtk.vtkvmtkAppendFilter()
             appendFilter.AddInput(surfaceToMesh.Mesh)
             appendFilter.AddInput(boundaryLayer.Mesh)
             appendFilter.AddInput(tetgen.Mesh)
+
+            if not self.BoundaryLayerOnCaps:
+                threshold = vtk.vtkThreshold()
+                threshold.SetInput(surfaceToMesh2.Mesh)
+                threshold.ThresholdByUpper(1.5)
+                threshold.SetInputArrayToProcess(0,0,0,1,self.CellEntityIdsArrayName)
+                threshold.Update()
+                endcaps = threshold.GetOutput()
+                appendFilter.AddInput(endcaps)
+
             appendFilter.Update()
 
             self.Mesh = appendFilter.GetOutput()
+
+            if not self.BoundaryLayerOnCaps:
+                cellEntityIdsArray = self.Mesh.GetCellData().GetArray(self.CellEntityIdsArrayName)
+
+                def VisitNeighbors(i, cellEntityId):
+                    cellPointIds = vtk.vtkIdList()
+                    self.Mesh.GetCellPoints(i,cellPointIds)
+                    neighborPointIds = vtk.vtkIdList()
+                    neighborPointIds.SetNumberOfIds(1)
+                    pointNeighborCellIds = vtk.vtkIdList()
+                    neighborCellIds = vtk.vtkIdList()
+
+                    for j in range(cellPointIds.GetNumberOfIds()):
+                        neighborPointIds.SetId(0,cellPointIds.GetId(j))
+                        self.Mesh.GetCellNeighbors(i,neighborPointIds,pointNeighborCellIds)
+                        for k in range(pointNeighborCellIds.GetNumberOfIds()):
+                            neighborCellIds.InsertNextId(pointNeighborCellIds.GetId(k))
+
+                    for j in range(neighborCellIds.GetNumberOfIds()):
+                        cellId = neighborCellIds.GetId(j)
+                        neighborCellEntityId = cellEntityIdsArray.GetTuple1(cellId)
+                        neighborCellType = self.Mesh.GetCellType(cellId)
+                        if neighborCellType not in [vtk.VTK_TRIANGLE, vtk.VTK_QUADRATIC_TRIANGLE, vtk.VTK_QUAD]:
+                            continue
+                        if neighborCellEntityId != placeholderCellEntityId:
+                            continue
+                        cellEntityIdsArray.SetTuple1(cellId,cellEntityId)
+                        VisitNeighbors(cellId,cellEntityId)
+
+                for i in range(self.Mesh.GetNumberOfCells()):
+                    cellEntityId = cellEntityIdsArray.GetTuple1(i)
+                    cellType = self.Mesh.GetCellType(i)
+                    if cellType not in [vtk.VTK_TRIANGLE, vtk.VTK_QUADRATIC_TRIANGLE, vtk.VTK_QUAD]:
+                        continue
+                    if cellEntityId in [0, placeholderCellEntityId]:
+                        continue
+                    VisitNeighbors(i,cellEntityId)
 
         else:
 

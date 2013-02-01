@@ -38,6 +38,8 @@ class vmtkMeshViewer(pypes.pypeScript):
         self.Grayscale = 0
         self.FlatInterpolation = 0
 	
+        self.Representation = 'surface'
+
         self.Actor = None
         self.ScalarBarActor = None
 
@@ -57,6 +59,30 @@ class vmtkMeshViewer(pypes.pypeScript):
         self.SetOutputMembers([
             ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh','vmtkmeshwriter']
             ])
+
+    def RepresentationCallback(self, obj):
+        if not self.Actor:
+            return
+
+        if self.Representation == 'surface':
+            self.Representation = 'edges'
+        elif self.Representation == 'edges':
+            self.Representation = 'wireframe'
+        elif self.Representation == 'wireframe':
+            self.Representation = 'surface'
+
+        if self.Representation == 'surface':
+            self.Actor.GetProperty().SetRepresentationToSurface()
+            self.Actor.GetProperty().EdgeVisibilityOff()
+        elif self.Representation == 'edges':
+            self.Actor.GetProperty().SetRepresentationToSurface()
+            self.Actor.GetProperty().EdgeVisibilityOn()
+        elif self.Representation == 'wireframe':
+            self.Actor.GetProperty().SetRepresentationToWireframe()
+            self.Actor.GetProperty().EdgeVisibilityOff()
+
+        self.vmtkRenderer.RenderWindow.Render()
+
 
     def BuildView(self):
 
@@ -95,6 +121,7 @@ class vmtkMeshViewer(pypes.pypeScript):
                 self.Actor.GetProperty().SetInterpolationToFlat()
             self.Actor.GetProperty().SetOpacity(self.Opacity)
             self.vmtkRenderer.Renderer.AddActor(self.Actor)
+            self.vmtkRenderer.AddKeyBinding('w','Change surface representation.',self.RepresentationCallback)
 
         if (self.Legend == 1) & (self.Actor != None):
             self.ScalarBarActor = vtk.vtkScalarBarActor()

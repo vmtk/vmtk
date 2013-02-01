@@ -23,9 +23,11 @@ Version:   $Revision: 1.7 $
 #include "vtkvmtkConstants.h"
 #include "vtkUnstructuredGrid.h"
 #include "vtkPointData.h"
+#include "vtkCellData.h"
 #include "vtkPoints.h"
 #include "vtkCellArray.h"
 #include "vtkDoubleArray.h"
+#include "vtkIntArray.h"
 #include "vtkMath.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
@@ -52,7 +54,14 @@ vtkvmtkBoundaryLayerGenerator::vtkvmtkBoundaryLayerGenerator()
   this->SubLayerRatio = 1.0; // thickness ratio between successive sublayers (moving from the surface)
 
   this->IncludeSurfaceCells = 0;
+  this->IncludeSidewallCells = 0;
   this->NegateWarpVectors = 0;
+
+  this->CellEntityIdsArrayName = NULL;
+  this->InnerSurfaceCellEntityId = 0;
+  this->OuterSurfaceCellEntityId = 0;
+  this->SidewallCellEntityId = 0;
+  this->VolumeCellEntityId = 0;
 
   this->InnerSurface = NULL;
 }
@@ -76,6 +85,12 @@ vtkvmtkBoundaryLayerGenerator::~vtkvmtkBoundaryLayerGenerator()
     this->InnerSurface->Delete();
     this->InnerSurface = NULL;
     }
+
+  if (this->CellEntityIdsArrayName)
+    {
+    delete[] this->CellEntityIdsArrayName;
+    this->CellEntityIdsArrayName = NULL;
+    }
 }
 
 int vtkvmtkBoundaryLayerGenerator::RequestData(
@@ -94,6 +109,12 @@ int vtkvmtkBoundaryLayerGenerator::RequestData(
   if (!this->WarpVectorsArrayName)
     {
     vtkErrorMacro("WarpVectors array name not specified.");
+    return 1;
+    }
+
+  if (!this->CellEntityIdsArrayName)
+    {
+    vtkErrorMacro("CellEntityIds array name not specified.");
     return 1;
     }
 
@@ -122,11 +143,19 @@ int vtkvmtkBoundaryLayerGenerator::RequestData(
     this->LayerThicknessArray = input->GetPointData()->GetArray(this->LayerThicknessArrayName);
     }
 
+  vtkIdType i;
+
   vtkPoints* outputPoints = vtkPoints::New();
   vtkPoints* warpedPoints = vtkPoints::New();
 
   vtkCellArray* boundaryLayerCellArray = vtkCellArray::New();
   vtkIdList* boundaryLayerCellTypes = vtkIdList::New();
+
+  vtkIntArray* cellEntityIdsArray = vtkIntArray::New();
+  cellEntityIdsArray->SetName(this->CellEntityIdsArrayName);
+
+  vtkIntArray* innerSurfaceCellEntityIdsArray = vtkIntArray::New();
+  innerSurfaceCellEntityIdsArray->SetName(this->CellEntityIdsArrayName);
 
   vtkIdType numberOfInputPoints = inputPoints->GetNumberOfPoints();
   vtkIdType numberOfInputCells = input->GetNumberOfCells();
@@ -145,10 +174,10 @@ int vtkvmtkBoundaryLayerGenerator::RequestData(
     numberOfLayerPoints = 2 * numberOfInputPoints;
     }  
 
-  outputPoints->SetNumberOfPoints(numberOfInputPoints + numberOfLayerPoints * this->NumberOfSubLayers);
+  vtkIdType numberOfOutputPoints = numberOfInputPoints + numberOfLayerPoints * this->NumberOfSubLayers;
+  outputPoints->SetNumberOfPoints(numberOfOutputPoints);
 
   double point[3];
-  int i;
   for (i=0; i<numberOfInputPoints; i++)
     {
     inputPoints->GetPoint(i,point);
@@ -195,6 +224,7 @@ int vtkvmtkBoundaryLayerGenerator::RequestData(
           break;
         }
       boundaryLayerCellArray->InsertNextCell(npts,surfacePts);
+      cellEntityIdsArray->InsertNextValue(this->InnerSurfaceCellEntityId);
       delete[] surfacePts;
       }
     }
@@ -210,6 +240,12 @@ int vtkvmtkBoundaryLayerGenerator::RequestData(
   vtkPoints* innerSurfacePoints = vtkPoints::New();
   this->WarpPoints(inputPoints,innerSurfacePoints,this->NumberOfSubLayers-1,warpQuadratic);
   this->InnerSurface->GetPoints()->DeepCopy(innerSurfacePoints);
+  innerSurfaceCellEntityIdsArray->SetNumberOfTuples(this->InnerSurface->GetNumberOfCells());
+  innerSurfaceCellEntityIdsArray->FillComponent(0,this->InnerSurfaceCellEntityId);
+  this->InnerSurface->GetCellData()->AddArray(innerSurfaceCellEntityIdsArray);
+
+  vtkIdList* edgePointIds = vtkIdList::New();
+  vtkIdList* edgeNeighborCellIds = vtkIdList::New();
 
   int k;
   for (k=0; k<this->NumberOfSubLayers; k++)
@@ -224,6 +260,7 @@ int vtkvmtkBoundaryLayerGenerator::RequestData(
       }
    
     vtkIdType prismNPts, *prismPts;
+    vtkIdType quadNPts, *quadPts;
     for (i=0; i<numberOfInputCells; i++)
       {
       input->GetCellPoints(i,npts,pts);
@@ -232,6 +269,8 @@ int vtkvmtkBoundaryLayerGenerator::RequestData(
         {
         prismNPts = npts * 2;
         prismPts = new vtkIdType[prismNPts];
+        quadNPts = 4;
+        quadPts = new vtkIdType[quadNPts];
         int j;
         for (j=0; j<npts; j++)
           {
@@ -242,7 +281,7 @@ int vtkvmtkBoundaryLayerGenerator::RequestData(
           prismPts[j+npts] = pts[j] + (k+1)*numberOfLayerPoints;
           }
         boundaryLayerCellArray->InsertNextCell(prismNPts,prismPts);
-        delete[] prismPts;
+        cellEntityIdsArray->InsertNextValue(this->VolumeCellEntityId);
 
         if (cellType == VTK_TRIANGLE)
           {
@@ -252,13 +291,44 @@ int vtkvmtkBoundaryLayerGenerator::RequestData(
           {
           boundaryLayerCellTypes->InsertNextId(VTK_HEXAHEDRON);
           }
+
+        if (this->IncludeSidewallCells)
+          {
+          for (j=0; j<npts; j++)
+            {
+            vtkIdType jnext = (j+1) % npts;
+            edgePointIds->Initialize();
+            edgePointIds->SetNumberOfIds(2);
+            edgePointIds->SetId(0,pts[j]);
+            edgePointIds->SetId(1,pts[jnext]);
+            input->GetCellNeighbors(i,edgePointIds,edgeNeighborCellIds);
+
+            if (edgeNeighborCellIds->GetNumberOfIds() > 0)
+              {
+              continue;
+              }
+
+            quadPts[0] = prismPts[j];
+            quadPts[1] = prismPts[jnext];
+            quadPts[2] = prismPts[jnext+npts];
+            quadPts[3] = prismPts[j+npts];
+
+            boundaryLayerCellArray->InsertNextCell(quadNPts,quadPts);
+            boundaryLayerCellTypes->InsertNextId(VTK_QUAD);
+            cellEntityIdsArray->InsertNextValue(this->SidewallCellEntityId);
+            }
+          }
+        
+        delete[] prismPts;
+        delete[] quadPts;
         }
       else if (cellType == VTK_QUADRATIC_TRIANGLE)
         {
-         prismNPts = npts * 3 - 3;
-//        prismNPts = npts * 3;
+        prismNPts = npts * 3 - 3;
         prismPts = new vtkIdType[prismNPts];
-
+        quadNPts = 8;
+        quadPts = new vtkIdType[quadNPts];
+ 
         boundaryLayerCellTypes->InsertNextId(VTK_QUADRATIC_WEDGE);
         
         prismPts[0] = pts[0] + k*numberOfLayerPoints;
@@ -281,13 +351,43 @@ int vtkvmtkBoundaryLayerGenerator::RequestData(
         prismPts[13] = pts[1] + k*numberOfLayerPoints + numberOfLayerPoints/2;
         prismPts[14] = pts[2] + k*numberOfLayerPoints + numberOfLayerPoints/2;
 
-        // TODO: this creates a 18-noded wedge, which is not supported by VTK, but it works as a 15-node (the last 3 points are ignored). Better solutions? Could put it in as a vtkGenericCell, but harder to identify it afterwards
-//        prismPts[15] = pts[3] + k*numberOfLayerPoints + numberOfLayerPoints/2;
-//        prismPts[16] = pts[4] + k*numberOfLayerPoints + numberOfLayerPoints/2;
-//        prismPts[17] = pts[5] + k*numberOfLayerPoints + numberOfLayerPoints/2;
-
         boundaryLayerCellArray->InsertNextCell(prismNPts,prismPts);
+        cellEntityIdsArray->InsertNextValue(this->VolumeCellEntityId);
+
+        if (this->IncludeSidewallCells)
+          {
+          for (int j=0; j<npts/2; j++)
+            {
+            vtkIdType jnext = (j+1) % npts;
+            edgePointIds->Initialize();
+            edgePointIds->SetNumberOfIds(2);
+            edgePointIds->SetId(0,pts[j]);
+            edgePointIds->SetId(1,pts[jnext]);
+            input->GetCellNeighbors(i,edgePointIds,edgeNeighborCellIds);
+
+            if (edgeNeighborCellIds->GetNumberOfIds() > 0)
+              {
+              continue;
+              }
+
+            quadPts[0] = prismPts[j];
+            quadPts[1] = prismPts[jnext];
+            quadPts[2] = prismPts[jnext+npts/2];
+            quadPts[3] = prismPts[j+npts/2];
+
+            quadPts[4] = prismPts[j+npts];
+            quadPts[5] = prismPts[jnext+2*npts];
+            quadPts[6] = prismPts[j+npts+npts/2];
+            quadPts[7] = prismPts[j+2*npts];
+
+            boundaryLayerCellArray->InsertNextCell(quadNPts,quadPts);
+            boundaryLayerCellTypes->InsertNextId(VTK_QUAD);
+            cellEntityIdsArray->InsertNextValue(this->SidewallCellEntityId);
+            }
+          }
+
         delete[] prismPts;
+        delete[] quadPts;
         }
       else
         {
@@ -335,6 +435,7 @@ int vtkvmtkBoundaryLayerGenerator::RequestData(
               break;
             }
           boundaryLayerCellArray->InsertNextCell(npts,surfacePts);
+          cellEntityIdsArray->InsertNextValue(this->OuterSurfaceCellEntityId);
           delete[] surfacePts;
           }
         }
@@ -352,12 +453,20 @@ int vtkvmtkBoundaryLayerGenerator::RequestData(
   output->SetCells(boundaryLayerCellTypesInt,boundaryLayerCellArray);
 
   delete[] boundaryLayerCellTypesInt;
+  
+  output->GetCellData()->AddArray(cellEntityIdsArray);
 
+  edgePointIds->Delete();
+  edgeNeighborCellIds->Delete();
+  
   outputPoints->Delete();
   warpedPoints->Delete();
   boundaryLayerCellArray->Delete();
   boundaryLayerCellTypes->Delete();
   innerSurfacePoints->Delete();
+
+  cellEntityIdsArray->Delete();
+  innerSurfaceCellEntityIdsArray->Delete();
  
   return 1;
 }
