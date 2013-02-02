@@ -105,7 +105,6 @@ class vmtkMeshGenerator(pypes.pypeScript):
             capper.Interactive = 0
             capper.Method = self.CappingMethod
             capper.TriangleOutput = 0
-            capper.CellEntityIdOffset = 1
             capper.CellEntityIdOffset = wallEntityOffset
             capper.Execute()
             surface = capper.Surface
@@ -175,7 +174,6 @@ class vmtkMeshGenerator(pypes.pypeScript):
                 capper.Interactive = 0
                 capper.Method = self.CappingMethod
                 capper.TriangleOutput = 1
-                capper.CellEntityIdOffset = 1
                 capper.CellEntityIdOffset = wallEntityOffset
                 capper.Execute()
 
@@ -223,6 +221,8 @@ class vmtkMeshGenerator(pypes.pypeScript):
 
             if tetgen.Mesh.GetNumberOfCells() == 0 and surfaceToMesh.Mesh.GetNumberOfCells() > 0:
                 self.PrintLog('An error occurred during tetrahedralization. Will only output surface mesh and boundary layer.')
+
+            surfaceToMesh.Mesh.GetCellData().GetArray(self.CellEntityIdsArrayName).FillComponent(0,wallEntityOffset)
 
             self.PrintLog("Assembling final mesh")
             appendFilter = vtkvmtk.vtkvmtkAppendFilter()
@@ -276,7 +276,7 @@ class vmtkMeshGenerator(pypes.pypeScript):
                     cellType = self.Mesh.GetCellType(i)
                     if cellType not in [vtk.VTK_TRIANGLE, vtk.VTK_QUADRATIC_TRIANGLE, vtk.VTK_QUAD]:
                         continue
-                    if cellEntityId in [0, placeholderCellEntityId]:
+                    if cellEntityId in [0, 1, placeholderCellEntityId]:
                         continue
                     VisitNeighbors(i,cellEntityId)
 
