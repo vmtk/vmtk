@@ -32,7 +32,7 @@ namespace itk
  */
 template <
   class TLevelSet, 
-  class TSpeedImage = Image<float,::itk::GetImageDimension<TLevelSet>::ImageDimension> >
+  class TSpeedImage = Image<float,TLevelSet::ImageDimension> >
 class ITK_EXPORT FastMarchingDirectionalFreezeImageFilter :
     public FastMarchingUpwindGradientImageFilter<TLevelSet,TSpeedImage>
 {
