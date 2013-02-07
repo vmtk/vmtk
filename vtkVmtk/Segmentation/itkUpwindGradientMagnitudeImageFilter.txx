@@ -111,7 +111,7 @@ template< typename TInputImage, typename TOutputImage >
 void
 UpwindGradientMagnitudeImageFilter< TInputImage, TOutputImage >
 ::ThreadedGenerateData(const OutputImageRegionType& outputRegionForThread,
-                       int threadId)
+                       ThreadIdType threadId)
 {
   unsigned int i;
   ZeroFluxNeumannBoundaryCondition<TInputImage> nbc;

@@ -163,7 +163,7 @@ protected:
   /** This method applies changes from the m_UpdateBuffer to the output using
    * the ThreadedApplyUpdate() method and a multithreading mechanism.  "dt" is
    * the time step to use for the update of each pixel. */
-  virtual void ApplyUpdate(TimeStepType dt);
+  virtual void ApplyUpdate(const TimeStepType& dt);
 
   /** Method to allow subclasses to get direct access to the update
    * buffer */
@@ -201,7 +201,7 @@ protected:
                 TimeStepType dt,
                 const ThreadRegionType &regionToProcess,
                 const ThreadDiffusionImageRegionType &diffusionRegionToProcess,
-                int threadId);
+                ThreadIdType threadId);
 
   /** Does the actual work of calculating change over a region supplied by
    * the multithreading mechanism.
@@ -211,7 +211,7 @@ protected:
   TimeStepType ThreadedCalculateChange(
                const ThreadRegionType &regionToProcess,
                const ThreadDiffusionImageRegionType &diffusionRegionToProcess,
-               int threadId);
+               ThreadIdType threadId);
 
   /** Prepare for the iteration process. */
   virtual void InitializeIteration();
@@ -223,13 +223,20 @@ private:
 
   /** Structure for passing information into static callback methods.  Used in
    * the subclasses' threading mechanisms. */
-  struct DenseFDThreadStruct
-    {
+  struct DenseFDThreadStruct {
     AnisotropicDiffusionVesselEnhancementImageFilter *Filter;
     TimeStepType TimeStep;
-    TimeStepType *TimeStepList;
-    bool *ValidTimeStepList;
-    };
+    std::vector< TimeStepType > TimeStepList;
+    std::vector< bool > ValidTimeStepList;
+  };
+
+  //struct DenseFDThreadStruct
+  //  {
+  //  AnisotropicDiffusionVesselEnhancementImageFilter *Filter;
+  //  TimeStepType TimeStep;
+  //  TimeStepType *TimeStepList;
+  //  bool *ValidTimeStepList;
+  //  };
     
   /** This callback method uses ImageSource::SplitRequestedRegion to acquire an
    * output region that it passes to ThreadedApplyUpdate for processing. */

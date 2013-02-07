@@ -133,7 +133,7 @@ protected:
   /** Threaded Generate Data */
   void BeforeThreadedGenerateData ();
   void ThreadedGenerateData
-    ( const OutputImageRegionType &outputRegionForThread, int threadId);
+    ( const OutputImageRegionType &outputRegionForThread, ThreadIdType threadId);
 
 private:
   HessianToObjectnessMeasureImageFilter(const Self&); //purposely not implemented
