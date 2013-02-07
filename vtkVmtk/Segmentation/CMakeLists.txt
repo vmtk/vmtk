@@ -23,16 +23,7 @@ SET (VTK_VMTK_SEGMENTATION_SRCS
   vtkvmtkSigmoidImageFilter.cxx
   vtkvmtkThresholdSegmentationLevelSetImageFilter.cxx
   vtkvmtkUpwindGradientMagnitudeImageFilter.cxx
-
-  #|| [ 81%] Building CXX object vtkVmtk/Segmentation/CMakeFiles/vtkvmtkSegmentation.dir/vtkvmtkVesselEnhancingDiffusionImageFilter.cxx.o
-  #|| /Users/pieper/slicer4/latest/SlicerVmtk4/SlicerVmtk4-build/VMTK/vtkVmtk/Segmentation/itkAnisotropicDiffusionVesselEnhancementImageFilter.h: In static member function ‘static itk::SmartPointer<itk::AnisotropicDiffusionVesselEnhancementImageFilter<TInputImage, TOutputImage, TVesselnessFilter> > itk::AnisotropicDiffusionVesselEnhancementImageFilter<TInputImage, TOutputImage, TVesselnessFilter>::New() [with TInputImage = itk::Image<float, 3u>, TOutputImage = itk::Image<float, 3u>, TVesselnessFilter = itk::HessianSmoothed3DToVesselnessMeasureImageFilter<double>]’:
-  #/Users/pieper/slicer4/latest/SlicerVmtk4/SlicerVmtk4-build/VMTK/vtkVmtk/Segmentation/vtkvmtkVesselEnhancingDiffusionImageFilter.h|250| instantiated from here
-  #/Users/pieper/slicer4/latest/SlicerVmtk4/SlicerVmtk4-build/VMTK/vtkVmtk/Segmentation/itkAnisotropicDiffusionVesselEnhancementImageFilter.h|60| error: cannot allocate an object of abstract type ‘itk::AnisotropicDiffusionVesselEnhancementImageFilter<itk::Image<float, 3u>, itk::Image<float, 3u>, itk::HessianSmoothed3DToVesselnessMeasureImageFilter<double> >’
-  #/Users/pieper/slicer4/latest/SlicerVmtk4/SlicerVmtk4-build/VMTK/vtkVmtk/Segmentation/itkAnisotropicDiffusionVesselEnhancementImageFilter.h|47| note:   because the following virtual functions are pure within ‘itk::AnisotropicDiffusionVesselEnhancementImageFilter<itk::Image<float, 3u>, itk::Image<float, 3u>, itk::HessianSmoothed3DToVesselnessMeasureImageFilter<double> >’:
-  #/Users/pieper/slicer4/latest/Slicer-superbuild/ITKv4/Modules/Core/FiniteDifference/include/itkFiniteDifferenceImageFilter.h|239| note: 	void itk::FiniteDifferenceImageFilter<TInputImage, TOutputImage>::ApplyUpdate(const typename itk::FiniteDifferenceFunction<TOutputImage>::TimeStepType&) [with TInputImage = itk::Image<float, 3u>, TOutputImage = itk::Image<float, 3u>]
-  ## 
-  #vtkvmtkVesselEnhancingDiffusionImageFilter.cxx
-
+  vtkvmtkVesselEnhancingDiffusionImageFilter.cxx
   vtkvmtkVesselEnhancingDiffusion3DImageFilter.cxx
   vtkvmtkVesselnessMeasureImageFilter.cxx
   )
