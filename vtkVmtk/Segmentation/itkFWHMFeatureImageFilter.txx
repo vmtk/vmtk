@@ -69,7 +69,7 @@ FWHMFeatureImageFilter< TInputImage, TOutputImage >
 
   // build output image as sigmoid-filtered difference between pixel and half-maximum
   // using Sigmoid functor 
-  Function::Sigmoid<InputPixelType,OutputPixelType> sigmoid;
+  itk::Functor::Sigmoid<InputPixelType,OutputPixelType> sigmoid;
   sigmoid.SetAlpha(1.0/6.0);
   sigmoid.SetBeta(0.0);
   sigmoid.SetOutputMinimum(-1.0);
