@@ -112,7 +112,7 @@ class Pype(object):
             text = ''
             self.OutputStream.write('\nThe current pype contains filename placeholders identified by the string FILE.')
             self.OutputStream.write('\nEvery occcurence of FILE is meant to be replaced with an actual file path.\n')
-            self.OutputStream.write('\nPress \'c\' to continue and be authomatically prompted for the required filenames.')
+            self.OutputStream.write('\nPress \'c\' to continue and be automathically prompted for the required filenames.')
             self.OutputStream.write('\nPress \'e\' to exit. You can still edit your pype manually and run it back.\n\n')
             while text not in ['c','e']:
                 self.OutputStream.write('> ')
