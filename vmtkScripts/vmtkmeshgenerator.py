@@ -45,6 +45,7 @@ class vmtkMeshGenerator(pypes.pypeScript):
 
         self.BoundaryLayer = 0
         self.NumberOfSubLayers = 2
+        self.SubLayerRatio = 0.5
         self.BoundaryLayerThicknessFactor = 0.25
 
         self.Tetrahedralize = 0
@@ -72,6 +73,7 @@ class vmtkMeshGenerator(pypes.pypeScript):
             ['VolumeElementScaleFactor','volumeelementfactor','float',1,'(0.0,)'],
             ['BoundaryLayer','boundarylayer','bool',1,''],
             ['NumberOfSubLayers','sublayers','int',1,'(0,)'],
+            ['SubLayerRatio','sublayerratio','float',1,'(0.0,)'],
             ['BoundaryLayerThicknessFactor','thicknessfactor','float',1,'(0.0,)'],
             ['RemeshCapsOnly','remeshcapsonly','bool',1,''],
             ['BoundaryLayerOnCaps','boundarylayeroncaps','bool',1,''],
@@ -152,7 +154,7 @@ class vmtkMeshGenerator(pypes.pypeScript):
                 boundaryLayer.ConstantThickness = False
             boundaryLayer.IncludeSurfaceCells = 0
             boundaryLayer.NumberOfSubLayers = self.NumberOfSubLayers
-            boundaryLayer.SubLayerRatio = 0.5
+            boundaryLayer.SubLayerRatio = self.SubLayerRatio
             boundaryLayer.Thickness = self.BoundaryLayerThicknessFactor * self.TargetEdgeLength
             boundaryLayer.ThicknessRatio = self.BoundaryLayerThicknessFactor * self.TargetEdgeLengthFactor
             boundaryLayer.MaximumThickness = self.BoundaryLayerThicknessFactor * self.MaxEdgeLength

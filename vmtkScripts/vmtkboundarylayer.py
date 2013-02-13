@@ -43,7 +43,7 @@ class vmtkBoundaryLayer(pypes.pypeScript):
         self.SubLayerRatio = 1.0
 
         self.UseWarpVectorMagnitudeAsThickness = 0;
-        self.ConstantThickness = 0;
+        self.ConstantThickness = 0
         self.IncludeSurfaceCells = 1
         self.IncludeSidewallCells = 1
         self.NegateWarpVectors = 0
