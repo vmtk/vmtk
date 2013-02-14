@@ -67,6 +67,7 @@ SET(SCRIPTS_SRCS
   vmtkmeshboundaryinspector.py
   vmtkmeshbranchclipper.py
   vmtkmeshclipper.py
+  vmtkmeshconnectivity.py
   vmtkmeshdatareader.py
   vmtkmeshlambda2.py
   vmtkmeshlinearize.py
@@ -81,6 +82,7 @@ SET(SCRIPTS_SRCS
   vmtkmeshtransformtoras.py
   vmtkmeshvectorfromcomponents.py
   vmtkmeshviewer.py
+  vmtkmeshvolume.py
   vmtkmeshvorticityhelicity.py
   vmtkmeshwallshearrate.py
   vmtkmeshwriter.py

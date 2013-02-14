@@ -29,6 +29,10 @@ class vmtkSurfaceMassProperties(pypes.pypeScript):
         
         self.Surface = None
 
+        self.SurfaceArea = 0.0
+        self.Volume = 0.0
+        self.ShapeIndex = 0.0
+
         self.SetScriptName('vmtksurfacemassproperties')
         self.SetScriptDoc('compute the volume of a closed surface.')
         self.SetInputMembers([

@@ -50,6 +50,7 @@ class vmtkSurfaceModeller(pypes.pypeScript):
         surfaceModellerFilter = vtk.vtkSurfaceReconstructionFilter()
         surfaceModellerFilter.SetInput(self.Surface)
         surfaceModellerFilter.SetSampleSpacing(self.SampleSpacing)
+        surfaceModellerFilter.SetNeighborhoodSize(40)
         surfaceModellerFilter.Update()
         self.Image = surfaceModellerFilter.GetOutput()
 
