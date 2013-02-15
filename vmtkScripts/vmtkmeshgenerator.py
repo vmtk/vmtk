@@ -162,6 +162,11 @@ class vmtkMeshGenerator(pypes.pypeScript):
                 boundaryLayer.SidewallCellEntityId = placeholderCellEntityId
             boundaryLayer.Execute()
 
+            #w = vtk.vtkXMLUnstructuredGridWriter()
+            #w.SetInput(boundaryLayer.Mesh)
+            #w.SetFileName('prism.vtu')
+            #w.Write()
+
             meshToSurface = vmtkscripts.vmtkMeshToSurface()
             meshToSurface.Mesh = boundaryLayer.InnerSurfaceMesh
             meshToSurface.Execute()
@@ -183,10 +188,10 @@ class vmtkMeshGenerator(pypes.pypeScript):
                 remeshing = vmtkscripts.vmtkSurfaceRemeshing()
                 remeshing.Surface = capper.Surface
                 remeshing.CellEntityIdsArrayName = self.CellEntityIdsArrayName
-                remeshing.TargetEdgeLength = self.TargetEdgeLength
+                remeshing.TargetEdgeLength = self.TargetEdgeLength * 0.5
                 remeshing.MaxEdgeLength = self.MaxEdgeLength
                 remeshing.MinEdgeLength = self.MinEdgeLength
-                remeshing.TargetEdgeLengthFactor = self.TargetEdgeLengthFactor
+                remeshing.TargetEdgeLengthFactor = self.TargetEdgeLengthFactor * 0.5
                 remeshing.TargetEdgeLengthArrayName = self.TargetEdgeLengthArrayName
                 remeshing.ElementSizeMode = self.ElementSizeMode
                 remeshing.ExcludeEntityIds = [wallEntityOffset]
@@ -220,6 +225,11 @@ class vmtkMeshGenerator(pypes.pypeScript):
             tetgen.OutputSurfaceElements = 0
             tetgen.OutputVolumeElements = 1
             tetgen.Execute()
+
+            #w = vtk.vtkXMLUnstructuredGridWriter()
+            #w.SetInput(tetgen.Mesh)
+            #w.SetFileName('tet.vtu')
+            #w.Write()
 
             if tetgen.Mesh.GetNumberOfCells() == 0 and surfaceToMesh.Mesh.GetNumberOfCells() > 0:
                 self.PrintLog('An error occurred during tetrahedralization. Will only output surface mesh and boundary layer.')

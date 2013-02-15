@@ -104,6 +104,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkBoundaryLayerGenerator : public vtkUnstructure
   virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
 
   void WarpPoints(vtkPoints* inputPoints, vtkPoints* warpedPoints, int subLayerId, bool quadratic);
+  void UnwrapSublayers(vtkUnstructuredGrid* input, vtkPoints* outputPoints);
 
   vtkDataArray* WarpVectorsArray;
   vtkDataArray* LayerThicknessArray;

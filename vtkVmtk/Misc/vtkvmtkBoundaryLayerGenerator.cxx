@@ -29,6 +29,7 @@ Version:   $Revision: 1.7 $
 #include "vtkDoubleArray.h"
 #include "vtkIntArray.h"
 #include "vtkMath.h"
+#include "vtkLine.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
@@ -229,21 +230,6 @@ int vtkvmtkBoundaryLayerGenerator::RequestData(
       }
     }
 
-  if (this->InnerSurface)
-    {
-    this->InnerSurface->Delete();
-    this->InnerSurface = NULL;
-    }
-
-  this->InnerSurface = vtkUnstructuredGrid::New();
-  this->InnerSurface->DeepCopy(input);
-  vtkPoints* innerSurfacePoints = vtkPoints::New();
-  this->WarpPoints(inputPoints,innerSurfacePoints,this->NumberOfSubLayers-1,warpQuadratic);
-  this->InnerSurface->GetPoints()->DeepCopy(innerSurfacePoints);
-  innerSurfaceCellEntityIdsArray->SetNumberOfTuples(this->InnerSurface->GetNumberOfCells());
-  innerSurfaceCellEntityIdsArray->FillComponent(0,this->InnerSurfaceCellEntityId);
-  this->InnerSurface->GetCellData()->AddArray(innerSurfaceCellEntityIdsArray);
-
   vtkIdList* edgePointIds = vtkIdList::New();
   vtkIdList* edgeNeighborCellIds = vtkIdList::New();
 
@@ -442,6 +428,8 @@ int vtkvmtkBoundaryLayerGenerator::RequestData(
       }
     }
 
+  this->UnwrapSublayers(input,outputPoints);
+
   output->SetPoints(outputPoints);
 
   int* boundaryLayerCellTypesInt = new int[boundaryLayerCellTypes->GetNumberOfIds()];
@@ -456,6 +444,28 @@ int vtkvmtkBoundaryLayerGenerator::RequestData(
   
   output->GetCellData()->AddArray(cellEntityIdsArray);
 
+  if (this->InnerSurface)
+    {
+    this->InnerSurface->Delete();
+    this->InnerSurface = NULL;
+    }
+
+  this->InnerSurface = vtkUnstructuredGrid::New();
+  this->InnerSurface->DeepCopy(input);
+
+  vtkPoints* innerSurfacePoints = vtkPoints::New();
+  innerSurfacePoints->SetNumberOfPoints(numberOfInputPoints);
+  for (i=0; i<numberOfInputPoints; i++)
+    {
+    output->GetPoint(i + numberOfInputPoints * (this->NumberOfSubLayers),point);
+    innerSurfacePoints->SetPoint(i,point);
+    }
+
+  this->InnerSurface->GetPoints()->DeepCopy(innerSurfacePoints);
+  innerSurfaceCellEntityIdsArray->SetNumberOfTuples(this->InnerSurface->GetNumberOfCells());
+  innerSurfaceCellEntityIdsArray->FillComponent(0,this->InnerSurfaceCellEntityId);
+  this->InnerSurface->GetCellData()->AddArray(innerSurfaceCellEntityIdsArray);
+
   edgePointIds->Delete();
   edgeNeighborCellIds->Delete();
   
@@ -469,6 +479,176 @@ int vtkvmtkBoundaryLayerGenerator::RequestData(
   innerSurfaceCellEntityIdsArray->Delete();
  
   return 1;
+}
+
+void vtkvmtkBoundaryLayerGenerator::UnwrapSublayers(vtkUnstructuredGrid* input, vtkPoints* outputPoints)
+{
+  vtkIdType numberOfInputPoints = input->GetNumberOfPoints();
+  vtkIdType npts, *pts;
+  vtkIdList* cellIds = vtkIdList::New();
+  vtkIdList* horizontalNeighborIds = vtkIdList::New();
+  vtkIdList* onEdgeHorizontalNeighborIds = vtkIdList::New();
+  vtkIdList* edgePointIds = vtkIdList::New();
+  vtkIdList* edgeNeighborCellIds = vtkIdList::New();
+  vtkIdType pointId, verticalNeighborId, horizontalNeighborId;
+  vtkIdType cellId, numberOfHorizontalNeighbors;
+  double verticalLength, nominalVerticalLength;
+  double point[3], direction[3], newPoint[3], newDirection[3];
+  double verticalNeighborPoint[3], horizontalNeighborPoint[3];
+  double barycenter[3];
+  double edgeDirection[3], edgePoint0[3], edgePoint1[3];
+  double warpDirection[3], offEdgeDirection[3], offEdgeComponent;
+
+  double horizontalRelaxation = 0.1;
+  double verticalRelaxation = 1.0;
+  int numberOfIterations = 1000; 
+
+  for (int n=0; n<numberOfIterations; n++)
+    {
+    for (int i=1; i<=this->NumberOfSubLayers; i++)
+      {
+      for (vtkIdType j=0; j<numberOfInputPoints; j++)
+        {
+        pointId = j + i * numberOfInputPoints;
+        outputPoints->GetPoint(pointId,point);
+
+        verticalNeighborId = pointId - numberOfInputPoints;
+        outputPoints->GetPoint(verticalNeighborId,verticalNeighborPoint);
+
+        nominalVerticalLength = sqrt(vtkMath::Distance2BetweenPoints(point,verticalNeighborPoint));
+
+        input->GetPointCells(j,cellIds);
+
+        horizontalNeighborIds->Initialize();
+        onEdgeHorizontalNeighborIds->Initialize();
+
+        // TODO: quadratic not handled here.
+        // Probably best strategy: first fix corner points.
+        // Once corner points are fixed, reinterpolate mid-edge nodes.
+
+        for (int k=0; k<cellIds->GetNumberOfIds(); k++)
+          {
+          cellId = cellIds->GetId(k);
+          input->GetCellPoints(cellId,npts,pts);
+
+          for (int p=0; p<npts; p++)
+            {
+            if (pts[p] == j)
+              {
+              continue;
+              }
+
+            // TODO: check if no edge neighbor between pts[p] and pointId
+            edgePointIds->InsertId(0,j);
+            edgePointIds->InsertId(1,pts[p]);
+
+            horizontalNeighborId = pts[p] + i * numberOfInputPoints;
+
+            input->GetCellNeighbors(cellId,edgePointIds,edgeNeighborCellIds);
+            if (edgeNeighborCellIds->GetNumberOfIds() == 0)
+              {
+              onEdgeHorizontalNeighborIds->InsertUniqueId(horizontalNeighborId);
+              }
+
+            horizontalNeighborIds->InsertUniqueId(horizontalNeighborId);
+            }
+          }
+
+        numberOfHorizontalNeighbors = horizontalNeighborIds->GetNumberOfIds();
+
+        barycenter[0] = barycenter[1] = barycenter[2] = 0.0;
+
+        for (int h=0; h<numberOfHorizontalNeighbors; h++)
+          {
+          horizontalNeighborId = horizontalNeighborIds->GetId(h);
+          outputPoints->GetPoint(horizontalNeighborId,horizontalNeighborPoint);
+          barycenter[0] += horizontalNeighborPoint[0];
+          barycenter[1] += horizontalNeighborPoint[1];
+          barycenter[2] += horizontalNeighborPoint[2];
+          }
+
+        barycenter[0] /= numberOfHorizontalNeighbors; 
+        barycenter[1] /= numberOfHorizontalNeighbors; 
+        barycenter[2] /= numberOfHorizontalNeighbors; 
+
+        newPoint[0] = point[0] + horizontalRelaxation * (barycenter[0] - point[0]);
+        newPoint[1] = point[1] + horizontalRelaxation * (barycenter[1] - point[1]);
+        newPoint[2] = point[2] + horizontalRelaxation * (barycenter[2] - point[2]);
+
+        direction[0] = point[0] - verticalNeighborPoint[0];
+        direction[1] = point[1] - verticalNeighborPoint[1];
+        direction[2] = point[2] - verticalNeighborPoint[2];
+
+        vtkMath::Normalize(direction);
+
+        newDirection[0] = newPoint[0] - verticalNeighborPoint[0];
+        newDirection[1] = newPoint[1] - verticalNeighborPoint[1];
+        newDirection[2] = newPoint[2] - verticalNeighborPoint[2];
+
+        verticalLength = vtkMath::Normalize(newDirection);
+
+        verticalLength = verticalLength + verticalRelaxation * (nominalVerticalLength - verticalLength);
+
+        if (vtkMath::Dot(newDirection,direction) < 0.0)
+          {
+          newDirection[0] *= -1.0;
+          newDirection[1] *= -1.0;
+          newDirection[2] *= -1.0;
+          }
+
+        newPoint[0] = verticalNeighborPoint[0] + verticalLength * newDirection[0];
+        newPoint[1] = verticalNeighborPoint[1] + verticalLength * newDirection[1];
+        newPoint[2] = verticalNeighborPoint[2] + verticalLength * newDirection[2];
+
+        if (onEdgeHorizontalNeighborIds->GetNumberOfIds() >= 2)
+          {
+          continue;
+          //double t0, t1, closestPoint0[3], closestPoint1[3];
+          //outputPoints->GetPoint(onEdgeHorizontalNeighborIds->GetId(0),edgePoint0);
+          //outputPoints->GetPoint(onEdgeHorizontalNeighborIds->GetId(1),edgePoint1);
+
+          //double distance0 = vtkLine::DistanceToLine(newPoint,point,edgePoint0,t0,closestPoint0);
+          //double distance1 = vtkLine::DistanceToLine(newPoint,point,edgePoint1,t1,closestPoint1);
+
+          //newPoint[0] = closestPoint0[0];
+          //newPoint[1] = closestPoint0[1];
+          //newPoint[2] = closestPoint0[2];
+
+          //if (distance1 < distance0)
+          //  {
+          //  newPoint[0] = closestPoint1[0];
+          //  newPoint[1] = closestPoint1[1];
+          //  newPoint[2] = closestPoint1[2];
+          //  }
+
+          //outputPoints->GetPoint(onEdgeHorizontalNeighborIds->GetId(0),edgePoint0);
+          //outputPoints->GetPoint(onEdgeHorizontalNeighborIds->GetId(1),edgePoint1);
+          //edgeDirection[0] = edgePoint1[0] - edgePoint0[0];
+          //edgeDirection[1] = edgePoint1[1] - edgePoint0[1];
+          //edgeDirection[2] = edgePoint1[2] - edgePoint0[2];
+          //vtkMath::Normalize(edgeDirection);
+
+          //this->WarpVectorsArray->GetTuple(i,warpDirection);
+          //vtkMath::Normalize(warpDirection);
+
+          //vtkMath::Cross(warpDirection,edgeDirection,offEdgeDirection);
+          //offEdgeComponent = vtkMath::Dot(newDirection,offEdgeDirection);
+
+          //newDirection[0] = newDirection[0] - offEdgeComponent * offEdgeDirection[0];
+          //newDirection[1] = newDirection[1] - offEdgeComponent * offEdgeDirection[1];
+          //newDirection[2] = newDirection[2] - offEdgeComponent * offEdgeDirection[2];
+          }
+
+        outputPoints->SetPoint(pointId,newPoint);
+        }
+      }
+    }
+
+  horizontalNeighborIds->Delete();
+  onEdgeHorizontalNeighborIds->Delete();
+  edgePointIds->Delete();
+  edgeNeighborCellIds->Delete();
+  cellIds->Delete();
 }
 
 void vtkvmtkBoundaryLayerGenerator::WarpPoints(vtkPoints* inputPoints, vtkPoints* warpedPoints, int subLayerId, bool quadratic)
