@@ -239,7 +239,6 @@ class vmtkDistanceToSpheres(pypes.pypeScript):
                 self.MinDistance = float(splitInputString[2])
             if len(splitInputString) >= 4:
                 self.MaxDistance = float(splitInputString[3])
-            self.vmtkRenderer.Render()
 
     def SwitchModeCallback(self,obj):
 	    #Switch beetween examien and interact mode

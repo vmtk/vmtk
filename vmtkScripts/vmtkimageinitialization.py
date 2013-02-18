@@ -37,7 +37,6 @@ class vmtkImageInitialization(pypes.pypeScript):
 
         self.InitialLevelSets = None
         self.Surface = None
-        self.InitialLevelSetsList = []
 
         self.MergedInitialLevelSets = None
 
@@ -440,36 +439,17 @@ class vmtkImageInitialization(pypes.pypeScript):
                                 '4': self.SeedInitialize
                                 }
   
-        self.InitialLevelSetsList = []
         endInitialization = False
         while not endInitialization:
             queryString = 'Please choose initialization type: \n 0: colliding fronts;\n 1: fast marching;\n 2: threshold;\n 3: isosurface;\n 4: seed\n '
             initializationType = self.InputText(queryString,self.InitializationTypeValidator)
             initializationMethods[initializationType]()
-            self.InitialLevelSetsList.append(self.InitialLevelSets)
-            currentLevelSetInd = len(self.InitialLevelSetsList)-1
-            endAccept = False
-            while not endAccept:
-                self.DisplayLevelSetSurface(self.InitialLevelSetsList[currentLevelSetInd])
-                queryString = 'Accept initialization? (y/n'
-                if currentLevelSetInd > 0 :
-                    queryString = queryString + '/p'
-                if currentLevelSetInd < (len(self.InitialLevelSetsList)-1) :
-                    queryString = queryString + '/x'
-                queryString = queryString + '): '
-                inputString = self.InputText(queryString)
-                if inputString == 'y':
-                    self.InitialLevelSets = self.InitialLevelSetsList[currentLevelSetInd]
-                    self.InitialLevelSetsList = []
-                    self.MergeLevelSets()
-                    self.DisplayLevelSetSurface(self.MergedInitialLevelSets)
-                    endAccept = True
-                elif inputString == 'n' :
-                    endAccept = True
-                elif inputString == 'p':
-                    currentLevelSetInd = currentLevelSetInd - 1
-                elif inputString == 'x':
-                    currentLevelSetInd = currentLevelSetInd + 1
+            self.DisplayLevelSetSurface(self.InitialLevelSets)
+            queryString = 'Accept initialization? (y/n): '
+            inputString = self.InputText(queryString,self.YesNoValidator)
+            if inputString == 'y':
+                self.MergeLevelSets()
+                self.DisplayLevelSetSurface(self.MergedInitialLevelSets)
             queryString = 'Initialize another branch? (y/n): '
             inputString = self.InputText(queryString,self.YesNoValidator)
             if inputString == 'y':

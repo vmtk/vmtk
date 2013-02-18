@@ -183,7 +183,6 @@ class vmtkDijkstraDistanceToPoints(pypes.pypeScript):
                 self.MinDistance = float(splitInputString[2])
             if len(splitInputString) >= 4:
                 self.MaxDistance = float(splitInputString[3])
-            self.vmtkRenderer.Render()
 
     def ExamineCallback(self, obj):
 	    #Switch beetween examien and interact mode
