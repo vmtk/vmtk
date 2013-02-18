@@ -36,8 +36,6 @@ class vmtkImageVOIPainter(pypes.pypeScript):
         self.BoxBounds = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
         self.PaintValue = 0.0
 
-        self.PaintedImage = vtk.vtkImageData()
-
         self.vmtkRenderer = None
         self.OwnRenderer = 0
 
@@ -64,10 +62,10 @@ class vmtkImageVOIPainter(pypes.pypeScript):
             ])
 
     def InteractCallback(self):
-	if self.BoxWidget.GetEnabled() == 1:
-	    self.BoxWidget.SetEnabled(0)
-	else:
-	    self.BoxWidget.SetEnabled(1)
+        if self.BoxWidget.GetEnabled() == 1:
+            self.BoxWidget.SetEnabled(0)
+        else:
+            self.BoxWidget.SetEnabled(1)
 
     def HideCube(self,object, event):
         self.CubeActor.VisibilityOff()
@@ -157,7 +155,7 @@ class vmtkImageVOIPainter(pypes.pypeScript):
 
     def PaintVOI(self):
 
-        wholeExtent = self.Image.GetWholeExtent()
+        wholeExtent = self.Image.GetWholeExtent()[:]
         origin = self.Image.GetOrigin()
         spacing = self.Image.GetSpacing()
 
@@ -169,18 +167,32 @@ class vmtkImageVOIPainter(pypes.pypeScript):
         paintedVOI[4] = max(wholeExtent[4],int(math.ceil((self.BoxBounds[4]-origin[2])/spacing[2])))
         paintedVOI[5] = min(wholeExtent[5],int(math.floor((self.BoxBounds[5]-origin[2])/spacing[2])))
 
+        # extent trick. TODO: fix vtkvmtkImageBoxPainter
+        paintedVOI[0] -= wholeExtent[0]
+        paintedVOI[1] -= wholeExtent[0]
+        paintedVOI[2] -= wholeExtent[2]
+        paintedVOI[3] -= wholeExtent[2]
+        paintedVOI[4] -= wholeExtent[4]
+        paintedVOI[5] -= wholeExtent[4]
+
+        translate = vtk.vtkImageTranslateExtent()
+        translate.SetInput(self.Image)
+        translate.SetTranslation(-wholeExtent[0],-wholeExtent[2],-wholeExtent[4])
+        translate.Update()
+
         imageBoxPainter = vtkvmtk.vtkvmtkImageBoxPainter()
-        imageBoxPainter.SetInput(self.Image)
+        imageBoxPainter.SetInput(translate.GetOutput())
         imageBoxPainter.SetBoxExtent(paintedVOI)
         imageBoxPainter.SetBoxDefinitionToUseExtent()
         imageBoxPainter.SetPaintValue(self.PaintValue)
         imageBoxPainter.Update()
 
-        self.PaintedImage.ShallowCopy(imageBoxPainter.GetOutput())
-        self.PaintedImage.Update()
+        translate = vtk.vtkImageTranslateExtent()
+        translate.SetInput(imageBoxPainter.GetOutput())
+        translate.SetTranslation(wholeExtent[0],wholeExtent[2],wholeExtent[4])
+        translate.Update()
 
-        if self.PaintedImage.GetSource():
-            self.PaintedImage.GetSource().UnregisterAllOutputs()
+        self.Image.ShallowCopy(translate.GetOutput())
 
     def Execute(self):
 
@@ -209,15 +221,12 @@ class vmtkImageVOIPainter(pypes.pypeScript):
             self.Display()
             while (self.BoxActive == 1):
                 self.PaintVOI()
-                self.Image = self.PaintedImage
                 self.Display()
         else:
             self.PaintVOI()
 
         if self.OwnRenderer:
             self.vmtkRenderer.Deallocate()
-
-        self.Image = self.PaintedImage
 
 
 if __name__=='__main__':
