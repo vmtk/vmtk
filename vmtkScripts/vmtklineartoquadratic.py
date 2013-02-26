@@ -32,6 +32,7 @@ class vmtkLinearToQuadratic(pypes.pypeScript):
         self.Surface = None
         self.Mode = 'volume'
         self.SubdivisionMethod = 'linear'
+        self.NumberOfNodesHexahedra = 27
         self.UseBiquadraticWedge = True
         self.CapSurface = False
         self.CellEntityIdsArrayName = None
@@ -53,7 +54,8 @@ class vmtkLinearToQuadratic(pypes.pypeScript):
             ['ProjectedCellEntityId','projectedid','int',1,'','id of the entity that is to be projected onto the reference surface'],
             ['QuadratureOrder','quadratureorder','int',1,'','quadrature order for checking negative Jacobians'],
             ['NegativeJacobianTolerance','jacobiantolerance','float',1,'','tolerance for the evaluation of negative Jacobians'],
-            ['SubdivisionMethod','subdivisionmethod','str',1,'["linear","butterfly"]','subdivision method for surface elements']
+            ['SubdivisionMethod','subdivisionmethod','str',1,'["linear","butterfly"]','subdivision method for surface elements'],
+            ['NumberOfNodesHexahedra','hexahedra','int',1,'','Hexahedral element types by #nodes: 8(linear), 20(quadratic), 24(biquadratic), 27(triquadratic)']
             ])
         self.SetOutputMembers([
             ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh','vmtkmeshwriter']])
@@ -81,6 +83,7 @@ class vmtkLinearToQuadratic(pypes.pypeScript):
             linearToQuadraticFilter.SetProjectedCellEntityId(self.ProjectedCellEntityId)
             linearToQuadraticFilter.SetQuadratureOrder(self.QuadratureOrder)
             linearToQuadraticFilter.SetNegativeJacobianTolerance(self.NegativeJacobianTolerance)
+            linearToQuadraticFilter.SetNumberOfNodesHexahedra(self.NumberOfNodesHexahedra)
         elif self.Mode == 'surface':
             linearToQuadraticFilter = vtkvmtk.vtkvmtkLinearToQuadraticSurfaceMeshFilter()
             if self.SubdivisionMethod == 'linear':
