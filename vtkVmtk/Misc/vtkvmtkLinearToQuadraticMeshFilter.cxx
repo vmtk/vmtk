@@ -150,6 +150,20 @@ int vtkvmtkLinearToQuadraticMeshFilter::RequestData(
 
   int numberOfInputCells = numberOfInputTetras + numberOfInputTriangles + numberOfInputWedges + numberOfInputHexahedra + numberOfInputQuads;
 
+  cout << "\n\n    number of input quads: ";
+  cout << numberOfInputQuads;
+  cout << "\n    number of input hexahedra: ";
+  cout << numberOfInputHexahedra;
+  cout << "\n    number of input triangles: ";
+  cout << numberOfInputTriangles;
+  cout << "\n    number of input tetrahedra: ";
+  cout << numberOfInputTetras;
+  cout << "\n    number of input wedges: ";
+  cout << numberOfInputWedges;
+  cout << "\n    total number of input cells: ";
+  cout << numberOfInputCells;
+  cout << "\n\n";
+
   output->SetPoints(outputPoints);
   output->Allocate(numberOfInputCells);
 
@@ -167,9 +181,8 @@ int vtkvmtkLinearToQuadraticMeshFilter::RequestData(
   vtkIdType pointId0, pointId1, pointId2, pointId3, pointId4, pointId5, pointId6, pointId7;
   double point[3];
   vtkIdType edgePointId01, edgePointId02, edgePointId03, edgePointId12, edgePointId13, edgePointId23;
-  vtkIdType edgePointId14, edgePointId34, edgePointId45, edgePointId35, edgePointId25, edgePointId30;
+  vtkIdType edgePointId14, edgePointId34, edgePointId45, edgePointId35, edgePointId25, edgePointId37;
   vtkIdType edgePointId56, edgePointId67, edgePointId74, edgePointId04, edgePointId15, edgePointId26;
-  vtkIdType edgePointId37;
   vtkIdType facePointId0143, facePointId1254, facePointId2035;
   vtkIdType facePointId3047, facePointId1265, facePointId0154, facePointId2376, facePointId0123, facePointId4567;
   vtkIdType midVolumePoint;
@@ -608,16 +621,16 @@ int vtkvmtkLinearToQuadraticMeshFilter::RequestData(
       edgeTable->InsertEdge(pointId2,pointId3,edgePointId23);
       }
 
-    edgePointId30 = edgeTable->IsEdge(pointId0,pointId3);
-    if (edgePointId30 == -1)
+    edgePointId03 = edgeTable->IsEdge(pointId0,pointId3);
+    if (edgePointId03 == -1)
       {
       for (j=0; j<3; j++)
 	{
 	point[j] = 0.5 * (point0[j] + point3[j]);
 	}
-      edgePointId30 = outputPoints->InsertNextPoint(point);
-      outputPointData->InterpolateEdge(inputPointData,edgePointId30,pointId0,pointId3,0.5);
-      edgeTable->InsertEdge(pointId0,pointId3,edgePointId30);
+      edgePointId03 = outputPoints->InsertNextPoint(point);
+      outputPointData->InterpolateEdge(inputPointData,edgePointId03,pointId0,pointId3,0.5);
+      edgeTable->InsertEdge(pointId0,pointId3,edgePointId03);
       }
 
     edgePointId04 = edgeTable->IsEdge(pointId0,pointId4);
@@ -731,12 +744,17 @@ int vtkvmtkLinearToQuadraticMeshFilter::RequestData(
 	if (input->GetCellType(cellNeighbors->GetId(j)) == VTK_HEXAHEDRON)
 	  {
 	  neighborCellId = cellNeighbors->GetId(j);
+	  facePointId0154 = faceTable->IsEdge(cellId,neighborCellId);
 	  break;
 	  }
 	}
+      if (cellNeighbors->GetNumberOfIds() == 0)
+	{
+	  neighborCellId = 0;
+	  facePointId0154 = -1;
+	}
       if (neighborCellId != -1)
 	{
-	facePointId0154 = faceTable->IsEdge(cellId,neighborCellId);
 	if (facePointId0154 == -1)
 	  {
 	  for (j=0; j<3; j++)
@@ -761,12 +779,17 @@ int vtkvmtkLinearToQuadraticMeshFilter::RequestData(
 	if (input->GetCellType(cellNeighbors->GetId(j)) == VTK_HEXAHEDRON)
 	  {
 	  neighborCellId = cellNeighbors->GetId(j);
+	  facePointId1265 = faceTable->IsEdge(cellId,neighborCellId);
 	  break;
 	  }
 	}
+      if (cellNeighbors->GetNumberOfIds() == 0)
+	{
+	  neighborCellId = 0;
+	  facePointId1265 = -1;
+	}
       if (neighborCellId != -1)
 	{
-	facePointId1265 = faceTable->IsEdge(cellId,neighborCellId);
 	if (facePointId1265 == -1)
 	  {
 	  for (j=0; j<3; j++)
@@ -791,12 +814,17 @@ int vtkvmtkLinearToQuadraticMeshFilter::RequestData(
 	if (input->GetCellType(cellNeighbors->GetId(j)) == VTK_HEXAHEDRON)
 	  {
 	  neighborCellId = cellNeighbors->GetId(j);
+	  facePointId2376 = faceTable->IsEdge(cellId,neighborCellId);
 	  break;
 	  }
 	}
+      if (cellNeighbors->GetNumberOfIds() == 0)
+	{
+	  neighborCellId = 0;
+	  facePointId2376 = -1;
+	}
       if (neighborCellId != -1)
 	{
-	facePointId2376 = faceTable->IsEdge(cellId,neighborCellId);
 	if (facePointId2376 == -1)
 	  {
 	  for (j=0; j<3; j++)
@@ -821,12 +849,17 @@ int vtkvmtkLinearToQuadraticMeshFilter::RequestData(
 	if (input->GetCellType(cellNeighbors->GetId(j)) == VTK_HEXAHEDRON)
 	  {
 	  neighborCellId = cellNeighbors->GetId(j);
+	  facePointId3047 = faceTable->IsEdge(cellId,neighborCellId);
 	  break;
 	  }
 	}
+      if (cellNeighbors->GetNumberOfIds() == 0)
+	{
+	  neighborCellId = 0;
+	  facePointId3047 = -1;
+	}
       if (neighborCellId != -1)
 	{
-	facePointId3047 = faceTable->IsEdge(cellId,neighborCellId);
 	if (facePointId3047 == -1)
 	  {
 	  for (j=0; j<3; j++)
@@ -853,12 +886,17 @@ int vtkvmtkLinearToQuadraticMeshFilter::RequestData(
 	  if (input->GetCellType(cellNeighbors->GetId(j)) == VTK_HEXAHEDRON)
 	    {
 	    neighborCellId = cellNeighbors->GetId(j);
+	    facePointId0123 = faceTable->IsEdge(cellId,neighborCellId);
 	    break;
 	    }
 	  }
+	if (cellNeighbors->GetNumberOfIds() == 0)
+	  {
+	    neighborCellId = 0;
+	    facePointId0123 = -1;
+	  }
 	if (neighborCellId != -1)
 	  {
-	  facePointId0123 = faceTable->IsEdge(cellId,neighborCellId);
 	  if (facePointId0123 == -1)
 	    {
 	    for (j=0; j<3; j++)
@@ -883,12 +921,17 @@ int vtkvmtkLinearToQuadraticMeshFilter::RequestData(
 	  if (input->GetCellType(cellNeighbors->GetId(j)) == VTK_HEXAHEDRON)
 	    {
 	    neighborCellId = cellNeighbors->GetId(j);
+	    facePointId4567 = faceTable->IsEdge(cellId,neighborCellId);
 	    break;
 	    }
 	  }
+	if (cellNeighbors->GetNumberOfIds() == 0)
+	  {
+	    neighborCellId = 0;
+	    facePointId4567 = -1;
+	  }
 	if (neighborCellId != -1)
 	  {
-	  facePointId4567 = faceTable->IsEdge(cellId,neighborCellId);
 	  if (facePointId4567 == -1)
 	    {
 	    for (j=0; j<3; j++)
@@ -930,7 +973,7 @@ int vtkvmtkLinearToQuadraticMeshFilter::RequestData(
     pts[8] = edgePointId01;
     pts[9] = edgePointId12;
     pts[10] = edgePointId23;
-    pts[11] = edgePointId30;
+    pts[11] = edgePointId03;
     pts[12] = edgePointId45;
     pts[13] = edgePointId56;
     pts[14] = edgePointId67;
@@ -1199,32 +1242,17 @@ int vtkvmtkLinearToQuadraticMeshFilter::RequestData(
       facePointIds->InsertNextId(pointId3);
       input->GetCellNeighbors(cellId,facePointIds,cellNeighbors);
       neighborCellId = -1;
-      for (j=0; j<cellNeighbors->GetNumberOfIds(); j++)
+      for (j=0; j<3; j++)
 	{
-	if (input->GetCellType(cellNeighbors->GetId(j)) == VTK_QUAD)
-	  {
-	  neighborCellId = cellNeighbors->GetId(j);
-	  break;
-	  }
+	point[j] = 0.25 * (point0[j] + point1[j] + point2[j] + point3[j]);
 	}
-      if (neighborCellId != -1)
-	{
-	facePointId0123 = faceTable->IsEdge(cellId,neighborCellId);
-	if (facePointId0123 == -1)
-	  {
-	  for (j=0; j<3; j++)
-	    {
-	    point[j] = 0.25 * (point0[j] + point1[j] + point2[j] + point3[j]);
-	    }
-	  facePointId0123 = outputPoints->InsertNextPoint(point);
-	  outputPointData->InterpolatePoint(inputPointData,facePointId0123,facePointIds,weights);
-	  faceTable->InsertEdge(cellId,neighborCellId,facePointId0123);
-	  }
-	}
+      facePointId0123 = outputPoints->InsertNextPoint(point);
+      outputPointData->InterpolatePoint(inputPointData,facePointId0123,facePointIds,weights);
 
       if (project)
 	{
-	  surfaceFaceTable->InsertEdge(cellId,neighborCellId,facePointId0123);
+	  //      	  surfaceFaceTable->InsertEdge(cellId,neighborCellId,facePointId0123);
+	  //	  surfaceEdgeTable->InsertEdge(cellId,neighborCellId,facePointId0123);
 	}
       pts[8] = facePointId0123;
       }
@@ -1238,7 +1266,7 @@ int vtkvmtkLinearToQuadraticMeshFilter::RequestData(
 	  newCellId = output->InsertNextCell(VTK_QUADRATIC_QUAD, 8, pts);
 	  break;
 	}
-      case 24 || 27:
+      case 27:
 	{
 	  newCellId = output->InsertNextCell(VTK_BIQUADRATIC_QUAD, 9, pts);
 	  break;
@@ -1246,7 +1274,7 @@ int vtkvmtkLinearToQuadraticMeshFilter::RequestData(
       default:
 	{
 	  newCellId = output->InsertNextCell(VTK_QUAD, 4, pts);
-	  vtkErrorMacro(<<"Invalid number of nodes for a quadratic hexahedral mesh- choose 20, 24, or 27.");
+	  vtkErrorMacro(<<"Invalid number of nodes (" << this->NumberOfNodesHexahedra << ") for a hexahedral mesh with quadratic quad surface- choose 20 or 27.\n");
 	  return 1;
 	}
       }
@@ -1406,13 +1434,19 @@ int vtkvmtkLinearToQuadraticMeshFilter::RequestData(
 	      input->GetCellType(cellNeighbors->GetId(j)) == VTK_TRIQUADRATIC_HEXAHEDRON)
 	    {
 	    neighborCellId = cellNeighbors->GetId(j);
+	    facePointId0123 = faceTable->IsEdge(cellId,neighborCellId);
 	    break;
 	    }
 	  }
-	if (neighborCellId != -1)
+	if (cellNeighbors->GetNumberOfIds() == 0)
 	  {
-	  facePointId0123 = faceTable->IsEdge(cellId,neighborCellId);
+	    neighborCellId = 0;
+	    facePointId0123 = -1;
 	  }
+	// if (neighborCellId != -1)
+	//   {
+	//     facePointId0123 = faceTable->IsEdge(cellId,neighborCellId);
+	//   }
 	}
    
       if (locator)
