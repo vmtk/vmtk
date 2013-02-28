@@ -294,6 +294,10 @@ int vtkvmtkBoundaryLayerGenerator::RequestData(
               continue;
               }
 
+            if (jnext < j) {
+              cout<<j<<" "<<jnext<<endl;
+            }
+
             quadPts[0] = prismPts[j];
             quadPts[1] = prismPts[jnext];
             quadPts[2] = prismPts[jnext+npts];

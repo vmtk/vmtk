@@ -160,6 +160,8 @@ void vtkvmtkDolfinWriter::WriteData()
     vtkIdList* triangleToLocalFacetId = vtkIdList::New();
     triangleToLocalFacetId->SetNumberOfIds(numberOfTriangles);
 
+    cout<<"NUMBER OF TRIANGLES "<<numberOfTriangles<<endl;
+
     int interiorFacetsFound = 0;
     int exteriorFacetsFound = 0;
     for (int i=0; i<numberOfTriangles; i++)
@@ -181,6 +183,10 @@ void vtkvmtkDolfinWriter::WriteData()
         exteriorFacetsFound++;
         }
 
+      if (cellIds->GetNumberOfIds() < 1) 
+        {
+        cout<<"E: cell id "<<triangleCellId<<" n "<<cellIds->GetNumberOfIds()<<endl;
+        }
       // Get neighbor cell to facet, pick the one with smallest index if two (interior facet)
       vtkIdType cellId = cellIds->GetId(0);
       if (cellIds->GetNumberOfIds() == 2  &&  cellIds->GetId(1) < cellId)

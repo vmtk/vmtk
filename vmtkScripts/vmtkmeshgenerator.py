@@ -162,11 +162,6 @@ class vmtkMeshGenerator(pypes.pypeScript):
                 boundaryLayer.SidewallCellEntityId = placeholderCellEntityId
             boundaryLayer.Execute()
 
-            #w = vtk.vtkXMLUnstructuredGridWriter()
-            #w.SetInput(boundaryLayer.Mesh)
-            #w.SetFileName('prism.vtu')
-            #w.Write()
-
             meshToSurface = vmtkscripts.vmtkMeshToSurface()
             meshToSurface.Mesh = boundaryLayer.InnerSurfaceMesh
             meshToSurface.Execute()
