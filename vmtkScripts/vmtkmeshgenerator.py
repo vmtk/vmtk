@@ -36,6 +36,7 @@ class vmtkMeshGenerator(pypes.pypeScript):
         self.TargetEdgeLengthArrayName = ''
         self.MaxEdgeLength = 1E16
         self.MinEdgeLength = 0.0
+        self.TriangleSplitFactor = 5.0
         self.CellEntityIdsArrayName = 'CellEntityIds'
         self.ElementSizeMode = 'edgelength'
         self.VolumeElementScaleFactor = 0.8
@@ -64,6 +65,7 @@ class vmtkMeshGenerator(pypes.pypeScript):
             ['TargetEdgeLength','edgelength','float',1,'(0.0,)'],
             ['TargetEdgeLengthArrayName','edgelengtharray','str',1],
             ['TargetEdgeLengthFactor','edgelengthfactor','float',1,'(0.0,)'],
+            ['TriangleSplitFactor','trianglesplitfactor','float',1,'(0.0,)'],
             ['MaxEdgeLength','maxedgelength','float',1,'(0.0,)'],
             ['MinEdgeLength','minedgelength','float',1,'(0.0,)'],
             ['CellEntityIdsArrayName','entityidsarray','str',1],
@@ -120,6 +122,7 @@ class vmtkMeshGenerator(pypes.pypeScript):
         remeshing.MinEdgeLength = self.MinEdgeLength
         remeshing.TargetEdgeLengthFactor = self.TargetEdgeLengthFactor
         remeshing.TargetEdgeLengthArrayName = self.TargetEdgeLengthArrayName
+        remeshing.TriangleSplitFactor = self.TriangleSplitFactor
         remeshing.ElementSizeMode = self.ElementSizeMode
         if self.RemeshCapsOnly:
             remeshing.ExcludeEntityIds = [wallEntityOffset]

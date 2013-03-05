@@ -62,6 +62,9 @@ public:
   vtkSetMacro(TargetAreaFactor,double);
   vtkGetMacro(TargetAreaFactor,double);
 
+  vtkSetMacro(TriangleSplitFactor,double);
+  vtkGetMacro(TriangleSplitFactor,double);
+
   vtkSetMacro(MinAreaFactor,double);
   vtkGetMacro(MinAreaFactor,double);
 
@@ -143,6 +146,7 @@ protected:
   int EdgeFlipConnectivityOptimizationIteration();
   int EdgeFlipIteration();
   int EdgeCollapseIteration();
+  int TriangleSplitIteration();
   int EdgeSplitIteration();
   int PointRelocationIteration(bool projectToSurface=true);
 
@@ -150,6 +154,7 @@ protected:
   int TestConnectivityFlipEdge(vtkIdType pt1, vtkIdType pt2);
   int TestDelaunayFlipEdge(vtkIdType pt1, vtkIdType pt2);
   int TestAspectRatioCollapseEdge(vtkIdType cellId, vtkIdType& pt1, vtkIdType& pt2);
+  int TestTriangleSplit(vtkIdType cellId);
   int TestAreaSplitEdge(vtkIdType cellId, vtkIdType& pt1, vtkIdType& pt2);
   
   int IsElementExcluded(vtkIdType cellId);
@@ -199,6 +204,7 @@ protected:
   double MaxArea;
   double MinArea;
   double MinAreaFactor;
+  double TriangleSplitFactor;
   char* TargetAreaArrayName;
 
   char* CellEntityIdsArrayName;
