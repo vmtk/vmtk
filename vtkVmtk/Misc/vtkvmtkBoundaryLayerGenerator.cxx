@@ -503,6 +503,8 @@ void vtkvmtkBoundaryLayerGenerator::UnwrapSublayers(vtkUnstructuredGrid* input, 
   double verticalRelaxation = 1.0;
   int numberOfIterations = 1000; 
 
+  // TODO: try unwrapping the whole layer at once, not the individual sub-layers
+  
   for (int n=0; n<numberOfIterations; n++)
     {
     for (int i=1; i<=this->NumberOfSubLayers; i++)

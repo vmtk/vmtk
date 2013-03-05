@@ -43,6 +43,7 @@ class vmtkMeshGenerator(pypes.pypeScript):
         self.CappingMethod = 'simple'
         self.SkipCapping = 0
         self.RemeshCapsOnly = 0
+        self.EndcapsEdgeLengthFactor = 1.0
 
         self.BoundaryLayer = 0
         self.NumberOfSubLayers = 2
@@ -66,6 +67,7 @@ class vmtkMeshGenerator(pypes.pypeScript):
             ['TargetEdgeLengthArrayName','edgelengtharray','str',1],
             ['TargetEdgeLengthFactor','edgelengthfactor','float',1,'(0.0,)'],
             ['TriangleSplitFactor','trianglesplitfactor','float',1,'(0.0,)'],
+            ['EndcapsEdgeLengthFactor','endcapsedgelengthfactor','float',1,'(0.0,)'],
             ['MaxEdgeLength','maxedgelength','float',1,'(0.0,)'],
             ['MinEdgeLength','minedgelength','float',1,'(0.0,)'],
             ['CellEntityIdsArrayName','entityidsarray','str',1],
@@ -186,10 +188,10 @@ class vmtkMeshGenerator(pypes.pypeScript):
                 remeshing = vmtkscripts.vmtkSurfaceRemeshing()
                 remeshing.Surface = capper.Surface
                 remeshing.CellEntityIdsArrayName = self.CellEntityIdsArrayName
-                remeshing.TargetEdgeLength = self.TargetEdgeLength * 0.5
+                remeshing.TargetEdgeLength = self.TargetEdgeLength * self.EndcapsEdgeLengthFactor
                 remeshing.MaxEdgeLength = self.MaxEdgeLength
                 remeshing.MinEdgeLength = self.MinEdgeLength
-                remeshing.TargetEdgeLengthFactor = self.TargetEdgeLengthFactor * 0.5
+                remeshing.TargetEdgeLengthFactor = self.TargetEdgeLengthFactor * self.EndcapsEdgeLengthFactor
                 remeshing.TargetEdgeLengthArrayName = self.TargetEdgeLengthArrayName
                 remeshing.TriangleSplitFactor = self.TriangleSplitFactor
                 remeshing.ElementSizeMode = self.ElementSizeMode
