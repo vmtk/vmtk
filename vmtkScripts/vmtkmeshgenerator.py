@@ -191,6 +191,7 @@ class vmtkMeshGenerator(pypes.pypeScript):
                 remeshing.MinEdgeLength = self.MinEdgeLength
                 remeshing.TargetEdgeLengthFactor = self.TargetEdgeLengthFactor * 0.5
                 remeshing.TargetEdgeLengthArrayName = self.TargetEdgeLengthArrayName
+                remeshing.TriangleSplitFactor = self.TriangleSplitFactor
                 remeshing.ElementSizeMode = self.ElementSizeMode
                 remeshing.ExcludeEntityIds = [wallEntityOffset]
                 remeshing.Execute()
