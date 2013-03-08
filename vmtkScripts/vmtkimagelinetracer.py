@@ -145,12 +145,15 @@ class vmtkImageLineTracer(pypes.pypeScript):
         self.SliceVOI[self.Axis*2] = wholeExtent[self.Axis*2]
         self.SliceVOI[self.Axis*2+1] = wholeExtent[self.Axis*2]
 
-        range = self.Image.GetScalarRange()
+        scalarRange = self.Image.GetScalarRange()
+        scale = 255.0
+        if scalarRange[1]-scalarRange[0] > 0.0:
+            scale = 255.0 / (scalarRange[1]-scalarRange[0])
 
         imageShifter = vtk.vtkImageShiftScale()
         imageShifter.SetInput(self.Image)
-        imageShifter.SetShift(-1.0*range[0])
-        imageShifter.SetScale(255.0/(range[1]-range[0]))
+        imageShifter.SetShift(-1.0 * scalarRange[0])
+        imageShifter.SetScale(scale)
         imageShifter.SetOutputScalarTypeToUnsignedChar()
 
         widgetImage = imageShifter.GetOutput()
