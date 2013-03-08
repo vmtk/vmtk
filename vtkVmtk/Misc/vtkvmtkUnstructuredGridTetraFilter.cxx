@@ -83,8 +83,6 @@ int vtkvmtkUnstructuredGridTetraFilter::TriangulateQuad(vtkUnstructuredGrid* out
 
   output->GetCellNeighbors(-1,ptIds,neighborCellIds);
 
-  cout<<neighborCellIds->GetNumberOfIds()<<endl;
-
   if (neighborCellIds->GetNumberOfIds() > 0)
     {
     ptIds->InsertId(3,quadPtIds->GetId(0));

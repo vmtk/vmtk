@@ -331,7 +331,7 @@ class vmtkMeshGenerator(pypes.pypeScript):
 
         if self.Tetrahedralize:
 
-            tetrahedralize = vtk.vtkDataSetTriangleFilter()
+            tetrahedralize = vtkvmtk.vtkvmtkUnstructuredGridTetraFilter()
             tetrahedralize.SetInput(self.Mesh)
             tetrahedralize.Update()
 
