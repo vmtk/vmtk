@@ -49,7 +49,7 @@ class vmtkSurfaceProjection(pypes.pypeScript):
         if self.ReferenceSurface == None:
             self.PrintError('Error: No ReferenceSurface.')
 
-        self.InputInfo('Computing projection.')
+        self.PrintLog('Computing projection')
         surfaceProjection = vtkvmtk.vtkvmtkSurfaceProjection()
         surfaceProjection.SetInput(self.Surface)
         surfaceProjection.SetReferenceSurface(self.ReferenceSurface)

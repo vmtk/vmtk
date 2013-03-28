@@ -80,6 +80,9 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkBoundaryLayerGenerator : public vtkUnstructure
   vtkGetMacro(SubLayerRatio,double);
   vtkSetMacro(SubLayerRatio,double);
 
+  vtkGetMacro(NumberOfSubsteps,int);
+  vtkSetMacro(NumberOfSubsteps,int);
+
   vtkSetStringMacro(CellEntityIdsArrayName);
   vtkGetStringMacro(CellEntityIdsArrayName);
 
@@ -103,6 +106,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkBoundaryLayerGenerator : public vtkUnstructure
 
   virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
 
+  void IncrementalWarpPoints(vtkUnstructuredGrid* input, vtkPoints* basePoints, vtkPoints* warpedPoints, int substep);
   void WarpPoints(vtkPoints* inputPoints, vtkPoints* warpedPoints, int subLayerId, bool quadratic);
   void UnwrapSublayers(vtkUnstructuredGrid* input, vtkPoints* outputPoints);
 
@@ -120,6 +124,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkBoundaryLayerGenerator : public vtkUnstructure
   double MaximumLayerThickness;
 
   int NumberOfSubLayers;
+  int NumberOfSubsteps;
   double SubLayerRatio;
 
   int IncludeSurfaceCells;
@@ -133,6 +138,8 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkBoundaryLayerGenerator : public vtkUnstructure
   int OuterSurfaceCellEntityId;
   int SidewallCellEntityId;
   int VolumeCellEntityId;
+
+  double Relaxation;
 
   private:
   vtkvmtkBoundaryLayerGenerator(const vtkvmtkBoundaryLayerGenerator&);  // Not implemented.
