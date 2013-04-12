@@ -55,8 +55,11 @@ class vmtkImageCast(pypes.pypeScript):
             shiftScale.SetInput(self.Image)
             if self.WindowLevel[0] == 0.0:
                 scalarRange = self.Image.GetScalarRange()
+                scale = 255.0
+                if (scalarRange[1]-scalarRange[0]) > 0.0:
+                    scale = 255.0/(scalarRange[1]-scalarRange[0])
                 shiftScale.SetShift(-scalarRange[0])
-                shiftScale.SetScale(255.0/(scalarRange[1]-scalarRange[0]))
+                shiftScale.SetScale(scale)
             else:
                 shiftScale.SetShift(-(self.WindowLevel[1]-self.WindowLevel[0]/2.0))
                 shiftScale.SetScale(255.0/self.WindowLevel[0])
