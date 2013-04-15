@@ -115,9 +115,11 @@ void vtkvmtkPNGWriter::Write()
   char* flipped_data = new char[length];
   if (this->FlipImage)
     {
-    for (int i=0; i<length; i++)
+    for (int i=0; i<length/3; i++)
       {
-      flipped_data[i] = data[length-i-1];
+      flipped_data[3*i]   = data[length-3-(3*i)];
+      flipped_data[3*i+1] = data[length-3-(3*i+1)];
+      flipped_data[3*i+2] = data[length-3-(3*i+2)];
       }
     data = flipped_data;
     }
