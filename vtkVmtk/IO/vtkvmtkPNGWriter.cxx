@@ -170,7 +170,7 @@ void vtkvmtkPNGWriter::Write()
       }
     this->GetInput()->UpdateData();
     
-    if (this->FlipImage)
+    if (!this->FlipImage)
       {
       this->WriteSlice(this->GetInput());
       }
@@ -178,6 +178,10 @@ void vtkvmtkPNGWriter::Write()
       {
       vtkImageData* flippedInput = vtkImageData::New();
       flippedInput->DeepCopy(this->GetInput());
+      flippedInput->SetUpdateExtent(wExtent[0], wExtent[1],
+                                    wExtent[2], wExtent[3],
+                                    this->FileNumber,
+                                    this->FileNumber);
       vtkDataArray* inputArray = this->GetInput()->GetPointData()->GetScalars();
       vtkDataArray* flippedInputArray = flippedInput->GetPointData()->GetScalars();
       int numberOfTuples = inputArray->GetNumberOfTuples();
