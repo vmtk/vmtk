@@ -184,11 +184,14 @@ void vtkvmtkPNGWriter::Write()
                                     this->FileNumber);
       vtkDataArray* inputArray = this->GetInput()->GetPointData()->GetScalars();
       vtkDataArray* flippedInputArray = flippedInput->GetPointData()->GetScalars();
-      int numberOfTuples = inputArray->GetNumberOfTuples();
-      for (int i=0; i<numberOfTuples; i++)
+      for (int i=0; i<wExtent[3]-wExtent[2]+1; i++)
         {
-        flippedInputArray->SetTuple(numberOfTuples-1-i,inputArray->GetTuple(i));
+        for (int j=0; j<wExtent[1]-wExtent[0]+1; j++)
+          {
+          flippedInputArray->SetTuple((wExtent[3]-wExtent[2]-i)*(wExtent[1]-wExtent[0]+1)+j,inputArray->GetTuple(i*(wExtent[1]-wExtent[0]+1)+j));
+          }
         }
+
       this->WriteSlice(flippedInput);
       flippedInput->Delete();
       }
