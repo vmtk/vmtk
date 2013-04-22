@@ -34,7 +34,7 @@ class vmtkMeshVectorFromComponents(pypes.pypeScript):
         self.RemoveComponentArrays = False
 
         self.SetScriptName('vmtkmeshvectorfromcomponents')
-        self.SetScriptDoc('scale a mesh by an isotropic factor')
+        self.SetScriptDoc('create a vector array from a number of scalar arrays treated as vector components')
         self.SetInputMembers([
             ['Mesh','i','vtkUnstructuredGrid',1,'','the input mesh','vmtkmeshreader'],
             ['VectorArrayName','vector','str',1,'',''],
