@@ -47,6 +47,7 @@ class vmtkSurfaceRegionDrawing(pypes.pypeScript):
             ['Binary','binary','bool',1,'','fill contour with inside value instead of distance to contour'],
             ['InsideValue','inside','float',1,'','value with which the surface within the contour is filled'],
             ['OutsideValue','outside','float',1,'','value with which the surface outside the contour is filled'],
+            ['ContourScalarsArrayName','array','str',1,'','the name of the array where the generated scalars are stored'],
             ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer']
             ])
         self.SetOutputMembers([
