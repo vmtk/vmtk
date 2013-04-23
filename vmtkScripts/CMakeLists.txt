@@ -106,6 +106,7 @@ SET(SCRIPTS_SRCS
   vmtksurfaceprojection.py
   vmtksurfacereader.py
   vmtksurfacereferencesystemtransform.py
+  vmtksurfaceregiondrawing.py
   vmtksurfaceremeshing.py
   vmtksurfacescaling.py
   vmtksurfacesmoothing.py

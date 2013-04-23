@@ -100,6 +100,7 @@ __all__ = [
   'vmtksurfaceprojection',
   'vmtksurfacereader',
   'vmtksurfacereferencesystemtransform',
+  'vmtksurfaceregiondrawing',
   'vmtksurfaceremeshing',
   'vmtksurfacescaling',
   'vmtksurfacesmoothing',
