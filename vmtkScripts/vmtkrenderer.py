@@ -57,6 +57,8 @@ class vmtkRenderer(pypes.pypeScript):
         #Solarized base03
         #self.Background = [0.02734375, 0.16796875, 0.2109375]
 
+        self.Annotations = 1
+
         self.PointSmoothing = 1
         self.LineSmoothing = 1
         self.PolygonSmoothing = 0
@@ -87,6 +89,7 @@ class vmtkRenderer(pypes.pypeScript):
             ['PointSmoothing','pointsmoothing','bool',1,'','toggle rendering smooth points'],
             ['LineSmoothing','linesmoothing','bool',1,'','toggle rendering smooth lines'],
             ['PolygonSmoothing','polygonsmoothing','bool',1,'','toggle rendering smooth polygons'],
+            ['Annotations','annotations','bool',1,'','toggle rendering of annotations superimposed to the renderer'],
             ['Background','background','float',3,'','background color of the rendering window'],
             ['ScreenshotMagnification','magnification','int',1,'','magnification to apply to the rendering window when taking a screenshot']])
         self.SetOutputMembers([
