@@ -60,7 +60,7 @@ class vmtkMeshVolume(pypes.pypeScript):
             point1 = self.Mesh.GetPoint(cellPoints.GetId(1))
             point2 = self.Mesh.GetPoint(cellPoints.GetId(2))
             point3 = self.Mesh.GetPoint(cellPoints.GetId(3))
-            self.Volume += vtk.vtkTetra.ComputeVolume(point0,point1,point2,point3)
+            self.Volume += abs(vtk.vtkTetra.ComputeVolume(point0,point1,point2,point3))
 
         if self.Mesh.GetSource():
             self.Mesh.GetSource().UnRegisterAllOutputs()
