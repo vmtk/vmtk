@@ -695,6 +695,10 @@ void vtkvmtkBoundaryLayerGenerator::IncrementalWarpPoints(vtkUnstructuredGrid* i
 
     warpedPoints->GetPoint(j,warpedPoint);
 
+    // TODO: find out if the current surface is intersecting the original 
+    // input surface (not the input surface at this iteration) and in that 
+    // case (before it gets too close) stop the warp
+
     warpedPoint[0] += this->Relaxation * (barycenter[0] - warpedPoint[0]);
     warpedPoint[1] += this->Relaxation * (barycenter[1] - warpedPoint[1]);
     warpedPoint[2] += this->Relaxation * (barycenter[2] - warpedPoint[2]);

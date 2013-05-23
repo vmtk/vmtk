@@ -83,6 +83,9 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkBoundaryLayerGenerator : public vtkUnstructure
   vtkGetMacro(NumberOfSubsteps,int);
   vtkSetMacro(NumberOfSubsteps,int);
 
+  vtkGetMacro(Relaxation,double);
+  vtkSetMacro(Relaxation,double);
+
   vtkSetStringMacro(CellEntityIdsArrayName);
   vtkGetStringMacro(CellEntityIdsArrayName);
 
