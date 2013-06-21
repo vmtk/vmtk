@@ -32,7 +32,7 @@ class vmtkRendererInputStream(object):
         self.renderer.EnterTextInputMode()
         return self.renderer.CurrentTextInput
 
-    def prompt(self,text):
+    def prompt(self,text,info=False):
         self.renderer.TextInputQuery = text
         self.renderer.CurrentTextInput = None
         self.renderer.UpdateTextInput()
