@@ -564,7 +564,7 @@ def RunPypeTkPad():
     queue = manager.list()
     output = manager.list()
 
-    pypeProcess = Process(target=pypeserver.PypeServer, args=(queue,output))
+    pypeProcess = Process(target=pypeserver.PypeServer, args=(queue,output,output))
     pypeProcess.start()
 
     from Tkinter import Tk
