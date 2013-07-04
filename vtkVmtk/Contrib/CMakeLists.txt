@@ -2,6 +2,7 @@ SET (VTK_VMTK_CONTRIB_SRCS
   vtkvmtkBoundaryLayerGenerator2.cxx
   vtkvmtkCellDimensionFilter.cxx
   vtkvmtkCenterlineInterpolateArray.cxx
+  vtkvmtkConcaveAnnularCapPolyData.cxx
   vtkvmtkDolfinWriter2.cxx
   vtkvmtkPolyBallLine2.cxx
   vtkvmtkPolyDataDijkstraDistanceToPoints.cxx
