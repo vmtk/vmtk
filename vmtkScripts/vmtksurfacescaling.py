@@ -29,12 +29,18 @@ class vmtkSurfaceScaling(pypes.pypeScript):
         self.Surface = None
 
         self.ScaleFactor = None
+        self.ScaleFactorX = None
+        self.ScaleFactorY = None
+        self.ScaleFactorZ = None
 
         self.SetScriptName('vmtksurfacescaling')
-        self.SetScriptDoc('scale a surface by an isotropic factor')
+        self.SetScriptDoc('scale a surface by an isotropic factor, or x,y,z directions by separate factors')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
-            ['ScaleFactor','scale','float',1,'(0.0,)','isotropic scaling factor']
+            ['ScaleFactor','scale','float',1,'(0.0,)','isotropic scaling factor'],
+            ['ScaleFactorX','scalex','float',1,'(0.0,)','scaling factor in x direction'],
+            ['ScaleFactorY','scaley','float',1,'(0.0,)','scaling factor in y direction'],
+            ['ScaleFactorZ','scalez','float',1,'(0.0,)','scaling factor in z direction'],
             ])
         self.SetOutputMembers([
             ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter']
@@ -46,7 +52,11 @@ class vmtkSurfaceScaling(pypes.pypeScript):
             self.PrintError('Error: no Surface.')
 
         transform = vtk.vtkTransform()
-        transform.Scale(self.ScaleFactor,self.ScaleFactor,self.ScaleFactor)
+        s = self.ScaleFactor or 1.0
+        x = self.ScaleFactorX or 1.0
+        y = self.ScaleFactorY or 1.0
+        z = self.ScaleFactorZ or 1.0
+        transform.Scale(s*x, s*y, s*z)
 
         transformFilter = vtk.vtkTransformPolyDataFilter()
         transformFilter.SetInput(self.Surface)
