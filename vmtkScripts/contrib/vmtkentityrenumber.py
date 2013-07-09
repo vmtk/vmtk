@@ -23,7 +23,7 @@ class VmtkEntityRenumber(pypes.pypeScript):
         self.SetInputMembers([
                 ['Mesh', 'i', 'vtkUnstructuredGrid', 1, '',
                  'the input mesh', 'vmtkmeshreader'],
-                ['CellEntityIdsArrayName', 'entityidsarray', 'str', 1, 'CellEntityIds',
+                ['CellEntityIdsArrayName', 'entityidsarray', 'str', 1, '',
                  'name of the array where entity ids have been stored'],
                 ['CellEntityIdOffset', 'offset', 'int', 1, '',
                  'offset added to cell entity ids that are not mapped explicitly', ''],
@@ -35,12 +35,12 @@ class VmtkEntityRenumber(pypes.pypeScript):
         self.SetOutputMembers([
                 ['Mesh', 'o', 'vtkUnstructuredGrid', 1, '',
                  'the output mesh', 'vmtkmeshwriter'],
-                ['CellEntityIdsArrayName', 'entityidsarray', 'str', 1, 'CellEntityIds',
+                ['CellEntityIdsArrayName', 'entityidsarray', 'str', 1, '',
                  'name of the array where entity ids have been stored'],
                 ])
 
     def Execute(self):
-        if self.Mesh == None:
+        if self.Mesh is None:
             self.PrintError('Error: No Mesh.')
 
         if len(self.CellEntityIdRenumbering) % 2 != 0:
