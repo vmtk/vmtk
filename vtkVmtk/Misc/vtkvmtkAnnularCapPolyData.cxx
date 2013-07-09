@@ -10,11 +10,11 @@ Version:   $Revision: 1.6 $
   See LICENCE file for details.
 
   Portions of this code are covered under the VTK copyright.
-  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
+  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm
   for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -89,14 +89,21 @@ int vtkvmtkAnnularCapPolyData::RequestData(
   vtkCellArray* newPolys = vtkCellArray::New();
   newPolys->DeepCopy(input->GetPolys());
 
-  vtkIntArray* cellEntityIdsArray = NULL;
+  vtkIdTypeArray* cellEntityIdsArray = NULL;
 
   if (markCells)
     {
-    cellEntityIdsArray = vtkIntArray::New();
+    cellEntityIdsArray = vtkIdTypeArray::New();
     cellEntityIdsArray->SetName(this->CellEntityIdsArrayName);
-    cellEntityIdsArray->SetNumberOfTuples(newPolys->GetNumberOfCells());
-    cellEntityIdsArray->FillComponent(0,static_cast<double>(this->CellEntityIdOffset));
+    if (input->GetCellData()->GetArray(this->CellEntityIdsArrayName))
+      {
+      cellEntityIdsArray->DeepCopy(input->GetCellData()->GetArray(this->CellEntityIdsArrayName));
+      }
+    else
+      {
+      cellEntityIdsArray->SetNumberOfTuples(newPolys->GetNumberOfCells());
+      cellEntityIdsArray->FillComponent(0,static_cast<double>(this->CellEntityIdOffset));
+      }
     }
 
   vtkvmtkPolyDataBoundaryExtractor* boundaryExtractor = vtkvmtkPolyDataBoundaryExtractor::New();
@@ -176,7 +183,7 @@ int vtkvmtkAnnularCapPolyData::RequestData(
       {
       continue;
       }
-  
+
     visitedBoundaries->SetId(i,i);
     visitedBoundaries->SetId(boundaryPairings->GetId(i),i);
 
