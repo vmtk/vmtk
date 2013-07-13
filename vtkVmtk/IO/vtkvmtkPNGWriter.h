@@ -44,6 +44,10 @@ public:
   vtkGetMacro(WriteToBase64,int);
   vtkBooleanMacro(WriteToBase64,int);
 
+  vtkSetMacro(FlipImage,int);
+  vtkGetMacro(FlipImage,int);
+  vtkBooleanMacro(FlipImage,int);
+
   virtual void Write();
 
 protected:
@@ -52,6 +56,7 @@ protected:
 
   char* Base64Image;
   int WriteToBase64;
+  int FlipImage;
 
 private:
   vtkvmtkPNGWriter(const vtkvmtkPNGWriter&);  // Not implemented.

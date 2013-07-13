@@ -234,10 +234,14 @@ class vmtkImageInitialization(pypes.pypeScript):
 
             thresholdedImage = threshold.GetOutput()
 
+        scale = 1.0
+        if scalarRange[1]-scalarRange[0] > 0.0:
+            scale = 1.0 / (scalarRange[1]-scalarRange[0])
+
         shiftScale = vtk.vtkImageShiftScale()
         shiftScale.SetInput(thresholdedImage)
         shiftScale.SetShift(-scalarRange[0])
-        shiftScale.SetScale(1/(scalarRange[1]-scalarRange[0]))
+        shiftScale.SetScale(scale)
         shiftScale.SetOutputScalarTypeToFloat()
         shiftScale.Update()
         
@@ -313,10 +317,14 @@ class vmtkImageInitialization(pypes.pypeScript):
 
             thresholdedImage = threshold.GetOutput()
 
+        scale = 1.0
+        if scalarRange[1]-scalarRange[0] > 0.0:
+            scale = 1.0 / (scalarRange[1]-scalarRange[0])
+
         shiftScale = vtk.vtkImageShiftScale()
         shiftScale.SetInput(thresholdedImage)
         shiftScale.SetShift(-scalarRange[0])
-        shiftScale.SetScale(1/(scalarRange[1]-scalarRange[0]))
+        shiftScale.SetScale(scale)
         shiftScale.SetOutputScalarTypeToFloat()
         shiftScale.Update()
         

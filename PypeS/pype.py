@@ -241,7 +241,7 @@ class Pype(object):
             try:
                 exec('import '+ moduleName)
             except ImportError, e:
-                self.PrintError('No module named ' + moduleName + '\n' + e)
+                self.PrintError(e.message)
                 break
             scriptObjectClassName = ''
             exec ('scriptObjectClassName =  '+moduleName+'.'+moduleName)

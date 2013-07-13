@@ -88,7 +88,10 @@ class vmtkImageVOISelector(pypes.pypeScript):
         self.PlaneWidgetX.SetInput(self.Image)
         self.PlaneWidgetX.SetPlaneOrientationToXAxes()
         self.PlaneWidgetX.SetSliceIndex(wholeExtent[0])
-        self.PlaneWidgetX.DisplayTextOn()
+        if self.vmtkRenderer.Annotations:
+            self.PlaneWidgetX.DisplayTextOn()
+        else:
+            self.PlaneWidgetX.DisplayTextOff()
         self.PlaneWidgetX.SetPicker(picker)
         self.PlaneWidgetX.KeyPressActivationOff()
         self.PlaneWidgetX.On()
@@ -96,7 +99,10 @@ class vmtkImageVOISelector(pypes.pypeScript):
         self.PlaneWidgetY.SetInput(self.Image)
         self.PlaneWidgetY.SetPlaneOrientationToYAxes()
         self.PlaneWidgetY.SetSliceIndex(wholeExtent[2])
-        self.PlaneWidgetY.DisplayTextOn()
+        if self.vmtkRenderer.Annotations:
+            self.PlaneWidgetY.DisplayTextOn()
+        else:
+            self.PlaneWidgetY.DisplayTextOff()
         self.PlaneWidgetY.SetPicker(picker)
         self.PlaneWidgetY.KeyPressActivationOff()
         self.PlaneWidgetY.SetLookupTable(self.PlaneWidgetX.GetLookupTable())
@@ -105,7 +111,10 @@ class vmtkImageVOISelector(pypes.pypeScript):
         self.PlaneWidgetZ.SetInput(self.Image)
         self.PlaneWidgetZ.SetPlaneOrientationToZAxes()
         self.PlaneWidgetZ.SetSliceIndex(wholeExtent[4])
-        self.PlaneWidgetZ.DisplayTextOn()
+        if self.vmtkRenderer.Annotations:
+            self.PlaneWidgetZ.DisplayTextOn()
+        else:
+            self.PlaneWidgetZ.DisplayTextOff()
         self.PlaneWidgetZ.SetPicker(picker)
         self.PlaneWidgetZ.KeyPressActivationOff()
         self.PlaneWidgetZ.SetLookupTable(self.PlaneWidgetX.GetLookupTable())

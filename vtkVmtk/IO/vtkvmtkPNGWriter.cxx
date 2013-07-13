@@ -21,6 +21,9 @@ Version:   $Revision: 1.6 $
 
 #include "vtkvmtkPNGWriter.h"
 #include "vtkUnsignedCharArray.h"
+#include "vtkImageData.h"
+#include "vtkPointData.h"
+#include "vtkErrorCode.h"
 #include "vtkObjectFactory.h"
 
 #include <math.h>
@@ -85,6 +88,7 @@ vtkvmtkPNGWriter::vtkvmtkPNGWriter()
 {
   this->Base64Image = NULL;
   this->WriteToBase64 = 0;
+  this->FlipImage = 0;
 }
 
 vtkvmtkPNGWriter::~vtkvmtkPNGWriter()
@@ -100,12 +104,108 @@ void vtkvmtkPNGWriter::Write()
 {
   if (!this->WriteToBase64) {
     Superclass::Write();
+    return;
   }
 
   int previousWriteToMemory = this->GetWriteToMemory();
 
   this->WriteToMemoryOn();
-  Superclass::Write();
+
+  //Superclass::Write();
+
+  this->SetErrorCode(vtkErrorCode::NoError);
+
+  // Error checking
+  if ( this->GetInput() == NULL )
+    {
+    vtkErrorMacro(<<"Write:Please specify an input!");
+    return;
+    }
+  if (!this->WriteToMemory && !this->FileName && !this->FilePattern)
+    {
+    vtkErrorMacro(<<"Write:Please specify either a FileName or a file prefix and pattern");
+    this->SetErrorCode(vtkErrorCode::NoFileNameError);
+    return;
+    }
+
+  // Make sure the file name is allocated
+  this->InternalFileName =
+    new char[(this->FileName ? strlen(this->FileName) : 1) +
+            (this->FilePrefix ? strlen(this->FilePrefix) : 1) +
+            (this->FilePattern ? strlen(this->FilePattern) : 1) + 10];
+
+  // Fill in image information.
+  this->GetInput()->UpdateInformation();
+  int *wExtent;
+  wExtent = this->GetInput()->GetWholeExtent();
+  this->FileNumber = this->GetInput()->GetWholeExtent()[4];
+  this->MinimumFileNumber = this->MaximumFileNumber = this->FileNumber;
+  this->FilesDeleted = 0;
+  this->UpdateProgress(0.0);
+  // loop over the z axis and write the slices
+  for (this->FileNumber = wExtent[4]; this->FileNumber <= wExtent[5];
+       ++this->FileNumber)
+    {
+    this->MaximumFileNumber = this->FileNumber;
+    this->GetInput()->SetUpdateExtent(wExtent[0], wExtent[1],
+                                      wExtent[2], wExtent[3],
+                                      this->FileNumber,
+                                      this->FileNumber);
+    // determine the name
+    if (this->FileName)
+      {
+      sprintf(this->InternalFileName,"%s",this->FileName);
+      }
+    else
+      {
+      if (this->FilePrefix)
+        {
+        sprintf(this->InternalFileName, this->FilePattern,
+                this->FilePrefix, this->FileNumber);
+        }
+      else
+        {
+        sprintf(this->InternalFileName, this->FilePattern,this->FileNumber);
+        }
+      }
+    this->GetInput()->UpdateData();
+    
+    if (!this->FlipImage)
+      {
+      this->WriteSlice(this->GetInput());
+      }
+    else
+      {
+      vtkImageData* flippedInput = vtkImageData::New();
+      flippedInput->DeepCopy(this->GetInput());
+      flippedInput->SetUpdateExtent(wExtent[0], wExtent[1],
+                                    wExtent[2], wExtent[3],
+                                    this->FileNumber,
+                                    this->FileNumber);
+      vtkDataArray* inputArray = this->GetInput()->GetPointData()->GetScalars();
+      vtkDataArray* flippedInputArray = flippedInput->GetPointData()->GetScalars();
+      for (int i=0; i<wExtent[3]-wExtent[2]+1; i++)
+        {
+        for (int j=0; j<wExtent[1]-wExtent[0]+1; j++)
+          {
+          flippedInputArray->SetTuple((wExtent[3]-wExtent[2]-i)*(wExtent[1]-wExtent[0]+1)+j,inputArray->GetTuple(i*(wExtent[1]-wExtent[0]+1)+j));
+          }
+        }
+
+      this->WriteSlice(flippedInput);
+      flippedInput->Delete();
+      }
+
+    if (this->ErrorCode == vtkErrorCode::OutOfDiskSpaceError)
+      {
+      this->DeleteFiles();
+      break;
+      }
+    this->UpdateProgress((this->FileNumber - wExtent[4])/
+                         (wExtent[5] - wExtent[4] + 1.0));
+    }
+  delete [] this->InternalFileName;
+  this->InternalFileName = NULL;
 
   vtkUnsignedCharArray* result = this->GetResult();
   char* data = (char*)result->GetPointer(0);
@@ -119,7 +219,6 @@ void vtkvmtkPNGWriter::Write()
 
   this->SetWriteToMemory(previousWriteToMemory);
 } 
-
 
 void vtkvmtkPNGWriter::PrintSelf(ostream& os, vtkIndent indent)
 {
