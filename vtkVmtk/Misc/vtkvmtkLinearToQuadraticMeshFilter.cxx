@@ -1333,7 +1333,7 @@ int vtkvmtkLinearToQuadraticMeshFilter::RequestData(
       }
     }
 
-#define LEGACY_RELAXATION
+//#define LEGACY_RELAXATION
 #ifdef LEGACY_RELAXATION
   int numberOfRelaxationSteps = 10;
   int maxSignChangeIterations = 20;
@@ -1626,6 +1626,75 @@ int vtkvmtkLinearToQuadraticMeshFilter::RequestData(
       }
     edgePointIds->Delete();
     cellEdgeNeighbors->Delete();
+
+    surfaceFaceTable->InitTraversal();
+    vtkIdType facePointId = surfaceFaceTable->GetNextEdge(cellId,neighborCellId);
+    vtkIdList* cellFaceNeighbors = vtkIdList::New();
+    while (facePointId >= 0)
+      {
+      facePointIds->Initialize();
+      facePointIds->InsertNextId(cellId);
+      facePointIds->InsertNextId(neighborCellId);
+      input->GetCellNeighbors(-1,facePointIds,cellFaceNeighbors);
+      int numberOfCellFaceNeighbors = cellFaceNeighbors->GetNumberOfIds();
+      for (i=0; i<numberOfCellFaceNeighbors; i++)
+        {
+        vtkIdType volumeCellId = cellFaceNeighbors->GetId(i);
+        if (input->GetCell(volumeCellId)->GetCellDimension() != 3)
+          {
+          continue;
+          }
+        vtkCell* linearVolumeCell = input->GetCell(volumeCellId);
+        vtkIdType outputCellId = inputToOutputCellIds->GetId(volumeCellId);
+        if (outputCellId == -1)
+          {
+          continue;
+          }
+        vtkCell* quadraticVolumeCell = output->GetCell(outputCellId);
+
+        int s;
+        for (s=0; s<numberOfRelaxationSteps; s++)
+          {
+          if (!this->HasJacobianChangedSign(linearVolumeCell,quadraticVolumeCell))
+            {
+            break;
+            }
+          anySignChange = true;
+          vtkWarningMacro(<<"Warning: projection causes element "<<volumeCellId<<" to have a negative Jacobian somewhere. Relaxing projection for this element.");
+          double relaxation = (double)(s+1)/(double)numberOfRelaxationSteps;
+          int numberOfFaces = linearVolumeCell->GetNumberOfFaces();
+          int f;
+          for (f=0; f<numberOfFaces; f++)
+            {
+            vtkCell* face = linearVolumeCell->GetFace(f);
+            vtkIdType pointId0 = face->GetPointId(0);
+            vtkIdType pointId1 = face->GetPointId(1);
+            vtkIdType pointId2 = face->GetPointId(2);
+            vtkIdType pointId3 = face->GetPointId(3);
+            vtkIdType facePointId = surfaceFaceTable->IsEdge(cellId,neighborCellId);
+            if (facePointId == -1)
+              {
+              continue;
+              }
+            double facePoint[3], relaxedFacePoint[3];
+            input->GetPoint(pointId0,point0);
+            input->GetPoint(pointId1,point1);
+            input->GetPoint(pointId2,point2);
+            input->GetPoint(pointId3,point3);
+            output->GetPoint(facePointId,facePoint);
+            for (j=0; j<3; j++)
+              {
+              relaxedFacePoint[j] = (1.0 - relaxation) * facePoint[j] + relaxation * (0.25 * (point0[j] + point1[j] + point2[j] + point3[j]));
+              }
+            outputPoints->SetPoint(facePointId,relaxedFacePoint);
+            }
+          quadraticVolumeCell = output->GetCell(outputCellId);
+          }
+        }
+      facePointId = surfaceFaceTable->GetNextEdge(cellId,neighborCellId);
+      }
+    facePointIds->Delete();
+    cellFaceNeighbors->Delete();
     }
 #endif
 
@@ -1653,6 +1722,7 @@ int vtkvmtkLinearToQuadraticMeshFilter::RequestData(
     }
 
   surfaceEdgeTable->Delete();
+  surfaceFaceTable->Delete();
 
   outputPoints->Delete();
   edgeTable->Delete();
