@@ -1377,7 +1377,7 @@ int vtkvmtkLinearToQuadraticMeshFilter::RequestData(
 
         if (project)
           {
-          vtkIdType volumeCellId = 0;
+          vtkIdType volumeCellId = -1;
           vtkIdList* volumeCellIds = vtkIdList::New();
           output->GetCellNeighbors(cellId,cell->PointIds,volumeCellIds);
           if (volumeCellIds->GetNumberOfIds() == 0)
@@ -1430,43 +1430,22 @@ int vtkvmtkLinearToQuadraticMeshFilter::RequestData(
       {
       cellId = quadIds->GetValue(i);
       input->GetCell(cellId,cell);
-  
+
       cell->Points->GetPoint(0,point0);
       cell->Points->GetPoint(1,point1);
       cell->Points->GetPoint(2,point2);
       cell->Points->GetPoint(3,point3);
-  
+
       pointId0 = cell->PointIds->GetId(0);
       pointId1 = cell->PointIds->GetId(1);
       pointId2 = cell->PointIds->GetId(2);
       pointId3 = cell->PointIds->GetId(3);
-  
+
       edgePointId01 = edgeTable->IsEdge(pointId0,pointId1);
       edgePointId12 = edgeTable->IsEdge(pointId1,pointId2);
       edgePointId23 = edgeTable->IsEdge(pointId2,pointId3);
       edgePointId03 = edgeTable->IsEdge(pointId0,pointId3);
 
-      if (this->NumberOfNodesHexahedra > 20)
-        {
-        facePointIds->Initialize();
-        facePointIds->InsertNextId(pointId0);
-        facePointIds->InsertNextId(pointId1);
-        facePointIds->InsertNextId(pointId2);
-        facePointIds->InsertNextId(pointId3);
-        input->GetCellNeighbors(cellId,facePointIds,cellNeighbors);
-        neighborCellId = -1;
-        facePointId0123 = -1;
-        for (j=0; j<cellNeighbors->GetNumberOfIds(); j++)
-          {
-          if (input->GetCellType(cellNeighbors->GetId(j)) == VTK_TRIQUADRATIC_HEXAHEDRON ||
-              input->GetCellType(cellNeighbors->GetId(j)) == VTK_HEXAHEDRON)
-            {
-            neighborCellId = cellNeighbors->GetId(j);
-            facePointId0123 = faceTable->IsEdge(cellId,neighborCellId);
-            break;
-            }
-          }
-        }
       if (locator)
         {
         bool project = true;
@@ -1497,16 +1476,13 @@ int vtkvmtkLinearToQuadraticMeshFilter::RequestData(
           volumeCellId = volumeCellIds->GetId(0);
           vtkCell* linearVolumeCell = input->GetCell(volumeCellId);
           vtkCell* quadraticVolumeCell = output->GetCell(volumeCellId);
-          double point01[3], point12[3], point23[3], point03[3], facePoint[3];
-          double projectedPoint01[3], projectedPoint12[3], projectedPoint23[3], projectedPoint03[3], projectedFacePoint0123[3];
+          double point01[3], point12[3], point23[3], point03[3];
+          double projectedPoint01[3], projectedPoint12[3], projectedPoint23[3], projectedPoint03[3];
           outputPoints->GetPoint(edgePointId01,projectedPoint01);
           outputPoints->GetPoint(edgePointId12,projectedPoint12);
           outputPoints->GetPoint(edgePointId23,projectedPoint23);
           outputPoints->GetPoint(edgePointId03,projectedPoint03);
-          if (this->NumberOfNodesHexahedra > 20)
-            {
-            outputPoints->GetPoint(facePointId0123,projectedFacePoint0123);
-            }
+
           int s;
           for (s=0; s<numberOfRelaxationSteps; s++)
             {
@@ -1523,19 +1499,11 @@ int vtkvmtkLinearToQuadraticMeshFilter::RequestData(
               point12[j] = (1.0 - relaxation) * projectedPoint12[j] + relaxation * (0.5 * (point1[j] + point2[j]));
               point23[j] = (1.0 - relaxation) * projectedPoint23[j] + relaxation * (0.5 * (point2[j] + point3[j]));
               point03[j] = (1.0 - relaxation) * projectedPoint03[j] + relaxation * (0.5 * (point0[j] + point3[j]));
-              if (this->NumberOfNodesHexahedra > 20)
-                {
-                facePoint[j] = (1.0 - relaxation) * projectedFacePoint0123[j] + relaxation * (0.25 * (point0[j] + point1[j] + point2[j] + point3[j]));
-                }
               }
             outputPoints->SetPoint(edgePointId01,point01);
             outputPoints->SetPoint(edgePointId12,point12);
             outputPoints->SetPoint(edgePointId23,point23);
             outputPoints->SetPoint(edgePointId03,point03);
-            if (this->NumberOfNodesHexahedra > 20)
-              {
-              outputPoints->SetPoint(facePointId0123,facePoint);
-              }
             quadraticVolumeCell = output->GetCell(volumeCellId);
             }
           volumeCellIds->Delete();
@@ -1626,77 +1594,115 @@ int vtkvmtkLinearToQuadraticMeshFilter::RequestData(
       }
     edgePointIds->Delete();
     cellEdgeNeighbors->Delete();
-
-    surfaceFaceTable->InitTraversal();
-    vtkIdType facePointId = surfaceFaceTable->GetNextEdge(cellId,neighborCellId);
-    vtkIdList* cellFaceNeighbors = vtkIdList::New();
-    while (facePointId >= 0)
-      {
-      facePointIds->Initialize();
-      facePointIds->InsertNextId(cellId);
-      facePointIds->InsertNextId(neighborCellId);
-      input->GetCellNeighbors(-1,facePointIds,cellFaceNeighbors);
-      int numberOfCellFaceNeighbors = cellFaceNeighbors->GetNumberOfIds();
-      for (i=0; i<numberOfCellFaceNeighbors; i++)
-        {
-        vtkIdType volumeCellId = cellFaceNeighbors->GetId(i);
-        if (input->GetCell(volumeCellId)->GetCellDimension() != 3)
-          {
-          continue;
-          }
-        vtkCell* linearVolumeCell = input->GetCell(volumeCellId);
-        vtkIdType outputCellId = inputToOutputCellIds->GetId(volumeCellId);
-        if (outputCellId == -1)
-          {
-          continue;
-          }
-        vtkCell* quadraticVolumeCell = output->GetCell(outputCellId);
-
-        int s;
-        for (s=0; s<numberOfRelaxationSteps; s++)
-          {
-          if (!this->HasJacobianChangedSign(linearVolumeCell,quadraticVolumeCell))
-            {
-            break;
-            }
-          anySignChange = true;
-          vtkWarningMacro(<<"Warning: projection causes element "<<volumeCellId<<" to have a negative Jacobian somewhere. Relaxing projection for this element.");
-          double relaxation = (double)(s+1)/(double)numberOfRelaxationSteps;
-          int numberOfFaces = linearVolumeCell->GetNumberOfFaces();
-          int f;
-          for (f=0; f<numberOfFaces; f++)
-            {
-            vtkCell* face = linearVolumeCell->GetFace(f);
-            vtkIdType pointId0 = face->GetPointId(0);
-            vtkIdType pointId1 = face->GetPointId(1);
-            vtkIdType pointId2 = face->GetPointId(2);
-            vtkIdType pointId3 = face->GetPointId(3);
-            vtkIdType facePointId = surfaceFaceTable->IsEdge(cellId,neighborCellId);
-            if (facePointId == -1)
-              {
-              continue;
-              }
-            double facePoint[3], relaxedFacePoint[3];
-            input->GetPoint(pointId0,point0);
-            input->GetPoint(pointId1,point1);
-            input->GetPoint(pointId2,point2);
-            input->GetPoint(pointId3,point3);
-            output->GetPoint(facePointId,facePoint);
-            for (j=0; j<3; j++)
-              {
-              relaxedFacePoint[j] = (1.0 - relaxation) * facePoint[j] + relaxation * (0.25 * (point0[j] + point1[j] + point2[j] + point3[j]));
-              }
-            outputPoints->SetPoint(facePointId,relaxedFacePoint);
-            }
-          quadraticVolumeCell = output->GetCell(outputCellId);
-          }
-        }
-      facePointId = surfaceFaceTable->GetNextEdge(cellId,neighborCellId);
-      }
-    facePointIds->Delete();
-    cellFaceNeighbors->Delete();
     }
 #endif
+
+  // Legacy relaxation for non-edge points on surface faces
+  if (numberOfInputQuads > 0 && this->NumberOfNodesHexahedra > 20)
+    {
+    int numberOfRelaxationSteps = 10;
+    int maxSignChangeIterations = 20;
+    int signChangeCounter = 0;
+    bool anySignChange = true;
+    while (anySignChange)
+      {
+      if (signChangeCounter >= maxSignChangeIterations)
+        {
+        break;
+        }
+      signChangeCounter++;
+      anySignChange = false;
+
+      for (i=0; i<numberOfInputQuads; i++)
+        {
+        cellId = quadIds->GetValue(i);
+        input->GetCell(cellId,cell);
+
+        cell->Points->GetPoint(0,point0);
+        cell->Points->GetPoint(1,point1);
+        cell->Points->GetPoint(2,point2);
+        cell->Points->GetPoint(3,point3);
+
+        pointId0 = cell->PointIds->GetId(0);
+        pointId1 = cell->PointIds->GetId(1);
+        pointId2 = cell->PointIds->GetId(2);
+        pointId3 = cell->PointIds->GetId(3);
+
+        facePointIds->Initialize();
+        facePointIds->InsertNextId(pointId0);
+        facePointIds->InsertNextId(pointId1);
+        facePointIds->InsertNextId(pointId2);
+        facePointIds->InsertNextId(pointId3);
+        input->GetCellNeighbors(cellId,facePointIds,cellNeighbors);
+        neighborCellId = -1;
+        facePointId0123 = -1;
+        for (j=0; j<cellNeighbors->GetNumberOfIds(); j++)
+          {
+          if (input->GetCellType(cellNeighbors->GetId(j)) == VTK_TRIQUADRATIC_HEXAHEDRON ||
+              input->GetCellType(cellNeighbors->GetId(j)) == VTK_HEXAHEDRON)
+            {
+            neighborCellId = cellNeighbors->GetId(j);
+            facePointId0123 = faceTable->IsEdge(cellId,neighborCellId);
+            break;
+            }
+          }
+        if (locator)
+          {
+          bool project = true;
+          if (this->CellEntityIdsArrayName) 
+            {
+            if (cellEntityIdsArray->GetValue(cellId) != this->ProjectedCellEntityId)
+              {
+              project = false;
+              }
+            }
+          if (project)
+            {
+            vtkIdType volumeCellId = 0;
+            vtkIdList* volumeCellIds = vtkIdList::New();
+            output->GetCellNeighbors(cellId,cell->PointIds,volumeCellIds);
+            if (volumeCellIds->GetNumberOfIds() == 0)
+              {
+              vtkWarningMacro(<<"Warning: surface element "<<cellId<<" does not have a volume element attached.");
+              volumeCellIds->Delete();
+              continue;
+              }
+            if (volumeCellIds->GetNumberOfIds() > 1)
+              {
+              vtkWarningMacro(<<"Warning: surface element "<<cellId<<" has more than one volume element attached.");
+              volumeCellIds->Delete();
+              continue;
+              }
+            volumeCellId = volumeCellIds->GetId(0);
+            vtkCell* linearVolumeCell = input->GetCell(volumeCellId);
+            vtkCell* quadraticVolumeCell = output->GetCell(volumeCellId);
+            double facePoint[3];
+            double projectedFacePoint0123[3];
+
+            outputPoints->GetPoint(facePointId0123,projectedFacePoint0123);
+            int s;
+            for (s=0; s<numberOfRelaxationSteps; s++)
+              {
+              if (!this->HasJacobianChangedSign(linearVolumeCell,quadraticVolumeCell))
+                {
+                break;
+                }
+              anySignChange = true;
+              vtkWarningMacro(<<"Warning: projection causes element "<<volumeCellId<<" to have a negative Jacobian somewhere. Relaxing projection for this element.");
+              double relaxation = (double)(s+1)/(double)numberOfRelaxationSteps;
+              for (j=0; j<3; j++)
+                {
+                facePoint[j] = (1.0 - relaxation) * projectedFacePoint0123[j] + relaxation * (0.25 * (point0[j] + point1[j] + point2[j] + point3[j]));
+                }
+              outputPoints->SetPoint(facePointId0123,facePoint);
+              quadraticVolumeCell = output->GetCell(volumeCellId);
+              }
+            volumeCellIds->Delete();
+            }
+          }
+        }
+      }
+    }
 
   if (this->TestFinalJacobians)
     {
