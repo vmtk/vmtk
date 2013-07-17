@@ -55,7 +55,7 @@ class vmtkLinearToQuadratic(pypes.pypeScript):
             ['QuadratureOrder','quadratureorder','int',1,'','quadrature order for checking negative Jacobians'],
             ['NegativeJacobianTolerance','jacobiantolerance','float',1,'','tolerance for the evaluation of negative Jacobians'],
             ['SubdivisionMethod','subdivisionmethod','str',1,'["linear","butterfly"]','subdivision method for surface elements'],
-            ['NumberOfNodesHexahedra','hexahedra','int',1,'','Hexahedral element types by #nodes: 8(linear), 20(quadratic), 24(biquadratic), 27(triquadratic)']
+            ['NumberOfNodesHexahedra','hexahedranodes','int',1,'','Output hexahedral element type by # of nodes: 20 or 27 (see vtkQuadraticHexahedron and vtkTriQuadraticHexahedron classes in VTK documentation)']
             ])
         self.SetOutputMembers([
             ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh','vmtkmeshwriter']])
