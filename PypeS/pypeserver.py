@@ -39,11 +39,11 @@ def RunPypeProcess(arguments, inputStream=None, outputStream=None, logOn=True):
         pipe.SetArgumentsString(arguments)
     else:
         pipe.Arguments = arguments
-    pipe.ParseArguments()
     try: 
+        pipe.ParseArguments()
         pipe.Execute() 
     except BaseException, e:
-        print "Error from pype:", e
+        pass
     del pipe
 
 
@@ -51,7 +51,7 @@ def PypeServer(queue, output, error, returnIfEmptyQueue=False):
 
     def MessageCallback(o, e, m):
         error.append(m)
-    OutputCallback.CallDataType = 'string0'
+    MessageCallback.CallDataType = 'string0'
     vtk.vtkOutputWindow.GetInstance().AddObserver('ErrorEvent',MessageCallback)
     vtk.vtkOutputWindow.GetInstance().AddObserver('WarningEvent',MessageCallback)
 

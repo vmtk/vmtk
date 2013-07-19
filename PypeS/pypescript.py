@@ -149,7 +149,7 @@ class pypeScript(object):
         if self.ExitOnError:
           self.Exit()
         else:
-          raise RuntimeError
+          raise RuntimeError(errorMessage)
     
     def Exit(self):
         sys.exit()
@@ -468,13 +468,13 @@ class pypeScript(object):
                 self.PrintLog('')
                 return 0
             if (arg[0] == '-') & (len(arg)==1):
-                self.PrintError(self.ScriptName + ' error: unknown option ' + arg + '\n' + self.GetUsageString())
+                self.PrintError(self.GetUsageString() + '\n' + self.ScriptName + ' error: unknown option ' + arg + '\n')
                 return 0
             if (arg[0] == '-'):
                 if (arg[1] in string.ascii_letters):
                     matchingMembers = [member for member in self.InputMembers if member.OptionName in [arg.lstrip('-'), arg.lstrip('-').rstrip('@')]]
                     if not matchingMembers:
-                        self.PrintError(self.ScriptName + ' error: unknown option ' + arg + '\n' + self.GetUsageString())
+                        self.PrintError(self.GetUsageString() + '\n' + self.ScriptName + ' error: unknown option ' + arg + '\n')
                         return 0
 
         for memberEntry in self.InputMembers:
@@ -528,7 +528,7 @@ class pypeScript(object):
 
             if memberLength != -1:
                 if (len(memberValues) != memberLength) and not memberEntry.ExplicitPipe:
-                    self.PrintError('Error for option '+option+': '+str(len(memberValues))+' entries given, '+str(memberLength)+' expected.\n\n'+self.GetUsageString())
+                    self.PrintError(self.GetUsageString() + '\n' + 'Error for option '+option+': '+str(len(memberValues))+' entries given, '+str(memberLength)+' expected.' + '\n')
                     return 0
 
             if len(memberValues) > 0:
@@ -545,12 +545,12 @@ class pypeScript(object):
 
             if memberType is 'bool':
                 if [value for value in memberValues if value not in [0,1]]:
-                    self.PrintError('Error for option '+option+': should be either 0 or 1\n\n'+self.GetUsageString())
+                    self.PrintError(self.GetUsageString() + '\n' + 'Error for option '+option+': should be either 0 or 1' + '\n')
                     return 0
 
             if memberRange != '':
                 if [value for value in memberValues if not memberEntry.IsInRange(value)]:
-                    self.PrintError('Error for option '+option+': should be ' + memberEntry.GetRangeRepresentation() + '\n\n'+self.GetUsageString())
+                    self.PrintError(self.GetUsageString() + '\n' + 'Error for option '+option+': should be ' + memberEntry.GetRangeRepresentation() + '\n')
                     return 0
 
             if (memberType != ''):
