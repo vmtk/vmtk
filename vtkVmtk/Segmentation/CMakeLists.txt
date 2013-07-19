@@ -36,10 +36,6 @@ SET (VTK_VMTK_SEGMENTATION_ITK_HEADERS
   itkFastMarchingDirectionalFreezeImageFilter.txx
   itkFastMarchingUpwindGradientImageFilter.h
   itkFastMarchingUpwindGradientImageFilter.txx
-  itkHessianToObjectnessMeasureImageFilter.h
-  itkHessianToObjectnessMeasureImageFilter.txx
-  itkMultiScaleHessianBasedMeasureImageFilter.h
-  itkMultiScaleHessianBasedMeasureImageFilter.txx
   itkUpwindGradientMagnitudeImageFilter.h
   itkUpwindGradientMagnitudeImageFilter.txx
   itkVesselEnhancingDiffusion3DImageFilter.h
