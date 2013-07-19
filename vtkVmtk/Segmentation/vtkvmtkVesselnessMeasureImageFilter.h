@@ -85,6 +85,30 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkVesselnessMeasureImageFilter : public 
     this->Modified();
   }
 
+  void SetUseScaledVesselness(int value)
+  {
+    ImageFilterType* tempFilter = dynamic_cast<ImageFilterType*>(this->m_Filter.GetPointer()); 
+    if (tempFilter) 
+      { 
+      dynamic_cast<ObjectnessFilterType*>(tempFilter->GetHessianToMeasureFilter())->SetScaleObjectnessMeasure(value); 
+      this->Modified(); 
+      }
+  }
+
+  int GetUseScaledVesselness()
+  {
+    ImageFilterType* tempFilter = dynamic_cast<ImageFilterType*>(this->m_Filter.GetPointer()); 
+    if (tempFilter) 
+      { 
+      return dynamic_cast<ObjectnessFilterType*>(tempFilter->GetHessianToMeasureFilter())->GetScaleObjectnessMeasure(); 
+      }
+    else
+      {
+      vtkErrorMacro ( << this->GetClassName() << " Error getting method. Dynamic cast returned 0" );
+      return 0.0;
+      }
+  }
+
   void SetAlpha(double value)
   {
     ImageFilterType* tempFilter = dynamic_cast<ImageFilterType*>(this->m_Filter.GetPointer()); 

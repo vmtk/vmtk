@@ -36,6 +36,8 @@ class vmtkImageObjectEnhancement(pypes.pypeScript):
         self.SigmaMax = 1.0
         self.NumberOfSigmaSteps = 1
 
+        self.ScaledObjectness = 0
+
         self.Alpha = 0.5
         self.Beta = 0.5
         self.Gamma = 5.0
@@ -49,6 +51,7 @@ class vmtkImageObjectEnhancement(pypes.pypeScript):
             ['SigmaMin','sigmamin','float',1,'(0.0,)'],
             ['SigmaMax','sigmamax','float',1,'(0.0,)'],
             ['NumberOfSigmaSteps','sigmasteps','int',1,'(0,)'],
+            ['ScaledObjectness','scaled','bool',1,''],
             ['Alpha','alpha','float',1,'(0.0,)',''],
             ['Beta','beta','float',1,'(0.0,)',''],
             ['Gamma','gamma','float',1,'(0.0,)',''],
