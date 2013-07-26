@@ -50,7 +50,10 @@ def RunPypeProcess(arguments, inputStream=None, outputStream=None, logOn=True):
 def PypeServer(queue, output, error, returnIfEmptyQueue=False):
 
     def MessageCallback(o, e, m):
+        if not error:
+            return
         error.append(m)
+
     MessageCallback.CallDataType = 'string0'
     vtk.vtkOutputWindow.GetInstance().AddObserver('ErrorEvent',MessageCallback)
     vtk.vtkOutputWindow.GetInstance().AddObserver('WarningEvent',MessageCallback)
