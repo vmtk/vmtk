@@ -43,6 +43,9 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkConcaveAnnularCapPolyData : public vtkPolyData
 
   static vtkvmtkConcaveAnnularCapPolyData *New();
 
+  vtkSetObjectMacro(BoundaryIds,vtkIdList);
+  vtkGetObjectMacro(BoundaryIds,vtkIdList);
+
   vtkSetStringMacro(CellEntityIdsArrayName);
   vtkGetStringMacro(CellEntityIdsArrayName);
 
@@ -55,8 +58,8 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkConcaveAnnularCapPolyData : public vtkPolyData
 
   virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
 
+  vtkIdList* BoundaryIds;
   char* CellEntityIdsArrayName;
-
   int CellEntityIdOffset;
 
   private:

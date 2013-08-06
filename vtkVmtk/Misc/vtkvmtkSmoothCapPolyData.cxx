@@ -10,11 +10,11 @@ Version:   $Revision: 1.6 $
   See LICENCE file for details.
 
   Portions of this code are covered under the VTK copyright.
-  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
+  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm
   for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -31,7 +31,7 @@ Version:   $Revision: 1.6 $
 #include "vtkObjectFactory.h"
 #include "vtkThinPlateSplineTransform.h"
 #include "vtkPoints.h"
-#include "vtkIdList.h" 
+#include "vtkIdList.h"
 #include "vtkMath.h"
 #include "vtkTriangle.h"
 
@@ -43,6 +43,8 @@ vtkvmtkSmoothCapPolyData::vtkvmtkSmoothCapPolyData()
   this->BoundaryIds = NULL;
   this->ConstraintFactor = 1.0;
   this->NumberOfRings = 8;
+  this->CellEntityIdsArrayName = NULL;
+  this->CellEntityIdOffset = 1;
 }
 
 vtkvmtkSmoothCapPolyData::~vtkvmtkSmoothCapPolyData()
@@ -51,6 +53,11 @@ vtkvmtkSmoothCapPolyData::~vtkvmtkSmoothCapPolyData()
     {
     this->BoundaryIds->Delete();
     this->BoundaryIds = NULL;
+    }
+  if (this->CellEntityIdsArrayName)
+    {
+    delete[] this->CellEntityIdsArrayName;
+    this->CellEntityIdsArrayName = NULL;
     }
 }
 
@@ -81,6 +88,24 @@ int vtkvmtkSmoothCapPolyData::RequestData(
   vtkCellArray* newPolys = vtkCellArray::New();
   newPolys->DeepCopy(input->GetPolys());
 
+  // Copy cell entitiy ids array
+  vtkIdTypeArray* cellEntityIdsArray = NULL;
+  bool markCells = this->CellEntityIdsArrayName && this->CellEntityIdsArrayName[0];
+  if (markCells)
+    {
+    cellEntityIdsArray = vtkIdTypeArray::New();
+    cellEntityIdsArray->SetName(this->CellEntityIdsArrayName);
+    if (input->GetCellData()->GetArray(this->CellEntityIdsArrayName))
+      {
+      cellEntityIdsArray->DeepCopy(input->GetCellData()->GetArray(this->CellEntityIdsArrayName));
+      }
+    else
+      {
+      cellEntityIdsArray->SetNumberOfTuples(newPolys->GetNumberOfCells());
+      cellEntityIdsArray->FillComponent(0,static_cast<double>(this->CellEntityIdOffset));
+      }
+    }
+
   vtkvmtkPolyDataBoundaryExtractor* boundaryExtractor = vtkvmtkPolyDataBoundaryExtractor::New();
   boundaryExtractor->SetInput(input);
   boundaryExtractor->Update();
@@ -99,10 +124,10 @@ int vtkvmtkSmoothCapPolyData::RequestData(
       }
 
     vtkPolyLine* boundaryCell = vtkPolyLine::SafeDownCast(boundaries->GetCell(boundaryId));
-  
+
     int numberOfBoundaryPoints = boundaryCell->GetNumberOfPoints();
     double boundaryDiagonal = sqrt(boundaryCell->GetLength2());
-  
+
     vtkIdList* boundaryPointIds = vtkIdList::New();
     int i;
     for (i=0; i<numberOfBoundaryPoints; i++)
@@ -110,7 +135,7 @@ int vtkvmtkSmoothCapPolyData::RequestData(
       vtkIdType boundaryPointId = static_cast<vtkIdType>(boundaries->GetPointData()->GetScalars()->GetComponent(boundaryCell->GetPointId(i),0));
       boundaryPointIds->InsertNextId(boundaryPointId);
       }
-  
+
     vtkPoints* outerRingPoints = vtkPoints::New();
     vtkIdList* pointCells = vtkIdList::New();
     vtkIdList* cellPoints = vtkIdList::New();
@@ -156,16 +181,16 @@ int vtkvmtkSmoothCapPolyData::RequestData(
       outerRingPoint[2] = distance * boundaryVector[2] + boundaryPoint[2];
       outerRingPoints->InsertNextPoint(outerRingPoint);
       }
-  
+
     pointCells->Delete();
     cellPoints->Delete();
-  
+
     vtkThinPlateSplineTransform* thinPlateSplineTransform = vtkThinPlateSplineTransform::New();
     thinPlateSplineTransform->SetBasisToR2LogR();
     thinPlateSplineTransform->SetSigma(1.0);
     vtkPoints* sourceLandmarks = vtkPoints::New();
     vtkPoints* targetLandmarks = vtkPoints::New();
-  
+
     for (i=0; i<numberOfBoundaryPoints; i++)
       {
       double angle = (double)i / (double)numberOfBoundaryPoints * 2.0*vtkMath::Pi();
@@ -182,10 +207,10 @@ int vtkvmtkSmoothCapPolyData::RequestData(
       sourceLandmarks->InsertNextPoint(sourcePoint);
       targetLandmarks->InsertNextPoint(outerRingPoints->GetPoint(i));
       }
-  
+
     thinPlateSplineTransform->SetSourceLandmarks(sourceLandmarks);
     thinPlateSplineTransform->SetTargetLandmarks(targetLandmarks);
-  
+
     outerRingPoints->Delete();
 
     vtkIdList* circlePointIds = vtkIdList::New();
@@ -220,11 +245,20 @@ int vtkvmtkSmoothCapPolyData::RequestData(
         newPolyIds->InsertNextId(circlePointIds->GetId(i));
         newPolys->InsertNextCell(newPolyIds);
         newPolyIds->Delete();
+        if (markCells)
+          {
+          cellEntityIdsArray->InsertNextValue(boundaryId+1+this->CellEntityIdOffset);
+          }
         }
       }
 
     newPolys->InsertNextCell(circlePointIds);
-  
+
+    if (markCells)
+      {
+      cellEntityIdsArray->InsertNextValue(boundaryId+1+this->CellEntityIdOffset);
+      }
+
     boundaryPointIds->Delete();
 
     circlePointIds->Delete();
@@ -234,9 +268,15 @@ int vtkvmtkSmoothCapPolyData::RequestData(
     sourceLandmarks->Delete();
     targetLandmarks->Delete();
     }
- 
+
   output->SetPoints(newPoints);
   output->SetPolys(newPolys);
+
+  if (markCells)
+    {
+    output->GetCellData()->AddArray(cellEntityIdsArray);
+    cellEntityIdsArray->Delete();
+    }
 
   boundaryExtractor->Delete();
   newPoints->Delete();
