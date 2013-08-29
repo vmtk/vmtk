@@ -35,7 +35,7 @@ Version:   $Revision: 1.0 $
 #include "vtkIdList.h"
 #include "vtkvmtkWin32Header.h"
 
-class VTK_VMTK_MISC_EXPORT vtkvmtkConcaveAnnularCapPolyData : public vtkPolyDataAlgorithm
+class VTK_VMTK_CONTRIB_EXPORT vtkvmtkConcaveAnnularCapPolyData : public vtkPolyDataAlgorithm
 {
   public:
   vtkTypeRevisionMacro(vtkvmtkConcaveAnnularCapPolyData,vtkPolyDataAlgorithm);
