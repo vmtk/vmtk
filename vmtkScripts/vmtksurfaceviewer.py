@@ -52,7 +52,8 @@ class vmtkSurfaceViewer(pypes.pypeScript):
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
             ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer'],
             ['Display','display','bool',1,'','toggle rendering'],
-            ['Opacity','opacity','float',1,'(0.0,1.0)','obejct opacity in the scene'],
+            ['Representation','representation','str',1,'["surface","wireframe","edges"]','change surface representation'],
+            ['Opacity','opacity','float',1,'(0.0,1.0)','object opacity in the scene'],
             ['ArrayName','array','str',1,'','name of the array where the scalars to be displayed are stored'],
             ['ScalarRange','scalarrange','float',2,'','range of the scalar map'],
             ['Legend','legend','bool',1,'','toggle scalar bar'],
@@ -67,26 +68,30 @@ class vmtkSurfaceViewer(pypes.pypeScript):
             ['Actor','oactor','vtkActor',1,'','the output actor']
             ])
 
+    def SetSurfaceRepresentation(self, representation):
+        if representation == 'surface':
+            self.Actor.GetProperty().SetRepresentationToSurface()
+            self.Actor.GetProperty().EdgeVisibilityOff()
+        elif representation == 'edges':
+            self.Actor.GetProperty().SetRepresentationToSurface()
+            self.Actor.GetProperty().EdgeVisibilityOn()
+        elif representation == 'wireframe':
+            self.Actor.GetProperty().SetRepresentationToWireframe()
+            self.Actor.GetProperty().EdgeVisibilityOff()
+        self.Representation = representation
+
     def RepresentationCallback(self, obj):
         if not self.Actor:
             return
 
         if self.Representation == 'surface':
-            self.Representation = 'edges'
+            representation = 'edges'
         elif self.Representation == 'edges':
-            self.Representation = 'wireframe'
+            representation = 'wireframe'
         elif self.Representation == 'wireframe':
-            self.Representation = 'surface'
+            representation = 'surface'
 
-        if self.Representation == 'surface':
-            self.Actor.GetProperty().SetRepresentationToSurface()
-            self.Actor.GetProperty().EdgeVisibilityOff()
-        elif self.Representation == 'edges':
-            self.Actor.GetProperty().SetRepresentationToSurface()
-            self.Actor.GetProperty().EdgeVisibilityOn()
-        elif self.Representation == 'wireframe':
-            self.Actor.GetProperty().SetRepresentationToWireframe()
-            self.Actor.GetProperty().EdgeVisibilityOff()
+        self.SetSurfaceRepresentation(representation)
 
         self.vmtkRenderer.RenderWindow.Render()
 
@@ -135,6 +140,7 @@ class vmtkSurfaceViewer(pypes.pypeScript):
             self.Actor.GetProperty().SetLineWidth(self.LineWidth)
             if self.FlatInterpolation:
                 self.Actor.GetProperty().SetInterpolationToFlat()
+            self.SetSurfaceRepresentation(self.Representation)
             self.vmtkRenderer.Renderer.AddActor(self.Actor)
             self.vmtkRenderer.AddKeyBinding('w','Change surface representation.',self.RepresentationCallback)
 
