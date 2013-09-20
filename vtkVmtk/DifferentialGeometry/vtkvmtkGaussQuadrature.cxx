@@ -26,10 +26,12 @@
 #include "vtkQuadraticEdge.h"
 #include "vtkQuad.h"
 #include "vtkQuadraticQuad.h"
+#include "vtkBiQuadraticQuad.h"
 #include "vtkTriangle.h"
 #include "vtkQuadraticTriangle.h"
 #include "vtkHexahedron.h"
 #include "vtkQuadraticHexahedron.h"
+#include "vtkTriQuadraticHexahedron.h"
 #include "vtkWedge.h"
 #include "vtkQuadraticWedge.h"
 #include "vtkTetra.h"
@@ -100,6 +102,7 @@ void vtkvmtkGaussQuadrature::Initialize(vtkIdType cellType)
     }
     case VTK_QUAD:
     case VTK_QUADRATIC_QUAD:
+    case VTK_BIQUADRATIC_QUAD:
     {
       vtkvmtkGaussQuadrature* q1D = vtkvmtkGaussQuadrature::New();
       q1D->SetOrder(this->Order);
@@ -138,6 +141,7 @@ void vtkvmtkGaussQuadrature::Initialize(vtkIdType cellType)
     }
     case VTK_HEXAHEDRON:
     case VTK_QUADRATIC_HEXAHEDRON:
+    case VTK_TRIQUADRATIC_HEXAHEDRON:
     {
       vtkvmtkGaussQuadrature* q1D = vtkvmtkGaussQuadrature::New();
       q1D->SetOrder(this->Order);

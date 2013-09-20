@@ -42,6 +42,9 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkLinearToQuadraticMeshFilter : public vtkUnstru
   vtkGetMacro(UseBiquadraticWedge,int);
   vtkBooleanMacro(UseBiquadraticWedge,int);
 
+  vtkSetMacro(NumberOfNodesHexahedra,int);
+  vtkGetMacro(NumberOfNodesHexahedra,int);
+
   vtkSetObjectMacro(ReferenceSurface,vtkPolyData);
   vtkGetObjectMacro(ReferenceSurface,vtkPolyData);
 
@@ -75,6 +78,8 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkLinearToQuadraticMeshFilter : public vtkUnstru
   double ComputeJacobian(vtkCell* cell, double pcoords[3]);
 
   int UseBiquadraticWedge;
+
+  int NumberOfNodesHexahedra;
 
   vtkPolyData* ReferenceSurface;
 

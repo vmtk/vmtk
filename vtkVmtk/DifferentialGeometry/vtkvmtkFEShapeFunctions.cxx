@@ -26,10 +26,12 @@
 #include "vtkQuadraticEdge.h"
 #include "vtkQuad.h"
 #include "vtkQuadraticQuad.h"
+#include "vtkBiQuadraticQuad.h"
 #include "vtkTriangle.h"
 #include "vtkQuadraticTriangle.h"
 #include "vtkHexahedron.h"
 #include "vtkQuadraticHexahedron.h"
+#include "vtkTriQuadraticHexahedron.h"
 #include "vtkWedge.h"
 #include "vtkQuadraticWedge.h"
 #if VTK_MAJOR_VERSION > 5 || (VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION > 0)
@@ -248,6 +250,9 @@ void vtkvmtkFEShapeFunctions::GetInterpolationFunctions(vtkCell* cell, double* p
     case VTK_QUADRATIC_QUAD:
       vtkQuadraticQuad::SafeDownCast(cell)->InterpolationFunctions(pcoords,sf);
       break;
+    case VTK_BIQUADRATIC_QUAD:
+      vtkBiQuadraticQuad::SafeDownCast(cell)->InterpolationFunctions(pcoords,sf);
+      break;
     case VTK_TRIANGLE:
       vtkTriangle::SafeDownCast(cell)->InterpolationFunctions(pcoords,sf);
       break;
@@ -259,6 +264,9 @@ void vtkvmtkFEShapeFunctions::GetInterpolationFunctions(vtkCell* cell, double* p
       break;
     case VTK_QUADRATIC_HEXAHEDRON:
       vtkQuadraticHexahedron::SafeDownCast(cell)->InterpolationFunctions(pcoords,sf);
+      break;
+    case VTK_TRIQUADRATIC_HEXAHEDRON:
+      vtkTriQuadraticHexahedron::SafeDownCast(cell)->InterpolationFunctions(pcoords,sf);
       break;
     case VTK_WEDGE:
       vtkWedge::SafeDownCast(cell)->InterpolationFunctions(pcoords,sf);
@@ -293,6 +301,9 @@ void vtkvmtkFEShapeFunctions::GetInterpolationDerivs(vtkCell* cell, double* pcoo
     case VTK_QUADRATIC_QUAD:
       vtkQuadraticQuad::SafeDownCast(cell)->InterpolationDerivs(pcoords,derivs);
       break;
+    case VTK_BIQUADRATIC_QUAD:
+      vtkBiQuadraticQuad::SafeDownCast(cell)->InterpolationDerivs(pcoords,derivs);
+      break;
     case VTK_TRIANGLE:
       vtkTriangle::SafeDownCast(cell)->InterpolationDerivs(pcoords,derivs);
       break;
@@ -304,6 +315,9 @@ void vtkvmtkFEShapeFunctions::GetInterpolationDerivs(vtkCell* cell, double* pcoo
       break;
     case VTK_QUADRATIC_HEXAHEDRON:
       vtkQuadraticHexahedron::SafeDownCast(cell)->InterpolationDerivs(pcoords,derivs);
+      break;
+    case VTK_TRIQUADRATIC_HEXAHEDRON:
+      vtkTriQuadraticHexahedron::SafeDownCast(cell)->InterpolationDerivs(pcoords,derivs);
       break;
     case VTK_WEDGE:
       vtkWedge::SafeDownCast(cell)->InterpolationDerivs(pcoords,derivs);
