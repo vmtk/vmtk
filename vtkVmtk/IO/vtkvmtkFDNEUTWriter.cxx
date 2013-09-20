@@ -76,10 +76,12 @@ void vtkvmtkFDNEUTWriter::WriteData()
       {
       case VTK_QUAD:
       case VTK_QUADRATIC_QUAD:
+      case VTK_BIQUADRATIC_QUAD:
       case VTK_TRIANGLE:
       case VTK_QUADRATIC_TRIANGLE:
       case VTK_HEXAHEDRON:
       case VTK_QUADRATIC_HEXAHEDRON:
+      case VTK_TRIQUADRATIC_HEXAHEDRON:
       case VTK_WEDGE:
       case VTK_QUADRATIC_WEDGE:
       case VTK_TETRA:
@@ -152,6 +154,10 @@ void vtkvmtkFDNEUTWriter::WriteData()
         fdneutElementType = 15;
         fdneutElementGeometry = QUADRILATERAL;
         break;
+      case VTK_BIQUADRATIC_QUAD:
+        fdneutElementType = 15;
+        fdneutElementGeometry = QUADRILATERAL;
+        break;
       case VTK_TRIANGLE:
       case VTK_QUADRATIC_TRIANGLE:
         fdneutElementType = 15;
@@ -159,6 +165,10 @@ void vtkvmtkFDNEUTWriter::WriteData()
         break;
       case VTK_HEXAHEDRON:
       case VTK_QUADRATIC_HEXAHEDRON:
+        fdneutElementType = BRICK;
+        fdneutElementGeometry = BRICK;
+        break;
+      case VTK_TRIQUADRATIC_HEXAHEDRON:
         fdneutElementType = BRICK;
         fdneutElementGeometry = BRICK;
         break;
@@ -223,6 +233,17 @@ void vtkvmtkFDNEUTWriter::WriteData()
             fprintf(FDNEUTFile,"%8d",(int)cellPoints[8]);
             }
           break;
+        case VTK_BIQUADRATIC_QUAD:
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[0]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[4]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[1]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[5]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[2]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[6]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[3]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[7]);
+          fprintf(FDNEUTFile,"%8d",(int)cellPoints[8]);
+          break;
         case VTK_TRIANGLE:
           for (i=0; i<numberOfNodesInElement; i++)
             {
@@ -247,7 +268,7 @@ void vtkvmtkFDNEUTWriter::WriteData()
           fprintf(FDNEUTFile,"%8d",(int)cellPoints[7]);
           fprintf(FDNEUTFile,"%8d",(int)cellPoints[6]);
           break;
-        case VTK_QUADRATIC_HEXAHEDRON:
+        case VTK_TRIQUADRATIC_HEXAHEDRON:
           if (numberOfNodesInElement != 27)
             {
             vtkErrorMacro(<< "Only 27-noded hexahedra are supported in FDNEUT.");
