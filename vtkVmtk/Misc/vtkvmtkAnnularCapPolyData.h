@@ -10,17 +10,17 @@ Version:   $Revision: 1.5 $
   See LICENCE file for details.
 
   Portions of this code are covered under the VTK copyright.
-  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
+  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm
   for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
   // .NAME vtkvmtkAnnularCapPolyData - Add annular caps between the boundaries of a walled surface.
   // .SECTION Description
-  // This class closes the boundaries between the surfaces of a walled surface with caps. The 
+  // This class closes the boundaries between the surfaces of a walled surface with caps. The
   // surfaces are required to be dense for the algorithm to produce legal caps.
 
 #ifndef __vtkvmtkAnnularCapPolyData_h
@@ -32,12 +32,15 @@ Version:   $Revision: 1.5 $
 
 class VTK_VMTK_MISC_EXPORT vtkvmtkAnnularCapPolyData : public vtkPolyDataAlgorithm
 {
-  public: 
+  public:
   vtkTypeRevisionMacro(vtkvmtkAnnularCapPolyData,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent); 
+  void PrintSelf(ostream& os, vtkIndent indent);
 
   static vtkvmtkAnnularCapPolyData *New();
-  
+
+  vtkSetObjectMacro(BoundaryIds,vtkIdList);
+  vtkGetObjectMacro(BoundaryIds,vtkIdList);
+
   vtkSetStringMacro(CellEntityIdsArrayName);
   vtkGetStringMacro(CellEntityIdsArrayName);
 
@@ -46,12 +49,12 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkAnnularCapPolyData : public vtkPolyDataAlgorit
 
   protected:
   vtkvmtkAnnularCapPolyData();
-  ~vtkvmtkAnnularCapPolyData();  
+  ~vtkvmtkAnnularCapPolyData();
 
   virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
 
+  vtkIdList* BoundaryIds;
   char* CellEntityIdsArrayName;
-
   int CellEntityIdOffset;
 
   private:

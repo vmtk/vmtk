@@ -36,12 +36,12 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkSimpleCapPolyData : public vtkPolyDataAlgorith
   void PrintSelf(ostream& os, vtkIndent indent); 
 
   static vtkvmtkSimpleCapPolyData *New();
-  
-  vtkSetStringMacro(CellEntityIdsArrayName);
-  vtkGetStringMacro(CellEntityIdsArrayName);
 
   vtkSetObjectMacro(BoundaryIds,vtkIdList);
   vtkGetObjectMacro(BoundaryIds,vtkIdList);
+  
+  vtkSetStringMacro(CellEntityIdsArrayName);
+  vtkGetStringMacro(CellEntityIdsArrayName);
 
   vtkSetMacro(CellEntityIdOffset,int);
   vtkGetMacro(CellEntityIdOffset,int);
@@ -54,7 +54,6 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkSimpleCapPolyData : public vtkPolyDataAlgorith
 
   vtkIdList* BoundaryIds;
   char* CellEntityIdsArrayName;
-
   int CellEntityIdOffset;
 
   private:

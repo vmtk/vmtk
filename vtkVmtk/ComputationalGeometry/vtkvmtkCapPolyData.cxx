@@ -10,11 +10,11 @@ Version:   $Revision: 1.5 $
   See LICENCE file for details.
 
   Portions of this code are covered under the VTK copyright.
-  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
+  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm
   for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -25,6 +25,7 @@ Version:   $Revision: 1.5 $
 #include "vtkvmtkConstants.h"
 #include "vtkCellArray.h"
 #include "vtkPointData.h"
+#include "vtkCellData.h"
 #include "vtkMath.h"
 #include "vtkPolyLine.h"
 #include "vtkLine.h"
@@ -41,6 +42,8 @@ vtkvmtkCapPolyData::vtkvmtkCapPolyData()
   this->Displacement = 1E-1;
   this->InPlaneDisplacement = 1E-1;
   this->CapCenterIds = NULL;
+  this->CellEntityIdsArrayName = NULL;
+  this->CellEntityIdOffset = 1;
 }
 
 vtkvmtkCapPolyData::~vtkvmtkCapPolyData()
@@ -54,6 +57,11 @@ vtkvmtkCapPolyData::~vtkvmtkCapPolyData()
     {
     this->CapCenterIds->Delete();
     this->CapCenterIds = NULL;
+    }
+  if (this->CellEntityIdsArrayName)
+    {
+    delete[] this->CellEntityIdsArrayName;
+    this->CellEntityIdsArrayName = NULL;
     }
 }
 
@@ -94,7 +102,25 @@ int vtkvmtkCapPolyData::RequestData(
   newPolys->DeepCopy(input->GetPolys());
   boundaryExtractor = vtkvmtkPolyDataBoundaryExtractor::New();
 
-  // Execute 
+  // Copy cell entitiy ids array
+  vtkIdTypeArray* cellEntityIdsArray = NULL;
+  bool markCells = this->CellEntityIdsArrayName && this->CellEntityIdsArrayName[0];
+  if (markCells)
+    {
+    cellEntityIdsArray = vtkIdTypeArray::New();
+    cellEntityIdsArray->SetName(this->CellEntityIdsArrayName);
+    if (input->GetCellData()->GetArray(this->CellEntityIdsArrayName))
+      {
+      cellEntityIdsArray->DeepCopy(input->GetCellData()->GetArray(this->CellEntityIdsArrayName));
+      }
+    else
+      {
+      cellEntityIdsArray->SetNumberOfTuples(newPolys->GetNumberOfCells());
+      cellEntityIdsArray->FillComponent(0,static_cast<double>(this->CellEntityIdOffset));
+      }
+    }
+
+  // Execute
   boundaryExtractor->SetInput(input);
   boundaryExtractor->Update();
 
@@ -145,21 +171,35 @@ int vtkvmtkCapPolyData::RequestData(
 
     barycenterId = newPoints->InsertNextPoint(barycenter);
     this->CapCenterIds->SetId(i,barycenterId);
-    
+
     vtkIdType numberOfBoundaryPoints = boundary->GetNumberOfPoints();
     for (j=0; j<numberOfBoundaryPoints; j++)
       {
       trianglePoints[0] = static_cast<vtkIdType>(boundaries->GetPointData()->GetScalars()->GetTuple1(boundary->GetPointId(j)));
       trianglePoints[1] = barycenterId;
       trianglePoints[2] = static_cast<vtkIdType>(boundaries->GetPointData()->GetScalars()->GetTuple1(boundary->GetPointId((j+1)%numberOfBoundaryPoints)));
+
       newPolys->InsertNextCell(3,trianglePoints);
+
+      if (markCells)
+        {
+        cellEntityIdsArray->InsertNextValue(i+1+this->CellEntityIdOffset);
+        }
+
       }
     }
 
   output->SetPoints(newPoints);
   output->SetPolys(newPolys);
 
-  // TODO: the filter throws all the point and cell data 
+  if (markCells)
+    {
+    output->GetCellData()->AddArray(cellEntityIdsArray);
+    cellEntityIdsArray->Delete();
+    }
+
+  // TODO: the filter throws all the point and cell data
+  //output->GetPointData()->PassData(input->GetPointData()); // Like this?
 
   // Destroy
   newPoints->Delete();
