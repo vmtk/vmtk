@@ -41,6 +41,7 @@ class vmtkSurfaceTransformInteractive(pypes.pypeScript):
         self.Actor = None
         self.BoxWidget = None
         self.Matrix4x4 = None
+        self.MatrixCoefficients = None
         self.Transform = None
         self.TransformFilter = None
         self.Scaling = 0
@@ -55,7 +56,8 @@ class vmtkSurfaceTransformInteractive(pypes.pypeScript):
             ])
         self.SetOutputMembers([
             ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter'],
-            ['Matrix4x4','omatrix4x4','vtkMatrix4x4',1,'','the output transform matrix']
+            ['Matrix4x4','omatrix4x4','vtkMatrix4x4',1,'','the output transform matrix'],
+            ['MatrixCoefficients','omatrix','float',16,'','the output transform matrix coefficients']
             ])
 
     def MoveCallback(self,obj):
@@ -186,6 +188,13 @@ class vmtkSurfaceTransformInteractive(pypes.pypeScript):
  
         self.Matrix4x4 = self.Transform.GetMatrix()
  
+        matrix = self.Matrix4x4
+        self.MatrixCoefficients = [
+            matrix.GetElement(0,0), matrix.GetElement(0,1), matrix.GetElement(0,2), matrix.GetElement(0,3),
+            matrix.GetElement(1,0), matrix.GetElement(1,1), matrix.GetElement(1,2), matrix.GetElement(1,3),
+            matrix.GetElement(2,0), matrix.GetElement(2,1), matrix.GetElement(2,2), matrix.GetElement(2,3),
+            matrix.GetElement(3,0), matrix.GetElement(3,1), matrix.GetElement(3,2), matrix.GetElement(3,3)]
+
         if self.OwnRenderer:
             self.vmtkRenderer.Deallocate()
  
