@@ -29,6 +29,7 @@ Version:   $Revision: 1.4 $
 #include "vtkvmtkWin32Header.h"
 
 class vtkPoints;
+class vtkUnsignedCharArray;
 class vtkDataArray;
 
 class VTK_VMTK_MISC_EXPORT vtkvmtkBoundaryLayerGenerator : public vtkUnstructuredGridAlgorithm
@@ -109,11 +110,11 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkBoundaryLayerGenerator : public vtkUnstructure
 
   virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
 
-  void SetWarpVectors (vtkUnstructuredGrid* input);
+  void BuildWarpVectors(vtkUnstructuredGrid* input);
   void IncrementalWarpPoints(vtkUnstructuredGrid* input, vtkPoints* basePoints, vtkPoints* warpedPoints, int substep, int numberOfSubsteps, double relaxation);
-  void IncrementalWarpVectors(vtkUnstructuredGrid* input, int numberOfSubsteps, double relaxation );
-  int CheckTangle(vtkUnstructuredGrid* input);
-  void LocalUntangle(vtkUnstructuredGrid* input, double Alpha); 
+  void IncrementalWarpVectors(vtkUnstructuredGrid* input, int numberOfSubsteps, double relaxation);
+  int CheckTangle(vtkUnstructuredGrid* input, vtkUnsignedCharArray* checkArray);
+  void LocalUntangle(vtkUnstructuredGrid* input, vtkUnsignedCharArray* checkArray, double alpha); 
   void WarpPoints(vtkPoints* inputPoints, vtkPoints* warpedPoints, int subLayerId, bool quadratic);
   void UnwrapSublayers(vtkUnstructuredGrid* input, vtkPoints* outputPoints);
 
