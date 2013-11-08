@@ -96,7 +96,7 @@ class vmtkRenderer(pypes.pypeScript):
             ['vmtkRenderer','o','vmtkRenderer',1,'','the renderer']])
 
     def ResetCameraCallback(self,obj):
-	self.Renderer.ResetCamera()
+        self.Renderer.ResetCamera()
 
     def ScreenshotCallback(self, obj):
         filePrefix = 'vmtk-screenshot'

@@ -47,6 +47,7 @@ vtkvmtkPolyDataSurfaceRemeshing::vtkvmtkPolyDataSurfaceRemeshing()
   this->Relaxation = 0.5;
   this->TargetArea = 1.0;
   this->TargetAreaFactor = 1.0;
+  this->TriangleSplitFactor = 1.0;
   this->MinAreaFactor = 0.5;
   this->MaxArea = VTK_VMTK_LARGE_FLOAT;
   this->MinArea = 0.0;
@@ -346,7 +347,9 @@ int vtkvmtkPolyDataSurfaceRemeshing::RequestData(
     {
     return 1;
     }
-  
+ 
+  this->TriangleSplitIteration();
+ 
   vtkPoints* newPoints = vtkPoints::New();
   vtkCellArray* newCells = vtkCellArray::New();
   vtkIntArray* newCellEntityIdsArray = vtkIntArray::New();
@@ -583,6 +586,27 @@ int vtkvmtkPolyDataSurfaceRemeshing::EdgeSplitIteration()
       continue;
       }
     this->SplitEdge(pt1,pt2);
+    numberOfChanges++;
+    }
+  return numberOfChanges;
+}
+
+int vtkvmtkPolyDataSurfaceRemeshing::TriangleSplitIteration()
+{
+  int numberOfChanges = 0;
+  int numberOfCells = this->Mesh->GetNumberOfCells();
+  for (int i=0; i<numberOfCells; i++)
+    {
+    if (this->Mesh->GetCellType(i) != VTK_TRIANGLE)
+      {
+      continue;
+      }
+    int test = this->TestTriangleSplit(i);
+    if (test == DO_NOTHING)
+      {
+      continue;
+      }
+    this->SplitTriangle(i);
     numberOfChanges++;
     }
   return numberOfChanges;
@@ -1094,6 +1118,8 @@ int vtkvmtkPolyDataSurfaceRemeshing::SplitTriangle(vtkIdType cellId)
   vtkIdType cell2 = this->Mesh->InsertNextLinkedCell(VTK_TRIANGLE,3,tri);
   this->CellEntityIdsArray->InsertValue(cell2,cellEntityId);
 
+  //cout<<cell1<<" "<<cell2<<" "<<numberOfCells<<endl;
+
   return SUCCESS;
 }
 
@@ -1603,6 +1629,35 @@ double vtkvmtkPolyDataSurfaceRemeshing::ComputeTriangleTargetArea(vtkIdType cell
     targetArea = this->MinArea;
     }
   return targetArea;
+}
+
+int vtkvmtkPolyDataSurfaceRemeshing::TestTriangleSplit(vtkIdType cellId)
+{
+  vtkIdType npts, *pts;
+  this->Mesh->GetCellPoints(cellId,npts,pts);
+
+  vtkIdType tri[3];
+  tri[0] = pts[0];
+  tri[1] = pts[1];
+  tri[2] = pts[2];
+
+  double point1[3], point2[3], point3[3];
+  this->Mesh->GetPoint(tri[0],point1);
+  this->Mesh->GetPoint(tri[1],point2);
+  this->Mesh->GetPoint(tri[2],point3);
+
+  double area = vtkTriangle::TriangleArea(point1,point2,point3);
+
+  double targetArea = this->ComputeTriangleTargetArea(cellId);
+
+  // TODO: make this a parameter
+  if (area < this->TriangleSplitFactor * targetArea)
+    {
+    return DO_NOTHING;
+    }
+
+  //cout<<cellId<<" "<<area<<" "<<targetArea<<endl;
+  return DO_CHANGE;
 }
 
 int vtkvmtkPolyDataSurfaceRemeshing::TestAspectRatioCollapseEdge(vtkIdType cellId, vtkIdType& pt1, vtkIdType& pt2)

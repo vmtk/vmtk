@@ -34,6 +34,7 @@ class vmtkSurfaceRemeshing(pypes.pypeScript):
         self.TargetEdgeLength = 1.0
         self.TargetAreaFactor = 1.0
         self.TargetEdgeLengthFactor = 1.0
+        self.TriangleSplitFactor = 5.0
         self.MaxArea = 1E16
         self.MinArea = 0.0
         self.MaxEdgeLength = 1E16
@@ -64,6 +65,7 @@ class vmtkSurfaceRemeshing(pypes.pypeScript):
             ['TargetEdgeLengthArrayName','edgelengtharray','str',1],
             ['TargetAreaFactor','areafactor','float',1,'(0.0,)'],
             ['TargetEdgeLengthFactor','edgelengthfactor','float',1,'(0.0,)'],
+            ['TriangleSplitFactor','trianglesplitfactor','float',1,'(0.0,)'],
             ['MaxArea','maxarea','float',1,'(0.0,)'],
             ['MinArea','minarea','float',1,'(0.0,)'],
             ['NumberOfIterations','iterations','int',1,'(0,)'],
@@ -128,6 +130,7 @@ class vmtkSurfaceRemeshing(pypes.pypeScript):
             self.PrintError('Error: unsupported ElementSizeMode.')
         surfaceRemeshing.SetTargetArea(self.TargetArea)
         surfaceRemeshing.SetTargetAreaFactor(self.TargetAreaFactor)
+        surfaceRemeshing.SetTriangleSplitFactor(self.TriangleSplitFactor)
         surfaceRemeshing.SetMaxArea(self.MaxArea)
         surfaceRemeshing.SetMinArea(self.MinArea)
         surfaceRemeshing.SetNumberOfIterations(self.NumberOfIterations)

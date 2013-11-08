@@ -90,11 +90,13 @@ SET(SCRIPTS_SRCS
   vmtkrendertoimage.py
   vmtkrbfinterpolation.py
   vmtksurfaceappend.py
+  vmtksurfacearrayoperation.py
   vmtksurfacecapper.py
   vmtksurfacecelldatatopointdata.py
   vmtksurfacecenterlineprojection.py
   vmtksurfaceclipper.py
   vmtksurfaceconnectivity.py
+  vmtksurfacecurvature.py
   vmtksurfacedecimation.py
   vmtksurfacedistance.py
   vmtksurfacekiteremoval.py
@@ -104,6 +106,7 @@ SET(SCRIPTS_SRCS
   vmtksurfaceprojection.py
   vmtksurfacereader.py
   vmtksurfacereferencesystemtransform.py
+  vmtksurfaceregiondrawing.py
   vmtksurfaceremeshing.py
   vmtksurfacescaling.py
   vmtksurfacesmoothing.py

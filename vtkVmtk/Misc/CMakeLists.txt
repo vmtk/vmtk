@@ -27,6 +27,7 @@ SET (VTK_VMTK_MISC_SRCS
   vtkvmtkStreamlineToParticlesFilter.cxx
   vtkvmtkSurfaceDistance.cxx
   vtkvmtkSurfaceProjection.cxx
+  vtkvmtkUnstructuredGridTetraFilter.cxx
   )
 
 SET (VTK_VMTK_MISC_TARGET_LINK_LIBRARIES vtkvmtkMisc vtkvmtkComputationalGeometry vtkvmtkDifferentialGeometry vtkCommon vtkFiltering vtkGraphics vtkHybrid)
