@@ -2,45 +2,44 @@
 
 Copyright Brigham and Women's Hospital (BWH) All Rights Reserved.
 
-See Doc/copyright/copyright.txt
+See COPYRIGHT.txt
 or http://www.slicer.org/copyright/copyright.txt for details.
 
-Program:   vtkvmtkITK
-Module:    $HeadURL: http://svn.slicer.org/Slicer3/trunk/Libs/vtkvmtkITK/vtkvmtkITKArchetypeImageSeriesReader.h $
-Date:      $Date: 2010-01-22 20:45:00 +0100 (Fri, 22 Jan 2010) $
-Version:   $Revision: 11747 $
+Program:   vtkITK
+Module:    $HeadURL$
+Date:      $Date$
+Version:   $Revision$
 
 ==========================================================================*/
-
-///  vtkvmtkITKArchetypeImageSeriesReader - Read a series of files
-/// that have a common naming convention
-/// 
-/// ArchetypeImageSeriesReader creates a volume from a series of images
-/// stored in files. The series are represented by one filename. This
-/// filename, the archetype, is any one of the files in the series.
-//
-/// \note
-/// This work is part of the National Alliance for Medical Image Computing 
-/// (NAMIC), funded by the National Institutes of Health through the NIH Roadmap
-/// for Medical Research, Grant U54 EB005149.
 
 #ifndef __vtkvmtkITKArchetypeImageSeriesReader_h
 #define __vtkvmtkITKArchetypeImageSeriesReader_h
 
-#include "vtkImageSource.h"
-#include "vtkMatrix4x4.h"
-#include "itkSpatialOrientation.h"
-#include <vector>
-#include <string>
-
-#include "itkMetaDataDictionary.h"
-//#include "gdcmDictSet.h"        /// access to dictionary
-#include "gdcmDict.h"           /// access to dictionary
-#include "gdcmDictEntry.h"      /// access to dictionary
-#include "gdcmGlobal.h"         /// access to dictionary
-
+// VTKITK includes
 #include "vtkvmtkITK.h"
 
+// VTK includes
+#include "vtkImageSource.h"
+class vtkMatrix4x4;
+
+// ITK includes
+#include "itkMetaDataDictionary.h"
+#include "itkSpatialOrientation.h"
+
+// STD includes
+#include <string>
+#include <vector>
+
+/// \brief Read a series of files that have a common naming convention.
+///
+/// ArchetypeImageSeriesReader creates a volume from a series of images
+/// stored in files. The series are represented by one filename. This
+/// filename, the archetype, is any one of the files in the series.
+///
+/// \note
+/// This work is part of the National Alliance for Medical Image Computing 
+/// (NAMIC), funded by the National Institutes of Health through the NIH Roadmap
+/// for Medical Research, Grant U54 EB005149.
 class VTK_VMTK_ITK_EXPORT vtkvmtkITKArchetypeImageSeriesReader : public vtkImageSource
 {
 public:
@@ -48,21 +47,19 @@ public:
   vtkTypeRevisionMacro(vtkvmtkITKArchetypeImageSeriesReader,vtkImageSource);
   void PrintSelf(ostream& os, vtkIndent indent);   
 
-  //BTX
   typedef itk::SpatialOrientation::ValidCoordinateOrientationFlags CoordinateOrientationCode;
-  //ETX
 
   /// 
   /// Specify the archetype filename for the series.
   vtkSetStringMacro(Archetype);
   vtkGetStringMacro(Archetype);
 
-  /// 
+  ///
   /// See how many file names were generated during ExecuteInformation
-  unsigned int GetNumberOfFileNames()
-    {
-    return this->FileNames.size();
-    };
+  unsigned int GetNumberOfFileNames();
+  ///
+  /// Return all the file names
+  const std::vector<std::string>& GetFileNames();
 
   /// 
   /// Specify the file names to be used when looking for extra files
@@ -138,6 +135,8 @@ public:
     this->UseNativeCoordinateOrientation = 1;
     this->Modified();
     }
+  vtkGetMacro(DesiredCoordinateOrientation, CoordinateOrientationCode);
+  vtkGetMacro(UseNativeCoordinateOrientation, char);
 
   /// 
   /// Set the data type of pixels in the file.  
@@ -238,6 +237,11 @@ public:
   vtkMatrix4x4* GetRasToIjkMatrix();
 
   /// 
+  /// Returns the Measurement frame matrix
+  vtkMatrix4x4* GetMeasurementFrameMatrix();
+
+
+  /// 
   /// ITK internally does not register all of the IO types that get built
   /// (possibly due to lingering bugs?) but many slicer users have
   /// GE5 (Signa - magic number: IMGF) files that they need to work
@@ -250,14 +254,12 @@ public:
   void RegisterExtraBuiltInFactories();
   void UnRegisterDeprecatedBuiltInFactories();
 
-  //BTX
   /// 
   /// Return the MetaDataDictionary from the ITK layer
   const itk::MetaDataDictionary &GetMetaDataDictionary() const;
   std::vector<std::string> Tags;
   std::vector<std::string> TagValues;
   void ParseDictionary();
-  //ETX
 
   unsigned int GetNumberOfItemsInDictionary(); 
   bool HasKey( char* tag );
@@ -402,6 +404,11 @@ public:
     return this->ImageOrientationPatient.size();
     };
 
+  unsigned int GetNumberOfImagePositionPatient()
+    {
+    return this->ImagePositionPatient.size();
+    }
+
   /// check the existance of given discriminator
   int ExistSeriesInstanceUID( const char* SeriesInstanceUID )
     {
@@ -524,6 +531,32 @@ public:
       return -1;
     }
   
+  int ExistImagePositionPatient( float* ipp )
+    {
+      float a = 0;
+      for (int n = 0; n < 3; n++)
+        {
+        a += ipp[n]*ipp[n];
+        }
+
+      for (unsigned int k = 0; k < GetNumberOfImagePositionPatient(); k++)
+        {
+        float b = 0;
+        float c = 0;
+        for (int n = 0; n < 3; n++)
+          {
+          b += this->ImagePositionPatient[k][n] * this->ImagePositionPatient[k][n];
+          c += this->ImagePositionPatient[k][n] * ipp[n];
+          }
+        c = fabs(c)/sqrt(a*b);
+        if ( c > 0.99999 )
+          {
+          return k;
+          }
+        }
+      return -1;
+    }
+    
   /// methods to get N-th discriminator
   const char* GetNthSeriesInstanceUID( unsigned int n )
     {
@@ -591,11 +624,25 @@ public:
         return NULL;
         } 
       float *dgo = new float [6];
-      for (int k = 0; k <3; k++)
+      for (int k = 0; k <6; k++)
         {
         dgo[k] = this->ImageOrientationPatient[n][k];
         }
       return dgo;
+    }
+
+  float* GetNthImagePositionPatient( unsigned int n )
+    {
+      if (n >= this->GetNumberOfImagePositionPatient() )
+        {
+        return NULL;
+        }
+      float *ipp = new float [3];
+      for (int k = 0; k <3; k++)
+        {
+        ipp[k] = this->ImagePositionPatient[n][k];
+        }
+      return ipp;
     }
 
   /// insert unique item into array. Duplicate code for TCL wrapping. 
@@ -702,6 +749,20 @@ public:
       return (this->ImageOrientationPatient.size()-1);
     }
 
+  int InsertImagePositionPatient ( float *a )
+    {
+      int k = ExistImagePositionPatient( a );
+      if ( k >= 0 )
+        {
+        return k;
+        }
+      
+      std::vector< float > aVector(3);
+      for ( unsigned int i = 0; i < 3; i++ ) aVector[i] = a[i]; 
+      this->ImagePositionPatient.push_back( aVector );
+      return (this->ImagePositionPatient.size()-1);
+    }
+
   void AnalyzeDicomHeaders( );
 
   void AssembleNthVolume( int n );
@@ -739,12 +800,15 @@ protected:
 
   double DefaultDataSpacing[3];
   double DefaultDataOrigin[3];
+  float ScanAxis[3];
+  float ScanOrigin[3];
 
   int FileNameSliceOffset;
   int FileNameSliceSpacing;
   int FileNameSliceCount;
 
   vtkMatrix4x4* RasToIjkMatrix;
+  vtkMatrix4x4* MeasurementFrameMatrix;
 
   char UseNativeCoordinateOrientation;
   char UseNativeScalarType;
@@ -761,17 +825,14 @@ protected:
 
   unsigned int IndexArchetype;
 
-  //BTX
   std::vector<std::string> FileNames;
+  std::vector<std::pair <double, int> > FileNameSliceKey;
   CoordinateOrientationCode DesiredCoordinateOrientation;
-  //ETX
   virtual void ExecuteInformation();
   /// defined in the subclasses
   virtual void ExecuteData(vtkDataObject *data);
 
-  //BTX
   itk::MetaDataDictionary Dictionary;
-  //ETX
 
   /// The following variables provide support
   /// for reading a directory with multiple series/groups.
@@ -785,8 +846,8 @@ protected:
   /// DiffusionGradientOrientation   0018,9089 
   /// SliceLocation                  0020,1041
   /// ImageOrientationPatient        0020,0037
+  /// ImagePositionPatient           0020,0032
 
-  //BTX
   std::vector<std::string> AllFileNames;
   bool AnalyzeHeader;
   bool IsOnlyFile;
@@ -798,6 +859,7 @@ protected:
   std::vector< std::vector<float> > DiffusionGradientOrientation;
   std::vector<float> SliceLocation;
   std::vector< std::vector<float> > ImageOrientationPatient;
+  std::vector< std::vector<float> > ImagePositionPatient;
 
   /// index of each dicom file into the above arrays
   std::vector<long int> IndexSeriesInstanceUIDs;
@@ -807,7 +869,7 @@ protected:
   std::vector<long int> IndexDiffusionGradientOrientation;
   std::vector<long int> IndexSliceLocation;
   std::vector<long int> IndexImageOrientationPatient;
-  //ETX
+  std::vector<long int> IndexImagePositionPatient;
 
 private:
   vtkvmtkITKArchetypeImageSeriesReader(const vtkvmtkITKArchetypeImageSeriesReader&);  /// Not implemented.

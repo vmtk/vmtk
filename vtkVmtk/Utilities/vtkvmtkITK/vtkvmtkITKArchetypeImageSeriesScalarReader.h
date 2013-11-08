@@ -2,13 +2,13 @@
 
   Copyright Brigham and Women's Hospital (BWH) All Rights Reserved.
 
-  See Doc/copyright/copyright.txt
+  See COPYRIGHT.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
 
-  Program:   vtkvmtkITK
-  Module:    $HeadURL: http://svn.slicer.org/Slicer3/trunk/Libs/vtkvmtkITK/vtkvmtkITKArchetypeImageSeriesScalarReader.h $
-  Date:      $Date: 2010-01-22 20:45:00 +0100 (Fri, 22 Jan 2010) $
-  Version:   $Revision: 11747 $
+  Program:   vtkITK
+  Module:    $HeadURL$
+  Date:      $Date$
+  Version:   $Revision$
 
 ==========================================================================*/
 
@@ -31,9 +31,7 @@ class VTK_VMTK_ITK_EXPORT vtkvmtkITKArchetypeImageSeriesScalarReader : public vt
   ~vtkvmtkITKArchetypeImageSeriesScalarReader();
 
   void ExecuteData(vtkDataObject *data);
-//BTX
   static void ReadProgressCallback(itk::ProcessObject* obj,const itk::ProgressEvent&, void* data);
-//ETX
   /// private:
 };
 

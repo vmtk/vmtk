@@ -54,7 +54,7 @@ IF(VMTK_LIBRARY_PROPERTIES)
   SET_TARGET_PROPERTIES(vtkvmtkSegmentation PROPERTIES ${VMTK_LIBRARY_PROPERTIES})
 ENDIF(VMTK_LIBRARY_PROPERTIES)
 SET_TARGET_PROPERTIES(vtkvmtkSegmentation PROPERTIES LINKER_LANGUAGE CXX)
-TARGET_LINK_LIBRARIES(vtkvmtkSegmentation vtkvmtkDifferentialGeometry vtkCommon vtkFiltering vtkGraphics vtkImaging vtkvmtkITK ITKCommon ITKBasicFilters)
+TARGET_LINK_LIBRARIES(vtkvmtkSegmentation vtkvmtkDifferentialGeometry vtkCommon vtkFiltering vtkGraphics vtkImaging vtkvmtkITK ${ITK_LIBRARIES})
 
 
 INSTALL(TARGETS vtkvmtkSegmentation

@@ -21,6 +21,7 @@ Version:   $Revision: 1.4 $
 
 #include "vtkvmtkLevelSetSigmoidFilter.h"
 
+#include "vtkDataArray.h"
 #include "vtkPointData.h"
 #include "vtkDataArray.h"
 #include "vtkInformation.h"
