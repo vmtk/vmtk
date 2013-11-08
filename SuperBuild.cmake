@@ -46,8 +46,7 @@ if( NOT USE_SYSTEM_ITK )
   ##
   set( proj ITK )
   ExternalProject_Add( ${proj}
-    GIT_REPOSITORY "${GIT_PROTOCOL}://github.com/vmtk/ITK.git"
-    #GIT_TAG "v3.20.1-vmtk"
+    GIT_REPOSITORY "${GIT_PROTOCOL}://github.com/Kitware/ITK.git"
     SOURCE_DIR "${CMAKE_BINARY_DIR}/ITK"
     BINARY_DIR ITK-Build
     CMAKE_GENERATOR ${gen}
