@@ -211,11 +211,22 @@ void vtkvmtkPNGWriter::Write()
   char* data = (char*)result->GetPointer(0);
   int length = result->GetNumberOfTuples() * result->GetNumberOfComponents();
 
+  char* flipped_data = new char[length];
+  if (this->FlipImage)
+    {
+    for (int i=0; i<length; i++)
+      {
+      flipped_data[i] = data[length-i-1];
+      }
+    data = flipped_data;
+    }
+
   char* encoded_data = new char[2*length];
   int output_length = base64_encode(encoded_data,data,length);
   this->SetBase64Image(encoded_data);
 
   delete[] encoded_data;
+  delete[] flipped_data;
 
   this->SetWriteToMemory(previousWriteToMemory);
 } 

@@ -1,3 +1,7 @@
+if( APPLE )
+  set ( CMAKE_CXX_COMPILER "/usr/bin/g++" CACHE STRING "CXX compiler." FORCE)
+endif( APPLE )
+
 PROJECT(VMTK)
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)

@@ -14,8 +14,11 @@ SET (VTK_VMTK_SEGMENTATION_SRCS
   vtkvmtkGradientMagnitudeImageFilter.cxx
   vtkvmtkGradientMagnitudeRecursiveGaussianImageFilter.cxx
   vtkvmtkGradientMagnitudeRecursiveGaussian2DImageFilter.cxx
+  vtkvmtkGrayscaleMorphologyImageFilter.cxx
   vtkvmtkLaplacianSegmentationLevelSetImageFilter.cxx
+  vtkvmtkNormalizeImageFilter.cxx
   vtkvmtkObjectnessMeasureImageFilter.cxx
+  vtkvmtkOtsuMultipleThresholdsImageFilter.cxx
   vtkvmtkPolyDataPotentialFit.cxx
   vtkvmtkRecursiveGaussianImageFilter.cxx
   vtkvmtkRecursiveGaussian2DImageFilter.cxx
