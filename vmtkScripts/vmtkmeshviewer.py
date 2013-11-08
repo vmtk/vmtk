@@ -34,10 +34,13 @@ class vmtkMeshViewer(pypes.pypeScript):
         self.Opacity = 1.0
         self.ArrayName = ''
         self.ScalarRange = [0.0, 0.0]
+        self.Color = [-1.0, -1.0, -1.0]
         self.Legend = 0
         self.Grayscale = 0
         self.FlatInterpolation = 0
 	
+        self.Representation = 'surface'
+
         self.Actor = None
         self.ScalarBarActor = None
 
@@ -52,11 +55,36 @@ class vmtkMeshViewer(pypes.pypeScript):
             ['ScalarRange','scalarrange','float',2,'','range of the scalar map'],
             ['Legend','legend','bool',1,'','toggle scalar bar'],
             ['Grayscale','grayscale','bool',1,'','toggle color or grayscale'],
+            ['Color','color','float',3,'','RGB color of the object in the scene'],
             ['FlatInterpolation','flat','bool',1,'','toggle flat or shaded surface display']
             ])
         self.SetOutputMembers([
             ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh','vmtkmeshwriter']
             ])
+
+    def RepresentationCallback(self, obj):
+        if not self.Actor:
+            return
+
+        if self.Representation == 'surface':
+            self.Representation = 'edges'
+        elif self.Representation == 'edges':
+            self.Representation = 'wireframe'
+        elif self.Representation == 'wireframe':
+            self.Representation = 'surface'
+
+        if self.Representation == 'surface':
+            self.Actor.GetProperty().SetRepresentationToSurface()
+            self.Actor.GetProperty().EdgeVisibilityOff()
+        elif self.Representation == 'edges':
+            self.Actor.GetProperty().SetRepresentationToSurface()
+            self.Actor.GetProperty().EdgeVisibilityOn()
+        elif self.Representation == 'wireframe':
+            self.Actor.GetProperty().SetRepresentationToWireframe()
+            self.Actor.GetProperty().EdgeVisibilityOff()
+
+        self.vmtkRenderer.RenderWindow.Render()
+
 
     def BuildView(self):
 
@@ -67,36 +95,40 @@ class vmtkMeshViewer(pypes.pypeScript):
 
         self.vmtkRenderer.RegisterScript(self) 
 
-        if self.Actor != None:
+        if self.Actor:
             self.vmtkRenderer.Renderer.RemoveActor(self.Actor)
 
-        if self.ScalarBarActor != None:
+        if self.ScalarBarActor:
             self.vmtkRenderer.Renderer.RemoveActor(self.ScalarBarActor)
 
-        if self.Mesh != None:
+        if self.Mesh:
             mapper = vtk.vtkDataSetMapper()
             mapper.SetInput(self.Mesh)
-            if (self.ArrayName != ''):
+            if self.ArrayName:
                 self.Mesh.GetPointData().SetActiveScalars(self.ArrayName)
-            if (self.Mesh.GetPointData().GetScalars() != None):
                 array = self.Mesh.GetPointData().GetScalars()
-                if (self.ScalarRange[1] > self.ScalarRange[0]):
+                if self.ScalarRange[1] > self.ScalarRange[0]:
                     mapper.SetScalarRange(self.ScalarRange)
                 else:
                     mapper.SetScalarRange(array.GetRange(0))
-                if (self.Grayscale == 1):
+                if self.Grayscale:
                     lut = vtk.vtkLookupTable()
                     lut.SetValueRange(0.0,1.0)
                     lut.SetSaturationRange(0.0,0.0)
                     mapper.SetLookupTable(lut)
+            else:
+                mapper.ScalarVisibilityOff()
             self.Actor = vtk.vtkActor()
             self.Actor.SetMapper(mapper)
-            if (self.FlatInterpolation == 1):
+            if (self.Color[0] >= 0.0):
+                self.Actor.GetProperty().SetColor(self.Color)
+            if self.FlatInterpolation:
                 self.Actor.GetProperty().SetInterpolationToFlat()
             self.Actor.GetProperty().SetOpacity(self.Opacity)
             self.vmtkRenderer.Renderer.AddActor(self.Actor)
+            self.vmtkRenderer.AddKeyBinding('w','Change surface representation.',self.RepresentationCallback)
 
-        if (self.Legend == 1) & (self.Actor != None):
+        if self.Legend and self.Actor:
             self.ScalarBarActor = vtk.vtkScalarBarActor()
             self.ScalarBarActor.SetLookupTable(self.Actor.GetMapper().GetLookupTable())
             self.ScalarBarActor.GetLabelTextProperty().ItalicOff()
@@ -106,7 +138,7 @@ class vmtkMeshViewer(pypes.pypeScript):
             self.ScalarBarActor.SetLabelFormat('%.2f')
             self.vmtkRenderer.Renderer.AddActor(self.ScalarBarActor)
 
-        if (self.Display == 1):
+        if self.Display:
             self.vmtkRenderer.Render()
 
         if self.OwnRenderer:

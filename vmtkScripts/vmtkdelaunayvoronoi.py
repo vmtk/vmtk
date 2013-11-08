@@ -106,6 +106,8 @@ class vmtkDelaunayVoronoi(pypes.pypeScript):
         self.VoronoiDiagram = None
         self.PoleIds = None
 
+        self.Mesh = None
+
         self.SetScriptName('vmtkdelaunayvoronoi')
         self.SetScriptDoc('')
         self.SetInputMembers([
@@ -124,6 +126,8 @@ class vmtkDelaunayVoronoi(pypes.pypeScript):
             ['RadiusArrayName','radiusarray','str',1,'','name of the array where radius values of maximal inscribed spheres are stored'],
             ['DelaunayTessellation','delaunaytessellation','vtkUnstructuredGrid',1,'','','vmtkmeshwriter'],
             ['VoronoiDiagram','voronoidiagram','vtkPolyData',1,'','','vmtksurfacewriter'],
+            ['Mesh','omesh','vtkUnstructuredGrid',1,'','conveniently named DelaunayTessellation output','vmtkmeshwriter'],
+            ['Surface','osurface','vtkPolyData',1,'','conveniently named VoronoiDiagram output','vmtksurfacewriter'],
             ['PoleIds','poleids','vtkIdList',1]])
 
     def Execute(self):
@@ -224,11 +228,14 @@ class vmtkDelaunayVoronoi(pypes.pypeScript):
         self.VoronoiDiagram = voronoiDiagramFilter.GetOutput()
 
         if self.SimplifyVoronoi:
-          voronoiDiagramSimplifier = vtkvmtk.vtkvmtkSimplifyVoronoiDiagram()
-          voronoiDiagramSimplifier.SetInput(voronoiDiagramFilter.GetOutput())
-          voronoiDiagramSimplifier.SetUnremovablePointIds(voronoiDiagramFilter.GetPoleIds())
-          voronoiDiagramSimplifier.Update()
-          self.VoronoiDiagram = voronoiDiagramSimplifier.GetOutput()
+            voronoiDiagramSimplifier = vtkvmtk.vtkvmtkSimplifyVoronoiDiagram()
+            voronoiDiagramSimplifier.SetInput(voronoiDiagramFilter.GetOutput())
+            voronoiDiagramSimplifier.SetUnremovablePointIds(voronoiDiagramFilter.GetPoleIds())
+            voronoiDiagramSimplifier.Update()
+            self.VoronoiDiagram = voronoiDiagramSimplifier.GetOutput()
+
+        self.Mesh = self.DelaunayTessellation
+        self.Surface = self.VoronoiDiagram
 
 
 if __name__=='__main__':

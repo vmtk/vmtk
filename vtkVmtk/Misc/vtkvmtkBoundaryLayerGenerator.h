@@ -29,6 +29,7 @@ Version:   $Revision: 1.4 $
 #include "vtkvmtkWin32Header.h"
 
 class vtkPoints;
+class vtkUnsignedCharArray;
 class vtkDataArray;
 
 class VTK_VMTK_MISC_EXPORT vtkvmtkBoundaryLayerGenerator : public vtkUnstructuredGridAlgorithm
@@ -57,6 +58,10 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkBoundaryLayerGenerator : public vtkUnstructure
   vtkSetMacro(IncludeSurfaceCells,int);
   vtkBooleanMacro(IncludeSurfaceCells,int);
 
+  vtkGetMacro(IncludeSidewallCells,int);
+  vtkSetMacro(IncludeSidewallCells,int);
+  vtkBooleanMacro(IncludeSidewallCells,int);
+
   vtkGetMacro(NegateWarpVectors,int);
   vtkSetMacro(NegateWarpVectors,int);
   vtkBooleanMacro(NegateWarpVectors,int);
@@ -76,6 +81,27 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkBoundaryLayerGenerator : public vtkUnstructure
   vtkGetMacro(SubLayerRatio,double);
   vtkSetMacro(SubLayerRatio,double);
 
+  vtkGetMacro(NumberOfSubsteps,int);
+  vtkSetMacro(NumberOfSubsteps,int);
+
+  vtkGetMacro(Relaxation,double);
+  vtkSetMacro(Relaxation,double);
+
+  vtkSetStringMacro(CellEntityIdsArrayName);
+  vtkGetStringMacro(CellEntityIdsArrayName);
+
+  vtkGetMacro(InnerSurfaceCellEntityId,int);
+  vtkSetMacro(InnerSurfaceCellEntityId,int);
+
+  vtkGetMacro(OuterSurfaceCellEntityId,int);
+  vtkSetMacro(OuterSurfaceCellEntityId,int);
+
+  vtkGetMacro(SidewallCellEntityId,int);
+  vtkSetMacro(SidewallCellEntityId,int);
+
+  vtkGetMacro(VolumeCellEntityId,int);
+  vtkSetMacro(VolumeCellEntityId,int);
+
   vtkGetObjectMacro(InnerSurface,vtkUnstructuredGrid);
 
   protected:
@@ -84,7 +110,13 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkBoundaryLayerGenerator : public vtkUnstructure
 
   virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
 
+  void BuildWarpVectors(vtkUnstructuredGrid* input);
+  void IncrementalWarpPoints(vtkUnstructuredGrid* input, vtkPoints* basePoints, vtkPoints* warpedPoints, int substep, int numberOfSubsteps, double relaxation);
+  void IncrementalWarpVectors(vtkUnstructuredGrid* input, int numberOfSubsteps, double relaxation);
+  int CheckTangle(vtkUnstructuredGrid* input, vtkUnsignedCharArray* checkArray);
+  void LocalUntangle(vtkUnstructuredGrid* input, vtkUnsignedCharArray* checkArray, double alpha); 
   void WarpPoints(vtkPoints* inputPoints, vtkPoints* warpedPoints, int subLayerId, bool quadratic);
+  void UnwrapSublayers(vtkUnstructuredGrid* input, vtkPoints* outputPoints);
 
   vtkDataArray* WarpVectorsArray;
   vtkDataArray* LayerThicknessArray;
@@ -100,12 +132,23 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkBoundaryLayerGenerator : public vtkUnstructure
   double MaximumLayerThickness;
 
   int NumberOfSubLayers;
+  int NumberOfSubsteps;
   double SubLayerRatio;
 
   int IncludeSurfaceCells;
+  int IncludeSidewallCells;
   int NegateWarpVectors;
 
   vtkUnstructuredGrid* InnerSurface;
+
+  char* CellEntityIdsArrayName;
+  int InnerSurfaceCellEntityId;
+  int OuterSurfaceCellEntityId;
+  int SidewallCellEntityId;
+  int VolumeCellEntityId;
+
+  double Relaxation;
+  double Alpha;
 
   private:
   vtkvmtkBoundaryLayerGenerator(const vtkvmtkBoundaryLayerGenerator&);  // Not implemented.

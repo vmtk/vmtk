@@ -46,7 +46,7 @@ class vmtkMeshTetrahedralize(pypes.pypeScript):
         if self.Mesh == None:
             self.PrintError('Error: No input mesh.')
 
-        tetrahedralizeFilter = vtk.vtkDataSetTriangleFilter()
+        tetrahedralizeFilter = vtkvmtk.vtkvmtkUnstructuredGridTetraFilter()
         tetrahedralizeFilter.SetInput(self.Mesh)
         tetrahedralizeFilter.SetTetrahedraOnly(self.TetrahedraOnly)
         tetrahedralizeFilter.Update()

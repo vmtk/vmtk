@@ -323,7 +323,7 @@ AnisotropicDiffusionVesselEnhancementImageFilter<TInputImage, TOutputImage, TVes
 template<class TInputImage, class TOutputImage, class TVesselnessFilter>
 void
 AnisotropicDiffusionVesselEnhancementImageFilter<TInputImage, TOutputImage, TVesselnessFilter>
-::ApplyUpdate(TimeStepType dt)
+::ApplyUpdate(const TimeStepType& dt)
 {
   itkDebugMacro( << "ApplyUpdate Invoked with time step size: " << dt ); 
   // Set up for multithreaded processing.
@@ -343,7 +343,8 @@ AnisotropicDiffusionVesselEnhancementImageFilter<TInputImage, TOutputImage, TVes
 ::ApplyUpdateThreaderCallback( void * arg )
 {
   DenseFDThreadStruct * str;
-  int total, threadId, threadCount;
+  ThreadIdType threadId;
+  int total, threadCount;
 
   threadId = ((MultiThreader::ThreadInfoStruct *)(arg))->ThreadID;
   threadCount = ((MultiThreader::ThreadInfoStruct *)(arg))->NumberOfThreads;
@@ -392,8 +393,8 @@ AnisotropicDiffusionVesselEnhancementImageFilter<TInputImage, TOutputImage, TVes
   // various threads.  There is one distinct slot for each possible thread,
   // so this data structure is thread-safe.
   threadCount = this->GetMultiThreader()->GetNumberOfThreads();  
-  str.TimeStepList = new TimeStepType[threadCount];
-  str.ValidTimeStepList = new bool[threadCount];
+  str.TimeStepList.resize(threadCount);
+  str.ValidTimeStepList.resize(threadCount);
   for (int i =0; i < threadCount; ++i)
     {      str.ValidTimeStepList[i] = false;    } 
 
@@ -401,9 +402,9 @@ AnisotropicDiffusionVesselEnhancementImageFilter<TInputImage, TOutputImage, TVes
   this->GetMultiThreader()->SingleMethodExecute();
 
   // Resolve the single value time step to return
-  dt = this->ResolveTimeStep(str.TimeStepList, str.ValidTimeStepList, threadCount);
-  delete [] str.TimeStepList;
-  delete [] str.ValidTimeStepList;
+  dt = this->ResolveTimeStep(str.TimeStepList, str.ValidTimeStepList);
+  //delete [] str.TimeStepList;
+  //delete [] str.ValidTimeStepList;
 
   return  dt;
 }
@@ -414,7 +415,8 @@ AnisotropicDiffusionVesselEnhancementImageFilter<TInputImage, TOutputImage, TVes
 ::CalculateChangeThreaderCallback( void * arg )
 {
   DenseFDThreadStruct * str;
-  int total, threadId, threadCount;
+  ThreadIdType threadId;
+  int total, threadCount;
 
   threadId = ((MultiThreader::ThreadInfoStruct *)(arg))->ThreadID;
   threadCount = ((MultiThreader::ThreadInfoStruct *)(arg))->NumberOfThreads;
@@ -449,13 +451,13 @@ void
 AnisotropicDiffusionVesselEnhancementImageFilter<TInputImage, TOutputImage, TVesselnessFilter>
 ::ThreadedApplyUpdate(TimeStepType dt, const ThreadRegionType &regionToProcess,
                       const ThreadDiffusionImageRegionType & diffusionRegionToProcess,
-                      int)
+                      ThreadIdType threadId)
 {
   ImageRegionIterator<UpdateBufferType> u(m_UpdateBuffer,    regionToProcess);
   ImageRegionIterator<OutputImageType>  o(this->GetOutput(), regionToProcess);
 
-  u = u.Begin();
-  o = o.Begin();
+  u.GoToBegin();
+  o.GoToBegin();
 
   while ( !u.IsAtEnd() )
     {
@@ -472,7 +474,7 @@ typename
 AnisotropicDiffusionVesselEnhancementImageFilter<TInputImage, TOutputImage, TVesselnessFilter>::TimeStepType
 AnisotropicDiffusionVesselEnhancementImageFilter<TInputImage, TOutputImage, TVesselnessFilter>
 ::ThreadedCalculateChange(const ThreadRegionType &regionToProcess, 
-    const ThreadDiffusionImageRegionType & diffusionRegionToProcess, int)
+    const ThreadDiffusionImageRegionType & diffusionRegionToProcess, ThreadIdType threadId)
 {
   typedef typename OutputImageType::RegionType      RegionType;
   typedef typename OutputImageType::SizeType        SizeType;
@@ -583,7 +585,7 @@ AnisotropicDiffusionVesselEnhancementImageFilter<TInputImage, TOutputImage, TVes
 {
   itkDebugMacro( << "GenerateData is called" );
 
-  if (this->GetState() == Superclass::UNINITIALIZED)
+  if (!this->GetIsInitialized())
     {
 
     // Allocate the output image
