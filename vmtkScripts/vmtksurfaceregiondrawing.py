@@ -99,7 +99,7 @@ class vmtkSurfaceRegionDrawing(pypes.pypeScript):
     def DeleteContourCallback(self, obj):
         self.ContourWidget.Initialize()
 
-    def InteractCallback(self):
+    def InteractCallback(self, obj):
         if self.ContourWidget.GetEnabled() == 1:
             self.ContourWidget.SetEnabled(0)
         else:
@@ -162,7 +162,7 @@ class vmtkSurfaceRegionDrawing(pypes.pypeScript):
 
         self.vmtkRenderer.AddKeyBinding('space','Generate scalars',self.ScalarsCallback)
         self.vmtkRenderer.AddKeyBinding('d','Delete contour',self.DeleteContourCallback)
-        self.vmtkRenderer.AddKeyBinding('i','Start interaction',self.InteractCallback)
+        self.vmtkRenderer.AddKeyBinding('t','Start interaction',self.InteractCallback)
         self.Display()
 
         if self.OwnRenderer:

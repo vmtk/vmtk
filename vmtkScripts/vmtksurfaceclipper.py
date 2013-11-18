@@ -83,11 +83,11 @@ class vmtkSurfaceClipper(pypes.pypeScript):
         self.CutLines.DeepCopy(self.Cutter.GetOutput())
         self.ClipWidget.Off()
 
-    def InteractCallback(self):
-        if self.BoxWidget.GetEnabled() == 1:
-            self.BoxWidget.SetEnabled(0)
+    def InteractCallback(self, obj):
+        if self.ClipWidget.GetEnabled() == 1:
+            self.ClipWidget.SetEnabled(0)
         else:
-            self.BoxWidget.SetEnabled(1)
+            self.ClipWidget.SetEnabled(1)
 
     def Display(self):
 
@@ -159,11 +159,12 @@ class vmtkSurfaceClipper(pypes.pypeScript):
             self.ClipWidget.SetInteractor(self.vmtkRenderer.RenderWindowInteractor)
             
             self.vmtkRenderer.AddKeyBinding('space','Clip.',self.ClipCallback)
-            self.vmtkRenderer.AddKeyBinding('i','Interact.',self.InteractCallback)
+            self.vmtkRenderer.AddKeyBinding('t','Interact.',self.InteractCallback)
             self.Display()
 
             self.Transform = vtk.vtkTransform()
             self.ClipWidget.GetTransform(self.Transform)
+            self.ClipWidget.RemoveObserver()
 
             if self.OwnRenderer:
                 self.vmtkRenderer.Deallocate()
