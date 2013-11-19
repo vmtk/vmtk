@@ -74,11 +74,11 @@ class vmtkSurfaceTransformInteractive(pypes.pypeScript):
  
         self.vmtkRenderer.RenderWindow.Render()
 
-    def InteractCallback(self):
-	if self.BoxWidget.GetEnabled() == 1:
-	    self.BoxWidget.SetEnabled(0)
-	else:
-	    self.BoxWidget.SetEnabled(1)
+    def InteractCallback(self, obj):
+        if self.BoxWidget.GetEnabled() == 1:
+            self.BoxWidget.SetEnabled(0)
+        else:
+            self.BoxWidget.SetEnabled(1)
 
 
     ##def KeyPressed(self,obj,event):
@@ -170,16 +170,16 @@ class vmtkSurfaceTransformInteractive(pypes.pypeScript):
             self.BoxWidget.ScalingEnabledOn()
             self.BoxWidget.HandlesOn()
  	
-	self.vmtkRenderer.RegisterScript(self) 
-
-	self.InputInfo('Use the left-mousebutton to rotate the box \nUse the middle-mouse-button to move the box \nPress space to move the surface to its new postion')
+        self.vmtkRenderer.RegisterScript(self) 
+        
+        self.InputInfo('Use the left-mousebutton to rotate the box \nUse the middle-mouse-button to move the box \nPress space to move the surface to its new postion')
         #self.OutputText('Press \'i\' to activate the box widget interactor \n')
         #self.OutputText('Use the left-mousebutton to rotate the box \n')
         #self.OutputText('Use the middle-mouse-button to move the box \n')
         #self.OutputText('Press space to move the surface to its new postion \n')
         #self.OutputText('Press \'q\' to quit and apply the transform \n')
 	
-	self.vmtkRenderer.AddKeyBinding('space','Move the surface.',self.MoveCallback)
+        self.vmtkRenderer.AddKeyBinding('space','Move the surface.',self.MoveCallback)
         self.vmtkRenderer.AddKeyBinding('i','Interact.',self.InteractCallback)
 
         self.Display()

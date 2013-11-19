@@ -463,6 +463,8 @@ class vmtkCenterlines(pypes.pypeScript):
         self.VoronoiDiagram = None
         self.PoleIds = None
 
+        self.DelaunayTolerance = 0.001
+
         self.SourceIds = []
         self.TargetIds = []
         self.SourcePoints = []
@@ -484,6 +486,7 @@ class vmtkCenterlines(pypes.pypeScript):
             ['CheckNonManifold','nonmanifoldcheck','bool',1,'','toggle checking the surface for non-manifold edges'],
             ['FlipNormals','flipnormals','bool',1,'','flip normals after outward normal computation; outward oriented normals must be computed for the removal of outer tetrahedra; the algorithm might fail so for weird geometries, so changing this might solve the problem'],
             ['CapDisplacement','capdisplacement','float',1,'','displacement of the center points of caps at open profiles along their normals (avoids the creation of degenerate tetrahedra)'],
+            ['DelaunayTolerance','delaunaytolerance','float',1,'','tolerance for evaluating coincident points during Delaunay tessellation, evaluated as a fraction of the bounding box'],
             ['RadiusArrayName','radiusarray','str',1,'','name of the array where radius values of maximal inscribed spheres have to be stored'],
             ['AppendEndPoints','endpoints','bool',1,'','toggle append open profile barycenters to centerlines'],
             ['Resampling','resampling','bool',1,'','toggle centerlines resampling'],
@@ -626,6 +629,7 @@ class vmtkCenterlines(pypes.pypeScript):
         if self.DelaunayTessellation != None:
             centerlineFilter.GenerateDelaunayTessellationOff()
             centerlineFilter.SetDelaunayTessellation(self.DelaunayTessellation)
+            centerlineFilter.SetDelaunayTolerance(self.DelaunayTolerance)
         if self.UseTetGen==1:
             self.PrintLog('Running TetGen.')
             import vmtkscripts

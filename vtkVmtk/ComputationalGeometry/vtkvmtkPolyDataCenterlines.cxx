@@ -78,6 +78,7 @@ vtkvmtkPolyDataCenterlines::vtkvmtkPolyDataCenterlines()
   this->GenerateDelaunayTessellation = 1;
 
   this->DelaunayTessellation = NULL;
+  this->DelaunayTolerance = 1E-3;
 
   this->VoronoiDiagram = vtkPolyData::New();
   this->PoleIds = vtkIdList::New();
@@ -203,6 +204,7 @@ int vtkvmtkPolyDataCenterlines::RequestData(
     vtkDelaunay3D* delaunayTessellator = vtkDelaunay3D::New();
     delaunayTessellator->CreateDefaultLocator();
     delaunayTessellator->SetInput(surfaceNormals->GetOutput());
+    delaunayTessellator->SetTolerance(this->DelaunayTolerance);
     delaunayTessellator->Update();
 
     vtkUnstructuredGrid* delaunay = delaunayTessellator->GetOutput();

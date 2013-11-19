@@ -59,7 +59,7 @@ class vmtkMeshClipper(pypes.pypeScript):
             ['ClippedMesh','oclipped','vtkUnstructuredGrid',1,'','the clipped mesh','vmtkmeshwriter']
             ])
 
-    def InteractCallback(self):
+    def InteractCallback(self, obj):
         if self.BoxWidget.GetEnabled() == 1:
             self.BoxWidget.SetEnabled(0)
         else:
