@@ -102,6 +102,8 @@ class vmtkDelaunayVoronoi(pypes.pypeScript):
         self.UseTetGen = 0
         self.TetGenDetectInter = 1
 
+        self.DelaunayTolerance = 0.001
+
         self.DelaunayTessellation = None
         self.VoronoiDiagram = None
         self.PoleIds = None
@@ -115,6 +117,7 @@ class vmtkDelaunayVoronoi(pypes.pypeScript):
             ['CheckNonManifold','nonmanifoldcheck','bool',1,'','toggle checking the surface for non-manifold edges'],
             ['FlipNormals','flipnormals','bool',1,'','flip normals after outward normal computation; outward oriented normals must be computed for the removal of outer tetrahedra; the algorithm might fail so for weird geometries, so changing this might solve the problem'],
             ['CapDisplacement','capdisplacement','float',1,'','displacement of the center points of caps at open profiles along their normals (avoids the creation of degenerate tetrahedra)'],
+            ['DelaunayTolerance','delaunaytolerance','float',1,'','tolerance for evaluating coincident points during Delaunay tessellation, evaluated as a fraction of the bounding box'],
             ['RadiusArrayName','radiusarray','str',1,'','name of the array where radius values of maximal inscribed spheres have to be stored'],
             ['DelaunayTessellation','delaunaytessellation','vtkUnstructuredGrid',1,'','optional input Delaunay tessellation'],
             ['RemoveSubresolutionTetrahedra','removesubresolution','bool',1,'','toggle removal of subresolution tetrahedra from Delaunay tessellation'],
@@ -198,6 +201,7 @@ class vmtkDelaunayVoronoi(pypes.pypeScript):
             delaunayTessellator = vtk.vtkDelaunay3D()
             delaunayTessellator.CreateDefaultLocator()
             delaunayTessellator.SetInput(surfaceNormals.GetOutput())
+            delaunayTessellator.SetTolerance(self.DelaunayTolerance)
             delaunayTessellator.Update()
             self.DelaunayTessellation = delaunayTessellator.GetOutput()
 

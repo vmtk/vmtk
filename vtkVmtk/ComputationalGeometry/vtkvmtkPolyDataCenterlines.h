@@ -101,6 +101,10 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataCenterlines : public
   vtkGetMacro(GenerateDelaunayTessellation,int);
   vtkBooleanMacro(GenerateDelaunayTessellation,int);
 
+  vtkSetMacro(DelaunayTolerance,double);
+  vtkGetMacro(DelaunayTolerance,double);
+
+
   protected:
   vtkvmtkPolyDataCenterlines();
   ~vtkvmtkPolyDataCenterlines();  
@@ -138,6 +142,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataCenterlines : public
   double ResamplingStepLength;
 
   int GenerateDelaunayTessellation;
+  double DelaunayTolerance;
 
   private:
   vtkvmtkPolyDataCenterlines(const vtkvmtkPolyDataCenterlines&);  // Not implemented.
