@@ -128,7 +128,7 @@ class vmtkMeshClipper(pypes.pypeScript):
             self.BoxWidget.GetFaceProperty().SetColor(0.6,0.6,0.2)
             self.BoxWidget.GetFaceProperty().SetOpacity(0.25)
 
-            self.vmtkRenderer.AddKeyBinding('t','Interact.', self.InteractCallback)
+            self.vmtkRenderer.AddKeyBinding('i','Interact.', self.InteractCallback)
             self.vmtkRenderer.AddKeyBinding('space','Clip.', self.ClipCallback)
 
             self.Display()

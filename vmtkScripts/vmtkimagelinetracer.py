@@ -226,7 +226,7 @@ class vmtkImageLineTracer(pypes.pypeScript):
 
         self.vmtkRenderer.AddKeyBinding('n','Next.',self.NextCallback)
         self.vmtkRenderer.AddKeyBinding('p','Previous.',self.PreviousCallback)
-        self.vmtkRenderer.AddKeyBinding('t','Interact.', self.InteractCallback)
+        self.vmtkRenderer.AddKeyBinding('i','Interact.', self.InteractCallback)
 
         self.Display()
 

@@ -159,7 +159,7 @@ class vmtkSurfaceClipper(pypes.pypeScript):
             self.ClipWidget.SetInteractor(self.vmtkRenderer.RenderWindowInteractor)
             
             self.vmtkRenderer.AddKeyBinding('space','Clip.',self.ClipCallback)
-            self.vmtkRenderer.AddKeyBinding('t','Interact.',self.InteractCallback)
+            self.vmtkRenderer.AddKeyBinding('i','Interact.',self.InteractCallback)
             self.Display()
 
             self.Transform = vtk.vtkTransform()

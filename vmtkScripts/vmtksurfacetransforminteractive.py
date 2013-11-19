@@ -180,7 +180,7 @@ class vmtkSurfaceTransformInteractive(pypes.pypeScript):
         #self.OutputText('Press \'q\' to quit and apply the transform \n')
 	
         self.vmtkRenderer.AddKeyBinding('space','Move the surface.',self.MoveCallback)
-        self.vmtkRenderer.AddKeyBinding('t','Interact.',self.InteractCallback)
+        self.vmtkRenderer.AddKeyBinding('i','Interact.',self.InteractCallback)
 
         self.Display()
  
