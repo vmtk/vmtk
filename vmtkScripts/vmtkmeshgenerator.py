@@ -177,6 +177,7 @@ class vmtkMeshGenerator(pypes.pypeScript):
             boundaryLayer.MaximumThickness = self.BoundaryLayerThicknessFactor * self.MaxEdgeLength
             if not self.BoundaryLayerOnCaps:
                 boundaryLayer.SidewallCellEntityId = placeholderCellEntityId
+                boundaryLayer.InnerSurfaceCellEntityId = wallEntityOffset
             boundaryLayer.Execute()
 
             meshToSurface = vmtkscripts.vmtkMeshToSurface()
