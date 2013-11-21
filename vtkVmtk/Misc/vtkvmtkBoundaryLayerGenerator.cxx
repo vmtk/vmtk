@@ -256,7 +256,8 @@ int vtkvmtkBoundaryLayerGenerator::RequestData(
     {
     std::cout <<"untangle procedure.. "<<std::endl; 
     }
-  //deve diventare input parameter!!
+
+  //these too
   int maximumNumberOfIterations = 50;  
   while (check==1 && iteration < maximumNumberOfIterations)
     {
