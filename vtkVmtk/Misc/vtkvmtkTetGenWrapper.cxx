@@ -314,7 +314,7 @@ int vtkvmtkTetGenWrapper::RequestData(
         tetraCellIds->InsertNextId(i);
         break;
       default:
-        vtkErrorMacro(<<"Invalid element found, cellId "<<i);
+        vtkErrorMacro(<<"Invalid element found, cellId "<<i<<", cellType "<<cellType);
         break;
       }
     }
