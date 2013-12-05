@@ -20,6 +20,7 @@ SET(SCRIPTS_SRCS
   vmtkbranchsections.py
   vmtkcenterlineattributes.py
   vmtkcenterlinegeometry.py
+  vmtkcenterlineinterpolation.py
   vmtkcenterlinelabeler.py
   vmtkcenterlinemeshsections.py
   vmtkcenterlinemerge.py
@@ -43,7 +44,10 @@ SET(SCRIPTS_SRCS
   vmtkimageinitialization.py
   vmtkimagelinetracer.py
   vmtkimagemipviewer.py
+  vmtkimagemorphology.py
+  vmtkimagenormalize.py
   vmtkimageobjectenhancement.py
+  vmtkimageotsuthresholds.py
   vmtkimagereader.py
   vmtkimagereslice.py
   vmtkimageseeder.py
@@ -59,13 +63,16 @@ SET(SCRIPTS_SRCS
   vmtklineresampling.py
   vmtklocalgeometry.py
   vmtkmarchingcubes.py
+  vmtkmesharrayoperation.py
   vmtkmeshboundaryinspector.py
   vmtkmeshbranchclipper.py
   vmtkmeshclipper.py
+  vmtkmeshconnectivity.py
   vmtkmeshdatareader.py
   vmtkmeshlambda2.py
   vmtkmeshlinearize.py
   vmtkmeshgenerator.py
+  vmtkmeshpolyballevaluation.py
   vmtkmeshprojection.py
   vmtkmeshreader.py
   vmtkmeshscaling.py
@@ -75,6 +82,7 @@ SET(SCRIPTS_SRCS
   vmtkmeshtransformtoras.py
   vmtkmeshvectorfromcomponents.py
   vmtkmeshviewer.py
+  vmtkmeshvolume.py
   vmtkmeshvorticityhelicity.py
   vmtkmeshwallshearrate.py
   vmtkmeshwriter.py
@@ -91,6 +99,7 @@ SET(SCRIPTS_SRCS
   vmtkrbfinterpolation.py
   vmtksurfaceappend.py
   vmtksurfacearrayoperation.py
+  vmtksurfacebooleanoperation.py
   vmtksurfacecapper.py
   vmtksurfacecelldatatopointdata.py
   vmtksurfacecenterlineprojection.py
@@ -100,9 +109,11 @@ SET(SCRIPTS_SRCS
   vmtksurfacedecimation.py
   vmtksurfacedistance.py
   vmtksurfacekiteremoval.py
+  vmtksurfacemassproperties.py
   vmtksurfacemodeller.py
   vmtksurfacenormals.py
   vmtksurfacepointdatatocelldata.py
+  vmtksurfacepolyballevaluation.py
   vmtksurfaceprojection.py
   vmtksurfacereader.py
   vmtksurfacereferencesystemtransform.py

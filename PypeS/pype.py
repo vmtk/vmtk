@@ -62,6 +62,7 @@ class Pype(object):
         
     def PrintError(self,logMessage):
         self.OutputStream.write(logMessage + '\n')
+        raise RuntimeError(errorMessage)
 
     def SetArgumentsString(self,argumentsString):
         if '"' not in argumentsString:

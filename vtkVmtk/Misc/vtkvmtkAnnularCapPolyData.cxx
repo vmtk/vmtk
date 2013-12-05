@@ -10,11 +10,11 @@ Version:   $Revision: 1.6 $
   See LICENCE file for details.
 
   Portions of this code are covered under the VTK copyright.
-  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
+  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm
   for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -38,6 +38,7 @@ vtkStandardNewMacro(vtkvmtkAnnularCapPolyData);
 
 vtkvmtkAnnularCapPolyData::vtkvmtkAnnularCapPolyData()
 {
+  this->BoundaryIds = NULL;
   this->CellEntityIdsArrayName = NULL;
   this->CellEntityIdOffset = 1;
 }
@@ -48,6 +49,11 @@ vtkvmtkAnnularCapPolyData::~vtkvmtkAnnularCapPolyData()
     {
     delete[] this->CellEntityIdsArrayName;
     this->CellEntityIdsArrayName = NULL;
+    }
+  if (this->BoundaryIds)
+    {
+    this->BoundaryIds->Delete();
+    this->BoundaryIds = NULL;
     }
 }
 
@@ -69,18 +75,6 @@ int vtkvmtkAnnularCapPolyData::RequestData(
     return 1;
     }
 
-  bool markCells = true;
-
-  if (!this->CellEntityIdsArrayName)
-    {
-    markCells = false;
-    }
-
-  if (strcmp(this->CellEntityIdsArrayName,"") == 0)
-    {
-    markCells = false;
-    }
-
   input->BuildLinks();
 
   vtkPoints* newPoints = vtkPoints::New();
@@ -89,14 +83,21 @@ int vtkvmtkAnnularCapPolyData::RequestData(
   vtkCellArray* newPolys = vtkCellArray::New();
   newPolys->DeepCopy(input->GetPolys());
 
-  vtkIntArray* cellEntityIdsArray = NULL;
-
+  vtkIdTypeArray* cellEntityIdsArray = NULL;
+  bool markCells = this->CellEntityIdsArrayName && this->CellEntityIdsArrayName[0];
   if (markCells)
     {
-    cellEntityIdsArray = vtkIntArray::New();
+    cellEntityIdsArray = vtkIdTypeArray::New();
     cellEntityIdsArray->SetName(this->CellEntityIdsArrayName);
-    cellEntityIdsArray->SetNumberOfTuples(newPolys->GetNumberOfCells());
-    cellEntityIdsArray->FillComponent(0,static_cast<double>(this->CellEntityIdOffset));
+    if (input->GetCellData()->GetArray(this->CellEntityIdsArrayName))
+      {
+      cellEntityIdsArray->DeepCopy(input->GetCellData()->GetArray(this->CellEntityIdsArrayName));
+      }
+    else
+      {
+      cellEntityIdsArray->SetNumberOfTuples(newPolys->GetNumberOfCells());
+      cellEntityIdsArray->FillComponent(0,static_cast<double>(this->CellEntityIdOffset));
+      }
     }
 
   vtkvmtkPolyDataBoundaryExtractor* boundaryExtractor = vtkvmtkPolyDataBoundaryExtractor::New();
@@ -106,7 +107,8 @@ int vtkvmtkAnnularCapPolyData::RequestData(
   vtkPolyData* boundaries = boundaryExtractor->GetOutput();
   int numberOfBoundaries = boundaries->GetNumberOfCells();
 
-  if (numberOfBoundaries % 2 != 0)
+  if ( (this->BoundaryIds && this->BoundaryIds->GetNumberOfIds() % 2)
+       || (!this->BoundaryIds && numberOfBoundaries % 2) )
     {
     vtkErrorMacro(<< "Error: the number of boundaries must be even.");
     newPoints->Delete();
@@ -139,8 +141,12 @@ int vtkvmtkAnnularCapPolyData::RequestData(
   double currentBarycenter[3];
   double distance2, minDistance2 = 0.0;
   vtkIdType closestBoundaryId;
-  for (int i=0; i<numberOfBoundaries-1; i++)
+  for (int i=0; i<numberOfBoundaries; i++)
     {
+    if (this->BoundaryIds && this->BoundaryIds->IsId(i) == -1)
+      {
+      continue;
+      }
     if (boundaryPairings->GetId(i) != -1 || boundaryPairings->IsId(i) != -1)
       {
       continue;
@@ -149,6 +155,10 @@ int vtkvmtkAnnularCapPolyData::RequestData(
     closestBoundaryId = -1;
     for (int j=i+1; j<numberOfBoundaries; j++)
       {
+      if (this->BoundaryIds && this->BoundaryIds->IsId(j) == -1)
+        {
+        continue;
+        }
       if (boundaryPairings->GetId(j) != -1 || boundaryPairings->IsId(j) != -1)
         {
         continue;
@@ -167,6 +177,11 @@ int vtkvmtkAnnularCapPolyData::RequestData(
 
   for (int i=0; i<numberOfBoundaries; i++)
     {
+    if (this->BoundaryIds && this->BoundaryIds->IsId(i) == -1)
+      {
+      continue;
+      }
+
     if (boundaryPairings->GetId(i) == -1)
       {
       continue;
@@ -176,7 +191,7 @@ int vtkvmtkAnnularCapPolyData::RequestData(
       {
       continue;
       }
-  
+
     visitedBoundaries->SetId(i,i);
     visitedBoundaries->SetId(boundaryPairings->GetId(i),i);
 

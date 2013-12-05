@@ -71,7 +71,7 @@ except:
 if __name__=='__main__':
     manager = Manager()
     queue = manager.list()
-    pypeProcess = Process(target=pypeserver.PypeServer, args=(queue,None), kwargs={"returnIfEmptyQueue":True})
+    pypeProcess = Process(target=pypeserver.PypeServer, args=(queue,None,None), kwargs={"returnIfEmptyQueue":True})
     pypeProcess.start()
 
     args = sys.argv[:]

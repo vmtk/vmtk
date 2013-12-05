@@ -28,8 +28,8 @@
 #include "vtkStreamingDemandDrivenPipeline.h"
 #include "vtkObjectFactory.h"
 
-#include <vtkstd/vector>
-#include <vtkstd/string>
+#include <vector>
+#include <string>
 
 #include "DICOMParser.h"
 #include "DICOMAppHelper.h"
@@ -80,7 +80,7 @@ void vtkvmtkDICOMImageReader::ComputeOutputVoxelSpacing()
 {
   double voxelSpacing[3] = {0.0, 0.0, 0.0};
 
-  vtkstd::vector<vtkstd::string>* dicomFileNames = (vtkstd::vector<vtkstd::string>*)this->DICOMFileNames;
+  std::vector<std::string>* dicomFileNames = (std::vector<std::string>*)this->DICOMFileNames;
 
   if (this->FileName)
     {
@@ -109,7 +109,7 @@ void vtkvmtkDICOMImageReader::ComputeOutputVoxelSpacing()
     this->AppHelper->Clear();
     this->AppHelper->RegisterCallbacks(this->Parser);
    
-    vtkstd::vector<vtkstd::string>::iterator fiter;
+    std::vector<std::string>::iterator fiter;
                                                                                                                   
     double imagePositions[3][3];
     int count;

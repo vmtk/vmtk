@@ -9,8 +9,8 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENCE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
 
@@ -27,7 +27,7 @@ class vmtkSurfaceCapper(pypes.pypeScript):
     def __init__(self):
 
         pypes.pypeScript.__init__(self)
-        
+
         self.Surface = None
         self.TriangleOutput = 1
         self.CellEntityIdsArrayName = 'CellEntityIds'
@@ -41,13 +41,13 @@ class vmtkSurfaceCapper(pypes.pypeScript):
         self.OwnRenderer = 0
 
         self.SetScriptName('vmtksurfacecapper')
-        self.SetScriptDoc('add caps to the holes of a surface, assigning an id to each cap for easy specification of boundary conditions ("simple" method only).')
+        self.SetScriptDoc('add caps to the holes of a surface, assigning an id to each cap for easy specification of boundary conditions.')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
-            ['Method','method','str',1,'["simple","centerpoint","smooth","annular"]','capping method'],
+            ['Method','method','str',1,'["simple","centerpoint","smooth","annular","concaveannular"]','capping method'],
             ['TriangleOutput','triangle','bool',1,'','toggle triangulation of the output'],
             ['CellEntityIdsArrayName','entityidsarray','str',1,'','name of the array where the id of the caps have to be stored'],
-            ['CellEntityIdOffset','entityidoffset','int',1,'(0,)','offset for entity ids ("simple" method only")'],
+            ['CellEntityIdOffset','entityidoffset','int',1,'(0,)','offset for entity ids'],
             ['ConstraintFactor','constraint','float',1,'','amount of influence of the shape of the surface near the boundary on the shape of the cap ("smooth" method only)'],
             ['NumberOfRings','rings','int',1,'(0,)','number of rings composing the cap ("smooth" method only)'],
             ['Interactive','interactive','bool',1],
@@ -93,7 +93,7 @@ class vmtkSurfaceCapper(pypes.pypeScript):
                 self.vmtkRenderer.Initialize()
                 self.OwnRenderer = 1
 
-	    self.vmtkRenderer.RegisterScript(self)
+            self.vmtkRenderer.RegisterScript(self)
 
             boundaryExtractor = vtkvmtk.vtkvmtkPolyDataBoundaryExtractor()
             boundaryExtractor.SetInput(self.Surface)
@@ -114,20 +114,19 @@ class vmtkSurfaceCapper(pypes.pypeScript):
             labelsMapper.SetLabelModeToLabelIds()
             labelsActor = vtk.vtkActor2D()
             labelsActor.SetMapper(labelsMapper)
-    
+
             self.vmtkRenderer.Renderer.AddActor(labelsActor)
-    
+
             surfaceMapper = vtk.vtkPolyDataMapper()
             surfaceMapper.SetInput(self.Surface)
             surfaceMapper.ScalarVisibilityOff()
             surfaceActor = vtk.vtkActor()
             surfaceActor.SetMapper(surfaceMapper)
             surfaceActor.GetProperty().SetOpacity(0.25)
-    
+
             self.vmtkRenderer.Renderer.AddActor(surfaceActor)
-    
+
             #self.vmtkRenderer.Render()
-    	    
             #self.vmtkRenderer.Renderer.RemoveActor(labelsActor)
             #self.vmtkRenderer.Renderer.RemoveActor(surfaceActor)
 
@@ -146,21 +145,13 @@ class vmtkSurfaceCapper(pypes.pypeScript):
         if self.Method == 'simple':
             capper = vtkvmtk.vtkvmtkSimpleCapPolyData()
             capper.SetInput(self.Surface)
-            if self.Interactive:
-                capper.SetBoundaryIds(boundaryIds)
-            capper.SetCellEntityIdsArrayName(self.CellEntityIdsArrayName)
-            capper.SetCellEntityIdOffset(self.CellEntityIdOffset)
-            capper.Update()
-            self.Surface = capper.GetOutput()
+
         elif self.Method == 'centerpoint':
             capper = vtkvmtk.vtkvmtkCapPolyData()
             capper.SetInput(self.Surface)
-            if self.Interactive:
-                capper.SetBoundaryIds(boundaryIds)
             capper.SetDisplacement(0.0)
             capper.SetInPlaneDisplacement(0.0)
-            capper.Update()
-            self.Surface = capper.GetOutput()
+
         elif self.Method == 'smooth':
             triangle = vtk.vtkTriangleFilter()
             triangle.SetInput(self.Surface)
@@ -171,17 +162,22 @@ class vmtkSurfaceCapper(pypes.pypeScript):
             capper.SetInput(triangle.GetOutput())
             capper.SetConstraintFactor(self.ConstraintFactor)
             capper.SetNumberOfRings(self.NumberOfRings)
-            if self.Interactive:
-                capper.SetBoundaryIds(boundaryIds)
-            capper.Update()
-            self.Surface = capper.GetOutput()
+
         elif self.Method == 'annular':
             capper = vtkvmtk.vtkvmtkAnnularCapPolyData()
             capper.SetInput(self.Surface)
-            capper.SetCellEntityIdsArrayName(self.CellEntityIdsArrayName)
-            capper.SetCellEntityIdOffset(self.CellEntityIdOffset)
-            capper.Update()
-            self.Surface = capper.GetOutput()
+
+        elif self.Method == 'concaveannular':
+            import vtkvmtkcontrib
+            capper = vtkvmtkcontrib.vtkvmtkConcaveAnnularCapPolyData()
+            capper.SetInput(self.Surface)
+
+        if self.Interactive:
+            capper.SetBoundaryIds(boundaryIds)
+        capper.SetCellEntityIdsArrayName(self.CellEntityIdsArrayName)
+        capper.SetCellEntityIdOffset(self.CellEntityIdOffset)
+        capper.Update()
+        self.Surface = capper.GetOutput()
 
         if self.TriangleOutput == 1:
             triangle = vtk.vtkTriangleFilter()
@@ -194,8 +190,8 @@ class vmtkSurfaceCapper(pypes.pypeScript):
         normals = vtk.vtkPolyDataNormals()
         normals.SetInput(self.Surface)
         normals.AutoOrientNormalsOn()
-      	normals.SplittingOff()
-      	normals.ConsistencyOn()
+        normals.SplittingOff()
+        normals.ConsistencyOn()
         normals.Update()
         self.Surface = normals.GetOutput()
 

@@ -115,11 +115,17 @@ class vmtkMeshBoundaryInspector(pypes.pypeScript):
 
         self.ReferenceSystems.GetPointData().AddArray(cellEntityIdsArray)
 
-        wallMeshToSurface = vtk.vtkGeometryFilter()
-        wallMeshToSurface.SetInput(boundaryMesh)
-        wallMeshToSurface.Update()
+        boundaryThreshold = vtk.vtkThreshold()
+        boundaryThreshold.SetInput(boundaryMesh)
+        boundaryThreshold.ThresholdByUpper(self.WallCellEntityId+0.5)
+        boundaryThreshold.SetInputArrayToProcess(0,0,0,1,self.CellEntityIdsArrayName)
+        boundaryThreshold.Update()
 
-        boundarySurface = wallMeshToSurface.GetOutput()
+        boundaryMeshToSurface = vtk.vtkGeometryFilter()
+        boundaryMeshToSurface.SetInput(boundaryThreshold.GetOutput())
+        boundaryMeshToSurface.Update()
+
+        boundarySurface = boundaryMeshToSurface.GetOutput()
         pointCells = vtk.vtkIdList()
 
         surfaceCellEntityIdsArray = vtk.vtkIntArray()

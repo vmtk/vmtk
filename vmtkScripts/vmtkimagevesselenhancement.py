@@ -38,6 +38,8 @@ class vmtkImageVesselEnhancement(pypes.pypeScript):
         self.NumberOfSigmaSteps = 1
         self.SigmaStepMethod = 'equispaced'
 
+        self.ScaledVesselness = 0
+
         self.Alpha = 0.5
         self.Beta = 0.5
         self.Gamma = 5.0
@@ -60,6 +62,7 @@ class vmtkImageVesselEnhancement(pypes.pypeScript):
             ['SigmaMax','sigmamax','float',1,'(0.0,)'],
             ['NumberOfSigmaSteps','sigmasteps','int',1,'(0,)'],
             ['SigmaStepMethod','stepmethod','str',1,'["equispaced","logarithmic"]'],
+            ['ScaledVesselness','scaled','bool',1,'','(frangi)'],
             ['Alpha1','alpha1','float',1,'(0.0,)','(sato)'],
             ['Alpha2','alpha2','float',1,'(0.0,)','(sato)'],
             ['Alpha','alpha','float',1,'(0.0,)','(frangi, ved, vedm)'],
@@ -84,6 +87,7 @@ class vmtkImageVesselEnhancement(pypes.pypeScript):
         vesselness.SetSigmaMin(self.SigmaMin)
         vesselness.SetSigmaMax(self.SigmaMax)
         vesselness.SetNumberOfSigmaSteps(self.NumberOfSigmaSteps)
+        vesselness.SetUseScaledVesselness(self.ScaledVesselness)
         vesselness.SetAlpha(self.Alpha)
         vesselness.SetBeta(self.Beta)
         vesselness.SetGamma(self.Gamma)

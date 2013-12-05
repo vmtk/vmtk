@@ -61,7 +61,7 @@ class vmtkImageVOIPainter(pypes.pypeScript):
             ['Image','o','vtkImageData',1,'','the output image','vmtkimagewriter']
             ])
 
-    def InteractCallback(self):
+    def InteractCallback(self, obj):
         if self.BoxWidget.GetEnabled() == 1:
             self.BoxWidget.SetEnabled(0)
         else:

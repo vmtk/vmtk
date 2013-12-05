@@ -12,6 +12,7 @@
 
 
 from vmtk import pypes
+import vtk
 import time
 
 class OutputStream(object):
@@ -38,17 +39,30 @@ def RunPypeProcess(arguments, inputStream=None, outputStream=None, logOn=True):
         pipe.SetArgumentsString(arguments)
     else:
         pipe.Arguments = arguments
-    pipe.ParseArguments()
     try: 
+        pipe.ParseArguments()
         pipe.Execute() 
     except BaseException, e:
-        print "Error from pype:", e
+        pass
     del pipe
 
-def PypeServer(queue, output, returnIfEmptyQueue=False):
+
+def PypeServer(queue, output, error, returnIfEmptyQueue=False):
+
+    def MessageCallback(o, e, m):
+        if not error:
+            return
+        error.append(m)
+
+    MessageCallback.CallDataType = 'string0'
+    vtk.vtkOutputWindow.GetInstance().AddObserver('ErrorEvent',MessageCallback)
+    vtk.vtkOutputWindow.GetInstance().AddObserver('WarningEvent',MessageCallback)
+
     outputStream = None
     if output != None:
         outputStream = OutputStream(output)
+    if error != None:
+        errorStream = OutputStream(error)
     ranOnce = False
     while True:
         try:

@@ -102,9 +102,13 @@ class vmtkDelaunayVoronoi(pypes.pypeScript):
         self.UseTetGen = 0
         self.TetGenDetectInter = 1
 
+        self.DelaunayTolerance = 0.001
+
         self.DelaunayTessellation = None
         self.VoronoiDiagram = None
         self.PoleIds = None
+
+        self.Mesh = None
 
         self.SetScriptName('vmtkdelaunayvoronoi')
         self.SetScriptDoc('')
@@ -113,6 +117,7 @@ class vmtkDelaunayVoronoi(pypes.pypeScript):
             ['CheckNonManifold','nonmanifoldcheck','bool',1,'','toggle checking the surface for non-manifold edges'],
             ['FlipNormals','flipnormals','bool',1,'','flip normals after outward normal computation; outward oriented normals must be computed for the removal of outer tetrahedra; the algorithm might fail so for weird geometries, so changing this might solve the problem'],
             ['CapDisplacement','capdisplacement','float',1,'','displacement of the center points of caps at open profiles along their normals (avoids the creation of degenerate tetrahedra)'],
+            ['DelaunayTolerance','delaunaytolerance','float',1,'','tolerance for evaluating coincident points during Delaunay tessellation, evaluated as a fraction of the bounding box'],
             ['RadiusArrayName','radiusarray','str',1,'','name of the array where radius values of maximal inscribed spheres have to be stored'],
             ['DelaunayTessellation','delaunaytessellation','vtkUnstructuredGrid',1,'','optional input Delaunay tessellation'],
             ['RemoveSubresolutionTetrahedra','removesubresolution','bool',1,'','toggle removal of subresolution tetrahedra from Delaunay tessellation'],
@@ -124,6 +129,8 @@ class vmtkDelaunayVoronoi(pypes.pypeScript):
             ['RadiusArrayName','radiusarray','str',1,'','name of the array where radius values of maximal inscribed spheres are stored'],
             ['DelaunayTessellation','delaunaytessellation','vtkUnstructuredGrid',1,'','','vmtkmeshwriter'],
             ['VoronoiDiagram','voronoidiagram','vtkPolyData',1,'','','vmtksurfacewriter'],
+            ['Mesh','omesh','vtkUnstructuredGrid',1,'','conveniently named DelaunayTessellation output','vmtkmeshwriter'],
+            ['Surface','osurface','vtkPolyData',1,'','conveniently named VoronoiDiagram output','vmtksurfacewriter'],
             ['PoleIds','poleids','vtkIdList',1]])
 
     def Execute(self):
@@ -194,6 +201,7 @@ class vmtkDelaunayVoronoi(pypes.pypeScript):
             delaunayTessellator = vtk.vtkDelaunay3D()
             delaunayTessellator.CreateDefaultLocator()
             delaunayTessellator.SetInput(surfaceNormals.GetOutput())
+            delaunayTessellator.SetTolerance(self.DelaunayTolerance)
             delaunayTessellator.Update()
             self.DelaunayTessellation = delaunayTessellator.GetOutput()
 
@@ -224,11 +232,14 @@ class vmtkDelaunayVoronoi(pypes.pypeScript):
         self.VoronoiDiagram = voronoiDiagramFilter.GetOutput()
 
         if self.SimplifyVoronoi:
-          voronoiDiagramSimplifier = vtkvmtk.vtkvmtkSimplifyVoronoiDiagram()
-          voronoiDiagramSimplifier.SetInput(voronoiDiagramFilter.GetOutput())
-          voronoiDiagramSimplifier.SetUnremovablePointIds(voronoiDiagramFilter.GetPoleIds())
-          voronoiDiagramSimplifier.Update()
-          self.VoronoiDiagram = voronoiDiagramSimplifier.GetOutput()
+            voronoiDiagramSimplifier = vtkvmtk.vtkvmtkSimplifyVoronoiDiagram()
+            voronoiDiagramSimplifier.SetInput(voronoiDiagramFilter.GetOutput())
+            voronoiDiagramSimplifier.SetUnremovablePointIds(voronoiDiagramFilter.GetPoleIds())
+            voronoiDiagramSimplifier.Update()
+            self.VoronoiDiagram = voronoiDiagramSimplifier.GetOutput()
+
+        self.Mesh = self.DelaunayTessellation
+        self.Surface = self.VoronoiDiagram
 
 
 if __name__=='__main__':

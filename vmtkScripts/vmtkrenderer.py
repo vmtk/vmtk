@@ -32,7 +32,7 @@ class vmtkRendererInputStream(object):
         self.renderer.EnterTextInputMode()
         return self.renderer.CurrentTextInput
 
-    def prompt(self,text):
+    def prompt(self,text,info=False):
         self.renderer.TextInputQuery = text
         self.renderer.CurrentTextInput = None
         self.renderer.UpdateTextInput()
@@ -274,6 +274,7 @@ class vmtkRenderer(pypes.pypeScript):
                 self.RenderWindowInteractor = vtkvmtk.vtkvmtkCocoaRenderWindowInteractor()
             self.RenderWindow.SetInteractor(self.RenderWindowInteractor)
             self.RenderWindowInteractor.SetInteractorStyle(vtkvmtk.vtkvmtkInteractorStyleTrackballCamera())
+            self.RenderWindowInteractor.GetInteractorStyle().KeyPressActivationOff()
             self.RenderWindowInteractor.GetInteractorStyle().AddObserver("CharEvent",self.CharCallback)
             self.RenderWindowInteractor.GetInteractorStyle().AddObserver("KeyPressEvent",self.KeyPressCallback)
 

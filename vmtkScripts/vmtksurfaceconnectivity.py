@@ -28,6 +28,11 @@ class vmtkSurfaceConnectivity(pypes.pypeScript):
         pypes.pypeScript.__init__(self)
         
         self.Surface = None
+        self.ReferenceSurface = None
+
+        self.ClosestPoint = None
+
+        self.Method = 'largest'
 
         self.GroupId = -1
         self.GroupIdsArrayName = ''
@@ -35,9 +40,12 @@ class vmtkSurfaceConnectivity(pypes.pypeScript):
         self.CleanOutput = 0
 
         self.SetScriptName('vmtksurfaceconnectivity')
-        self.SetScriptDoc('extract the largest connected region or the scalar-connected region from a surface')
+        self.SetScriptDoc('extract the largest connected region, the closest point-connected region or the scalar-connected region from a surface')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
+            ['Method','method','str',1,'["largest","closest"]','connectivity method'],
+            ['ClosestPoint','closestpoint','float',3,'','coordinates of the closest point'],
+            ['ReferenceSurface','r','vtkPolyData',1,'','the reference surface, whose barycenter will be used as closest point for the connectivity filter','vmtksurfacereader'],
             ['CleanOutput','cleanoutput','bool',1,'','clean the unused points in the output'],
             ['GroupIdsArrayName','groupidsarray','str',1,'','name of the array containing the connectivity scalar'],
             ['GroupId','groupid','int',1,'','value of the connectivity scalar']
@@ -54,10 +62,29 @@ class vmtkSurfaceConnectivity(pypes.pypeScript):
         if (self.GroupId != -1) & (self.GroupIdsArrayName!=''):
             self.Surface.GetPointData().SetActiveScalars(self.GroupIdsArrayName)
 
+        barycenter = [0.0,0.0,0.0]
+        if self.Method == 'closest' and self.ClosestPoint == None:
+            n = self.ReferenceSurface.GetNumberOfPoints()
+            for i in xrange(n):
+                point = self.ReferenceSurface.GetPoint(i)
+                barycenter[0] += point[0]
+                barycenter[1] += point[1]
+                barycenter[2] += point[2]
+            barycenter[0] /= n
+            barycenter[1] /= n
+            barycenter[2] /= n
+
         connectivityFilter = vtk.vtkPolyDataConnectivityFilter()
         connectivityFilter.SetInput(self.Surface)
         connectivityFilter.ColorRegionsOff()       
-        connectivityFilter.SetExtractionModeToLargestRegion()
+        if self.Method == 'largest':
+            connectivityFilter.SetExtractionModeToLargestRegion()
+        elif self.Method == 'closest':
+            connectivityFilter.SetExtractionModeToClosestPointRegion()
+            if self.ClosestPoint:
+                connectivityFilter.SetClosestPoint(self.ClosestPoint)
+            else:
+                connectivityFilter.SetClosestPoint(barycenter)
         if self.GroupId != -1:
             connectivityFilter.ScalarConnectivityOn()
             scalarRange = [self.GroupId,self .GroupId]
