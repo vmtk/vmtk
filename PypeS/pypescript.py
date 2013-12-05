@@ -257,6 +257,9 @@ class pypeScript(object):
     def SetScriptDoc(self,scriptDoc):
         self.ScriptDoc = scriptDoc
 
+    def GetScriptDocString(self):
+        return self.ScriptDoc
+
     def GetUsageString(self):
         usageString = ''
         scriptUsageString = os.path.splitext(self.ScriptName)[0]
@@ -314,11 +317,11 @@ class pypeScript(object):
         usageString += '\n'
         return usageString
 
-    def GetMarkdownUsageString(self):
+    def GetHTMLUsageString(self):
         usageString = ''
-        usageString += '---' + '\n'
-        usageString += 'layout: default' + '\n'
-        usageString += '---' + '\n'
+        #usageString += '---' + '\n'
+        #usageString += 'layout: default' + '\n'
+        #usageString += '---' + '\n'
         usageString += '<h1>'
         usageString += self.ScriptName
         usageString += '</h1>'
@@ -358,7 +361,7 @@ class pypeScript(object):
                     #memberUsageString += ' | '
                 memberUsageString += '\n'
                 usageString += '<tr>' + memberUsageString + '</tr>' + '\n'
-            usageString += '</table>'
+            usageString += '</table>\n'
         usageString += '\n'
         return usageString
 
@@ -452,9 +455,14 @@ class pypeScript(object):
                 self.OutputText(self.GetUsageString())
                 self.PrintLog('')
                 return 0
-            if arg == '--markdown':
+            if arg == '--doc':
                 self.PrintLog('')
-                self.OutputText(self.GetMarkdownUsageString())
+                self.OutputText(self.GetScriptDocString())
+                self.PrintLog('')
+                return 0
+            if arg == '--html':
+                self.PrintLog('')
+                self.OutputText(self.GetHTMLUsageString())
                 self.PrintLog('')
                 return 0
             if arg == '--dokuwiki':
