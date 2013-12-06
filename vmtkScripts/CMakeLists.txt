@@ -73,6 +73,7 @@ SET(SCRIPTS_SRCS
   vmtkmeshlambda2.py
   vmtkmeshlinearize.py
   vmtkmeshgenerator.py
+  vmtkmeshmergetimesteps.py
   vmtkmeshpolyballevaluation.py
   vmtkmeshprojection.py
   vmtkmeshreader.py
@@ -90,6 +91,8 @@ SET(SCRIPTS_SRCS
   vmtknetworkextraction.py
   vmtknetworkeditor.py
   vmtknetworkwriter.py
+  vmtkparticletracer.py
+  vmtkpathlineanimator.py
   vmtkpointsplitextractor.py
   vmtkpointtransform.py
   vmtkpolyballmodeller.py
