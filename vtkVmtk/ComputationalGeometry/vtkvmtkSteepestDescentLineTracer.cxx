@@ -155,8 +155,13 @@ void vtkvmtkSteepestDescentLineTracer::Backtrace(vtkPolyData* input, vtkIdType s
   this->Edges->InsertComponent(pointId,1,currentEdge[1]);
   this->EdgeParCoords->InsertValue(pointId,currentS);
 
+  std::size_t numIterations = 0;
+
   previousEdge[0] = currentEdge[0];
   previousEdge[1] = currentEdge[1];
+
+  previousEdge2[0] = -1;
+  previousEdge2[1] = -1;
 
   while (!done)
     {
@@ -225,8 +230,12 @@ void vtkvmtkSteepestDescentLineTracer::Backtrace(vtkPolyData* input, vtkIdType s
     currentEdge[1] = steepestDescentEdge[1];
     currentS = steepestDescentS;
 
-    if ((currentEdge[0] == previousEdge2[0] && currentEdge[1] == previousEdge2[1] && fabs(previousS2 - currentS) < VTK_VMTK_DOUBLE_TOL) ||
-        (currentEdge[0] == previousEdge2[1] && currentEdge[1] == previousEdge2[0]) && fabs(1.0 - previousS2 - currentS) < VTK_VMTK_DOUBLE_TOL)
+    if (numIterations > 0 &&
+			(
+				(currentEdge[0] == previousEdge2[0] && currentEdge[1] == previousEdge2[1] && fabs(previousS2 - currentS) < VTK_VMTK_DOUBLE_TOL) ||
+				(currentEdge[0] == previousEdge2[1] && currentEdge[1] == previousEdge2[0]) && fabs(1.0 - previousS2 - currentS) < VTK_VMTK_DOUBLE_TOL
+			)
+		)
       {
       vtkWarningMacro(<<"Degenerate descent detected. Target not reached.");
       done = true;
@@ -281,6 +290,8 @@ void vtkvmtkSteepestDescentLineTracer::Backtrace(vtkPolyData* input, vtkIdType s
     previousEdge[0] = currentEdge[0];
     previousEdge[1] = currentEdge[1];
     previousS = currentS;
+
+	++numIterations;
     }
 
   newLines->InsertNextCell(lineIds);
