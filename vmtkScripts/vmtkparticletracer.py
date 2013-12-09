@@ -85,7 +85,7 @@ class vmtkParticleTracer(pypes.pypeScript):
         if (self.Mesh == None):
             self.PrintError('Error: no Mesh.')
         
-        if (self.FirstTimeStep == None or Self.LastTimeStep == None or self.IntervalTimeStep == None):
+        if (self.FirstTimeStep == None or self.LastTimeStep == None or self.IntervalTimeStep == None):
             timesteps = self.Mesh.GetFieldData().GetArray("timesteps")
             if (timesteps == None):
                 self.PrintError('Error: no Timesteps.')
