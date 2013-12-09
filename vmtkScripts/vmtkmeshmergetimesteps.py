@@ -43,7 +43,7 @@ class vmtkMeshMergeTimesteps(pypes.pypeScript):
         self.Wsr = 0
         self.VelocityComponentsArrayNames = 'u v w'
         self.WsrComponentsArrayNames = 'taux tauy tauz'
-        self.WsrVector = 1
+        self.WsrVector = 0
         self.SetScriptName('vmtkmeshmergetimesteps')
         self.SetScriptDoc('merge multiple mesh files with different timesteps into one')
         
