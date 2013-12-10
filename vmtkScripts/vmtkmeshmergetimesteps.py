@@ -100,7 +100,18 @@ class vmtkMeshMergeTimesteps(pypes.pypeScript):
         	tauy_name = self.WsrComponentsArrayNames.split(' ')[1]
         	tauz_name = self.WsrComponentsArrayNames.split(' ')[2]
         
+        field = vtk.vtkFieldData()
+        field.AllocateArrays(1)
+        timesteps = vtk.vtkIntArray()
+        timesteps.SetNumberOfTuples(len(timeIndexList))
+        timesteps.SetNumberOfComponents(1)
+        timesteps.SetName("timesteps")
+        i = 0
         for step in timeIndexList:
+        
+            timesteps.InsertTuple1(i, step)
+            i+=1
+            
             if (self.Pattern%step).replace(' ','0') in fileList:
                 fileName = (self.Pattern%step).replace(' ','0')
                 timeIndex = step
@@ -156,16 +167,7 @@ class vmtkMeshMergeTimesteps(pypes.pypeScript):
                     vectorFromComponents.ComponentsArrayNames = [taux.GetName(),tauy.GetName(),tauz.GetName()]
                     vectorFromComponents.RemoveComponentArrays = True
                     vectorFromComponents.Execute()
-        
-        field = vtk.vtkFieldData()
-        field.AllocateArrays(1)
-        timesteps = vtk.vtkIntArray()
-        timesteps.SetNumberOfTuples(3)
-        timesteps.SetNumberOfComponents(1)
-        timesteps.InsertTuple1(0, self.FirstTimeStep)
-        timesteps.InsertTuple1(1, self.LastTimeStep)
-        timesteps.InsertTuple1(2, self.IntervalTimeStep)
-        timesteps.SetName("timesteps")
+    
         field.AddArray(timesteps)
         self.Mesh.SetFieldData(field)
                  

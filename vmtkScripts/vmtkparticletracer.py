@@ -85,15 +85,23 @@ class vmtkParticleTracer(pypes.pypeScript):
         if (self.Mesh == None):
             self.PrintError('Error: no Mesh.')
         
+        if (self.Source == None):
+            self.PrintError('Error: no Source surface.')
+        
         if (self.FirstTimeStep == None or self.LastTimeStep == None or self.IntervalTimeStep == None):
             timesteps = self.Mesh.GetFieldData().GetArray("timesteps")
+            indexList = []
+            i = 0
+            while i < self.Mesh.GetFieldData().GetArray("timesteps").GetNumberOfTuples():
+                indexList.append(int(timesteps.GetTuple(i)[0]))
+                i+=1
             if (timesteps == None):
                 self.PrintError('Error: no Timesteps.')
             self.FirstTimeStep = int(timesteps.GetTuple(0)[0])
             self.LastTimeStep = int(timesteps.GetTuple(1)[0])
             self.IntervalTimeStep = int(timesteps.GetTuple(2)[0])
-        
-        indexList = range(self.FirstTimeStep,self.LastTimeStep+1,self.IntervalTimeStep)
+        else:
+            indexList = range(self.FirstTimeStep,self.LastTimeStep+1,self.IntervalTimeStep)
         
         indexColumn = vtk.vtkIntArray()
         indexColumn.SetName("index")
