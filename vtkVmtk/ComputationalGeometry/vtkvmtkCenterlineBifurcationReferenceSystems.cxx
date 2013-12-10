@@ -316,7 +316,9 @@ void vtkvmtkCenterlineBifurcationReferenceSystems::ComputeGroupReferenceSystem(v
 
       vertexPoints->Initialize();
 
-      if (vtkMath::Distance2BetweenPoints(bifurcationPoints->GetPoint(i),bifurcationPoints->GetPoint(j))<VTK_VMTK_DOUBLE_TOL)
+      bifurcationPoints->GetPoint(i,point0);
+      bifurcationPoints->GetPoint(j,point1);
+      if (vtkMath::Distance2BetweenPoints(point0,point1)<VTK_VMTK_DOUBLE_TOL)
         {
         vertexPoints->InsertPoint(0,bifurcationPoints->GetPoint(i));
         vertexPoints->InsertPoint(1,bifurcationPoints->GetPoint(i+1));
@@ -364,6 +366,35 @@ void vtkvmtkCenterlineBifurcationReferenceSystems::ComputeGroupReferenceSystem(v
 
       bifurcationNormals->InsertNextTuple(polygonNormal);
       }    
+    }
+
+  if (bifurcationNormals->GetNumberOfTuples() == 0)
+    {
+    if (bifurcationPoints->GetNumberOfPoints() > 1)
+      {
+      bifurcationPoints->GetPoint(1,point1);
+      bifurcationPoints->GetPoint(0,point0);
+      double lineUpNormal[3];
+      lineUpNormal[0] = point1[0] - point0[0];
+      lineUpNormal[1] = point1[1] - point0[1];
+      lineUpNormal[2] = point1[2] - point0[2];
+      vtkMath::Normalize(lineUpNormal);
+
+      double lineNormal[3], dummy[3];
+      vtkMath::Perpendiculars(lineUpNormal,lineNormal,dummy,0.0);
+
+      outputPoints->InsertNextPoint(bifurcationOrigin);
+      normalArray->InsertNextTuple(lineNormal);
+      upNormalArray->InsertNextTuple(lineUpNormal);
+      referenceGroupIdsArray->InsertNextTuple1(referenceGroupId);
+      }
+
+    vertexPoints->Delete();
+    bifurcationPoints->Delete();
+    bifurcationRadii->Delete();
+    bifurcationNormals->Delete();
+
+    return;
     }
 
   int numberOfNormals = bifurcationNormals->GetNumberOfTuples();

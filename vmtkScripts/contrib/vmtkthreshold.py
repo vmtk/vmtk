@@ -2,7 +2,6 @@
 
 import sys
 import math
-import numpy
 import vtk
 from vmtk import pypes
 from vmtk import vmtkscripts
