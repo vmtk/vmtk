@@ -100,7 +100,7 @@ class vmtkParticleTracer(pypes.pypeScript):
             firstTimeStep = indexList[0]
         else:
             indexList = range(self.FirstTimeStep,self.LastTimeStep+1,self.IntervalTimeStep)
-            firsTimeStep = self.FirstTimeStep
+            firstTimeStep = self.FirstTimeStep
         
         indexColumn = vtk.vtkIntArray()
         indexColumn.SetName("index")

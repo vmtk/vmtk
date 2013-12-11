@@ -81,10 +81,10 @@ class vmtkMeshMergeTimesteps(pypes.pypeScript):
         
         if (self.VelocityComponentsArrayNames == None):
             self.PrintError('Error: no VelocityComponentsArrayNames.')
-        
+            
         for root, dirs, files in os.walk(self.InputDirectoryName):
             if root == self.InputDirectoryName:
-                fileList = [x for x in files if not (x.startswith('.'))]        
+                fileList = [x for x in files if not (x.startswith('.'))]
         
         timeIndexList = range(self.FirstTimeStep,self.LastTimeStep+1,self.IntervalTimeStep)
         reader = vmtkmeshreader.vmtkMeshReader()
