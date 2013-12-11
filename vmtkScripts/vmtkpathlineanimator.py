@@ -42,8 +42,8 @@ class vmtkPathLineAnimator(pypes.pypeScript):
         self.TimeStep = None
         self.StreakLineTimeLength = 0.01
         self.WithScreenshots = 0
-        self.VelocityMax = None
-        self.VelocityUnit = 'cm/s'
+        self.ArrayMax = None
+        self.ArrayUnit = 'cm/s'
         self.PointSize = 6
         self.LineWidth = 2
         self.Method = 'particles' 
@@ -64,8 +64,8 @@ class vmtkPathLineAnimator(pypes.pypeScript):
             ['Pattern','pattern','str',1,''],
             ['ImagesDirectory','imagesdirectory','str',1,''],
             ['WithScreenshots','screenshot','bool',1,''],
-            ['VelocityMax','velocitymax','float',1,'(0.0,)'],
-            ['VelocityUnit','velocityunit','str',1,'', 'velocity unit measure'],
+            ['ArrayMax','arraymax','float',1,'(0.0,)'],
+            ['ArrayUnit','arrayunit','str',1,'', 'array unit measure'],
             ['PointSize','pointsize','int',1,'(1,)'],
             ['LineWidth','linewidth','int',1,'(1,)'],
             ['ArrayName','array','str',1,'','name of the array where the scalars to be displayed are stored'],
@@ -124,7 +124,7 @@ class vmtkPathLineAnimator(pypes.pypeScript):
             self.ScalarBarActor.SetWidth(0.1)
             self.ScalarBarActor.SetHeight(0.6)
             self.ScalarBarActor.SetNumberOfLabels(4)
-            self.ScalarBarActor.SetTitle("Velocity ["+self.VelocityUnit+"]")
+            self.ScalarBarActor.SetTitle(self.ArrayName+" ["+self.ArrayUnit+"]")
             self.ScalarBarActor.SetLabelFormat('%.2f')
             self.vmtkRenderer.Renderer.AddActor(self.ScalarBarActor)
        
@@ -136,9 +136,9 @@ class vmtkPathLineAnimator(pypes.pypeScript):
         minTime = self.MinTime
         currentTime = self.TimeStep 
         maxTime = self.MaxTime
-        if (self.VelocityMax == None):
-            self.VelocityMax = round(self.Traces.GetPointData().GetArray('Velocity').GetRange()[1],0)
-
+        if (self.ArrayMax == None and self.ArrayName == "Velocity"):
+            self.ArrayMax = round(self.Traces.GetPointData().GetArray('Speed').GetRange()[1],0)
+        
         if self.Method is 'particles':
             particleTime = minTime
             imageNumber = 0
@@ -161,8 +161,8 @@ class vmtkPathLineAnimator(pypes.pypeScript):
                 
                 surfaceViewer.Actor.GetMapper().GetLookupTable().SetVectorModeToMagnitude() 
                 surfaceViewer.Actor.GetMapper().SetScalarModeToUsePointFieldData() 
-                surfaceViewer.Actor.GetMapper().SelectColorArray("Velocity") 
-                surfaceViewer.Actor.GetMapper().SetScalarRange([0.0,self.VelocityMax]) 
+                surfaceViewer.Actor.GetMapper().SelectColorArray(self.ArrayName) 
+                surfaceViewer.Actor.GetMapper().SetScalarRange([0.0,self.ArrayMax]) 
                         
                 surfaceViewer.vmtkRenderer.RenderWindow.Render()
                 if self.WithScreenshots:
@@ -199,8 +199,8 @@ class vmtkPathLineAnimator(pypes.pypeScript):
                 
                 surfaceViewer.Actor.GetMapper().GetLookupTable().SetVectorModeToMagnitude() 
                 surfaceViewer.Actor.GetMapper().SetScalarModeToUsePointFieldData() 
-                surfaceViewer.Actor.GetMapper().SelectColorArray("Velocity") 
-                surfaceViewer.Actor.GetMapper().SetScalarRange([0.0,self.VelocityMax]) 
+                surfaceViewer.Actor.GetMapper().SelectColorArray(self.ArrayName) 
+                surfaceViewer.Actor.GetMapper().SetScalarRange([0.0,self.ArrayMax]) 
                 
                 surfaceViewer.vmtkRenderer = self.vmtkRenderer
                 surfaceViewer.vmtkRenderer.RenderWindow.Render()
