@@ -18,10 +18,10 @@ import vtk
 import sys
 import os
     
-import vtkvmtk
-import vmtkmeshreader
-import vmtkmeshvectorfromcomponents
-import pypes
+from vmtk import vtkvmtk
+from vmtk import vmtkmeshreader
+from vmtk import vmtkmeshvectorfromcomponents
+from vmtk import pypes
 
 vmtkmeshmergetimesteps = 'vmtkMeshMergeTimesteps'
 
@@ -81,10 +81,10 @@ class vmtkMeshMergeTimesteps(pypes.pypeScript):
         
         if (self.VelocityComponentsArrayNames == None):
             self.PrintError('Error: no VelocityComponentsArrayNames.')
-         
+        
         for root, dirs, files in os.walk(self.InputDirectoryName):
             if root == self.InputDirectoryName:
-                fileList = [x for x in files if not (x.startswith('.'))]
+                fileList = [x for x in files if not (x.startswith('.'))]        
         
         timeIndexList = range(self.FirstTimeStep,self.LastTimeStep+1,self.IntervalTimeStep)
         reader = vmtkmeshreader.vmtkMeshReader()
@@ -103,22 +103,19 @@ class vmtkMeshMergeTimesteps(pypes.pypeScript):
         field = vtk.vtkFieldData()
         field.AllocateArrays(1)
         timesteps = vtk.vtkIntArray()
-        timesteps.SetNumberOfTuples(len(timeIndexList))
         timesteps.SetNumberOfComponents(1)
         timesteps.SetName("timesteps")
         i = 0
         for step in timeIndexList:
-        
-            timesteps.InsertTuple1(i, step)
-            i+=1
-            
             if (self.Pattern%step).replace(' ','0') in fileList:
+                timesteps.InsertTuple1(i, step)
+                i+=1
+                
                 fileName = (self.Pattern%step).replace(' ','0')
                 timeIndex = step
                 reader.InputFileName = os.path.abspath(os.path.join(self.InputDirectoryName,fileName))
                 reader.Execute()
                 mesh = reader.Mesh
-                
                 
                 if step == self.FirstTimeStep:
                     mesh.CopyStructure(mesh)

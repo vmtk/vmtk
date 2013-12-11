@@ -17,8 +17,8 @@ import vtk
 import sys
 import os
 
-import vtkvmtk
-import pypes
+from vmtk import vtkvmtk
+from vmtk import pypes
 
 vmtkparticletracer = 'vmtkParticleTracer'
 
@@ -90,18 +90,17 @@ class vmtkParticleTracer(pypes.pypeScript):
         
         if (self.FirstTimeStep == None or self.LastTimeStep == None or self.IntervalTimeStep == None):
             timesteps = self.Mesh.GetFieldData().GetArray("timesteps")
+            if (timesteps == None):
+                self.PrintError('Error: no Timesteps.')
             indexList = []
             i = 0
             while i < self.Mesh.GetFieldData().GetArray("timesteps").GetNumberOfTuples():
                 indexList.append(int(timesteps.GetTuple(i)[0]))
                 i+=1
-            if (timesteps == None):
-                self.PrintError('Error: no Timesteps.')
-            self.FirstTimeStep = int(timesteps.GetTuple(0)[0])
-            self.LastTimeStep = int(timesteps.GetTuple(1)[0])
-            self.IntervalTimeStep = int(timesteps.GetTuple(2)[0])
+            firstTimeStep = indexList[0]
         else:
             indexList = range(self.FirstTimeStep,self.LastTimeStep+1,self.IntervalTimeStep)
+            firsTimeStep = self.FirstTimeStep
         
         indexColumn = vtk.vtkIntArray()
         indexColumn.SetName("index")
@@ -123,9 +122,9 @@ class vmtkParticleTracer(pypes.pypeScript):
             v = self.Source.GetPointData().GetArray("v")
             w = self.Source.GetPointData().GetArray("w")
         else:
-            u = self.Source.GetPointData().GetArray("u_"+str(self.FirstTimeStep))
-            v = self.Source.GetPointData().GetArray("v_"+str(self.FirstTimeStep))
-            w = self.Source.GetPointData().GetArray("w_"+str(self.FirstTimeStep))
+            u = self.Source.GetPointData().GetArray("u_"+str(firstTimeStep))
+            v = self.Source.GetPointData().GetArray("v_"+str(firstTimeStep))
+            w = self.Source.GetPointData().GetArray("w_"+str(firstTimeStep))
         
         speed = vtk.vtkFloatArray()
         speed.SetNumberOfComponents(u.GetNumberOfComponents())
