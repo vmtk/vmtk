@@ -70,6 +70,7 @@ SET(SCRIPTS_SRCS
   vmtkmeshconnectivity.py
   vmtkmeshcutter.py
   vmtkmeshdatareader.py
+  vmtkmeshextractpointdata.py
   vmtkmeshlambda2.py
   vmtkmeshlinearize.py
   vmtkmeshgenerator.py

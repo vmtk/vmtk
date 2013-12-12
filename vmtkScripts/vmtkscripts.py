@@ -64,6 +64,7 @@ __all__ = [
   'vmtkmeshconnectivity',
   'vmtkmeshcutter',
   'vmtkmeshdatareader',
+  'vmtkmeshextractpointdata',
   'vmtkmeshlambda2',
   'vmtkmeshlinearize',
   'vmtkmeshgenerator',
