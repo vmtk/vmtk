@@ -186,7 +186,7 @@ class vmtkMeshViewer2(pypes.pypeScript):
             self.vmtkRenderer.RenderWindow.Render()
 
     def UndoCallback(self,obj):
-	      self.ThresholdUpper = not self.ThresholdUpper
+        self.ThresholdUpper = not self.ThresholdUpper
         if self.DoThreshold:
             isClipped = (self.Actor.GetMapper().GetInput() != self.Mesh)
             self.ThresholdMesh()
