@@ -13,6 +13,10 @@
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
 ##      PURPOSE.  See the above copyright notices for more information.
 
+## Note: this class was contributed by 
+##       Simone Manini
+##       Orobix Srl
+
 import vtk
 import sys
 import os
