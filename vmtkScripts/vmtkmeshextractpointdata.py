@@ -13,6 +13,9 @@
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
 ##      PURPOSE.  See the above copyright notices for more information.
 
+## Note: this class was contributed by 
+##       Simone Manini
+##       Orobix Srl
 
 from vmtk import vtkvmtk
 import vtk
@@ -68,7 +71,8 @@ class vmtkMeshExtractPointData(pypes.pypeScript):
         
         logLine = 'PointId: %d\n' % self.PointId
         logLine += '  Array: %s\n' % self.ArrayName
-        logLine += '  Value: %f\n' % dataValue
+        logLine += ' Components[x,y,z]: %s,%s,%s\n' % (dataArray.GetTuple(self.PointId)[0],dataArray.GetTuple(self.PointId)[1],dataArray.GetTuple(self.PointId)[2])
+        logLine += '  Magnitude: %f\n' % dataValue
         
         self.PrintLog(logLine)
         
