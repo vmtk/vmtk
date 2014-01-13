@@ -74,7 +74,7 @@ class vmtkMeshExtractPointData(pypes.pypeScript):
         logLine += ' Components[x,y,z]: %s,%s,%s\n' % (dataArray.GetTuple(self.PointId)[0],dataArray.GetTuple(self.PointId)[1],dataArray.GetTuple(self.PointId)[2])
         logLine += '  Magnitude: %f\n' % dataValue
         
-        self.PrintLog(logLine):
+        self.PrintLog(logLine)
         
 if __name__=='__main__':
     main = pypes.pypeMain()
