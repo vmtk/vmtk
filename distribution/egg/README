@@ -1,0 +1,10 @@
+#build egg
+python setup.py vmtk_build
+python setup.py bdist_egg
+
+#install
+sudo easy_install <vmtk_version>.egg
+
+#post install
+sudo python vmtk_post_install.py
+
