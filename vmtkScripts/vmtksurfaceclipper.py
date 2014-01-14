@@ -164,7 +164,6 @@ class vmtkSurfaceClipper(pypes.pypeScript):
 
             self.Transform = vtk.vtkTransform()
             self.ClipWidget.GetTransform(self.Transform)
-            self.ClipWidget.RemoveObserver()
 
             if self.OwnRenderer:
                 self.vmtkRenderer.Deallocate()

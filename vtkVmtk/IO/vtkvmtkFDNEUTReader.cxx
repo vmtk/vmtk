@@ -81,9 +81,10 @@ int vtkvmtkFDNEUTReader::RequestData(
     }
 
   char buffer[1024];
+  int ret;
   do
     {
-    fscanf(FDNEUTFile, "%s", buffer);
+    ret = fscanf(FDNEUTFile, "%s", buffer);
     while (fgetc(FDNEUTFile) != '\n');
     }
   while (strncmp(buffer,"NODAL",5)!=0);
@@ -96,9 +97,9 @@ int vtkvmtkFDNEUTReader::RequestData(
 
   while(fscanf(FDNEUTFile, "%d", &pointId))
     {
-    fscanf(FDNEUTFile, "%f", &point[0]);
-    fscanf(FDNEUTFile, "%f", &point[1]);
-    fscanf(FDNEUTFile, "%f", &point[2]);
+    ret = fscanf(FDNEUTFile, "%f", &point[0]);
+    ret = fscanf(FDNEUTFile, "%f", &point[1]);
+    ret = fscanf(FDNEUTFile, "%f", &point[2]);
     while (fgetc(FDNEUTFile) != '\n');
 
     doublePoint[0] = point[0];
@@ -123,21 +124,21 @@ int vtkvmtkFDNEUTReader::RequestData(
   while (fscanf(FDNEUTFile, "%s", buffer)!=EOF)
     {
     while (strncmp(buffer,"NODES:",6)!=0)
-      fscanf(FDNEUTFile, "%s", buffer);
-    fscanf(FDNEUTFile, "%d", &nodesPerElement);
+      ret = fscanf(FDNEUTFile, "%s", buffer);
+    ret = fscanf(FDNEUTFile, "%d", &nodesPerElement);
     while (strncmp(buffer,"GEOMETRY:",9)!=0)
-      fscanf(FDNEUTFile, "%s", buffer);
-    fscanf(FDNEUTFile, "%d", &geometry);
+      ret = fscanf(FDNEUTFile, "%s", buffer);
+    ret = fscanf(FDNEUTFile, "%d", &geometry);
     while (strncmp(buffer,"TYPE:",5)!=0)
-      fscanf(FDNEUTFile, "%s", buffer);
-    fscanf(FDNEUTFile, "%d", &fdneutType);
+      ret = fscanf(FDNEUTFile, "%s", buffer);
+    ret = fscanf(FDNEUTFile, "%d", &fdneutType);
                 
     while (fgetc(FDNEUTFile) != '\n');
-    fscanf(FDNEUTFile, "%s", buffer);
-    fscanf(FDNEUTFile, "%s", buffer);
+    ret = fscanf(FDNEUTFile, "%s", buffer);
+    ret = fscanf(FDNEUTFile, "%s", buffer);
 
     char currentEntityName[256];
-    fscanf(FDNEUTFile, "%s", currentEntityName);
+    ret = fscanf(FDNEUTFile, "%s", currentEntityName);
     while (fgetc(FDNEUTFile) != '\n');
 
     int type = -1;
@@ -167,7 +168,7 @@ int vtkvmtkFDNEUTReader::RequestData(
             cellPoints = new int[numberOfCellPoints];
             for (i=0; i<nodesPerElement; i++)
               {
-              fscanf(FDNEUTFile, "%d", &cellPoints[i]);
+              ret = fscanf(FDNEUTFile, "%d", &cellPoints[i]);
               }
             }
           else if ((nodesPerElement==8) || (nodesPerElement==9))
@@ -175,23 +176,23 @@ int vtkvmtkFDNEUTReader::RequestData(
             type = VTK_QUADRATIC_QUAD;
             numberOfCellPoints = this->GhostNodes ? nodesPerElement : 8;
             cellPoints = new int[numberOfCellPoints];
-            fscanf(FDNEUTFile, "%d", &cellPoints[0]);
-            fscanf(FDNEUTFile, "%d", &cellPoints[4]);
-            fscanf(FDNEUTFile, "%d", &cellPoints[1]);
-            fscanf(FDNEUTFile, "%d", &cellPoints[5]);
-            fscanf(FDNEUTFile, "%d", &cellPoints[2]);
-            fscanf(FDNEUTFile, "%d", &cellPoints[6]);
-            fscanf(FDNEUTFile, "%d", &cellPoints[3]);
-            fscanf(FDNEUTFile, "%d", &cellPoints[7]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[0]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[4]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[1]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[5]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[2]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[6]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[3]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[7]);
             if (nodesPerElement==9)
               {
               if (this->GhostNodes)
                 {
-                fscanf(FDNEUTFile, "%d",&cellPoints[8]);
+                ret = fscanf(FDNEUTFile, "%d",&cellPoints[8]);
                 }
               else
                 {
-                fscanf(FDNEUTFile, "%d",&pointBuffer);
+                ret = fscanf(FDNEUTFile, "%d",&pointBuffer);
                 }
               }
             }
@@ -208,7 +209,7 @@ int vtkvmtkFDNEUTReader::RequestData(
             cellPoints = new int[numberOfCellPoints];
             for (i=0; i<nodesPerElement; i++)
               {
-              fscanf(FDNEUTFile, "%d", &cellPoints[i]);
+              ret = fscanf(FDNEUTFile, "%d", &cellPoints[i]);
               }
             }
           else if ((nodesPerElement==6) || (nodesPerElement==7))
@@ -216,22 +217,22 @@ int vtkvmtkFDNEUTReader::RequestData(
             type = VTK_QUADRATIC_TRIANGLE;
             numberOfCellPoints = this->GhostNodes ? nodesPerElement : 6;
             cellPoints = new int[numberOfCellPoints];
-            fscanf(FDNEUTFile, "%d", &cellPoints[0]);
-            fscanf(FDNEUTFile, "%d", &cellPoints[3]);
-            fscanf(FDNEUTFile, "%d", &cellPoints[1]);
-            fscanf(FDNEUTFile, "%d", &cellPoints[4]);
-            fscanf(FDNEUTFile, "%d", &cellPoints[2]);
-            fscanf(FDNEUTFile, "%d", &cellPoints[5]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[0]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[3]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[1]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[4]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[2]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[5]);
  
             if (nodesPerElement==7)
               {
               if (this->GhostNodes)
                 {
-                fscanf(FDNEUTFile, "%d",&cellPoints[6]);
+                ret = fscanf(FDNEUTFile, "%d",&cellPoints[6]);
                 }
               else
                 {
-                fscanf(FDNEUTFile, "%d",&pointBuffer);
+                ret = fscanf(FDNEUTFile, "%d",&pointBuffer);
                 }
               }
             }
@@ -242,92 +243,92 @@ int vtkvmtkFDNEUTReader::RequestData(
             type = VTK_HEXAHEDRON;
             numberOfCellPoints = this->GhostNodes ? nodesPerElement : 8;
             cellPoints = new int[numberOfCellPoints];
-            fscanf(FDNEUTFile, "%d", &cellPoints[0]);
-            fscanf(FDNEUTFile, "%d", &cellPoints[1]);
-            fscanf(FDNEUTFile, "%d", &cellPoints[3]);
-            fscanf(FDNEUTFile, "%d", &cellPoints[2]);
-            fscanf(FDNEUTFile, "%d", &cellPoints[4]);
-            fscanf(FDNEUTFile, "%d", &cellPoints[5]);
-            fscanf(FDNEUTFile, "%d", &cellPoints[7]);
-            fscanf(FDNEUTFile, "%d", &cellPoints[6]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[0]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[1]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[3]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[2]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[4]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[5]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[7]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[6]);
             }
           else if (nodesPerElement==27)
             {
             type = VTK_QUADRATIC_HEXAHEDRON;
             numberOfCellPoints = this->GhostNodes ? nodesPerElement : 20;
             cellPoints = new int[numberOfCellPoints];
-            fscanf(FDNEUTFile, "%d", &cellPoints[0]);
-            fscanf(FDNEUTFile, "%d", &cellPoints[8]);
-            fscanf(FDNEUTFile, "%d", &cellPoints[1]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[0]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[8]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[1]);
 
-            fscanf(FDNEUTFile, "%d", &cellPoints[11]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[11]);
             if (this->GhostNodes)
               {
-              fscanf(FDNEUTFile, "%d", &cellPoints[24]);
+              ret = fscanf(FDNEUTFile, "%d", &cellPoints[24]);
               }
             else
               {
-              fscanf(FDNEUTFile, "%d", &pointBuffer);
+              ret = fscanf(FDNEUTFile, "%d", &pointBuffer);
               }
-            fscanf(FDNEUTFile, "%d", &cellPoints[9]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[9]);
 
-            fscanf(FDNEUTFile, "%d", &cellPoints[3]);
-            fscanf(FDNEUTFile, "%d", &cellPoints[10]);
-            fscanf(FDNEUTFile, "%d", &cellPoints[2]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[3]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[10]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[2]);
 
-            fscanf(FDNEUTFile, "%d", &cellPoints[16]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[16]);
             if (this->GhostNodes)
               {
-              fscanf(FDNEUTFile, "%d", &cellPoints[20]);
+              ret = fscanf(FDNEUTFile, "%d", &cellPoints[20]);
               }
             else
               {
-              fscanf(FDNEUTFile, "%d", &pointBuffer);
+              ret = fscanf(FDNEUTFile, "%d", &pointBuffer);
               }
-            fscanf(FDNEUTFile, "%d", &cellPoints[17]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[17]);
 
             if (this->GhostNodes)
               {
-              fscanf(FDNEUTFile, "%d", &cellPoints[23]);
-              fscanf(FDNEUTFile, "%d", &cellPoints[26]);
-              fscanf(FDNEUTFile, "%d", &cellPoints[21]);
+              ret = fscanf(FDNEUTFile, "%d", &cellPoints[23]);
+              ret = fscanf(FDNEUTFile, "%d", &cellPoints[26]);
+              ret = fscanf(FDNEUTFile, "%d", &cellPoints[21]);
               }
             else
               {
-              fscanf(FDNEUTFile, "%d", &pointBuffer);
-              fscanf(FDNEUTFile, "%d", &pointBuffer);
-              fscanf(FDNEUTFile, "%d", &pointBuffer);
+              ret = fscanf(FDNEUTFile, "%d", &pointBuffer);
+              ret = fscanf(FDNEUTFile, "%d", &pointBuffer);
+              ret = fscanf(FDNEUTFile, "%d", &pointBuffer);
               }
 
-            fscanf(FDNEUTFile, "%d",&cellPoints[19]);
+            ret = fscanf(FDNEUTFile, "%d",&cellPoints[19]);
             if (this->GhostNodes)
               {
-              fscanf(FDNEUTFile, "%d", &cellPoints[22]);
+              ret = fscanf(FDNEUTFile, "%d", &cellPoints[22]);
               }
             else
               {
-              fscanf(FDNEUTFile, "%d", &pointBuffer);
+              ret = fscanf(FDNEUTFile, "%d", &pointBuffer);
               }
-            fscanf(FDNEUTFile, "%d",&cellPoints[18]);
+            ret = fscanf(FDNEUTFile, "%d",&cellPoints[18]);
 
-            fscanf(FDNEUTFile, "%d",&cellPoints[4]);
-            fscanf(FDNEUTFile, "%d",&cellPoints[12]);
-            fscanf(FDNEUTFile, "%d",&cellPoints[5]);
+            ret = fscanf(FDNEUTFile, "%d",&cellPoints[4]);
+            ret = fscanf(FDNEUTFile, "%d",&cellPoints[12]);
+            ret = fscanf(FDNEUTFile, "%d",&cellPoints[5]);
 
-            fscanf(FDNEUTFile, "%d",&cellPoints[15]);
+            ret = fscanf(FDNEUTFile, "%d",&cellPoints[15]);
             if (this->GhostNodes)
               {
-              fscanf(FDNEUTFile, "%d", &cellPoints[25]);
+              ret = fscanf(FDNEUTFile, "%d", &cellPoints[25]);
               }
             else
               {
-              fscanf(FDNEUTFile, "%d", &pointBuffer);
+              ret = fscanf(FDNEUTFile, "%d", &pointBuffer);
               }
-            fscanf(FDNEUTFile, "%d",&cellPoints[13]);
+            ret = fscanf(FDNEUTFile, "%d",&cellPoints[13]);
 
-            fscanf(FDNEUTFile, "%d",&cellPoints[7]);
-            fscanf(FDNEUTFile, "%d",&cellPoints[14]);
-            fscanf(FDNEUTFile, "%d",&cellPoints[6]);
+            ret = fscanf(FDNEUTFile, "%d",&cellPoints[7]);
+            ret = fscanf(FDNEUTFile, "%d",&cellPoints[14]);
+            ret = fscanf(FDNEUTFile, "%d",&cellPoints[6]);
             }
           break;
         case TETRAHEDRON:
@@ -338,7 +339,7 @@ int vtkvmtkFDNEUTReader::RequestData(
             cellPoints = new int[numberOfCellPoints];
             for (i=0; i<nodesPerElement; i++)
               {
-              fscanf(FDNEUTFile, "%d", &cellPoints[i]);
+              ret = fscanf(FDNEUTFile, "%d", &cellPoints[i]);
               }
             }
           else if (nodesPerElement==10)
@@ -346,16 +347,16 @@ int vtkvmtkFDNEUTReader::RequestData(
             type = VTK_QUADRATIC_TETRA;
             numberOfCellPoints = this->GhostNodes ? nodesPerElement : 10;
             cellPoints = new int[numberOfCellPoints];
-            fscanf(FDNEUTFile, "%d", &cellPoints[0]);
-            fscanf(FDNEUTFile, "%d", &cellPoints[4]);
-            fscanf(FDNEUTFile, "%d", &cellPoints[1]);
-            fscanf(FDNEUTFile, "%d", &cellPoints[6]);
-            fscanf(FDNEUTFile, "%d", &cellPoints[5]);
-            fscanf(FDNEUTFile, "%d", &cellPoints[2]);
-            fscanf(FDNEUTFile, "%d", &cellPoints[7]);
-            fscanf(FDNEUTFile, "%d", &cellPoints[8]);
-            fscanf(FDNEUTFile, "%d", &cellPoints[9]);
-            fscanf(FDNEUTFile, "%d", &cellPoints[3]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[0]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[4]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[1]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[6]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[5]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[2]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[7]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[8]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[9]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[3]);
             }
           break;
         case WEDGE:
@@ -366,7 +367,7 @@ int vtkvmtkFDNEUTReader::RequestData(
             cellPoints = new int[numberOfCellPoints];
             for (i=0; i<nodesPerElement; i++)
               {
-              fscanf(FDNEUTFile, "%d", &cellPoints[i]);
+              ret = fscanf(FDNEUTFile, "%d", &cellPoints[i]);
               }
             }
           else if (nodesPerElement==18)
@@ -374,69 +375,69 @@ int vtkvmtkFDNEUTReader::RequestData(
             type = VTK_QUADRATIC_WEDGE;
             numberOfCellPoints = this->GhostNodes ? nodesPerElement : 15;
             cellPoints = new int[numberOfCellPoints];
-            fscanf(FDNEUTFile, "%d", &cellPoints[0]);
-            fscanf(FDNEUTFile, "%d", &cellPoints[6]);
-            fscanf(FDNEUTFile, "%d", &cellPoints[1]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[0]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[6]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[1]);
 
-            fscanf(FDNEUTFile, "%d", &cellPoints[8]);
-            fscanf(FDNEUTFile, "%d", &cellPoints[7]);
-            fscanf(FDNEUTFile, "%d", &cellPoints[2]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[8]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[7]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[2]);
 
-            fscanf(FDNEUTFile, "%d", &cellPoints[12]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[12]);
             if (this->GhostNodes)
               {
-              fscanf(FDNEUTFile, "%d", &cellPoints[15]);
+              ret = fscanf(FDNEUTFile, "%d", &cellPoints[15]);
               }
             else
               {
-              fscanf(FDNEUTFile, "%d", &pointBuffer);
+              ret = fscanf(FDNEUTFile, "%d", &pointBuffer);
               }
-            fscanf(FDNEUTFile, "%d", &cellPoints[13]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[13]);
 
             if (this->GhostNodes)
               {
-              fscanf(FDNEUTFile, "%d", &cellPoints[16]);
-              fscanf(FDNEUTFile, "%d", &cellPoints[17]);
+              ret = fscanf(FDNEUTFile, "%d", &cellPoints[16]);
+              ret = fscanf(FDNEUTFile, "%d", &cellPoints[17]);
               }
             else
               {
-              fscanf(FDNEUTFile, "%d", &pointBuffer);
-              fscanf(FDNEUTFile, "%d", &pointBuffer);
+              ret = fscanf(FDNEUTFile, "%d", &pointBuffer);
+              ret = fscanf(FDNEUTFile, "%d", &pointBuffer);
               }
-            fscanf(FDNEUTFile, "%d", &cellPoints[14]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[14]);
 
-            fscanf(FDNEUTFile, "%d", &cellPoints[3]);
-            fscanf(FDNEUTFile, "%d", &cellPoints[9]);
-            fscanf(FDNEUTFile, "%d", &cellPoints[4]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[3]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[9]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[4]);
 
-            fscanf(FDNEUTFile, "%d",&cellPoints[11]);
-            fscanf(FDNEUTFile, "%d",&cellPoints[10]);
-            fscanf(FDNEUTFile, "%d",&cellPoints[5]);
+            ret = fscanf(FDNEUTFile, "%d",&cellPoints[11]);
+            ret = fscanf(FDNEUTFile, "%d",&cellPoints[10]);
+            ret = fscanf(FDNEUTFile, "%d",&cellPoints[5]);
             }
           else if (nodesPerElement==15)
             {
             type = VTK_QUADRATIC_WEDGE;
             numberOfCellPoints = this->GhostNodes ? nodesPerElement : 15;
             cellPoints = new int[numberOfCellPoints];
-            fscanf(FDNEUTFile, "%d", &cellPoints[0]);
-            fscanf(FDNEUTFile, "%d", &cellPoints[6]);
-            fscanf(FDNEUTFile, "%d", &cellPoints[1]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[0]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[6]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[1]);
 
-            fscanf(FDNEUTFile, "%d", &cellPoints[8]);
-            fscanf(FDNEUTFile, "%d", &cellPoints[7]);
-            fscanf(FDNEUTFile, "%d", &cellPoints[2]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[8]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[7]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[2]);
 
-            fscanf(FDNEUTFile, "%d", &cellPoints[12]);
-            fscanf(FDNEUTFile, "%d", &cellPoints[13]);
-            fscanf(FDNEUTFile, "%d", &cellPoints[14]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[12]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[13]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[14]);
 
-            fscanf(FDNEUTFile, "%d", &cellPoints[3]);
-            fscanf(FDNEUTFile, "%d", &cellPoints[9]);
-            fscanf(FDNEUTFile, "%d", &cellPoints[4]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[3]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[9]);
+            ret = fscanf(FDNEUTFile, "%d", &cellPoints[4]);
 
-            fscanf(FDNEUTFile, "%d",&cellPoints[11]);
-            fscanf(FDNEUTFile, "%d",&cellPoints[10]);
-            fscanf(FDNEUTFile, "%d",&cellPoints[5]);
+            ret = fscanf(FDNEUTFile, "%d",&cellPoints[11]);
+            ret = fscanf(FDNEUTFile, "%d",&cellPoints[10]);
+            ret = fscanf(FDNEUTFile, "%d",&cellPoints[5]);
             }
           break;
         default:
