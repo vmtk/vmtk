@@ -22,7 +22,7 @@ if __name__ == '__main__':
     vmtkPythonPath="export PYTHONPATH=$VMTKHOME/vmtk/lib:$PYTHONPATH"
     append_decision = raw_input('Do you want to append vmtk environment variables in your .bash_profile? YES/n: ')
     while True:
-        if append_decision.lower() == 'y':
+        if append_decision.lower() == 'y' or append_decision.lower() == 'yes':
             if sys.platform == 'darwin': 
                 ldEnvironmentVariable="export DYLD_LIBRARY_PATH=$VMTKHOME/vmtk/lib"
                 with open(home+'/.bash_profile','aw') as bash_profile:
@@ -43,7 +43,7 @@ if __name__ == '__main__':
                 #WINDOWS
                 pass
             break
-        elif append_decision.lower() == 'n':
+        elif append_decision.lower() == 'n' or append_decision.lower() == 'no':
             break
         else:
             append_decision = raw_input('Do you want to append vmtk environment variables in your .bash_profile? YES/n: ' )

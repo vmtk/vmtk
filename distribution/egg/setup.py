@@ -79,6 +79,7 @@ class vmtk_build(_build):
         for file_to_move in list_files('vmtk/lib/vmtk'):
             shutil.copy('vmtk/lib/vmtk/'+file_to_move, 'vmtk/lib/'+file_to_move)
         shutil.rmtree('vmtk/lib/vmtk')
+        
         for file_to_move in list_files('vmtk/lib/vtk-5.10'):
             shutil.copy('vmtk/lib/vtk-5.10/'+file_to_move, 'vmtk/lib/'+file_to_move)
         shutil.rmtree('vmtk/lib/vtk-5.10')
@@ -110,7 +111,7 @@ class vmtk_install(_install):
         vmtkPythonPath="export PYTHONPATH=$VMTKHOME/vmtk/lib:$PYTHONPATH"
         append_decision = raw_input('Do you want to append vmtk environment variables in your .bash_profile? YES/n: ')
         while True:
-            if append_decision.lower() == 'y':
+            if append_decision.lower() == 'y' or append_decision.lower() == 'yes':
                 if sys.platform == 'darwin': 
                     ldEnvironmentVariable="export DYLD_LIBRARY_PATH=$VMTKHOME/vmtk/lib:$DYLD_LIBRARY_PATH"
                     with open(home+'/.bash_profile','aw') as bash_profile:
@@ -131,7 +132,7 @@ class vmtk_install(_install):
                     #WINDOWS
                     pass
                 break
-            elif append_decision.lower() == 'n':
+            elif append_decision.lower() == 'n' or append_decision.lower() == 'no':
                 break
             else:
                 append_decision = raw_input('Do you want to append vmtk environment variables in your .bash_profile? YES/n: ')
