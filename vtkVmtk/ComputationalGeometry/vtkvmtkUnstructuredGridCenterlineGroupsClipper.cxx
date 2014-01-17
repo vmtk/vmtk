@@ -34,7 +34,7 @@ Version:   $Revision: 1.9 $
 #include "vtkObjectFactory.h"
 #include "vtkvmtkConstants.h"
 
-vtkCxxRevisionMacro(vtkvmtkUnstructuredGridCenterlineGroupsClipper, "$Revision: 1.9 $");
+
 vtkStandardNewMacro(vtkvmtkUnstructuredGridCenterlineGroupsClipper);
 
 vtkvmtkUnstructuredGridCenterlineGroupsClipper::vtkvmtkUnstructuredGridCenterlineGroupsClipper()

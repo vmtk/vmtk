@@ -37,7 +37,7 @@ class vtkPoints;
 class VTK_VMTK_MISC_EXPORT vtkvmtkPolyDataNetworkExtraction : public vtkPolyDataAlgorithm
 {
   public: 
-  vtkTypeRevisionMacro(vtkvmtkPolyDataNetworkExtraction,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkvmtkPolyDataNetworkExtraction,vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent); 
 
   static vtkvmtkPolyDataNetworkExtraction *New();

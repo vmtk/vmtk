@@ -38,7 +38,7 @@ Version:   $Revision: 1.0 $
 class VTK_VMTK_CONTRIB_EXPORT vtkvmtkConcaveAnnularCapPolyData : public vtkPolyDataAlgorithm
 {
   public:
-  vtkTypeRevisionMacro(vtkvmtkConcaveAnnularCapPolyData,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkvmtkConcaveAnnularCapPolyData,vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   static vtkvmtkConcaveAnnularCapPolyData *New();

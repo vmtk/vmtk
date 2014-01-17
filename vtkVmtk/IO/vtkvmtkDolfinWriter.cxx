@@ -32,7 +32,7 @@ Version:   $Revision: 1.6 $
 #include "vtkObjectFactory.h"
 #include "vtkvmtkConstants.h"
 
-vtkCxxRevisionMacro(vtkvmtkDolfinWriter, "$Revision: 1.6 $");
+
 vtkStandardNewMacro(vtkvmtkDolfinWriter);
 
 vtkvmtkDolfinWriter::vtkvmtkDolfinWriter()

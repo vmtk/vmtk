@@ -25,7 +25,7 @@ Version:   $Revision: 1.3 $
 #include "vtkIdList.h"
 #include "vtkCell.h"
 
-vtkCxxRevisionMacro(vtkvmtkPolyDataNeighborhood, "$Revision: 1.3 $");
+
 vtkStandardNewMacro(vtkvmtkPolyDataNeighborhood);
 
 void vtkvmtkPolyDataNeighborhood::Build()

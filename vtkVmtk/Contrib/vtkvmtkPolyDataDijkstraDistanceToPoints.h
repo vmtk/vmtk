@@ -40,7 +40,7 @@ class VTK_VMTK_CONTRIB_EXPORT vtkvmtkPolyDataDijkstraDistanceToPoints : public v
 {
 public:
   static vtkvmtkPolyDataDijkstraDistanceToPoints* New();
-  vtkTypeRevisionMacro(vtkvmtkPolyDataDijkstraDistanceToPoints,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkvmtkPolyDataDijkstraDistanceToPoints,vtkPolyDataAlgorithm);
 
   vtkSetObjectMacro(SeedIds,vtkIdList);
   vtkGetObjectMacro(SeedIds,vtkIdList);

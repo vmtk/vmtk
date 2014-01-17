@@ -35,7 +35,7 @@ class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkPolyDataUmbrellaStencil : pub
 public:
 
   static vtkvmtkPolyDataUmbrellaStencil *New();
-  vtkTypeRevisionMacro(vtkvmtkPolyDataUmbrellaStencil,vtkvmtkPolyDataManifoldStencil);
+  vtkTypeMacro(vtkvmtkPolyDataUmbrellaStencil,vtkvmtkPolyDataManifoldStencil);
 
   virtual vtkIdType GetItemType() {return VTK_VMTK_UMBRELLA_STENCIL;};
 

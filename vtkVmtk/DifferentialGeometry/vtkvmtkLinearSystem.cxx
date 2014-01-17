@@ -22,7 +22,7 @@
 #include "vtkvmtkLinearSystem.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkLinearSystem, "$Revision: 1.3 $");
+
 vtkStandardNewMacro(vtkvmtkLinearSystem);
 
 vtkvmtkLinearSystem::vtkvmtkLinearSystem()

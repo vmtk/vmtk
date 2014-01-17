@@ -81,7 +81,7 @@ long base64_encode (char* to, char* from, unsigned int len)
   return top - to;
 }
 
-vtkCxxRevisionMacro(vtkvmtkPNGWriter, "$Revision: 1.6 $");
+
 vtkStandardNewMacro(vtkvmtkPNGWriter);
 
 vtkvmtkPNGWriter::vtkvmtkPNGWriter()

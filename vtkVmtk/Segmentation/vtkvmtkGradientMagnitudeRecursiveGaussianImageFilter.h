@@ -40,7 +40,7 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkGradientMagnitudeRecursiveGaussianImag
 {
  public:
   static vtkvmtkGradientMagnitudeRecursiveGaussianImageFilter *New();
-  vtkTypeRevisionMacro(vtkvmtkGradientMagnitudeRecursiveGaussianImageFilter, vtkvmtkITKImageToImageFilterFF);
+  vtkTypeMacro(vtkvmtkGradientMagnitudeRecursiveGaussianImageFilter, vtkvmtkITKImageToImageFilterFF);
 
   void SetSigma ( float value )
   {

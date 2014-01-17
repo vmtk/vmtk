@@ -30,7 +30,7 @@
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkPolyDataClampedSmoothingFilter, "$Revision: 1.5 $");
+
 vtkStandardNewMacro(vtkvmtkPolyDataClampedSmoothingFilter);
 
 vtkvmtkPolyDataClampedSmoothingFilter::vtkvmtkPolyDataClampedSmoothingFilter()

@@ -29,7 +29,7 @@
 #include "vtkvmtkMath.h"
 #include "vtkMath.h"
 
-vtkCxxRevisionMacro(vtkvmtkPolyDataManifoldStencil, "$Revision: 1.4 $");
+
 
 vtkvmtkPolyDataManifoldStencil::vtkvmtkPolyDataManifoldStencil()
   {

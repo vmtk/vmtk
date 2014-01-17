@@ -26,7 +26,7 @@ Version:   $Revision: 1.1 $
 #include "vtkvmtkThresholdSegmentationLevelSetImageFilter.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkThresholdSegmentationLevelSetImageFilter, "$Revision: 1.4 $");
+
 vtkStandardNewMacro(vtkvmtkThresholdSegmentationLevelSetImageFilter);
 
 

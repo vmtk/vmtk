@@ -26,7 +26,7 @@
 #include "vtkMath.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkUnstructuredGridFELaplaceAssembler, "$Revision: 1.3 $");
+
 vtkStandardNewMacro(vtkvmtkUnstructuredGridFELaplaceAssembler);
 
 vtkvmtkUnstructuredGridFELaplaceAssembler::vtkvmtkUnstructuredGridFELaplaceAssembler()

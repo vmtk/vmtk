@@ -36,7 +36,7 @@ Version:   Revision: 1.0
 
 #include <sstream>
 
-vtkCxxRevisionMacro(vtkvmtkTetGenReader, "Revision: 1.0");
+
 vtkStandardNewMacro(vtkvmtkTetGenReader);
 
 vtkvmtkTetGenReader::vtkvmtkTetGenReader()

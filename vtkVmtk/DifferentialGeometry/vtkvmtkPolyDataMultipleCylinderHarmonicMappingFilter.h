@@ -33,7 +33,7 @@ class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkPolyDataMultipleCylinderHarmo
 {
 public:
   static vtkvmtkPolyDataMultipleCylinderHarmonicMappingFilter* New();
-  vtkTypeRevisionMacro(vtkvmtkPolyDataMultipleCylinderHarmonicMappingFilter,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkvmtkPolyDataMultipleCylinderHarmonicMappingFilter,vtkPolyDataAlgorithm);
 
   vtkSetStringMacro(HarmonicMappingArrayName);
   vtkGetStringMacro(HarmonicMappingArrayName);

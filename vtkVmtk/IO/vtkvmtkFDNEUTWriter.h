@@ -36,7 +36,7 @@ class VTK_VMTK_IO_EXPORT vtkvmtkFDNEUTWriter : public vtkUnstructuredGridWriter
 {
 public:
   static vtkvmtkFDNEUTWriter *New();
-  vtkTypeRevisionMacro(vtkvmtkFDNEUTWriter,vtkUnstructuredGridWriter);
+  vtkTypeMacro(vtkvmtkFDNEUTWriter,vtkUnstructuredGridWriter);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   //BTX

@@ -41,7 +41,7 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkObjectnessMeasureImageFilter : public 
 {
  public:
   static vtkvmtkObjectnessMeasureImageFilter *New();
-  vtkTypeRevisionMacro(vtkvmtkObjectnessMeasureImageFilter, vtkvmtkITKImageToImageFilterFF);
+  vtkTypeMacro(vtkvmtkObjectnessMeasureImageFilter, vtkvmtkITKImageToImageFilterFF);
 
   void SetSigmaMin(double value)
   {

@@ -27,7 +27,7 @@
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkPolyDataCenterlineProjection, "$Revision: 1.3 $");
+
 vtkStandardNewMacro(vtkvmtkPolyDataCenterlineProjection);
 
 vtkvmtkPolyDataCenterlineProjection::vtkvmtkPolyDataCenterlineProjection() 

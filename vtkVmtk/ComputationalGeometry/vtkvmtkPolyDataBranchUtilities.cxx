@@ -27,7 +27,7 @@ Version:   $Revision: 1.3 $
 #include "vtkIdList.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkPolyDataBranchUtilities, "$Revision: 1.3 $");
+
 vtkStandardNewMacro(vtkvmtkPolyDataBranchUtilities);
 
 void vtkvmtkPolyDataBranchUtilities::GetGroupsIdList(vtkPolyData* surface, const char* groupIdsArrayName, vtkIdList* groupIds)

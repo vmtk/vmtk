@@ -34,7 +34,7 @@ class vtkDoubleArray;
 class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkCenterlineSmoothing : public vtkPolyDataAlgorithm
 {
   public: 
-  vtkTypeRevisionMacro(vtkvmtkCenterlineSmoothing,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkvmtkCenterlineSmoothing,vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent); 
 
   static vtkvmtkCenterlineSmoothing* New();

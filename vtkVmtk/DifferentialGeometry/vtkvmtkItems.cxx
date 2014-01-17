@@ -25,7 +25,7 @@
 #include "vtkIdList.h"
 #include "vtkCell.h"
 
-vtkCxxRevisionMacro(vtkvmtkItems, "$Revision: 1.4 $");
+
 
 vtkvmtkItems::~vtkvmtkItems()
 {

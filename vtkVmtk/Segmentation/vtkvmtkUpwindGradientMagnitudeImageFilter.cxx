@@ -26,7 +26,7 @@ Version:   $Revision: 1.1 $
 #include "vtkvmtkUpwindGradientMagnitudeImageFilter.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkUpwindGradientMagnitudeImageFilter, "$Revision: 1.3 $");
+
 vtkStandardNewMacro(vtkvmtkUpwindGradientMagnitudeImageFilter);
 
 

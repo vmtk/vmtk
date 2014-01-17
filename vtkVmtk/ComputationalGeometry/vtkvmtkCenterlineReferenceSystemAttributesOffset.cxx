@@ -35,7 +35,7 @@ Version:   $Revision: 1.8 $
 #include "vtkvmtkCenterlineUtilities.h"
 #include "vtkvmtkReferenceSystemUtilities.h"
 
-vtkCxxRevisionMacro(vtkvmtkCenterlineReferenceSystemAttributesOffset, "$Revision: 1.8 $");
+
 vtkStandardNewMacro(vtkvmtkCenterlineReferenceSystemAttributesOffset);
 
 vtkvmtkCenterlineReferenceSystemAttributesOffset::vtkvmtkCenterlineReferenceSystemAttributesOffset()

@@ -33,7 +33,7 @@ class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkUnstructuredGridFEGradientAss
 public:
 
   static vtkvmtkUnstructuredGridFEGradientAssembler* New();
-  vtkTypeRevisionMacro(vtkvmtkUnstructuredGridFEGradientAssembler,vtkvmtkFEAssembler);
+  vtkTypeMacro(vtkvmtkUnstructuredGridFEGradientAssembler,vtkvmtkFEAssembler);
 
   virtual void Build();
 

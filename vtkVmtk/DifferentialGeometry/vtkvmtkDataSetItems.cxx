@@ -24,7 +24,7 @@
 #include "vtkObjectFactory.h"
 #include "vtkvmtkDataSetItem.h"
 
-vtkCxxRevisionMacro(vtkvmtkDataSetItems, "$Revision: 1.3 $");
+
 
 void vtkvmtkDataSetItems::Build()
   {

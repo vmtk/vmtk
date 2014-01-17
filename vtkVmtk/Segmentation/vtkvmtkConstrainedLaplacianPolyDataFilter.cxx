@@ -35,7 +35,7 @@ Version:   $Revision: 1.3 $
 #include "vtkMath.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkConstrainedLaplacianPolyDataFilter, "$Revision: 1.3 $");
+
 vtkStandardNewMacro(vtkvmtkConstrainedLaplacianPolyDataFilter);
 
 vtkvmtkConstrainedLaplacianPolyDataFilter::vtkvmtkConstrainedLaplacianPolyDataFilter()

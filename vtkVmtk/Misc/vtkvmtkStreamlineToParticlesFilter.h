@@ -31,7 +31,7 @@ Version:   $Revision: 1.5 $
 class VTK_VMTK_MISC_EXPORT vtkvmtkStreamlineToParticlesFilter : public vtkPolyDataAlgorithm
 {
   public: 
-  vtkTypeRevisionMacro(vtkvmtkStreamlineToParticlesFilter,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkvmtkStreamlineToParticlesFilter,vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent); 
 
   static vtkvmtkStreamlineToParticlesFilter *New();

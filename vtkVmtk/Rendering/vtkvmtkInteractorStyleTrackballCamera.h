@@ -33,7 +33,7 @@ class VTK_VMTK_RENDERING_EXPORT vtkvmtkInteractorStyleTrackballCamera : public v
 public:
   static vtkvmtkInteractorStyleTrackballCamera *New();
 
-  vtkTypeRevisionMacro(vtkvmtkInteractorStyleTrackballCamera,vtkInteractorStyleTrackballCamera);
+  vtkTypeMacro(vtkvmtkInteractorStyleTrackballCamera,vtkInteractorStyleTrackballCamera);
   //void PrintSelf(ostream& os, vtkIndent indent);
 
 protected:

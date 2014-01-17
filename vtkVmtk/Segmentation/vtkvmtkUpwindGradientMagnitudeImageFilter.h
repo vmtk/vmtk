@@ -40,7 +40,7 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkUpwindGradientMagnitudeImageFilter : p
 {
  public:
   static vtkvmtkUpwindGradientMagnitudeImageFilter *New();
-  vtkTypeRevisionMacro(vtkvmtkUpwindGradientMagnitudeImageFilter, vtkvmtkITKImageToImageFilterFF);
+  vtkTypeMacro(vtkvmtkUpwindGradientMagnitudeImageFilter, vtkvmtkITKImageToImageFilterFF);
 
   void SetUpwindFactor ( float value )
   {

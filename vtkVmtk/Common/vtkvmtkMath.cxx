@@ -22,7 +22,7 @@
 #include "vtkvmtkMath.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkMath, "$Revision: 1.0 $");
+
 vtkStandardNewMacro(vtkvmtkMath);
 
 double vtkvmtkMath::Cotangent(double point0[3], double point1[3], double point2[3])

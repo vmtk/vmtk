@@ -3,7 +3,7 @@
 
 //------------------------------------------------------------------------------
 
-vtkCxxRevisionMacro(vtkvmtkCurvedMPRImageFilter, "$Revision: 1.2 $");
+
 vtkStandardNewMacro(vtkvmtkCurvedMPRImageFilter);
 
 vtkvmtkCurvedMPRImageFilter::vtkvmtkCurvedMPRImageFilter()

@@ -31,7 +31,7 @@ Version:   $Revision: 1.4 $
 class VTK_VMTK_MISC_EXPORT vtkvmtkLinearizeMeshFilter : public vtkUnstructuredGridAlgorithm
 {
   public: 
-  vtkTypeRevisionMacro(vtkvmtkLinearizeMeshFilter,vtkUnstructuredGridAlgorithm);
+  vtkTypeMacro(vtkvmtkLinearizeMeshFilter,vtkUnstructuredGridAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent); 
 
   static vtkvmtkLinearizeMeshFilter *New();

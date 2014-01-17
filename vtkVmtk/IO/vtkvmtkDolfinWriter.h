@@ -38,7 +38,7 @@ class VTK_VMTK_IO_EXPORT vtkvmtkDolfinWriter : public vtkUnstructuredGridWriter
 {
 public:
   static vtkvmtkDolfinWriter *New();
-  vtkTypeRevisionMacro(vtkvmtkDolfinWriter,vtkUnstructuredGridWriter);
+  vtkTypeMacro(vtkvmtkDolfinWriter,vtkUnstructuredGridWriter);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   vtkSetStringMacro(BoundaryDataArrayName);

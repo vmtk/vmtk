@@ -38,7 +38,7 @@ Version:   $Revision: 1.4 $
 class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkSteepestDescentShooter : public vtkvmtkNonManifoldSteepestDescent
 {
   public: 
-  vtkTypeRevisionMacro(vtkvmtkSteepestDescentShooter,vtkvmtkNonManifoldSteepestDescent);
+  vtkTypeMacro(vtkvmtkSteepestDescentShooter,vtkvmtkNonManifoldSteepestDescent);
   void PrintSelf(ostream& os, vtkIndent indent); 
 
   static vtkvmtkSteepestDescentShooter *New();

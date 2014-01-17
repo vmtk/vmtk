@@ -33,7 +33,7 @@ class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkLinearSystemSolver : public v
 {
 public:
   static vtkvmtkLinearSystemSolver* New();
-  vtkTypeRevisionMacro(vtkvmtkLinearSystemSolver,vtkObject);
+  vtkTypeMacro(vtkvmtkLinearSystemSolver,vtkObject);
 
   vtkSetObjectMacro(LinearSystem,vtkvmtkLinearSystem);
   vtkGetObjectMacro(LinearSystem,vtkvmtkLinearSystem);

@@ -32,7 +32,7 @@ Version:   $Revision: 1.5 $
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkPolyDataLineEmbedder, "$Revision: 1.5 $");
+
 vtkStandardNewMacro(vtkvmtkPolyDataLineEmbedder);
 
 vtkvmtkPolyDataLineEmbedder::vtkvmtkPolyDataLineEmbedder()

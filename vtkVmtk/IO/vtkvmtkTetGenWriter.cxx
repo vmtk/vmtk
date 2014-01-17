@@ -31,7 +31,7 @@ Version:   Revision: 1.0
 #include "vtkObjectFactory.h"
 #include "vtkvmtkConstants.h"
 
-vtkCxxRevisionMacro(vtkvmtkTetGenWriter, "$Revision: 1.0 $");
+
 vtkStandardNewMacro(vtkvmtkTetGenWriter);
 
 vtkvmtkTetGenWriter::vtkvmtkTetGenWriter()

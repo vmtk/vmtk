@@ -24,7 +24,7 @@
 #include "vtkvmtkFEShapeFunctions.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkFEAssembler, "$Revision: 1.3 $");
+
 
 vtkvmtkFEAssembler::vtkvmtkFEAssembler()
 {

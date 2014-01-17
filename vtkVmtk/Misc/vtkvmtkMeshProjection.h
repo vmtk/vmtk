@@ -32,7 +32,7 @@ Version:   $Revision: 1.1 $
 class VTK_VMTK_MISC_EXPORT vtkvmtkMeshProjection : public vtkUnstructuredGridAlgorithm
 {
   public: 
-  vtkTypeRevisionMacro(vtkvmtkMeshProjection,vtkUnstructuredGridAlgorithm);
+  vtkTypeMacro(vtkvmtkMeshProjection,vtkUnstructuredGridAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent); 
 
   static vtkvmtkMeshProjection *New();

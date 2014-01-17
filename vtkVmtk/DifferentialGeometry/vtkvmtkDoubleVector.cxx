@@ -25,7 +25,7 @@
 #include "vtkvmtkConstants.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkDoubleVector, "$Revision: 1.3 $");
+
 vtkStandardNewMacro(vtkvmtkDoubleVector);
 
 vtkvmtkDoubleVector::vtkvmtkDoubleVector()

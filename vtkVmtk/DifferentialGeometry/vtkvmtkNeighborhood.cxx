@@ -22,7 +22,7 @@
 #include "vtkvmtkNeighborhood.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkNeighborhood, "$Revision: 1.2 $");
+
 
 vtkvmtkNeighborhood::vtkvmtkNeighborhood()
   {

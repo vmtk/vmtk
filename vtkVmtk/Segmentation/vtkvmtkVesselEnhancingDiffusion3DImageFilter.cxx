@@ -26,7 +26,7 @@ Version:   $Revision: 1.1 $
 #include "vtkvmtkVesselEnhancingDiffusion3DImageFilter.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkVesselEnhancingDiffusion3DImageFilter, "$Revision: 1.2 $");
+
 vtkStandardNewMacro(vtkvmtkVesselEnhancingDiffusion3DImageFilter);
 
 

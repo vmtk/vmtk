@@ -35,7 +35,7 @@ Version:   $Revision: 1.4 $
 class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkCapPolyData : public vtkPolyDataAlgorithm
 {
   public:
-  vtkTypeRevisionMacro(vtkvmtkCapPolyData,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkvmtkCapPolyData,vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   static vtkvmtkCapPolyData *New();

@@ -33,7 +33,7 @@ class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkUnstructuredGridFELaplaceAsse
 public:
 
   static vtkvmtkUnstructuredGridFELaplaceAssembler* New();
-  vtkTypeRevisionMacro(vtkvmtkUnstructuredGridFELaplaceAssembler,vtkvmtkFEAssembler);
+  vtkTypeMacro(vtkvmtkUnstructuredGridFELaplaceAssembler,vtkvmtkFEAssembler);
 
   virtual void Build();
 

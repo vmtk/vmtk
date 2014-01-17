@@ -46,7 +46,7 @@ Version:   $Revision: 1.1 $
 #include "vtkvmtkCenterlineUtilities.h"
 #include "vtkvmtkPolyDataBranchUtilities.h"
 
-vtkCxxRevisionMacro(vtkvmtkPolyDataBranchSections, "$Revision: 1.1 $");
+
 vtkStandardNewMacro(vtkvmtkPolyDataBranchSections);
 
 vtkvmtkPolyDataBranchSections::vtkvmtkPolyDataBranchSections()

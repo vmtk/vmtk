@@ -34,7 +34,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataPatchingFilter : pub
 {
 public:
   static vtkvmtkPolyDataPatchingFilter* New();
-  vtkTypeRevisionMacro(vtkvmtkPolyDataPatchingFilter,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkvmtkPolyDataPatchingFilter,vtkPolyDataAlgorithm);
 
   vtkSetStringMacro(LongitudinalMappingArrayName);
   vtkGetStringMacro(LongitudinalMappingArrayName);

@@ -34,7 +34,7 @@
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkPolyDataStencilFlowFilter, "$Revision: 1.1 $");
+
 vtkStandardNewMacro(vtkvmtkPolyDataStencilFlowFilter);
 
 vtkvmtkPolyDataStencilFlowFilter::vtkvmtkPolyDataStencilFlowFilter() 

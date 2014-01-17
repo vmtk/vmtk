@@ -46,7 +46,7 @@ Version:   $Revision: 1.1 $
 #include "vtkvmtkCenterlineUtilities.h"
 #include "vtkvmtkPolyDataBranchUtilities.h"
 
-vtkCxxRevisionMacro(vtkvmtkPolyDataCenterlineSections, "$Revision: 1.1 $");
+
 vtkStandardNewMacro(vtkvmtkPolyDataCenterlineSections);
 
 vtkvmtkPolyDataCenterlineSections::vtkvmtkPolyDataCenterlineSections()

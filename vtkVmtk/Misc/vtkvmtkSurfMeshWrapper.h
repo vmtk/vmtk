@@ -32,7 +32,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkSurfMeshWrapper : public vtkPolyDataAlgorithm
 {
   public: 
   static vtkvmtkSurfMeshWrapper *New();
-  vtkTypeRevisionMacro(vtkvmtkSurfMeshWrapper,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkvmtkSurfMeshWrapper,vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent); 
 
   vtkSetMacro(NodeSpacing,double);

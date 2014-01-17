@@ -33,7 +33,7 @@ Version:   $Revision: 1.5 $
 class VTK_VMTK_MISC_EXPORT vtkvmtkAnnularCapPolyData : public vtkPolyDataAlgorithm
 {
   public:
-  vtkTypeRevisionMacro(vtkvmtkAnnularCapPolyData,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkvmtkAnnularCapPolyData,vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   static vtkvmtkAnnularCapPolyData *New();

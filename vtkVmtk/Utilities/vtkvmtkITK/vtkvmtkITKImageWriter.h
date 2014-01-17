@@ -31,7 +31,7 @@ class VTK_VMTK_ITK_EXPORT vtkvmtkITKImageWriter : public vtkProcessObject
 public:
 
   static vtkvmtkITKImageWriter *New();
-  vtkTypeRevisionMacro(vtkvmtkITKImageWriter,vtkProcessObject);
+  vtkTypeMacro(vtkvmtkITKImageWriter,vtkProcessObject);
   void PrintSelf(ostream& os, vtkIndent indent);
   
   // Description:

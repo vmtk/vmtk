@@ -35,7 +35,7 @@
 
 #include "vtkvmtkConstants.h"
 
-vtkCxxRevisionMacro(vtkvmtkPolyDataSampleFunction, "$Revision: 1.3 $");
+
 vtkStandardNewMacro(vtkvmtkPolyDataSampleFunction);
 vtkCxxSetObjectMacro(vtkvmtkPolyDataSampleFunction,ImplicitFunction,vtkImplicitFunction);
 

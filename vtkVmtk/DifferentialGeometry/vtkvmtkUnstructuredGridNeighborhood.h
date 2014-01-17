@@ -36,7 +36,7 @@ class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkUnstructuredGridNeighborhood 
 public:
 
   static vtkvmtkUnstructuredGridNeighborhood *New();
-  vtkTypeRevisionMacro(vtkvmtkUnstructuredGridNeighborhood,vtkvmtkNeighborhood);
+  vtkTypeMacro(vtkvmtkUnstructuredGridNeighborhood,vtkvmtkNeighborhood);
 
   virtual vtkIdType GetItemType() {return VTK_VMTK_UNSTRUCTUREDGRID_NEIGHBORHOOD;};
 

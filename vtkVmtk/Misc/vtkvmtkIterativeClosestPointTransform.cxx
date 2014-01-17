@@ -30,7 +30,7 @@ Version:   $Revision: 1.0 $
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkIterativeClosestPointTransform, "$Revision: 1.0 $");
+
 vtkStandardNewMacro(vtkvmtkIterativeClosestPointTransform);
 
 vtkvmtkIterativeClosestPointTransform::vtkvmtkIterativeClosestPointTransform()

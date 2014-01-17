@@ -38,7 +38,7 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkGrayscaleMorphologyImageFilter : publi
 {
  public:
   static vtkvmtkGrayscaleMorphologyImageFilter *New();
-  vtkTypeRevisionMacro(vtkvmtkGrayscaleMorphologyImageFilter, vtkSimpleImageToImageFilter);
+  vtkTypeMacro(vtkvmtkGrayscaleMorphologyImageFilter, vtkSimpleImageToImageFilter);
 
   vtkGetVectorMacro(BallRadius,int,3);
   vtkSetVectorMacro(BallRadius,int,3);

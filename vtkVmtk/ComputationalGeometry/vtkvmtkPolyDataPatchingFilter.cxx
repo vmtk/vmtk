@@ -39,7 +39,7 @@
 
 #include "vtkvmtkPolyDataBranchUtilities.h"
 
-vtkCxxRevisionMacro(vtkvmtkPolyDataPatchingFilter, "$Revision: 1.11 $");
+
 vtkStandardNewMacro(vtkvmtkPolyDataPatchingFilter);
 
 vtkvmtkPolyDataPatchingFilter::vtkvmtkPolyDataPatchingFilter() 

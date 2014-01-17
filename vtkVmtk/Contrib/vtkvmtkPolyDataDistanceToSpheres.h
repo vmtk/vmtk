@@ -39,7 +39,7 @@ class VTK_VMTK_CONTRIB_EXPORT vtkvmtkPolyDataDistanceToSpheres : public vtkPolyD
 {
 public:
   static vtkvmtkPolyDataDistanceToSpheres* New();
-  vtkTypeRevisionMacro(vtkvmtkPolyDataDistanceToSpheres,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkvmtkPolyDataDistanceToSpheres,vtkPolyDataAlgorithm);
 
   vtkSetObjectMacro(Spheres,vtkPolyData);
   vtkGetObjectMacro(Spheres,vtkPolyData);

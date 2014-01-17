@@ -36,7 +36,7 @@ class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkPolyDataAreaWeightedUmbrellaS
 public:
 
   static vtkvmtkPolyDataAreaWeightedUmbrellaStencil *New();
-  vtkTypeRevisionMacro(vtkvmtkPolyDataAreaWeightedUmbrellaStencil,vtkvmtkPolyDataManifoldStencil);
+  vtkTypeMacro(vtkvmtkPolyDataAreaWeightedUmbrellaStencil,vtkvmtkPolyDataManifoldStencil);
 
   virtual vtkIdType GetItemType() {return VTK_VMTK_AREA_WEIGHTED_UMBRELLA_STENCIL;};
 

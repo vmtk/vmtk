@@ -34,7 +34,7 @@
 class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkFEShapeFunctions : public vtkObject
 {
 public:
-  vtkTypeRevisionMacro(vtkvmtkFEShapeFunctions,vtkObject);
+  vtkTypeMacro(vtkvmtkFEShapeFunctions,vtkObject);
   static vtkvmtkFEShapeFunctions* New();
 
   void Initialize(vtkCell* cell, vtkDoubleArray* pcoords);

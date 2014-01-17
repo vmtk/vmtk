@@ -39,7 +39,7 @@ Version:   $Revision: 1.4 $
 class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkNonManifoldSteepestDescent : public vtkPolyDataAlgorithm
 {
   public:
-  vtkTypeRevisionMacro(vtkvmtkNonManifoldSteepestDescent,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkvmtkNonManifoldSteepestDescent,vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent); 
 
   static vtkvmtkNonManifoldSteepestDescent *New();

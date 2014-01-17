@@ -39,7 +39,7 @@ class vtkThreshold;
 class VTK_VMTK_CONTRIB_EXPORT vtkvmtkCellDimensionFilter : public vtkUnstructuredGridAlgorithm
 {
   public: 
-  vtkTypeRevisionMacro(vtkvmtkCellDimensionFilter,vtkUnstructuredGridAlgorithm);
+  vtkTypeMacro(vtkvmtkCellDimensionFilter,vtkUnstructuredGridAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent); 
 
   static vtkvmtkCellDimensionFilter* New();

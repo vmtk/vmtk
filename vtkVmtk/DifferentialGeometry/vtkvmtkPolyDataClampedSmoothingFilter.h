@@ -34,7 +34,7 @@ class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkPolyDataClampedSmoothingFilte
 public:
 
   static vtkvmtkPolyDataClampedSmoothingFilter *New();
-  vtkTypeRevisionMacro(vtkvmtkPolyDataClampedSmoothingFilter,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkvmtkPolyDataClampedSmoothingFilter,vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent); 
 
   vtkSetMacro(SmoothingType,int);

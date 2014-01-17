@@ -35,7 +35,7 @@ Version:   $Revision: 1.3 $
 #include "vtkMath.h"
 #include "vtkMergePoints.h"
 
-vtkCxxRevisionMacro(vtkvmtkAppendFilter, "$Revision: 1.76 $");
+
 vtkStandardNewMacro(vtkvmtkAppendFilter);
 
 vtkvmtkAppendFilter::vtkvmtkAppendFilter()

@@ -29,7 +29,7 @@ Version:   $Revision: 1.6 $
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkPolyDataSizingFunction, "$Revision: 1.6 $");
+
 vtkStandardNewMacro(vtkvmtkPolyDataSizingFunction);
 
 vtkvmtkPolyDataSizingFunction::vtkvmtkPolyDataSizingFunction()

@@ -30,7 +30,7 @@ Version:   $Revision: 1.4 $
 #include "vtkInformationVector.h"
 #include "vtkvmtkConstants.h"
 
-vtkCxxRevisionMacro(vtkvmtkNonManifoldSteepestDescent, "$Revision: 1.4 $");
+
 vtkStandardNewMacro(vtkvmtkNonManifoldSteepestDescent);
 
 vtkvmtkNonManifoldSteepestDescent::vtkvmtkNonManifoldSteepestDescent()

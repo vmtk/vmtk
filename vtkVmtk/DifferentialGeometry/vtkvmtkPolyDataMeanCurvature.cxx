@@ -32,7 +32,7 @@
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkPolyDataMeanCurvature, "$Revision: 1.5 $");
+
 vtkStandardNewMacro(vtkvmtkPolyDataMeanCurvature);
 
 vtkvmtkPolyDataMeanCurvature::vtkvmtkPolyDataMeanCurvature()

@@ -36,7 +36,7 @@ Version:   $Revision: 1.7 $
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkBoundaryLayerGenerator, "$Revision: 1.7 $");
+
 vtkStandardNewMacro(vtkvmtkBoundaryLayerGenerator);
 
 vtkvmtkBoundaryLayerGenerator::vtkvmtkBoundaryLayerGenerator()

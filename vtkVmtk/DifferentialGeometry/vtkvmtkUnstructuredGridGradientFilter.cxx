@@ -33,7 +33,7 @@
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkUnstructuredGridGradientFilter, "$Revision: 1.7 $");
+
 vtkStandardNewMacro(vtkvmtkUnstructuredGridGradientFilter);
 
 vtkvmtkUnstructuredGridGradientFilter::vtkvmtkUnstructuredGridGradientFilter() 

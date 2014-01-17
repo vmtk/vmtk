@@ -30,7 +30,7 @@ Version:   $Revision: 1.6 $
 #include "vtkObjectFactory.h"
 #include "vtkvmtkConstants.h"
 
-vtkCxxRevisionMacro(vtkvmtkXdaWriter, "$Revision: 1.6 $");
+
 vtkStandardNewMacro(vtkvmtkXdaWriter);
 
 vtkvmtkXdaWriter::vtkvmtkXdaWriter()

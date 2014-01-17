@@ -26,7 +26,7 @@
 #include "vtkMath.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkPolyDataFELaplaceAssembler, "$Revision: 1.3 $");
+
 vtkStandardNewMacro(vtkvmtkPolyDataFELaplaceAssembler);
 
 vtkvmtkPolyDataFELaplaceAssembler::vtkvmtkPolyDataFELaplaceAssembler()

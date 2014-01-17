@@ -29,7 +29,7 @@
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkPolyDataDiscreteElasticaFilter, "$Revision: 1.5 $");
+
 vtkStandardNewMacro(vtkvmtkPolyDataDiscreteElasticaFilter);
 
 vtkvmtkPolyDataDiscreteElasticaFilter::vtkvmtkPolyDataDiscreteElasticaFilter()

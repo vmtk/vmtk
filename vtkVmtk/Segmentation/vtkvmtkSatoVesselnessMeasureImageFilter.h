@@ -38,7 +38,7 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkSatoVesselnessMeasureImageFilter : pub
 {
  public:
   static vtkvmtkSatoVesselnessMeasureImageFilter *New();
-  vtkTypeRevisionMacro(vtkvmtkSatoVesselnessMeasureImageFilter, vtkSimpleImageToImageFilter);
+  vtkTypeMacro(vtkvmtkSatoVesselnessMeasureImageFilter, vtkSimpleImageToImageFilter);
 
   vtkGetMacro(SigmaMin,double);
   vtkSetMacro(SigmaMin,double);

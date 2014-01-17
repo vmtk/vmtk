@@ -35,7 +35,7 @@ class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkEmptyStencil : public vtkvmtk
 {
 public:
   static vtkvmtkEmptyStencil* New();
-  vtkTypeRevisionMacro(vtkvmtkEmptyStencil,vtkvmtkStencil);
+  vtkTypeMacro(vtkvmtkEmptyStencil,vtkvmtkStencil);
 
   // Description:
   // Build the stencil.

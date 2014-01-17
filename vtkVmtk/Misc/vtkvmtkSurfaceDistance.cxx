@@ -31,7 +31,7 @@ Version:   $Revision: 1.3 $
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkSurfaceDistance, "$Revision: 1.3 $");
+
 vtkStandardNewMacro(vtkvmtkSurfaceDistance);
 
 vtkvmtkSurfaceDistance::vtkvmtkSurfaceDistance()

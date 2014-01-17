@@ -28,7 +28,7 @@ Version:   $Revision: 1.4 $
 #include "vtkInformationVector.h"
 #include "SurfaceMesher.h"
 
-vtkCxxRevisionMacro(vtkvmtkSurfMeshWrapper, "$Revision: 1.4 $");
+
 vtkStandardNewMacro(vtkvmtkSurfMeshWrapper);
 
 vtkvmtkSurfMeshWrapper::vtkvmtkSurfMeshWrapper()

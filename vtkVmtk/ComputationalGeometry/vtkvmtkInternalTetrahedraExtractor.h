@@ -39,7 +39,7 @@ Version:   $Revision: 1.5 $
 class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkInternalTetrahedraExtractor : public vtkUnstructuredGridAlgorithm
 {
   public: 
-  vtkTypeRevisionMacro(vtkvmtkInternalTetrahedraExtractor,vtkUnstructuredGridAlgorithm);
+  vtkTypeMacro(vtkvmtkInternalTetrahedraExtractor,vtkUnstructuredGridAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent); 
 
   static vtkvmtkInternalTetrahedraExtractor *New();

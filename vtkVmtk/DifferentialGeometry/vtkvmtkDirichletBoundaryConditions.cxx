@@ -25,7 +25,7 @@
 #include "vtkvmtkDirichletBoundaryConditions.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkDirichletBoundaryConditions, "$Revision: 1.2 $");
+
 vtkStandardNewMacro(vtkvmtkDirichletBoundaryConditions);
 
 void vtkvmtkDirichletBoundaryConditions::Apply()

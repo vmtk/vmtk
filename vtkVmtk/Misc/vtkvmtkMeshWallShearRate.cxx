@@ -34,7 +34,7 @@ Version:   $Revision: 1.1 $
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkMeshWallShearRate, "$Revision: 1.1 $");
+
 vtkStandardNewMacro(vtkvmtkMeshWallShearRate);
 
 vtkvmtkMeshWallShearRate::vtkvmtkMeshWallShearRate()

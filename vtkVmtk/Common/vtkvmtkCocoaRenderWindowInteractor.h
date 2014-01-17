@@ -32,7 +32,7 @@ class VTK_VMTK_COMMON_EXPORT vtkvmtkCocoaRenderWindowInteractor : public vtkCoco
 {
 public:
   static vtkvmtkCocoaRenderWindowInteractor *New();
-  vtkTypeRevisionMacro(vtkvmtkCocoaRenderWindowInteractor,vtkCocoaRenderWindowInteractor);
+  vtkTypeMacro(vtkvmtkCocoaRenderWindowInteractor,vtkCocoaRenderWindowInteractor);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual void TerminateApp();

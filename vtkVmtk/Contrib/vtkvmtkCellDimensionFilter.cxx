@@ -33,7 +33,7 @@
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkCellDimensionFilter, "$Revision: 1.1 $");
+
 vtkStandardNewMacro(vtkvmtkCellDimensionFilter);
 
 vtkvmtkCellDimensionFilter::vtkvmtkCellDimensionFilter()

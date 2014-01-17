@@ -26,7 +26,7 @@ Version:   $Revision: 1.1 $
 #include "vtkvmtkLaplacianSegmentationLevelSetImageFilter.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkLaplacianSegmentationLevelSetImageFilter, "$Revision: 1.4 $");
+
 vtkStandardNewMacro(vtkvmtkLaplacianSegmentationLevelSetImageFilter);
 
 

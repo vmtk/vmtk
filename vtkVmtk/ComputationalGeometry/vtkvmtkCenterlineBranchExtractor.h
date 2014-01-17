@@ -32,7 +32,7 @@ Version:   $Revision: 1.5 $
 class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkCenterlineBranchExtractor : public vtkvmtkCenterlineSplittingAndGroupingFilter
 {
   public: 
-  vtkTypeRevisionMacro(vtkvmtkCenterlineBranchExtractor,vtkvmtkCenterlineSplittingAndGroupingFilter);
+  vtkTypeMacro(vtkvmtkCenterlineBranchExtractor,vtkvmtkCenterlineSplittingAndGroupingFilter);
   void PrintSelf(ostream& os, vtkIndent indent); 
 
   static vtkvmtkCenterlineBranchExtractor *New();

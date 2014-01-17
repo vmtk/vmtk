@@ -31,7 +31,7 @@ Version:   $Revision: 1.7 $
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkCenterlineAttributesFilter, "$Revision: 1.7 $");
+
 vtkStandardNewMacro(vtkvmtkCenterlineAttributesFilter);
 
 vtkvmtkCenterlineAttributesFilter::vtkvmtkCenterlineAttributesFilter()

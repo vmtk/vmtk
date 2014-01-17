@@ -31,7 +31,7 @@ Version:   $Revision: 1.5 $
 class VTK_VMTK_MISC_EXPORT vtkvmtkStreamlineOsculatingCentersFilter : public vtkPolyDataAlgorithm
 {
   public: 
-  vtkTypeRevisionMacro(vtkvmtkStreamlineOsculatingCentersFilter,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkvmtkStreamlineOsculatingCentersFilter,vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent); 
 
   static vtkvmtkStreamlineOsculatingCentersFilter *New();

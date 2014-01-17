@@ -35,7 +35,7 @@ Version:   $Revision: 1.6 $
 #include "vtkCellArray.h"
 #include "vtkCell.h"
 
-vtkCxxRevisionMacro(vtkvmtkStreamlineOsculatingCentersFilter, "$Revision: 1.6 $");
+
 vtkStandardNewMacro(vtkvmtkStreamlineOsculatingCentersFilter);
 
 vtkvmtkStreamlineOsculatingCentersFilter::vtkvmtkStreamlineOsculatingCentersFilter()

@@ -32,7 +32,7 @@ Version:   $Revision: 1.4 $
 class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkMergeCenterlines : public vtkPolyDataAlgorithm
 {
   public: 
-  vtkTypeRevisionMacro(vtkvmtkMergeCenterlines,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkvmtkMergeCenterlines,vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent); 
 
   static vtkvmtkMergeCenterlines *New();

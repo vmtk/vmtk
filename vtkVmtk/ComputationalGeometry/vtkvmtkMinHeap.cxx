@@ -25,7 +25,7 @@ Version:   $Revision: 1.3 $
 #include "vtkObjectFactory.h"
 #include "vtkvmtkConstants.h"
 
-vtkCxxRevisionMacro(vtkvmtkMinHeap, "$Revision: 1.3 $");
+
 vtkStandardNewMacro(vtkvmtkMinHeap);
 
 vtkvmtkMinHeap::vtkvmtkMinHeap()

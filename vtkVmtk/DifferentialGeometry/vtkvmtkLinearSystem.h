@@ -35,7 +35,7 @@ class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkLinearSystem : public vtkObje
 {
 public:
   static vtkvmtkLinearSystem* New();
-  vtkTypeRevisionMacro(vtkvmtkLinearSystem,vtkObject);
+  vtkTypeMacro(vtkvmtkLinearSystem,vtkObject);
 
   vtkSetObjectMacro(A,vtkvmtkSparseMatrix);
   vtkGetObjectMacro(A,vtkvmtkSparseMatrix);

@@ -39,7 +39,7 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkFWHMFeatureImageFilter : public vtkvmt
 {
  public:
   static vtkvmtkFWHMFeatureImageFilter *New();
-  vtkTypeRevisionMacro(vtkvmtkFWHMFeatureImageFilter, vtkvmtkITKImageToImageFilterFF);
+  vtkTypeMacro(vtkvmtkFWHMFeatureImageFilter, vtkvmtkITKImageToImageFilterFF);
 
   void SetUseImageSpacing ( int value )
   {

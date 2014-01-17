@@ -34,7 +34,7 @@ Version:   $Revision: 1.7 $
 class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataCenterlineGroupsClipper : public vtkPolyDataAlgorithm
 {
   public: 
-  vtkTypeRevisionMacro(vtkvmtkPolyDataCenterlineGroupsClipper,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkvmtkPolyDataCenterlineGroupsClipper,vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent); 
 
   static vtkvmtkPolyDataCenterlineGroupsClipper *New();

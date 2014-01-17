@@ -36,7 +36,7 @@ class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkBoundaryConditions : public v
 {
 public:
 
-  vtkTypeRevisionMacro(vtkvmtkBoundaryConditions,vtkObject);
+  vtkTypeMacro(vtkvmtkBoundaryConditions,vtkObject);
 
   vtkSetObjectMacro(LinearSystem,vtkvmtkLinearSystem);
   vtkGetObjectMacro(LinearSystem,vtkvmtkLinearSystem);

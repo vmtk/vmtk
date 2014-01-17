@@ -38,7 +38,7 @@ class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkStencils : public vtkvmtkData
 public:
 
   static vtkvmtkStencils* New();
-  vtkTypeRevisionMacro(vtkvmtkStencils,vtkvmtkItems);
+  vtkTypeMacro(vtkvmtkStencils,vtkvmtkItems);
 
   void SetStencilTypeToEmptyStencil()
     {this->SetItemType(VTK_VMTK_EMPTY_STENCIL);};  

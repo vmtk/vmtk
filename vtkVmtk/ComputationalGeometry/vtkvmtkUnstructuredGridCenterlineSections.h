@@ -35,7 +35,7 @@ class vtkTransform;
 class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkUnstructuredGridCenterlineSections : public vtkPolyDataAlgorithm
 {
   public: 
-  vtkTypeRevisionMacro(vtkvmtkUnstructuredGridCenterlineSections,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkvmtkUnstructuredGridCenterlineSections,vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent); 
 
   static vtkvmtkUnstructuredGridCenterlineSections* New();

@@ -35,7 +35,7 @@ Version:   $Revision: 1.6 $
 #include "vtkMath.h"
 #include "vtkTriangle.h"
 
-vtkCxxRevisionMacro(vtkvmtkSmoothCapPolyData, "$Revision: 1.6 $");
+
 vtkStandardNewMacro(vtkvmtkSmoothCapPolyData);
 
 vtkvmtkSmoothCapPolyData::vtkvmtkSmoothCapPolyData()

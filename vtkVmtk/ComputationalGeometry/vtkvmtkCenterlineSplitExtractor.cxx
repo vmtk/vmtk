@@ -28,7 +28,7 @@ Version:   $Revision: 1.6 $
 #include "vtkMath.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkCenterlineSplitExtractor, "$Revision: 1.6 $");
+
 vtkStandardNewMacro(vtkvmtkCenterlineSplitExtractor);
 
 vtkvmtkCenterlineSplitExtractor::vtkvmtkCenterlineSplitExtractor()

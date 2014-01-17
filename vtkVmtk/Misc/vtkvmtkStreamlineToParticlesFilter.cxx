@@ -32,7 +32,7 @@ Version:   $Revision: 1.6 $
 #include "vtkDoubleArray.h"
 #include "vtkCellArray.h"
 
-vtkCxxRevisionMacro(vtkvmtkStreamlineToParticlesFilter, "$Revision: 1.6 $");
+
 vtkStandardNewMacro(vtkvmtkStreamlineToParticlesFilter);
 
 vtkvmtkStreamlineToParticlesFilter::vtkvmtkStreamlineToParticlesFilter()

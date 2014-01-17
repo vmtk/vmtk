@@ -34,7 +34,7 @@ class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkEllipticProblem : public vtkO
 {
 public:
   static vtkvmtkEllipticProblem* New();
-  vtkTypeRevisionMacro(vtkvmtkEllipticProblem,vtkObject);
+  vtkTypeMacro(vtkvmtkEllipticProblem,vtkObject);
 
 protected:
   vtkvmtkEllipticProblem();

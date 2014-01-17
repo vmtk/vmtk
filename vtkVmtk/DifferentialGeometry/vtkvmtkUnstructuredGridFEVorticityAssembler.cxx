@@ -28,7 +28,7 @@
 #include "vtkMath.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkUnstructuredGridFEVorticityAssembler, "$Revision: 1.3 $");
+
 vtkStandardNewMacro(vtkvmtkUnstructuredGridFEVorticityAssembler);
 
 vtkvmtkUnstructuredGridFEVorticityAssembler::vtkvmtkUnstructuredGridFEVorticityAssembler()

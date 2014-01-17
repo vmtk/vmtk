@@ -31,7 +31,7 @@ Version:   $Revision: 1.1 $
 class VTK_VMTK_MISC_EXPORT vtkvmtkMeshWallShearRate : public vtkPolyDataAlgorithm
 {
   public: 
-  vtkTypeRevisionMacro(vtkvmtkMeshWallShearRate,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkvmtkMeshWallShearRate,vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent); 
 
   static vtkvmtkMeshWallShearRate *New();

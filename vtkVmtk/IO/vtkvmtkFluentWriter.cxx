@@ -33,7 +33,7 @@ Version:   $Revision: 1.6 $
 #include "vtkObjectFactory.h"
 #include "vtkvmtkConstants.h"
 
-vtkCxxRevisionMacro(vtkvmtkFluentWriter, "$Revision: 1.6 $");
+
 vtkStandardNewMacro(vtkvmtkFluentWriter);
 
 vtkvmtkFluentWriter::vtkvmtkFluentWriter()

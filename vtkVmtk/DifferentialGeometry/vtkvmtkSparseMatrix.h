@@ -38,7 +38,7 @@ class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkSparseMatrix : public vtkObje
 public:
 
   static vtkvmtkSparseMatrix* New();
-  vtkTypeRevisionMacro(vtkvmtkSparseMatrix,vtkObject);
+  vtkTypeMacro(vtkvmtkSparseMatrix,vtkObject);
 
   void Multiply(vtkvmtkDoubleVector* x, vtkvmtkDoubleVector* y);
   void TransposeMultiply(vtkvmtkDoubleVector* x, vtkvmtkDoubleVector* y);

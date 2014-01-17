@@ -48,7 +48,7 @@ Version:   $Revision: 1.4 $
 class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataLocalGeometry : public vtkPolyDataAlgorithm
 {
   public: 
-  vtkTypeRevisionMacro(vtkvmtkPolyDataLocalGeometry,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkvmtkPolyDataLocalGeometry,vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent); 
 
   static vtkvmtkPolyDataLocalGeometry *New();

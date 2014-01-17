@@ -40,7 +40,7 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkDanielssonDistanceMapImageFilter : pub
 {
  public:
   static vtkvmtkDanielssonDistanceMapImageFilter *New();
-  vtkTypeRevisionMacro(vtkvmtkDanielssonDistanceMapImageFilter, vtkvmtkITKImageToImageFilterFF);
+  vtkTypeMacro(vtkvmtkDanielssonDistanceMapImageFilter, vtkvmtkITKImageToImageFilterFF);
 
   void SetSquaredDistance ( int value )
   {

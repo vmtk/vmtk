@@ -24,7 +24,7 @@ Version:   $Revision: 1.5 $
 #include "vtkPolyLine.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkPolyBallLine, "$Revision: 1.5 $");
+
 vtkStandardNewMacro(vtkvmtkPolyBallLine);
 
 vtkvmtkPolyBallLine::vtkvmtkPolyBallLine()

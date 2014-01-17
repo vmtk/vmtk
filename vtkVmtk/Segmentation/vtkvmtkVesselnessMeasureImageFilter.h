@@ -41,7 +41,7 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkVesselnessMeasureImageFilter : public 
 {
  public:
   static vtkvmtkVesselnessMeasureImageFilter *New();
-  vtkTypeRevisionMacro(vtkvmtkVesselnessMeasureImageFilter, vtkvmtkITKImageToImageFilterFF);
+  vtkTypeMacro(vtkvmtkVesselnessMeasureImageFilter, vtkvmtkITKImageToImageFilterFF);
 
   void SetSigmaMin(double value)
   {

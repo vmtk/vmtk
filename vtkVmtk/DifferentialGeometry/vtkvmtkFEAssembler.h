@@ -35,7 +35,7 @@ class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkFEAssembler : public vtkObjec
 {
 public:
 
-  vtkTypeRevisionMacro(vtkvmtkFEAssembler,vtkObject);
+  vtkTypeMacro(vtkvmtkFEAssembler,vtkObject);
 
   vtkSetObjectMacro(DataSet,vtkDataSet);
   vtkGetObjectMacro(DataSet,vtkDataSet);

@@ -32,7 +32,7 @@ Version:   $Revision: 1.5 $
 class VTK_VMTK_MISC_EXPORT vtkvmtkSimpleCapPolyData : public vtkPolyDataAlgorithm
 {
   public: 
-  vtkTypeRevisionMacro(vtkvmtkSimpleCapPolyData,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkvmtkSimpleCapPolyData,vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent); 
 
   static vtkvmtkSimpleCapPolyData *New();

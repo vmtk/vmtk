@@ -45,7 +45,7 @@ Version:   $Revision: 1.1 $
 #include "vtkvmtkCenterlineUtilities.h"
 #include "vtkvmtkPolyDataBranchUtilities.h"
 
-vtkCxxRevisionMacro(vtkvmtkUnstructuredGridCenterlineSections, "$Revision: 1.1 $");
+
 vtkStandardNewMacro(vtkvmtkUnstructuredGridCenterlineSections);
 
 vtkvmtkUnstructuredGridCenterlineSections::vtkvmtkUnstructuredGridCenterlineSections()

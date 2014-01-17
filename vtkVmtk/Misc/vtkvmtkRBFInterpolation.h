@@ -33,7 +33,7 @@ Version:   $Revision: 1.3 $
 class VTK_VMTK_MISC_EXPORT vtkvmtkRBFInterpolation : public vtkImplicitFunction
 {
   public:
-  vtkTypeRevisionMacro(vtkvmtkRBFInterpolation,vtkImplicitFunction);
+  vtkTypeMacro(vtkvmtkRBFInterpolation,vtkImplicitFunction);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   static vtkvmtkRBFInterpolation *New();

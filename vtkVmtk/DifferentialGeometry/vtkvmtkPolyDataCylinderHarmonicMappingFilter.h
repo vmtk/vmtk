@@ -32,7 +32,7 @@ class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkPolyDataCylinderHarmonicMappi
 {
 public:
   static vtkvmtkPolyDataCylinderHarmonicMappingFilter* New();
-  vtkTypeRevisionMacro(vtkvmtkPolyDataCylinderHarmonicMappingFilter,vtkvmtkPolyDataHarmonicMappingFilter);
+  vtkTypeMacro(vtkvmtkPolyDataCylinderHarmonicMappingFilter,vtkvmtkPolyDataHarmonicMappingFilter);
 
 protected:
   vtkvmtkPolyDataCylinderHarmonicMappingFilter();

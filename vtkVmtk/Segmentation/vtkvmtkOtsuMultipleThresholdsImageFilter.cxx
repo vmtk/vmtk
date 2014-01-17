@@ -34,7 +34,7 @@ Version:   $Revision: 1.1 $
 
 #include "itkOtsuMultipleThresholdsImageFilter.h"
 
-vtkCxxRevisionMacro(vtkvmtkOtsuMultipleThresholdsImageFilter, "$Revision: 1.2 $");
+
 vtkStandardNewMacro(vtkvmtkOtsuMultipleThresholdsImageFilter);
 
 vtkvmtkOtsuMultipleThresholdsImageFilter::vtkvmtkOtsuMultipleThresholdsImageFilter()
