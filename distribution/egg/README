@@ -1,10 +1,26 @@
-#build egg
+vmtk - The Vascular Modeling Toolkit
+vmtk (http://www.vmtk.org) is a collection of libraries and tools for 3D reconstruction, 
+geometric analysis, mesh generation and surface data analysis for image-based modeling of 
+blood vessels.
+        
+INSTALLATION REQUIREMENTS:
+
+Python 2.7 (http://python.org/#download)
+
+INSTALLATION HOW TO:
+
+sudo easy_install <vmtk-egg>
+sudo vmtk_post_install.py
+
+WINDOWS INSTALLATION HOW TO:
+Run the installer
+or
+install setuptools ---> (https://pypi.python.org/pypi/setuptools#windows)
+sudo easy_install <vmtk-egg>
+
+BUILD AN EGG HOW TO:
 python setup.py vmtk_build
 python setup.py bdist_egg
 
-#install
-sudo easy_install <vmtk_version>.egg
-
-#post install
-sudo python vmtk_post_install.py
-
+UPGRADE HOW TO:
+sudo easy_install --upgrade vmtk

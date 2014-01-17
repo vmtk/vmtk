@@ -20,9 +20,9 @@ if __name__ == '__main__':
     vmtkHomeEnvironmentVariable="VMTKHOME=%s" % package_path
     vmtkPathEnvironmentVariable="export PATH=$VMTKHOME/bin:$PATH"
     vmtkPythonPath="export PYTHONPATH=$VMTKHOME/vmtk/lib:$PYTHONPATH"
-    append_decision = raw_input('Do you want to append vmtk environment variables in your .bash_profile? Y/N: ')
+    append_decision = raw_input('Do you want to append vmtk environment variables in your .bash_profile? YES/n: ')
     while True:
-        if append_decision.lower() == 'y':
+        if append_decision.lower() == 'y' or append_decision.lower() == 'yes':
             if sys.platform == 'darwin': 
                 ldEnvironmentVariable="export DYLD_LIBRARY_PATH=$VMTKHOME/vmtk/lib"
                 with open(home+'/.bash_profile','aw') as bash_profile:
@@ -33,17 +33,17 @@ if __name__ == '__main__':
                     bash_profile.write(vmtkPythonPath+'\n')
             elif sys.platform == 'linux2':
                 ldEnvironmentVariable="export LD_LIBRARY_PATH=$VMTKHOME/vmtk/lib"
-                with open(home+'/.bash_profile','aw') as bash_profile:
-                    bash_profile.write('\n#VMTK\n')
-                    bash_profile.write(vmtkHomeEnvironmentVariable+'\n')
-                    bash_profile.write(vmtkPathEnvironmentVariable+'\n')
-                    bash_profile.write(ldEnvironmentVariable+'\n')
-                    bash_profile.write(vmtkPythonPath+'\n')
+                with open(home+'/.bashrc','aw') as bashrc:
+                    bashrc.write('\n#VMTK\n')
+                    bashrc.write(vmtkHomeEnvironmentVariable+'\n')
+                    bashrc.write(vmtkPathEnvironmentVariable+'\n')
+                    bashrc.write(ldEnvironmentVariable+'\n')
+                    bashrc.write(vmtkPythonPath+'\n')
             else:
                 #WINDOWS
                 pass
             break
-        elif append_decision.lower() == 'n':
+        elif append_decision.lower() == 'n' or append_decision.lower() == 'no':
             break
         else:
-            append_decision = raw_input('Do you want to append vmtk environment variables in your .bash_profile? Y/N: ' )
+            append_decision = raw_input('Do you want to append vmtk environment variables in your .bash_profile? YES/n: ' )

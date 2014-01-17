@@ -33,7 +33,10 @@ if __name__ == '__main__':
     else:
         vmtkhome = os.path.join(os.path.dirname(os.path.abspath(__file__)),"..","..","..")
     
-    vtkdir = [el for el in os.listdir(os.path.join(vmtkhome,"lib")) if el.startswith('vtk')][0]
+    try:
+        vtkdir = [el for el in os.listdir(os.path.join(vmtkhome,"lib")) if el.startswith('vtk')][0]
+    except OSError:
+        vtkdir = (os.path.join(vmtkhome,"vmtk/lib"))
     
     newEnviron[ldEnvironmentVariable] = os.path.join(vmtkhome,"bin") + os.path.pathsep + \
     								os.path.join(vmtkhome,"lib",vtkdir) + os.path.pathsep + \
