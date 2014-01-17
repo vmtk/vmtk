@@ -36,7 +36,7 @@ class vtkIntArray;
 class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkCenterlineBifurcationReferenceSystems : public vtkPolyDataAlgorithm
 {
   public: 
-  vtkTypeRevisionMacro(vtkvmtkCenterlineBifurcationReferenceSystems,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkvmtkCenterlineBifurcationReferenceSystems,vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent); 
 
   static vtkvmtkCenterlineBifurcationReferenceSystems* New();

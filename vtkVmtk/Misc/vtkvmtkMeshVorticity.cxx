@@ -31,7 +31,7 @@ Version:   $Revision: 1.1 $
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkMeshVorticity, "$Revision: 1.1 $");
+
 vtkStandardNewMacro(vtkvmtkMeshVorticity);
 
 vtkvmtkMeshVorticity::vtkvmtkMeshVorticity()

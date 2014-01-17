@@ -36,7 +36,7 @@ class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkPolyDataMeanCurvature : publi
 public:
 
   static vtkvmtkPolyDataMeanCurvature *New();
-  vtkTypeRevisionMacro(vtkvmtkPolyDataMeanCurvature,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkvmtkPolyDataMeanCurvature,vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent); 
 
   vtkSetMacro(StencilType,int);

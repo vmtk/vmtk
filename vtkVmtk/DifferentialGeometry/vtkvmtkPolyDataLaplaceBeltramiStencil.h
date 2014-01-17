@@ -34,7 +34,7 @@ class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkPolyDataLaplaceBeltramiStenci
 {
 public:
 
-  vtkTypeRevisionMacro(vtkvmtkPolyDataLaplaceBeltramiStencil,vtkvmtkPolyDataManifoldStencil);
+  vtkTypeMacro(vtkvmtkPolyDataLaplaceBeltramiStencil,vtkvmtkPolyDataManifoldStencil);
 
   void Build();
   void BuildBoundaryWeights(vtkIdType boundaryPointId, vtkIdType boundaryNeighborPointId, double &boundaryWeight, double &boundaryNeighborWeight);

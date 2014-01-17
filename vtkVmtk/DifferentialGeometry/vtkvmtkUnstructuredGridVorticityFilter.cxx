@@ -33,7 +33,7 @@
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkUnstructuredGridVorticityFilter, "$Revision: 1.7 $");
+
 vtkStandardNewMacro(vtkvmtkUnstructuredGridVorticityFilter);
 
 vtkvmtkUnstructuredGridVorticityFilter::vtkvmtkUnstructuredGridVorticityFilter() 

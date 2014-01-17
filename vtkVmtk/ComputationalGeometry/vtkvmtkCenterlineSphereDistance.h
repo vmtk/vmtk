@@ -34,7 +34,7 @@ class vtkPolyData;
 class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkCenterlineSphereDistance : public vtkObject
 {
   public: 
-  vtkTypeRevisionMacro(vtkvmtkCenterlineSphereDistance,vtkObject);
+  vtkTypeMacro(vtkvmtkCenterlineSphereDistance,vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent); 
   static vtkvmtkCenterlineSphereDistance* New();
 

@@ -31,7 +31,7 @@ Version:   $Revision: 1.4 $
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkSurfaceProjection, "$Revision: 1.4 $");
+
 vtkStandardNewMacro(vtkvmtkSurfaceProjection);
 
 vtkvmtkSurfaceProjection::vtkvmtkSurfaceProjection()

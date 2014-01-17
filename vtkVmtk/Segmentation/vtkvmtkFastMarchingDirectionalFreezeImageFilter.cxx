@@ -26,7 +26,7 @@ Version:   $Revision: 1.1 $
 #include "vtkvmtkFastMarchingDirectionalFreezeImageFilter.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkFastMarchingDirectionalFreezeImageFilter, "$Revision: 1.4 $");
+
 vtkStandardNewMacro(vtkvmtkFastMarchingDirectionalFreezeImageFilter);
 
 

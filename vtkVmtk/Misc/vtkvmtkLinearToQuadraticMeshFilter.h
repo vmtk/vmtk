@@ -33,7 +33,7 @@ Version:   $Revision: 1.4 $
 class VTK_VMTK_MISC_EXPORT vtkvmtkLinearToQuadraticMeshFilter : public vtkUnstructuredGridAlgorithm
 {
   public: 
-  vtkTypeRevisionMacro(vtkvmtkLinearToQuadraticMeshFilter,vtkUnstructuredGridAlgorithm);
+  vtkTypeMacro(vtkvmtkLinearToQuadraticMeshFilter,vtkUnstructuredGridAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent); 
 
   static vtkvmtkLinearToQuadraticMeshFilter *New();

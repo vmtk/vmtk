@@ -32,7 +32,7 @@ Version:   $Revision: 1.6 $
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkBoundaryReferenceSystems, "$Revision: 1.6 $");
+
 vtkStandardNewMacro(vtkvmtkBoundaryReferenceSystems);
 
 vtkvmtkBoundaryReferenceSystems::vtkvmtkBoundaryReferenceSystems()

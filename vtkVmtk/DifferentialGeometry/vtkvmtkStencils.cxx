@@ -29,7 +29,7 @@
 #include "vtkvmtkPolyDataFVFELaplaceBeltramiStencil.h"
 #include "vtkvmtkPolyDataGradientStencil.h"
 
-vtkCxxRevisionMacro(vtkvmtkStencils, "$Revision: 1.3 $");
+
 vtkStandardNewMacro(vtkvmtkStencils);
 
 vtkvmtkStencils::vtkvmtkStencils()

@@ -22,7 +22,7 @@
 #include "vtkvmtkPolyDataUmbrellaStencil.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkPolyDataUmbrellaStencil, "$Revision: 1.4 $");
+
 vtkStandardNewMacro(vtkvmtkPolyDataUmbrellaStencil);
 
 vtkvmtkPolyDataUmbrellaStencil::vtkvmtkPolyDataUmbrellaStencil()

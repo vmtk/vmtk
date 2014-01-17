@@ -33,7 +33,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataStretchMappingFilter
 {
 public:
   static vtkvmtkPolyDataStretchMappingFilter* New();
-  vtkTypeRevisionMacro(vtkvmtkPolyDataStretchMappingFilter,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkvmtkPolyDataStretchMappingFilter,vtkPolyDataAlgorithm);
 
   vtkSetStringMacro(StretchedMappingArrayName);
   vtkGetStringMacro(StretchedMappingArrayName);

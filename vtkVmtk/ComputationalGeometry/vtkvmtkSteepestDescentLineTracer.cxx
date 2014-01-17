@@ -31,7 +31,7 @@ Version:   $Revision: 1.4 $
 #include "vtkInformationVector.h"
 #include "vtkvmtkConstants.h"
 
-vtkCxxRevisionMacro(vtkvmtkSteepestDescentLineTracer, "$Revision: 1.4 $");
+
 vtkStandardNewMacro(vtkvmtkSteepestDescentLineTracer);
 
 vtkvmtkSteepestDescentLineTracer::vtkvmtkSteepestDescentLineTracer()

@@ -39,7 +39,7 @@ Version:   $Revision: 1.1 $
 #include "vtkvmtkPolyDataBoundaryExtractor.h"
 #include "vtkvmtkBoundaryReferenceSystems.h"
 
-vtkCxxRevisionMacro(vtkvmtkPolyDataBifurcationProfiles, "$Revision: 1.1 $");
+
 vtkStandardNewMacro(vtkvmtkPolyDataBifurcationProfiles);
 
 vtkvmtkPolyDataBifurcationProfiles::vtkvmtkPolyDataBifurcationProfiles()

@@ -41,7 +41,7 @@ class vtkDoubleArray;
 class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkActiveTubeFilter : public vtkPolyDataAlgorithm
 {
   public: 
-  vtkTypeRevisionMacro(vtkvmtkActiveTubeFilter,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkvmtkActiveTubeFilter,vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent); 
 
   static vtkvmtkActiveTubeFilter *New();

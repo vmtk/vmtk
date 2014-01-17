@@ -34,7 +34,7 @@ Version:   $Revision: 1.9 $
 #include "vtkObjectFactory.h"
 #include "vtkvmtkConstants.h"
 
-vtkCxxRevisionMacro(vtkvmtkPolyDataCenterlineGroupsClipper, "$Revision: 1.9 $");
+
 vtkStandardNewMacro(vtkvmtkPolyDataCenterlineGroupsClipper);
 
 vtkvmtkPolyDataCenterlineGroupsClipper::vtkvmtkPolyDataCenterlineGroupsClipper()

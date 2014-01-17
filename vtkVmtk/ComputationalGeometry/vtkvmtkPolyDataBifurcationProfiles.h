@@ -33,7 +33,7 @@ Version:   $Revision: 1.1 $
 class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataBifurcationProfiles : public vtkPolyDataAlgorithm
 {
   public: 
-  vtkTypeRevisionMacro(vtkvmtkPolyDataBifurcationProfiles,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkvmtkPolyDataBifurcationProfiles,vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent); 
 
   static vtkvmtkPolyDataBifurcationProfiles* New();

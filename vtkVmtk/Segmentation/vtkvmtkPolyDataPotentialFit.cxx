@@ -42,7 +42,7 @@ Version:   $Revision: 1.3 $
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkPolyDataPotentialFit, "$Revision: 1.3 $");
+
 vtkStandardNewMacro(vtkvmtkPolyDataPotentialFit);
 
 vtkvmtkPolyDataPotentialFit::vtkvmtkPolyDataPotentialFit()

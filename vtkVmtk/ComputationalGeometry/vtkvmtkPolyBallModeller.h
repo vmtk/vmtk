@@ -33,7 +33,7 @@ Version:   $Revision: 1.4 $
 class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyBallModeller : public vtkImageAlgorithm 
 {
   public:
-  vtkTypeRevisionMacro(vtkvmtkPolyBallModeller,vtkImageAlgorithm);
+  vtkTypeMacro(vtkvmtkPolyBallModeller,vtkImageAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   static vtkvmtkPolyBallModeller *New();

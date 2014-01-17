@@ -31,7 +31,7 @@ Version:   $Revision: 1.1 $
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkMeshLambda2, "$Revision: 1.1 $");
+
 vtkStandardNewMacro(vtkvmtkMeshLambda2);
 
 vtkvmtkMeshLambda2::vtkvmtkMeshLambda2()

@@ -40,7 +40,7 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkCollidingFrontsImageFilter : public vt
 {
  public:
   static vtkvmtkCollidingFrontsImageFilter *New();
-  vtkTypeRevisionMacro(vtkvmtkCollidingFrontsImageFilter, vtkvmtkITKImageToImageFilterFF);
+  vtkTypeMacro(vtkvmtkCollidingFrontsImageFilter, vtkvmtkITKImageToImageFilterFF);
 
   void SetApplyConnectivity ( int value )
   {

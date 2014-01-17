@@ -35,7 +35,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataCenterlineProjection
 {
 public:
   static vtkvmtkPolyDataCenterlineProjection* New();
-  vtkTypeRevisionMacro(vtkvmtkPolyDataCenterlineProjection,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkvmtkPolyDataCenterlineProjection,vtkPolyDataAlgorithm);
 
   vtkSetObjectMacro(Centerlines,vtkPolyData);
   vtkGetObjectMacro(Centerlines,vtkPolyData);

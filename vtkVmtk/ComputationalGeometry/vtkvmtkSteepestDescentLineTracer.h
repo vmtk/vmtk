@@ -49,7 +49,7 @@ Version:   $Revision: 1.4 $
 class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkSteepestDescentLineTracer : public vtkvmtkNonManifoldSteepestDescent
 {
 public:
-  vtkTypeRevisionMacro(vtkvmtkSteepestDescentLineTracer,vtkvmtkNonManifoldSteepestDescent);
+  vtkTypeMacro(vtkvmtkSteepestDescentLineTracer,vtkvmtkNonManifoldSteepestDescent);
   void PrintSelf(ostream& os, vtkIndent indent); 
 
   static vtkvmtkSteepestDescentLineTracer *New();

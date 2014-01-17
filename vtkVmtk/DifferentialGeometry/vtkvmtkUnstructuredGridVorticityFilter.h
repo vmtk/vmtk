@@ -32,7 +32,7 @@ class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkUnstructuredGridVorticityFilt
 {
 public:
   static vtkvmtkUnstructuredGridVorticityFilter* New();
-  vtkTypeRevisionMacro(vtkvmtkUnstructuredGridVorticityFilter,vtkUnstructuredGridAlgorithm);
+  vtkTypeMacro(vtkvmtkUnstructuredGridVorticityFilter,vtkUnstructuredGridAlgorithm);
 
   vtkSetStringMacro(VelocityArrayName);
   vtkGetStringMacro(VelocityArrayName);

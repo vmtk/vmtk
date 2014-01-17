@@ -35,7 +35,7 @@ class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkPolyDataFELaplaceBeltramiSten
 public:
 
   static vtkvmtkPolyDataFELaplaceBeltramiStencil *New();
-  vtkTypeRevisionMacro(vtkvmtkPolyDataFELaplaceBeltramiStencil,vtkvmtkPolyDataLaplaceBeltramiStencil);
+  vtkTypeMacro(vtkvmtkPolyDataFELaplaceBeltramiStencil,vtkvmtkPolyDataLaplaceBeltramiStencil);
 
   virtual vtkIdType GetItemType() {return VTK_VMTK_FE_LAPLACE_BELTRAMI_STENCIL;};
 

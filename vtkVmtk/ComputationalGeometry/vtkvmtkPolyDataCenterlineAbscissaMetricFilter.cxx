@@ -31,7 +31,7 @@
 
 #include "vtkvmtkCenterlineUtilities.h"
 
-vtkCxxRevisionMacro(vtkvmtkPolyDataCenterlineAbscissaMetricFilter, "$Revision: 1.7 $");
+
 vtkStandardNewMacro(vtkvmtkPolyDataCenterlineAbscissaMetricFilter);
 
 vtkvmtkPolyDataCenterlineAbscissaMetricFilter::vtkvmtkPolyDataCenterlineAbscissaMetricFilter() 

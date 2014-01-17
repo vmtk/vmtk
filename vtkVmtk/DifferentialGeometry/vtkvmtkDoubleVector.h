@@ -38,7 +38,7 @@ class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkDoubleVector : public vtkObje
 public:
 
   static vtkvmtkDoubleVector* New();
-  vtkTypeRevisionMacro(vtkvmtkDoubleVector,vtkObject);
+  vtkTypeMacro(vtkvmtkDoubleVector,vtkObject);
 
   vtkSetMacro(NormType,int);
   vtkGetMacro(NormType,int);

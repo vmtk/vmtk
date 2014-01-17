@@ -41,7 +41,7 @@
 #include "vtkvmtkConstants.h"
 #include "vtkvmtkCenterlineAttributesFilter.h"
 
-vtkCxxRevisionMacro(vtkvmtkCenterlineInterpolateArray, "$Revision: 1.3 $");
+
 vtkStandardNewMacro(vtkvmtkCenterlineInterpolateArray);
 
 vtkvmtkCenterlineInterpolateArray::vtkvmtkCenterlineInterpolateArray() 

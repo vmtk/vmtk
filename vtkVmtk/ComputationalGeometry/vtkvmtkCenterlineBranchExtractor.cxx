@@ -31,7 +31,7 @@ Version:   $Revision: 1.10 $
 #include "vtkMath.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkCenterlineBranchExtractor, "$Revision: 1.10 $");
+
 vtkStandardNewMacro(vtkvmtkCenterlineBranchExtractor);
 
 vtkvmtkCenterlineBranchExtractor::vtkvmtkCenterlineBranchExtractor()

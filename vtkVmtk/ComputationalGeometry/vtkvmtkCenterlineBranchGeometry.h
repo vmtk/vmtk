@@ -37,7 +37,7 @@ class vtkIntArray;
 class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkCenterlineBranchGeometry : public vtkPolyDataAlgorithm
 {
   public: 
-  vtkTypeRevisionMacro(vtkvmtkCenterlineBranchGeometry,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkvmtkCenterlineBranchGeometry,vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent); 
 
   static vtkvmtkCenterlineBranchGeometry* New();

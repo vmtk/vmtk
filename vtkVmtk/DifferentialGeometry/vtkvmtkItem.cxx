@@ -22,7 +22,7 @@
 #include "vtkvmtkItem.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkItem, "$Revision: 1.2 $");
+
 
 void vtkvmtkItem::DeepCopy(vtkvmtkItem *src)
   {

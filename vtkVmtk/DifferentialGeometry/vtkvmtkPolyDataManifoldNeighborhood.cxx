@@ -26,7 +26,7 @@ Version:   $Revision: 1.3 $
 #include "vtkCell.h"
 #include "vtkMath.h"
 
-  vtkCxxRevisionMacro(vtkvmtkPolyDataManifoldNeighborhood, "$Revision: 1.3 $");
+  
 vtkStandardNewMacro(vtkvmtkPolyDataManifoldNeighborhood);
 
 void vtkvmtkPolyDataManifoldNeighborhood::Build()

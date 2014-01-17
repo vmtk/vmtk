@@ -35,7 +35,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataDistanceToCenterline
 {
 public:
   static vtkvmtkPolyDataDistanceToCenterlines* New();
-  vtkTypeRevisionMacro(vtkvmtkPolyDataDistanceToCenterlines,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkvmtkPolyDataDistanceToCenterlines,vtkPolyDataAlgorithm);
 
   vtkSetObjectMacro(Centerlines,vtkPolyData);
   vtkGetObjectMacro(Centerlines,vtkPolyData);

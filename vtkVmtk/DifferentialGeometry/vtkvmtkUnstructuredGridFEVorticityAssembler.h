@@ -33,7 +33,7 @@ class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkUnstructuredGridFEVorticityAs
 public:
 
   static vtkvmtkUnstructuredGridFEVorticityAssembler* New();
-  vtkTypeRevisionMacro(vtkvmtkUnstructuredGridFEVorticityAssembler,vtkvmtkFEAssembler);
+  vtkTypeMacro(vtkvmtkUnstructuredGridFEVorticityAssembler,vtkvmtkFEAssembler);
 
   virtual void Build();
 

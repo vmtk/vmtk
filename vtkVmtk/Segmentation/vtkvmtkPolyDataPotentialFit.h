@@ -40,7 +40,7 @@ class vtkvmtkNeighborhoods;
 class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkPolyDataPotentialFit : public vtkPolyDataAlgorithm
 {
   public: 
-  vtkTypeRevisionMacro(vtkvmtkPolyDataPotentialFit,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkvmtkPolyDataPotentialFit,vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent); 
 
   static vtkvmtkPolyDataPotentialFit *New();

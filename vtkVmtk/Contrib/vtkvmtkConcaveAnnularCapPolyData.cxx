@@ -41,7 +41,7 @@ Version:   $Revision: 1.0 $
 #include "vtkSmartPointer.h"
 #include <limits>
 
-vtkCxxRevisionMacro(vtkvmtkConcaveAnnularCapPolyData, "$Revision: 1.0 $");
+
 vtkStandardNewMacro(vtkvmtkConcaveAnnularCapPolyData);
 
 namespace {

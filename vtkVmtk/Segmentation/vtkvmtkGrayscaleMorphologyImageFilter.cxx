@@ -37,7 +37,7 @@ Version:   $Revision: 1.1 $
 #include "itkGrayscaleDilateImageFilter.h"
 #include "itkGrayscaleErodeImageFilter.h"
 
-vtkCxxRevisionMacro(vtkvmtkGrayscaleMorphologyImageFilter, "$Revision: 1.2 $");
+
 vtkStandardNewMacro(vtkvmtkGrayscaleMorphologyImageFilter);
 
 vtkvmtkGrayscaleMorphologyImageFilter::vtkvmtkGrayscaleMorphologyImageFilter()

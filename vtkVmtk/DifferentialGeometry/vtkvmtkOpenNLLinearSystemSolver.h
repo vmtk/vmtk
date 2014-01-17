@@ -33,7 +33,7 @@ class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkOpenNLLinearSystemSolver : pu
 {
 public:
   static vtkvmtkOpenNLLinearSystemSolver* New();
-  vtkTypeRevisionMacro(vtkvmtkOpenNLLinearSystemSolver,vtkvmtkLinearSystemSolver);
+  vtkTypeMacro(vtkvmtkOpenNLLinearSystemSolver,vtkvmtkLinearSystemSolver);
 
   int Solve();
 

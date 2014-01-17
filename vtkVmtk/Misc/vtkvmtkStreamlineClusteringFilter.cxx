@@ -35,7 +35,7 @@ Version:   $Revision: 1.6 $
 #include "vtkCellArray.h"
 #include "vtkCell.h"
 
-vtkCxxRevisionMacro(vtkvmtkStreamlineClusteringFilter, "$Revision: 1.6 $");
+
 vtkStandardNewMacro(vtkvmtkStreamlineClusteringFilter);
 
 vtkvmtkStreamlineClusteringFilter::vtkvmtkStreamlineClusteringFilter()

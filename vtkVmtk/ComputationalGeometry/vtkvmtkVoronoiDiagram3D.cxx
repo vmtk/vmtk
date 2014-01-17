@@ -31,7 +31,7 @@ Version:   $Revision: 1.5 $
 #include "vtkInformationVector.h"
 #include "vtkvmtkConstants.h"
 
-vtkCxxRevisionMacro(vtkvmtkVoronoiDiagram3D, "$Revision: 1.5 $");
+
 vtkStandardNewMacro(vtkvmtkVoronoiDiagram3D);
 
 vtkvmtkVoronoiDiagram3D::vtkvmtkVoronoiDiagram3D()

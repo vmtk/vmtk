@@ -36,7 +36,7 @@ class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkSparseMatrixRow : public vtkO
 public:
 
   static vtkvmtkSparseMatrixRow *New();
-  vtkTypeRevisionMacro(vtkvmtkSparseMatrixRow,vtkObject);
+  vtkTypeMacro(vtkvmtkSparseMatrixRow,vtkObject);
 
   vtkIdType GetElementId(vtkIdType i) { return this->ElementIds[i]; }
   void SetElementId(vtkIdType i, vtkIdType id) { this->ElementIds[i] = id; }

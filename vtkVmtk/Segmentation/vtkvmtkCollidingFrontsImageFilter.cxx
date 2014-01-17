@@ -26,7 +26,7 @@ Version:   $Revision: 1.1 $
 #include "vtkvmtkCollidingFrontsImageFilter.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkCollidingFrontsImageFilter, "$Revision: 1.4 $");
+
 vtkStandardNewMacro(vtkvmtkCollidingFrontsImageFilter);
 
 

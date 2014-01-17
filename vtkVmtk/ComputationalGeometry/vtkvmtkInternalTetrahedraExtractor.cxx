@@ -32,7 +32,7 @@ Version:   $Revision: 1.5 $
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkInternalTetrahedraExtractor, "$Revision: 1.5 $");
+
 vtkStandardNewMacro(vtkvmtkInternalTetrahedraExtractor);
 
 vtkvmtkInternalTetrahedraExtractor::vtkvmtkInternalTetrahedraExtractor()

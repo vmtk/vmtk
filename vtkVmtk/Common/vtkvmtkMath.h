@@ -38,7 +38,7 @@ class VTK_VMTK_COMMON_EXPORT vtkvmtkMath : public vtkObject
 {
 public:
 
-  vtkTypeRevisionMacro(vtkvmtkMath,vtkObject);
+  vtkTypeMacro(vtkvmtkMath,vtkObject);
 //  vtkTypeMacro(vtkvmtkMath,vtkObject);
   static vtkvmtkMath* New();
   

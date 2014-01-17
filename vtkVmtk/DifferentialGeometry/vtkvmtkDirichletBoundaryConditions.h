@@ -36,7 +36,7 @@ class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkDirichletBoundaryConditions :
 {
 public:
   static vtkvmtkDirichletBoundaryConditions* New();
-  vtkTypeRevisionMacro(vtkvmtkDirichletBoundaryConditions,vtkvmtkBoundaryConditions);
+  vtkTypeMacro(vtkvmtkDirichletBoundaryConditions,vtkvmtkBoundaryConditions);
 
   void Apply();
 

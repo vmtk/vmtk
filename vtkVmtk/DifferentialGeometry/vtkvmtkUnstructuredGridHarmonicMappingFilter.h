@@ -35,7 +35,7 @@ class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkUnstructuredGridHarmonicMappi
 {
 public:
   static vtkvmtkUnstructuredGridHarmonicMappingFilter* New();
-  vtkTypeRevisionMacro(vtkvmtkUnstructuredGridHarmonicMappingFilter,vtkUnstructuredGridAlgorithm);
+  vtkTypeMacro(vtkvmtkUnstructuredGridHarmonicMappingFilter,vtkUnstructuredGridAlgorithm);
 
   vtkSetObjectMacro(BoundaryPointIds,vtkIdList);
   vtkGetObjectMacro(BoundaryPointIds,vtkIdList);

@@ -26,7 +26,7 @@ Version:   $Revision: 1.1 $
 #include "vtkvmtkDanielssonDistanceMapImageFilter.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkDanielssonDistanceMapImageFilter, "$Revision: 1.3 $");
+
 vtkStandardNewMacro(vtkvmtkDanielssonDistanceMapImageFilter);
 
 

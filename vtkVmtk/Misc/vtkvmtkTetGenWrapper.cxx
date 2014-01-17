@@ -33,7 +33,7 @@ Version:   $Revision: 1.8 $
 #include "vtkObjectFactory.h"
 #include "tetgen.h"
 
-vtkCxxRevisionMacro(vtkvmtkTetGenWrapper, "$Revision: 1.8 $");
+
 vtkStandardNewMacro(vtkvmtkTetGenWrapper);
 
 vtkvmtkTetGenWrapper::vtkvmtkTetGenWrapper()

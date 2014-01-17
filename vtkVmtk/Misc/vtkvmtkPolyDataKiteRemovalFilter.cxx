@@ -32,7 +32,7 @@ Version:   $Revision: 1.2 $
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkPolyDataKiteRemovalFilter, "$Revision: 1.2 $");
+
 vtkStandardNewMacro(vtkvmtkPolyDataKiteRemovalFilter);
 
 vtkvmtkPolyDataKiteRemovalFilter::vtkvmtkPolyDataKiteRemovalFilter()

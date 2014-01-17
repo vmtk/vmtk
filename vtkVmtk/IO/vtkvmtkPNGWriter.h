@@ -34,7 +34,7 @@ class VTK_VMTK_IO_EXPORT vtkvmtkPNGWriter : public vtkPNGWriter
 {
 public:
   static vtkvmtkPNGWriter *New();
-  vtkTypeRevisionMacro(vtkvmtkPNGWriter,vtkPNGWriter);
+  vtkTypeMacro(vtkvmtkPNGWriter,vtkPNGWriter);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   vtkGetStringMacro(Base64Image);

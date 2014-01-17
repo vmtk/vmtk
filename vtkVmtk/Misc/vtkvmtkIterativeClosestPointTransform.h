@@ -33,7 +33,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkIterativeClosestPointTransform : public vtkIte
 {
 public:
   static vtkvmtkIterativeClosestPointTransform *New();
-  vtkTypeRevisionMacro(vtkvmtkIterativeClosestPointTransform,vtkIterativeClosestPointTransform);
+  vtkTypeMacro(vtkvmtkIterativeClosestPointTransform,vtkIterativeClosestPointTransform);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description: 

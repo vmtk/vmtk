@@ -40,7 +40,7 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkRecursiveGaussian2DImageFilter : publi
 {
  public:
   static vtkvmtkRecursiveGaussian2DImageFilter *New();
-  vtkTypeRevisionMacro(vtkvmtkRecursiveGaussian2DImageFilter, vtkvmtkITKImageToImageFilter2DFF);
+  vtkTypeMacro(vtkvmtkRecursiveGaussian2DImageFilter, vtkvmtkITKImageToImageFilter2DFF);
 
   void SetSigma ( float value )
   {

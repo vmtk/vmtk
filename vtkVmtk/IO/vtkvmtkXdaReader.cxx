@@ -32,7 +32,7 @@ Version:   $Revision: 1.3 $
 #include "vtkStreamingDemandDrivenPipeline.h"
 #include "vtkvmtkConstants.h"
 
-vtkCxxRevisionMacro(vtkvmtkXdaReader, "$Revision: 1.3 $");
+
 vtkStandardNewMacro(vtkvmtkXdaReader);
 
 vtkvmtkXdaReader::vtkvmtkXdaReader()

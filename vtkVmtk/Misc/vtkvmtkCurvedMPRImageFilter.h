@@ -26,7 +26,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkCurvedMPRImageFilter : public vtkImageAlgorith
 public:
   static vtkvmtkCurvedMPRImageFilter *New();
 
-  vtkTypeRevisionMacro(vtkvmtkCurvedMPRImageFilter,vtkImageAlgorithm);
+  vtkTypeMacro(vtkvmtkCurvedMPRImageFilter,vtkImageAlgorithm);
 
   void PrintSelf(ostream& os, vtkIndent indent);
 

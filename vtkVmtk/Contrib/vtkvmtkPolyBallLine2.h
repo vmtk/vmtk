@@ -45,7 +45,7 @@ class VTK_VMTK_CONTRIB_EXPORT vtkvmtkPolyBallLine2 : public vtkImplicitFunction
   public:
 
   static vtkvmtkPolyBallLine2 *New();
-  vtkTypeRevisionMacro(vtkvmtkPolyBallLine2,vtkImplicitFunction);
+  vtkTypeMacro(vtkvmtkPolyBallLine2,vtkImplicitFunction);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description

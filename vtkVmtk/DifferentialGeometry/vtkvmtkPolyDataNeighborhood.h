@@ -36,7 +36,7 @@ class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkPolyDataNeighborhood : public
 public:
 
   static vtkvmtkPolyDataNeighborhood *New();
-  vtkTypeRevisionMacro(vtkvmtkPolyDataNeighborhood,vtkvmtkNeighborhood);
+  vtkTypeMacro(vtkvmtkPolyDataNeighborhood,vtkvmtkNeighborhood);
 
   virtual vtkIdType GetItemType() {return VTK_VMTK_POLYDATA_NEIGHBORHOOD;};
 

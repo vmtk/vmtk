@@ -39,7 +39,7 @@
 #include "vtkMath.h"
 
 vtkStandardNewMacro(vtkvmtkGaussQuadrature);
-vtkCxxRevisionMacro(vtkvmtkGaussQuadrature, "$Revision: 1.2 $");
+
 
 vtkvmtkGaussQuadrature::vtkvmtkGaussQuadrature()
 {

@@ -22,7 +22,7 @@
 #include "vtkvmtkEllipticProblem.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkEllipticProblem, "$Revision: 1.2 $");
+
 vtkStandardNewMacro(vtkvmtkEllipticProblem);
 
 vtkvmtkEllipticProblem::vtkvmtkEllipticProblem() 

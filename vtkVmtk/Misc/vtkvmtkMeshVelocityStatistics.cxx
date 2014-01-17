@@ -30,7 +30,7 @@ Version:   $Revision: 1.1 $
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkMeshVelocityStatistics, "$Revision: 1.1 $");
+
 vtkStandardNewMacro(vtkvmtkMeshVelocityStatistics);
 
 vtkvmtkMeshVelocityStatistics::vtkvmtkMeshVelocityStatistics()

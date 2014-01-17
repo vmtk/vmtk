@@ -31,7 +31,7 @@ Version:   $Revision: 1.6 $
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkLinearizeMeshFilter, "$Revision: 1.6 $");
+
 vtkStandardNewMacro(vtkvmtkLinearizeMeshFilter);
 
 vtkvmtkLinearizeMeshFilter::vtkvmtkLinearizeMeshFilter()

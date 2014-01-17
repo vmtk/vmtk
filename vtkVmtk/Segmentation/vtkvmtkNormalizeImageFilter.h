@@ -40,7 +40,7 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkNormalizeImageFilter : public vtkSimpl
 {
  public:
   static vtkvmtkNormalizeImageFilter *New();
-  vtkTypeRevisionMacro(vtkvmtkNormalizeImageFilter, vtkSimpleImageToImageFilter);
+  vtkTypeMacro(vtkvmtkNormalizeImageFilter, vtkSimpleImageToImageFilter);
 
 protected:
   vtkvmtkNormalizeImageFilter();

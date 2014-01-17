@@ -27,7 +27,7 @@ extern "C"
 #include "nl.h"
 }
 
-vtkCxxRevisionMacro(vtkvmtkOpenNLLinearSystemSolver, "$Revision: 1.3 $");
+
 vtkStandardNewMacro(vtkvmtkOpenNLLinearSystemSolver);
 
 vtkvmtkOpenNLLinearSystemSolver::vtkvmtkOpenNLLinearSystemSolver()

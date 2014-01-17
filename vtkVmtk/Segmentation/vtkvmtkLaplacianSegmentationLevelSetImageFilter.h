@@ -40,7 +40,7 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkLaplacianSegmentationLevelSetImageFilt
 {
  public:
   static vtkvmtkLaplacianSegmentationLevelSetImageFilter *New();
-  vtkTypeRevisionMacro(vtkvmtkLaplacianSegmentationLevelSetImageFilter, vtkvmtkITKImageToImageFilterFF);
+  vtkTypeMacro(vtkvmtkLaplacianSegmentationLevelSetImageFilter, vtkvmtkITKImageToImageFilterFF);
 
   float GetIsoSurfaceValue ()
   {

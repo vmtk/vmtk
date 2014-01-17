@@ -33,7 +33,7 @@ class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkPolyDataFEGradientAssembler :
 public:
 
   static vtkvmtkPolyDataFEGradientAssembler* New();
-  vtkTypeRevisionMacro(vtkvmtkPolyDataFEGradientAssembler,vtkvmtkFEAssembler);
+  vtkTypeMacro(vtkvmtkPolyDataFEGradientAssembler,vtkvmtkFEAssembler);
 
   virtual void Build();
 

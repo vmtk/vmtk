@@ -35,7 +35,7 @@ class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkPolyDataGradientStencil : pub
 public:
 
   static vtkvmtkPolyDataGradientStencil *New();
-  vtkTypeRevisionMacro(vtkvmtkPolyDataGradientStencil,vtkvmtkPolyDataManifoldStencil);
+  vtkTypeMacro(vtkvmtkPolyDataGradientStencil,vtkvmtkPolyDataManifoldStencil);
 
   virtual vtkIdType GetItemType() {return VTK_VMTK_GRADIENT_STENCIL;};
   

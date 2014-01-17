@@ -37,7 +37,7 @@ Version:   $$
 
 #include "vtkvmtkConstants.h"
 
-vtkCxxRevisionMacro(vtkvmtkSurfaceProjectCellArray, "$Revision: 1.4 $");
+
 vtkStandardNewMacro(vtkvmtkSurfaceProjectCellArray);
 
 vtkvmtkSurfaceProjectCellArray::vtkvmtkSurfaceProjectCellArray()

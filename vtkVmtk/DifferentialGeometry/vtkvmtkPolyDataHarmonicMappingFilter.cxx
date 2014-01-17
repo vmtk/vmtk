@@ -36,7 +36,7 @@
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkPolyDataHarmonicMappingFilter, "$Revision: 1.7 $");
+
 vtkStandardNewMacro(vtkvmtkPolyDataHarmonicMappingFilter);
 
 vtkvmtkPolyDataHarmonicMappingFilter::vtkvmtkPolyDataHarmonicMappingFilter() 

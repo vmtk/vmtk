@@ -33,7 +33,7 @@ class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkItem : public vtkObject
 {
 public:
 
-  vtkTypeRevisionMacro(vtkvmtkItem,vtkObject);
+  vtkTypeMacro(vtkvmtkItem,vtkObject);
 
   virtual vtkIdType GetItemType() = 0;
 

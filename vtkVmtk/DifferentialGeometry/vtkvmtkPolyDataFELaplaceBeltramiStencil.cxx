@@ -26,7 +26,7 @@
 
 #include "vtkvmtkConstants.h"
 
-vtkCxxRevisionMacro(vtkvmtkPolyDataFELaplaceBeltramiStencil, "$Revision: 1.4 $");
+
 vtkStandardNewMacro(vtkvmtkPolyDataFELaplaceBeltramiStencil);
 
 vtkvmtkPolyDataFELaplaceBeltramiStencil::vtkvmtkPolyDataFELaplaceBeltramiStencil()

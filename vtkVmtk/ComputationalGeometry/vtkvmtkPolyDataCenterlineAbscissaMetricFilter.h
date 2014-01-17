@@ -35,7 +35,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataCenterlineAbscissaMe
 {
 public:
   static vtkvmtkPolyDataCenterlineAbscissaMetricFilter* New();
-  vtkTypeRevisionMacro(vtkvmtkPolyDataCenterlineAbscissaMetricFilter,vtkvmtkPolyDataCenterlineMetricFilter);
+  vtkTypeMacro(vtkvmtkPolyDataCenterlineAbscissaMetricFilter,vtkvmtkPolyDataCenterlineMetricFilter);
 
   vtkSetStringMacro(AbscissasArrayName);
   vtkGetStringMacro(AbscissasArrayName);

@@ -33,7 +33,7 @@ Version:   $Revision: 1.3 $
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkLinearToQuadraticSurfaceMeshFilter, "$Revision: 1.3 $");
+
 vtkStandardNewMacro(vtkvmtkLinearToQuadraticSurfaceMeshFilter);
 
 vtkvmtkLinearToQuadraticSurfaceMeshFilter::vtkvmtkLinearToQuadraticSurfaceMeshFilter()

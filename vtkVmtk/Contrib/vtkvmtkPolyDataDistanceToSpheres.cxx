@@ -35,7 +35,7 @@
 
 #include "vtkvmtkConstants.h"
 
-vtkCxxRevisionMacro(vtkvmtkPolyDataDistanceToSpheres, "$Revision: 1.3 $");
+
 vtkStandardNewMacro(vtkvmtkPolyDataDistanceToSpheres);
 
 vtkvmtkPolyDataDistanceToSpheres::vtkvmtkPolyDataDistanceToSpheres() 

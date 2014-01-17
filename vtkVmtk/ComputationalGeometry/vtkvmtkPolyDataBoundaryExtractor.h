@@ -32,7 +32,7 @@ Version:   $Revision: 1.5 $
 class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataBoundaryExtractor : public vtkPolyDataAlgorithm
 {
   public: 
-  vtkTypeRevisionMacro(vtkvmtkPolyDataBoundaryExtractor,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkvmtkPolyDataBoundaryExtractor,vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent); 
 
   static vtkvmtkPolyDataBoundaryExtractor *New();

@@ -44,7 +44,7 @@ class vtkOrderedTriangulator;
 class VTK_VMTK_CONTRIB_EXPORT vtkvmtkBoundaryLayerGenerator2 : public vtkvmtkBoundaryLayerGenerator
 {
   public: 
-  vtkTypeRevisionMacro(vtkvmtkBoundaryLayerGenerator2,vtkvmtkBoundaryLayerGenerator);
+  vtkTypeMacro(vtkvmtkBoundaryLayerGenerator2,vtkvmtkBoundaryLayerGenerator);
   void PrintSelf(ostream& os, vtkIndent indent); 
 
   static vtkvmtkBoundaryLayerGenerator2 *New();

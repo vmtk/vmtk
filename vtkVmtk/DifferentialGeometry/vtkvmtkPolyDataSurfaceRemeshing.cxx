@@ -35,7 +35,7 @@
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkPolyDataSurfaceRemeshing, "$Revision: 1.5 $");
+
 vtkStandardNewMacro(vtkvmtkPolyDataSurfaceRemeshing);
 
 vtkvmtkPolyDataSurfaceRemeshing::vtkvmtkPolyDataSurfaceRemeshing()

@@ -32,7 +32,7 @@ Version:   $Revision: 1.5 $
 #include "vtkObjectFactory.h"
 #include "vtkvmtkConstants.h"
 
-vtkCxxRevisionMacro(vtkvmtkPolyDataLocalGeometry, "$Revision: 1.5 $");
+
 vtkStandardNewMacro(vtkvmtkPolyDataLocalGeometry);
 
 vtkvmtkPolyDataLocalGeometry::vtkvmtkPolyDataLocalGeometry()

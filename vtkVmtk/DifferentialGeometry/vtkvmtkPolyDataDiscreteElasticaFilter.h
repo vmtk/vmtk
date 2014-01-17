@@ -34,7 +34,7 @@ class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkPolyDataDiscreteElasticaFilte
 public:
 
   static vtkvmtkPolyDataDiscreteElasticaFilter *New();
-  vtkTypeRevisionMacro(vtkvmtkPolyDataDiscreteElasticaFilter,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkvmtkPolyDataDiscreteElasticaFilter,vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent); 
 
 protected:

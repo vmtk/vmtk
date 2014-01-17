@@ -34,7 +34,7 @@
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkUnstructuredGridHarmonicMappingFilter, "$Revision: 1.7 $");
+
 vtkStandardNewMacro(vtkvmtkUnstructuredGridHarmonicMappingFilter);
 
 vtkvmtkUnstructuredGridHarmonicMappingFilter::vtkvmtkUnstructuredGridHarmonicMappingFilter() 

@@ -21,7 +21,7 @@ Version:   $Revision: 1.1 $
 #include "vtkvmtkInteractorStyleTrackballCamera.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkInteractorStyleTrackballCamera, "$Revision: 1.1 $");
+
 vtkStandardNewMacro(vtkvmtkInteractorStyleTrackballCamera);
 
 void vtkvmtkInteractorStyleTrackballCamera::OnChar()

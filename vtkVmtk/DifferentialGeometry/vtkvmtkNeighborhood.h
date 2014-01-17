@@ -34,7 +34,7 @@ class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkNeighborhood : public vtkvmtk
 {
 public:
 
-  vtkTypeRevisionMacro(vtkvmtkNeighborhood,vtkvmtkDataSetItem);
+  vtkTypeMacro(vtkvmtkNeighborhood,vtkvmtkDataSetItem);
 
   vtkGetMacro(IsBoundary,bool);
 

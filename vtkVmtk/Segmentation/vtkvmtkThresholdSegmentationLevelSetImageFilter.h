@@ -40,7 +40,7 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkThresholdSegmentationLevelSetImageFilt
 {
  public:
   static vtkvmtkThresholdSegmentationLevelSetImageFilter *New();
-  vtkTypeRevisionMacro(vtkvmtkThresholdSegmentationLevelSetImageFilter, vtkvmtkITKImageToImageFilterFF);
+  vtkTypeMacro(vtkvmtkThresholdSegmentationLevelSetImageFilter, vtkvmtkITKImageToImageFilterFF);
 
   void SetUpperThreshold ( float value )
   {

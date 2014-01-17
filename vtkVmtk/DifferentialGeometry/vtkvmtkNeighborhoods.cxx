@@ -30,7 +30,7 @@
 #include "vtkvmtkPolyDataManifoldExtendedNeighborhood.h"
 #include "vtkvmtkUnstructuredGridNeighborhood.h"
 
-vtkCxxRevisionMacro(vtkvmtkNeighborhoods, "$Revision: 1.3 $");
+
 vtkStandardNewMacro(vtkvmtkNeighborhoods);
 
 vtkvmtkItem* vtkvmtkNeighborhoods::InstantiateNewItem(int itemType)

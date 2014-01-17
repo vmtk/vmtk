@@ -36,7 +36,7 @@ class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkPolyDataStencilFlowFilter : p
 {
 public:
   static vtkvmtkPolyDataStencilFlowFilter* New();
-  vtkTypeRevisionMacro(vtkvmtkPolyDataStencilFlowFilter,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkvmtkPolyDataStencilFlowFilter,vtkPolyDataAlgorithm);
 
   vtkSetMacro(StencilType,int);
   vtkGetMacro(StencilType,int);
