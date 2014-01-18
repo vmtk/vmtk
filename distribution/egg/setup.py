@@ -51,7 +51,7 @@ def list_files(directory):
             return [x for x in files if not (x.startswith('.')) and not (x.endswith('cmake'))]
 
 class vmtk_build(_build):
-
+    '''Build vmtk libraries'''
     def run(self):
         #finding absolute path 
         vmtk_path = os.path.abspath(VMTKPATH)
@@ -109,7 +109,13 @@ class vmtk_install(_install):
         vmtkHomeEnvironmentVariable="VMTKHOME=%s" % package_path
         vmtkPathEnvironmentVariable="export PATH=$VMTKHOME/bin:$PATH"
         vmtkPythonPath="export PYTHONPATH=$VMTKHOME/vmtk/lib:$PYTHONPATH"
-        append_decision = raw_input('Do you want to append vmtk environment variables in your .bash_profile? YES/n: ')
+        if sys.platform == 'darwin':
+            append_decision = raw_input('Do you want to append vmtk environment variables in your .bash_profile? yes/no: ')
+        elif sys.platform == 'linux2':
+            append_decision = raw_input('Do you want to append vmtk environment variables in your .bashrc? yes/no: ')
+        else:
+            #WINDOWS
+            pass
         while True:
             if append_decision.lower() == 'y' or append_decision.lower() == 'yes':
                 if sys.platform == 'darwin': 
@@ -135,7 +141,13 @@ class vmtk_install(_install):
             elif append_decision.lower() == 'n' or append_decision.lower() == 'no':
                 break
             else:
-                append_decision = raw_input('Do you want to append vmtk environment variables in your .bash_profile? YES/n: ')
+                if sys.platform == 'darwin':
+                    append_decision = raw_input('Do you want to append vmtk environment variables in your .bash_profile? yes/no: ')
+                elif sys.platform == 'linux2':
+                    append_decision = raw_input('Do you want to append vmtk environment variables in your .bashrc? yes/no: ')
+                else:
+                    #WINDOWS
+                    pass
 
 
 setup(name=NAME,
