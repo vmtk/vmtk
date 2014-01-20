@@ -14,11 +14,13 @@ if __name__ == '__main__':
     
     print "Please run this script with sudo\n"
     print "chmod+x on binary scripts..."
-    bin_path = package_path+'/bin'      
+    bin_path = package_path+'/vmtk-%s/bin' % VERSION
+    print bin_path    
     os.system('chmod -R +x '+bin_path)
         
     vmtkHomeEnvironmentVariable="VMTKHOME=%s" % package_path
-    vmtkPathEnvironmentVariable="export PATH=$VMTKHOME/bin:$PATH"
+    vmtkPathEnvironmentVariable="export PATH=$VMTKHOME/vmtk-%s/bin:$PATH" % VERSION
+    print vmtkPathEnvironmentVariable
     vmtkPythonPath="export PYTHONPATH=$VMTKHOME/vmtk/lib:$PYTHONPATH"
     if sys.platform == 'darwin':
         append_decision = raw_input('Do you want to append vmtk environment variables in your .bash_profile? yes/no: ')
