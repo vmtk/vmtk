@@ -109,7 +109,6 @@ setup(name=NAME,
       cmdclass={'vmtk_build':vmtk_build},
       packages = find_packages(),
       zip_safe=False,
-      #data_files=[(os.path.join(NAME+'-'+VERSION,'bin'), [f for f in glob.glob(os.path.join(os.path.join(NAME+'-'+VERSION,'bin'), '*'))])],
       package_data = {
          'vmtk': ["lib/*.so*","lib/*.*lib*","lib/*.pyd*","bin/*"],
          'vtk': ["lib/*.so*","lib/*.pyd*"],
