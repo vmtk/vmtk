@@ -55,52 +55,43 @@ class vmtk_build(_build):
         #finding absolute path 
         vmtk_path = os.path.abspath(VMTKPATH)
         
-        #creating main directory
-        root = os.path.join(NAME+'-'+VERSION)
+        #copying install directory
         try:
-            os.mkdir(root)
-        except OSError:
-            shutil.rmtree(root)
-            os.mkdir(root)
-        
-        #copying install directory 
-        try:
-            shutil.copytree(os.path.join(vmtk_path,'bin'), os.path.join(root,'bin'), ignore=shutil.ignore_patterns('Python'))
-        except OSError:
-            shutil.rmtree('bin')
-            shutil.copytree(os.path.join(vmtk_path,'bin'), os.path.join(root,'bin'), ignore=shutil.ignore_patterns('Python'))
-        
-        try:
-            shutil.copytree(os.path.join(vmtk_path,'bin','Python','vtk'), os.path.join(root,'vtk'))
-        except OSError:
-            shutil.rmtree('vtk')
-            shutil.copytree(os.path.join(vmtk_path,'bin','Python','vtk'), os.path.join(root,'vtk'))
-        
-        try:
-            shutil.copytree(os.path.join(vmtk_path,'lib','vmtk','vmtk'), os.path.join(root,'vmtk'))
+            shutil.copytree(os.path.join(vmtk_path,'lib','vmtk','vmtk'), 'vmtk')
         except OSError:
             shutil.rmtree('vmtk')
-            shutil.copytree(os.path.join(vmtk_path,'lib','vmtk','vmtk'), os.path.join(root,'vmtk'))
+            shutil.copytree(os.path.join(vmtk_path,'lib','vmtk','vmtk'), 'vmtk')
+        try:
+            shutil.copytree(os.path.join(vmtk_path,'bin'), os.path.join('vmtk','bin'), ignore=shutil.ignore_patterns('Python'))
+        except OSError:
+            shutil.rmtree('bin')
+            shutil.copytree(os.path.join(vmtk_path,'bin'), os.path.join('vmtk','bin'), ignore=shutil.ignore_patterns('Python'))
         
-        shutil.copytree(os.path.join(vmtk_path,'lib'), os.path.join(root,'vmtk','lib'), symlinks=True, ignore=shutil.ignore_patterns('cmake'))
+        try:
+            shutil.copytree(os.path.join(vmtk_path,'bin','Python','vtk'), os.path.join('vmtk','vtk'))
+        except OSError:
+            shutil.rmtree('vtk')
+            shutil.copytree(os.path.join(vmtk_path,'bin','Python','vtk'), os.path.join('vmtk','vtk'))
         
-        for file_to_move in list_files(os.path.join(root,'vmtk','lib','vmtk')):
-            shutil.copy(os.path.join(root,'vmtk','lib','vmtk',file_to_move),os.path.join(root,'vmtk','lib',file_to_move))
-        shutil.rmtree(os.path.join(root,'vmtk','lib','vmtk'))
+        shutil.copytree(os.path.join(vmtk_path,'lib'), os.path.join('vmtk','lib'), symlinks=True, ignore=shutil.ignore_patterns('cmake'))
         
-        for file_to_move in list_files(os.path.join(root,'vmtk','lib','vtk-5.10')):
-            shutil.copy(os.path.join(root,'vmtk','lib','vtk-5.10',file_to_move),os.path.join(root,'vmtk','lib',file_to_move))
-        shutil.rmtree(os.path.join(root,'vmtk','lib','vtk-5.10'))
+        for file_to_move in list_files(os.path.join('vmtk','lib','vmtk')):
+            shutil.copy(os.path.join('vmtk','lib','vmtk',file_to_move),os.path.join('vmtk','lib',file_to_move))
+        shutil.rmtree(os.path.join('vmtk','lib','vmtk'))
         
-        for file_to_move in list_files(os.path.join(root,'vmtk')):
+        for file_to_move in list_files(os.path.join('vmtk','lib','vtk-5.10')):
+            shutil.copy(os.path.join('vmtk','lib','vtk-5.10',file_to_move),os.path.join('vmtk','lib',file_to_move))
+        shutil.rmtree(os.path.join('vmtk','lib','vtk-5.10'))
+        
+        for file_to_move in list_files(os.path.join('vmtk')):
             if file_to_move.endswith('.so') or file_to_move.endswith('.pyd'):
-                shutil.move(os.path.join(root,'vmtk',file_to_move),os.path.join(root,'vmtk','lib',file_to_move))
+                shutil.move(os.path.join('vmtk',file_to_move),os.path.join('vmtk','lib',file_to_move))
         
-        for file_to_unlink in list_files(os.path.join(root,'vmtk','lib')):
+        for file_to_unlink in list_files(os.path.join('vmtk','lib')):
             if file_to_unlink == 'hints':
-                os.remove(os.path.join(root,'vmtk','lib',file_to_unlink))
-            if os.path.islink(os.path.join(root,'vmtk','lib',file_to_unlink)):
-                os.unlink(os.path.join(root,'vmtk','lib',file_to_unlink))
+                os.remove(os.path.join('vmtk','lib',file_to_unlink))
+            if os.path.islink(os.path.join('vmtk','lib',file_to_unlink)):
+                os.unlink(os.path.join('vmtk','lib',file_to_unlink))
         
 setup(name=NAME,
       maintainer=MAINTAINER,
@@ -116,13 +107,12 @@ setup(name=NAME,
       platforms=PLATFORMS,
       version=VERSION,
       cmdclass={'vmtk_build':vmtk_build},
-      packages = ['vmtk','vtk'],
+      packages = find_packages(),
       zip_safe=False,
-      data_files=[(os.path.join(NAME+'-'+VERSION,'bin'), [f for f in glob.glob(os.path.join(os.path.join(NAME+'-'+VERSION,'bin'), '*'))])],
-      package_dir = {'': NAME+'-'+VERSION},
+      #data_files=[(os.path.join(NAME+'-'+VERSION,'bin'), [f for f in glob.glob(os.path.join(os.path.join(NAME+'-'+VERSION,'bin'), '*'))])],
       package_data = {
-         'vmtk': ["lib/*.so*","lib/*.*lib*"],
-         'vtk': ["lib/*.so*"],
+         'vmtk': ["lib/*.so*","lib/*.*lib*","lib/*.pyd*","bin/*"],
+         'vtk': ["lib/*.so*","lib/*.pyd*"],
         },
       scripts = ['vmtk_post_install.py']
     )
