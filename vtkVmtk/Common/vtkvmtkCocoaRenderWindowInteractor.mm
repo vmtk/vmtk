@@ -23,7 +23,6 @@
 #import "vtkvmtkCocoaRenderWindowInteractor.h"
 #import "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkCocoaRenderWindowInteractor, "$Revision: 1.70 $");
 vtkStandardNewMacro(vtkvmtkCocoaRenderWindowInteractor);
 
 vtkvmtkCocoaRenderWindowInteractor::vtkvmtkCocoaRenderWindowInteractor()
