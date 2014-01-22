@@ -6,7 +6,7 @@ from setuptools import setup, find_packages
 from setuptools.command.install import install as _install
 from setuptools.command.build_py import build_py as _build
 
-VMTKPATH = "../../../vmtk_build/Install"
+VMTKPATH = "../../../vmtk-build/Install"
 
 CLASSIFIERS = ["Development Status :: 5 - Production/Stable",
                "Environment :: Console",
