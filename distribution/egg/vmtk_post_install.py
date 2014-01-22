@@ -2,6 +2,7 @@
 
 import sys
 import os
+import shutil
 import pkg_resources
 home = os.path.expanduser("~")
 
@@ -10,21 +11,17 @@ VERSION = "1.2"
 if __name__ == '__main__':
     
     if sys.platform == "win32":
-        
-        #=======================================================================
-        # target = # target is the path to the program to be started by the shortcut
-        # description = 'vmtk-launcher' #description is the description of the shortcut
-        # filename = 'vmtk-'+VERSION #filename is the title of the shortcut that the user will see
-        # arguments = # arguments specifies the command line arguments
-        # workdir = #workdir is the working directory for the program
-        # iconpath = #iconpath is the file containing the icon for the shortcut
-        # iconindex = #iconindex is the index of the icon in the file iconpath    
-        # 
-        # create_shortcut(target, description, filename[, arguments[, workdir[, iconpath[, iconindex]]]])
-        # 
-        #=======================================================================
-        #windows
-        pass
+        package_path = pkg_resources.get_distribution("vmtk").location
+        vmtk_exe_path = os.path.join(package_path,"vmtk","bin","vmtk-exe.py")
+        DESKTOP_FOLDER = get_special_folder_path("CSIDL_DESKTOPDIRECTORY")        
+        target = vmtk_exe_path
+        description = "vmtk-launcher"
+        filename = "vmtk-%s.lnk" % VERSION
+        iconpath = os.path.join(package_path,"vmtk","bin","vmtk-icon.ico")
+        create_shortcut(target,description,filename,'','',iconpath)
+        #move shortcut to Desktop
+        shutil.move(os.path.join(os.getcwd(),filename),os.path.join(DESKTOP_FOLDER,filename))
+        file_created(os.path.join(DESKTOP_FOLDER,filename))
     else:
         package_name = 'vmtk-'+VERSION+'-py2.7.egg-info'
         package_path = pkg_resources.get_distribution("vmtk").location

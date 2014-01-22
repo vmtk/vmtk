@@ -6,7 +6,7 @@ from setuptools import setup, find_packages
 from setuptools.command.install import install as _install
 from setuptools.command.build_py import build_py as _build
 
-VMTKPATH = "../../../vmtk-build/Install"
+VMTKPATH = "../../../vmtk_build/Install"
 
 CLASSIFIERS = ["Development Status :: 5 - Production/Stable",
                "Environment :: Console",
@@ -92,6 +92,9 @@ class vmtk_build(_build):
                 os.remove(os.path.join('vmtk','lib',file_to_unlink))
             if os.path.islink(os.path.join('vmtk','lib',file_to_unlink)):
                 os.unlink(os.path.join('vmtk','lib',file_to_unlink))
+
+        #copy favicon
+        shutil.copy(os.path.join(os.getcwd(),'vmtk-icon.ico'),os.path.join('vmtk','bin','vmtk-icon.ico'))
         
 setup(name=NAME,
       maintainer=MAINTAINER,
