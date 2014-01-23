@@ -14,7 +14,7 @@ if __name__ == '__main__':
             import pkg_resources
             package_path = pkg_resources.get_distribution("vmtk").location
         except:
-            [f for f in sys.path where f.contains('Python2.7\\lib\\site-packages')
+            package_path = [f for f in sys.path if 'Python27\\lib\\site-packages' in f][0]
         vmtk_exe_path = os.path.join(package_path,"vmtk","bin","vmtk-exe.py")
         DESKTOP_FOLDER = get_special_folder_path("CSIDL_DESKTOPDIRECTORY")        
         target = vmtk_exe_path
