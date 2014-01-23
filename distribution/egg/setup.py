@@ -111,7 +111,6 @@ setup(name=NAME,
       version=VERSION,
       cmdclass={'vmtk_build':vmtk_build},
       packages = find_packages(),
-      install_requires = setuptools,
       zip_safe=False,
       package_data = {
          'vmtk': ["lib/*.so*","lib/*.*lib*","lib/*.pyd*","bin/*"],

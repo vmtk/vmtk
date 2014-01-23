@@ -2,8 +2,7 @@
 
 import sys
 import os
-import shutil
-import pkg_resources
+import shutil 
 home = os.path.expanduser("~")
 
 VERSION = "1.2"
@@ -11,7 +10,11 @@ VERSION = "1.2"
 if __name__ == '__main__':
     
     if sys.platform == "win32":
-        package_path = pkg_resources.get_distribution("vmtk").location
+        try:
+            import pkg_resources
+            package_path = pkg_resources.get_distribution("vmtk").location
+        except:
+            [f for f in sys.path where f.contains('Python2.7\\lib\\site-packages')
         vmtk_exe_path = os.path.join(package_path,"vmtk","bin","vmtk-exe.py")
         DESKTOP_FOLDER = get_special_folder_path("CSIDL_DESKTOPDIRECTORY")        
         target = vmtk_exe_path
