@@ -28,8 +28,8 @@ idx = max(0, long_description.find("vmtk - The Vascular Modeling Toolkit"))
 long_description = long_description[idx:]
 
 NAME                = 'vmtk'
-MAINTAINER          = "Luca Antiga"
-MAINTAINER_EMAIL    = "luca.antiga@orobix.com"
+MAINTAINER          = "Simone Manini"
+MAINTAINER_EMAIL    = "simone.manini@orobix.com"
 DESCRIPTION         = description
 LONG_DESCRIPTION    = long_description
 URL                 = "https://github.com/vmtk/vmtk"
@@ -111,6 +111,7 @@ setup(name=NAME,
       version=VERSION,
       cmdclass={'vmtk_build':vmtk_build},
       packages = find_packages(),
+      install_requires = setuptools,
       zip_safe=False,
       package_data = {
          'vmtk': ["lib/*.so*","lib/*.*lib*","lib/*.pyd*","bin/*"],

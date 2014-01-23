@@ -20,7 +20,7 @@ Description: vmtk
   		
         To install, run::
         
-            sudo easy_install vmtk
+            sudo easy_install <vmtk.egg>
             sudo vmtk_post_install.py
        
         
