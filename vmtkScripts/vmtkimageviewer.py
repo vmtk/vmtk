@@ -83,13 +83,13 @@ class vmtkImageViewer(pypes.pypeScript):
             self.Picker = vtk.vtkCellPicker()
 
         if self.PlaneWidgetX == None:
-            self.PlaneWidgetX = vtk.vtkImagePlaneWidget()
+            self.PlaneWidgetX = vtkvmtk.vtkvmtkImagePlaneWidget()
 
         if self.PlaneWidgetY == None:
-            self.PlaneWidgetY = vtk.vtkImagePlaneWidget()
+            self.PlaneWidgetY = vtkvmtk.vtkvmtkImagePlaneWidget()
 
         if self.PlaneWidgetZ == None:
-            self.PlaneWidgetZ = vtk.vtkImagePlaneWidget()
+            self.PlaneWidgetZ = vtkvmtk.vtkvmtkImagePlaneWidget()
             
         self.Picker.SetTolerance(0.005)
 
