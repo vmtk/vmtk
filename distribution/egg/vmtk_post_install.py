@@ -26,6 +26,7 @@ if __name__ == '__main__':
         shutil.move(os.path.join(os.getcwd(),filename),os.path.join(DESKTOP_FOLDER,filename))
         file_created(os.path.join(DESKTOP_FOLDER,filename))
     else:
+        import pkg_resources
         package_name = 'vmtk-'+VERSION+'-py2.7.egg-info'
         package_path = pkg_resources.get_distribution("vmtk").location
         print "Please run this script with sudo\n"
