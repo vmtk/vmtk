@@ -26,11 +26,12 @@ Version:   $Revision: 1.1 $
 #define __vtkvmtkUnstructuredGridTetraFilter_h
 
 #include "vtkUnstructuredGridAlgorithm.h"
+#include "vtkvmtkWin32Header.h"
 
 class vtkOrderedTriangulator;
 class vtkIdList;
 
-class VTK_GRAPHICS_EXPORT vtkvmtkUnstructuredGridTetraFilter : public vtkUnstructuredGridAlgorithm
+class VTK_VMTK_MISC_EXPORT vtkvmtkUnstructuredGridTetraFilter : public vtkUnstructuredGridAlgorithm
 {
 public:
   static vtkvmtkUnstructuredGridTetraFilter *New();
