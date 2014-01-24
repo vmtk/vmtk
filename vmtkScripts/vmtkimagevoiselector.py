@@ -210,11 +210,11 @@ class vmtkImageVOISelector(pypes.pypeScript):
                 self.OwnRenderer = 1
 
             self.vmtkRenderer.RegisterScript(self)
-            self.PlaneWidgetX = vtk.vtkImagePlaneWidget()
+            self.PlaneWidgetX = vtkvmtk.vtkvmtkImagePlaneWidget()
             self.PlaneWidgetX.SetInteractor(self.vmtkRenderer.RenderWindowInteractor)
-            self.PlaneWidgetY = vtk.vtkImagePlaneWidget()
+            self.PlaneWidgetY = vtkvmtk.vtkvmtkImagePlaneWidget()
             self.PlaneWidgetY.SetInteractor(self.vmtkRenderer.RenderWindowInteractor)
-            self.PlaneWidgetZ = vtk.vtkImagePlaneWidget()
+            self.PlaneWidgetZ = vtkvmtk.vtkvmtkImagePlaneWidget()
             self.PlaneWidgetZ.SetInteractor(self.vmtkRenderer.RenderWindowInteractor)
             self.BoxWidget = vtk.vtkBoxWidget()
             self.BoxWidget.SetInteractor(self.vmtkRenderer.RenderWindowInteractor)
