@@ -87,6 +87,9 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkBoundaryLayerGenerator : public vtkUnstructure
   vtkGetMacro(Relaxation,double);
   vtkSetMacro(Relaxation,double);
 
+  vtkGetMacro(LocalCorrectionFactor,double);
+  vtkSetMacro(LocalCorrectionFactor,double);
+
   vtkSetStringMacro(CellEntityIdsArrayName);
   vtkGetStringMacro(CellEntityIdsArrayName);
 
@@ -148,7 +151,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkBoundaryLayerGenerator : public vtkUnstructure
   int VolumeCellEntityId;
 
   double Relaxation;
-  double Alpha;
+  double LocalCorrectionFactor;
 
   private:
   vtkvmtkBoundaryLayerGenerator(const vtkvmtkBoundaryLayerGenerator&);  // Not implemented.
