@@ -1,0 +1,7 @@
+vmtk - The Vascular Modeling Toolkit
+vmtk (http://www.vmtk.org) is a collection of libraries and tools for 3D reconstruction,geometric analysis, mesh generation and surface data analysis for image-based modeling of blood vessels.
+        
+INSTALLATION REQUIREMENTS:
+Python 2.7 (http://www.python.org/download/releases/2.7.6/)
+
+Read the HOWTO to build your own distribution or to install vmtk under linux/OSX.
