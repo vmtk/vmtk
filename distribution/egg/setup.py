@@ -51,6 +51,7 @@ def list_files(directory):
 
 class vmtk_build(_build):
     '''Build vmtk libraries'''
+    
     def run(self):
         #finding absolute path 
         vmtk_path = os.path.abspath(VMTKPATH)
@@ -92,9 +93,18 @@ class vmtk_build(_build):
                 os.remove(os.path.join('vmtk','lib',file_to_unlink))
             if os.path.islink(os.path.join('vmtk','lib',file_to_unlink)):
                 os.unlink(os.path.join('vmtk','lib',file_to_unlink))
-
-        #copy favicon
-        shutil.copy(os.path.join(os.getcwd(),'vmtk-icon.ico'),os.path.join('vmtk','bin','vmtk-icon.ico'))
+        
+        if sys.platform == "win32":
+            #copy favicon
+            shutil.copy(os.path.join(os.getcwd(),'vmtk-icon.ico'),os.path.join('vmtk','bin','vmtk-icon.ico'))
+            #copy c++ dll files
+            if 'PROGRAMFILES(X86)' in os.environ:
+                windows_architecture = 'x8664'
+            else:
+                windows_architecture = 'i386'         
+            for dll_to_copy in list_files(os.path.join(os.getcwd(),'windows_dll',windows_architecture)):
+                shutil.copy(os.path.join(os.getcwd(),'windows_dll','x8664',dll_to_copy),os.path.join('vmtk','bin'))
+      
         
 setup(name=NAME,
       maintainer=MAINTAINER,
