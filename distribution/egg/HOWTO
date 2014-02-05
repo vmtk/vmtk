@@ -1,0 +1,33 @@
+HOW TO INSTALL VMTK UNDER LINUX/OSX:
+
+sudo easy_install <vmtk-egg>
+
+POST INSTALL FOR LINUX AND MACOSX:
+
+sudo vmtk_post_install.py
+
+HOW TO INSTALL VMTK UNDER WINDOWS:
+
+Run the installer
+or
+install setuptools ---> (https://pypi.python.org/pypi/setuptools#windows)
+sudo easy_install <vmtk-egg>
+
+HOW TO BUILD A VMTK PYTHON EGG FROM SOURCE:
+
+compile vmtk from source ---> (http://www.vmtk.org/documentation/installation.html#installing_from_source)
+python setup.py vmtk_build
+python setup.py bdist_egg
+or for Windows:
+python setup.py bdist_wininst --install-script vmtk_post_install.py
+
+HOW TO UPGRADE VMTK UNDER LINUX/OSX:
+
+sudo easy_install --upgrade vmtk
+
+HOW TO UPGRADE VMTK UNDER WINDOWS:
+
+Run the installer
+or
+install setuptools ---> (https://pypi.python.org/pypi/setuptools#windows)
+sudo easy_install --upgrade vmtk

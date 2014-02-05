@@ -1,0 +1,33 @@
+Metadata-Version: 1.1
+Name: vmtk
+Version: 1.2
+Summary: vmtk - The Vascular Modeling Toolkit
+Home-page: http://www.vmtk.org
+Author: Luca Antiga
+Author-email: Luca Antiga <luca.antiga@orobix.com>
+License: BSD
+Description: vmtk
+        ~~~~~~~~~
+        
+        vmtk is a collection of libraries and tools for 3D reconstruction, geometric analysis, 
+        mesh generation and surface data analysis for image-based modeling of blood vessels.
+        
+        http://www.vmtk.org
+        
+        
+  		Installation requirements:
+  		Python 2.7 (http://python.org/#download)
+  		
+        To install, run::
+        
+            sudo easy_install <vmtk.egg>
+            sudo vmtk_post_install.py
+       
+        
+Platform: Linux / MacOsX / Windows
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Intended Audience :: Science/Research
+Classifier: License :: OSI Approved :: BSD License
+Topic :: Scientific/Engineering
+Programming Language :: C++
+Programming Language :: Python
