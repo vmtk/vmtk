@@ -637,7 +637,10 @@ int vtkvmtkBoundaryLayerGenerator::CheckTangle(vtkUnstructuredGrid* input, vtkUn
     vtkTriangle::ComputeNormal(basePoint1,basePoint2,basePoint3,baseNormal);
     vtkTriangle::ComputeNormal(warpedPoint1,warpedPoint2,warpedPoint3,warpedNormal);
     double prod = vtkMath::Dot(baseNormal,warpedNormal);
-    if (prod<0)
+    double baseArea = vtkTriangle::TriangleArea(basePoint1,basePoint2,basePoint3);
+    double warpedArea = vtkTriangle::TriangleArea(warpedPoint1,warpedPoint2,warpedPoint3);
+    double testArea = warpedArea / baseArea;    
+    if (prod < 0 || testArea <= 0.1 )
       {
       check = 1;
       found = found + 1;
