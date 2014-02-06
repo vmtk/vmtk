@@ -101,6 +101,16 @@ void vtkvmtkFluentWriter::WriteData()
 {
   vtkUnstructuredGrid *input= vtkUnstructuredGrid::SafeDownCast(this->GetInput());
 
+  int numberOfCells = input->GetNumberOfCells();
+  for (int i=0; i<numberOfCells; i++)
+    {
+    int cellType = input->GetCellType(i);
+    if (cellType != VTK_TRIANGLE && cellType != VTK_TETRA) 
+      {
+      vtkErrorMacro(<<"Only triangles and linear tetrahedra supported.");
+      }
+    }
+
   if (!this->FileName)
     {
     vtkErrorMacro(<<"FileName not set.");
@@ -118,7 +128,6 @@ void vtkvmtkFluentWriter::WriteData()
   input->BuildLinks();
 
   int numberOfPoints = input->GetNumberOfPoints();
-  int numberOfCells = input->GetNumberOfCells();
 
   vtkIntArray* boundaryDataArray = vtkIntArray::New();
   if (this->BoundaryDataArrayName)
