@@ -51,8 +51,9 @@ class vmtkMeshGenerator(pypes.pypeScript):
         self.SubLayerRatio = 0.5
         self.BoundaryLayerThicknessFactor = 0.25
 
-        self.NumberOfSubsteps = 500
+        self.NumberOfSubsteps = 2000
         self.Relaxation = 0.01
+        self.LocalCorrectionFactor = 0.45
 
         self.Tetrahedralize = 0
 
@@ -84,6 +85,7 @@ class vmtkMeshGenerator(pypes.pypeScript):
             ['NumberOfSubLayers','sublayers','int',1,'(0,)'],
             ['NumberOfSubsteps','substeps','int',1,'(0,)'],
             ['Relaxation','relaxation','float',1,'(0.0,)'],
+            ['LocalCorrectionFactor','localcorrection','float',1,'(0.0,)'],
             ['SubLayerRatio','sublayerratio','float',1,'(0.0,)'],
             ['BoundaryLayerThicknessFactor','thicknessfactor','float',1,'(0.0,)'],
             ['RemeshCapsOnly','remeshcapsonly','bool',1,''],
@@ -171,6 +173,8 @@ class vmtkMeshGenerator(pypes.pypeScript):
             boundaryLayer.IncludeSurfaceCells = 0
             boundaryLayer.NumberOfSubLayers = self.NumberOfSubLayers
             boundaryLayer.NumberOfSubsteps = self.NumberOfSubsteps
+            boundaryLayer.Relaxation = self.Relaxation
+            boundaryLayer.LocalCorrectionFactor = self.LocalCorrectionFactor
             boundaryLayer.SubLayerRatio = self.SubLayerRatio
             boundaryLayer.Thickness = self.BoundaryLayerThicknessFactor * self.TargetEdgeLength
             boundaryLayer.ThicknessRatio = self.BoundaryLayerThicknessFactor * self.TargetEdgeLengthFactor
