@@ -33,6 +33,7 @@ class vmtkDistanceToCenterlines(pypes.pypeScript):
         self.UseRadiusInformation = 0
         self.EvaluateTubeFunction = 0
         self.EvaluateCenterlineRadius = 0
+        self.UseCombinedDistance = 0
         self.ProjectPointArrays = 0
         self.DistanceToCenterlinesArrayName = 'DistanceToCenterlines'
         self.RadiusArrayName = ''
@@ -44,6 +45,7 @@ class vmtkDistanceToCenterlines(pypes.pypeScript):
             ['UseRadiusInformation','useradius','bool',1],
             ['EvaluateTubeFunction','tubefunction','bool',1],
             ['EvaluateCenterlineRadius','centerlineradius','bool',1],
+            ['UseCombinedDistance','combined','bool',1,'','combines local radius with maximum inscribed sphere radius'],
             ['ProjectPointArrays','projectarrays','bool',1],
             ['DistanceToCenterlinesArrayName','distancetocenterlinesarray','str',1],
             ['RadiusArrayName','radiusarray','str',1]
@@ -60,18 +62,47 @@ class vmtkDistanceToCenterlines(pypes.pypeScript):
         if self.Centerlines == None:
             self.PrintError('Error: No input centerlines.')
 
-        distanceToCenterlinesFilter = vtkvmtk.vtkvmtkPolyDataDistanceToCenterlines()
-        distanceToCenterlinesFilter.SetInput(self.Surface)
-        distanceToCenterlinesFilter.SetCenterlines(self.Centerlines)
-        distanceToCenterlinesFilter.SetUseRadiusInformation(self.UseRadiusInformation)
-        distanceToCenterlinesFilter.SetEvaluateTubeFunction(self.EvaluateTubeFunction)
-        distanceToCenterlinesFilter.SetEvaluateCenterlineRadius(self.EvaluateCenterlineRadius)
-        distanceToCenterlinesFilter.SetProjectPointArrays(self.ProjectPointArrays)
-        distanceToCenterlinesFilter.SetDistanceToCenterlinesArrayName(self.DistanceToCenterlinesArrayName)
-        distanceToCenterlinesFilter.SetCenterlineRadiusArrayName(self.RadiusArrayName)
-        distanceToCenterlinesFilter.Update()
+        if self.UseCombinedDistance == 1:
+            if self.RadiusArrayName == '':
+                self.PrintError('Error: CenterlineRadiusArrayName not set.')
+            distanceToCenterlinesFilter = vtkvmtk.vtkvmtkPolyDataDistanceToCenterlines()
+            distanceToCenterlinesFilter.SetInput(self.Surface)
+            distanceToCenterlinesFilter.SetCenterlines(self.Centerlines)
+            distanceToCenterlinesFilter.SetUseRadiusInformation(1)
+            distanceToCenterlinesFilter.SetEvaluateCenterlineRadius(1)
+            distanceToCenterlinesFilter.SetProjectPointArrays(self.ProjectPointArrays)
+            distanceToCenterlinesFilter.SetDistanceToCenterlinesArrayName(self.DistanceToCenterlinesArrayName)
+            distanceToCenterlinesFilter.SetCenterlineRadiusArrayName(self.RadiusArrayName)
+            distanceToCenterlinesFilter.Update()    
+            
+            surface = distanceToCenterlinesFilter.GetOutput()
+            centerlineArray = surface.GetPointData().GetArray(self.DistanceToCenterlinesArrayName)
+            radiusArray = surface.GetPointData().GetArray(self.RadiusArrayName)
 
-        self.Surface = distanceToCenterlinesFilter.GetOutput()
+            for i in range (surface.GetNumberOfPoints()):
+                centerlineval = centerlineArray.GetComponent(i,0)
+                radius = radiusArray.GetComponent(i,0)
+                if centerlineval > 1.4 * radius:
+                    centerlineArray.SetTuple1(i,1.4 * radius)
+                elif centerlineval < 0.9 * radius:
+                    centerlineArray.SetTuple1(i,radius)
+                
+            self.Surface = surface
+            
+        else:    
+            distanceToCenterlinesFilter = vtkvmtk.vtkvmtkPolyDataDistanceToCenterlines()
+            distanceToCenterlinesFilter.SetInput(self.Surface)
+            distanceToCenterlinesFilter.SetCenterlines(self.Centerlines)
+            distanceToCenterlinesFilter.SetUseRadiusInformation(self.UseRadiusInformation)
+            distanceToCenterlinesFilter.SetEvaluateTubeFunction(self.EvaluateTubeFunction)
+            distanceToCenterlinesFilter.SetEvaluateCenterlineRadius(self.EvaluateCenterlineRadius)
+            distanceToCenterlinesFilter.SetProjectPointArrays(self.ProjectPointArrays)
+            distanceToCenterlinesFilter.SetDistanceToCenterlinesArrayName(self.DistanceToCenterlinesArrayName)
+            distanceToCenterlinesFilter.SetCenterlineRadiusArrayName(self.RadiusArrayName)
+            distanceToCenterlinesFilter.Update()
+    
+            self.Surface = distanceToCenterlinesFilter.GetOutput()
+
 
         if self.Surface.GetSource():
             self.Surface.GetSource().UnRegisterAllOutputs()
