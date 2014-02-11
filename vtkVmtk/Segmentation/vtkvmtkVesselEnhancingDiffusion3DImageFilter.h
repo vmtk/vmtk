@@ -40,7 +40,7 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkVesselEnhancingDiffusion3DImageFilter 
 {
  public:
   static vtkvmtkVesselEnhancingDiffusion3DImageFilter *New();
-  vtkTypeRevisionMacro(vtkvmtkVesselEnhancingDiffusion3DImageFilter, vtkvmtkITKImageToImageFilterFF);
+  vtkTypeMacro(vtkvmtkVesselEnhancingDiffusion3DImageFilter, vtkvmtkITKImageToImageFilterFF);
 
   vtkSetMacro(SigmaMin,double);
   vtkGetMacro(SigmaMin,double);

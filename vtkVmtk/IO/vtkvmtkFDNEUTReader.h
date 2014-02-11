@@ -35,7 +35,7 @@ Version:   $Revision: 1.6 $
 class VTK_VMTK_IO_EXPORT vtkvmtkFDNEUTReader : public vtkUnstructuredGridReader
 {
   public:
-  vtkTypeRevisionMacro(vtkvmtkFDNEUTReader,vtkUnstructuredGridReader);
+  vtkTypeMacro(vtkvmtkFDNEUTReader,vtkUnstructuredGridReader);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   static vtkvmtkFDNEUTReader *New();

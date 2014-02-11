@@ -30,7 +30,7 @@
 #include "vtkMath.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkPolyBallLine2, "$Revision: 1.5 $");
+
 vtkStandardNewMacro(vtkvmtkPolyBallLine2);
 
 vtkvmtkPolyBallLine2::vtkvmtkPolyBallLine2()

@@ -35,7 +35,7 @@ class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkPolyDataHarmonicMappingFilter
 {
 public:
   static vtkvmtkPolyDataHarmonicMappingFilter* New();
-  vtkTypeRevisionMacro(vtkvmtkPolyDataHarmonicMappingFilter,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkvmtkPolyDataHarmonicMappingFilter,vtkPolyDataAlgorithm);
 
   vtkSetObjectMacro(BoundaryPointIds,vtkIdList);
   vtkGetObjectMacro(BoundaryPointIds,vtkIdList);

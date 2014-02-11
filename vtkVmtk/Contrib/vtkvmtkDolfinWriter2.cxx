@@ -37,7 +37,7 @@ Version:   $$
 #include "vtkTetra.h"
 #include "vtkvmtkConstants.h"
 
-vtkCxxRevisionMacro(vtkvmtkDolfinWriter2, "$Revision: 1.6 $");
+
 vtkStandardNewMacro(vtkvmtkDolfinWriter2);
 
 vtkvmtkDolfinWriter2::vtkvmtkDolfinWriter2()

@@ -45,7 +45,7 @@
 //#define VTKVMTKFESHAPEFUNCTIONS_NEGATIVE_JACOBIAN_WARNING
 
 vtkStandardNewMacro(vtkvmtkFEShapeFunctions);
-vtkCxxRevisionMacro(vtkvmtkFEShapeFunctions, "$Revision: 1.2 $");
+
 
 vtkvmtkFEShapeFunctions::vtkvmtkFEShapeFunctions()
 {

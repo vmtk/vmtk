@@ -40,7 +40,7 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkFastMarchingDirectionalFreezeImageFilt
 {
  public:
   static vtkvmtkFastMarchingDirectionalFreezeImageFilter *New();
-  vtkTypeRevisionMacro(vtkvmtkFastMarchingDirectionalFreezeImageFilter, vtkvmtkITKImageToImageFilterFF);
+  vtkTypeMacro(vtkvmtkFastMarchingDirectionalFreezeImageFilter, vtkvmtkITKImageToImageFilterFF);
 
 //   void SetUseImageSpacing ( int value )
 //   {

@@ -40,7 +40,7 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkFastMarchingUpwindGradientImageFilter 
 {
  public:
   static vtkvmtkFastMarchingUpwindGradientImageFilter *New();
-  vtkTypeRevisionMacro(vtkvmtkFastMarchingUpwindGradientImageFilter, vtkvmtkITKImageToImageFilterFF);
+  vtkTypeMacro(vtkvmtkFastMarchingUpwindGradientImageFilter, vtkvmtkITKImageToImageFilterFF);
 
 //   void SetUseImageSpacing ( int value )
 //   {

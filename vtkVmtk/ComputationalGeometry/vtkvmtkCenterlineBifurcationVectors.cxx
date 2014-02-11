@@ -38,7 +38,7 @@ Version:   $Revision: 1.1 $
 #include "vtkvmtkCenterlineUtilities.h"
 #include "vtkvmtkReferenceSystemUtilities.h"
 
-vtkCxxRevisionMacro(vtkvmtkCenterlineBifurcationVectors, "$Revision: 1.1 $");
+
 vtkStandardNewMacro(vtkvmtkCenterlineBifurcationVectors);
 
 vtkvmtkCenterlineBifurcationVectors::vtkvmtkCenterlineBifurcationVectors()

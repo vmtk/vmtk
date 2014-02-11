@@ -24,7 +24,7 @@
 #include "vtkMath.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkPolyDataAreaWeightedUmbrellaStencil, "$Revision: 1.2 $");
+
 vtkStandardNewMacro(vtkvmtkPolyDataAreaWeightedUmbrellaStencil);
 
 vtkvmtkPolyDataAreaWeightedUmbrellaStencil::vtkvmtkPolyDataAreaWeightedUmbrellaStencil()

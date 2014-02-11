@@ -34,7 +34,7 @@
 class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkGaussQuadrature : public vtkObject
 {
 public:
-  vtkTypeRevisionMacro(vtkvmtkGaussQuadrature,vtkObject);
+  vtkTypeMacro(vtkvmtkGaussQuadrature,vtkObject);
   static vtkvmtkGaussQuadrature* New();
 
   vtkGetObjectMacro(QuadraturePoints,vtkDoubleArray);

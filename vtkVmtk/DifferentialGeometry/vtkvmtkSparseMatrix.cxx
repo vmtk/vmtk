@@ -26,7 +26,7 @@
 #include "vtkvmtkConstants.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkSparseMatrix, "$Revision: 1.3 $");
+
 vtkStandardNewMacro(vtkvmtkSparseMatrix);
 
 vtkvmtkSparseMatrix::vtkvmtkSparseMatrix()

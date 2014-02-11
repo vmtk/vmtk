@@ -32,7 +32,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkImageBoxPainter : public vtkSimpleImageToImage
 {
 public:
   static vtkvmtkImageBoxPainter *New();
-  vtkTypeRevisionMacro(vtkvmtkImageBoxPainter,vtkSimpleImageToImageFilter);
+  vtkTypeMacro(vtkvmtkImageBoxPainter,vtkSimpleImageToImageFilter);
 
   vtkGetMacro(PaintValue,double);
   vtkSetMacro(PaintValue,double);

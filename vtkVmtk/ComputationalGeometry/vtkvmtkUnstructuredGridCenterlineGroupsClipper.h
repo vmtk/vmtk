@@ -34,7 +34,7 @@ Version:   Revision: 1.0
 class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkUnstructuredGridCenterlineGroupsClipper : public vtkUnstructuredGridAlgorithm
 {
   public: 
-  vtkTypeRevisionMacro(vtkvmtkUnstructuredGridCenterlineGroupsClipper,vtkUnstructuredGridAlgorithm);
+  vtkTypeMacro(vtkvmtkUnstructuredGridCenterlineGroupsClipper,vtkUnstructuredGridAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent); 
 
   static vtkvmtkUnstructuredGridCenterlineGroupsClipper *New();

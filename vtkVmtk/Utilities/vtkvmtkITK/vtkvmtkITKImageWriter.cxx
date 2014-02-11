@@ -24,7 +24,7 @@
 #include "vtkvmtkITKUtility.h"
 
 vtkStandardNewMacro(vtkvmtkITKImageWriter);
-vtkCxxRevisionMacro(vtkvmtkITKImageWriter, "$Revision: 1900 $")
+
 #if 0
 // helper function
 template <class  TPixelType>

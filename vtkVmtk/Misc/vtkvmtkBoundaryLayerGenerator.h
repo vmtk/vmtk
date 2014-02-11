@@ -35,7 +35,7 @@ class vtkDataArray;
 class VTK_VMTK_MISC_EXPORT vtkvmtkBoundaryLayerGenerator : public vtkUnstructuredGridAlgorithm
 {
   public: 
-  vtkTypeRevisionMacro(vtkvmtkBoundaryLayerGenerator,vtkUnstructuredGridAlgorithm);
+  vtkTypeMacro(vtkvmtkBoundaryLayerGenerator,vtkUnstructuredGridAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent); 
 
   static vtkvmtkBoundaryLayerGenerator *New();

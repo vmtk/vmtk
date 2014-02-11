@@ -35,7 +35,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataCenterlineAngularMet
 {
 public:
   static vtkvmtkPolyDataCenterlineAngularMetricFilter* New();
-  vtkTypeRevisionMacro(vtkvmtkPolyDataCenterlineAngularMetricFilter,vtkvmtkPolyDataCenterlineMetricFilter);
+  vtkTypeMacro(vtkvmtkPolyDataCenterlineAngularMetricFilter,vtkvmtkPolyDataCenterlineMetricFilter);
 
   vtkSetStringMacro(CenterlineNormalsArrayName);
   vtkGetStringMacro(CenterlineNormalsArrayName);

@@ -34,7 +34,7 @@ Version:   $Revision: 1.1 $
 class VTK_VMTK_MISC_EXPORT vtkvmtkMeshVelocityStatistics : public vtkUnstructuredGridAlgorithm
 {
   public: 
-  vtkTypeRevisionMacro(vtkvmtkMeshVelocityStatistics,vtkUnstructuredGridAlgorithm);
+  vtkTypeMacro(vtkvmtkMeshVelocityStatistics,vtkUnstructuredGridAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent); 
 
   static vtkvmtkMeshVelocityStatistics *New();

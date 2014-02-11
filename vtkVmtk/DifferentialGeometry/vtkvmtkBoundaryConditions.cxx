@@ -22,7 +22,7 @@
 #include "vtkvmtkBoundaryConditions.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkBoundaryConditions, "$Revision: 1.2 $");
+
 
 vtkvmtkBoundaryConditions::vtkvmtkBoundaryConditions()
   {

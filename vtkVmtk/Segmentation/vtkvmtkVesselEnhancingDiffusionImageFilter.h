@@ -42,7 +42,7 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkVesselEnhancingDiffusionImageFilter : 
 {
  public:
   static vtkvmtkVesselEnhancingDiffusionImageFilter *New();
-  vtkTypeRevisionMacro(vtkvmtkVesselEnhancingDiffusionImageFilter, vtkvmtkITKImageToImageFilterFF);
+  vtkTypeMacro(vtkvmtkVesselEnhancingDiffusionImageFilter, vtkvmtkITKImageToImageFilterFF);
 
   void SetSigmaMin(double value)
   {

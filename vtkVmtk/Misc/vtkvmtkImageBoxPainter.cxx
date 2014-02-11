@@ -23,7 +23,7 @@
 #include "vtkImageData.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkImageBoxPainter, "$Revision: 1.2 $");
+
 vtkStandardNewMacro(vtkvmtkImageBoxPainter);
 
 vtkvmtkImageBoxPainter::vtkvmtkImageBoxPainter() 

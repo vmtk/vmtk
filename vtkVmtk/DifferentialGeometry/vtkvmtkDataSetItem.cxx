@@ -22,7 +22,7 @@
 #include "vtkvmtkDataSetItem.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkDataSetItem, "$Revision: 1.3 $");
+
 
 vtkvmtkDataSetItem::vtkvmtkDataSetItem()
   {

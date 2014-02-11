@@ -27,7 +27,7 @@
 
 #include "vtkvmtkConstants.h"
 
-vtkCxxRevisionMacro(vtkvmtkPolyDataGradientStencil, "$Revision: 1.4 $");
+
 vtkStandardNewMacro(vtkvmtkPolyDataGradientStencil);
 
 vtkvmtkPolyDataGradientStencil::vtkvmtkPolyDataGradientStencil()

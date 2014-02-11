@@ -32,7 +32,7 @@ Version:   $Revision: 1.5 $
 class VTK_VMTK_MISC_EXPORT vtkvmtkStreamlineClusteringFilter : public vtkPolyDataAlgorithm
 {
   public: 
-  vtkTypeRevisionMacro(vtkvmtkStreamlineClusteringFilter,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkvmtkStreamlineClusteringFilter,vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent); 
 
   static vtkvmtkStreamlineClusteringFilter *New();

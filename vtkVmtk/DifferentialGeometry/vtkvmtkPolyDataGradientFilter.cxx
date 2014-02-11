@@ -33,7 +33,7 @@
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkPolyDataGradientFilter, "$Revision: 1.7 $");
+
 vtkStandardNewMacro(vtkvmtkPolyDataGradientFilter);
 
 vtkvmtkPolyDataGradientFilter::vtkvmtkPolyDataGradientFilter() 

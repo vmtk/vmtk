@@ -23,7 +23,7 @@
 #include "vtkvmtkConstants.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkStencil, "$Revision: 1.5 $");
+
 
 vtkvmtkStencil::vtkvmtkStencil()
   {

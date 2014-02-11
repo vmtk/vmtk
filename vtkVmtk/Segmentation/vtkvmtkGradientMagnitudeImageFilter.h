@@ -40,7 +40,7 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkGradientMagnitudeImageFilter : public 
 {
  public:
   static vtkvmtkGradientMagnitudeImageFilter *New();
-  vtkTypeRevisionMacro(vtkvmtkGradientMagnitudeImageFilter, vtkvmtkITKImageToImageFilterFF);
+  vtkTypeMacro(vtkvmtkGradientMagnitudeImageFilter, vtkvmtkITKImageToImageFilterFF);
 
 protected:
   //BTX

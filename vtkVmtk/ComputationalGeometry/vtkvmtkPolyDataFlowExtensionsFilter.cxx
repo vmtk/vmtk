@@ -36,7 +36,7 @@ Version:   $Revision: 1.12 $
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkPolyDataFlowExtensionsFilter, "$Revision: 1.12 $");
+
 vtkStandardNewMacro(vtkvmtkPolyDataFlowExtensionsFilter);
 
 vtkvmtkPolyDataFlowExtensionsFilter::vtkvmtkPolyDataFlowExtensionsFilter()

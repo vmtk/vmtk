@@ -31,7 +31,7 @@ Version:   $Revision: 1.5 $
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkPolyDataBoundaryExtractor, "$Revision: 1.5 $");
+
 vtkStandardNewMacro(vtkvmtkPolyDataBoundaryExtractor);
 
 vtkvmtkPolyDataBoundaryExtractor::vtkvmtkPolyDataBoundaryExtractor()

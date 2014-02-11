@@ -28,7 +28,7 @@
 #include "vtkMath.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkPolyDataFEGradientAssembler, "$Revision: 1.3 $");
+
 vtkStandardNewMacro(vtkvmtkPolyDataFEGradientAssembler);
 
 vtkvmtkPolyDataFEGradientAssembler::vtkvmtkPolyDataFEGradientAssembler()

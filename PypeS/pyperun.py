@@ -20,53 +20,8 @@ try:
     from vmtk import pypeserver
     from vmtk import pypes
 except:
-
-    import os
-
-    if sys.platform == 'darwin':
-        ldEnvironmentVariable = "DYLD_LIBRARY_PATH"
-
-    elif sys.platform == 'win32':
-        ldEnvironmentVariable = "PATH"
-
-    else:
-        ldEnvironmentVariable = "LD_LIBRARY_PATH"
-
-    currentEnviron = dict()
-    currentEnviron[ldEnvironmentVariable] = ""
-    currentEnviron["PYTHONPATH"] = ""
-
-    if os.environ.has_key(ldEnvironmentVariable):
-        currentEnviron[ldEnvironmentVariable] = os.environ[ldEnvironmentVariable]
-
-    if os.environ.has_key("PYTHONPATH"):
-        currentEnviron["PYTHONPATH"] = os.environ["PYTHONPATH"]
-
-    newEnviron = {}
-
-    vmtkhome = os.path.dirname(os.path.abspath(__file__))
-
-    if vmtkhome.endswith('bin'):
-        vmtkhome = os.path.join(os.path.dirname(os.path.abspath(__file__)),"..")
-    else:
-        vmtkhome = os.path.join(os.path.dirname(os.path.abspath(__file__)),"..","..","..")
-	
-    vtkdir = [el for el in os.listdir(os.path.join(vmtkhome,"lib")) if el.startswith('vtk')][0]
-
-    newEnviron[ldEnvironmentVariable] = os.path.join(vmtkhome,"bin") + os.path.pathsep + \
-	                                os.path.join(vmtkhome,"lib",vtkdir) + os.path.pathsep + \
-                                    os.path.join(vmtkhome,"lib","vmtk") + os.path.pathsep + \
-                                    os.path.join(vmtkhome,"lib","InsightToolkit")
-
-    os.environ[ldEnvironmentVariable] = newEnviron[ldEnvironmentVariable] + os.path.pathsep + currentEnviron[ldEnvironmentVariable]
-
-    sys.path.append(os.path.join(vmtkhome,"bin","Python"))
-    sys.path.append(os.path.join(vmtkhome,"lib",vtkdir))
-    sys.path.append(os.path.join(vmtkhome,"lib","vmtk"))
-
-    from vmtk import pypeserver
-    from vmtk import pypes
-
+    print "Unexpected error:", sys.exc_info()[0]
+    raise
 
 if __name__=='__main__':
     manager = Manager()

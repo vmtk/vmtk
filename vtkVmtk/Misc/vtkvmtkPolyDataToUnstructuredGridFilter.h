@@ -33,7 +33,7 @@ class vtkPolyData;
 class VTK_VMTK_MISC_EXPORT vtkvmtkPolyDataToUnstructuredGridFilter : public vtkUnstructuredGridAlgorithm
 {
 public:
-  vtkTypeRevisionMacro(vtkvmtkPolyDataToUnstructuredGridFilter,vtkUnstructuredGridAlgorithm);
+  vtkTypeMacro(vtkvmtkPolyDataToUnstructuredGridFilter,vtkUnstructuredGridAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   static vtkvmtkPolyDataToUnstructuredGridFilter *New();

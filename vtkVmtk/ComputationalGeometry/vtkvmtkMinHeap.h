@@ -41,7 +41,7 @@ Version:   $Revision: 1.3 $
 class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkMinHeap : public vtkObject
 {
   public: 
-  vtkTypeRevisionMacro(vtkvmtkMinHeap,vtkObject);
+  vtkTypeMacro(vtkvmtkMinHeap,vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent); 
 
   static vtkvmtkMinHeap *New();

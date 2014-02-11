@@ -39,7 +39,7 @@ class vtkDataArray;
 class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataCenterlines : public vtkPolyDataAlgorithm
 {
   public: 
-  vtkTypeRevisionMacro(vtkvmtkPolyDataCenterlines,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkvmtkPolyDataCenterlines,vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent); 
 
   static vtkvmtkPolyDataCenterlines *New();

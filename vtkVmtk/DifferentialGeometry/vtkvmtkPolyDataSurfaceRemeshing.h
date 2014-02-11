@@ -38,7 +38,7 @@ class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkPolyDataSurfaceRemeshing : pu
 public:
 
   static vtkvmtkPolyDataSurfaceRemeshing *New();
-  vtkTypeRevisionMacro(vtkvmtkPolyDataSurfaceRemeshing,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkvmtkPolyDataSurfaceRemeshing,vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent); 
 
   vtkSetMacro(AspectRatioThreshold,double);

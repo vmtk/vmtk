@@ -32,7 +32,7 @@
 #include "itkGDCMImageIO.h"
 #include <itksys/SystemTools.hxx>
 
-vtkCxxRevisionMacro(vtkvmtkITKArchetypeImageSeriesScalarReader, "$Revision: 2267 $");
+
 vtkStandardNewMacro(vtkvmtkITKArchetypeImageSeriesScalarReader);
 
 

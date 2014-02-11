@@ -23,7 +23,7 @@ Version:   $Revision: 1.3 $
 #include "vtkvmtkConstants.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkLinearSystemSolver, "$Revision: 1.3 $");
+
 vtkStandardNewMacro(vtkvmtkLinearSystemSolver);
 
 vtkvmtkLinearSystemSolver::vtkvmtkLinearSystemSolver()

@@ -34,7 +34,7 @@
 
 #include "vtkvmtkCenterlineUtilities.h"
 
-vtkCxxRevisionMacro(vtkvmtkPolyDataCenterlineAngularMetricFilter, "$Revision: 1.9 $");
+
 vtkStandardNewMacro(vtkvmtkPolyDataCenterlineAngularMetricFilter);
 
 vtkvmtkPolyDataCenterlineAngularMetricFilter::vtkvmtkPolyDataCenterlineAngularMetricFilter() 

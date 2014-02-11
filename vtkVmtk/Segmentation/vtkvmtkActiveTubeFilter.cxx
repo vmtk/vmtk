@@ -43,7 +43,7 @@ Version:   $Revision: 1.3 $
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkActiveTubeFilter, "$Revision: 1.3 $");
+
 vtkStandardNewMacro(vtkvmtkActiveTubeFilter);
 
 vtkvmtkActiveTubeFilter::vtkvmtkActiveTubeFilter()

@@ -29,7 +29,7 @@ Version:   $Revision: 1.5 $
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkPolyDataScissors, "$Revision: 1.5 $");
+
 vtkStandardNewMacro(vtkvmtkPolyDataScissors);
 
 vtkvmtkPolyDataScissors::vtkvmtkPolyDataScissors()

@@ -29,7 +29,7 @@
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkPolyDataCenterlineMetricFilter, "$Revision: 1.6 $");
+
 
 vtkvmtkPolyDataCenterlineMetricFilter::vtkvmtkPolyDataCenterlineMetricFilter() 
 {

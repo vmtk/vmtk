@@ -31,7 +31,7 @@
 
 #include "vtkvmtkPolyDataBranchUtilities.h"
 
-vtkCxxRevisionMacro(vtkvmtkPolyDataMultipleCylinderHarmonicMappingFilter, "$Revision: 1.7 $");
+
 vtkStandardNewMacro(vtkvmtkPolyDataMultipleCylinderHarmonicMappingFilter);
 
 vtkvmtkPolyDataMultipleCylinderHarmonicMappingFilter::vtkvmtkPolyDataMultipleCylinderHarmonicMappingFilter() 

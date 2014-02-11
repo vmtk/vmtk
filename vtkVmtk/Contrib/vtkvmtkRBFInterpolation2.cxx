@@ -28,7 +28,7 @@ Version:   $Revision: 1.2 $
 #include "vtkMath.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkRBFInterpolation2, "$Revision: 1.2 $");
+
 vtkStandardNewMacro(vtkvmtkRBFInterpolation2);
 
 vtkvmtkRBFInterpolation2::vtkvmtkRBFInterpolation2()

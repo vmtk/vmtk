@@ -36,7 +36,7 @@ class vtkDataArray;
 class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataCenterlineMetricFilter : public vtkPolyDataAlgorithm
 {
 public:
-  vtkTypeRevisionMacro(vtkvmtkPolyDataCenterlineMetricFilter,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkvmtkPolyDataCenterlineMetricFilter,vtkPolyDataAlgorithm);
 
   vtkSetStringMacro(MetricArrayName);
   vtkGetStringMacro(MetricArrayName);

@@ -29,7 +29,7 @@ Version:   $Revision: 1.1 $
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkCenterlineSmoothing, "$Revision: 1.1 $");
+
 vtkStandardNewMacro(vtkvmtkCenterlineSmoothing);
 
 vtkvmtkCenterlineSmoothing::vtkvmtkCenterlineSmoothing()

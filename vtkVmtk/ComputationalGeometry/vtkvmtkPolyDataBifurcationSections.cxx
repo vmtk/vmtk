@@ -37,7 +37,7 @@ Version:   $Revision: 1.1 $
 #include "vtkvmtkPolyDataBranchUtilities.h"
 #include "vtkvmtkPolyDataBranchSections.h"
 
-vtkCxxRevisionMacro(vtkvmtkPolyDataBifurcationSections, "$Revision: 1.1 $");
+
 vtkStandardNewMacro(vtkvmtkPolyDataBifurcationSections);
 
 vtkvmtkPolyDataBifurcationSections::vtkvmtkPolyDataBifurcationSections()

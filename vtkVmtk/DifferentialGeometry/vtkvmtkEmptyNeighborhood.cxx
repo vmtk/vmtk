@@ -22,7 +22,7 @@
 #include "vtkvmtkEmptyNeighborhood.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkEmptyNeighborhood, "$Revision: 1.2 $");
+
 vtkStandardNewMacro(vtkvmtkEmptyNeighborhood);
 
 void vtkvmtkEmptyNeighborhood::Build()

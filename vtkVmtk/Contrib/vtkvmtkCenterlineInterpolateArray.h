@@ -40,7 +40,7 @@ class VTK_VMTK_CONTRIB_EXPORT vtkvmtkCenterlineInterpolateArray : public vtkPoly
 {
 public:
   static vtkvmtkCenterlineInterpolateArray* New();
-  vtkTypeRevisionMacro(vtkvmtkCenterlineInterpolateArray,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkvmtkCenterlineInterpolateArray,vtkPolyDataAlgorithm);
 
   //Description:
   //Default value to fill in when no data is available

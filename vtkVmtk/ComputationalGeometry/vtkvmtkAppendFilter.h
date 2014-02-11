@@ -53,7 +53,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkAppendFilter : public vtkApp
 public:
   static vtkvmtkAppendFilter *New();
 
-  vtkTypeRevisionMacro(vtkvmtkAppendFilter,vtkAppendFilter);
+  vtkTypeMacro(vtkvmtkAppendFilter,vtkAppendFilter);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   vtkSetMacro(MergeDuplicatePoints,int);

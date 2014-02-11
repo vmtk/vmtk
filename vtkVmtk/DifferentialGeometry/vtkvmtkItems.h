@@ -35,7 +35,7 @@ class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkItems : public vtkObject
 {
 public:
 
-  vtkTypeRevisionMacro(vtkvmtkItems,vtkObject);
+  vtkTypeMacro(vtkvmtkItems,vtkObject);
 
   vtkSetMacro(ItemType,int);
   vtkGetMacro(ItemType,int);

@@ -22,7 +22,7 @@
 #include "vtkvmtkEmptyStencil.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkEmptyStencil, "$Revision: 1.4 $");
+
 vtkStandardNewMacro(vtkvmtkEmptyStencil);
 
 void vtkvmtkEmptyStencil::Build()

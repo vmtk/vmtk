@@ -33,7 +33,7 @@ Version:   $Revision: 1.4 $
 class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataScissors : public vtkPolyDataAlgorithm
 {
   public: 
-  vtkTypeRevisionMacro(vtkvmtkPolyDataScissors,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkvmtkPolyDataScissors,vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent); 
   
   static vtkvmtkPolyDataScissors *New();

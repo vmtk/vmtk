@@ -43,7 +43,7 @@
 #include "vtkDijkstraGraphGeodesicPath.h"
 #endif
 
-vtkCxxRevisionMacro(vtkvmtkPolyDataGeodesicRBFInterpolation, "$Revision: 1.3 $");
+
 vtkStandardNewMacro(vtkvmtkPolyDataGeodesicRBFInterpolation);
 
 vtkvmtkPolyDataGeodesicRBFInterpolation::vtkvmtkPolyDataGeodesicRBFInterpolation() 

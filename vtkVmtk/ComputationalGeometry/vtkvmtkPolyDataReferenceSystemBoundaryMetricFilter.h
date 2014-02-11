@@ -38,7 +38,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataReferenceSystemBound
 {
 public:
   static vtkvmtkPolyDataReferenceSystemBoundaryMetricFilter* New();
-  vtkTypeRevisionMacro(vtkvmtkPolyDataReferenceSystemBoundaryMetricFilter,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkvmtkPolyDataReferenceSystemBoundaryMetricFilter,vtkPolyDataAlgorithm);
 
   vtkSetStringMacro(BoundaryMetricArrayName);
   vtkGetStringMacro(BoundaryMetricArrayName);

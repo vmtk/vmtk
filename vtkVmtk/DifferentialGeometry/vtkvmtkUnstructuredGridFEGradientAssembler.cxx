@@ -28,7 +28,7 @@
 #include "vtkMath.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkUnstructuredGridFEGradientAssembler, "$Revision: 1.3 $");
+
 vtkStandardNewMacro(vtkvmtkUnstructuredGridFEGradientAssembler);
 
 vtkvmtkUnstructuredGridFEGradientAssembler::vtkvmtkUnstructuredGridFEGradientAssembler()

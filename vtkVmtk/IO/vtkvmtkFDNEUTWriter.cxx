@@ -25,7 +25,7 @@ Version:   $Revision: 1.6 $
 #include "vtkObjectFactory.h"
 #include "vtkvmtkConstants.h"
 
-vtkCxxRevisionMacro(vtkvmtkFDNEUTWriter, "$Revision: 1.6 $");
+
 vtkStandardNewMacro(vtkvmtkFDNEUTWriter);
 
 vtkvmtkFDNEUTWriter::vtkvmtkFDNEUTWriter()

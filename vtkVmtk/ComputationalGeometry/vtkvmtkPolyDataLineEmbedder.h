@@ -33,7 +33,7 @@ Version:   $Revision: 1.4 $
 class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataLineEmbedder : public vtkPolyDataAlgorithm
 {
   public: 
-  vtkTypeRevisionMacro(vtkvmtkPolyDataLineEmbedder,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkvmtkPolyDataLineEmbedder,vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent); 
 
   static vtkvmtkPolyDataLineEmbedder *New();

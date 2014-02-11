@@ -32,7 +32,7 @@ class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkPolyDataGradientFilter : publ
 {
 public:
   static vtkvmtkPolyDataGradientFilter* New();
-  vtkTypeRevisionMacro(vtkvmtkPolyDataGradientFilter,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkvmtkPolyDataGradientFilter,vtkPolyDataAlgorithm);
 
   vtkSetStringMacro(InputArrayName);
   vtkGetStringMacro(InputArrayName);

@@ -39,7 +39,7 @@ class VTK_VMTK_CONTRIB_EXPORT vtkvmtkPolyDataSampleFunction : public vtkPolyData
 {
 public:
   static vtkvmtkPolyDataSampleFunction* New();
-  vtkTypeRevisionMacro(vtkvmtkPolyDataSampleFunction,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkvmtkPolyDataSampleFunction,vtkPolyDataAlgorithm);
 
   // Description:
   // Specify the implicit function to use to generate data.

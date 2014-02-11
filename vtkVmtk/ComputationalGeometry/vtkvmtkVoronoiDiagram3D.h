@@ -36,7 +36,7 @@ class vtkUnstructuredGrid;
 class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkVoronoiDiagram3D : public vtkPolyDataAlgorithm
 {
   public: 
-  vtkTypeRevisionMacro(vtkvmtkVoronoiDiagram3D,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkvmtkVoronoiDiagram3D,vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent); 
 
   static vtkvmtkVoronoiDiagram3D *New();

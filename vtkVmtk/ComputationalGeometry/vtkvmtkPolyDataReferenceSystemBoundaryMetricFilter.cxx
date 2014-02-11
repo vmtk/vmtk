@@ -36,7 +36,7 @@
 #include "vtkvmtkCenterlineUtilities.h"
 #include "vtkvmtkReferenceSystemUtilities.h"
 
-vtkCxxRevisionMacro(vtkvmtkPolyDataReferenceSystemBoundaryMetricFilter, "$Revision: 1.7 $");
+
 vtkStandardNewMacro(vtkvmtkPolyDataReferenceSystemBoundaryMetricFilter);
 
 vtkvmtkPolyDataReferenceSystemBoundaryMetricFilter::vtkvmtkPolyDataReferenceSystemBoundaryMetricFilter() 

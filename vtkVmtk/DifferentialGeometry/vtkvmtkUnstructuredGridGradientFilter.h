@@ -32,7 +32,7 @@ class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkUnstructuredGridGradientFilte
 {
 public:
   static vtkvmtkUnstructuredGridGradientFilter* New();
-  vtkTypeRevisionMacro(vtkvmtkUnstructuredGridGradientFilter,vtkUnstructuredGridAlgorithm);
+  vtkTypeMacro(vtkvmtkUnstructuredGridGradientFilter,vtkUnstructuredGridAlgorithm);
 
   vtkSetStringMacro(InputArrayName);
   vtkGetStringMacro(InputArrayName);

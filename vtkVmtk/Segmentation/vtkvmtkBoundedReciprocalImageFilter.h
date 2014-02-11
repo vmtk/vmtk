@@ -40,7 +40,7 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkBoundedReciprocalImageFilter : public 
 {
  public:
   static vtkvmtkBoundedReciprocalImageFilter *New();
-  vtkTypeRevisionMacro(vtkvmtkBoundedReciprocalImageFilter, vtkvmtkITKImageToImageFilterFF);
+  vtkTypeMacro(vtkvmtkBoundedReciprocalImageFilter, vtkvmtkITKImageToImageFilterFF);
 
 protected:
   //BTX

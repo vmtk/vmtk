@@ -34,7 +34,7 @@ class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkPolyDataManifoldStencil : pub
 {
 public:
 
-  vtkTypeRevisionMacro(vtkvmtkPolyDataManifoldStencil,vtkvmtkStencil);
+  vtkTypeMacro(vtkvmtkPolyDataManifoldStencil,vtkvmtkStencil);
 
   vtkGetMacro(Area,double);
 

@@ -41,7 +41,7 @@
 #include "vtkDijkstraGraphGeodesicPath.h"
 #endif
 
-vtkCxxRevisionMacro(vtkvmtkPolyDataDijkstraDistanceToPoints, "$Revision: 1.3 $");
+
 vtkStandardNewMacro(vtkvmtkPolyDataDijkstraDistanceToPoints);
 
 vtkvmtkPolyDataDijkstraDistanceToPoints::vtkvmtkPolyDataDijkstraDistanceToPoints() 

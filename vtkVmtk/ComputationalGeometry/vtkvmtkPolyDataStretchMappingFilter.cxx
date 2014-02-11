@@ -40,7 +40,7 @@
 
 #include "vtkvmtkPolyDataBranchUtilities.h"
 
-vtkCxxRevisionMacro(vtkvmtkPolyDataStretchMappingFilter, "$Revision: 1.11 $");
+
 vtkStandardNewMacro(vtkvmtkPolyDataStretchMappingFilter);
 
 vtkvmtkPolyDataStretchMappingFilter::vtkvmtkPolyDataStretchMappingFilter() 

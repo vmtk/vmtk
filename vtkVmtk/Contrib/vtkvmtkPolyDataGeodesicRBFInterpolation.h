@@ -41,7 +41,7 @@ class VTK_VMTK_CONTRIB_EXPORT vtkvmtkPolyDataGeodesicRBFInterpolation : public v
 {
 public:
   static vtkvmtkPolyDataGeodesicRBFInterpolation* New();
-  vtkTypeRevisionMacro(vtkvmtkPolyDataGeodesicRBFInterpolation,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkvmtkPolyDataGeodesicRBFInterpolation,vtkPolyDataAlgorithm);
 
   vtkSetObjectMacro(SeedIds,vtkIdList);
   vtkGetObjectMacro(SeedIds,vtkIdList);

@@ -29,7 +29,7 @@
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkPolyDataDistanceToCenterlines, "$Revision: 1.3 $");
+
 vtkStandardNewMacro(vtkvmtkPolyDataDistanceToCenterlines);
 
 vtkvmtkPolyDataDistanceToCenterlines::vtkvmtkPolyDataDistanceToCenterlines() 

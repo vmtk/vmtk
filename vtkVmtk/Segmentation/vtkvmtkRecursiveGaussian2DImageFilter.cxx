@@ -26,7 +26,7 @@ Version:   $Revision: 1.1 $
 #include "vtkvmtkRecursiveGaussian2DImageFilter.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkRecursiveGaussian2DImageFilter, "$Revision: 1.2 $");
+
 vtkStandardNewMacro(vtkvmtkRecursiveGaussian2DImageFilter);
 
 

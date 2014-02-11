@@ -34,7 +34,7 @@
 #include "DICOMParser.h"
 #include "DICOMAppHelper.h"
 
-vtkCxxRevisionMacro(vtkvmtkDICOMImageReader,"$Revision: 1.8 $");
+
 vtkStandardNewMacro(vtkvmtkDICOMImageReader);
 
 vtkvmtkDICOMImageReader::vtkvmtkDICOMImageReader()

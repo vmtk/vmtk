@@ -34,7 +34,7 @@ class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkPolyDataRigidSurfaceModelling
 public:
 
   static vtkvmtkPolyDataRigidSurfaceModelling *New();
-  vtkTypeRevisionMacro(vtkvmtkPolyDataRigidSurfaceModelling,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkvmtkPolyDataRigidSurfaceModelling,vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent); 
 
 protected:

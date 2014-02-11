@@ -1,3 +1,31 @@
 #import pypes
 #import vtkvmtk
 #import vmtkscripts
+import sys
+import os
+
+if sys.platform == "win32":
+    
+    ldEnvironmentVariable = "PATH"
+    currentEnviron = dict()
+    currentEnviron[ldEnvironmentVariable] = ""
+    currentEnviron["PYTHONPATH"] = ""
+    
+    if os.environ.has_key(ldEnvironmentVariable):
+    	currentEnviron[ldEnvironmentVariable] = os.environ[ldEnvironmentVariable]
+    
+    if os.environ.has_key("PYTHONPATH"):
+    	currentEnviron["PYTHONPATH"] = os.environ["PYTHONPATH"]
+
+    newEnviron = {}
+    vmtkhome = os.path.dirname(os.path.abspath(__file__))
+    vtkdir = (os.path.join(vmtkhome,"lib"))
+    newEnviron[ldEnvironmentVariable] = os.path.join(vmtkhome,"bin") + os.path.pathsep + \
+                                        os.path.join(vtkdir) + os.path.pathsep + \
+                                        os.path.join(vmtkhome) + os.path.pathsep + \
+                                        os.path.join(vmtkhome,"vtk")
+    os.environ[ldEnvironmentVariable] = newEnviron[ldEnvironmentVariable] + os.path.pathsep + currentEnviron[ldEnvironmentVariable]
+    sys.path.append(os.path.join(vmtkhome,"bin"))
+    sys.path.append(os.path.join(vtkdir))
+    sys.path.append(os.path.join(vmtkhome))
+    sys.path.append(os.path.join(vmtkhome,"vtk"))

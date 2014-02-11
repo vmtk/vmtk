@@ -29,7 +29,7 @@ Version:   $Revision: 1.0 $
 
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkCardinalSpline, "$Revision: 1.00 $");
+
 vtkStandardNewMacro(vtkvmtkCardinalSpline);
 
 vtkvmtkCardinalSpline::vtkvmtkCardinalSpline()

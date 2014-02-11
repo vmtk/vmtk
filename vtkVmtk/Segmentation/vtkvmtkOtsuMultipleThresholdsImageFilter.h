@@ -40,7 +40,7 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkOtsuMultipleThresholdsImageFilter : pu
 {
  public:
   static vtkvmtkOtsuMultipleThresholdsImageFilter *New();
-  vtkTypeRevisionMacro(vtkvmtkOtsuMultipleThresholdsImageFilter, vtkSimpleImageToImageFilter);
+  vtkTypeMacro(vtkvmtkOtsuMultipleThresholdsImageFilter, vtkSimpleImageToImageFilter);
 
   vtkGetMacro(NumberOfHistogramBins,int);
   vtkSetMacro(NumberOfHistogramBins,int);

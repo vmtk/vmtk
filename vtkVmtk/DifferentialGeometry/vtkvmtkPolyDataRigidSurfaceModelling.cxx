@@ -24,7 +24,7 @@
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkPolyDataRigidSurfaceModelling, "$Revision: 1.5 $");
+
 vtkStandardNewMacro(vtkvmtkPolyDataRigidSurfaceModelling);
 
 vtkvmtkPolyDataRigidSurfaceModelling::vtkvmtkPolyDataRigidSurfaceModelling()

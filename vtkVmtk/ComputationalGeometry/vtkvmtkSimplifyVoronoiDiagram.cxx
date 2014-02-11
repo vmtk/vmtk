@@ -29,7 +29,7 @@ Version:   $Revision: 1.4 $
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkSimplifyVoronoiDiagram, "$Revision: 1.4 $");
+
 vtkStandardNewMacro(vtkvmtkSimplifyVoronoiDiagram);
 
 vtkvmtkSimplifyVoronoiDiagram::vtkvmtkSimplifyVoronoiDiagram()

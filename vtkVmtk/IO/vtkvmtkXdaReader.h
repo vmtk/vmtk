@@ -38,7 +38,7 @@ class VTK_VMTK_IO_EXPORT vtkvmtkXdaReader : public vtkUnstructuredGridReader
 {
 public:
   static vtkvmtkXdaReader *New();
-  vtkTypeRevisionMacro(vtkvmtkXdaReader,vtkUnstructuredGridReader);
+  vtkTypeMacro(vtkvmtkXdaReader,vtkUnstructuredGridReader);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   vtkSetStringMacro(BoundaryDataArrayName);

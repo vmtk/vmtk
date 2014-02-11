@@ -31,7 +31,7 @@ Version:   $Revision: 1.3 $
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkPolyDataToUnstructuredGridFilter, "$Revision: 1.3 $");
+
 vtkStandardNewMacro(vtkvmtkPolyDataToUnstructuredGridFilter);
 
 int vtkvmtkPolyDataToUnstructuredGridFilter::FillInputPortInformation(int, vtkInformation *info)

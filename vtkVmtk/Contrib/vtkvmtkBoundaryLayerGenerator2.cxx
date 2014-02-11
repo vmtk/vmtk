@@ -42,7 +42,7 @@
 
 #include "vtkvmtkPolyDataBoundaryExtractor.h"
 
-vtkCxxRevisionMacro(vtkvmtkBoundaryLayerGenerator2, "$Revision: 1.7 $");
+
 vtkStandardNewMacro(vtkvmtkBoundaryLayerGenerator2);
 
 vtkvmtkBoundaryLayerGenerator2::vtkvmtkBoundaryLayerGenerator2()

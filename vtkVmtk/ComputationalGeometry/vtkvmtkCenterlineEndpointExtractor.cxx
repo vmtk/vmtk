@@ -25,7 +25,7 @@ Version:   $Revision: 1.6 $
 #include "vtkPolyLine.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkCenterlineEndpointExtractor, "$Revision: 1.6 $");
+
 vtkStandardNewMacro(vtkvmtkCenterlineEndpointExtractor);
 
 vtkvmtkCenterlineEndpointExtractor::vtkvmtkCenterlineEndpointExtractor()

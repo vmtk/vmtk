@@ -31,7 +31,7 @@ Version:   $Revision: 1.1 $
 
 #include "itkNormalizeImageFilter.h"
 
-vtkCxxRevisionMacro(vtkvmtkNormalizeImageFilter, "$Revision: 1.2 $");
+
 vtkStandardNewMacro(vtkvmtkNormalizeImageFilter);
 
 vtkvmtkNormalizeImageFilter::vtkvmtkNormalizeImageFilter()

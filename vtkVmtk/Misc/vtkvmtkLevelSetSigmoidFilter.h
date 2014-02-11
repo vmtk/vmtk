@@ -32,7 +32,7 @@ Version:   $Revision: 1.4 $
 class VTK_VMTK_MISC_EXPORT vtkvmtkLevelSetSigmoidFilter : public vtkSimpleImageToImageFilter
 {
   public: 
-  vtkTypeRevisionMacro(vtkvmtkLevelSetSigmoidFilter,vtkSimpleImageToImageFilter);
+  vtkTypeMacro(vtkvmtkLevelSetSigmoidFilter,vtkSimpleImageToImageFilter);
   void PrintSelf(ostream& os, vtkIndent indent); 
 
   static vtkvmtkLevelSetSigmoidFilter *New();

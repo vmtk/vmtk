@@ -30,7 +30,7 @@ Version:   $Revision: 1.4 $
 #include "vtkInformationVector.h"
 #include "vtkvmtkConstants.h"
 
-vtkCxxRevisionMacro(vtkvmtkSteepestDescentShooter, "$Revision: 1.4 $");
+
 vtkStandardNewMacro(vtkvmtkSteepestDescentShooter);
 
 vtkvmtkSteepestDescentShooter::vtkvmtkSteepestDescentShooter()

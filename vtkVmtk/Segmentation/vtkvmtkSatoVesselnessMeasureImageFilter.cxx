@@ -32,7 +32,7 @@ Version:   $Revision: 1.1 $
 #include "itkMultiScaleHessianBasedMeasureImageFilter.h"
 #include "itkHessian3DToVesselnessMeasureImageFilter.h"
 
-vtkCxxRevisionMacro(vtkvmtkSatoVesselnessMeasureImageFilter, "$Revision: 1.2 $");
+
 vtkStandardNewMacro(vtkvmtkSatoVesselnessMeasureImageFilter);
 
 vtkvmtkSatoVesselnessMeasureImageFilter::vtkvmtkSatoVesselnessMeasureImageFilter()

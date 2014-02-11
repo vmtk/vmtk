@@ -40,7 +40,7 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkCurvesLevelSetImageFilter : public vtk
 {
  public:
   static vtkvmtkCurvesLevelSetImageFilter *New();
-  vtkTypeRevisionMacro(vtkvmtkCurvesLevelSetImageFilter, vtkvmtkITKImageToImageFilterFF);
+  vtkTypeMacro(vtkvmtkCurvesLevelSetImageFilter, vtkvmtkITKImageToImageFilterFF);
 
   float GetIsoSurfaceValue ()
   {

@@ -33,7 +33,7 @@ Version:   $Revision: 1.6 $
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkAnnularCapPolyData, "$Revision: 1.6 $");
+
 vtkStandardNewMacro(vtkvmtkAnnularCapPolyData);
 
 vtkvmtkAnnularCapPolyData::vtkvmtkAnnularCapPolyData()

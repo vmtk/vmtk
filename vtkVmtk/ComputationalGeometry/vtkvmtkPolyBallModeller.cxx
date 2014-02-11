@@ -33,7 +33,7 @@ Version:   $Revision: 1.4 $
 #include "vtkStreamingDemandDrivenPipeline.h"
 #include "vtkPointData.h"
 
-vtkCxxRevisionMacro(vtkvmtkPolyBallModeller, "$Revision: 1.4 $");
+
 vtkStandardNewMacro(vtkvmtkPolyBallModeller);
 
 vtkvmtkPolyBallModeller::vtkvmtkPolyBallModeller()

@@ -40,7 +40,7 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkGeodesicActiveContourLevelSet2DImageFi
 {
  public:
   static vtkvmtkGeodesicActiveContourLevelSet2DImageFilter *New();
-  vtkTypeRevisionMacro(vtkvmtkGeodesicActiveContourLevelSet2DImageFilter, vtkvmtkITKImageToImageFilter2DFF);
+  vtkTypeMacro(vtkvmtkGeodesicActiveContourLevelSet2DImageFilter, vtkvmtkITKImageToImageFilter2DFF);
 
   float GetIsoSurfaceValue ()
   {

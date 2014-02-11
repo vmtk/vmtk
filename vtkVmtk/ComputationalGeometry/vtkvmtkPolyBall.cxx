@@ -23,7 +23,7 @@ Version:   $Revision: 1.2 $
 #include "vtkPointData.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkPolyBall, "$Revision: 1.2 $");
+
 vtkStandardNewMacro(vtkvmtkPolyBall);
 
 vtkvmtkPolyBall::vtkvmtkPolyBall()

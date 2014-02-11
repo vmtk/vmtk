@@ -26,6 +26,6 @@ Version:   $Revision: 1.1 $
 #include "vtkvmtkBoundedReciprocalImageFilter.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkBoundedReciprocalImageFilter, "$Revision: 1.3 $");
+
 vtkStandardNewMacro(vtkvmtkBoundedReciprocalImageFilter);
 

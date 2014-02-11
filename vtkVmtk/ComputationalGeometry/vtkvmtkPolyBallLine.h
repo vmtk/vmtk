@@ -36,7 +36,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyBallLine : public vtkImp
   public:
 
   static vtkvmtkPolyBallLine *New();
-  vtkTypeRevisionMacro(vtkvmtkPolyBallLine,vtkImplicitFunction);
+  vtkTypeMacro(vtkvmtkPolyBallLine,vtkImplicitFunction);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description

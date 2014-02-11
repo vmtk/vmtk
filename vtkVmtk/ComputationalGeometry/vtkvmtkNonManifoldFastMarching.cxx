@@ -33,7 +33,7 @@ Version:   $Revision: 1.5 $
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkNonManifoldFastMarching, "$Revision: 1.5 $");
+
 vtkStandardNewMacro(vtkvmtkNonManifoldFastMarching);
 
 

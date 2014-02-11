@@ -33,7 +33,7 @@ Version:   $Revision: 1.3 $
 class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyBall : public vtkImplicitFunction
 {
   public:
-  vtkTypeRevisionMacro(vtkvmtkPolyBall,vtkImplicitFunction);
+  vtkTypeMacro(vtkvmtkPolyBall,vtkImplicitFunction);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   static vtkvmtkPolyBall *New();

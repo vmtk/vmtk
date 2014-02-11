@@ -33,7 +33,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkTetGenWrapper : public vtkUnstructuredGridAlgo
 {
   public: 
   static vtkvmtkTetGenWrapper *New();
-  vtkTypeRevisionMacro(vtkvmtkTetGenWrapper,vtkUnstructuredGridAlgorithm);
+  vtkTypeMacro(vtkvmtkTetGenWrapper,vtkUnstructuredGridAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent); 
 
   vtkSetMacro(PLC,int);

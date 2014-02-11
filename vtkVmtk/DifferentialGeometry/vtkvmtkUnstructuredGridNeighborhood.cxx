@@ -25,7 +25,7 @@ Version:   $Revision: 1.3 $
 #include "vtkIdList.h"
 #include "vtkCell.h"
 
-vtkCxxRevisionMacro(vtkvmtkUnstructuredGridNeighborhood, "$Revision: 1.3 $");
+
 vtkStandardNewMacro(vtkvmtkUnstructuredGridNeighborhood);
 
 void vtkvmtkUnstructuredGridNeighborhood::Build()

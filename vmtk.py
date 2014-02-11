@@ -23,7 +23,6 @@ if __name__ == '__main__':
     
     if os.environ.has_key("PYTHONPATH"):
     	currentEnviron["PYTHONPATH"] = os.environ["PYTHONPATH"]
-    
     newEnviron = {}
     
     vmtkhome = os.path.dirname(os.path.abspath(__file__))
@@ -33,19 +32,29 @@ if __name__ == '__main__':
     else:
         vmtkhome = os.path.join(os.path.dirname(os.path.abspath(__file__)),"..","..","..")
     
-    vtkdir = [el for el in os.listdir(os.path.join(vmtkhome,"lib")) if el.startswith('vtk')][0]
-    
-    newEnviron[ldEnvironmentVariable] = os.path.join(vmtkhome,"bin") + os.path.pathsep + \
-    								os.path.join(vmtkhome,"lib",vtkdir) + os.path.pathsep + \
-    								os.path.join(vmtkhome,"lib","vmtk") + os.path.pathsep + \
-    								os.path.join(vmtkhome,"lib","InsightToolkit")
-    
+    try:
+        vtkdir = [el for el in os.listdir(os.path.join(vmtkhome,"lib")) if el.startswith('vtk') and os.path.isdir(el)][0]
+        newEnviron[ldEnvironmentVariable] = os.path.join(vmtkhome,"bin") + os.path.pathsep + \
+    								        os.path.join(vmtkhome,"lib",vtkdir) + os.path.pathsep + \
+    								        os.path.join(vmtkhome,"lib","vmtk") + os.path.pathsep + \
+    								        os.path.join(vmtkhome,"lib","InsightToolkit")
+    	sys.path.append(os.path.join(vmtkhome,"bin","Python"))
+        sys.path.append(os.path.join(vmtkhome,"lib",vtkdir))
+        sys.path.append(os.path.join(vmtkhome,"lib","vmtk"))
+        
+    except Exception:
+        vtkdir = (os.path.join(vmtkhome,"lib"))
+        newEnviron[ldEnvironmentVariable] = os.path.join(vmtkhome,"bin") + os.path.pathsep + \
+                                            os.path.join(vtkdir) + os.path.pathsep + \
+                                            os.path.join(vmtkhome) + os.path.pathsep + \
+                                            os.path.join(vmtkhome,"vtk")
+        sys.path.append(os.path.join(vmtkhome,"bin"))
+        sys.path.append(os.path.join(vtkdir))
+        sys.path.append(os.path.join(vmtkhome))
+        sys.path.append(os.path.join(vmtkhome,"vtk"))
+
     os.environ[ldEnvironmentVariable] = newEnviron[ldEnvironmentVariable] + os.path.pathsep + currentEnviron[ldEnvironmentVariable]
-    
-    sys.path.append(os.path.join(vmtkhome,"bin","Python"))
-    sys.path.append(os.path.join(vmtkhome,"lib",vtkdir))
-    sys.path.append(os.path.join(vmtkhome,"lib","vmtk"))
-    
+        
     from vmtk import pypes
     
     vmtkOptions = ['--help', '--ui', '--file']
@@ -118,4 +127,3 @@ if __name__ == '__main__':
                     pipe.Execute() 
                 except Exception:
                     continue
-    

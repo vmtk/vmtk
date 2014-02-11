@@ -36,7 +36,7 @@ Version:   $Revision: 1.7 $
 #include "vtkObjectFactory.h"
 
 
-vtkCxxRevisionMacro(vtkvmtkCenterlineSphereDistance, "$Revision: 1.7 $");
+
 vtkStandardNewMacro(vtkvmtkCenterlineSphereDistance);
 
 

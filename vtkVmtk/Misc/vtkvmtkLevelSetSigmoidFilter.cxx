@@ -28,7 +28,7 @@ Version:   $Revision: 1.4 $
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkLevelSetSigmoidFilter, "$Revision: 1.4 $");
+
 vtkStandardNewMacro(vtkvmtkLevelSetSigmoidFilter);
 
 vtkvmtkLevelSetSigmoidFilter::vtkvmtkLevelSetSigmoidFilter()

@@ -39,7 +39,7 @@ Version:   $Revision: 1.11 $
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkCenterlineSplittingAndGroupingFilter, "$Revision: 1.11 $");
+
 
 vtkvmtkCenterlineSplittingAndGroupingFilter::vtkvmtkCenterlineSplittingAndGroupingFilter()
 {

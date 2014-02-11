@@ -28,7 +28,7 @@
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkPolyDataCylinderHarmonicMappingFilter, "$Revision: 1.5 $");
+
 vtkStandardNewMacro(vtkvmtkPolyDataCylinderHarmonicMappingFilter);
 
 vtkvmtkPolyDataCylinderHarmonicMappingFilter::vtkvmtkPolyDataCylinderHarmonicMappingFilter() 

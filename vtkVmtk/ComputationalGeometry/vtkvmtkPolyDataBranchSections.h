@@ -33,7 +33,7 @@ Version:   $Revision: 1.1 $
 class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataBranchSections : public vtkPolyDataAlgorithm
 {
   public: 
-  vtkTypeRevisionMacro(vtkvmtkPolyDataBranchSections,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkvmtkPolyDataBranchSections,vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent); 
 
   static vtkvmtkPolyDataBranchSections* New();

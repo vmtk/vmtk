@@ -39,7 +39,7 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkCardinalSpline : public vtkCardinalSpl
 public:
   static vtkvmtkCardinalSpline *New();
 
-  vtkTypeRevisionMacro(vtkvmtkCardinalSpline,vtkCardinalSpline);
+  vtkTypeMacro(vtkvmtkCardinalSpline,vtkCardinalSpline);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   virtual double EvaluateDerivative(double t);

@@ -35,7 +35,7 @@ class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkEmptyNeighborhood : public vt
 {
 public:
   static vtkvmtkEmptyNeighborhood* New();
-  vtkTypeRevisionMacro(vtkvmtkEmptyNeighborhood,vtkvmtkNeighborhood);
+  vtkTypeMacro(vtkvmtkEmptyNeighborhood,vtkvmtkNeighborhood);
 
   virtual vtkIdType GetItemType() {return VTK_VMTK_EMPTY_NEIGHBORHOOD;};
 

@@ -34,7 +34,7 @@ Version:   $Revision: 1.4 $
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkvmtkMergeCenterlines, "$Revision: 1.4 $");
+
 vtkStandardNewMacro(vtkvmtkMergeCenterlines);
 
 vtkvmtkMergeCenterlines::vtkvmtkMergeCenterlines()

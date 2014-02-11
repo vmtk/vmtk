@@ -32,7 +32,7 @@ Version:   $Revision: 1.1 $
 class VTK_VMTK_MISC_EXPORT vtkvmtkMeshVorticity : public vtkUnstructuredGridAlgorithm
 {
   public: 
-  vtkTypeRevisionMacro(vtkvmtkMeshVorticity,vtkUnstructuredGridAlgorithm);
+  vtkTypeMacro(vtkvmtkMeshVorticity,vtkUnstructuredGridAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent); 
 
   static vtkvmtkMeshVorticity *New();

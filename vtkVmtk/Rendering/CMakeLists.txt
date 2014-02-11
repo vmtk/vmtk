@@ -1,4 +1,5 @@
 SET (VTK_VMTK_RENDERING_SRCS
+  vtkvmtkImagePlaneWidget.cxx
   vtkvmtkInteractorStyleTrackballCamera.cxx
   )
 

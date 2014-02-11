@@ -38,7 +38,7 @@ Version:   $Revision: 1.12 $
 
 // #define SPIRAL_TEST
 
-vtkCxxRevisionMacro(vtkvmtkCenterlineBranchGeometry, "$Revision: 1.12 $");
+
 vtkStandardNewMacro(vtkvmtkCenterlineBranchGeometry);
 
 vtkvmtkCenterlineBranchGeometry::vtkvmtkCenterlineBranchGeometry()

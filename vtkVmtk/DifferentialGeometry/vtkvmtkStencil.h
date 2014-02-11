@@ -34,7 +34,7 @@ class VTK_VMTK_DIFFERENTIAL_GEOMETRY_EXPORT vtkvmtkStencil : public vtkvmtkNeigh
 {
 public:
 
-  vtkTypeRevisionMacro(vtkvmtkStencil,vtkvmtkNeighborhood);
+  vtkTypeMacro(vtkvmtkStencil,vtkvmtkNeighborhood);
 
   vtkSetMacro(NumberOfComponents,vtkIdType);
   vtkGetMacro(NumberOfComponents,vtkIdType);

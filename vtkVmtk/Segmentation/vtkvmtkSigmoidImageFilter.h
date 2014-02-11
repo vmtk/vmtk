@@ -40,7 +40,7 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkSigmoidImageFilter : public vtkvmtkITK
 {
  public:
   static vtkvmtkSigmoidImageFilter *New();
-  vtkTypeRevisionMacro(vtkvmtkSigmoidImageFilter, vtkvmtkITKImageToImageFilterFF);
+  vtkTypeMacro(vtkvmtkSigmoidImageFilter, vtkvmtkITKImageToImageFilterFF);
 
   void SetAlpha ( float value )
   {
