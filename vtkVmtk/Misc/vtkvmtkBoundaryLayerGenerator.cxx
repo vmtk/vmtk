@@ -651,7 +651,7 @@ int vtkvmtkBoundaryLayerGenerator::CheckTangle(vtkUnstructuredGrid* input, vtkUn
       checkArray->SetValue(j,0);  
       }
     }
-  std::cout << found <<" tangle triangles found"<<std::endl;
+  //std::cout << found <<" tangle triangles found"<<std::endl;
   
   pointList->Delete();
   return check;
