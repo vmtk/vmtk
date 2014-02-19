@@ -34,9 +34,10 @@ class vmtkMeshViewer(pypes.pypeScript):
         self.Opacity = 1.0
         self.ArrayName = ''
         self.ScalarRange = [0.0, 0.0]
+        self.ColorMap = 'cooltowarm'
+        self.NumberOfColors = 256
         self.Color = [-1.0, -1.0, -1.0]
         self.Legend = 0
-        self.Grayscale = 0
         self.FlatInterpolation = 0
 	
         self.Representation = 'surface'
@@ -53,8 +54,9 @@ class vmtkMeshViewer(pypes.pypeScript):
             ['Opacity','opacity','float',1,'(0.0,1.0)','object opacity in the scene'],
             ['ArrayName','array','str',1,'','name of the array where the scalars to be displayed are stored'],
             ['ScalarRange','scalarrange','float',2,'','range of the scalar map'],
+            ['ColorMap','colormap','str',1,'["rainbow","blackbody","cooltowarm","grayscale"]','choose the color map'],
+            ['NumberOfColors','numberofcolors','int',1,'','number of colors in the color map'],
             ['Legend','legend','bool',1,'','toggle scalar bar'],
-            ['Grayscale','grayscale','bool',1,'','toggle color or grayscale'],
             ['Color','color','float',3,'','RGB color of the object in the scene'],
             ['FlatInterpolation','flat','bool',1,'','toggle flat or shaded surface display']
             ])
@@ -107,15 +109,58 @@ class vmtkMeshViewer(pypes.pypeScript):
             if self.ArrayName:
                 self.Mesh.GetPointData().SetActiveScalars(self.ArrayName)
                 array = self.Mesh.GetPointData().GetScalars()
+                
                 if self.ScalarRange[1] > self.ScalarRange[0]:
                     mapper.SetScalarRange(self.ScalarRange)
                 else:
                     mapper.SetScalarRange(array.GetRange(0))
-                if self.Grayscale:
-                    lut = vtk.vtkLookupTable()
+                
+                if self.ColorMap == 'grayscale':
+                    lut = mapper.GetLookupTable()
+                    lut.SetNumberOfTableValues(self.NumberOfColors)
                     lut.SetValueRange(0.0,1.0)
                     lut.SetSaturationRange(0.0,0.0)
+                    lut.Build()
                     mapper.SetLookupTable(lut)
+                
+                if self.ColorMap == 'rainbow':
+                    lut = mapper.GetLookupTable()
+                    lut.SetHueRange(0.666667,0.0)
+                    lut.SetSaturationRange(0.75,0.75)
+                    lut.SetValueRange(1.0,1.0)
+                    lut.SetAlphaRange(1.0,1.0)
+                    lut.SetNumberOfColors(self.NumberOfColors)
+                    lut.Build()
+                    mapper.SetLookupTable(lut)  
+                     
+                if self.ColorMap == 'blackbody': 
+                   lut = mapper.GetLookupTable()
+                   lut.SetNumberOfTableValues(self.NumberOfColors)
+                   colorTransferFunction = vtk.vtkColorTransferFunction()
+                   colorTransferFunction.SetColorSpaceToRGB()
+                   colorTransferFunction.AddRGBPoint(0,0.0,0.0,0.0)
+                   colorTransferFunction.AddRGBPoint(0.4,0.901961,0.0,0.0)
+                   colorTransferFunction.AddRGBPoint(0.8,0.901961,0.901961,0.0)
+                   colorTransferFunction.AddRGBPoint(1.0,1.0,1.0,1.0)
+                   for ii,ss in enumerate([float(xx)/float(self.NumberOfColors) for xx in range(self.NumberOfColors)]):
+                       cc = colorTransferFunction.GetColor(ss)
+                       lut.SetTableValue(ii,cc[0],cc[1],cc[2],1.0)
+                   lut.Build()
+                   mapper.SetLookupTable(lut)
+           
+                if self.ColorMap == 'cooltowarm':
+                   lut = mapper.GetLookupTable()
+                   lut.SetNumberOfTableValues(self.NumberOfColors)
+                   colorTransferFunction = vtk.vtkColorTransferFunction()
+                   colorTransferFunction.SetColorSpaceToDiverging()
+                   colorTransferFunction.AddRGBPoint(0,0.231373,0.298039,0.752941)
+                   colorTransferFunction.AddRGBPoint(0.5,0.865003,0.865003,0.865003)
+                   colorTransferFunction.AddRGBPoint(1.0,0.705882,0.0156863,0.14902)
+                   for ii,ss in enumerate([float(xx)/float(self.NumberOfColors) for xx in range(self.NumberOfColors)]):
+                       cc = colorTransferFunction.GetColor(ss)
+                       lut.SetTableValue(ii,cc[0],cc[1],cc[2],1.0)
+                   lut.Build()
+                   mapper.SetLookupTable(lut)
             else:
                 mapper.ScalarVisibilityOff()
             self.Actor = vtk.vtkActor()
