@@ -43,6 +43,8 @@ class vmtkPathLineAnimator(pypes.pypeScript):
         self.MinTime = 0.0
         self.MaxTime = 1.0
         self.Legend = 0
+        self.ColorMap = 'cooltowarm'
+        self.NumberOfColors = 256
         self.TimeStep = None
         self.StreakLineTimeLength = 0.01
         self.WithScreenshots = 0
@@ -62,6 +64,8 @@ class vmtkPathLineAnimator(pypes.pypeScript):
             ['Method','method','str',1,'["particles","streaklines"]','animator method'],
             ['StreakLineTimeLength','streaklinetimelength','float',1,'(0.0,)'],
             ['Legend','legend','bool',1,'','toggle scalar bar'],
+            ['ColorMap','colormap','str',1,'["rainbow","blackbody","cooltowarm","grayscale"]','change the color map'],
+            ['NumberOfColors','numberofcolors','int',1,'','number of colors in the color map'],
             ['MinTime','mintime','float',1,'(0.0,)'],
             ['MaxTime','maxtime','float',1,'(0.0,)'],
             ['TimeStep','timestep','float',1,'(0.0,)'],
@@ -108,17 +112,57 @@ class vmtkPathLineAnimator(pypes.pypeScript):
         surfaceViewer.vmtkRenderer = self.vmtkRenderer
         surfaceViewer.Surface = self.InputTraces
         surfaceViewer.ArrayName = self.ArrayName
+        surfaceViewer.ColorMap = self.ColorMap
+        surfaceViewer.NumberOfColors = self.NumberOfColors
         surfaceViewer.Execute()
+        
+        if self.ColorMap == 'grayscale':
+            lut = surfaceViewer.Actor.GetMapper().GetLookupTable()
+            lut.SetNumberOfTableValues(self.NumberOfColors)
+            lut.SetValueRange(0.0,1.0)
+            lut.SetSaturationRange(0.0,0.0)
+            lut.Build()
+            surfaceViewer.Actor.GetMapper().SetLookupTable(lut)
+            
+        if self.ColorMap == 'rainbow':
+            lut = surfaceViewer.Actor.GetMapper().GetLookupTable()
+            lut.SetHueRange(0.666667,0.0)
+            lut.SetSaturationRange(0.75,0.75)
+            lut.SetValueRange(1.0,1.0)
+            lut.SetAlphaRange(1.0,1.0)
+            lut.SetNumberOfColors(self.NumberOfColors)
+            lut.Build()
+            surfaceViewer.Actor.GetMapper().SetLookupTable(lut)  
+         
+        if self.ColorMap == 'blackbody': 
+           lut = surfaceViewer.Actor.GetMapper().GetLookupTable()
+           lut.SetNumberOfTableValues(self.NumberOfColors)
+           colorTransferFunction = vtk.vtkColorTransferFunction()
+           colorTransferFunction.SetColorSpaceToRGB()
+           colorTransferFunction.AddRGBPoint(0,0.0,0.0,0.0)
+           colorTransferFunction.AddRGBPoint(0.4,0.901961,0.0,0.0)
+           colorTransferFunction.AddRGBPoint(0.8,0.901961,0.901961,0.0)
+           colorTransferFunction.AddRGBPoint(1.0,1.0,1.0,1.0)
+           for ii,ss in enumerate([float(xx)/float(self.NumberOfColors) for xx in range(self.NumberOfColors)]):
+               cc = colorTransferFunction.GetColor(ss)
+               lut.SetTableValue(ii,cc[0],cc[1],cc[2],1.0)
+           lut.Build()
+           surfaceViewer.Actor.GetMapper().SetLookupTable(lut)
 
-        lut = vtk.vtkLookupTable()
-        lut.SetHueRange(0.666667,0.0)
-        lut.SetSaturationRange(0.75,0.75)
-        lut.SetValueRange(1.0,1.0)
-        lut.SetAlphaRange(1.0,1.0)
-        lut.SetNumberOfColors(256)
-        lut.Build()
-        surfaceViewer.Actor.GetMapper().SetLookupTable(lut)
-                
+        if self.ColorMap == 'cooltowarm':
+           lut = surfaceViewer.Actor.GetMapper().GetLookupTable()
+           lut.SetNumberOfTableValues(self.NumberOfColors)
+           colorTransferFunction = vtk.vtkColorTransferFunction()
+           colorTransferFunction.SetColorSpaceToDiverging()
+           colorTransferFunction.AddRGBPoint(0,0.231373,0.298039,0.752941)
+           colorTransferFunction.AddRGBPoint(0.5,0.865003,0.865003,0.865003)
+           colorTransferFunction.AddRGBPoint(1.0,0.705882,0.0156863,0.14902)
+           for ii,ss in enumerate([float(xx)/float(self.NumberOfColors) for xx in range(self.NumberOfColors)]):
+               cc = colorTransferFunction.GetColor(ss)
+               lut.SetTableValue(ii,cc[0],cc[1],cc[2],1.0)
+           lut.Build()
+           surfaceViewer.Actor.GetMapper().SetLookupTable(lut)
+        
         if (self.Legend == 1):
             self.ScalarBarActor = vtk.vtkScalarBarActor()
             self.ScalarBarActor.SetLookupTable(surfaceViewer.Actor.GetMapper().GetLookupTable())
