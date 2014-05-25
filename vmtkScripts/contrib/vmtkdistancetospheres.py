@@ -58,6 +58,7 @@ class vmtkDistanceToSpheres(pypes.pypeScript):
 	self.ExamineSpheres = vtk.vtkPolyData()
 	self.ExamineSpheresActor = None
 	self.ExamineText = None
+        self.ParametersChanged = False
         
         self.SetScriptName('vmtkdistancetospheres')
         self.SetInputMembers([
@@ -239,6 +240,7 @@ class vmtkDistanceToSpheres(pypes.pypeScript):
                 self.MinDistance = float(splitInputString[2])
             if len(splitInputString) >= 4:
                 self.MaxDistance = float(splitInputString[3])
+            self.ParametersChanged = True
 
     def SwitchModeCallback(self,obj):
 	    #Switch beetween examien and interact mode
@@ -351,8 +353,10 @@ class vmtkDistanceToSpheres(pypes.pypeScript):
         
         
         any = 0
-        while any == 0:
-            self.InitializeSpheres()
+        while any == 0 or self.ParametersChanged:
+            self.ParametersChanged = False
+            if any == 0:
+                self.InitializeSpheres()
             self.vmtkRenderer.Render()
             any = self.Spheres.GetNumberOfPoints()
         
