@@ -9,8 +9,8 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENCE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
 import sys
@@ -32,7 +32,7 @@ class vmtkMeshReader(pypes.pypeScript):
         self.InputFileName = ''
         self.Mesh = 0
         self.Output = 0
-        
+
         self.GhostNodes = 1
         self.VolumeElementsOnly = 0
 
@@ -41,7 +41,7 @@ class vmtkMeshReader(pypes.pypeScript):
         self.SetScriptName('vmtkmeshreader')
         self.SetScriptDoc('read a mesh and stores it in a vtkUnstructuredGrid object')
         self.SetInputMembers([
-            ['Format','f','str',1,'["vtkxml","vtk","fdneut","ngneut","tecplot","tetgen","gambit"]','file format (fdneut - FIDAP neutral format, ngneut - Netgen neutral format)'],
+            ['Format','f','str',1,'["vtkxml", "vtkxmlp", "vtk","fdneut","ngneut","tecplot","tetgen","gambit"]','file format (fdneut - FIDAP neutral format, ngneut - Netgen neutral format)'],
             ['GuessFormat','guessformat','bool',1,'','guess file format from extension'],
             ['Mesh','i','vtkUnstructuredGrid',1,'','the input mesh'],
             ['InputFileName','ifile','str',1,'','input file name'],
@@ -89,6 +89,15 @@ class vmtkMeshReader(pypes.pypeScript):
             self.PrintError('Error: no InputFileName.')
         self.PrintLog('Reading VTK XML mesh file.')
         reader = vtk.vtkXMLUnstructuredGridReader()
+        reader.SetFileName(self.InputFileName)
+        reader.Update()
+        self.Mesh = reader.GetOutput()
+
+    def ReadVTKXMLPMeshFile(self):
+        if (self.InputFileName == ''):
+            self.PrintError('Error: no InputFileName.')
+        self.PrintLog('Reading VTK XML Parallel format mesh file.')
+        reader = vtk.vtkXMLPUnstructuredGridReader()
         reader.SetFileName(self.InputFileName)
         reader.Update()
         self.Mesh = reader.GetOutput()
@@ -271,8 +280,9 @@ class vmtkMeshReader(pypes.pypeScript):
 
     def Execute(self):
 
-        extensionFormats = {'vtu':'vtkxml', 
-                            'vtkxml':'vtkxml', 
+        extensionFormats = {'vtu':'vtkxml',
+                            'vtkxml':'vtkxml',
+                            'pvtu':'vtkxmlp',
                             'vtk':'vtk',
                             'FDNEUT':'fdneut',
                             'xda':'xda',
@@ -303,6 +313,8 @@ class vmtkMeshReader(pypes.pypeScript):
             self.ReadVTKMeshFile()
         elif (self.Format == 'vtkxml'):
             self.ReadVTKXMLMeshFile()
+        elif (self.Format == 'vtkxmlp'):
+            self.ReadVTKXMLPMeshFile()
         elif (self.Format == 'gambit'):
             self.ReadGAMBITMeshFile()
         elif (self.Format == 'fdneut'):
