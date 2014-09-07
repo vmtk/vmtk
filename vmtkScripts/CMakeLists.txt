@@ -36,6 +36,7 @@ SET(SCRIPTS_SRCS
   vmtkendpointextractor.py
   vmtkflowextensions.py
   vmtkicpregistration.py
+  vmtkimagebinarize.py
   vmtkimagecast.py
   vmtkimagecompose.py
   vmtkimagecurvedmpr.py

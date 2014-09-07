@@ -30,6 +30,7 @@ __all__ = [
   'vmtkendpointextractor',
   'vmtkflowextensions',
   'vmtkicpregistration',
+  'vmtkimagebinarize',
   'vmtkimagecast',
   'vmtkimagecompose',
   'vmtkimagecurvedmpr',
