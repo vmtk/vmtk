@@ -34,6 +34,7 @@ class vmtkSurfaceArraySmoothing(pypes.pypeScript):
         self.Surface = None
         self.SurfaceArrayName = ''
         self.Connexity = 1
+        self.Relaxation = 1.0
 
         self.SetScriptName('vmtksurfacearraysmoothing')
         self.SetScriptDoc('Perform smoothing of the point array defined on the surface')
@@ -41,6 +42,7 @@ class vmtkSurfaceArraySmoothing(pypes.pypeScript):
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
             ['SurfaceArrayName','surfacearray','str',1],
             ['Connexity','connexity','int',1,'(1,2)','patch connexity considered in the smoothing procedure'],
+            ['Relaxation','relaxation','float',1,'(0.0,1.0)','relaxation factor']
             ])
         self.SetOutputMembers([
             ['Surface','o','vtkPolyData',1,'','the output surface with the smoothed array','vmtksurfacewriter'],
@@ -82,8 +84,8 @@ class vmtkSurfaceArraySmoothing(pypes.pypeScript):
                             vval = vval + val
                             ddd = ddd + dd
                 val = array.GetComponent(i,0)
-                vval = vval + val
-                newval = vval / (N+1)
+                vval = vval / (N)
+                newval = self.Relaxation * vval + (1 - self.Relaxation) * val
                 array.SetTuple1(i,newval)
         elif self.Connexity == 2:
             for i in range (surfEdges.GetNumberOfPoints()):
@@ -116,8 +118,8 @@ class vmtkSurfaceArraySmoothing(pypes.pypeScript):
                     vval = vval + val
                     ddd = ddd + dd
                 val = array.GetComponent(i,0)
-                vval = vval + val
-                newval = vval / (N+1)
+                vval = vval / (N)
+                newval = self.Relaxation * vval + (1 - self.Relaxation) * val
                 array.SetTuple1(i,newval)
         else:
             self.PrintError ('Error: wrong connexity')
