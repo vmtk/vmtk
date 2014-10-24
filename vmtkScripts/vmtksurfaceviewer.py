@@ -44,6 +44,10 @@ class vmtkSurfaceViewer(pypes.pypeScript):
         self.Color = [-1.0, -1.0, -1.0]
         self.LineWidth = 1
         self.Representation = 'surface'
+        self.DisplayTag = False 
+        self.RegionTagArrayName = 'RegionTagArray'
+        self.NumberOfRegions = 0
+        self.TagSet = []
 
         self.Actor = None
         self.ScalarBarActor = None
@@ -63,6 +67,8 @@ class vmtkSurfaceViewer(pypes.pypeScript):
             ['Legend','legend','bool',1,'','toggle scalar bar'],
             ['FlatInterpolation','flat','bool',1,'','toggle flat or shaded surface display'],
             ['DisplayCellData','celldata','bool',1,'','toggle display of point or cell data'],
+            ['DisplayTag','displaytag','bool',1,'','toggle rendering of tag'],
+            ['RegionTagArrayName','regiontagarray','str',1,'','name of the array where the tags to be displayed are stored'],
             ['Color','color','float',3,'','RGB color of the object in the scene'],
             ['LineWidth','linewidth','int',1,'(0.0,)','width of line objects in the scene'],
             ['LegendTitle','legendtitle','str',1,'','title of the scalar bar']])
@@ -214,12 +220,142 @@ class vmtkSurfaceViewer(pypes.pypeScript):
         if self.OwnRenderer:
             self.vmtkRenderer.Deallocate()
 
+    def BuildViewWithTag(self):
+
+        if not self.vmtkRenderer:
+            self.vmtkRenderer = vmtkrenderer.vmtkRenderer()
+            self.vmtkRenderer.Initialize()
+            self.OwnRenderer = 1
+
+        self.vmtkRenderer.RegisterScript(self) 
+
+        if self.Actor:
+            self.vmtkRenderer.Renderer.RemoveActor(self.Actor)
+
+        if self.ScalarBarActor:
+            self.vmtkRenderer.Renderer.RemoveActor(self.ScalarBarActor)
+
+
+        if self.Surface.GetPointData().GetArray(self.RegionTagArrayName) == None and self.Surface.GetCellData().GetArray(self.RegionTagArrayName) == None:
+            self.PrintError('Error: no regiontagarray with name specified')
+
+        elif self.Surface.GetPointData().GetArray(self.RegionTagArrayName) != None:
+
+            regionTagArray = self.Surface.GetPointData().GetArray(self.RegionTagArrayName)
+            for j in range (self.Surface.GetNumberOfPoints()):
+                if regionTagArray.GetTuple1(j) not in self.TagSet:
+                    self.TagSet.append(regionTagArray.GetTuple1(j))
+            self.TagSet.sort()
+            self.NumberOfRegions = len(self.TagSet)
+
+            tagSetCopy = list(self.TagSet)
+            labelPoints = vtk.vtkPoints()
+            labelPoints.SetNumberOfPoints(len(self.TagSet))
+            point = [0.0,0.0,0.0]
+            for j in range (self.Surface.GetNumberOfPoints()):
+                item = regionTagArray.GetTuple1(j)
+                if item in tagSetCopy:
+                    self.Surface.GetPoint(j, point)
+                    labelPoints.SetPoint(self.TagSet.index(item), point)
+                    tagSetCopy.remove(item)
+
+            self.Surface.GetPointData().SetActiveScalars(self.RegionTagArrayName)
+
+        elif self.Surface.GetCellData().GetArray(self.RegionTagArrayName) != None:
+
+            regionTagArray = self.Surface.GetCellData().GetArray(self.RegionTagArrayName)
+            for j in range (self.Surface.GetNumberOfCells()):
+                if regionTagArray.GetTuple1(j) not in self.TagSet:
+                    self.TagSet.append(regionTagArray.GetTuple1(j))
+            self.TagSet.sort()
+            self.NumberOfRegions = len(self.TagSet)
+
+            tagSetCopy = list(self.TagSet)
+            labelPoints = vtk.vtkPoints()
+            labelPoints.SetNumberOfPoints(len(self.TagSet))
+            point = [0.0,0.0,0.0]
+            
+            cellCenters = vtk.vtkCellCenters()
+            cellCenters.SetInput(self.Surface)
+            cellCenters.Update()
+            
+            regionTagArrayCenters = cellCenters.GetOutput().GetPointData().GetArray(self.RegionTagArrayName)
+            
+            for j in range (cellCenters.GetOutput().GetNumberOfPoints()):
+                item = regionTagArrayCenters.GetTuple1(j)
+                if item in tagSetCopy:
+                    cellCenters.GetOutput().GetPoint(j, point)
+                    labelPoints.SetPoint(self.TagSet.index(item), point)
+                    tagSetCopy.remove(item)
+
+            self.Surface.GetCellData().SetActiveScalars(self.RegionTagArrayName)
+
+        labelPolyData = vtk.vtkPolyData()
+        labelPolyData.SetPoints(labelPoints)
+        labelPolyData.Update()
+
+        labelArray = vtk.vtkIntArray()
+        labelArray.SetNumberOfComponents(1)
+        labelArray.SetNumberOfTuples(self.NumberOfRegions)
+        labelArray.SetName('label')
+        labelArray.FillComponent(0,0)
+
+        labelPolyData.GetPointData().AddArray(labelArray)
+
+        for item in self.TagSet:
+            labelArray.SetTuple1(self.TagSet.index(item), item)
+
+        labelPolyData.GetPointData().SetActiveScalars('label')
+        labelsMapper = vtk.vtkLabeledDataMapper()
+        labelsMapper.SetInput(labelPolyData)
+        labelsMapper.SetLabelModeToLabelScalars()
+        labelsMapper.GetLabelTextProperty().SetColor(1, 1, 1)
+        labelsMapper.GetLabelTextProperty().SetFontSize(14)
+        self.labelsActor = vtk.vtkActor2D()
+        self.labelsActor.SetMapper(labelsMapper)
+        self.vmtkRenderer.Renderer.AddActor(self.labelsActor)
+
+        surfaceMapper = vtk.vtkPolyDataMapper()
+        surfaceMapper.SetInput(self.Surface)
+        surfaceMapper.ScalarVisibilityOn()
+        surfaceMapper.SetScalarRange(self.TagSet[0], self.TagSet[self.NumberOfRegions-1])
+        self.Actor = vtk.vtkActor()
+        self.Actor.SetMapper(surfaceMapper)
+        self.Actor.GetProperty().SetOpacity(self.Opacity)
+        self.Actor.GetProperty().SetLineWidth(self.LineWidth)
+        if self.FlatInterpolation:
+            self.Actor.GetProperty().SetInterpolationToFlat()
+        self.SetSurfaceRepresentation(self.Representation)
+        self.vmtkRenderer.Renderer.AddActor(self.Actor)
+        self.vmtkRenderer.AddKeyBinding('w','Change surface representation.',self.RepresentationCallback)
+
+        if self.Legend and self.Actor:
+            self.ScalarBarActor = vtk.vtkScalarBarActor()
+            self.ScalarBarActor.SetLookupTable(self.Actor.GetMapper().GetLookupTable())
+            self.ScalarBarActor.GetLabelTextProperty().ItalicOff()
+            self.ScalarBarActor.GetLabelTextProperty().BoldOff()
+            self.ScalarBarActor.GetLabelTextProperty().ShadowOff()
+##             self.ScalarBarActor.GetLabelTextProperty().SetColor(0.0,0.0,0.0)
+            self.ScalarBarActor.SetLabelFormat('%.2f')
+            self.ScalarBarActor.SetTitle(self.LegendTitle)
+            self.vmtkRenderer.Renderer.AddActor(self.ScalarBarActor)
+
+        if self.Display:
+            self.vmtkRenderer.Render()
+##            self.vmtkRenderer.Renderer.RemoveActor(self.Actor)
+##            self.vmtkRenderer.Renderer.RemoveActor(self.ScalarBarActor)
+
+        if self.OwnRenderer:
+            self.vmtkRenderer.Deallocate()
 
     def Execute(self):
         if (not self.Surface) and self.Display:
             self.PrintError('Error: no Surface.')
 
-        self.BuildView()
+        if not self.DisplayTag:
+            self.BuildView()
+        else:
+            self.BuildViewWithTag()
         
 if __name__=='__main__':
     main = pypes.pypeMain()
