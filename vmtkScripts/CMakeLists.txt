@@ -111,11 +111,13 @@ SET(SCRIPTS_SRCS
   vmtksurfacecelldatatopointdata.py
   vmtksurfacecenterlineprojection.py
   vmtksurfaceclipper.py
+  vmtksurfacecliploop.py
   vmtksurfaceconnectivity.py
   vmtksurfacecurvature.py
   vmtksurfacedecimation.py
   vmtksurfacedistance.py
   vmtksurfacekiteremoval.py
+  vmtksurfaceloopextraction.py
   vmtksurfacemassproperties.py
   vmtksurfacemodeller.py
   vmtksurfacenormals.py
