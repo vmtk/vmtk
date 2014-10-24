@@ -105,6 +105,7 @@ SET(SCRIPTS_SRCS
   vmtkrbfinterpolation.py
   vmtksurfaceappend.py
   vmtksurfacearrayoperation.py
+  vmtksurfacearraysmoothing.py
   vmtksurfacebooleanoperation.py
   vmtksurfacecapper.py
   vmtksurfacecelldatatopointdata.py
