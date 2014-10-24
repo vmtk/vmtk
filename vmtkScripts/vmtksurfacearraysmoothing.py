@@ -32,11 +32,11 @@ class vmtkSurfaceArraySmoothing(pypes.pypeScript):
         pypes.pypeScript.__init__(self)
 
         self.Surface = None
-        self.SurfaceArrayName = 'SurfaceArray'
+        self.SurfaceArrayName = ''
         self.Connexity = 1
 
         self.SetScriptName('vmtksurfacearraysmoothing')
-        self.SetScriptDoc('')
+        self.SetScriptDoc('Perform smoothing of the point array defined on the surface')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
             ['SurfaceArrayName','surfacearray','str',1],
