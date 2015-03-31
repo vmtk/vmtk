@@ -34,6 +34,7 @@ Version:   $Revision: 1.6 $
 #include "vtkIdList.h"
 #include "vtkMath.h"
 #include "vtkTriangle.h"
+#include "vtkVersion.h"
 
 
 vtkStandardNewMacro(vtkvmtkSmoothCapPolyData);
@@ -107,7 +108,11 @@ int vtkvmtkSmoothCapPolyData::RequestData(
     }
 
   vtkvmtkPolyDataBoundaryExtractor* boundaryExtractor = vtkvmtkPolyDataBoundaryExtractor::New();
+#if (VTK_MAJOR_VERSION <= 5)
   boundaryExtractor->SetInput(input);
+#else
+  boundaryExtractor->SetInputData(input);
+#endif
   boundaryExtractor->Update();
 
   vtkPolyData* boundaries = boundaryExtractor->GetOutput();

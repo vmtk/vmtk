@@ -1,11 +1,29 @@
 set(VTK_VMTK_MISC_TARGET_LINK_LIBRARIES vtkvmtkComputationalGeometry vtkvmtkDifferentialGeometry)
 
+if( ${VTK_VERSION_MAJOR} GREATER 5 )
+  set( VTK_VMTK_MISC_COMPONENTS
+    vtkFiltersFlowPaths
+    vtkFiltersGeometry
+    vtkFiltersModeling
+    vtkImagingCore
+    )
+  if (VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
+    list(APPEND VTK_VMTK_MISC_COMPONENTS
+      vtkWrappingPythonCore
+      )
+  endif(VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
+  find_package( VTK 6.2 COMPONENTS ${VTK_VMTK_MISC_COMPONENTS} REQUIRED )
+  include( ${VTK_USE_FILE} )
+  list( APPEND VTK_VMTK_MISC_TARGET_LINK_LIBRARIES ${VTK_LIBRARIES} )
+else( ${VTK_VERSION_MAJOR} GREATER 5 )
   list( APPEND VTK_VMTK_MISC_TARGET_LINK_LIBRARIES
     vtkCommon
     vtkFiltering
     vtkGraphics
     vtkHybrid
     )
+endif( ${VTK_VERSION_MAJOR} GREATER 5 )
+
 SET (VTK_VMTK_MISC_SRCS
   vtkvmtkAnnularCapPolyData.cxx
   vtkvmtkBoundaryLayerGenerator.cxx

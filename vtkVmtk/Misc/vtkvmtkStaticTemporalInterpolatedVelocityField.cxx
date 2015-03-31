@@ -62,6 +62,7 @@ vtkvmtkStaticTemporalInterpolatedVelocityField::~vtkvmtkStaticTemporalInterpolat
   this->SetTimeStepsTable(NULL);
 }
 
+#if (VTK_MAJOR_VERSION <= 5)
 void vtkvmtkStaticTemporalInterpolatedVelocityField::AddDataSet( vtkDataSet * dataset )
 {
   if ( !dataset )
@@ -99,6 +100,7 @@ void vtkvmtkStaticTemporalInterpolatedVelocityField::SetLastCellId( vtkIdType c,
   
   this->LastDataSetIndex = dataindex;
 }
+#endif
 
 void vtkvmtkStaticTemporalInterpolatedVelocityField::FindTimeRowId(double time, int& prevRowId, int& nextRowId, double& p)
 {
@@ -171,6 +173,7 @@ void vtkvmtkStaticTemporalInterpolatedVelocityField::BuildArrayName(char* prefix
   sprintf(name,"%s%d",prefix,index);
 }
 
+#if (VTK_MAJOR_VERSION <= 5)
 int vtkvmtkStaticTemporalInterpolatedVelocityField::FunctionValues( double * x, double * f )
 {
   vtkDataSet * ds;
@@ -422,10 +425,13 @@ int vtkvmtkStaticTemporalInterpolatedVelocityField::FunctionValues( vtkDataSet *
 
   return  1;
 }
+#endif
 
 void vtkvmtkStaticTemporalInterpolatedVelocityField::CopyParameters( vtkAbstractInterpolatedVelocityField * from )
 {
+#if (VTK_MAJOR_VERSION <= 5)
   this->Superclass::CopyParameters(from);
+#endif
 
   if (from->IsA("vtkvmtkStaticTemporalInterpolatedVelocityField"))
     {

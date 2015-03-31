@@ -25,6 +25,11 @@ Version:   $Revision: 1.6 $
 #include "vtkPointData.h"
 #include "vtkErrorCode.h"
 #include "vtkObjectFactory.h"
+#include "vtkVersion.h"
+#if (VTK_MAJOR_VERSION > 5)
+#include "vtkInformation.h"
+#include "vtkStreamingDemandDrivenPipeline.h"
+#endif
 
 #include <math.h>
 
@@ -135,10 +140,17 @@ void vtkvmtkPNGWriter::Write()
             (this->FilePattern ? strlen(this->FilePattern) : 1) + 10];
 
   // Fill in image information.
-  this->GetInput()->UpdateInformation();
   int *wExtent;
+#if (VTK_MAJOR_VERSION <= 5)
+  this->GetInput()->UpdateInformation();
   wExtent = this->GetInput()->GetWholeExtent();
-  this->FileNumber = this->GetInput()->GetWholeExtent()[4];
+#else
+  this->UpdateInformation();
+  vtkInformation *inInfoImage = this->GetInputPortInformation(0);
+  inInfoImage->Get(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), wExtent);
+#endif
+
+  this->FileNumber = wExtent[4];
   this->MinimumFileNumber = this->MaximumFileNumber = this->FileNumber;
   this->FilesDeleted = 0;
   this->UpdateProgress(0.0);
@@ -147,10 +159,13 @@ void vtkvmtkPNGWriter::Write()
        ++this->FileNumber)
     {
     this->MaximumFileNumber = this->FileNumber;
-    this->GetInput()->SetUpdateExtent(wExtent[0], wExtent[1],
-                                      wExtent[2], wExtent[3],
-                                      this->FileNumber,
-                                      this->FileNumber);
+    int updatedExtent[6] = {wExtent[0], wExtent[1],
+                            wExtent[2], wExtent[3],
+                            this->FileNumber,
+                            this->FileNumber};
+#if (VTK_MAJOR_VERSION <= 5)
+    this->GetInput()->SetUpdateExtent(updatedExtent);
+#endif
     // determine the name
     if (this->FileName)
       {
@@ -168,20 +183,25 @@ void vtkvmtkPNGWriter::Write()
         sprintf(this->InternalFileName, this->FilePattern,this->FileNumber);
         }
       }
+#if (VTK_MAJOR_VERSION <= 5)
     this->GetInput()->UpdateData();
+#endif
     
     if (!this->FlipImage)
       {
+#if (VTK_MAJOR_VERSION <= 5)
       this->WriteSlice(this->GetInput());
+#else
+      this->WriteSlice(this->GetInput(), updatedExtent);
+#endif
       }
     else
       {
       vtkImageData* flippedInput = vtkImageData::New();
       flippedInput->DeepCopy(this->GetInput());
-      flippedInput->SetUpdateExtent(wExtent[0], wExtent[1],
-                                    wExtent[2], wExtent[3],
-                                    this->FileNumber,
-                                    this->FileNumber);
+#if (VTK_MAJOR_VERSION <= 5)
+      flippedInput->SetUpdateExtent(updatedExtent);
+#endif
       vtkDataArray* inputArray = this->GetInput()->GetPointData()->GetScalars();
       vtkDataArray* flippedInputArray = flippedInput->GetPointData()->GetScalars();
       for (int i=0; i<wExtent[3]-wExtent[2]+1; i++)
@@ -191,8 +211,11 @@ void vtkvmtkPNGWriter::Write()
           flippedInputArray->SetTuple((wExtent[3]-wExtent[2]-i)*(wExtent[1]-wExtent[0]+1)+j,inputArray->GetTuple(i*(wExtent[1]-wExtent[0]+1)+j));
           }
         }
-
+#if (VTK_MAJOR_VERSION <= 5)
       this->WriteSlice(flippedInput);
+#else
+      this->WriteSlice(flippedInput, updatedExtent);
+#endif
       flippedInput->Delete();
       }
 

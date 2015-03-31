@@ -2,39 +2,49 @@
 
   Copyright Brigham and Women's Hospital (BWH) All Rights Reserved.
 
-  See Doc/copyright/copyright.txt
+  See COPYRIGHT.txt
   or http://www.slicer.org/copyright/copyright.txt for details.
 
-  Program:   vtkvmtkITK
-  Module:    $HeadURL: http://svn.slicer.org/Slicer3/trunk/Libs/vtkvmtkITK/vtkvmtkITKArchetypeImageSeriesScalarReader.cxx $
-  Date:      $Date: 2007-01-19 19:21:56 +0100 (Fri, 19 Jan 2007) $
-  Version:   $Revision: 2267 $
+  Program:   vtkITK
+  Module:    $HeadURL$
+  Date:      $Date$
+  Version:   $Revision$
 
 ==========================================================================*/
 
 #include "vtkvmtkITKArchetypeImageSeriesScalarReader.h"
 
-#include "vtkImageData.h"
-#include "vtkObjectFactory.h"
-#include "vtkPointData.h"
-#include "vtkDataArray.h"
+// VTK includes
 #include <vtkCommand.h>
+#include <vtkDataArray.h>
+#include <vtkDataArrayTemplate.h>
+#include <vtkImageData.h>
+#include <vtkInformation.h>
+#include <vtkInformationVector.h>
+#include <vtkObjectFactory.h>
+#include <vtkPointData.h>
+#include <vtkStreamingDemandDrivenPipeline.h>
+#include <vtkVersion.h>
 
-#include "itkArchetypeSeriesFileNames.h"
-#include "itkImage.h"
-#include "itkVector.h"
-#include "itkOrientImageFilter.h"
-#include "itkImageSeriesReader.h"
-#include "itkImageFileReader.h"
-#include "itkImportImageContainer.h"
-#include "itkImageRegion.h"
-#include "itkGDCMSeriesFileNames.h"
-#include "itkGDCMImageIO.h"
-#include <itksys/SystemTools.hxx>
-
+// ITK includes
+#include <itkOrientImageFilter.h>
+#include <itkImageSeriesReader.h>
 
 vtkStandardNewMacro(vtkvmtkITKArchetypeImageSeriesScalarReader);
 
+namespace {
+
+template <class T>
+vtkDataArrayTemplate<T>* DownCast(vtkAbstractArray* a)
+{
+#if VTK_MAJOR_VERSION <= 5
+  return static_cast<vtkDataArrayTemplate<T>*>(a);
+#else
+  return vtkDataArrayTemplate<T>::FastDownCast(a);
+#endif
+}
+
+};
 
 //----------------------------------------------------------------------------
 vtkvmtkITKArchetypeImageSeriesScalarReader::vtkvmtkITKArchetypeImageSeriesScalarReader()
@@ -42,7 +52,7 @@ vtkvmtkITKArchetypeImageSeriesScalarReader::vtkvmtkITKArchetypeImageSeriesScalar
 }
 
 //----------------------------------------------------------------------------
-vtkvmtkITKArchetypeImageSeriesScalarReader::~vtkvmtkITKArchetypeImageSeriesScalarReader() 
+vtkvmtkITKArchetypeImageSeriesScalarReader::~vtkvmtkITKArchetypeImageSeriesScalarReader()
 {
 }
 
@@ -56,24 +66,36 @@ void vtkvmtkITKArchetypeImageSeriesScalarReader::PrintSelf(ostream& os, vtkInden
 //----------------------------------------------------------------------------
 // This function reads a data from a file.  The datas extent/axes
 // are assumed to be the same as the file extent/order.
-void vtkvmtkITKArchetypeImageSeriesScalarReader::ExecuteData(vtkDataObject *output)
+int vtkvmtkITKArchetypeImageSeriesScalarReader::RequestData(
+  vtkInformation* vtkNotUsed(request),
+  vtkInformationVector** vtkNotUsed(inputVector),
+  vtkInformationVector* outputVector)
 {
   if (!this->Superclass::Archetype)
     {
       vtkErrorMacro("An Archetype must be specified.");
-      return;
+      return 0;
     }
 
+  vtkInformation *outInfo = outputVector->GetInformationObject(0);
+
+  vtkDataObject * output = outInfo->Get(vtkDataObject::DATA_OBJECT());
   vtkImageData *data = vtkImageData::SafeDownCast(output);
-// removed UpdateInformation: generates an error message
-//   from VTK and doesn't appear to be needed...
-//data->UpdateInformation();
+  // removed UpdateInformation: generates an error message
+  //   from VTK and doesn't appear to be needed...
+  //data->UpdateInformation();
   data->SetExtent(0,0,0,0,0,0);
+#if (VTK_MAJOR_VERSION <= 5)
   data->AllocateScalars();
   data->SetExtent(data->GetWholeExtent());
+#else
+  data->AllocateScalars(outInfo);
+  data->SetExtent(outInfo->Get(
+    vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT()));
+#endif
 
-  /// SCALAR MACRO
-#define vtkvmtkITKExecuteDataFromSeries(typeN, type) \
+/// SCALAR MACRO
+#define vtkITKExecuteDataFromSeries(typeN, type) \
     case typeN: \
     {\
       typedef itk::Image<type,3> image##typeN;\
@@ -102,15 +124,17 @@ void vtkvmtkITKArchetypeImageSeriesScalarReader::ExecuteData(vtkDataObject *outp
         filter = orient##typeN; \
         }\
       filter->UpdateLargestPossibleRegion(); \
-      itk::ImportImageContainer<unsigned long, type>::Pointer PixelContainer##typeN;\
+      itk::ImportImageContainer<itk::SizeValueType, type>::Pointer PixelContainer##typeN;\
       PixelContainer##typeN = filter->GetOutput()->GetPixelContainer();\
       void *ptr = static_cast<void *> (PixelContainer##typeN->GetBufferPointer());\
-      (dynamic_cast<vtkImageData *>( output))->GetPointData()->GetScalars()->SetVoidArray(ptr, PixelContainer##typeN->Size(), 0);\
+      DownCast<type>(data->GetPointData()->GetScalars())                \
+        ->SetVoidArray(ptr, PixelContainer##typeN->Size(), 0,\
+                       vtkDataArrayTemplate<type>::VTK_DATA_ARRAY_DELETE);\
       PixelContainer##typeN->ContainerManageMemoryOff();\
     }\
     break
 
-#define vtkvmtkITKExecuteDataFromFile(typeN, type) \
+#define vtkITKExecuteDataFromFile(typeN, type) \
     case typeN: \
     {\
       typedef itk::Image<type,3> image2##typeN;\
@@ -133,11 +157,13 @@ void vtkvmtkITKArchetypeImageSeriesScalarReader::ExecuteData(vtkDataObject *outp
         orient2##typeN->SetDesiredCoordinateOrientation(this->DesiredCoordinateOrientation); \
         filter = orient2##typeN; \
         } \
-       filter->UpdateLargestPossibleRegion();\
-      itk::ImportImageContainer<unsigned long, type>::Pointer PixelContainer2##typeN;\
+      filter->UpdateLargestPossibleRegion();\
+      itk::ImportImageContainer<itk::SizeValueType, type>::Pointer PixelContainer2##typeN;\
       PixelContainer2##typeN = filter->GetOutput()->GetPixelContainer();\
       void *ptr = static_cast<void *> (PixelContainer2##typeN->GetBufferPointer());\
-      (dynamic_cast<vtkImageData *>( output))->GetPointData()->GetScalars()->SetVoidArray(ptr, PixelContainer2##typeN->Size(), 0);\
+      DownCast<type>(data->GetPointData()->GetScalars())                \
+        ->SetVoidArray(ptr, PixelContainer2##typeN->Size(), 0,\
+                       vtkDataArrayTemplate<type>::VTK_DATA_ARRAY_DELETE);\
       PixelContainer2##typeN->ContainerManageMemoryOff();\
     }\
     break
@@ -146,54 +172,55 @@ void vtkvmtkITKArchetypeImageSeriesScalarReader::ExecuteData(vtkDataObject *outp
   // If there is only one file in the series, just use an image file reader
   if (this->FileNames.size() == 1)
     {
-    if (this->GetNumberOfComponents() == 1) 
+    if (this->GetNumberOfComponents() == 1)
       {
       switch (this->OutputScalarType)
         {
-          vtkvmtkITKExecuteDataFromFile(VTK_DOUBLE, double);
-          vtkvmtkITKExecuteDataFromFile(VTK_FLOAT, float);
-          vtkvmtkITKExecuteDataFromFile(VTK_LONG, long);
-          vtkvmtkITKExecuteDataFromFile(VTK_UNSIGNED_LONG, unsigned long);
-          vtkvmtkITKExecuteDataFromFile(VTK_INT, int);
-          vtkvmtkITKExecuteDataFromFile(VTK_UNSIGNED_INT, unsigned int);
-          vtkvmtkITKExecuteDataFromFile(VTK_SHORT, short);
-          vtkvmtkITKExecuteDataFromFile(VTK_UNSIGNED_SHORT, unsigned short);
-          vtkvmtkITKExecuteDataFromFile(VTK_CHAR, char);
-          vtkvmtkITKExecuteDataFromFile(VTK_UNSIGNED_CHAR, unsigned char);
+          vtkITKExecuteDataFromFile(VTK_DOUBLE, double);
+          vtkITKExecuteDataFromFile(VTK_FLOAT, float);
+          vtkITKExecuteDataFromFile(VTK_LONG, long);
+          vtkITKExecuteDataFromFile(VTK_UNSIGNED_LONG, unsigned long);
+          vtkITKExecuteDataFromFile(VTK_INT, int);
+          vtkITKExecuteDataFromFile(VTK_UNSIGNED_INT, unsigned int);
+          vtkITKExecuteDataFromFile(VTK_SHORT, short);
+          vtkITKExecuteDataFromFile(VTK_UNSIGNED_SHORT, unsigned short);
+          vtkITKExecuteDataFromFile(VTK_CHAR, char);
+          vtkITKExecuteDataFromFile(VTK_UNSIGNED_CHAR, unsigned char);
         default:
           vtkErrorMacro(<< "UpdateFromFile: Unknown data type");
         }
       }
-    else 
+    else
       {
         vtkErrorMacro(<< "UpdateFromFile: Unsupported number of components (only 1 allowed): " << this->GetNumberOfComponents());
       }
     }
   else
     {
-    if (this->GetNumberOfComponents() == 1) 
+    if (this->GetNumberOfComponents() == 1)
       {
       switch (this->OutputScalarType)
         {
-          vtkvmtkITKExecuteDataFromSeries(VTK_DOUBLE, double);
-          vtkvmtkITKExecuteDataFromSeries(VTK_FLOAT, float);
-          vtkvmtkITKExecuteDataFromSeries(VTK_LONG, long);
-          vtkvmtkITKExecuteDataFromSeries(VTK_UNSIGNED_LONG, unsigned long);
-          vtkvmtkITKExecuteDataFromSeries(VTK_INT, int);
-          vtkvmtkITKExecuteDataFromSeries(VTK_UNSIGNED_INT, unsigned int);
-          vtkvmtkITKExecuteDataFromSeries(VTK_SHORT, short);
-          vtkvmtkITKExecuteDataFromSeries(VTK_UNSIGNED_SHORT, unsigned short);
-          vtkvmtkITKExecuteDataFromSeries(VTK_CHAR, char);
-          vtkvmtkITKExecuteDataFromSeries(VTK_UNSIGNED_CHAR, unsigned char);
+          vtkITKExecuteDataFromSeries(VTK_DOUBLE, double);
+          vtkITKExecuteDataFromSeries(VTK_FLOAT, float);
+          vtkITKExecuteDataFromSeries(VTK_LONG, long);
+          vtkITKExecuteDataFromSeries(VTK_UNSIGNED_LONG, unsigned long);
+          vtkITKExecuteDataFromSeries(VTK_INT, int);
+          vtkITKExecuteDataFromSeries(VTK_UNSIGNED_INT, unsigned int);
+          vtkITKExecuteDataFromSeries(VTK_SHORT, short);
+          vtkITKExecuteDataFromSeries(VTK_UNSIGNED_SHORT, unsigned short);
+          vtkITKExecuteDataFromSeries(VTK_CHAR, char);
+          vtkITKExecuteDataFromSeries(VTK_UNSIGNED_CHAR, unsigned char);
         default:
           vtkErrorMacro(<< "UpdateFromFile: Unknown data type");
         }
       }
-    else 
+    else
       {
         vtkErrorMacro(<<"UpdateFromSeries: Unsupported number of components: 1 != " << this->GetNumberOfComponents());
       }
     }
+  return 1;
 }
 
 

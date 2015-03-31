@@ -19,7 +19,6 @@
 #define __vtkvmtkITKImageToImageFilterUSUL_h
 
 
-#include "vtkImageToImageFilter.h"
 #include "vtkvmtkITKImageToImageFilter.h"
 #include "itkImageToImageFilter.h"
 #include "itkVTKImageExport.h"

@@ -34,6 +34,7 @@ Version:   $Revision: 1.3 $
 #include "vtkvmtkITKImageToImageFilterFF.h"
 #include "itkFWHMFeatureImageFilter.h"
 #include "vtkvmtkWin32Header.h"
+#include "vtkVersion.h"
 
 class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkFWHMFeatureImageFilter : public vtkvmtkITKImageToImageFilterFF
 {
@@ -97,7 +98,8 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkFWHMFeatureImageFilter : public vtkvmt
     if (this->vtkExporter->GetInput())
     {
     } 
-     
+
+#if (VTK_MAJOR_VERSION <= 5)
     // Force the internal pipeline to update.
     if (this->GetOutput(0))
       {
@@ -107,6 +109,7 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkFWHMFeatureImageFilter : public vtkvmt
         //          this->SetErrorCode( this->GetOutput(0)->GetSource()->GetErrorCode() );
         }
       }
+#endif
   }
 
 protected:

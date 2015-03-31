@@ -35,6 +35,7 @@ Version:   $Revision: 1.12 $
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
+#include "vtkVersion.h"
 
 
 vtkStandardNewMacro(vtkvmtkPolyDataFlowExtensionsFilter);
@@ -101,7 +102,12 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
   outputPolys->DeepCopy(input->GetPolys());
 
   vtkvmtkPolyDataBoundaryExtractor* boundaryExtractor = vtkvmtkPolyDataBoundaryExtractor::New();
+#if (VTK_MAJOR_VERSION <= 5)
   boundaryExtractor->SetInput(input);
+#else
+  boundaryExtractor->SetInputData(input);
+#endif
+
   boundaryExtractor->Update();
 
   vtkPolyData* boundaries = boundaryExtractor->GetOutput();

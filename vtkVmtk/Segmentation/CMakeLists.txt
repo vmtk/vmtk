@@ -1,11 +1,30 @@
 set(VTK_VMTK_SEGMENTATION_TARGET_LINK_LIBRARIES vtkvmtkDifferentialGeometry vtkvmtkITK ${ITK_LIBRARIES})
 
+if( ${VTK_VERSION_MAJOR} GREATER 5 )
+  set( VTK_VMTK_SEGMENTATION_COMPONENTS
+    vtkCommonComputationalGeometry
+    vtkCommonCore
+    vtkFiltersCore
+    vtkImagingGeneral
+    vtkIOImage
+    )
+  if (VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
+    list(APPEND VTK_VMTK_SEGMENTATION_COMPONENTS
+      vtkWrappingPythonCore
+      )
+  endif(VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
+  find_package( VTK 6.2 COMPONENTS ${VTK_VMTK_SEGMENTATION_COMPONENTS} REQUIRED )
+  include( ${VTK_USE_FILE} )
+  list( APPEND VTK_VMTK_SEGMENTATION_TARGET_LINK_LIBRARIES ${VTK_LIBRARIES} )
+else( ${VTK_VERSION_MAJOR} GREATER 5 )
   list( APPEND VTK_VMTK_SEGMENTATION_TARGET_LINK_LIBRARIES
     vtkCommon
     vtkFiltering
     vtkGraphics
     vtkImaging
     )
+endif( ${VTK_VERSION_MAJOR} GREATER 5 )
+
 SET (VTK_VMTK_SEGMENTATION_SRCS
   vtkvmtkActiveTubeFilter.cxx
   vtkvmtkBoundedReciprocalImageFilter.cxx
@@ -59,7 +78,6 @@ SET (VTK_VMTK_SEGMENTATION_SRCS
 
 INCLUDE_DIRECTORIES (${vtkvmtkITK_SOURCE_DIR})
 INCLUDE_DIRECTORIES (${vtkvmtkITK_BINARY_DIR})
-
 
 set(lib_name vtkvmtkSegmentation)
 

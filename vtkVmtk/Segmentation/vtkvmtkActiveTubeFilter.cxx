@@ -42,6 +42,7 @@ Version:   $Revision: 1.3 $
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
+#include "vtkVersion.h"
 
 
 vtkStandardNewMacro(vtkvmtkActiveTubeFilter);
@@ -514,7 +515,11 @@ int vtkvmtkActiveTubeFilter::RequestData(vtkInformation *vtkNotUsed(request), vt
     }
 
   vtkImageGradient* gradientFilter = vtkImageGradient::New();
+#if (VTK_MAJOR_VERSION <= 5)
   gradientFilter->SetInput(this->PotentialImage);
+#else
+  gradientFilter->SetInputData(this->PotentialImage);
+#endif
   gradientFilter->SetDimensionality(3);
   gradientFilter->Update();
 

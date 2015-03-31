@@ -41,6 +41,7 @@ Version:   $Revision: 1.3 $
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
+#include "vtkVersion.h"
 
 
 vtkStandardNewMacro(vtkvmtkPolyDataPotentialFit);
@@ -540,7 +541,11 @@ int vtkvmtkPolyDataPotentialFit::RequestData(
   this->Displacements->SetNumberOfTuples(numberOfPoints);
 
   vtkImageGradient* gradientFilter = vtkImageGradient::New();
+#if (VTK_MAJOR_VERSION <= 5)
   gradientFilter->SetInput(this->PotentialImage);
+#else
+  gradientFilter->SetInputData(this->PotentialImage);
+#endif
   gradientFilter->SetDimensionality(this->Dimensionality);
   gradientFilter->Update();
 
@@ -577,7 +582,11 @@ int vtkvmtkPolyDataPotentialFit::RequestData(
   this->Neighborhoods->Build();
 
   vtkPolyDataNormals* surfaceNormals = vtkPolyDataNormals::New();
+#if (VTK_MAJOR_VERSION <= 5)
   surfaceNormals->SetInput(input);
+#else
+  surfaceNormals->SetInputData(input);
+#endif
   surfaceNormals->SplittingOff();
   surfaceNormals->AutoOrientNormalsOn();
   surfaceNormals->SetFlipNormals(this->FlipNormals);

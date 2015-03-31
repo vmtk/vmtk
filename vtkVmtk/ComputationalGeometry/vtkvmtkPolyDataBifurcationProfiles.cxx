@@ -30,6 +30,7 @@ Version:   $Revision: 1.1 $
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
+#include "vtkVersion.h"
 
 #include "vtkvmtkConstants.h"
 #include "vtkvmtkCenterlineUtilities.h"
@@ -374,7 +375,11 @@ void vtkvmtkPolyDataBifurcationProfiles::ComputeBifurcationProfiles(vtkPolyData*
     vtkvmtkPolyDataBranchUtilities::ExtractGroup(input,this->GroupIdsArrayName,bifurcationProfileGroupId,false,cylinder);
 
     vtkvmtkPolyDataBoundaryExtractor* boundaryExtractor = vtkvmtkPolyDataBoundaryExtractor::New();
+#if (VTK_MAJOR_VERSION <= 5)
     boundaryExtractor->SetInput(cylinder);
+#else
+    boundaryExtractor->SetInputData(cylinder);
+#endif
     boundaryExtractor->Update();
 
     vtkPolyData* profile = boundaryExtractor->GetOutput();

@@ -23,6 +23,7 @@ Version:   $Revision: 1.5 $
 #include "vtkPointData.h"
 #include "vtkPolyLine.h"
 #include "vtkObjectFactory.h"
+#include "vtkVersion.h"
 
 
 vtkStandardNewMacro(vtkvmtkPolyBallLine);
@@ -115,7 +116,9 @@ double vtkvmtkPolyBallLine::EvaluateFunction(double x[3])
     }
 
   this->Input->BuildCells();
+#if (VTK_MAJOR_VERSION <= 5)
   this->Input->Update();
+#endif
 
   minPolyBallFunctionValue = VTK_VMTK_LARGE_DOUBLE;
 

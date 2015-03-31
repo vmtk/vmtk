@@ -30,6 +30,7 @@ Version:   $Revision: 1.1 $
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
+#include "vtkVersion.h"
 
 
 vtkStandardNewMacro(vtkvmtkMeshVorticity);
@@ -87,7 +88,11 @@ int vtkvmtkMeshVorticity::RequestData(
   char gradientArrayName[] = "VelocityGradient";
 
   vtkvmtkUnstructuredGridGradientFilter* gradientFilter = vtkvmtkUnstructuredGridGradientFilter::New();
+#if (VTK_MAJOR_VERSION <= 5)
   gradientFilter->SetInput(input);
+#else
+  gradientFilter->SetInputData(input);
+#endif
   gradientFilter->SetInputArrayName(this->VelocityArrayName);
   gradientFilter->SetGradientArrayName(gradientArrayName);
   gradientFilter->SetQuadratureOrder(this->QuadratureOrder);

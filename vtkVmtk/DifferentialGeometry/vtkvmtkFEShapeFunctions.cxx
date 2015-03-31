@@ -34,6 +34,7 @@
 #include "vtkTriQuadraticHexahedron.h"
 #include "vtkWedge.h"
 #include "vtkQuadraticWedge.h"
+#include "vtkVersion.h"
 #if VTK_MAJOR_VERSION > 5 || (VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION > 0)
 #include "vtkBiQuadraticQuadraticWedge.h"
 #endif
@@ -331,10 +332,14 @@ void vtkvmtkFEShapeFunctions::GetInterpolationDerivs(vtkCell* cell, double* pcoo
       break;
 #endif
     case VTK_TETRA:
+#if (VTK_MAJOR_VERSION <= 5)
 #if VTK_MAJOR_VERSION > 5 || (VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION > 0)
       vtkTetra::SafeDownCast(cell)->InterpolationDerivs(pcoords,derivs);
 #else
       vtkTetra::SafeDownCast(cell)->InterpolationDerivs(derivs);
+#endif
+#else
+      vtkTetra::SafeDownCast(cell)->InterpolateDerivs(pcoords,derivs);
 #endif
       break;
     case VTK_QUADRATIC_TETRA:

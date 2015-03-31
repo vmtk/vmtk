@@ -27,6 +27,7 @@
 #include "vtkInformationVector.h"
 #include "vtkStreamingDemandDrivenPipeline.h"
 #include "vtkObjectFactory.h"
+#include "vtkVersion.h"
 
 #include <vector>
 #include <string>
@@ -267,7 +268,11 @@ void vtkvmtkDICOMImageReader::OrientImageData()
   if (flipX)
     {
     flipFilterX = vtkImageFlip::New();
+#if (VTK_MAJOR_VERSION <= 5)
     flipFilterX->SetInput(temp);
+#else
+    flipFilterX->SetInputData(temp);
+#endif
     flipFilterX->SetFilteredAxis(0);
     flipFilterX->Update();
     temp0 = flipFilterX->GetOutput();
@@ -282,7 +287,11 @@ void vtkvmtkDICOMImageReader::OrientImageData()
   if (flipY)
     {
     flipFilterY = vtkImageFlip::New();
+#if (VTK_MAJOR_VERSION <= 5)
     flipFilterY->SetInput(temp0);
+#else
+    flipFilterY->SetInputData(temp0);
+#endif
     flipFilterY->SetFilteredAxis(1);
     flipFilterY->Update();
     temp1 = flipFilterY->GetOutput();
@@ -297,7 +306,11 @@ void vtkvmtkDICOMImageReader::OrientImageData()
   if (flipZ)
     {
     flipFilterZ = vtkImageFlip::New();
+#if (VTK_MAJOR_VERSION <= 5)
     flipFilterZ->SetInput(temp1);
+#else
+    flipFilterZ->SetInputData(temp1);
+#endif
     flipFilterZ->SetFilteredAxis(2);
     flipFilterZ->Update();
     temp2 = flipFilterZ->GetOutput();

@@ -42,7 +42,9 @@ option( USE_SYSTEM_VTK
   "Exclude VTK from SuperBuild and use an existing build instead." OFF )
 if( USE_SYSTEM_VTK )
   find_package( VTK REQUIRED )
-  include( ${VTK_USE_FILE} )
+  if( ${VTK_VERSION_MAJOR} LESS 6 )
+    include( ${VTK_USE_FILE} )
+  endif( ${VTK_VERSION_MAJOR} LESS 6 )
 endif( USE_SYSTEM_VTK )
 
 #-----------------------------------------------------------------------------
@@ -131,7 +133,9 @@ else( VMTK_USE_SUPERBUILD )
 
   if ( NOT VTK_FOUND )
     find_package( VTK REQUIRED )
-    include( ${VTK_USE_FILE} )
+    if( ${VTK_VERSION_MAJOR} LESS 6 )
+      include( ${VTK_USE_FILE} )
+    endif( ${VTK_VERSION_MAJOR} LESS 6 )
   endif( NOT VTK_FOUND )
 
 endif( VMTK_USE_SUPERBUILD )

@@ -35,6 +35,7 @@ Version:   $Revision: 1.4 $
 #include "itkFastMarchingUpwindGradientImageFilter.h"
 #include "vtkIdList.h"
 #include "vtkvmtkWin32Header.h"
+#include "vtkVersion.h"
 
 class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkFastMarchingUpwindGradientImageFilter : public vtkvmtkITKImageToImageFilterFF
 {
@@ -161,7 +162,8 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkFastMarchingUpwindGradientImageFilter 
       }
     this->GetImageFilterPointer()->SetTargetPoints(targets);
     } 
-     
+
+#if (VTK_MAJOR_VERSION <= 5)
     // Force the internal pipeline to update.
     if (this->GetOutput(0))
       {
@@ -171,6 +173,7 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkFastMarchingUpwindGradientImageFilter 
         //          this->SetErrorCode( this->GetOutput(0)->GetSource()->GetErrorCode() );
         }
       }
+#endif
   //ETX
   }
 
