@@ -68,7 +68,7 @@ SET_SOURCE_FILES_PROPERTIES (
 
 INCLUDE_DIRECTORIES(${VTK_VMTK_SOURCE_DIR}/Utilities/OpenNL)
 
-SET(VTK_VMTK_DIFFERENTIALGEOMETRY_TARGET_LINK_LIBRARIES vtkvmtkDifferentialGeometry vtkCommon vtkFiltering vtkGraphics vtkvmtkComputationalGeometry nl)
+SET(VTK_VMTK_DIFFERENTIALGEOMETRY_TARGET_LINK_LIBRARIES vtkCommon vtkFiltering vtkGraphics vtkvmtkComputationalGeometry nl)
 
 ADD_LIBRARY (vtkvmtkDifferentialGeometry ${VTK_VMTK_DIFFERENTIALGEOMETRY_SRCS})
 IF(VMTK_LIBRARY_PROPERTIES)
