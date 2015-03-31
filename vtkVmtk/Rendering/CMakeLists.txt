@@ -1,9 +1,17 @@
+set(VTK_VMTK_RENDERING_TARGET_LINK_LIBRARIES )
+
+  list( APPEND VTK_VMTK_RENDERING_TARGET_LINK_LIBRARIES
+    vtkCommon
+    vtkFiltering
+    vtkGraphics
+    vtkHybrid
+    vtkRendering
+    vtkWidgets
+    )
 SET (VTK_VMTK_RENDERING_SRCS
   vtkvmtkImagePlaneWidget.cxx
   vtkvmtkInteractorStyleTrackballCamera.cxx
   )
-
-SET (VTK_VMTK_RENDERING_TARGET_LINK_LIBRARIES vtkvmtkRendering vtkCommon vtkFiltering vtkGraphics vtkHybrid vtkRendering vtkWidgets)
 
 ADD_LIBRARY (vtkvmtkRendering ${VTK_VMTK_RENDERING_SRCS})
 IF(VMTK_LIBRARY_PROPERTIES)
@@ -38,23 +46,10 @@ ENDIF (VTK_VMTK_IN_SLICER)
 
 
 IF (VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
-  VTK_WRAP_PYTHON3(vtkvmtkRenderingPython VTK_VMTK_RENDERING_PYTHON_SRCS "${VTK_VMTK_RENDERING_SRCS}")
-  ADD_LIBRARY(vtkvmtkRenderingPythonD ${VTK_VMTK_RENDERING_PYTHON_SRCS})
-  IF(VMTK_LIBRARY_PROPERTIES)
-    SET_TARGET_PROPERTIES(vtkvmtkRenderingPythonD PROPERTIES ${VMTK_LIBRARY_PROPERTIES})
-  ENDIF(VMTK_LIBRARY_PROPERTIES)
-  ADD_LIBRARY(vtkvmtkRenderingPython MODULE vtkvmtkRenderingPythonInit.cxx)
-  TARGET_LINK_LIBRARIES(vtkvmtkRenderingPythonD vtkvmtkRendering vtkCommon vtkCommonPythonD vtkFiltering vtkFilteringPythonD vtkGraphics vtkGraphicsPythonD vtkRendering vtkRenderingPythonD vtkWidgets vtkWidgetsPythonD)
-  TARGET_LINK_LIBRARIES (vtkvmtkRenderingPython vtkvmtkRenderingPythonD)
-  IF(WIN32 AND NOT CYGWIN)
-     SET_TARGET_PROPERTIES(vtkvmtkRenderingPython PROPERTIES SUFFIX ".pyd")
-  ENDIF(WIN32 AND NOT CYGWIN)
-  INSTALL(TARGETS vtkvmtkRenderingPythonD
-    LIBRARY DESTINATION ${VTK_VMTK_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
-    ARCHIVE DESTINATION ${VTK_VMTK_INSTALL_LIB_DIR} COMPONENT Development
-    RUNTIME DESTINATION ${VTK_VMTK_INSTALL_BIN_DIR} COMPONENT RuntimeExecutables
+  vtkMacroKitPythonWrap(
+    KIT_NAME ${lib_name}
+    KIT_SRCS ${VTK_VMTK_RENDERING_SRCS}
+    KIT_INSTALL_BIN_DIR ${VTK_VMTK_INSTALL_BIN_DIR}
+    KIT_INSTALL_LIB_DIR ${VTK_VMTK_INSTALL_LIB_DIR}
     )
-  INSTALL(TARGETS vtkvmtkRenderingPython
-    LIBRARY DESTINATION ${VTK_VMTK_MODULE_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
-  )
 ENDIF (VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)

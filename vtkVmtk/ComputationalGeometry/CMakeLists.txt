@@ -1,3 +1,10 @@
+set(VTK_VMTK_COMPUTATIONALGEOMETRY_TARGET_LINK_LIBRARIES )
+  list( APPEND VTK_VMTK_COMPUTATIONALGEOMETRY_TARGET_LINK_LIBRARIES
+    vtkCommon
+    vtkFiltering
+    vtkGraphics
+    vtkHybrid
+    )
 SET (VTK_VMTK_COMPUTATIONALGEOMETRY_SRCS
   vtkvmtkAppendFilter.cxx
   vtkvmtkCapPolyData.cxx
@@ -58,13 +65,15 @@ SET_SOURCE_FILES_PROPERTIES (
   ABSTRACT
 )
 
-ADD_LIBRARY (vtkvmtkComputationalGeometry ${VTK_VMTK_COMPUTATIONALGEOMETRY_SRCS})
-IF(VMTK_LIBRARY_PROPERTIES)
-  SET_TARGET_PROPERTIES(vtkvmtkComputationalGeometry PROPERTIES ${VMTK_LIBRARY_PROPERTIES})
-ENDIF(VMTK_LIBRARY_PROPERTIES)
-TARGET_LINK_LIBRARIES(vtkvmtkComputationalGeometry vtkvmtkCommon vtkCommon vtkFiltering vtkGraphics vtkHybrid)
+set(lib_name vtkvmtkComputationalGeometry)
 
-INSTALL(TARGETS vtkvmtkComputationalGeometry
+ADD_LIBRARY (${lib_name} ${VTK_VMTK_COMPUTATIONALGEOMETRY_SRCS})
+IF(VMTK_LIBRARY_PROPERTIES)
+  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES ${VMTK_LIBRARY_PROPERTIES})
+ENDIF(VMTK_LIBRARY_PROPERTIES)
+TARGET_LINK_LIBRARIES(${lib_name} vtkvmtkCommon ${VTK_VMTK_COMPUTATIONALGEOMETRY_TARGET_LINK_LIBRARIES})
+
+INSTALL(TARGETS ${lib_name}
   LIBRARY DESTINATION ${VTK_VMTK_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
   ARCHIVE DESTINATION ${VTK_VMTK_INSTALL_LIB_DIR} COMPONENT Development
   RUNTIME DESTINATION ${VTK_VMTK_INSTALL_BIN_DIR} COMPONENT RuntimeExecutables
@@ -78,7 +87,7 @@ INSTALL(FILES ${files}
 
 ### START VMTK IN SLICER PATCH ###
 IF (VTK_VMTK_IN_SLICER)
-  SET(LIBS vtkvmtkComputationalGeometry)
+  SET(LIBS ${lib_name})
 
   FOREACH(LIB ${LIBS})
     slicer3_set_modules_output_path(${LIB})
@@ -89,25 +98,12 @@ ENDIF (VTK_VMTK_IN_SLICER)
 ### END VMTK IN SLICER PATCH ###
 
 
-
 IF (VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
-  VTK_WRAP_PYTHON3(vtkvmtkComputationalGeometryPython VTK_VMTK_COMPUTATIONALGEOMETRY_PYTHON_SRCS "${VTK_VMTK_COMPUTATIONALGEOMETRY_SRCS}")
-  ADD_LIBRARY(vtkvmtkComputationalGeometryPythonD ${VTK_VMTK_COMPUTATIONALGEOMETRY_PYTHON_SRCS})
-  IF(VMTK_LIBRARY_PROPERTIES)
-    SET_TARGET_PROPERTIES(vtkvmtkComputationalGeometryPythonD PROPERTIES ${VMTK_LIBRARY_PROPERTIES})
-  ENDIF(VMTK_LIBRARY_PROPERTIES)
-  ADD_LIBRARY(vtkvmtkComputationalGeometryPython MODULE vtkvmtkComputationalGeometryPythonInit.cxx)
-  TARGET_LINK_LIBRARIES(vtkvmtkComputationalGeometryPythonD vtkvmtkComputationalGeometry vtkvmtkCommon vtkvmtkCommonPythonD vtkCommon vtkCommonPythonD vtkFiltering vtkFilteringPythonD vtkGraphics vtkGraphicsPythonD vtkHybrid vtkHybridPythonD)
-  TARGET_LINK_LIBRARIES (vtkvmtkComputationalGeometryPython vtkvmtkComputationalGeometryPythonD)
-  IF(WIN32 AND NOT CYGWIN)
-     SET_TARGET_PROPERTIES(vtkvmtkComputationalGeometryPython PROPERTIES SUFFIX ".pyd")
-  ENDIF(WIN32 AND NOT CYGWIN)
-  INSTALL(TARGETS vtkvmtkComputationalGeometryPythonD
-    LIBRARY DESTINATION ${VTK_VMTK_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
-    ARCHIVE DESTINATION ${VTK_VMTK_INSTALL_LIB_DIR} COMPONENT Development
-    RUNTIME DESTINATION ${VTK_VMTK_INSTALL_BIN_DIR} COMPONENT RuntimeExecutables
+  vtkMacroKitPythonWrap(
+    KIT_NAME ${lib_name}
+    KIT_SRCS ${VTK_VMTK_COMPUTATIONALGEOMETRY_SRCS}
+    KIT_PYTHON_LIBRARIES vtkvmtkCommonPythonD
+    KIT_INSTALL_BIN_DIR ${VTK_VMTK_INSTALL_BIN_DIR}
+    KIT_INSTALL_LIB_DIR ${VTK_VMTK_INSTALL_LIB_DIR}
     )
-  INSTALL(TARGETS vtkvmtkComputationalGeometryPython
-    LIBRARY DESTINATION ${VTK_VMTK_MODULE_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
-  )
 ENDIF (VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)

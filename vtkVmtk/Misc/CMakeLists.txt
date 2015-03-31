@@ -1,3 +1,11 @@
+set(VTK_VMTK_MISC_TARGET_LINK_LIBRARIES vtkvmtkComputationalGeometry vtkvmtkDifferentialGeometry)
+
+  list( APPEND VTK_VMTK_MISC_TARGET_LINK_LIBRARIES
+    vtkCommon
+    vtkFiltering
+    vtkGraphics
+    vtkHybrid
+    )
 SET (VTK_VMTK_MISC_SRCS
   vtkvmtkAnnularCapPolyData.cxx
   vtkvmtkBoundaryLayerGenerator.cxx
@@ -30,8 +38,6 @@ SET (VTK_VMTK_MISC_SRCS
   vtkvmtkUnstructuredGridTetraFilter.cxx
   )
 
-SET (VTK_VMTK_MISC_TARGET_LINK_LIBRARIES vtkvmtkComputationalGeometry vtkvmtkDifferentialGeometry vtkCommon vtkFiltering vtkGraphics vtkHybrid)
-
 IF (VTK_VMTK_BUILD_TETGEN)
   SET (VTK_VMTK_MISC_SRCS ${VTK_VMTK_MISC_SRCS} vtkvmtkTetGenWrapper.cxx)
 
@@ -47,13 +53,15 @@ IF (VTK_VMTK_BUILD_STREAMTRACER)
 
 ENDIF (VTK_VMTK_BUILD_STREAMTRACER)
 
-ADD_LIBRARY (vtkvmtkMisc ${VTK_VMTK_MISC_SRCS})
-IF(VMTK_LIBRARY_PROPERTIES)
-  SET_TARGET_PROPERTIES(vtkvmtkMisc PROPERTIES ${VMTK_LIBRARY_PROPERTIES})
-ENDIF(VMTK_LIBRARY_PROPERTIES)
-TARGET_LINK_LIBRARIES(vtkvmtkMisc ${VTK_VMTK_MISC_TARGET_LINK_LIBRARIES})
+set(lib_name vtkvmtkMisc)
 
-INSTALL(TARGETS vtkvmtkMisc
+ADD_LIBRARY (${lib_name} ${VTK_VMTK_MISC_SRCS})
+IF(VMTK_LIBRARY_PROPERTIES)
+  SET_TARGET_PROPERTIES(${lib_name} PROPERTIES ${VMTK_LIBRARY_PROPERTIES})
+ENDIF(VMTK_LIBRARY_PROPERTIES)
+TARGET_LINK_LIBRARIES(${lib_name} ${VTK_VMTK_MISC_TARGET_LINK_LIBRARIES})
+
+INSTALL(TARGETS ${lib_name}
   LIBRARY DESTINATION ${VTK_VMTK_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
   ARCHIVE DESTINATION ${VTK_VMTK_INSTALL_LIB_DIR} COMPONENT Development
   RUNTIME DESTINATION ${VTK_VMTK_INSTALL_BIN_DIR} COMPONENT RuntimeExecutables
@@ -67,7 +75,7 @@ INSTALL(FILES ${files}
 
 ### START VMTK IN SLICER PATCH ###
 IF (VTK_VMTK_IN_SLICER)
-  SET(LIBS vtkvmtkMisc)
+  SET(LIBS ${lib_name})
 
   FOREACH(LIB ${LIBS})
     slicer3_set_modules_output_path(${LIB})
@@ -80,23 +88,11 @@ ENDIF (VTK_VMTK_IN_SLICER)
 
 
 IF (VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
-  VTK_WRAP_PYTHON3(vtkvmtkMiscPython VTK_VMTK_MISC_PYTHON_SRCS "${VTK_VMTK_MISC_SRCS}")
-  ADD_LIBRARY(vtkvmtkMiscPythonD ${VTK_VMTK_MISC_PYTHON_SRCS})
-  IF(VMTK_LIBRARY_PROPERTIES)
-    SET_TARGET_PROPERTIES(vtkvmtkMiscPythonD PROPERTIES ${VMTK_LIBRARY_PROPERTIES})
-  ENDIF(VMTK_LIBRARY_PROPERTIES)
-  ADD_LIBRARY(vtkvmtkMiscPython MODULE vtkvmtkMiscPythonInit.cxx)
-  TARGET_LINK_LIBRARIES(vtkvmtkMiscPythonD vtkvmtkMisc vtkvmtkComputationalGeometry vtkvmtkComputationalGeometryPythonD vtkvmtkDifferentialGeometry vtkvmtkDifferentialGeometryPythonD vtkCommon vtkCommonPythonD vtkFiltering vtkFilteringPythonD vtkGraphics vtkGraphicsPythonD)
-  TARGET_LINK_LIBRARIES (vtkvmtkMiscPython vtkvmtkMiscPythonD)
-  IF(WIN32 AND NOT CYGWIN)
-     SET_TARGET_PROPERTIES(vtkvmtkMiscPython PROPERTIES SUFFIX ".pyd")
-  ENDIF(WIN32 AND NOT CYGWIN)
-  INSTALL(TARGETS vtkvmtkMiscPythonD
-    LIBRARY DESTINATION ${VTK_VMTK_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
-    ARCHIVE DESTINATION ${VTK_VMTK_INSTALL_LIB_DIR} COMPONENT Development
-    RUNTIME DESTINATION ${VTK_VMTK_INSTALL_BIN_DIR} COMPONENT RuntimeExecutables
+  vtkMacroKitPythonWrap(
+    KIT_NAME ${lib_name}
+    KIT_SRCS ${VTK_VMTK_MISC_SRCS}
+    KIT_PYTHON_LIBRARIES vtkvmtkComputationalGeometryPythonD vtkvmtkDifferentialGeometryPythonD
+    KIT_INSTALL_BIN_DIR ${VTK_VMTK_INSTALL_BIN_DIR}
+    KIT_INSTALL_LIB_DIR ${VTK_VMTK_INSTALL_LIB_DIR}
     )
-  INSTALL(TARGETS vtkvmtkMiscPython
-    LIBRARY DESTINATION ${VTK_VMTK_MODULE_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
-  )
 ENDIF (VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
