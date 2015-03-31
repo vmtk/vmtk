@@ -66,32 +66,6 @@ ENDIF (EXISTS ${VTK_DIR}/bin)
 #
 
 #
-# Tcl
-#
-
-IF (VTK_WRAP_TCL)
-
-  OPTION(VTK_VMTK_WRAP_TCL
-         "Wrap classes into the TCL interpreted language."
-         ON)
-
-  IF(VTK_VMTK_WRAP_TCL)
-    SET(VTK_WRAP_TCL3_INIT_DIR "${VTK_VMTK_SOURCE_DIR}/Wrapping")
-    INCLUDE(${VTK_CMAKE_DIR}/vtkWrapTcl.cmake)
-  ENDIF(VTK_VMTK_WRAP_TCL)
-
-ELSE (VTK_WRAP_TCL)
-
-  IF (VTK_VMTK_WRAP_TCL)
-    MESSAGE("Warning. VTK_VMTK_WRAP_TCL is ON but the VTK version you have "
-            "chosen has not support for Tcl (VTK_WRAP_TCL is OFF).  "
-            "Please set VTK_VMTK_WRAP_TCL to OFF.")
-    SET (VTK_VMTK_WRAP_TCL OFF)
-  ENDIF (VTK_VMTK_WRAP_TCL)
-
-ENDIF (VTK_WRAP_TCL)
-
-#
 # Python
 #
 
