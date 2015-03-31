@@ -5,26 +5,24 @@ IF(COMMAND cmake_policy)
   cmake_policy(SET CMP0003 NEW)
 ENDIF(COMMAND cmake_policy)
 
-SUBDIRS(
+set(dirs
+  Utilities
   Common
   ComputationalGeometry
   DifferentialGeometry
   IO
   Misc
   Segmentation
-  Utilities
   )
 
 IF (VTK_USE_RENDERING)
-  SUBDIRS(
-    Rendering
-  )
+  list(APPEND dirs Rendering)
 ENDIF (VTK_USE_RENDERING)
 
 OPTION(VTK_VMTK_CONTRIB "Build and install classes in the vtkVmtk/Contrib directory." OFF)
 
 IF (VTK_VMTK_CONTRIB)
-  SUBDIRS(Contrib)
+  list(APPEND dirs Contrib)
 ENDIF (VTK_VMTK_CONTRIB)
 
 INCLUDE (${VTK_VMTK_SOURCE_DIR}/CMakeOptions.cmake)
@@ -100,3 +98,7 @@ IF (VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
 ENDIF (VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
 
 SET(TETGEN_SOURCE_DIR "${VTK_VMTK_SOURCE_DIR}/Utilities/tetgen1.4.3")
+
+foreach(dir ${dirs})
+  add_subdirectory(${dir})
+endforeach()
