@@ -5,7 +5,7 @@ IF(COMMAND cmake_policy)
   cmake_policy(SET CMP0003 NEW)
 ENDIF(COMMAND cmake_policy)
 
-include(${VTK_VMTK_SOURCE_DIR}/vtkMacroKitPythonWrap.cmake)
+include(${VTK_VMTK_SOURCE_DIR}/vmtkFunctions.cmake)
 
 set(dirs
   Utilities
