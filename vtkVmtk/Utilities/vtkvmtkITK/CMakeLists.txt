@@ -26,9 +26,6 @@ endif( ${VTK_VERSION_MAJOR} GREATER 5 )
 INCLUDE (${CMAKE_ROOT}/Modules/TestBigEndian.cmake)
 TEST_BIG_ENDIAN(CMAKE_WORDS_BIGENDIAN)
 
-#FIND_PACKAGE(ITK REQUIRED)
-#INCLUDE(${ITK_USE_FILE})
-
 SET(vtkvmtkITK_SRCS
     vtkvmtkITKArchetypeImageSeriesReader.cxx
     vtkvmtkITKArchetypeImageSeriesScalarReader.cxx
@@ -65,7 +62,6 @@ INSTALL(TARGETS ${lib_name}
   RUNTIME DESTINATION ${VTK_VMTK_INSTALL_BIN_DIR} COMPONENT RuntimeExecutables
 )
 
-#FILE(GLOB files "${vtkvmtkITK_SRCS}/*.h")
 FILE(GLOB files "${VTK_VMTK_SOURCE_DIR}/Utilities/${lib_name}/*.h")
 INSTALL(FILES ${files} ${VTK_VMTK_ITK_EXTRA_INCLUDES}
   DESTINATION ${VTK_VMTK_INSTALL_INCLUDE_DIR}
