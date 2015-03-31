@@ -61,19 +61,6 @@ INSTALL(FILES ${files}
   DESTINATION ${VTK_VMTK_INSTALL_INCLUDE_DIR}
   COMPONENT Development)
 
-### START VMTK IN SLICER PATCH ###
-IF (VTK_VMTK_IN_SLICER)
-  SET(LIBS ${lib_name})
-
-  FOREACH(LIB ${LIBS})
-    slicer3_set_modules_output_path(${LIB})
-  ENDFOREACH(LIB ${LIBS})
-    
-  slicer3_install_modules(${LIBS})
-ENDIF (VTK_VMTK_IN_SLICER)
-### END VMTK IN SLICER PATCH ###
-
-
 IF (VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
   vtkMacroKitPythonWrap(
     KIT_NAME ${lib_name}
