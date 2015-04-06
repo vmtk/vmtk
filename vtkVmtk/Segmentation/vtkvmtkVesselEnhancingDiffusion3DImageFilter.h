@@ -35,6 +35,7 @@ Version:   $Revision: 1.2 $
 #include "vtkvmtkITKImageToImageFilterFF.h"
 #include "itkVesselEnhancingDiffusion3DImageFilter.h"
 #include "vtkvmtkWin32Header.h"
+#include "vtkVersion.h"
 
 class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkVesselEnhancingDiffusion3DImageFilter : public vtkvmtkITKImageToImageFilterFF
 {
@@ -154,7 +155,7 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkVesselEnhancingDiffusion3DImageFilter 
       scales.push_back(this->ComputeSigmaValue(i));
       }
     this->GetImageFilterPointer()->SetScales(scales);
-
+#if (VTK_MAJOR_VERSION <= 5) 
     if (this->GetOutput(0))
       {
         this->GetOutput(0)->Update();
@@ -163,6 +164,7 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkVesselEnhancingDiffusion3DImageFilter 
             //          this->SetErrorCode( this->GetOutput(0)->GetSource()->GetErrorCode() );
           }
       }
+#endif
   }
 
 //BTX

@@ -33,6 +33,7 @@ Version:   $Revision: 1.4 $
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
+#include "vtkVersion.h"
 
 
 vtkStandardNewMacro(vtkvmtkMergeCenterlines);
@@ -160,7 +161,11 @@ int vtkvmtkMergeCenterlines::RequestData(vtkInformation *vtkNotUsed(request), vt
     }
 
   vtkCleanPolyData* cleaner = vtkCleanPolyData::New();
+#if (VTK_MAJOR_VERSION <= 5)
   cleaner->SetInput(input);
+#else
+  cleaner->SetInputData(input);
+#endif
   cleaner->Update();
   
   if (this->ResamplingStepLength < 1E-12)
@@ -169,7 +174,11 @@ int vtkvmtkMergeCenterlines::RequestData(vtkInformation *vtkNotUsed(request), vt
     }
 
   vtkSplineFilter* resampler = vtkSplineFilter::New();
+#if (VTK_MAJOR_VERSION <= 5)
   resampler->SetInput(cleaner->GetOutput());
+#else
+  resampler->SetInputConnection(cleaner->GetOutputPort());
+#endif
   resampler->SetSubdivideToLength();
   resampler->SetLength(this->ResamplingStepLength);
   resampler->Update();
@@ -280,7 +289,11 @@ int vtkvmtkMergeCenterlines::RequestData(vtkInformation *vtkNotUsed(request), vt
     }
 
   vtkvmtkCenterlineBifurcationReferenceSystems* referenceSystemsFilter = vtkvmtkCenterlineBifurcationReferenceSystems::New();
+#if (VTK_MAJOR_VERSION <= 5)
   referenceSystemsFilter->SetInput(resampledCenterlines);
+#else
+  referenceSystemsFilter->SetInputData(resampledCenterlines);
+#endif
   referenceSystemsFilter->SetRadiusArrayName(this->RadiusArrayName);
   referenceSystemsFilter->SetGroupIdsArrayName(this->GroupIdsArrayName);
   referenceSystemsFilter->SetBlankingArrayName(this->BlankingArrayName);

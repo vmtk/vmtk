@@ -21,7 +21,6 @@
 
 
 #include "vtkvmtkITKImageToImageFilter.h"
-#include "vtkImageToImageFilter.h"
 #include "itkImageToImageFilter.h"
 #include "itkVTKImageExport.h"
 #include "itkVTKImageImport.h"

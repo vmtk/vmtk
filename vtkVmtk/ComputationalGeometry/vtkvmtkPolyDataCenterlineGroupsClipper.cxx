@@ -32,6 +32,8 @@ Version:   $Revision: 1.9 $
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
+#include "vtkVersion.h"
+
 #include "vtkvmtkConstants.h"
 
 
@@ -299,7 +301,11 @@ int vtkvmtkPolyDataCenterlineGroupsClipper::RequestData(
       }
 
     vtkClipPolyData* clipper = vtkClipPolyData::New();
+#if (VTK_MAJOR_VERSION <= 5)
     clipper->SetInput(clippingInput);
+#else
+    clipper->SetInputData(clippingInput);
+#endif
     clipper->SetValue(this->ClipValue);
     clipper->GenerateClipScalarsOff();
     clipper->SetGenerateClippedOutput(this->GenerateClippedOutput);
@@ -318,7 +324,11 @@ int vtkvmtkPolyDataCenterlineGroupsClipper::RequestData(
       {
       vtkPolyData* clippedOutputBranch = vtkPolyData::New();
       clippedOutputBranch->DeepCopy(clipper->GetClippedOutput());
+#if (VTK_MAJOR_VERSION <= 5)
       appendClippedOutput->AddInput(clippedOutputBranch);
+#else
+      appendClippedOutput->AddInputData(clippedOutputBranch);
+#endif
       clippedOutputBranch->Delete();
       }
     
@@ -328,7 +338,11 @@ int vtkvmtkPolyDataCenterlineGroupsClipper::RequestData(
     groupIdsArray->FillComponent(0,groupId);
 
     clippedBranch->GetPointData()->AddArray(groupIdsArray);
+#if (VTK_MAJOR_VERSION <= 5)
     appendBranches->AddInput(clippedBranch);
+#else
+    appendBranches->AddInputData(clippedBranch);
+#endif
     groupIdsArray->Delete();
     clippedBranch->Delete();
     clipper->Delete();

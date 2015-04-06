@@ -25,11 +25,8 @@
 #ifndef __vtkvmtkDICOMImageReader_h
 #define __vtkvmtkDICOMImageReader_h
 
-#include "vtkDICOMImageReader.h"
 #include "vtkvmtkWin32Header.h"
-
-//#include "DICOMParser/DICOMParser.h"
-//#include "DICOMParser/DICOMAppHelper.h"
+#include "vtkDICOMImageReader.h"
 
 class VTK_VMTK_IO_EXPORT vtkvmtkDICOMImageReader : public vtkDICOMImageReader
 {

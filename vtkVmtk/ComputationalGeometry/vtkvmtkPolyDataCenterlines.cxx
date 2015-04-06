@@ -38,6 +38,7 @@ Version:   $Revision: 1.6 $
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
+#include "vtkVersion.h"
 
 
 vtkStandardNewMacro(vtkvmtkPolyDataCenterlines);
@@ -191,7 +192,11 @@ int vtkvmtkPolyDataCenterlines::RequestData(
     }
 
   vtkPolyDataNormals* surfaceNormals = vtkPolyDataNormals::New();
+#if (VTK_MAJOR_VERSION <= 5)
   surfaceNormals->SetInput(input);
+#else
+  surfaceNormals->SetInputData(input);
+#endif
   surfaceNormals->SplittingOff();
   surfaceNormals->AutoOrientNormalsOn();
   surfaceNormals->SetFlipNormals(this->FlipNormals);
@@ -203,7 +208,11 @@ int vtkvmtkPolyDataCenterlines::RequestData(
     {
     vtkDelaunay3D* delaunayTessellator = vtkDelaunay3D::New();
     delaunayTessellator->CreateDefaultLocator();
+#if (VTK_MAJOR_VERSION <= 5)
     delaunayTessellator->SetInput(surfaceNormals->GetOutput());
+#else
+    delaunayTessellator->SetInputConnection(surfaceNormals->GetOutputPort());
+#endif
     delaunayTessellator->SetTolerance(this->DelaunayTolerance);
     delaunayTessellator->Update();
 
@@ -211,7 +220,11 @@ int vtkvmtkPolyDataCenterlines::RequestData(
     delaunay->GetPointData()->AddArray(surfaceNormals->GetOutput()->GetPointData()->GetNormals());
 
     vtkvmtkInternalTetrahedraExtractor* internalTetrahedraExtractor = vtkvmtkInternalTetrahedraExtractor::New();
+#if (VTK_MAJOR_VERSION <= 5)
     internalTetrahedraExtractor->SetInput(delaunayTessellator->GetOutput());
+#else
+    internalTetrahedraExtractor->SetInputConnection(delaunayTessellator->GetOutputPort());
+#endif
     internalTetrahedraExtractor->SetOutwardNormalsArrayName(surfaceNormals->GetOutput()->GetPointData()->GetNormals()->GetName());
     if (this->CapCenterIds)
       {
@@ -228,7 +241,11 @@ int vtkvmtkPolyDataCenterlines::RequestData(
     }
 
   vtkvmtkVoronoiDiagram3D* voronoiDiagramFilter = vtkvmtkVoronoiDiagram3D::New();
+#if (VTK_MAJOR_VERSION <= 5)
   voronoiDiagramFilter->SetInput(this->DelaunayTessellation);
+#else
+  voronoiDiagramFilter->SetInputData(this->DelaunayTessellation);
+#endif
   voronoiDiagramFilter->SetRadiusArrayName(this->RadiusArrayName);
   voronoiDiagramFilter->Update();
 
@@ -239,7 +256,11 @@ int vtkvmtkPolyDataCenterlines::RequestData(
   if (this->SimplifyVoronoi)
     {
     vtkvmtkSimplifyVoronoiDiagram* voronoiDiagramSimplifier = vtkvmtkSimplifyVoronoiDiagram::New();
+#if (VTK_MAJOR_VERSION <= 5)
     voronoiDiagramSimplifier->SetInput(voronoiDiagramFilter->GetOutput());
+#else
+    voronoiDiagramSimplifier->SetInputConnection(voronoiDiagramFilter->GetOutputPort());
+#endif
     voronoiDiagramSimplifier->SetUnremovablePointIds(voronoiDiagramFilter->GetPoleIds());
     voronoiDiagramSimplifier->Update();
     voronoiDiagram = voronoiDiagramSimplifier->GetOutput();
@@ -248,7 +269,11 @@ int vtkvmtkPolyDataCenterlines::RequestData(
     }
 
   vtkArrayCalculator* voronoiCostFunctionCalculator = vtkArrayCalculator::New();
+#if (VTK_MAJOR_VERSION <= 5)
   voronoiCostFunctionCalculator->SetInput(voronoiDiagram);
+#else
+  voronoiCostFunctionCalculator->SetInputData(voronoiDiagram);
+#endif
   voronoiCostFunctionCalculator->SetAttributeModeToUsePointData();
   voronoiCostFunctionCalculator->AddScalarVariable("R",this->RadiusArrayName,0);
   voronoiCostFunctionCalculator->SetFunction(this->CostFunction);
@@ -286,7 +311,11 @@ int vtkvmtkPolyDataCenterlines::RequestData(
     }
 
   vtkvmtkNonManifoldFastMarching* voronoiFastMarching = vtkvmtkNonManifoldFastMarching::New();
+#if (VTK_MAJOR_VERSION <= 5)
   voronoiFastMarching->SetInput(vtkPolyData::SafeDownCast(voronoiCostFunctionCalculator->GetOutput()));
+#else
+  voronoiFastMarching->SetInputConnection(voronoiCostFunctionCalculator->GetOutputPort());
+#endif
   voronoiFastMarching->SetCostFunctionArrayName(this->CostFunctionArrayName);
   voronoiFastMarching->SetSolutionArrayName(this->EikonalSolutionArrayName);
   voronoiFastMarching->SeedsBoundaryConditionsOn();
@@ -294,10 +323,16 @@ int vtkvmtkPolyDataCenterlines::RequestData(
   voronoiFastMarching->Update();
 
   this->VoronoiDiagram->ShallowCopy(voronoiFastMarching->GetOutput());
+#if (VTK_MAJOR_VERSION <= 5)
   this->VoronoiDiagram->Update();
+#endif
 
   vtkvmtkSteepestDescentLineTracer* centerlineBacktracing = vtkvmtkSteepestDescentLineTracer::New();
+#if (VTK_MAJOR_VERSION <= 5)
   centerlineBacktracing->SetInput(voronoiFastMarching->GetOutput());
+#else
+  centerlineBacktracing->SetInputConnection(voronoiFastMarching->GetOutputPort());
+#endif
   centerlineBacktracing->SetDataArrayName(this->RadiusArrayName);
   centerlineBacktracing->SetDescentArrayName(this->EikonalSolutionArrayName);
   centerlineBacktracing->SetEdgeArrayName(this->EdgeArrayName);
@@ -504,7 +539,9 @@ void vtkvmtkPolyDataCenterlines::AppendEndPoints(vtkPoints* endPointPairs)
   completeCenterlines->SetPoints(completeCenterlinesPoints);
   completeCenterlines->SetLines(completeCenterlinesCellArray);
   completeCenterlines->GetPointData()->AddArray(completeCenterlinesRadiusArray);
+#if (VTK_MAJOR_VERSION <= 5)
   completeCenterlines->Update();
+#endif
   
   output->ShallowCopy(completeCenterlines);
 
@@ -593,7 +630,9 @@ void vtkvmtkPolyDataCenterlines::ResampleCenterlines()
   resampledCenterlines->SetPoints(resampledCenterlinesPoints);
   resampledCenterlines->SetLines(resampledCenterlinesCellArray);
   resampledCenterlines->GetPointData()->AddArray(resampledCenterlinesRadiusArray);
+#if (VTK_MAJOR_VERSION <= 5)
   resampledCenterlines->Update();
+#endif
 
   output->ShallowCopy(resampledCenterlines);
 

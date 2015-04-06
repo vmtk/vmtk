@@ -40,6 +40,7 @@ Version:   $Revision: 1.6 $
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
+#include "vtkVersion.h"
 
 
 vtkStandardNewMacro(vtkvmtkPolyDataNetworkExtraction);
@@ -95,7 +96,11 @@ void vtkvmtkPolyDataNetworkExtraction::BoundaryExtractor(vtkPolyData* polyInput,
   boundaryExtractor->FeatureEdgesOff();
   boundaryExtractor->NonManifoldEdgesOff();
   boundaryExtractor->ManifoldEdgesOff();
+#if (VTK_MAJOR_VERSION <= 5)
   boundaryExtractor->SetInput(polyInput);
+#else
+  boundaryExtractor->SetInputData(polyInput);
+#endif
   boundaryExtractor->Update();
 
   if (boundaryExtractor->GetOutput()->GetNumberOfCells()==0) 
@@ -105,14 +110,24 @@ void vtkvmtkPolyDataNetworkExtraction::BoundaryExtractor(vtkPolyData* polyInput,
     }
 
   vtkCleanPolyData *boundaryExtractorCleaner = vtkCleanPolyData::New();
+#if (VTK_MAJOR_VERSION <= 5)
   boundaryExtractorCleaner->SetInput(boundaryExtractor->GetOutput());
+#else
+  boundaryExtractorCleaner->SetInputConnection(boundaryExtractor->GetOutputPort());
+#endif
 
   vtkStripper *boundaryExtractorStripper = vtkStripper::New();
+#if (VTK_MAJOR_VERSION <= 5)
   boundaryExtractorStripper->SetInput(boundaryExtractorCleaner->GetOutput());
+#else
+  boundaryExtractorStripper->SetInputConnection(boundaryExtractorCleaner->GetOutputPort());
+#endif
   boundaryExtractorStripper->Update();
 
   boundary->DeepCopy(boundaryExtractorStripper->GetOutput());
+#if (VTK_MAJOR_VERSION <= 5)
   boundary->Update();
+#endif
 
   boundaryExtractorStripper->Delete();
   boundaryExtractorCleaner->Delete();
@@ -122,7 +137,9 @@ void vtkvmtkPolyDataNetworkExtraction::BoundaryExtractor(vtkPolyData* polyInput,
 void vtkvmtkPolyDataNetworkExtraction::BoundarySeparator(vtkPolyData* appendedBoundaries, vtkPolyDataCollection* boundaries)
 {
   appendedBoundaries->BuildLinks();
+#if (VTK_MAJOR_VERSION <= 5)
   appendedBoundaries->Update();
+#endif
 
   vtkIdType i;
   for (i=0; i<appendedBoundaries->GetNumberOfCells(); i++)
@@ -142,7 +159,9 @@ void vtkvmtkPolyDataNetworkExtraction::BoundarySeparator(vtkPolyData* appendedBo
     vtkPolyData* boundary = vtkPolyData::New();
     boundary->SetPoints(boundaryPoints);
     boundary->SetLines(boundaryCellArray);
+#if (VTK_MAJOR_VERSION <= 5)
     boundary->Update();
+#endif
     boundaries->AddItem(boundary);
     boundary->Delete();
     boundaryPoints->Delete();
@@ -190,7 +209,9 @@ void vtkvmtkPolyDataNetworkExtraction::UpdateEdgeTableCollectionReal(vtkPolyData
   for (j=0; j<profiles->GetNumberOfItems(); j++)
     {
     vtkPolyData* profile=profiles->GetNextItem();
+#if (VTK_MAJOR_VERSION <= 5)
     profile->Update();
+#endif
     vtkIdTypeArray* edgeTable = vtkIdTypeArray::New();
     edgeTable->SetNumberOfComponents(2);
     vtkIdType i;
@@ -324,7 +345,9 @@ void vtkvmtkPolyDataNetworkExtraction::DefineVirtualSphere(vtkPolyDataCollection
   for (i=0; i<baseProfiles->GetNumberOfItems(); i++)
     {
     vtkPolyData* baseProfile = baseProfiles->GetNextItem();
+#if (VTK_MAJOR_VERSION <= 5)
     baseProfile->Update();
+#endif
     double barycenter[3];
     this->ProfileBarycenter(baseProfile->GetPoints(),barycenter);
     barycenters->InsertNextPoint(barycenter);
@@ -634,7 +657,9 @@ void vtkvmtkPolyDataNetworkExtraction::ReconstructNewProfiles(vtkPoints* virtual
       }
     newProfileLines->InsertCellPoint(0);
     newProfile->SetLines(newProfileLines);
+#if (VTK_MAJOR_VERSION <= 5)
     newProfile->Update();
+#endif
     newProfiles->AddItem(newProfile);
     newProfilesEdgeTables->AddItem(newProfileEdgeTable);
     newProfile->Delete();
@@ -1326,7 +1351,9 @@ void vtkvmtkPolyDataNetworkExtraction::BuildSegment(vtkPoints* segmentPoints, vt
   segment->GetPointData()->AddArray(segmentPolyScalars);
   segment->GetCellData()->AddArray(segmentTopologyArray);
   segment->SetLines(segmentPolyLine);
+#if (VTK_MAJOR_VERSION <= 5)
   segment->Update();
+#endif
 
   segmentPolyPoints->Delete();
   segmentPolyScalars->Delete();
@@ -1570,7 +1597,9 @@ void vtkvmtkPolyDataNetworkExtraction::JoinSegments (vtkPolyData* segment0, vtkP
   segment->SetLines(segmentCell);
   segment->GetPointData()->AddArray(radiusArray);
   segment->GetCellData()->AddArray(topologyArray);
+#if (VTK_MAJOR_VERSION <= 5)
   segment->Update();
+#endif
 
   radiusArray->Delete();
   topologyArray->Delete();
@@ -1788,13 +1817,19 @@ void vtkvmtkPolyDataNetworkExtraction::GlobalIteration(vtkPolyData* model, vtkPo
   segments->InitTraversal();
   for (i=0; i<segments->GetNumberOfItems(); i++)
     {
+#if (VTK_MAJOR_VERSION <= 5)
     segmentsAppended->AddInput(segments->GetNextItem());
+#else
+    segmentsAppended->AddInputData(segments->GetNextItem());
+#endif
     }
   segmentsAppended->Update();
 
   network->DeepCopy(segmentsAppended->GetOutput());
   network->GetCellData()->AddArray(topologyArray);
+#if (VTK_MAJOR_VERSION <= 5)
   network->Update();
+#endif
    
   globalProfilesEdgeTables->Delete();
   bifurcations->Delete();

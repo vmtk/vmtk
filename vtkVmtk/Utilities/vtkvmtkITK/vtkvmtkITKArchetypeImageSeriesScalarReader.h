@@ -30,9 +30,9 @@ class VTK_VMTK_ITK_EXPORT vtkvmtkITKArchetypeImageSeriesScalarReader : public vt
   vtkvmtkITKArchetypeImageSeriesScalarReader();
   ~vtkvmtkITKArchetypeImageSeriesScalarReader();
 
-  void ExecuteData(vtkDataObject *data);
+  int RequestData(vtkInformation* request, vtkInformationVector** inputVector, vtkInformationVector* outputVector);
   static void ReadProgressCallback(itk::ProcessObject* obj,const itk::ProgressEvent&, void* data);
-  /// private:
 };
 
 #endif
+

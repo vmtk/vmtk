@@ -26,6 +26,7 @@ Version:   $Revision: 1.3 $
 #include "vtkCellArray.h"
 #include "vtkIdList.h"
 #include "vtkObjectFactory.h"
+#include "vtkVersion.h"
 
 
 vtkStandardNewMacro(vtkvmtkPolyDataBranchUtilities);
@@ -111,7 +112,11 @@ void vtkvmtkPolyDataBranchUtilities::ExtractGroup(vtkPolyData* surface, const ch
   if (cleanGroupSurface)
     {
     vtkCleanPolyData* cleaner = vtkCleanPolyData::New();
+#if (VTK_MAJOR_VERSION <= 5)
     cleaner->SetInput(groupSurface);
+#else
+    cleaner->SetInputData(groupSurface);
+#endif
     cleaner->Update();
 
     groupSurface->DeepCopy(cleaner->GetOutput());

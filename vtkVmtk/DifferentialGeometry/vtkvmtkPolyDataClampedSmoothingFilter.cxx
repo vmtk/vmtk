@@ -29,6 +29,7 @@
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
+#include "vtkVersion.h"
 
 
 vtkStandardNewMacro(vtkvmtkPolyDataClampedSmoothingFilter);
@@ -151,7 +152,11 @@ void vtkvmtkPolyDataClampedSmoothingFilter::CurvatureDiffusionIteration(vtkPolyD
   vtkDataArray* clampArray = surface->GetPointData()->GetArray(this->ClampArrayName);
 
   vtkPolyDataNormals* normalsFilter = vtkPolyDataNormals::New();
+#if (VTK_MAJOR_VERSION <= 5)
   normalsFilter->SetInput(surface);
+#else
+  normalsFilter->SetInputData(surface);
+#endif
   normalsFilter->FlipNormalsOff();
   normalsFilter->ConsistencyOn();
   normalsFilter->ComputePointNormalsOn();
@@ -160,7 +165,11 @@ void vtkvmtkPolyDataClampedSmoothingFilter::CurvatureDiffusionIteration(vtkPolyD
   vtkDataArray* normals = normalsFilter->GetOutput()->GetPointData()->GetNormals();
 
   vtkCurvatures* curvaturesFilter = vtkCurvatures::New();
+#if (VTK_MAJOR_VERSION <= 5)
   curvaturesFilter->SetInput(surface);
+#else
+  curvaturesFilter->SetInputData(surface);
+#endif
 //  curvaturesFilter->InvertMeanCurvatureOn();
   curvaturesFilter->SetCurvatureTypeToMean();
   curvaturesFilter->Update();
