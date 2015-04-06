@@ -198,7 +198,11 @@ int vtkvmtkStaticTemporalStreamTracer::CheckInputs(vtkAbstractInterpolatedVeloci
         {
         *maxCellSize = cellSize;
         }
+#if (VTK_MAJOR_VERSION <= 5)
+      vtkAbstractInterpolatedVelocityField::SafeDownCast(func)->AddDataSet(inp);
+#else
       vtkInterpolatedVelocityField::SafeDownCast(func)->AddDataSet(inp);
+#endif
       numInputs++;
       }
     iterP->GoToNextItem();
