@@ -85,6 +85,7 @@ void vtkvmtkStaticTemporalInterpolatedVelocityField::AddDataSet( vtkDataSet * da
     this->Weights = new double[size]; 
     }
 }
+#endif
 
 void vtkvmtkStaticTemporalInterpolatedVelocityField::SetLastCellId( vtkIdType c, int dataindex )
 {
@@ -100,7 +101,6 @@ void vtkvmtkStaticTemporalInterpolatedVelocityField::SetLastCellId( vtkIdType c,
   
   this->LastDataSetIndex = dataindex;
 }
-#endif
 
 void vtkvmtkStaticTemporalInterpolatedVelocityField::FindTimeRowId(double time, int& prevRowId, int& nextRowId, double& p)
 {
