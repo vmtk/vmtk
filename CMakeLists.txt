@@ -47,6 +47,9 @@ if( USE_SYSTEM_VTK )
   endif( ${VTK_VERSION_MAJOR} LESS 6 )
 endif( USE_SYSTEM_VTK )
 
+option( USE_VTK6_SUPERBUILD
+  "Download and build against VTK6." OFF )
+
 #-----------------------------------------------------------------------------
 # Superbuild setup
 option( VMTK_USE_SUPERBUILD

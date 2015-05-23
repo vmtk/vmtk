@@ -82,13 +82,19 @@ endif( NOT USE_SYSTEM_ITK )
 ##
 if( NOT USE_SYSTEM_VTK )
 
+  if( USE_VTK6_SUPERBUILD )
+    set(VTK_GIT_TAG "v6.2.0-vmtk")
+  else( USE_VTK6_SUPERBUILD )
+    set(VTK_GIT_TAG "v5.10.0-vmtk")
+  endif( USE_VTK6_SUPERBUILD )
+
   ##
   ## VTK
   ##
   set( proj VTK )
   ExternalProject_Add( VTK
     GIT_REPOSITORY "${GIT_PROTOCOL}://github.com/vmtk/VTK.git"
-    GIT_TAG "v5.10.0-vmtk"
+    GIT_TAG ${VTK_GIT_TAG}
     SOURCE_DIR "${CMAKE_BINARY_DIR}/VTK"
     BINARY_DIR VTK-Build
     CMAKE_GENERATOR ${gen}
