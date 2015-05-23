@@ -292,7 +292,11 @@ void vtkvmtkPolyBallLine2::BuildLocator()
     }
     
   //Triangulate the input for improved performance
+#if (VTK_MAJOR_VERSION <= 5)
   this->Triangulator->SetInput(this->LocalInput);
+#else
+  this->Triangulator->SetInputData(this->LocalInput);
+#endif
   this->Triangulator->Update();
   this->TriangulatedInput = this->Triangulator->GetOutput();
   

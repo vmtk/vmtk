@@ -35,7 +35,7 @@
 #include "vtkFloatArray.h"
 #include "vtkDoubleArray.h"
 
-#include <vtkstd/vector>
+#include <vector>
 
 #include "vtkvmtkConstants.h"
 
@@ -171,7 +171,11 @@ int vtkvmtkPolyDataGeodesicRBFInterpolation::RequestData(
   
   
   vtkDijkstraGraphGeodesicPath *dijkstraAlgo = vtkDijkstraGraphGeodesicPath::New();
+#if (VTK_MAJOR_VERSION <= 5)
   dijkstraAlgo->SetInput(input);
+#else
+  dijkstraAlgo->SetInputData(input);
+#endif
   dijkstraAlgo->StopWhenEndReachedOff();
   dijkstraAlgo->UseScalarWeightsOff();
   
@@ -184,11 +188,7 @@ int vtkvmtkPolyDataGeodesicRBFInterpolation::RequestData(
     dijkstraAlgo->SetStartVertex(SeedIds->GetId(i));
     dijkstraAlgo->Update();
     vtkDoubleArray *seedDistances = vtkDoubleArray::New();
-#if (VTK_MINOR_VERSION < 5)
-    seedDistances->DeepCopy(dijkstraAlgo->Getd());
-#else
     dijkstraAlgo->GetCumulativeWeights(seedDistances);
-#endif
     geodesicDistances.push_back(seedDistances);
     }
     
