@@ -57,7 +57,7 @@ class vmtkNetworkWriter(pypes.pypeScript):
             self.PrintError('Error: no OutputFileName.')
         self.PrintLog('Writing VTK network file.')
         writer = vtk.vtkPolyDataWriter()
-        writer.SetInput(self.Network)
+        writer.SetInputData(self.Network)
         writer.SetFileName(self.OutputFileName)
         writer.Write()
 
@@ -66,7 +66,7 @@ class vmtkNetworkWriter(pypes.pypeScript):
             self.PrintError('Error: no OutputFileName.')
         self.PrintLog('Writing VTK XML network file.')
         writer = vtk.vtkXMLPolyDataWriter()
-        writer.SetInput(self.Network)
+        writer.SetInputData(self.Network)
         writer.SetFileName(self.OutputFileName)
         #writer.SetDataModeToAscii()
         writer.Write()

@@ -53,7 +53,7 @@ class vmtkMeshProjection(pypes.pypeScript):
 
         self.PrintLog('Computing projection.')
         meshProjection = vtkvmtk.vtkvmtkMeshProjection()
-        meshProjection.SetInput(self.Mesh)
+        meshProjection.SetInputData(self.Mesh)
         meshProjection.SetReferenceMesh(self.ReferenceMesh)
         meshProjection.SetTolerance(self.Tolerance)
         meshProjection.Update()

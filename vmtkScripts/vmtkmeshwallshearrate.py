@@ -55,7 +55,7 @@ class vmtkMeshWallShearRate(pypes.pypeScript):
             self.PrintError('Error: no Mesh.')
 
         wallShearRateFilter = vtkvmtk.vtkvmtkMeshWallShearRate()
-        wallShearRateFilter.SetInput(self.Mesh)
+        wallShearRateFilter.SetInputData(self.Mesh)
         wallShearRateFilter.SetVelocityArrayName(self.VelocityArrayName)
         wallShearRateFilter.SetWallShearRateArrayName(self.WallShearRateArrayName)
         wallShearRateFilter.SetConvergenceTolerance(self.ConvergenceTolerance)
@@ -65,8 +65,6 @@ class vmtkMeshWallShearRate(pypes.pypeScript):
 
         self.Surface = wallShearRateFilter.GetOutput()
 
-        if self.Surface.GetSource():
-            self.Surface.GetSource().UnRegisterAllOutputs()
 
 
 if __name__=='__main__':

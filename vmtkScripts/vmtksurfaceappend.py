@@ -45,14 +45,12 @@ class vmtkSurfaceAppend(pypes.pypeScript):
             self.PrintError('Error: no Surface.')
 
         appendFilter = vtk.vtkAppendPolyData()
-        appendFilter.AddInput(self.Surface)
-        appendFilter.AddInput(self.Surface2)
+        appendFilter.AddInputData(self.Surface)
+        appendFilter.AddInputData(self.Surface2)
         appendFilter.Update()
 
         self.Surface = appendFilter.GetOutput()
 
-        if self.Surface.GetSource():
-            self.Surface.GetSource().UnRegisterAllOutputs()
 
 
 if __name__=='__main__':

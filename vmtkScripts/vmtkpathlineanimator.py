@@ -91,7 +91,7 @@ class vmtkPathLineAnimator(pypes.pypeScript):
         windowToImage.Update()
         surfaceViewer.vmtkRenderer.RenderWindow.Render()
         writer = vtk.vtkPNGWriter()
-        writer.SetInput(windowToImage.GetOutput())
+        writer.SetInputConnection(windowToImage.GetOutputPort())
         writer.SetFileName(os.path.join(homeDir,fileName))
         writer.Write()
 
@@ -192,7 +192,7 @@ class vmtkPathLineAnimator(pypes.pypeScript):
             imageNumber = 0
             while particleTime <= maxTime:
                 contour = vtk.vtkContourFilter()
-                contour.SetInput(self.Traces)
+                contour.SetInputData(self.Traces)
                 i = 0
                 while i <= currentCycle:
                     time = minTime + currentTime + (maxTime - minTime) * i
@@ -205,7 +205,7 @@ class vmtkPathLineAnimator(pypes.pypeScript):
                 contour.Update()
                 surfaceViewer.vmtkRenderer = self.vmtkRenderer
                 surfaceViewer.Actor.GetProperty().SetPointSize(self.PointSize)
-                vtk.vtkPolyDataMapper.SafeDownCast(surfaceViewer.Actor.GetMapper()).SetInput(contour.GetOutput())       
+                vtk.vtkPolyDataMapper.SafeDownCast(surfaceViewer.Actor.GetMapper()).SetInputConnection(contour.GetOutputPort())
                 
                 surfaceViewer.Actor.GetMapper().GetLookupTable().SetVectorModeToMagnitude() 
                 surfaceViewer.Actor.GetMapper().SetScalarModeToUsePointFieldData() 
@@ -225,11 +225,11 @@ class vmtkPathLineAnimator(pypes.pypeScript):
             imageNumber = 0
             while particleTime <= maxTime:
                 clip1 = vtk.vtkClipPolyData()
-                clip1.SetInput(self.Traces)
+                clip1.SetInputData(self.Traces)
                 clip1.GenerateClipScalarsOff()
                 clip1.InsideOutOn()
                 clip2 = vtk.vtkClipPolyData()
-                clip2.SetInput(clip1.GetOutput())
+                clip2.SetInputConnection(clip1.GetOutputPort())
                 clip2.GenerateClipScalarsOff()
                 clip2.InsideOutOff()
 
@@ -243,7 +243,7 @@ class vmtkPathLineAnimator(pypes.pypeScript):
                 clip2.Update()
             
                 surfaceViewer.Actor.GetProperty().SetLineWidth(self.LineWidth)
-                vtk.vtkPolyDataMapper.SafeDownCast(surfaceViewer.Actor.GetMapper()).SetInput(clip2.GetOutput())
+                vtk.vtkPolyDataMapper.SafeDownCast(surfaceViewer.Actor.GetMapper()).SetInputConnection(clip2.GetOutputPort())
                 
                 surfaceViewer.Actor.GetMapper().GetLookupTable().SetVectorModeToMagnitude() 
                 surfaceViewer.Actor.GetMapper().SetScalarModeToUsePointFieldData() 

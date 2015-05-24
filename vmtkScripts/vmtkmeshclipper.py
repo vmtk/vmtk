@@ -71,18 +71,18 @@ class vmtkMeshClipper(pypes.pypeScript):
         self.BoxWidget.GetPlanes(self.Planes)
         self.Clipper.Update()
         self.Mesh.DeepCopy(self.Clipper.GetOutput())
-        self.ClippedMesh.DeepCopy(self.Clipper.GetClippedOutput())
+        self.ClippedMesh.DeepCopy(self.Clipper.GetClippedOutputData())
         self.Cutter.Update()
         self.Surface.DeepCopy(self.Cutter.GetOutput())
         mapper = vtk.vtkDataSetMapper()
-        mapper.SetInput(self.Mesh)
+        mapper.SetInputData(self.Mesh)
         mapper.ScalarVisibilityOff()
         self.Actor.SetMapper(mapper)
         self.BoxWidget.Off()
 
     def Display(self):
 
-      	self.BoxWidget.SetInput(self.Mesh)
+      	self.BoxWidget.SetInputData(self.Mesh)
       	self.BoxWidget.PlaceWidget()
 
         self.vmtkRenderer.Render()
@@ -93,7 +93,7 @@ class vmtkMeshClipper(pypes.pypeScript):
             self.PrintError('Error: no Mesh.')
 
         self.Clipper = vtk.vtkClipDataSet()
-        self.Clipper.SetInput(self.Mesh)
+        self.Clipper.SetInputData(self.Mesh)
         self.Clipper.GenerateClippedOutputOn()
         self.Clipper.SetInsideOut(self.InsideOut)
         
@@ -103,7 +103,7 @@ class vmtkMeshClipper(pypes.pypeScript):
             self.Clipper.SetClipFunction(self.Planes)
 
             self.Cutter = vtk.vtkCutter()
-            self.Cutter.SetInput(self.Mesh)
+            self.Cutter.SetInputData(self.Mesh)
             self.Cutter.SetCutFunction(self.Planes)
 
             self.ClippedMesh = vtk.vtkUnstructuredGrid()
@@ -117,7 +117,7 @@ class vmtkMeshClipper(pypes.pypeScript):
             self.vmtkRenderer.RegisterScript(self) 
 
             mapper = vtk.vtkDataSetMapper()
-            mapper.SetInput(self.Mesh)
+            mapper.SetInputData(self.Mesh)
             mapper.ScalarVisibilityOff()
             self.Actor = vtk.vtkActor()
             self.Actor.SetMapper(mapper)
@@ -145,16 +145,14 @@ class vmtkMeshClipper(pypes.pypeScript):
             self.Clipper.Update()
 
             self.Cutter = vtk.vtkContourFilter()
-            self.Cutter.SetInput(self.Mesh)
+            self.Cutter.SetInputData(self.Mesh)
             self.Cutter.SetValue(0,self.ClipValue)
             self.Cutter.Update()
 
             self.Mesh = self.Clipper.GetOutput()
             self.Surface = self.Cutter.GetOutput()
-            self.ClippedMesh = self.Clipper.GetClippedOutput()
+            self.ClippedMesh = self.Clipper.GetClippedOutputData()
         
-        if self.Mesh.GetSource():
-            self.Mesh.GetSource().UnRegisterAllOutputs()
 
 
 if __name__=='__main__':

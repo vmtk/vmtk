@@ -88,7 +88,7 @@ class vmtkBranchMapping(pypes.pypeScript):
 
         self.PrintLog('Computing boundary metric')
         boundaryMetricFilter = vtkvmtk.vtkvmtkPolyDataReferenceSystemBoundaryMetricFilter()
-        boundaryMetricFilter.SetInput(self.Surface)
+        boundaryMetricFilter.SetInputData(self.Surface)
         boundaryMetricFilter.SetBoundaryMetricArrayName(self.BoundaryMetricArrayName)
         boundaryMetricFilter.SetGroupIdsArrayName(self.GroupIdsArrayName)
         boundaryMetricFilter.SetCenterlines(self.Centerlines)
@@ -103,14 +103,14 @@ class vmtkBranchMapping(pypes.pypeScript):
 
         self.PrintLog('Computing harmonic mapping')
         harmonicMappingFilter = vtkvmtk.vtkvmtkPolyDataMultipleCylinderHarmonicMappingFilter()
-        harmonicMappingFilter.SetInput(boundaryMetricFilter.GetOutput())
+        harmonicMappingFilter.SetInputConnection(boundaryMetricFilter.GetOutputPort())
         harmonicMappingFilter.SetHarmonicMappingArrayName(self.HarmonicMappingArrayName)
         harmonicMappingFilter.SetGroupIdsArrayName(self.GroupIdsArrayName)
         harmonicMappingFilter.Update()
 
         self.PrintLog('Stretching harmonic mapping')
         stretchFilter = vtkvmtk.vtkvmtkPolyDataStretchMappingFilter()
-        stretchFilter.SetInput(harmonicMappingFilter.GetOutput())
+        stretchFilter.SetInputConnection(harmonicMappingFilter.GetOutputPort())
         stretchFilter.SetStretchedMappingArrayName(self.StretchedMappingArrayName)
         stretchFilter.SetHarmonicMappingArrayName(self.HarmonicMappingArrayName)
         stretchFilter.SetGroupIdsArrayName(self.GroupIdsArrayName)
@@ -120,9 +120,6 @@ class vmtkBranchMapping(pypes.pypeScript):
         stretchFilter.Update()
         
         self.Surface = stretchFilter.GetOutput()
-
-        if self.Surface.GetSource():
-            self.Surface.GetSource().UnRegisterAllOutputs()
 
 
 if __name__=='__main__':

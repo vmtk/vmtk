@@ -55,8 +55,8 @@ class vmtkSurfaceBooleanOperation(pypes.pypeScript):
             self.PrintError('Error: No Surface2.')
 
         booleanOperationFilter = vtk.vtkBooleanOperationPolyDataFilter()
-        booleanOperationFilter.SetInput(0,self.Surface)
-        booleanOperationFilter.SetInput(1,self.Surface2)
+        booleanOperationFilter.SetInputData(0,self.Surface)
+        booleanOperationFilter.SetInputData(1,self.Surface2)
         if self.Operation == 'union':
             booleanOperationFilter.SetOperationToUnion()
         elif self.Operation == 'intersection':
@@ -68,8 +68,6 @@ class vmtkSurfaceBooleanOperation(pypes.pypeScript):
 
         self.Surface = booleanOperationFilter.GetOutput()
 
-        if self.Surface.GetSource():
-            self.Surface.GetSource().UnRegisterAllOutputs()
 
 if __name__=='__main__':
     main = pypes.pypeMain()

@@ -72,7 +72,7 @@ class vmtkICPRegistration(pypes.pypeScript):
 ##         if (self.SignedDistanceArrayName != '') & (self.ReferenceSurface.GetPointData().GetNormals() == None):
         if (self.SignedDistanceArrayName != ''):
             normalsFilter = vtk.vtkPolyDataNormals()
-            normalsFilter.SetInput(self.ReferenceSurface)
+            normalsFilter.SetInputData(self.ReferenceSurface)
             normalsFilter.AutoOrientNormalsOn()
             normalsFilter.ConsistencyOn()
             normalsFilter.SplittingOff()
@@ -83,7 +83,7 @@ class vmtkICPRegistration(pypes.pypeScript):
         self.PrintLog('Computing ICP transform.')
 
         icpTransform = vtkvmtk.vtkvmtkIterativeClosestPointTransform()
-        icpTransform.SetSource(self.Surface)
+        icpTransform.SetSourceData(self.Surface)
         icpTransform.SetTarget(self.ReferenceSurface)
         icpTransform.GetLandmarkTransform().SetModeToRigidBody()
         icpTransform.StartByMatchingCentroidsOn()
@@ -98,7 +98,7 @@ class vmtkICPRegistration(pypes.pypeScript):
             icpTransform.UseFarThresholdOff()
 
         transformFilter = vtk.vtkTransformPolyDataFilter()
-        transformFilter.SetInput(self.Surface)
+        transformFilter.SetInputData(self.Surface)
         transformFilter.SetTransform(icpTransform)
         transformFilter.Update()
 
@@ -118,7 +118,7 @@ class vmtkICPRegistration(pypes.pypeScript):
         if (self.DistanceArrayName != '') | (self.SignedDistanceArrayName != ''):
             self.PrintLog('Computing distance.')
             surfaceDistance = vtkvmtk.vtkvmtkSurfaceDistance()
-            surfaceDistance.SetInput(self.Surface)
+            surfaceDistance.SetInputData(self.Surface)
             surfaceDistance.SetReferenceSurface(self.ReferenceSurface)
             if (self.DistanceArrayName != ''):
                 surfaceDistance.SetDistanceArrayName(self.DistanceArrayName)

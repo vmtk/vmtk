@@ -89,7 +89,7 @@ class vmtkBranchSections(pypes.pypeScript):
             self.PrintError('Error: No input centerlines.')
 
         branchSections = vtkvmtk.vtkvmtkPolyDataBranchSections()
-        branchSections.SetInput(self.Surface)
+        branchSections.SetInputData(self.Surface)
         branchSections.SetGroupIdsArrayName(self.GroupIdsArrayName)
         branchSections.SetCenterlines(self.Centerlines)
         branchSections.SetNumberOfDistanceSpheres(self.NumberOfDistanceSpheres)

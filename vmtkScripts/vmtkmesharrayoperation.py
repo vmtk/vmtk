@@ -96,8 +96,6 @@ class vmtkMeshArrayOperation(pypes.pypeScript):
 
         self.Mesh.GetPointData().AddArray(resultArray)
 
-        if self.Mesh.GetSource():
-            self.Mesh.GetSource().UnRegisterAllOutputs()
 
 if __name__=='__main__':
     main = pypes.pypeMain()

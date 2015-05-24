@@ -221,9 +221,6 @@ class vmtkSurfaceReader(pypes.pypeScript):
         else:
             self.PrintError('Error: unsupported format '+ self.Format + '.')
 
-        if self.Surface.GetSource():
-            self.Surface.GetSource().UnRegisterAllOutputs()
-
         self.Output = self.Surface
 
 

@@ -143,21 +143,21 @@ class vmtkParticleTracer(pypes.pypeScript):
         
         if self.Subdivide:
             sd = vtk.vtkLinearSubdivisionFilter()
-            sd.SetInput(self.Source)
+            sd.SetInputData(self.Source)
             sd.SetNumberOfSubdivisions(1)
             sd.Update()
             self.Source = sd.GetOutput()
             
         self.Source.GetPointData().SetActiveScalars('speed')
         cp = vtk.vtkClipPolyData()
-        cp.SetInput(self.Source)
+        cp.SetInputData(self.Source)
         cp.GenerateClipScalarsOff()
         cp.SetValue(self.MinSpeed)
         cp.Update()
         self.Source = cp.GetOutput()
         
         tracer = vtkvmtk.vtkvmtkStaticTemporalStreamTracer()
-        tracer.SetInput(self.Mesh)
+        tracer.SetInputData(self.Mesh)
         tracer.SetIntegratorTypeToRungeKutta45()
         tracer.SetTimeStepsTable(timeStepsTable)
         tracer.SetSeedTime(self.SeedTime)
@@ -170,7 +170,7 @@ class vmtkParticleTracer(pypes.pypeScript):
             tracer.SetComputeVorticity(1)
         if self.IntegrationDirectionBoth:
             tracer.SetIntegrationDirectionToBoth()
-        tracer.SetSource(self.Source)
+        tracer.SetSourceData(self.Source)
         tracer.SetVelocityScale(self.VelocityScale)
         if self.VectorComponents:
             tracer.UseVectorComponentsOn()

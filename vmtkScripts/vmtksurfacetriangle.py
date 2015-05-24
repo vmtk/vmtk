@@ -44,17 +44,14 @@ class vmtkSurfaceTriangle(pypes.pypeScript):
             self.PrintError('Error: No input surface.')
 
         cleaner = vtk.vtkCleanPolyData()
-        cleaner.SetInput(self.Surface)
+        cleaner.SetInputData(self.Surface)
         cleaner.Update()
 
         triangleFilter = vtk.vtkTriangleFilter()
-        triangleFilter.SetInput(cleaner.GetOutput())
+        triangleFilter.SetInputConnection(cleaner.GetOutputPort())
         triangleFilter.Update()
 
         self.Surface = triangleFilter.GetOutput()
-
-        if self.Surface.GetSource():
-            self.Surface.GetSource().UnRegisterAllOutputs()
 
 
 if __name__=='__main__':

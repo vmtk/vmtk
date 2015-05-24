@@ -45,14 +45,12 @@ class vmtkSurfaceCellDataToPointData(pypes.pypeScript):
             self.PrintError('Error: No Surface.')
 
         cellDataToPointDataFilter = vtk.vtkCellDataToPointData()
-        cellDataToPointDataFilter.SetInput(self.Surface)
+        cellDataToPointDataFilter.SetInputData(self.Surface)
         cellDataToPointDataFilter.PassCellDataOn()
         cellDataToPointDataFilter.Update()
 
         self.Surface = cellDataToPointDataFilter.GetPolyDataOutput()
 
-        if self.Surface.GetSource():
-            self.Surface.GetSource().UnRegisterAllOutputs()
 
 if __name__=='__main__':
     main = pypes.pypeMain()

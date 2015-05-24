@@ -70,7 +70,7 @@ class vmtkSurfaceRegionDrawing(pypes.pypeScript):
             points.SetPoint(i,point)
 
         selectionFilter = vtk.vtkSelectPolyData()
-        selectionFilter.SetInput(self.Surface)
+        selectionFilter.SetInputData(self.Surface)
         selectionFilter.SetLoop(points)
         selectionFilter.GenerateSelectionScalarsOn()
         selectionFilter.SetSelectionModeToSmallestRegion()
@@ -122,7 +122,7 @@ class vmtkSurfaceRegionDrawing(pypes.pypeScript):
         self.vmtkRenderer.RegisterScript(self) 
 
         triangleFilter = vtk.vtkTriangleFilter()
-        triangleFilter.SetInput(self.Surface)
+        triangleFilter.SetInputData(self.Surface)
         triangleFilter.Update()
 
         self.Surface = triangleFilter.GetOutput()
@@ -137,7 +137,7 @@ class vmtkSurfaceRegionDrawing(pypes.pypeScript):
         self.Surface.GetPointData().SetActiveScalars(self.ContourScalarsArrayName)
 
         mapper = vtk.vtkPolyDataMapper()
-        mapper.SetInput(self.Surface)
+        mapper.SetInputData(self.Surface)
         mapper.ScalarVisibilityOn()
         self.Actor = vtk.vtkActor()
         self.Actor.SetMapper(mapper)

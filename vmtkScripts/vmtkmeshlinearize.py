@@ -47,14 +47,12 @@ class vmtkMeshLinearize(pypes.pypeScript):
             self.PrintError('Error: No input mesh.')
 
         linearizeFilter = vtkvmtk.vtkvmtkLinearizeMeshFilter()
-        linearizeFilter.SetInput(self.Mesh)
+        linearizeFilter.SetInputData(self.Mesh)
         linearizeFilter.SetCleanOutput(self.CleanOutput)
         linearizeFilter.Update()
 
         self.Mesh = linearizeFilter.GetOutput()
 
-        if self.Mesh.GetSource():
-            self.Mesh.GetSource().UnRegisterAllOutputs()
 
 
 if __name__=='__main__':

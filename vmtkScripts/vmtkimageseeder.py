@@ -68,7 +68,7 @@ class vmtkImageSeeder(pypes.pypeScript):
         obj.GetCursorData(cursorData)
         spacing = self.Image.GetSpacing()
         origin = self.Image.GetOrigin()
-        extent = self.Image.GetWholeExtent()
+        extent = self.Image.GetExtent()
         point = [0.0,0.0,0.0]
         point[0] = cursorData[0] * spacing[0] + origin[0]
         point[1] = cursorData[1] * spacing[1] + origin[1]
@@ -96,12 +96,12 @@ class vmtkImageSeeder(pypes.pypeScript):
 
         if (self.ArrayName != ''):
             self.Image.GetPointData().SetActiveScalars(self.ArrayName)
-        wholeExtent = self.Image.GetWholeExtent()
+        wholeExtent = self.Image.GetExtent()
 
 #        self.PlaneWidgetX.SetResliceInterpolateToNearestNeighbour()
         self.PlaneWidgetX.SetResliceInterpolateToLinear()
         self.PlaneWidgetX.SetTextureInterpolate(self.TextureInterpolation)
-        self.PlaneWidgetX.SetInput(self.Image)
+        self.PlaneWidgetX.SetInputData(self.Image)
         self.PlaneWidgetX.SetPlaneOrientationToXAxes()
         self.PlaneWidgetX.SetSliceIndex(wholeExtent[0])
         if self.vmtkRenderer.Annotations:
@@ -113,7 +113,7 @@ class vmtkImageSeeder(pypes.pypeScript):
 #        self.PlaneWidgetY.SetResliceInterpolateToNearestNeighbour()
         self.PlaneWidgetY.SetResliceInterpolateToLinear()
         self.PlaneWidgetY.SetTextureInterpolate(self.TextureInterpolation)
-        self.PlaneWidgetY.SetInput(self.Image)
+        self.PlaneWidgetY.SetInputData(self.Image)
         self.PlaneWidgetY.SetPlaneOrientationToYAxes()
         self.PlaneWidgetY.SetSliceIndex(wholeExtent[2])
         if self.vmtkRenderer.Annotations:
@@ -126,7 +126,7 @@ class vmtkImageSeeder(pypes.pypeScript):
 #        self.PlaneWidgetZ.SetResliceInterpolateToNearestNeighbour()
         self.PlaneWidgetZ.SetResliceInterpolateToLinear()
         self.PlaneWidgetZ.SetTextureInterpolate(self.TextureInterpolation)
-        self.PlaneWidgetZ.SetInput(self.Image)
+        self.PlaneWidgetZ.SetInputData(self.Image)
         self.PlaneWidgetZ.SetPlaneOrientationToZAxes()
         self.PlaneWidgetZ.SetSliceIndex(wholeExtent[4])
         if self.vmtkRenderer.Annotations:
@@ -138,12 +138,12 @@ class vmtkImageSeeder(pypes.pypeScript):
 
         glyphs = vtk.vtkGlyph3D()
         glyphSource = vtk.vtkSphereSource()
-        glyphs.SetInput(self.Seeds)
-        glyphs.SetSource(glyphSource.GetOutput())
+        glyphs.SetInputData(self.Seeds)
+        glyphs.SetSourceData(glyphSource.GetOutput())
         glyphs.SetScaleModeToDataScalingOff()
         glyphs.SetScaleFactor(self.Image.GetLength()*0.01)
         glyphMapper = vtk.vtkPolyDataMapper()
-        glyphMapper.SetInput(glyphs.GetOutput())
+        glyphMapper.SetInputConnection(glyphs.GetOutputPort())
         self.SeedActor = vtk.vtkActor()
         self.SeedActor.SetMapper(glyphMapper)
         self.SeedActor.GetProperty().SetColor(1.0,0.0,0.0)

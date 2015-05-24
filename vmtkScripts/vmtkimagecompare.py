@@ -67,8 +67,8 @@ class vmtkImageCompare(pypes.pypeScript):
         self.ReferenceImage.SetScalarType(minScalarType) 
 
         imageMath = vtk.vtkImageMathematics()
-        imageMath.SetInput1(self.Image) 
-        imageMath.SetInput2(self.ReferenceImage) 
+        imageMath.SetInput1Data(self.Image) 
+        imageMath.SetInput2Data(self.ReferenceImage) 
         imageMath.SetOperationToSubtract()
         imageMath.Update()
         differenceImage = imageMath.GetOutput()

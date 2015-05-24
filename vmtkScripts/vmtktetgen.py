@@ -108,19 +108,19 @@ class vmtkTetGen(pypes.pypeScript):
             if not ((self.Mesh.IsHomogeneous() == 1) & (self.Mesh.GetCellType(0) == 5)):
                 self.PrintError('Error: In order to generate caps, all input mesh elements must be triangles.')
             meshToSurfaceFilter = vtk.vtkGeometryFilter()
-            meshToSurfaceFilter.SetInput(self.Mesh)
+            meshToSurfaceFilter.SetInputData(self.Mesh)
             meshToSurfaceFilter.Update()
             cap = vtkvmtk.vtkvmtkSimpleCapPolyData()
-            cap.SetInput(meshToSurfaceFilter.GetOutput())
+            cap.SetInputConnection(meshToSurfaceFilter.GetOutputPort())
             cap.SetCellMarkerArrayName(self.FacetMarkerArrayName)
             cap.Update()
             surfacetomesh = vtkvmtk.vtkvmtkPolyDataToUnstructuredGridFilter()
-            surfacetomesh.SetInput(cap.GetOutput())
+            surfacetomesh.SetInputConnection(cap.GetOutputPort())
             surfacetomesh.Update()
             self.Mesh = surfacetomesh.GetOutput()
 
         tetgen = vtkvmtk.vtkvmtkTetGenWrapper()
-        tetgen.SetInput(self.Mesh)
+        tetgen.SetInputData(self.Mesh)
         tetgen.SetPLC(self.PLC)
         tetgen.SetRefine(self.Refine)
         tetgen.SetCoarsen(self.Coarsen)
@@ -151,8 +151,6 @@ class vmtkTetGen(pypes.pypeScript):
 
         self.Mesh = tetgen.GetOutput()
 
-        if self.Mesh.GetSource():
-            self.Mesh.GetSource().UnRegisterAllOutputs()
 
 
 if __name__=='__main__':

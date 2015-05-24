@@ -119,7 +119,7 @@ class vmtkLocalGeometry(pypes.pypeScript):
                 self.PrintError('Error: No input edge array name.')
 
             voronoiRadialFastMarching = vtkvmtk.vtkvmtkNonManifoldFastMarching()
-            voronoiRadialFastMarching.SetInput(voronoi)
+            voronoiRadialFastMarching.SetInputData(voronoi)
             voronoiRadialFastMarching.UnitSpeedOn()
             voronoiRadialFastMarching.SetSolutionArrayName(self.VoronoiGeodesicDistanceArrayName)
             voronoiRadialFastMarching.PolyDataBoundaryConditionsOn()
@@ -131,7 +131,7 @@ class vmtkLocalGeometry(pypes.pypeScript):
         if self.ComputeEuclideanDistance | self.ComputeCenterlineVectors | self.ComputeCellIds | self.ComputePCoords:
 
             voronoiShooter = vtkvmtk.vtkvmtkSteepestDescentShooter()
-            voronoiShooter.SetInput(voronoi)
+            voronoiShooter.SetInputData(voronoi)
             voronoiShooter.SetTarget(self.Centerlines)
             voronoiShooter.SetDescentArrayName(self.VoronoiGeodesicDistanceArrayName)
             voronoiShooter.SetEdgeArrayName(self.EdgeArrayName)
@@ -143,7 +143,7 @@ class vmtkLocalGeometry(pypes.pypeScript):
 
         surfaceLocalGeometry = vtkvmtk.vtkvmtkPolyDataLocalGeometry()
         
-        surfaceLocalGeometry.SetInput(self.Surface)
+        surfaceLocalGeometry.SetInputData(self.Surface)
         surfaceLocalGeometry.SetVoronoiDiagram(voronoi)
         surfaceLocalGeometry.SetVoronoiGeodesicDistanceArrayName(self.VoronoiGeodesicDistanceArrayName)
         surfaceLocalGeometry.SetPoleIds(self.PoleIds)
@@ -174,8 +174,6 @@ class vmtkLocalGeometry(pypes.pypeScript):
 
         self.Surface = surfaceLocalGeometry.GetOutput()
 
-        if self.Surface.GetSource():
-            self.Surface.GetSource().UnRegisterAllOutputs()
 
 
 if __name__=='__main__':

@@ -79,7 +79,7 @@ class vmtkBranchMetrics(pypes.pypeScript):
         if self.ComputeAngularMetric == 1:
             self.PrintLog('Computing angular metric')
             angularMetricFilter = vtkvmtk.vtkvmtkPolyDataCenterlineAngularMetricFilter()
-            angularMetricFilter.SetInput(self.Surface)
+            angularMetricFilter.SetInputData(self.Surface)
             angularMetricFilter.SetMetricArrayName(self.AngularMetricArrayName)
             angularMetricFilter.SetGroupIdsArrayName(self.GroupIdsArrayName)
             angularMetricFilter.SetCenterlines(self.Centerlines)
@@ -97,7 +97,7 @@ class vmtkBranchMetrics(pypes.pypeScript):
         if self.ComputeAbscissaMetric == 1:
             self.PrintLog('Computing abscissa metric')
             abscissaMetricFilter = vtkvmtk.vtkvmtkPolyDataCenterlineAbscissaMetricFilter()
-            abscissaMetricFilter.SetInput(self.Surface)
+            abscissaMetricFilter.SetInputData(self.Surface)
             abscissaMetricFilter.SetMetricArrayName(self.AbscissaMetricArrayName)
             abscissaMetricFilter.SetGroupIdsArrayName(self.GroupIdsArrayName)
             abscissaMetricFilter.SetCenterlines(self.Centerlines)
@@ -111,9 +111,6 @@ class vmtkBranchMetrics(pypes.pypeScript):
             abscissaMetricFilter.SetCenterlineIdsArrayName(self.CenterlineIdsArrayName)
             abscissaMetricFilter.Update()
             self.Surface = abscissaMetricFilter.GetOutput()
-
-        if self.Surface.GetSource():
-            self.Surface.GetSource().UnRegisterAllOutputs()
 
 
 if __name__=='__main__':

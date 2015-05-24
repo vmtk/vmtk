@@ -59,19 +59,16 @@ class vmtkBifurcationReferenceSystems(pypes.pypeScript):
             self.PrintError('Error: No input centerlines.')
 
         bifurcationReferenceSystems = vtkvmtk.vtkvmtkCenterlineBifurcationReferenceSystems()
-        bifurcationReferenceSystems.SetInput(self.Centerlines)
+        bifurcationReferenceSystems.SetInputData(self.Centerlines)
         bifurcationReferenceSystems.SetRadiusArrayName(self.RadiusArrayName)
       	bifurcationReferenceSystems.SetBlankingArrayName(self.BlankingArrayName)
         bifurcationReferenceSystems.SetGroupIdsArrayName(self.GroupIdsArrayName)
         bifurcationReferenceSystems.SetNormalArrayName(self.ReferenceSystemsNormalArrayName)
         bifurcationReferenceSystems.SetUpNormalArrayName(self.ReferenceSystemsUpNormalArrayName)
-##	bifurcationReferenceSystems.SetReferenceGroupId(self.ReferenceGroupId)
+        ##	bifurcationReferenceSystems.SetReferenceGroupId(self.ReferenceGroupId)
         bifurcationReferenceSystems.Update()
 
         self.ReferenceSystems = bifurcationReferenceSystems.GetOutput()
-
-        if self.ReferenceSystems.GetSource():
-            self.ReferenceSystems.GetSource().UnRegisterAllOutputs()
 
 if __name__=='__main__':
 

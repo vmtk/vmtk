@@ -53,7 +53,7 @@ class vmtkSurfaceCenterlineProjection(pypes.pypeScript):
             self.PrintError('Error: No input centerlines.')
 
         projectionFilter = vtkvmtk.vtkvmtkPolyDataCenterlineProjection()
-        projectionFilter.SetInput(self.Surface)
+        projectionFilter.SetInputData(self.Surface)
         projectionFilter.SetCenterlines(self.Centerlines)
         projectionFilter.SetUseRadiusInformation(self.UseRadiusInformation)
         projectionFilter.SetCenterlineRadiusArrayName(self.RadiusArrayName)

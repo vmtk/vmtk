@@ -105,7 +105,7 @@ class vmtkMeshViewer(pypes.pypeScript):
 
         if self.Mesh:
             mapper = vtk.vtkDataSetMapper()
-            mapper.SetInput(self.Mesh)
+            mapper.SetInputData(self.Mesh)
             if self.ArrayName:
                 self.Mesh.GetPointData().SetActiveScalars(self.ArrayName)
                 array = self.Mesh.GetPointData().GetScalars()

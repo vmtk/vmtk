@@ -65,7 +65,7 @@ class vmtkImageObjectEnhancement(pypes.pypeScript):
     def ApplyObjectness(self):
 
         objectness = vtkvmtk.vtkvmtkObjectnessMeasureImageFilter()
-        objectness.SetInput(self.Image)
+        objectness.SetInputData(self.Image)
         objectness.SetSigmaMin(self.SigmaMin)
         objectness.SetSigmaMax(self.SigmaMax)
         objectness.SetNumberOfSigmaSteps(self.NumberOfSigmaSteps)

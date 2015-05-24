@@ -54,7 +54,7 @@ class vmtkMeshLambda2(pypes.pypeScript):
             self.PrintError('Error: no Mesh.')
 
         lambda2Filter = vtkvmtk.vtkvmtkMeshLambda2()
-        lambda2Filter.SetInput(self.Mesh)
+        lambda2Filter.SetInputData(self.Mesh)
         lambda2Filter.SetVelocityArrayName(self.VelocityArrayName)
         lambda2Filter.SetLambda2ArrayName(self.Lambda2ArrayName)
         lambda2Filter.SetConvergenceTolerance(self.ConvergenceTolerance)
@@ -65,8 +65,6 @@ class vmtkMeshLambda2(pypes.pypeScript):
 
         self.Mesh = lambda2Filter.GetOutput()
 
-        if self.Mesh.GetSource():
-            self.Mesh.GetSource().UnRegisterAllOutputs()
 
 
 if __name__=='__main__':

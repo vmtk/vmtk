@@ -50,15 +50,12 @@ class vmtkCenterlineSmoothing(pypes.pypeScript):
             self.PrintError('Error: No input centerlines.')
 
         centerlineSmoothing = vtkvmtk.vtkvmtkCenterlineSmoothing()
-        centerlineSmoothing.SetInput(self.Centerlines)
+        centerlineSmoothing.SetInputData(self.Centerlines)
         centerlineSmoothing.SetNumberOfSmoothingIterations(self.NumberOfSmoothingIterations)
         centerlineSmoothing.SetSmoothingFactor(self.SmoothingFactor)
         centerlineSmoothing.Update()
 
         self.Centerlines = centerlineSmoothing.GetOutput()
-
-        if self.Centerlines.GetSource():
-            self.Centerlines.GetSource().UnRegisterAllOutputs()
 
 
 if __name__=='__main__':

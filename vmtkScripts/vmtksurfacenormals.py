@@ -56,7 +56,7 @@ class vmtkSurfaceNormals(pypes.pypeScript):
             self.PrintError('Error: No Surface.')
 
         normalsFilter = vtk.vtkPolyDataNormals()
-        normalsFilter.SetInput(self.Surface)
+        normalsFilter.SetInputData(self.Surface)
         normalsFilter.SetAutoOrientNormals(self.AutoOrientNormals)
         normalsFilter.SetFlipNormals(self.FlipNormals)
         normalsFilter.SetConsistency(self.Consistency)
@@ -66,8 +66,6 @@ class vmtkSurfaceNormals(pypes.pypeScript):
 
         self.Surface = normalsFilter.GetOutput()
 
-        if self.Surface.GetSource():
-            self.Surface.GetSource().UnRegisterAllOutputs()
 
         if self.NormalsArrayName != '':
             self.Surface.GetPointData().GetNormals().SetName(self.NormalsArrayName)

@@ -49,28 +49,26 @@ class vmtkSurfaceDecimation(pypes.pypeScript):
             self.PrintError('Error: No input surface.')
 
         triangleFilter = vtk.vtkTriangleFilter()
-        triangleFilter.SetInput(self.Surface)
+        triangleFilter.SetInputData(self.Surface)
         triangleFilter.Update()
 
         decimationFilter = vtk.vtkDecimatePro()
-        decimationFilter.SetInput(triangleFilter.GetOutput())
+        decimationFilter.SetInputConnection(triangleFilter.GetOutputPort())
         decimationFilter.SetTargetReduction(self.TargetReduction)
         decimationFilter.SetBoundaryVertexDeletion(self.BoundaryVertexDeletion)
         decimationFilter.PreserveTopologyOn()
         decimationFilter.Update()
 
         cleaner = vtk.vtkCleanPolyData()
-        cleaner.SetInput(decimationFilter.GetOutput())
+        cleaner.SetInputConnection(decimationFilter.GetOutputPort())
         cleaner.Update()
 
         triangleFilter = vtk.vtkTriangleFilter()
-        triangleFilter.SetInput(cleaner.GetOutput())
+        triangleFilter.SetInputConnection(cleaner.GetOutputPort())
         triangleFilter.Update()
 
         self.Surface = triangleFilter.GetOutput()
 
-        if self.Surface.GetSource():
-            self.Surface.GetSource().UnRegisterAllOutputs()
 
 
 if __name__=='__main__':

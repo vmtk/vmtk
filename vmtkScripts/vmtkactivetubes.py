@@ -69,7 +69,7 @@ class vmtkActiveTubes(pypes.pypeScript):
             self.PrintError('Error: Image not set.')
 
         activeTubes = vtkvmtk.vtkvmtkActiveTubeFilter()
-        activeTubes.SetInput(self.Centerline)
+        activeTubes.SetInputData(self.Centerline)
         activeTubes.SetPotentialImage(self.Image)
         activeTubes.SetRadiusArrayName(self.RadiusArrayName)
         activeTubes.SetConvergence(self.Convergence)

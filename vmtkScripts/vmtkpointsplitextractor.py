@@ -67,7 +67,7 @@ class vmtkPointSplitExtractor(pypes.pypeScript):
             self.PrintError('Error: No input centerlines.')
 
         pointSplitExtractor = vtkvmtk.vtkvmtkCenterlineSplitExtractor()
-        pointSplitExtractor.SetInput(self.Centerlines)
+        pointSplitExtractor.SetInputData(self.Centerlines)
         pointSplitExtractor.SetRadiusArrayName(self.RadiusArrayName)
         pointSplitExtractor.SetGroupIdsArrayName(self.GroupIdsArrayName)
         pointSplitExtractor.SetTractIdsArrayName(self.TractIdsArrayName)
@@ -78,10 +78,8 @@ class vmtkPointSplitExtractor(pypes.pypeScript):
         pointSplitExtractor.SetTolerance(self.Tolerance)
         pointSplitExtractor.Update()
 
-        self.Centerlines = pointSplitExtractor.GetOutput()
+        self.Centerlines = pointSplitExtractor.GetOutputPort()
 
-        if self.Centerlines.GetSource():
-            self.Centerlines.GetSource().UnRegisterAllOutputs()
 
 
 if __name__=='__main__':

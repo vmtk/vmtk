@@ -60,7 +60,7 @@ class vmtkBranchExtractor(pypes.pypeScript):
             self.PrintError('Error: No input centerlines.')
 
         branchExtractor = vtkvmtk.vtkvmtkCenterlineBranchExtractor()
-        branchExtractor.SetInput(self.Centerlines)
+        branchExtractor.SetInputData(self.Centerlines)
         branchExtractor.SetBlankingArrayName(self.BlankingArrayName)
         branchExtractor.SetRadiusArrayName(self.RadiusArrayName)
         branchExtractor.SetGroupIdsArrayName(self.GroupIdsArrayName)
@@ -70,8 +70,6 @@ class vmtkBranchExtractor(pypes.pypeScript):
 
         self.Centerlines = branchExtractor.GetOutput()
 
-        if self.Centerlines.GetSource():
-            self.Centerlines.GetSource().UnRegisterAllOutputs()
 
 if __name__=='__main__':
 

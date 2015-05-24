@@ -68,7 +68,7 @@ class vmtkCenterlineSections(pypes.pypeScript):
             self.PrintError('Error: No input centerlines.')
 
         centerlineSections = vtkvmtk.vtkvmtkPolyDataCenterlineSections()
-        centerlineSections.SetInput(self.Surface)
+        centerlineSections.SetInputData(self.Surface)
         centerlineSections.SetCenterlines(self.Centerlines)
         centerlineSections.SetCenterlineSectionAreaArrayName(self.CenterlineSectionAreaArrayName)
         centerlineSections.SetCenterlineSectionMinSizeArrayName(self.CenterlineSectionMinSizeArrayName)

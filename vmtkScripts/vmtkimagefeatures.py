@@ -60,23 +60,23 @@ class vmtkImageFeatures(pypes.pypeScript):
     def BuildVTKGradientBasedFeatureImage(self):
 
         cast = vtk.vtkImageCast()
-        cast.SetInput(self.Image)
+        cast.SetInputData(self.Image)
         cast.SetOutputScalarTypeToFloat()
         cast.Update()
 
         gradientMagnitude = vtk.vtkImageGradientMagnitude()
-        gradientMagnitude.SetInput(cast.GetOutput())
+        gradientMagnitude.SetInputConnection(cast.GetOutputPort())
         gradientMagnitude.SetDimensionality(self.Dimensionality)
         gradientMagnitude.Update()
 
         imageAdd = vtk.vtkImageMathematics()
-        imageAdd.SetInput(gradientMagnitude.GetOutput())
+        imageAdd.SetInputConnection(gradientMagnitude.GetOutputPort())
         imageAdd.SetOperationToAddConstant()
         imageAdd.SetConstantC(1.0)
         imageAdd.Update()
 
         imageInvert = vtk.vtkImageMathematics()
-        imageInvert.SetInput(imageAdd.GetOutput())
+        imageInvert.SetInputConnection(imageAdd.GetOutputPort())
         imageInvert.SetOperationToInvert()
         imageInvert.SetConstantC(1E20)
         imageInvert.DivideByZeroToCOn()
@@ -84,34 +84,32 @@ class vmtkImageFeatures(pypes.pypeScript):
 
         self.FeatureImage = vtk.vtkImageData()
         self.FeatureImage.DeepCopy(imageInvert.GetOutput())
-        self.FeatureImage.Update()
 
     def BuildFWHMBasedFeatureImage(self):
         
         cast = vtk.vtkImageCast()
-        cast.SetInput(self.Image)
+        cast.SetInputData(self.Image)
         cast.SetOutputScalarTypeToFloat()
         cast.Update()
 
         fwhmFeatureImageFilter = vtkvmtk.vtkvmtkFWHMFeatureImageFilter()
-        fwhmFeatureImageFilter.SetInput(cast.GetOutput())
+        fwhmFeatureImageFilter.SetInputConnection(cast.GetOutputPort())
         fwhmFeatureImageFilter.SetRadius(self.FWHMRadius)
         fwhmFeatureImageFilter.SetBackgroundValue(self.FWHMBackgroundValue)
         fwhmFeatureImageFilter.Update()
 	
         self.FeatureImage = vtk.vtkImageData()
         self.FeatureImage.DeepCopy(fwhmFeatureImageFilter.GetOutput())
-        self.FeatureImage.Update()
 
     def BuildUpwindGradientBasedFeatureImage(self):
  
         cast = vtk.vtkImageCast()
-        cast.SetInput(self.Image)
+        cast.SetInputData(self.Image)
         cast.SetOutputScalarTypeToFloat()
         cast.Update()
        
         gradientMagnitude = vtkvmtk.vtkvmtkUpwindGradientMagnitudeImageFilter()
-        gradientMagnitude.SetInput(cast.GetOutput())
+        gradientMagnitude.SetInputConnection(cast.GetOutputPort())
         gradientMagnitude.SetUpwindFactor(self.UpwindFactor)
         gradientMagnitude.Update()
 
@@ -123,7 +121,7 @@ class vmtkImageFeatures(pypes.pypeScript):
             alpha = - (inputMaximum - inputMinimum) / 6.0
             beta = (inputMaximum + inputMinimum) / 2.0
             sigmoid = vtkvmtk.vtkvmtkSigmoidImageFilter()
-            sigmoid.SetInput(gradientMagnitude.GetOutput())
+            sigmoid.SetInputConnection(gradientMagnitude.GetOutputPort())
             sigmoid.SetAlpha(alpha)
             sigmoid.SetBeta(beta)
             sigmoid.SetOutputMinimum(0.0)
@@ -132,30 +130,29 @@ class vmtkImageFeatures(pypes.pypeScript):
             featureImage = sigmoid.GetOutput()
         else:
             boundedReciprocal = vtkvmtk.vtkvmtkBoundedReciprocalImageFilter()
-            boundedReciprocal.SetInput(gradientMagnitude.GetOutput())
+            boundedReciprocal.SetInputConnection(gradientMagnitude.GetOutputPort())
             boundedReciprocal.Update()
             featureImage = boundedReciprocal.GetOutput()
  
         self.FeatureImage = vtk.vtkImageData()
         self.FeatureImage.DeepCopy(featureImage)
-        self.FeatureImage.Update()
   
     def BuildGradientBasedFeatureImage(self):
 
         cast = vtk.vtkImageCast()
-        cast.SetInput(self.Image)
+        cast.SetInputData(self.Image)
         cast.SetOutputScalarTypeToFloat()
         cast.Update()
 
         if (self.DerivativeSigma > 0.0):
             gradientMagnitude = vtkvmtk.vtkvmtkGradientMagnitudeRecursiveGaussianImageFilter()
-            gradientMagnitude.SetInput(cast.GetOutput())
+            gradientMagnitude.SetInputConnection(cast.GetOutputPort())
             gradientMagnitude.SetSigma(self.DerivativeSigma)
             gradientMagnitude.SetNormalizeAcrossScale(0)
             gradientMagnitude.Update()
         else:
             gradientMagnitude = vtkvmtk.vtkvmtkGradientMagnitudeImageFilter()
-            gradientMagnitude.SetInput(cast.GetOutput())
+            gradientMagnitude.SetInputConnection(cast.GetOutputPort())
             gradientMagnitude.Update()
 
         featureImage = None
@@ -166,7 +163,7 @@ class vmtkImageFeatures(pypes.pypeScript):
             alpha = - (inputMaximum - inputMinimum) / 6.0
             beta = (inputMaximum + inputMinimum) / 2.0
             sigmoid = vtkvmtk.vtkvmtkSigmoidImageFilter()
-            sigmoid.SetInput(gradientMagnitude.GetOutput())
+            sigmoid.SetInputConnection(gradientMagnitude.GetOutputPort())
             sigmoid.SetAlpha(alpha)
             sigmoid.SetBeta(beta)
             sigmoid.SetOutputMinimum(0.0)
@@ -175,13 +172,12 @@ class vmtkImageFeatures(pypes.pypeScript):
             featureImage = sigmoid.GetOutput()
         else:
             boundedReciprocal = vtkvmtk.vtkvmtkBoundedReciprocalImageFilter()
-            boundedReciprocal.SetInput(gradientMagnitude.GetOutput())
+            boundedReciprocal.SetInputConnection(gradientMagnitude.GetOutputPort())
             boundedReciprocal.Update()
             featureImage = boundedReciprocal.GetOutput()
 
         self.FeatureImage = vtk.vtkImageData()
         self.FeatureImage.DeepCopy(featureImage)
-        self.FeatureImage.Update()
 
     def Execute(self):
 

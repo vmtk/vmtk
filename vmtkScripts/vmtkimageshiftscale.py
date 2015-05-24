@@ -74,7 +74,7 @@ class vmtkImageShiftScale(pypes.pypeScript):
             self.Scale = (self.OutputRange[1] - self.OutputRange[0]) / (self.InputRange[1] - self.InputRange[0])
 
         shiftScale = vtk.vtkImageShiftScale()
-        shiftScale.SetInput(self.Image)
+        shiftScale.SetInputData(self.Image)
         shiftScale.SetShift(self.Shift)
         shiftScale.SetScale(self.Scale)
 
@@ -110,7 +110,7 @@ class vmtkImageShiftScale(pypes.pypeScript):
 
         if self.MapRanges and self.OutputRange[0] != 0.0:
             shiftScale2 = vtk.vtkImageShiftScale()
-            shiftScale2.SetInput(self.Image)
+            shiftScale2.SetInputData(self.Image)
             shiftScale2.SetShift(self.OutputRange[0])
             shiftScale2.SetScale(1.0)
             shiftScale2.Update()

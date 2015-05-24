@@ -46,19 +46,16 @@ class vmtkMeshToSurface(pypes.pypeScript):
             self.PrintError('Error: No input mesh.')
 
         meshToSurfaceFilter = vtk.vtkGeometryFilter()
-        meshToSurfaceFilter.SetInput(self.Mesh)
+        meshToSurfaceFilter.SetInputData(self.Mesh)
         meshToSurfaceFilter.Update()
 
         self.Surface = meshToSurfaceFilter.GetOutput()
 
         if self.CleanOutput == 1:
             cleaner = vtk.vtkCleanPolyData()
-            cleaner.SetInput(meshToSurfaceFilter.GetOutput())
+            cleaner.SetInputConnection(meshToSurfaceFilter.GetOutputPort())
             cleaner.Update()
             self.Surface = cleaner.GetOutput()
-
-        if self.Surface.GetSource():
-            self.Surface.GetSource().UnRegisterAllOutputs()
 
 
 if __name__=='__main__':

@@ -319,21 +319,21 @@ class vmtkImageReader(pypes.pypeScript):
             temp0 = self.Image
             if self.Flip[0] == 1:
                 flipFilter = vtk.vtkImageFlip()
-                flipFilter.SetInput(self.Image)
+                flipFilter.SetInputData(self.Image)
                 flipFilter.SetFilteredAxis(0)
                 flipFilter.Update()
                 temp0 = flipFilter.GetOutput()
             temp1 = temp0
             if self.Flip[1] == 1:
                 flipFilter = vtk.vtkImageFlip()
-                flipFilter.SetInput(temp0)
+                flipFilter.SetInputData(temp0)
                 flipFilter.SetFilteredAxis(1)
                 flipFilter.Update()
                 temp1 = flipFilter.GetOutput()
             temp2 = temp1
             if self.Flip[2] == 1:
                 flipFilter = vtk.vtkImageFlip()
-                flipFilter.SetInput(temp1)
+                flipFilter.SetInputData(temp1)
                 flipFilter.SetFilteredAxis(2)
                 flipFilter.Update()
                 temp2 = flipFilter.GetOutput()
@@ -342,9 +342,6 @@ class vmtkImageReader(pypes.pypeScript):
         self.PrintLog('Spacing %f %f %f' % self.Image.GetSpacing())
         self.PrintLog('Origin %f %f %f' % self.Image.GetOrigin())
         self.PrintLog('Dimensions %d %d %d' % self.Image.GetDimensions())
-
-        if self.Image.GetSource():
-            self.Image.GetSource().UnRegisterAllOutputs()
 
         self.Output = self.Image
 

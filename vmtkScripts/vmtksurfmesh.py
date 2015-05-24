@@ -47,14 +47,11 @@ class vmtkSurfMesh(pypes.pypeScript):
             self.PrintError('Error: No Surface.')
 
         surfmesh = vtkvmtk.vtkvmtkSurfMeshWrapper()
-        surfmesh.SetInput(self.Surface)
+        surfmesh.SetInputData(self.Surface)
         surfmesh.SetNodeSpacing(self.NodeSpacing)
         surfmesh.Update()
 
         self.Surface = surfmesh.GetOutput()
-
-        if self.Surface.GetSource():
-            self.Surface.GetSource().UnRegisterAllOutputs()
 
 if __name__=='__main__':
     main = pypes.pypeMain()

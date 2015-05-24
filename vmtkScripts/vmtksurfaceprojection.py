@@ -51,7 +51,7 @@ class vmtkSurfaceProjection(pypes.pypeScript):
 
         self.PrintLog('Computing projection')
         surfaceProjection = vtkvmtk.vtkvmtkSurfaceProjection()
-        surfaceProjection.SetInput(self.Surface)
+        surfaceProjection.SetInputData(self.Surface)
         surfaceProjection.SetReferenceSurface(self.ReferenceSurface)
         surfaceProjection.Update()
         self.Surface = surfaceProjection.GetOutput()

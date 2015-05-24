@@ -85,14 +85,11 @@ class vmtkSurfaceTransform(pypes.pypeScript):
         transform.SetInput(self.Matrix4x4)
 
         transformFilter = vtk.vtkTransformPolyDataFilter()
-        transformFilter.SetInput(self.Surface)
+        transformFilter.SetInputData(self.Surface)
         transformFilter.SetTransform(transform)
         transformFilter.Update()
 
         self.Surface = transformFilter.GetOutput()
-
-        if self.Surface.GetSource():
-            self.Surface.GetSource().UnRegisterAllOutputs()
 
 
 if __name__=='__main__':

@@ -75,7 +75,7 @@ class vmtkMeshCompare(pypes.pypeScript):
         refArray.SetName(referenceArrayName) 
         attributeData.AddArray(refArray)
 
-        calculator.SetInput(self.Mesh)
+        calculator.SetInputData(self.Mesh)
         calculator.AddScalarVariable('a',self.ArrayName,0)
         calculator.AddScalarVariable('b',referenceArrayName,0)
         calculator.SetFunction("a - b") 
@@ -98,13 +98,13 @@ class vmtkMeshCompare(pypes.pypeScript):
     def qualityCompare(self):
         
         meshQuality = vtk.vtkMeshQuality()
-        meshQuality.SetInput(self.Mesh)
+        meshQuality.SetInputData(self.Mesh)
         meshQuality.RatioOn()
         meshQuality.Update()
         meshQualityOutput = meshQuality.GetOutput()
 
         referenceQuality = vtk.vtkMeshQuality()
-        referenceQuality.SetInput(self.ReferenceMesh)
+        referenceQuality.SetInputData(self.ReferenceMesh)
         referenceQuality.RatioOn()
         referenceQuality.Update()
         referenceQualityOutput = referenceQuality.GetOutput()

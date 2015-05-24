@@ -98,8 +98,6 @@ class vmtkSurfaceArrayOperation(pypes.pypeScript):
 
         self.Surface.GetPointData().AddArray(resultArray)
 
-        if self.Surface.GetSource():
-            self.Surface.GetSource().UnRegisterAllOutputs()
 
 if __name__=='__main__':
     main = pypes.pypeMain()

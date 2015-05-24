@@ -57,14 +57,12 @@ class vmtkSurfaceSubdivision(pypes.pypeScript):
             subdivisionFilter = vtk.vtkLoopSubdivisionFilter()
         else:
             self.PrintError('Error: Unsupported subdivision method.')
-        subdivisionFilter.SetInput(self.Surface)
+        subdivisionFilter.SetInputData(self.Surface)
         subdivisionFilter.SetNumberOfSubdivisions(self.NumberOfSubdivisions)
         subdivisionFilter.Update()
 
         self.Surface = subdivisionFilter.GetOutput()
 
-        if self.Surface.GetSource():
-            self.Surface.GetSource().UnRegisterAllOutputs()
 
 
 if __name__=='__main__':

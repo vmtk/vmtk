@@ -47,22 +47,19 @@ class vmtkLineResampling(pypes.pypeScript):
             self.PrintError('Error: No input surface.')
 
         cleaner = vtk.vtkCleanPolyData()
-        cleaner.SetInput(self.Surface)
+        cleaner.SetInputData(self.Surface)
         cleaner.Update()
 
         if self.Length == 0.0:
             self.Length = cleaner.GetOutput().GetLength() / 100.0
 
         splineFilter = vtk.vtkSplineFilter()
-        splineFilter.SetInput(cleaner.GetOutput())
+        splineFilter.SetInputConnection(cleaner.GetOutputPort())
         splineFilter.SetSubdivideToLength()
         splineFilter.SetLength(self.Length)
         splineFilter.Update()
 
         self.Surface = splineFilter.GetOutput()
-
-        if self.Surface.GetSource():
-            self.Surface.GetSource().UnRegisterAllOutputs()
 
 
 if __name__=='__main__':

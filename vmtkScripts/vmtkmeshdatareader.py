@@ -344,8 +344,6 @@ class vmtkMeshDataReader(pypes.pypeScript):
             else:
                 self.PrintError('Unsupported DataFileType.')
 
-        if self.Mesh.GetSource():
-            self.Mesh.GetSource().UnRegisterAllOutputs()
 
 
 if __name__=='__main__':

@@ -57,7 +57,7 @@ class vmtkPolyBallModeller(pypes.pypeScript):
             self.PrintError('Error: No radius array name.')
 
         modeller = vtkvmtk.vtkvmtkPolyBallModeller()
-        modeller.SetInput(self.Surface)
+        modeller.SetInputData(self.Surface)
         modeller.SetRadiusArrayName(self.RadiusArrayName)
         modeller.UsePolyBallLineOff()
         if self.Image:
@@ -71,8 +71,6 @@ class vmtkPolyBallModeller(pypes.pypeScript):
 
         self.Image = modeller.GetOutput()
         
-        if self.Image.GetSource():
-            self.Image.GetSource().UnRegisterAllOutputs()
 
 
 if __name__=='__main__':

@@ -74,7 +74,7 @@ class vmtkCenterlineMeshSections(pypes.pypeScript):
             self.PrintError('Error: No input centerlines.')
 
         centerlineSections = vtkvmtk.vtkvmtkUnstructuredGridCenterlineSections()
-        centerlineSections.SetInput(self.Mesh)
+        centerlineSections.SetInputData(self.Mesh)
         centerlineSections.SetCenterlines(self.Centerlines)
         centerlineSections.SetSectionSource(self.SectionSource)
         centerlineSections.SetUseSectionSource(self.UseSectionSource)

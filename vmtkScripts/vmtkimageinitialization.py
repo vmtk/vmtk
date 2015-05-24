@@ -126,13 +126,13 @@ class vmtkImageInitialization(pypes.pypeScript):
             self.IsoSurfaceValue = self.ThresholdInput(queryString)
         
         imageMathematics = vtk.vtkImageMathematics()
-        imageMathematics.SetInput(self.Image)
+        imageMathematics.SetInputData(self.Image)
         imageMathematics.SetConstantK(-1.0)
         imageMathematics.SetOperationToMultiplyByK()
         imageMathematics.Update()
 
         subtract = vtk.vtkImageMathematics()
-        subtract.SetInput(imageMathematics.GetOutput())
+        subtract.SetInputConnection(imageMathematics.GetOutputPort())
         subtract.SetOperationToAddConstant()
         subtract.SetConstantC(self.IsoSurfaceValue)
         subtract.Update()
@@ -160,7 +160,7 @@ class vmtkImageInitialization(pypes.pypeScript):
 	
         if self.LowerThreshold != None or self.UpperThreshold != None:
             threshold = vtk.vtkImageThreshold()
-            threshold.SetInput(self.Image)
+            threshold.SetInputData(self.Image)
             if self.LowerThreshold != None and self.UpperThreshold != None:
                 threshold.ThresholdBetween(self.LowerThreshold,self.UpperThreshold)
             elif self.LowerThreshold != None:
@@ -218,7 +218,7 @@ class vmtkImageInitialization(pypes.pypeScript):
 	
         if (self.LowerThreshold is not None) | (self.UpperThreshold is not None):
             threshold = vtk.vtkImageThreshold()
-            threshold.SetInput(self.Image)
+            threshold.SetInputData(self.Image)
             if (self.LowerThreshold is not None) & (self.UpperThreshold is not None):
                 threshold.ThresholdBetween(self.LowerThreshold,self.UpperThreshold)
             elif (self.LowerThreshold is not None):
@@ -239,7 +239,7 @@ class vmtkImageInitialization(pypes.pypeScript):
             scale = 1.0 / (scalarRange[1]-scalarRange[0])
 
         shiftScale = vtk.vtkImageShiftScale()
-        shiftScale.SetInput(thresholdedImage)
+        shiftScale.SetInputData(thresholdedImage)
         shiftScale.SetShift(-scalarRange[0])
         shiftScale.SetScale(scale)
         shiftScale.SetOutputScalarTypeToFloat()
@@ -248,7 +248,7 @@ class vmtkImageInitialization(pypes.pypeScript):
         speedImage = shiftScale.GetOutput()
 
         fastMarching = vtkvmtk.vtkvmtkFastMarchingUpwindGradientImageFilter()
-        fastMarching.SetInput(speedImage)
+        fastMarching.SetInputData(speedImage)
         fastMarching.SetSeeds(sourceSeedIds)
         fastMarching.GenerateGradientImageOff()
         fastMarching.SetTargetOffset(100.0)
@@ -260,7 +260,7 @@ class vmtkImageInitialization(pypes.pypeScript):
         fastMarching.Update()
 
         subtract = vtk.vtkImageMathematics()
-        subtract.SetInput(fastMarching.GetOutput())
+        subtract.SetInputConnection(fastMarching.GetOutputPort())
         subtract.SetOperationToAddConstant()
         subtract.SetConstantC(-fastMarching.GetTargetValue())
         subtract.Update()
@@ -301,7 +301,7 @@ class vmtkImageInitialization(pypes.pypeScript):
 
         if (self.LowerThreshold is not None) | (self.UpperThreshold is not None):
             threshold = vtk.vtkImageThreshold()
-            threshold.SetInput(self.Image)
+            threshold.SetInputData(self.Image)
             if (self.LowerThreshold is not None) & (self.UpperThreshold is not None):
                 threshold.ThresholdBetween(self.LowerThreshold,self.UpperThreshold)
             elif (self.LowerThreshold is not None):
@@ -322,7 +322,7 @@ class vmtkImageInitialization(pypes.pypeScript):
             scale = 1.0 / (scalarRange[1]-scalarRange[0])
 
         shiftScale = vtk.vtkImageShiftScale()
-        shiftScale.SetInput(thresholdedImage)
+        shiftScale.SetInputData(thresholdedImage)
         shiftScale.SetShift(-scalarRange[0])
         shiftScale.SetScale(scale)
         shiftScale.SetOutputScalarTypeToFloat()
@@ -331,7 +331,7 @@ class vmtkImageInitialization(pypes.pypeScript):
         speedImage = shiftScale.GetOutput()
 
         collidingFronts = vtkvmtk.vtkvmtkCollidingFrontsImageFilter()
-        collidingFronts.SetInput(speedImage)
+        collidingFronts.SetInputData(speedImage)
         collidingFronts.SetSeeds1(seedIds1)
         collidingFronts.SetSeeds2(seedIds2)
         collidingFronts.ApplyConnectivityOn()
@@ -339,7 +339,7 @@ class vmtkImageInitialization(pypes.pypeScript):
         collidingFronts.Update()
 
         subtract = vtk.vtkImageMathematics()
-        subtract.SetInput(collidingFronts.GetOutput())
+        subtract.SetInputConnection(collidingFronts.GetOutputPort())
         subtract.SetOperationToAddConstant()
         subtract.SetConstantC(-10.0 * collidingFronts.GetNegativeEpsilon())
         subtract.Update()
@@ -378,7 +378,7 @@ class vmtkImageInitialization(pypes.pypeScript):
             levelSetsInputScalars.SetComponent(seedIds.GetId(i),0,-1.0)
 
         dilateErode = vtk.vtkImageDilateErode3D()
-        dilateErode.SetInput(self.InitialLevelSets)
+        dilateErode.SetInputData(self.InitialLevelSets)
         dilateErode.SetDilateValue(-1.0)
         dilateErode.SetErodeValue(1.0)
         dilateErode.SetKernelSize(3,3,3)
@@ -392,7 +392,7 @@ class vmtkImageInitialization(pypes.pypeScript):
      
         value = 0.0 
         marchingCubes = vtk.vtkMarchingCubes()
-        marchingCubes.SetInput(levelSets)
+        marchingCubes.SetInputData(levelSets)
         marchingCubes.SetValue(0,value)
         marchingCubes.Update()
 
@@ -401,8 +401,6 @@ class vmtkImageInitialization(pypes.pypeScript):
         self.OutputText('Displaying.\n')
   
         self.SurfaceViewer.Surface = marchingCubes.GetOutput()
-        if self.SurfaceViewer.Surface.GetSource():
-            self.SurfaceViewer.Surface.GetSource().UnRegisterAllOutputs()
         self.SurfaceViewer.Display = 0
         self.SurfaceViewer.Opacity = 0.5
         self.SurfaceViewer.BuildView()
@@ -425,8 +423,8 @@ class vmtkImageInitialization(pypes.pypeScript):
         else:
             minFilter = vtk.vtkImageMathematics()
             minFilter.SetOperationToMin()
-            minFilter.SetInput1(self.MergedInitialLevelSets)
-            minFilter.SetInput2(self.InitialLevelSets)
+            minFilter.SetInput1Data(self.MergedInitialLevelSets)
+            minFilter.SetInput2Data(self.InitialLevelSets)
             minFilter.Update()
             self.MergedInitialLevelSets = minFilter.GetOutput()
 
@@ -435,7 +433,7 @@ class vmtkImageInitialization(pypes.pypeScript):
             self.PrintError('Error: no Image.')
 
         cast = vtk.vtkImageCast()
-        cast.SetInput(self.Image)
+        cast.SetInputData(self.Image)
         cast.SetOutputScalarTypeToFloat()
         cast.Update()
         self.Image = cast.GetOutput()
@@ -443,12 +441,12 @@ class vmtkImageInitialization(pypes.pypeScript):
         if self.NegateImage:
             scalarRange = self.Image.GetScalarRange()
             negate = vtk.vtkImageMathematics()
-            negate.SetInput(self.Image)
+            negate.SetInputData(self.Image)
             negate.SetOperationToMultiplyByK()
             negate.SetConstantK(-1.0)
             negate.Update()
             shiftScale = vtk.vtkImageShiftScale()
-            shiftScale.SetInput(negate.GetOutput())
+            shiftScale.SetInputConnection(negate.GetOutputPort())
             shiftScale.SetShift(scalarRange[1]+scalarRange[0])
             shiftScale.SetOutputScalarTypeToFloat()
             shiftScale.Update()

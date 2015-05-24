@@ -46,14 +46,12 @@ class vmtkSurfaceKiteRemoval(pypes.pypeScript):
             self.PrintError('Error: No input surface.')
 
         kiteRemoval = vtkvmtk.vtkvmtkPolyDataKiteRemovalFilter()
-        kiteRemoval.SetInput(self.Surface)
+        kiteRemoval.SetInputData(self.Surface)
         kiteRemoval.SetSizeFactor(self.SizeFactor)
         kiteRemoval.Update()
 
         self.Surface = kiteRemoval.GetOutput()
 
-        if self.Surface.GetSource():
-            self.Surface.GetSource().UnRegisterAllOutputs()
 
 
 if __name__=='__main__':

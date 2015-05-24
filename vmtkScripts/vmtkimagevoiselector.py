@@ -80,12 +80,12 @@ class vmtkImageVOISelector(pypes.pypeScript):
 
     def Display(self):
 
-        wholeExtent = self.Image.GetWholeExtent()
+        wholeExtent = self.Image.GetExtent()
 
         picker = vtk.vtkCellPicker()
         picker.SetTolerance(0.005)
 
-        self.PlaneWidgetX.SetInput(self.Image)
+        self.PlaneWidgetX.SetInputData(self.Image)
         self.PlaneWidgetX.SetPlaneOrientationToXAxes()
         self.PlaneWidgetX.SetSliceIndex(wholeExtent[0])
         if self.vmtkRenderer.Annotations:
@@ -96,7 +96,7 @@ class vmtkImageVOISelector(pypes.pypeScript):
         self.PlaneWidgetX.KeyPressActivationOff()
         self.PlaneWidgetX.On()
 
-        self.PlaneWidgetY.SetInput(self.Image)
+        self.PlaneWidgetY.SetInputData(self.Image)
         self.PlaneWidgetY.SetPlaneOrientationToYAxes()
         self.PlaneWidgetY.SetSliceIndex(wholeExtent[2])
         if self.vmtkRenderer.Annotations:
@@ -108,7 +108,7 @@ class vmtkImageVOISelector(pypes.pypeScript):
         self.PlaneWidgetY.SetLookupTable(self.PlaneWidgetX.GetLookupTable())
         self.PlaneWidgetY.On()
 
-        self.PlaneWidgetZ.SetInput(self.Image)
+        self.PlaneWidgetZ.SetInputData(self.Image)
         self.PlaneWidgetZ.SetPlaneOrientationToZAxes()
         self.PlaneWidgetZ.SetSliceIndex(wholeExtent[4])
         if self.vmtkRenderer.Annotations:
@@ -122,7 +122,7 @@ class vmtkImageVOISelector(pypes.pypeScript):
 
         self.BoxWidget.SetPriority(1.0)
         self.BoxWidget.SetHandleSize(5E-3)
-        self.BoxWidget.SetInput(self.Image)
+        self.BoxWidget.SetInputData(self.Image)
         self.BoxWidget.PlaceWidget()
         self.BoxWidget.RotationEnabledOff()
         self.BoxWidget.AddObserver("StartInteractionEvent", self.HideCube)
@@ -135,7 +135,7 @@ class vmtkImageVOISelector(pypes.pypeScript):
         polyData.ComputeBounds()
         self.CubeSource.SetBounds(polyData.GetBounds())
         cubeMapper = vtk.vtkPolyDataMapper()
-        cubeMapper.SetInput(self.CubeSource.GetOutput())
+        cubeMapper.SetInputConnection(self.CubeSource.GetOutputPort())
         self.CubeActor.SetMapper(cubeMapper)
         self.CubeActor.GetProperty().SetColor(0.6,0.6,0.2)
         self.CubeActor.GetProperty().SetOpacity(0.25)
@@ -166,7 +166,7 @@ class vmtkImageVOISelector(pypes.pypeScript):
 
     def ExtractVOI(self):
 
-        wholeExtent = self.Image.GetWholeExtent()
+        wholeExtent = self.Image.GetExtent()
         origin = self.Image.GetOrigin()
         spacing = self.Image.GetSpacing()
 
@@ -179,28 +179,23 @@ class vmtkImageVOISelector(pypes.pypeScript):
         newVOI[5] = min(wholeExtent[5],int(math.floor((self.BoxBounds[5]-origin[2])/spacing[2])))
 
         extractVOI = vtk.vtkExtractVOI()
-        extractVOI.SetInput(self.CroppedImage)
+        extractVOI.SetInputData(self.CroppedImage)
         extractVOI.SetVOI(newVOI)
         extractVOI.Update()
 
         self.CroppedImage.DeepCopy(extractVOI.GetOutput())
         self.CroppedImage.Update()
 
-        if self.CroppedImage.GetSource():
-            self.CroppedImage.GetSource().UnregisterAllOutputs()
-
     def InteractCallback(self):
-	if self.BoxWidget.GetEnabled() == 1:
-	    self.BoxWidget.SetEnabled(0)
-	else:
-	    self.BoxWidget.SetEnabled(1)
+        if self.BoxWidget.GetEnabled() == 1:
+            self.BoxWidget.SetEnabled(0)
+        else:
+            self.BoxWidget.SetEnabled(1)
 
     def Execute(self):
 	
         if self.Image == None:
             self.PrintError('Error: no Image.')
-
-        self.Image.Update()
 
         self.CroppedImage.DeepCopy(self.Image)
 

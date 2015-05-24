@@ -58,12 +58,12 @@ class vmtkImageOtsuThresholds(pypes.pypeScript):
             self.PrintError('Error: No input image.')
 
         cast = vtk.vtkImageCast()
-        cast.SetInput(self.Image)
+        cast.SetInputData(self.Image)
         cast.SetOutputScalarTypeToFloat()
         cast.Update()
 
         otsuFilter = vtkvmtk.vtkvmtkOtsuMultipleThresholdsImageFilter()
-        otsuFilter.SetInput(cast.GetOutput())
+        otsuFilter.SetInputConnection(cast.GetOutputPort())
         otsuFilter.SetNumberOfHistogramBins(self.NumberOfHistogramBins)
         otsuFilter.SetNumberOfThresholds(self.NumberOfThresholds)
         otsuFilter.SetLabelOffset(self.LabelOffset)

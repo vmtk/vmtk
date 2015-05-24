@@ -503,10 +503,10 @@ class vmtkTetrInGenerator(pypes.pypeScript):
                 count = 0
                 wallPointIdsMap.SetNumberOfIds(entityArray.GetNumberOfTuples())
                 extractSurface = vtk.vtkGeometryFilter()
-                extractSurface.SetInput(self.Mesh)
+                extractSurface.SetInputData(self.Mesh)
                 extractSurface.Update()
                 normalsFilter = vtk.vtkPolyDataNormals()
-                normalsFilter.SetInput(extractSurface.GetOutput())
+                normalsFilter.SetInputConnection(extractSurface.GetOutputPort())
                 normalsFilter.AutoOrientNormalsOn()
                 normalsFilter.ConsistencyOn()
                 normalsFilter.Update()

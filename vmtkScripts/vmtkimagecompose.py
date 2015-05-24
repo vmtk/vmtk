@@ -54,15 +54,15 @@ class vmtkImageCompose(pypes.pypeScript):
 
         if self.NegateImage2:
             negateFilter = vtk.vtkImageMathematics()
-            negateFilter.SetInput(self.Image2)
+            negateFilter.SetInputData(self.Image2)
             negateFilter.SetOperationToMultiplyByK()
             negateFilter.SetConstantK(-1.0)
             negateFilter.Update()
             self.Image2 = negateFilter.GetOutput()
 
         composeFilter = vtk.vtkImageMathematics()
-        composeFilter.SetInput1(self.Image)
-        composeFilter.SetInput2(self.Image2)
+        composeFilter.SetInput1Data(self.Image)
+        composeFilter.SetInput2Data(self.Image2)
         if self.Operation == 'min':
             composeFilter.SetOperationToMin()
         elif self.Operation == 'max':

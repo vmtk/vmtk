@@ -59,7 +59,7 @@ class vmtkImageLineTracer(pypes.pypeScript):
             ])
 
     def NextCallback(self, obj):
-           if self.SliceVOI[self.Axis*2+1] < self.Image.GetWholeExtent()[self.Axis*2+1]:
+           if self.SliceVOI[self.Axis*2+1] < self.Image.GetExtent()[self.Axis*2+1]:
                 self.SliceVOI[self.Axis*2+1] += 1
                 self.SliceVOI[self.Axis*2] = self.SliceVOI[self.Axis*2+1]
                 origin = self.Image.GetOrigin()
@@ -71,7 +71,7 @@ class vmtkImageLineTracer(pypes.pypeScript):
            obj.Render()
 
     def PreviousCallback(self, obj):
-	   if self.SliceVOI[self.Axis*2] > self.Image.GetWholeExtent()[self.Axis*2]:
+	   if self.SliceVOI[self.Axis*2] > self.Image.GetExtent()[self.Axis*2]:
                 self.SliceVOI[self.Axis*2] -= 1
                 self.SliceVOI[self.Axis*2+1] = self.SliceVOI[self.Axis*2]
                 origin = self.Image.GetOrigin()
@@ -109,14 +109,11 @@ class vmtkImageLineTracer(pypes.pypeScript):
         transform.Translate(translation)
 
         pathTransform = vtk.vtkTransformPolyDataFilter()
-        pathTransform.SetInput(path)
+        pathTransform.SetInputData(path)
         pathTransform.SetTransform(transform)
         pathTransform.Update()
 
         self.Line = pathTransform.GetOutput()
-
-        if self.Line.GetSource():
-            self.Line.GetSource().UnRegisterAllOutputs()
 
     def ChangeSlice(self,obj,event):
         currentSlice = self.SliceVOI[self.Axis*2]
@@ -151,21 +148,21 @@ class vmtkImageLineTracer(pypes.pypeScript):
             scale = 255.0 / (scalarRange[1]-scalarRange[0])
 
         imageShifter = vtk.vtkImageShiftScale()
-        imageShifter.SetInput(self.Image)
+        imageShifter.SetInputData(self.Image)
         imageShifter.SetShift(-1.0 * scalarRange[0])
         imageShifter.SetScale(scale)
         imageShifter.SetOutputScalarTypeToUnsignedChar()
 
         widgetImage = imageShifter.GetOutput()
 
-        self.ImageActor.SetInput(widgetImage)
+        self.ImageActor.SetInputData(widgetImage)
         self.ImageActor.SetDisplayExtent(self.SliceVOI)
         self.vmtkRenderer.Renderer.AddActor(self.ImageActor)
 
         if self.Type == 'freehand':
             self.ImageTracerWidget.SetCaptureRadius(1.5)
             self.ImageTracerWidget.SetViewProp(self.ImageActor)
-            self.ImageTracerWidget.SetInput(widgetImage)
+            self.ImageTracerWidget.SetInputData(widgetImage)
             self.ImageTracerWidget.ProjectToPlaneOn()
             self.ImageTracerWidget.SetProjectionNormal(self.Axis)
             self.ImageTracerWidget.PlaceWidget()

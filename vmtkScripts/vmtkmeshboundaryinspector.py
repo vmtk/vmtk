@@ -71,7 +71,7 @@ class vmtkMeshBoundaryInspector(pypes.pypeScript):
         self.vmtkRenderer.RegisterScript(self) 
 
         threshold = vtk.vtkThreshold()
-        threshold.SetInput(self.Mesh)
+        threshold.SetInputData(self.Mesh)
         threshold.ThresholdByUpper(self.VolumeCellEntityId+0.5)
         threshold.SetInputArrayToProcess(0,0,0,1,self.CellEntityIdsArrayName)
         threshold.Update()
@@ -80,7 +80,7 @@ class vmtkMeshBoundaryInspector(pypes.pypeScript):
         boundaryMesh.GetCellData().SetActiveScalars(self.CellEntityIdsArrayName)
 
         boundaryMapper = vtk.vtkDataSetMapper()
-        boundaryMapper.SetInput(boundaryMesh)
+        boundaryMapper.SetInputData(boundaryMesh)
         boundaryMapper.ScalarVisibilityOn()
         boundaryMapper.SetScalarModeToUseCellData()
         boundaryMapper.SetScalarRange(boundaryMesh.GetCellData().GetScalars().GetRange())
@@ -90,17 +90,17 @@ class vmtkMeshBoundaryInspector(pypes.pypeScript):
         self.vmtkRenderer.Renderer.AddActor(boundaryActor)
 
         wallThreshold = vtk.vtkThreshold()
-        wallThreshold.SetInput(boundaryMesh)
+        wallThreshold.SetInputData(boundaryMesh)
         wallThreshold.ThresholdByLower(self.WallCellEntityId+0.5)
         wallThreshold.SetInputArrayToProcess(0,0,0,1,self.CellEntityIdsArrayName)
         wallThreshold.Update()
 
         wallMeshToSurface = vtk.vtkGeometryFilter()
-        wallMeshToSurface.SetInput(wallThreshold.GetOutput())
+        wallMeshToSurface.SetInputConnection(wallThreshold.GetOutputPort())
         wallMeshToSurface.Update()
 
         boundaryReferenceSystems = vtkvmtk.vtkvmtkBoundaryReferenceSystems()
-        boundaryReferenceSystems.SetInput(wallMeshToSurface.GetOutput())
+        boundaryReferenceSystems.SetInputConnection(wallMeshToSurface.GetOutputPort())
         boundaryReferenceSystems.SetBoundaryRadiusArrayName("BoundaryRadius")
         boundaryReferenceSystems.SetBoundaryNormalsArrayName("BoundaryNormals")
         boundaryReferenceSystems.SetPoint1ArrayName("Point1Array")
@@ -116,13 +116,13 @@ class vmtkMeshBoundaryInspector(pypes.pypeScript):
         self.ReferenceSystems.GetPointData().AddArray(cellEntityIdsArray)
 
         boundaryThreshold = vtk.vtkThreshold()
-        boundaryThreshold.SetInput(boundaryMesh)
+        boundaryThreshold.SetInputData(boundaryMesh)
         boundaryThreshold.ThresholdByUpper(self.WallCellEntityId+0.5)
         boundaryThreshold.SetInputArrayToProcess(0,0,0,1,self.CellEntityIdsArrayName)
         boundaryThreshold.Update()
 
         boundaryMeshToSurface = vtk.vtkGeometryFilter()
-        boundaryMeshToSurface.SetInput(boundaryThreshold.GetOutput())
+        boundaryMeshToSurface.SetInputConnection(boundaryThreshold.GetOutputPort())
         boundaryMeshToSurface.Update()
 
         boundarySurface = boundaryMeshToSurface.GetOutput()
@@ -150,7 +150,7 @@ class vmtkMeshBoundaryInspector(pypes.pypeScript):
         self.ReferenceSystems.GetPointData().SetActiveScalars(self.CellEntityIdsArrayName)
 
         labelsMapper = vtk.vtkLabeledDataMapper();
-        labelsMapper.SetInput(self.ReferenceSystems)
+        labelsMapper.SetInputData(self.ReferenceSystems)
         labelsMapper.SetLabelModeToLabelScalars()
         labelsActor = vtk.vtkActor2D()
         labelsActor.SetMapper(labelsMapper)

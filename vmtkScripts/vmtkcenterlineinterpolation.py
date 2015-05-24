@@ -116,8 +116,6 @@ class vmtkCenterlineInterpolation(pypes.pypeScript):
                     value = aSplines[k].Evaluate(abscissa)
                     array.SetTuple1(pointId,value)
 
-        if self.Centerlines.GetSource():
-            self.Centerlines.GetSource().UnRegisterAllOutputs()
 
 
 if __name__=='__main__':

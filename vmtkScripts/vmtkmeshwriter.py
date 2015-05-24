@@ -63,7 +63,7 @@ class vmtkMeshWriter(pypes.pypeScript):
             self.PrintError('Error: no OutputFileName.')
         self.PrintLog('Writing VTK mesh file.')
         writer = vtk.vtkUnstructuredGridWriter()
-        writer.SetInput(self.Mesh)
+        writer.SetInputData(self.Mesh)
         writer.SetFileName(self.OutputFileName)
         if self.Mode == "binary":
             writer.SetFileTypeToBinary()
@@ -76,7 +76,7 @@ class vmtkMeshWriter(pypes.pypeScript):
             self.PrintError('Error: no OutputFileName.')
         self.PrintLog('Writing VTK XML mesh file.')
         writer = vtk.vtkXMLUnstructuredGridWriter()
-        writer.SetInput(self.Mesh)
+        writer.SetInputData(self.Mesh)
         writer.SetFileName(self.OutputFileName)
         if self.Mode == "binary":
             writer.SetDataModeToBinary()
@@ -91,7 +91,7 @@ class vmtkMeshWriter(pypes.pypeScript):
         import os.path
         outputFileName = os.path.splitext(self.OutputFileName)[0]
         writer = vtkvmtk.vtkvmtkTetGenWriter()
-        writer.SetInput(self.Mesh)
+        writer.SetInputData(self.Mesh)
         writer.SetFileName(outputFileName)
         if self.CellEntityIdsArrayName != '':
             writer.SetBoundaryDataArrayName(self.CellEntityIdsArrayName)
@@ -102,7 +102,7 @@ class vmtkMeshWriter(pypes.pypeScript):
             self.PrintError('Error: no OutputFileName.')
         self.PrintLog('Writing Xda mesh file.')
         writer = vtkvmtk.vtkvmtkXdaWriter()
-        writer.SetInput(self.Mesh)
+        writer.SetInputData(self.Mesh)
         writer.SetFileName(self.OutputFileName)
         if self.CellEntityIdsArrayName != '':
             writer.SetBoundaryDataArrayName(self.CellEntityIdsArrayName)
@@ -113,7 +113,7 @@ class vmtkMeshWriter(pypes.pypeScript):
             self.PrintError('Error: no OutputFileName.')
         self.PrintLog('Writing FDNEUT mesh file.')
         writer = vtkvmtk.vtkvmtkFDNEUTWriter()
-        writer.SetInput(self.Mesh)
+        writer.SetInputData(self.Mesh)
         writer.SetFileName(self.OutputFileName)
         writer.Write()
 
@@ -122,7 +122,7 @@ class vmtkMeshWriter(pypes.pypeScript):
             self.PrintError('Error: no OutputFileName.')
         self.PrintLog('Writing Tecplot file.')
         triangleFilter = vtk.vtkDataSetTriangleFilter()
-        triangleFilter.SetInput(self.Mesh)
+        triangleFilter.SetInputData(self.Mesh)
         triangleFilter.Update()
         self.Mesh = triangleFilter.GetOutput()
         f=open(self.OutputFileName, 'w')
@@ -252,7 +252,7 @@ class vmtkMeshWriter(pypes.pypeScript):
         if self.Compressed:
             self.OutputFileName += '.gz'
         writer = vtkvmtk.vtkvmtkDolfinWriter()
-        writer.SetInput(self.Mesh)
+        writer.SetInputData(self.Mesh)
         writer.SetFileName(self.OutputFileName)
         if self.CellEntityIdsArrayName != '':
             writer.SetBoundaryDataArrayName(self.CellEntityIdsArrayName)
@@ -275,7 +275,7 @@ class vmtkMeshWriter(pypes.pypeScript):
 #        return
         self.PrintLog('Writing Fluent file.')
         writer = vtkvmtk.vtkvmtkFluentWriter()
-        writer.SetInput(self.Mesh)
+        writer.SetInputData(self.Mesh)
         writer.SetFileName(self.OutputFileName)
         if self.CellEntityIdsArrayName != '':
             writer.SetBoundaryDataArrayName(self.CellEntityIdsArrayName)

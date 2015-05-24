@@ -330,9 +330,6 @@ class vmtkMeshReader(pypes.pypeScript):
         else:
             self.PrintError('Error: unsupported format '+ self.Format + '.')
 
-        if self.Mesh.GetSource():
-            self.Mesh.GetSource().UnRegisterAllOutputs()
-
         self.Output = self.Mesh
 
 

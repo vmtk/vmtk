@@ -94,7 +94,7 @@ class vmtkBoundaryLayer(pypes.pypeScript):
             self.PrintError('Error: No input mesh.')
 
         boundaryLayerGenerator = vtkvmtk.vtkvmtkBoundaryLayerGenerator()
-        boundaryLayerGenerator.SetInput(self.Mesh)
+        boundaryLayerGenerator.SetInputData(self.Mesh)
         boundaryLayerGenerator.SetWarpVectorsArrayName(self.WarpVectorsArrayName)
         boundaryLayerGenerator.SetLayerThickness(self.Thickness)
         boundaryLayerGenerator.SetLayerThicknessArrayName(self.ThicknessArrayName)
@@ -120,8 +120,6 @@ class vmtkBoundaryLayer(pypes.pypeScript):
         self.Mesh = boundaryLayerGenerator.GetOutput()
         self.InnerSurfaceMesh = boundaryLayerGenerator.GetInnerSurface()
 
-        if self.Mesh.GetSource():
-            self.Mesh.GetSource().UnRegisterAllOutputs()
 
 
 if __name__=='__main__':

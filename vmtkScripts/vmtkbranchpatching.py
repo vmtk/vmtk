@@ -79,7 +79,7 @@ class vmtkBranchPatching(pypes.pypeScript):
         self.PatchSize = [self.LongitudinalPatchSize, 1.0/float(self.CircularNumberOfPatches)]
 
         patchingFilter = vtkvmtk.vtkvmtkPolyDataPatchingFilter()
-        patchingFilter.SetInput(self.Surface)
+        patchingFilter.SetInputData(self.Surface)
         patchingFilter.SetCircularPatching(self.CircularPatching)
         patchingFilter.SetUseConnectivity(self.UseConnectivity)
         patchingFilter.SetLongitudinalMappingArrayName(self.LongitudinalMappingArrayName)
@@ -93,13 +93,7 @@ class vmtkBranchPatching(pypes.pypeScript):
 
         self.Surface = patchingFilter.GetOutput()
 
-        if self.Surface.GetSource():
-            self.Surface.GetSource().UnRegisterAllOutputs()
-
         self.PatchedData = patchingFilter.GetPatchedData()
-
-        if self.PatchedData.GetSource():
-            self.PatchedData.GetSource().UnRegisterAllOutputs()
 
 
 if __name__=='__main__':

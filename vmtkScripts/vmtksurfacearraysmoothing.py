@@ -62,7 +62,7 @@ class vmtkSurfaceArraySmoothing(pypes.pypeScript):
 
         surface = self.Surface
         extractEdges = vtk.vtkExtractEdges()
-        extractEdges.SetInput(surface)
+        extractEdges.SetInputData(surface)
         extractEdges.Update()
         surfEdges = extractEdges.GetOutput()
 

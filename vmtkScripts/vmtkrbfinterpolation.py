@@ -55,7 +55,7 @@ class vmtkRBFInterpolation(pypes.pypeScript):
             self.PrintError('Error: No input seeds.')
 
         rbf = vtkvmtk.vtkvmtkRBFInterpolation()
-        rbf.SetSource(self.Seeds)
+        rbf.SetSourceData(self.Seeds)
         if self.RBFType == "thinplatespline":
             rbf.SetRBFTypeToThinPlateSpline()
         elif self.RBFType == "biharmonic":

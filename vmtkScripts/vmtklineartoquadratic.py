@@ -71,7 +71,7 @@ class vmtkLinearToQuadratic(pypes.pypeScript):
             surface = self.Surface
             if self.Surface and self.CapSurface:
                 capper = vtkvmtk.vtkvmtkSimpleCapPolyData()
-                capper.SetInput(self.Surface)
+                capper.SetInputData(self.Surface)
                 capper.SetCellEntityIdsArrayName('foo') 
                 capper.Update()
                 surface = capper.GetOutput()
@@ -95,13 +95,10 @@ class vmtkLinearToQuadratic(pypes.pypeScript):
         else:
             self.PrintError('Unsupported mode.')
 
-        linearToQuadraticFilter.SetInput(self.Mesh)
+        linearToQuadraticFilter.SetInputData(self.Mesh)
         linearToQuadraticFilter.Update()
 
         self.Mesh = linearToQuadraticFilter.GetOutput()
-
-        if self.Mesh.GetSource():
-            self.Mesh.GetSource().UnRegisterAllOutputs()
 
 
 if __name__=='__main__':

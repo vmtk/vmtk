@@ -59,7 +59,7 @@ class vmtkBoundaryReferenceSystems(pypes.pypeScript):
             self.PrintError('Error: No input surface.')
 
         boundaryReferenceSystems = vtkvmtk.vtkvmtkBoundaryReferenceSystems()
-        boundaryReferenceSystems.SetInput(self.Surface)
+        boundaryReferenceSystems.SetInputData(self.Surface)
         boundaryReferenceSystems.SetBoundaryRadiusArrayName(self.BoundaryRadiusArrayName)
         boundaryReferenceSystems.SetBoundaryNormalsArrayName(self.BoundaryNormalsArrayName)
         boundaryReferenceSystems.SetPoint1ArrayName(self.Point1ArrayName)
@@ -68,8 +68,6 @@ class vmtkBoundaryReferenceSystems(pypes.pypeScript):
 
         self.ReferenceSystems = boundaryReferenceSystems.GetOutput()
 
-        if self.ReferenceSystems.GetSource():
-            self.ReferenceSystems.GetSource().UnRegisterAllOutputs()
 
 
 if __name__=='__main__':

@@ -52,7 +52,7 @@ class vmtkImageCast(pypes.pypeScript):
 
         if self.OutputType == 'uchar' and self.ShiftScale:
             shiftScale = vtk.vtkImageShiftScale()
-            shiftScale.SetInput(self.Image)
+            shiftScale.SetInputData(self.Image)
             if self.WindowLevel[0] == 0.0:
                 scalarRange = self.Image.GetScalarRange()
                 scale = 255.0
@@ -69,7 +69,7 @@ class vmtkImageCast(pypes.pypeScript):
             self.Image = shiftScale.GetOutput()
         else:
             cast = vtk.vtkImageCast()
-            cast.SetInput(self.Image)
+            cast.SetInputData(self.Image)
             if self.OutputType == 'float':
                 cast.SetOutputScalarTypeToFloat()
             elif self.OutputType == 'double':

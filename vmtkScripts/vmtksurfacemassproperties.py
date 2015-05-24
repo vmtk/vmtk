@@ -50,15 +50,15 @@ class vmtkSurfaceMassProperties(pypes.pypeScript):
             self.PrintError('Error: No input surface.')
 
         cleaner = vtk.vtkCleanPolyData()
-        cleaner.SetInput(self.Surface)
+        cleaner.SetInputData(self.Surface)
         cleaner.Update()
 
         triangleFilter = vtk.vtkTriangleFilter()
-        triangleFilter.SetInput(cleaner.GetOutput())
+        triangleFilter.SetInputConnection(cleaner.GetOutputPort())
         triangleFilter.Update()
 
         massProps = vtk.vtkMassProperties()
-        massProps.SetInput(triangleFilter.GetOutput())
+        massProps.SetInputConnection(triangleFilter.GetOutputPort())
         massProps.Update()
 
         self.SurfaceArea = massProps.GetSurfaceArea()

@@ -57,7 +57,7 @@ class vmtkCenterlineModeller(pypes.pypeScript):
             self.PrintError('Error: No radius array name.')
 
         modeller = vtkvmtk.vtkvmtkPolyBallModeller()
-        modeller.SetInput(self.Centerlines)
+        modeller.SetInputData(self.Centerlines)
         modeller.SetRadiusArrayName(self.RadiusArrayName)
         modeller.UsePolyBallLineOn()
         if self.Image:
@@ -71,8 +71,6 @@ class vmtkCenterlineModeller(pypes.pypeScript):
 
         self.Image = modeller.GetOutput()
         
-        if self.Image.GetSource():
-            self.Image.GetSource().UnRegisterAllOutputs()
 
 
 if __name__=='__main__':

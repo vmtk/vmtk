@@ -63,11 +63,11 @@ class vmtkImageMorphology(pypes.pypeScript):
                 morphologyFilter.SetOperationToErode()
 
             cast = vtk.vtkImageCast()
-            cast.SetInput(self.Image)
+            cast.SetInputData(self.Image)
             cast.SetOutputScalarTypeToFloat()
             cast.Update()
 
-            morphologyFilter.SetInput(cast.GetOutput())
+            morphologyFilter.SetInputConnection(cast.GetOutputPort())
 
         morphologyFilter.SetBallRadius(self.BallRadius)
         morphologyFilter.Update()

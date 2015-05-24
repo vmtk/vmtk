@@ -103,7 +103,7 @@ class vmtkFlowExtensions(pypes.pypeScript):
             self.vmtkRenderer.RegisterScript(self)  
 
             boundaryExtractor = vtkvmtk.vtkvmtkPolyDataBoundaryExtractor()
-            boundaryExtractor.SetInput(self.Surface)
+            boundaryExtractor.SetInputData(self.Surface)
             boundaryExtractor.Update()
             boundaries = boundaryExtractor.GetOutput()
             numberOfBoundaries = boundaries.GetNumberOfCells()
@@ -116,7 +116,7 @@ class vmtkFlowExtensions(pypes.pypeScript):
             seedPolyData.SetPoints(seedPoints)
             seedPolyData.Update()
             labelsMapper = vtk.vtkLabeledDataMapper();
-            labelsMapper.SetInput(seedPolyData)
+            labelsMapper.SetInputData(seedPolyData)
             labelsMapper.SetLabelModeToLabelIds()
             labelsActor = vtk.vtkActor2D()
             labelsActor.SetMapper(labelsMapper)
@@ -124,7 +124,7 @@ class vmtkFlowExtensions(pypes.pypeScript):
             self.vmtkRenderer.Renderer.AddActor(labelsActor)
     
             surfaceMapper = vtk.vtkPolyDataMapper()
-            surfaceMapper.SetInput(self.Surface)
+            surfaceMapper.SetInputData(self.Surface)
             surfaceMapper.ScalarVisibilityOff()
             surfaceActor = vtk.vtkActor()
             surfaceActor.SetMapper(surfaceMapper)
@@ -150,7 +150,7 @@ class vmtkFlowExtensions(pypes.pypeScript):
                 boundaryIds.InsertNextId(label)
 
         flowExtensionsFilter = vtkvmtk.vtkvmtkPolyDataFlowExtensionsFilter()
-        flowExtensionsFilter.SetInput(self.Surface)
+        flowExtensionsFilter.SetInputData(self.Surface)
         flowExtensionsFilter.SetCenterlines(self.Centerlines)
         flowExtensionsFilter.SetSigma(self.Sigma)
         flowExtensionsFilter.SetAdaptiveExtensionLength(self.AdaptiveExtensionLength)
@@ -176,8 +176,6 @@ class vmtkFlowExtensions(pypes.pypeScript):
 
         self.Surface = flowExtensionsFilter.GetOutput()
 
-        if self.Surface.GetSource():
-            self.Surface.GetSource().UnRegisterAllOutputs()
 
 
 if __name__=='__main__':

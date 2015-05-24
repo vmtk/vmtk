@@ -77,7 +77,7 @@ class vmtkImageViewer(pypes.pypeScript):
 
         if (self.ArrayName != ''):
             self.Image.GetPointData().SetActiveScalars(self.ArrayName)
-        wholeExtent = self.Image.GetWholeExtent()
+        wholeExtent = self.Image.GetExtent()
 
         if self.Picker == None:
             self.Picker = vtk.vtkCellPicker()
@@ -96,7 +96,7 @@ class vmtkImageViewer(pypes.pypeScript):
         self.PlaneWidgetX.SetResliceInterpolateToLinear()
         self.PlaneWidgetX.SetTextureInterpolate(self.TextureInterpolation)
         self.PlaneWidgetX.SetUseContinuousCursor(self.ContinuousCursor)
-        self.PlaneWidgetX.SetInput(self.Image)
+        self.PlaneWidgetX.SetInputData(self.Image)
         self.PlaneWidgetX.SetPlaneOrientationToXAxes()
         self.PlaneWidgetX.SetSliceIndex(wholeExtent[0])
         if self.vmtkRenderer.Annotations:
@@ -119,7 +119,7 @@ class vmtkImageViewer(pypes.pypeScript):
         self.PlaneWidgetY.SetResliceInterpolateToLinear()
         self.PlaneWidgetY.SetTextureInterpolate(self.TextureInterpolation)
         self.PlaneWidgetY.SetUseContinuousCursor(self.ContinuousCursor)
-        self.PlaneWidgetY.SetInput(self.Image)
+        self.PlaneWidgetY.SetInputData(self.Image)
         self.PlaneWidgetY.SetPlaneOrientationToYAxes()
         self.PlaneWidgetY.SetSliceIndex(wholeExtent[2])
         if self.vmtkRenderer.Annotations:
@@ -143,7 +143,7 @@ class vmtkImageViewer(pypes.pypeScript):
         self.PlaneWidgetZ.SetResliceInterpolateToLinear()
         self.PlaneWidgetZ.SetTextureInterpolate(self.TextureInterpolation)
         self.PlaneWidgetZ.SetUseContinuousCursor(self.ContinuousCursor)
-        self.PlaneWidgetZ.SetInput(self.Image)
+        self.PlaneWidgetZ.SetInputData(self.Image)
         self.PlaneWidgetZ.SetPlaneOrientationToZAxes()
         self.PlaneWidgetZ.SetSliceIndex(wholeExtent[4])
         if self.vmtkRenderer.Annotations:

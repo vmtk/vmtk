@@ -200,12 +200,12 @@ class vmtkPickPointSeedSelector(vmtkSeedSelector):
 
         glyphs = vtk.vtkGlyph3D()
         glyphSource = vtk.vtkSphereSource()
-        glyphs.SetInput(self.PickedSeeds)
-        glyphs.SetSource(glyphSource.GetOutput())
+        glyphs.SetInputData(self.PickedSeeds)
+        glyphs.SetSourceData(glyphSource.GetOutput())
         glyphs.SetScaleModeToDataScalingOff()
         glyphs.SetScaleFactor(self._Surface.GetLength()*0.01)
         glyphMapper = vtk.vtkPolyDataMapper()
-        glyphMapper.SetInput(glyphs.GetOutput())
+        glyphMapper.SetInputConnection(glyphs.GetOutputPort())
         self.SeedActor = vtk.vtkActor()
         self.SeedActor.SetMapper(glyphMapper)
         self.SeedActor.GetProperty().SetColor(1.0,0.0,0.0)
@@ -216,7 +216,7 @@ class vmtkPickPointSeedSelector(vmtkSeedSelector):
         self.vmtkRenderer.AddKeyBinding('u','Undo.',self.UndoCallback)
         self.vmtkRenderer.AddKeyBinding('space','Add points.',self.PickCallback)
         surfaceMapper = vtk.vtkPolyDataMapper()
-        surfaceMapper.SetInput(self._Surface)
+        surfaceMapper.SetInputData(self._Surface)
         surfaceMapper.ScalarVisibilityOff()
         surfaceActor = vtk.vtkActor()
         surfaceActor.SetMapper(surfaceMapper)
@@ -286,7 +286,7 @@ class vmtkOpenProfilesSeedSelector(vmtkSeedSelector):
         seedPolyData.SetPoints(seedPoints)
         seedPolyData.Update()
         labelsMapper = vtk.vtkLabeledDataMapper();
-        labelsMapper.SetInput(seedPolyData)
+        labelsMapper.SetInputData(seedPolyData)
         labelsMapper.SetLabelModeToLabelIds()
         labelsActor = vtk.vtkActor2D()
         labelsActor.SetMapper(labelsMapper)
@@ -294,7 +294,7 @@ class vmtkOpenProfilesSeedSelector(vmtkSeedSelector):
         self.vmtkRenderer.Renderer.AddActor(labelsActor)
 
         surfaceMapper = vtk.vtkPolyDataMapper()
-        surfaceMapper.SetInput(self._Surface)
+        surfaceMapper.SetInputData(self._Surface)
         surfaceMapper.ScalarVisibilityOff()
         surfaceActor = vtk.vtkActor()
         surfaceActor.SetMapper(surfaceMapper)
@@ -534,12 +534,12 @@ class vmtkCenterlines(pypes.pypeScript):
 
         self.PrintLog('Cleaning surface.')
         surfaceCleaner = vtk.vtkCleanPolyData()
-        surfaceCleaner.SetInput(self.Surface)
+        surfaceCleaner.SetInputData(self.Surface)
         surfaceCleaner.Update()
 
         self.PrintLog('Triangulating surface.')
         surfaceTriangulator = vtk.vtkTriangleFilter()
-        surfaceTriangulator.SetInput(surfaceCleaner.GetOutput())
+        surfaceTriangulator.SetInputConnection(surfaceCleaner.GetOutputPort())
         surfaceTriangulator.PassLinesOff()
         surfaceTriangulator.PassVertsOff()
         surfaceTriangulator.Update()
@@ -551,7 +551,7 @@ class vmtkCenterlines(pypes.pypeScript):
         if self.SeedSelectorName in ['openprofiles', 'carotidprofiles', 'pickpoint', 'profileidlist']:
             self.PrintLog('Capping surface.')
             surfaceCapper = vtkvmtk.vtkvmtkCapPolyData()
-            surfaceCapper.SetInput(surfaceTriangulator.GetOutput())
+            surfaceCapper.SetInputConnection(surfaceTriangulator.GetOutputPort())
             surfaceCapper.SetDisplacement(self.CapDisplacement)
             surfaceCapper.SetInPlaneDisplacement(self.CapDisplacement)
             surfaceCapper.Update()
@@ -616,7 +616,7 @@ class vmtkCenterlines(pypes.pypeScript):
         self.InputInfo('Computing centerlines...')
 
         centerlineFilter = vtkvmtk.vtkvmtkPolyDataCenterlines()
-        centerlineFilter.SetInput(centerlineInputSurface)
+        centerlineFilter.SetInputData(centerlineInputSurface)
         if self.SeedSelectorName in ['openprofiles','carotidprofiles','profileidlist']:
             centerlineFilter.SetCapCenterIds(capCenterIds)
         centerlineFilter.SetSourceSeedIds(inletSeedIds)

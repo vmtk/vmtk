@@ -114,7 +114,7 @@ class vmtkRenderer(pypes.pypeScript):
         windowToImage.Update()
         self.RenderWindow.Render()
         writer = vtk.vtkPNGWriter()
-        writer.SetInput(windowToImage.GetOutput())
+        writer.SetInputConnection(windowToImage.GetOutputPort())
         writer.SetFileName(os.path.join(homeDir,fileName))
         writer.Write()
 

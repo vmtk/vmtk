@@ -51,7 +51,7 @@ class vmtkImageBinarize(pypes.pypeScript):
             self.PrintError('Error: No input image.')
 
         thresholdFilter = vtk.vtkImageThreshold()
-        thresholdFilter.SetInput(self.Image)
+        thresholdFilter.SetInputData(self.Image)
         thresholdFilter.ThresholdByUpper(self.Threshold)
         thresholdFilter.ReplaceInOn()
         thresholdFilter.ReplaceOutOn()

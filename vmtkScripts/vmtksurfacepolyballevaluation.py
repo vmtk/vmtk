@@ -65,7 +65,7 @@ class vmtkSurfacePolyBallEvaluation(pypes.pypeScript):
             polyball = vtkvmtk.vtkvmtkPolyBall()
         elif self.Type == "tubes":
             polyball = vtkvmtk.vtkvmtkPolyBallLine()
-        polyball.SetInput(self.PolyBall)
+        polyball.SetInputData(self.PolyBall)
         polyball.SetPolyBallRadiusArrayName(self.RadiusArrayName)
  
         for i in xrange(self.Surface.GetNumberOfPoints()):

@@ -219,7 +219,7 @@ class vmtkMeshGenerator(pypes.pypeScript):
 
             self.PrintLog("Computing sizing function")
             sizingFunction = vtkvmtk.vtkvmtkPolyDataSizingFunction()
-            sizingFunction.SetInput(innerSurface)
+            sizingFunction.SetInputData(innerSurface)
             sizingFunction.SetSizingFunctionArrayName(self.SizingFunctionArrayName)
             sizingFunction.SetScaleFactor(self.VolumeElementScaleFactor)
             sizingFunction.Update()
@@ -256,20 +256,20 @@ class vmtkMeshGenerator(pypes.pypeScript):
 
             self.PrintLog("Assembling final mesh")
             appendFilter = vtkvmtk.vtkvmtkAppendFilter()
-            appendFilter.AddInput(surfaceToMesh.Mesh)
-            appendFilter.AddInput(boundaryLayer.Mesh)
-            appendFilter.AddInput(tetgen.Mesh)
+            appendFilter.AddInputData(surfaceToMesh.Mesh)
+            appendFilter.AddInputData(boundaryLayer.Mesh)
+            appendFilter.AddInputData(tetgen.Mesh)
 
             #appendFilter.AddInput(boundaryLayer.InnerSurfaceMesh)
 
             if not self.BoundaryLayerOnCaps:
                 threshold = vtk.vtkThreshold()
-                threshold.SetInput(surfaceToMesh2.Mesh)
+                threshold.SetInputData(surfaceToMesh2.Mesh)
                 threshold.ThresholdByUpper(1.5)
                 threshold.SetInputArrayToProcess(0,0,0,1,self.CellEntityIdsArrayName)
                 threshold.Update()
                 endcaps = threshold.GetOutput()
-                appendFilter.AddInput(endcaps)
+                appendFilter.AddInputData(endcaps)
 
             appendFilter.Update()
 
@@ -316,7 +316,7 @@ class vmtkMeshGenerator(pypes.pypeScript):
 
             self.PrintLog("Computing sizing function")
             sizingFunction = vtkvmtk.vtkvmtkPolyDataSizingFunction()
-            sizingFunction.SetInput(remeshedSurface)
+            sizingFunction.SetInputData(remeshedSurface)
             sizingFunction.SetSizingFunctionArrayName(self.SizingFunctionArrayName)
             sizingFunction.SetScaleFactor(self.VolumeElementScaleFactor)
             sizingFunction.Update()
@@ -351,7 +351,7 @@ class vmtkMeshGenerator(pypes.pypeScript):
         if self.Tetrahedralize:
 
             tetrahedralize = vtkvmtk.vtkvmtkUnstructuredGridTetraFilter()
-            tetrahedralize.SetInput(self.Mesh)
+            tetrahedralize.SetInputData(self.Mesh)
             tetrahedralize.Update()
 
             self.Mesh = tetrahedralize.GetOutput()

@@ -64,7 +64,7 @@ class vmtkMeshConnectivity(pypes.pypeScript):
             barycenter[2] /= n
 
         connectivityFilter = vtk.vtkConnectivityFilter()
-        connectivityFilter.SetInput(self.Mesh)
+        connectivityFilter.SetInputData(self.Mesh)
         connectivityFilter.ColorRegionsOff()       
         if self.Method == 'largest':
             connectivityFilter.SetExtractionModeToLargestRegion()
@@ -78,9 +78,6 @@ class vmtkMeshConnectivity(pypes.pypeScript):
 
         self.Mesh = connectivityFilter.GetOutput()
 	
-        if self.Mesh.GetSource():
-            self.Mesh.GetSource().UnRegisterAllOutputs()
-
 
 if __name__=='__main__':
 

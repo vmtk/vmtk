@@ -121,7 +121,7 @@ class vmtkSurfaceViewer(pypes.pypeScript):
 
         if self.Surface:
             mapper = vtk.vtkPolyDataMapper()
-            mapper.SetInput(self.Surface)
+            mapper.SetInputData(self.Surface)
             if self.ArrayName:
                 if self.DisplayCellData == 0:
                     self.Surface.GetPointData().SetActiveScalars(self.ArrayName)
@@ -276,7 +276,7 @@ class vmtkSurfaceViewer(pypes.pypeScript):
             point = [0.0,0.0,0.0]
             
             cellCenters = vtk.vtkCellCenters()
-            cellCenters.SetInput(self.Surface)
+            cellCenters.SetInputData(self.Surface)
             cellCenters.Update()
             
             regionTagArrayCenters = cellCenters.GetOutput().GetPointData().GetArray(self.RegionTagArrayName)
@@ -307,7 +307,7 @@ class vmtkSurfaceViewer(pypes.pypeScript):
 
         labelPolyData.GetPointData().SetActiveScalars('label')
         labelsMapper = vtk.vtkLabeledDataMapper()
-        labelsMapper.SetInput(labelPolyData)
+        labelsMapper.SetInputData(labelPolyData)
         labelsMapper.SetLabelModeToLabelScalars()
         labelsMapper.GetLabelTextProperty().SetColor(1, 1, 1)
         labelsMapper.GetLabelTextProperty().SetFontSize(14)
@@ -316,7 +316,7 @@ class vmtkSurfaceViewer(pypes.pypeScript):
         self.vmtkRenderer.Renderer.AddActor(self.labelsActor)
 
         surfaceMapper = vtk.vtkPolyDataMapper()
-        surfaceMapper.SetInput(self.Surface)
+        surfaceMapper.SetInputData(self.Surface)
         surfaceMapper.ScalarVisibilityOn()
         surfaceMapper.SetScalarRange(self.TagSet[0], self.TagSet[self.NumberOfRegions-1])
         self.Actor = vtk.vtkActor()

@@ -19,7 +19,7 @@ class vmtkSurfaceCompare(pypes.pypeScript):
         self.ReferenceSurface = None
         self.Method = ''
         self.ArrayName = ''
-	self.Tolerance = 1E-8
+        self.Tolerance = 1E-8
         self.Result = ''
         self.ResultLog = ''
         self.ResultData = None
@@ -74,14 +74,14 @@ class vmtkSurfaceCompare(pypes.pypeScript):
             refArray = referenceAttributeData.GetArray(self.ArrayName) 
             refArray.SetName(referenceArrayName) 
             attributeData.AddArray(refArray)
-            calculator.SetInput(self.Surface)
+            calculator.SetInputData(self.Surface)
         elif self.Method in ['projection']:
             referenceAttributeData.GetArray(self.ArrayName).SetName(referenceArrayName)
             projection = vmtkscripts.vmtkSurfaceProjection()
             projection.Surface = self.Surface
             projection.ReferenceSurface = self.ReferenceSurface
             projection.Execute()
-            calculator.SetInput(projection.Surface)
+            calculator.SetInputData(projection.Surface)
 
         calculator.AddScalarVariable('a',self.ArrayName,0)
         calculator.AddScalarVariable('b',referenceArrayName,0)

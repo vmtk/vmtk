@@ -105,7 +105,7 @@ class vmtkSurfaceLoopExtraction(pypes.pypeScript):
         self.vmtkRenderer.RegisterScript(self) 
 
         triangleFilter = vtk.vtkTriangleFilter()
-        triangleFilter.SetInput(self.Surface)
+        triangleFilter.SetInputData(self.Surface)
         triangleFilter.Update()
 
         self.Surface = triangleFilter.GetOutput()

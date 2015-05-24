@@ -115,7 +115,7 @@ class vmtkMeshBranchClipper(pypes.pypeScript):
             self.GroupIds = [int(groupId) for groupId in groupIdsString.split()]
 
         clipper = vtkvmtk.vtkvmtkUnstructuredGridCenterlineGroupsClipper()
-        clipper.SetInput(self.Mesh)
+        clipper.SetInputData(self.Mesh)
         clipper.SetCenterlines(self.Centerlines)
         clipper.SetCenterlineGroupIdsArrayName(self.GroupIdsArrayName)
         clipper.SetGroupIdsArrayName(self.GroupIdsArrayName)
@@ -141,14 +141,7 @@ class vmtkMeshBranchClipper(pypes.pypeScript):
         if not self.InsideOut:
             self.Mesh = clipper.GetOutput()
         else:
-            self.Mesh = clipper.GetClippedOutput()
-
-        if self.Mesh:
-            if self.Mesh.GetSource():
-                self.Mesh.GetSource().UnRegisterAllOutputs()
-
-        if self.Centerlines.GetSource():
-            self.Centerlines.GetSource().UnRegisterAllOutputs()
+            self.Mesh = clipper.GetClippedOutputData()
 
         if self.OwnRenderer:
             self.vmtkRenderer.Deallocate()

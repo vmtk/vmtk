@@ -60,7 +60,7 @@ class vmtkNetworkExtraction(pypes.pypeScript):
             self.PrintError('Error: No input surface.')
 
         networkExtraction = vtkvmtk.vtkvmtkPolyDataNetworkExtraction()
-        networkExtraction.SetInput(self.Surface)
+        networkExtraction.SetInputData(self.Surface)
         networkExtraction.SetAdvancementRatio(self.AdvancementRatio)
         networkExtraction.SetRadiusArrayName(self.RadiusArrayName)
         networkExtraction.SetTopologyArrayName(self.TopologyArrayName)

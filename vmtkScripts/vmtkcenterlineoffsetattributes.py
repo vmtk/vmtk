@@ -119,7 +119,7 @@ class vmtkCenterlineOffsetAttributes(pypes.pypeScript):
             self.ReferenceGroupId = int(groupIdString)
 
         offsetFilter = vtkvmtk.vtkvmtkCenterlineReferenceSystemAttributesOffset()
-        offsetFilter.SetInput(self.Centerlines)
+        offsetFilter.SetInputData(self.Centerlines)
         offsetFilter.SetReferenceSystems(self.ReferenceSystems)
         offsetFilter.SetAbscissasArrayName(self.AbscissasArrayName)
         offsetFilter.SetNormalsArrayName(self.NormalsArrayName)
@@ -140,9 +140,6 @@ class vmtkCenterlineOffsetAttributes(pypes.pypeScript):
 
         if self.ReferenceGroupId == -1:
             self.ReferenceGroupId = offsetFilter.GetReferenceGroupId()
-
-        if self.Centerlines.GetSource():
-            self.Centerlines.GetSource().UnRegisterAllOutputs()
 
         if self.OwnRenderer:
             self.vmtkRenderer.Deallocate()

@@ -73,7 +73,7 @@ class vmtkCenterlineGeometry(pypes.pypeScript):
             self.PrintError('Error: No input centerlines.')
 
         centerlineGeometry = vtkvmtk.vtkvmtkCenterlineGeometry()
-        centerlineGeometry.SetInput(self.Centerlines)
+        centerlineGeometry.SetInputData(self.Centerlines)
       	centerlineGeometry.SetLengthArrayName(self.LengthArrayName)
       	centerlineGeometry.SetCurvatureArrayName(self.CurvatureArrayName)
       	centerlineGeometry.SetTorsionArrayName(self.TorsionArrayName)
@@ -89,8 +89,6 @@ class vmtkCenterlineGeometry(pypes.pypeScript):
 
         self.Centerlines = centerlineGeometry.GetOutput()
 
-        if self.Centerlines.GetSource():
-            self.Centerlines.GetSource().UnRegisterAllOutputs()
 
 
 if __name__=='__main__':
