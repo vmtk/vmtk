@@ -108,7 +108,7 @@ int vtkvmtkSurfaceProjectCellArray::RequestData(
     output->GetCellData()->AddArray(projectedArray);
     }
     
-  int numberOfComponents = vtkstd::min(referenceArray->GetNumberOfComponents(), projectedArray->GetNumberOfComponents());
+  int numberOfComponents = std::min(referenceArray->GetNumberOfComponents(), projectedArray->GetNumberOfComponents());
 
   for (int i=0; i<numberOfComponents; i++)
     {

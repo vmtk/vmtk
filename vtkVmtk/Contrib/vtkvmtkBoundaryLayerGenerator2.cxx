@@ -39,6 +39,7 @@
 #include "vtkCellData.h"
 #include "vtkGeometryFilter.h"
 #include "vtkOrderedTriangulator.h"
+#include "vtkVersion.h"
 
 #include "vtkvmtkPolyDataBoundaryExtractor.h"
 
