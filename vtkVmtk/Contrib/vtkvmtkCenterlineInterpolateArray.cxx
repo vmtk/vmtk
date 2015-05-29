@@ -37,6 +37,7 @@
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 #include "vtkIOStream.h"
+#include "vtkVersion.h"
 
 #include "vtkvmtkConstants.h"
 #include "vtkvmtkCenterlineAttributesFilter.h"
@@ -133,7 +134,7 @@ int vtkvmtkCenterlineInterpolateArray::RequestData(
     output->GetPointData()->AddArray(interpolatedArray);
     }
     
-  int numberOfComponents = vtkstd::min(interpolatedArray->GetNumberOfComponents(),this->Values->GetNumberOfComponents());
+  int numberOfComponents = std::min(interpolatedArray->GetNumberOfComponents(),this->Values->GetNumberOfComponents());
     
   //Compute abscissas for the centerlines
   vtkvmtkCenterlineAttributesFilter *attribFilter = vtkvmtkCenterlineAttributesFilter::New();
@@ -191,7 +192,7 @@ int vtkvmtkCenterlineInterpolateArray::RequestData(
       
     //Otherwise we have our first value fill the previous points with this value
     startInd--;
-    vtkstd::vector<double> startVal(numberOfComponents);
+    std::vector<double> startVal(numberOfComponents);
     for (int j=0; j<numberOfComponents; j++)
       {
       startVal[j] = interpolatedArray->GetComponent(polyLine->GetPointId(startInd),j);
@@ -215,7 +216,7 @@ int vtkvmtkCenterlineInterpolateArray::RequestData(
       if (foundValue)
         {
         //Interpolate between the start and end values
-        vtkstd::vector<double> endVal(numberOfComponents);
+        std::vector<double> endVal(numberOfComponents);
         for (int j=0; j<numberOfComponents; j++)
           {
           endVal[j] = interpolatedArray->GetComponent(polyLine->GetPointId(endInd),j);

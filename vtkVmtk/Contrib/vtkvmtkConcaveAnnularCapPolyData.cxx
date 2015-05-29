@@ -39,6 +39,8 @@ Version:   $Revision: 1.0 $
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 #include "vtkSmartPointer.h"
+#include "vtkVersion.h"
+
 #include <limits>
 
 

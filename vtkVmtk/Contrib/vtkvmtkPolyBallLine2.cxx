@@ -29,6 +29,7 @@
 #include "vtkPolyLine.h"
 #include "vtkMath.h"
 #include "vtkObjectFactory.h"
+#include "vtkVersion.h"
 
 
 vtkStandardNewMacro(vtkvmtkPolyBallLine2);
