@@ -37,6 +37,7 @@ Version:   $$
 
 #include "vtkvmtkConstants.h"
 
+#include <algorithm>
 
 vtkStandardNewMacro(vtkvmtkSurfaceProjectCellArray);
 
