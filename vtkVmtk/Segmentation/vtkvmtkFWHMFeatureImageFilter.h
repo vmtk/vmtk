@@ -69,12 +69,11 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkFWHMFeatureImageFilter : public vtkvmt
     this->Radius[2] = value[2];
     //BTX
     typedef ImageFilterType::StructuringElementRadiusType RadiusType;
-    long unsigned int radiusValue[3];
-    radiusValue[0] = static_cast<long unsigned int>(value[0]);
-    radiusValue[1] = static_cast<long unsigned int>(value[1]);
-    radiusValue[2] = static_cast<long unsigned int>(value[2]);
     //ETX
     RadiusType radius;
+    radius[0] = value[0];
+    radius[1] = value[1];
+    radius[2] = value[2];
     radius.SetSize(radiusValue);
     this->GetImageFilterPointer()->SetRadius(radius);
     this->Modified();
