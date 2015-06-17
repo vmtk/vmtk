@@ -201,7 +201,7 @@ class vmtkPickPointSeedSelector(vmtkSeedSelector):
         glyphs = vtk.vtkGlyph3D()
         glyphSource = vtk.vtkSphereSource()
         glyphs.SetInputData(self.PickedSeeds)
-        glyphs.SetSourceData(glyphSource.GetOutput())
+        glyphs.SetSourceConnection(glyphSource.GetOutputPort())
         glyphs.SetScaleModeToDataScalingOff()
         glyphs.SetScaleFactor(self._Surface.GetLength()*0.01)
         glyphMapper = vtk.vtkPolyDataMapper()
