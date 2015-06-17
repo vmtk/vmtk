@@ -172,7 +172,7 @@ class vmtkImageFeatures(pypes.pypeScript):
             featureImage = sigmoid.GetOutput()
         else:
             boundedReciprocal = vtkvmtk.vtkvmtkBoundedReciprocalImageFilter()
-            boundedReciprocal.SetInputConnection(gradientMagnitude.GetOutputPort())
+            boundedReciprocal.SetInput(gradientMagnitude.GetOutput())
             boundedReciprocal.Update()
             featureImage = boundedReciprocal.GetOutput()
 
