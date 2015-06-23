@@ -53,9 +53,9 @@ class vmtkMeshTetrahedralize2(pypes.pypeScript):
             self.PrintError('Error: No input mesh.')
 
         tetrahedralizeFilter = vtk.vtkDataSetTriangleFilter()
-        tetrahedralizeFilter.SetInput(self.Mesh)
-	if ((vtk.vtkVersion.GetVTKMajorVersion()>=5) and (vtk.vtkVersion.GetVTKMinorVersion()>0)):
-	    tetrahedralizeFilter.SetTetrahedraOnly(self.TetrahedraOnly)
+        tetrahedralizeFilter.SetInputData(self.Mesh)
+        if ((vtk.vtkVersion.GetVTKMajorVersion()>=5) and (vtk.vtkVersion.GetVTKMinorVersion()>0)):
+            tetrahedralizeFilter.SetTetrahedraOnly(self.TetrahedraOnly)
         tetrahedralizeFilter.Update()
 
         self.Mesh = tetrahedralizeFilter.GetOutput()

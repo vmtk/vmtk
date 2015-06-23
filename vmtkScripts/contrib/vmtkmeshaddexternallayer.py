@@ -101,7 +101,7 @@ class vmtkMeshAddExternalLayer(pypes.pypeScript):
 
         #cut off the volumetric elements
         wallThreshold = vtk.vtkThreshold()
-        wallThreshold.SetInput(self.Mesh)
+        wallThreshold.SetInputData(self.Mesh)
         wallThreshold.ThresholdByUpper(self.SurfaceCellEntityId-0.5)
         wallThreshold.SetInputArrayToProcess(0,0,0,1,self.CellEntityIdsArrayName)
         wallThreshold.Update()
@@ -113,7 +113,7 @@ class vmtkMeshAddExternalLayer(pypes.pypeScript):
         #Compute the normals for this surface, orientation should be right because the surface is closed
         #TODO: Add option for cell normals in vmtksurfacenormals
         normalsFilter = vtk.vtkPolyDataNormals()
-        normalsFilter.SetInput(meshToSurface.Surface)
+        normalsFilter.SetInputData(meshToSurface.Surface)
         normalsFilter.SetAutoOrientNormals(1)
         normalsFilter.SetFlipNormals(0)
         normalsFilter.SetConsistency(1)
@@ -135,13 +135,13 @@ class vmtkMeshAddExternalLayer(pypes.pypeScript):
         
         #cut off the boundaries and other surfaces
         extrudeThresholdLower = vtk.vtkThreshold()
-        extrudeThresholdLower.SetInput(wallWithBoundariesMesh)
+        extrudeThresholdLower.SetInputData(wallWithBoundariesMesh)
         extrudeThresholdLower.ThresholdByLower(self.ExtrudeCellEntityId+0.5)
         extrudeThresholdLower.SetInputArrayToProcess(0,0,0,1,self.CellEntityIdsArrayName)
         extrudeThresholdLower.Update()
         
         extrudeThresholdUpper = vtk.vtkThreshold()
-        extrudeThresholdUpper.SetInput(extrudeThresholdLower.GetOutput())
+        extrudeThresholdUpper.SetInputConnection(extrudeThresholdLower.GetOutputPort())
         extrudeThresholdUpper.ThresholdByUpper(self.ExtrudeCellEntityId-0.5)
         extrudeThresholdUpper.SetInputArrayToProcess(0,0,0,1,self.CellEntityIdsArrayName)
         extrudeThresholdUpper.Update()
@@ -154,7 +154,7 @@ class vmtkMeshAddExternalLayer(pypes.pypeScript):
                 
         #Compute cell normals without boundaries
         normalsFilter = vtk.vtkPolyDataNormals()
-        normalsFilter.SetInput(meshToSurface.Surface)
+        normalsFilter.SetInputData(meshToSurface.Surface)
         normalsFilter.SetAutoOrientNormals(1)
         normalsFilter.SetFlipNormals(0)
         normalsFilter.SetConsistency(1)
@@ -173,7 +173,7 @@ class vmtkMeshAddExternalLayer(pypes.pypeScript):
         #If the normal are inverted, recompute the normals with flipping on
         if normals.GetNumberOfTuples() > 0 and math.Dot(normals.GetTuple3(0),savedNormals.GetTuple3(0)) < 0:
             normalsFilter = vtk.vtkPolyDataNormals()
-            normalsFilter.SetInput(meshToSurface.Surface)
+            normalsFilter.SetInputData(meshToSurface.Surface)
             normalsFilter.SetAutoOrientNormals(1)
             normalsFilter.SetFlipNormals(1)
             normalsFilter.SetConsistency(1)
@@ -227,7 +227,7 @@ class vmtkMeshAddExternalLayer(pypes.pypeScript):
         if cellEntityIdsArray != None:
             #offset the previous cellentityids to make room for the new ones
             arrayCalculator = vtk.vtkArrayCalculator()
-            arrayCalculator.SetInput(self.Mesh)
+            arrayCalculator.SetInputData(self.Mesh)
             arrayCalculator.SetAttributeModeToUseCellData()
             arrayCalculator.AddScalarVariable("entityid",self.CellEntityIdsArrayName,0)
             arrayCalculator.SetFunction("if( entityid > " + str(self.InletOutletCellEntityId-1) +", entityid + " + str(wallOffset) + ", entityid)")

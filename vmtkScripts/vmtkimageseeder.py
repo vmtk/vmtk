@@ -139,7 +139,7 @@ class vmtkImageSeeder(pypes.pypeScript):
         glyphs = vtk.vtkGlyph3D()
         glyphSource = vtk.vtkSphereSource()
         glyphs.SetInputData(self.Seeds)
-        glyphs.SetSourceData(glyphSource.GetOutput())
+        glyphs.SetSourceConnection(glyphSource.GetOutputPort())
         glyphs.SetScaleModeToDataScalingOff()
         glyphs.SetScaleFactor(self.Image.GetLength()*0.01)
         glyphMapper = vtk.vtkPolyDataMapper()

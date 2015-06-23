@@ -63,7 +63,7 @@ class vmtkSurfaceWriter2(pypes.pypeScript):
         writer = vtk.vtkPolyDataWriter()
         if self.Ascii:
             writer.SetDataModeToAscii()
-        writer.SetInput(self.Surface)
+        writer.SetInputData(self.Surface)
         writer.SetFileName(self.OutputFileName)
         writer.Write()
 
@@ -74,7 +74,7 @@ class vmtkSurfaceWriter2(pypes.pypeScript):
         writer = vtk.vtkXMLPolyDataWriter()
         if self.Ascii:
             writer.SetDataModeToAscii()
-        writer.SetInput(self.Surface)
+        writer.SetInputData(self.Surface)
         writer.SetFileName(self.OutputFileName)
         writer.Write()
 
@@ -83,7 +83,7 @@ class vmtkSurfaceWriter2(pypes.pypeScript):
             self.PrintError('Error: no OutputFileName.')
         self.PrintLog('Writing STL surface file.')
         writer = vtk.vtkSTLWriter()
-        writer.SetInput(self.Surface)
+        writer.SetInputData(self.Surface)
         writer.SetFileName(self.OutputFileName)
         writer.Write()
 
@@ -134,7 +134,7 @@ class vmtkSurfaceWriter2(pypes.pypeScript):
             self.PrintError('Error: no OutputFileName.')
         self.PrintLog('Writing Tecplot file.')
         triangleFilter = vtk.vtkTriangleFilter()
-        triangleFilter.SetInput(self.Surface)
+        triangleFilter.SetInputData(self.Surface)
         triangleFilter.PassVertsOff()
         triangleFilter.PassLinesOff()
         triangleFilter.Update()

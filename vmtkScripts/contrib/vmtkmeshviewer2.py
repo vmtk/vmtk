@@ -86,7 +86,7 @@ class vmtkMeshViewer2(pypes.pypeScript):
 
     def ClipMesh(self):
         meshClipFilter = vtk.vtkClipDataSet()
-        meshClipFilter.SetInput(self.Mesh)
+        meshClipFilter.SetInputData(self.Mesh)
         meshClipFilter.SetInsideOut(self.InsideOut)
         clipPlane = vtk.vtkPlane()
         self.PlaneWidget.GetPlane(clipPlane)
@@ -96,7 +96,7 @@ class vmtkMeshViewer2(pypes.pypeScript):
         
     def ExtractMesh(self):
         meshExtractFilter = vtk.vtkExtractGeometry()
-        meshExtractFilter.SetInput(self.Mesh)
+        meshExtractFilter.SetInputData(self.Mesh)
         meshExtractFilter.SetExtractInside(self.InsideOut)
         clipPlane = vtk.vtkPlane()
         self.PlaneWidget.GetPlane(clipPlane)
@@ -106,7 +106,7 @@ class vmtkMeshViewer2(pypes.pypeScript):
         
     def ThresholdMesh(self):
         thresholder = vtk.vtkThreshold()
-        thresholder.SetInput(self.InitialMesh)
+        thresholder.SetInputData(self.InitialMesh)
         if (self.ThresholdUpper):
             thresholder.ThresholdByUpper(self.Threshold)
         else:
@@ -118,9 +118,9 @@ class vmtkMeshViewer2(pypes.pypeScript):
 
     def PlaneCallback(self,widget,event_string):
         if self.ClipExtract:
-            self.Actor.GetMapper().SetInput(self.ExtractMesh())
+            self.Actor.GetMapper().SetInputData(self.ExtractMesh())
         else:
-            self.Actor.GetMapper().SetInput(self.ClipMesh())
+            self.Actor.GetMapper().SetInputData(self.ClipMesh())
     
     def InteractCallback(self,obj):
         if self.BoxWidget.GetEnabled() == 1:
@@ -132,18 +132,18 @@ class vmtkMeshViewer2(pypes.pypeScript):
         if self.Mesh != None:
             self.ClipExtract = False
             if self.PlaneWidget.GetEnabled():
-                self.Actor.GetMapper().SetInput(self.ClipMesh())
+                self.Actor.GetMapper().SetInputData(self.ClipMesh())
             else:
-                self.Actor.GetMapper().SetInput(self.Mesh)
+                self.Actor.GetMapper().SetInputData(self.Mesh)
             self.vmtkRenderer.RenderWindow.Render()
 
     def ExtractCallback(self,obj):
         if self.Mesh:
             self.ClipExtract = True
             if self.PlaneWidget.GetEnabled():
-                self.Actor.GetMapper().SetInput(self.ExtractMesh())
+                self.Actor.GetMapper().SetInputData(self.ExtractMesh())
             else:
-                self.Actor.GetMapper().SetInput(self.Mesh)
+                self.Actor.GetMapper().SetInputData(self.Mesh)
             self.vmtkRenderer.RenderWindow.Render()
 
     def NCallback(self,obj):
@@ -157,7 +157,7 @@ class vmtkMeshViewer2(pypes.pypeScript):
                 self.PlaneWidget.RemoveObserver(self.ObserverId)
                 self.ObserverId = -1
                 self.PlaneWidget.Off()
-                self.Actor.GetMapper().SetInput(self.Mesh)
+                self.Actor.GetMapper().SetInputData(self.Mesh)
             self.vmtkRenderer.RenderWindow.Render()
 
     def DCallback(self,obj):
@@ -178,11 +178,11 @@ class vmtkMeshViewer2(pypes.pypeScript):
             #Redo the clipping if the mesh was clipped
             if isClipped:
                 if self.ClipExtract:
-                    self.Actor.GetMapper().SetInput(self.ExtractMesh())
+                    self.Actor.GetMapper().SetInputData(self.ExtractMesh())
                 else:
-                    self.Actor.GetMapper().SetInput(self.ClipMesh())
+                    self.Actor.GetMapper().SetInputData(self.ClipMesh())
             else:
-                self.Actor.GetMapper().SetInput(self.Mesh)
+                self.Actor.GetMapper().SetInputData(self.Mesh)
             self.vmtkRenderer.RenderWindow.Render()
 
     def UndoCallback(self,obj):
@@ -192,11 +192,11 @@ class vmtkMeshViewer2(pypes.pypeScript):
             self.ThresholdMesh()
             if isClipped:
                 if self.ClipExtract:
-                    self.Actor.GetMapper().SetInput(self.ExtractMesh())
+                    self.Actor.GetMapper().SetInputData(self.ExtractMesh())
                 else:
-                    self.Actor.GetMapper().SetInput(self.ClipMesh())
+                    self.Actor.GetMapper().SetInputData(self.ClipMesh())
             else:
-                self.Actor.GetMapper().SetInput(self.Mesh)
+                self.Actor.GetMapper().SetInputData(self.Mesh)
             self.vmtkRenderer.RenderWindow.Render()
           
 
@@ -217,7 +217,7 @@ class vmtkMeshViewer2(pypes.pypeScript):
             self.InitialMesh = self.Mesh
             self.DisplayMesh = self.Mesh
             mapper = vtk.vtkDataSetMapper()
-            mapper.SetInput(self.DisplayMesh)
+            mapper.SetInputData(self.DisplayMesh)
             array = None
             if (self.ArrayName != ''):
                 if self.DisplayCellData == 0:

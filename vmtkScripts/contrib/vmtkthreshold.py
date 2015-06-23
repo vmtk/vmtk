@@ -52,7 +52,7 @@ class VmtkThreshold(pypes.pypeScript):
         input = self.Surface or self.Mesh
 
         th = vtk.vtkThreshold()
-        th.SetInput(input)
+        th.SetInputData(input)
         th.SetInputArrayToProcess(0, 0, 0, 1, self.CellEntityIdsArrayName)
         th.ThresholdBetween(self.LowThreshold, self.HighThreshold)
         th.Update()
@@ -62,7 +62,7 @@ class VmtkThreshold(pypes.pypeScript):
         else:
             assert self.Surface != None
             gf = vtk.vtkGeometryFilter()
-            gf.SetInput(th.GetOutput())
+            gf.SetInputConnection(th.GetOutputPort())
             gf.Update()
             self.Surface = gf.GetOutput()
 
