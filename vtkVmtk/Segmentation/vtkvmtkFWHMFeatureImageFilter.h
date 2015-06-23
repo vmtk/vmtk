@@ -74,7 +74,7 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkFWHMFeatureImageFilter : public vtkvmt
     radius[0] = value[0];
     radius[1] = value[1];
     radius[2] = value[2];
-    radius.SetSize(radiusValue);
+    //radius.SetSize(radiusValue);
     this->GetImageFilterPointer()->SetRadius(radius);
     this->Modified();
   }
