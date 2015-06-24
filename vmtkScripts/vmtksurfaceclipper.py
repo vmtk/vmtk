@@ -76,9 +76,7 @@ class vmtkSurfaceClipper(pypes.pypeScript):
             self.ClipWidget.GetSphere(self.ClipFunction)
         self.Clipper.Update()
         self.Surface.DeepCopy(self.Clipper.GetOutput())
-        self.Surface.Update()
-        self.ClippedSurface.DeepCopy(self.Clipper.GetClippedOutputData())
-        self.ClippedSurface.Update()
+        self.ClippedSurface.DeepCopy(self.Clipper.GetClippedOutput())
         self.Cutter.Update()
         self.CutLines.DeepCopy(self.Cutter.GetOutput())
         self.ClipWidget.Off()
@@ -182,7 +180,7 @@ class vmtkSurfaceClipper(pypes.pypeScript):
             self.Cutter.Update()
 
             self.Surface = self.Clipper.GetOutput()
-            self.ClippedSurface = self.Clipper.GetClippedOutputData()
+            self.ClippedSurface = self.Clipper.GetClippedOutput()
 
             self.CutLines = self.Cutter.GetOutput()
 

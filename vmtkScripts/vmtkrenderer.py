@@ -270,8 +270,8 @@ class vmtkRenderer(pypes.pypeScript):
             self.RenderWindow.SetLineSmoothing(self.LineSmoothing)
             self.RenderWindow.SetPolygonSmoothing(self.PolygonSmoothing)
             self.RenderWindowInteractor = vtk.vtkRenderWindowInteractor()
-            if 'vtkCocoaRenderWindowInteractor' in dir(vtk) and vtk.vtkCocoaRenderWindowInteractor.SafeDownCast(self.RenderWindowInteractor):
-                self.RenderWindowInteractor = vtkvmtk.vtkvmtkCocoaRenderWindowInteractor()
+            #if 'vtkCocoaRenderWindowInteractor' in dir(vtk) and vtk.vtkCocoaRenderWindowInteractor.SafeDownCast(self.RenderWindowInteractor):
+            #    self.RenderWindowInteractor = vtkvmtk.vtkvmtkCocoaRenderWindowInteractor()
             self.RenderWindow.SetInteractor(self.RenderWindowInteractor)
             self.RenderWindowInteractor.SetInteractorStyle(vtkvmtk.vtkvmtkInteractorStyleTrackballCamera())
             self.RenderWindowInteractor.GetInteractorStyle().KeyPressActivationOff()
@@ -320,10 +320,10 @@ class vmtkRenderer(pypes.pypeScript):
         self.RenderWindowInteractor.Close()
 
     def Deallocate(self):
-        if 'vtkCocoaRenderWindowInteractor' in dir(vtk) and vtkvmtk.vtkvmtkCocoaRenderWindowInteractor.SafeDownCast(self.RenderWindowInteractor):
-            self.RenderWindowInteractor.AddObserver("TimerEvent", self.Close)
-            self.RenderWindowInteractor.CreateOneShotTimer(1)
-            self.RenderWindowInteractor.Start()
+        #if 'vtkCocoaRenderWindowInteractor' in dir(vtk) and vtkvmtk.vtkvmtkCocoaRenderWindowInteractor.SafeDownCast(self.RenderWindowInteractor):
+        #    self.RenderWindowInteractor.AddObserver("TimerEvent", self.Close)
+        #    self.RenderWindowInteractor.CreateOneShotTimer(1)
+        #    self.RenderWindowInteractor.Start()
         self.RenderWindowInteractor = None
         self.RenderWindow = None
         self.Renderer = None

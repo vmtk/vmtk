@@ -184,7 +184,6 @@ class vmtkImageVOISelector(pypes.pypeScript):
         extractVOI.Update()
 
         self.CroppedImage.DeepCopy(extractVOI.GetOutput())
-        self.CroppedImage.Update()
 
     def InteractCallback(self):
         if self.BoxWidget.GetEnabled() == 1:

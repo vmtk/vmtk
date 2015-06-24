@@ -284,7 +284,6 @@ class vmtkOpenProfilesSeedSelector(vmtkSeedSelector):
             seedPoints.InsertNextPoint(self._Surface.GetPoint(self._SeedIds.GetId(i)))
         seedPolyData = vtk.vtkPolyData()
         seedPolyData.SetPoints(seedPoints)
-        seedPolyData.Update()
         labelsMapper = vtk.vtkLabeledDataMapper();
         labelsMapper.SetInputData(seedPolyData)
         labelsMapper.SetLabelModeToLabelIds()
@@ -403,7 +402,6 @@ class vmtkNonManifoldSurfaceChecker(object):
 
         self.Surface.BuildCells()
         self.Surface.BuildLinks(0)
-        self.Surface.Update()
 
         numberOfNonManifoldEdges = 0
 

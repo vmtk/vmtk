@@ -140,8 +140,6 @@ class vmtkCenterlineLabeler(pypes.pypeScript):
         
         self.Centerlines.GetCellData().AddArray(labelIdsArray)
 
-        self.Centerlines.Update()
-
         if self.OwnRenderer:
             self.vmtkRenderer.Deallocate()
         

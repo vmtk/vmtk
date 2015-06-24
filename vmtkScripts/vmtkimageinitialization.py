@@ -91,7 +91,6 @@ class vmtkImageInitialization(pypes.pypeScript):
 
         seeds = vtk.vtkPolyData()
         seeds.DeepCopy(self.ImageSeeder.Seeds)
-        seeds.Update()
 
         return seeds
 
@@ -139,7 +138,6 @@ class vmtkImageInitialization(pypes.pypeScript):
 
         self.InitialLevelSets = vtk.vtkImageData()
         self.InitialLevelSets.DeepCopy(subtract.GetOutput())
-        self.InitialLevelSets.Update()
 
         self.IsoSurfaceValue = 0.0
 
@@ -177,7 +175,6 @@ class vmtkImageInitialization(pypes.pypeScript):
  
         self.InitialLevelSets = vtk.vtkImageData()
         self.InitialLevelSets.DeepCopy(thresholdedImage)
-        self.InitialLevelSets.Update()
 
         self.IsoSurfaceValue = 0.0
 
@@ -267,7 +264,6 @@ class vmtkImageInitialization(pypes.pypeScript):
 
         self.InitialLevelSets = vtk.vtkImageData()
         self.InitialLevelSets.DeepCopy(subtract.GetOutput())
-        self.InitialLevelSets.Update()
 
         self.IsoSurfaceValue = 0.0
 
@@ -346,7 +342,6 @@ class vmtkImageInitialization(pypes.pypeScript):
 
         self.InitialLevelSets = vtk.vtkImageData()
         self.InitialLevelSets.DeepCopy(subtract.GetOutput())
-        self.InitialLevelSets.Update()
 
         self.IsoSurfaceValue = 0.0 
 
@@ -368,7 +363,6 @@ class vmtkImageInitialization(pypes.pypeScript):
         
         self.InitialLevelSets = vtk.vtkImageData()
         self.InitialLevelSets.DeepCopy(self.Image)
-        self.InitialLevelSets.Update()
 
         levelSetsInputScalars = self.InitialLevelSets.GetPointData().GetScalars()
         levelSetsInputScalars.FillComponent(0,1.0)

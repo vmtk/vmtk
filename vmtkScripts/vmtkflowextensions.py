@@ -114,7 +114,6 @@ class vmtkFlowExtensions(pypes.pypeScript):
                 seedPoints.InsertNextPoint(barycenter)
             seedPolyData = vtk.vtkPolyData()
             seedPolyData.SetPoints(seedPoints)
-            seedPolyData.Update()
             labelsMapper = vtk.vtkLabeledDataMapper();
             labelsMapper.SetInputData(seedPolyData)
             labelsMapper.SetLabelModeToLabelIds()

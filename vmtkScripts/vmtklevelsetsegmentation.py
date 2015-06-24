@@ -194,7 +194,6 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
   
         self.LevelSetsOutput = vtk.vtkImageData()
         self.LevelSetsOutput.DeepCopy(levelSets.GetOutput())
-        self.LevelSetsOutput.Update()
 
     def MergeLevelSet(self):
 

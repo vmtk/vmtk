@@ -87,7 +87,6 @@ class vmtkSurfaceTransformInteractive(pypes.pypeScript):
         ##self.TransformFilter.Update()
  
         ##self.TransformedSurface.ShallowCopy(self.TransformFilter.GetOutput())
-        ##self.TransformedSurface.Update()
  
  
         ##self.vmtkRenderer.RenderWindow.Render()     

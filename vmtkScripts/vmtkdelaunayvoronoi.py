@@ -55,7 +55,6 @@ class vmtkNonManifoldSurfaceChecker(object):
 
         self.Surface.BuildCells()
         self.Surface.BuildLinks(0)
-        self.Surface.Update()
 
         numberOfNonManifoldEdges = 0
 

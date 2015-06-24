@@ -292,7 +292,6 @@ class vmtkSurfaceViewer(pypes.pypeScript):
 
         labelPolyData = vtk.vtkPolyData()
         labelPolyData.SetPoints(labelPoints)
-        labelPolyData.Update()
 
         labelArray = vtk.vtkIntArray()
         labelArray.SetNumberOfComponents(1)
