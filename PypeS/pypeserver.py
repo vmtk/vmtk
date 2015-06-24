@@ -14,6 +14,7 @@
 from vmtk import pypes
 import vtk
 import time
+import traceback
 
 class OutputStream(object):
 
@@ -43,7 +44,7 @@ def RunPypeProcess(arguments, inputStream=None, outputStream=None, logOn=True):
         pipe.ParseArguments()
         pipe.Execute() 
     except BaseException, e:
-        pass
+        print traceback.format_exc()
     del pipe
 
 
