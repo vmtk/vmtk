@@ -70,6 +70,37 @@ public:
   }
 
   template<typename TImage>
+    static void
+    VTKToITKVectorImage(vtkImageData* input, typename TImage::Pointer output) {
+
+    typedef TImage ImageType;
+    typedef typename ImageType::Pointer ImagePointer;
+    typedef typename ImageType::PixelType PixelType;
+    typedef typename ImageType::InternalPixelType InternalPixelType;
+
+    int dims[3];
+    input->GetDimensions(dims);
+    double spacing[3];
+    input->GetSpacing(spacing);
+    int components = input->GetNumberOfScalarComponents();
+
+    output->GetPixelContainer()->SetImportPointer(static_cast<InternalPixelType*>(input->GetScalarPointer()),dims[0]*dims[1]*dims[2]*components,false);
+    typename ImageType::RegionType region;
+    typename ImageType::IndexType index;
+    typename ImageType::SizeType size;
+    index[0] = index[1] = index[2] = 0;
+    size[0] = dims[0];
+    size[1] = dims[1];
+    size[2] = dims[2];
+    region.SetIndex(index);
+    region.SetSize(size);
+    output->SetLargestPossibleRegion(region);
+    output->SetBufferedRegion(region);
+    output->SetSpacing(spacing);
+    output->SetVectorLength(components);
+  }
+
+  template<typename TImage>
   static void
   ITKToVTKImage(typename TImage::Pointer input, vtkImageData* output) {
 

@@ -31,60 +31,36 @@ Version:   $Revision: 1.3 $
 #ifndef __vtkvmtkDanielssonDistanceMapImageFilter_h
 #define __vtkvmtkDanielssonDistanceMapImageFilter_h
 
-
-#include "vtkvmtkITKImageToImageFilterFF.h"
-#include "itkDanielssonDistanceMapImageFilter.h"
+#include "vtkSimpleImageToImageFilter.h"
 #include "vtkvmtkWin32Header.h"
 
-class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkDanielssonDistanceMapImageFilter : public vtkvmtkITKImageToImageFilterFF
+class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkDanielssonDistanceMapImageFilter : public vtkSimpleImageToImageFilter
 {
  public:
   static vtkvmtkDanielssonDistanceMapImageFilter *New();
-  vtkTypeMacro(vtkvmtkDanielssonDistanceMapImageFilter, vtkvmtkITKImageToImageFilterFF);
+  vtkTypeMacro(vtkvmtkDanielssonDistanceMapImageFilter, vtkSimpleImageToImageFilter);
 
-  void SetSquaredDistance ( int value )
-  {
-    DelegateITKInputMacro ( SetSquaredDistance, (bool) value );
-  }
+  vtkGetMacro(SquaredDistance,int);
+  vtkSetMacro(SquaredDistance,int);
+  vtkBooleanMacro(SquaredDistance,int);
 
-  void SquaredDistanceOn()
-  {
-    this->SetSquaredDistance (true);
-  }
-  void SquaredDistanceOff()
-  {
-    this->SetSquaredDistance (false);
-  }
-  int GetSquaredDistance()
-  { DelegateITKOutputMacro ( GetSquaredDistance ); }
-
-
-  void SetInputIsBinary ( int value )
-  {
-    DelegateITKInputMacro ( SetInputIsBinary, (bool) value );
-  }
-  void InputIsBinaryOn()
-  {
-    this->SetInputIsBinary (true);
-  }
-  void InputIsBinaryOff()
-  {
-    this->SetInputIsBinary (false);
-  }
-  int GetInputIsBinary()
-  { DelegateITKOutputMacro ( GetInputIsBinary ); };
+  vtkGetMacro(InputIsBinary,int);
+  vtkSetMacro(InputIsBinary,int);
+  vtkBooleanMacro(InputIsBinary,int);
 
 protected:
-  //BTX
-  typedef itk::DanielssonDistanceMapImageFilter<Superclass::InputImageType, Superclass::OutputImageType> ImageFilterType;
-  vtkvmtkDanielssonDistanceMapImageFilter() : Superclass ( ImageFilterType::New() ){};
+
+  vtkvmtkDanielssonDistanceMapImageFilter();
   ~vtkvmtkDanielssonDistanceMapImageFilter() {};
-  ImageFilterType* GetImageFilterPointer() { return dynamic_cast<ImageFilterType*> ( m_Filter.GetPointer() ); }
-  //ETX
-  
+
+  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output);
+
 private:
   vtkvmtkDanielssonDistanceMapImageFilter(const vtkvmtkDanielssonDistanceMapImageFilter&);  // Not implemented.
   void operator=(const vtkvmtkDanielssonDistanceMapImageFilter&);  // Not implemented.
+
+  int SquaredDistance;
+  int InputIsBinary;
 };
 
 #endif

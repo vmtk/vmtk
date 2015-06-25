@@ -31,49 +31,42 @@ Version:   $Revision: 1.3 $
 #ifndef __vtkvmtkSigmoidImageFilter_h
 #define __vtkvmtkSigmoidImageFilter_h
 
-
-#include "vtkvmtkITKImageToImageFilterFF.h"
-#include "itkSigmoidImageFilter.h"
+#include "vtkSimpleImageToImageFilter.h"
 #include "vtkvmtkWin32Header.h"
 
-class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkSigmoidImageFilter : public vtkvmtkITKImageToImageFilterFF
+class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkSigmoidImageFilter : public vtkSimpleImageToImageFilter
 {
  public:
   static vtkvmtkSigmoidImageFilter *New();
-  vtkTypeMacro(vtkvmtkSigmoidImageFilter, vtkvmtkITKImageToImageFilterFF);
+  vtkTypeMacro(vtkvmtkSigmoidImageFilter, vtkSimpleImageToImageFilter);
 
-  void SetAlpha ( float value )
-  {
-    DelegateITKInputMacro ( SetAlpha, value );
-  };
+  vtkGetMacro(Alpha,double);
+  vtkSetMacro(Alpha,double);
 
-  void SetBeta ( float value )
-  {
-    DelegateITKInputMacro ( SetBeta, value );
-  };
+  vtkGetMacro(Beta,double);
+  vtkSetMacro(Beta,double);
 
-  void SetOutputMinimum ( float value )
-  {
-    DelegateITKInputMacro ( SetOutputMinimum, value );
-  };
+  vtkGetMacro(OutputMinimum,double);
+  vtkSetMacro(OutputMinimum,double);
 
-  void SetOutputMaximum ( float value )
-  {
-    DelegateITKInputMacro ( SetOutputMaximum, value );
-  };
+  vtkGetMacro(OutputMaximum,double);
+  vtkSetMacro(OutputMaximum,double);
 
 protected:
 
-  //BTX
-  typedef itk::SigmoidImageFilter<Superclass::InputImageType,Superclass::OutputImageType> ImageFilterType;
-  vtkvmtkSigmoidImageFilter() : Superclass ( ImageFilterType::New() ){};
+  vtkvmtkSigmoidImageFilter();
   ~vtkvmtkSigmoidImageFilter() {};
-  ImageFilterType* GetImageFilterPointer() { return dynamic_cast<ImageFilterType*> ( m_Filter.GetPointer() ); }
-  //ETX
-  
+
+  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output);
+
 private:
   vtkvmtkSigmoidImageFilter(const vtkvmtkSigmoidImageFilter&);  // Not implemented.
   void operator=(const vtkvmtkSigmoidImageFilter&);  // Not implemented.
+
+  double Alpha;
+  double Beta;
+  double OutputMinimum;
+  double OutputMaximum;
 };
 
 #endif

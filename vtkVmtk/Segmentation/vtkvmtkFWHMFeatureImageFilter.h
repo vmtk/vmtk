@@ -31,110 +31,38 @@ Version:   $Revision: 1.3 $
 #ifndef __vtkvmtkFWHMFeatureImageFilter_h
 #define __vtkvmtkFWHMFeatureImageFilter_h
 
-#include "vtkvmtkITKImageToImageFilterFF.h"
-#include "itkFWHMFeatureImageFilter.h"
+#include "vtkSimpleImageToImageFilter.h"
 #include "vtkvmtkWin32Header.h"
-#include "vtkVersion.h"
 
-class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkFWHMFeatureImageFilter : public vtkvmtkITKImageToImageFilterFF
+class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkFWHMFeatureImageFilter : public vtkSimpleImageToImageFilter
 {
  public:
   static vtkvmtkFWHMFeatureImageFilter *New();
-  vtkTypeMacro(vtkvmtkFWHMFeatureImageFilter, vtkvmtkITKImageToImageFilterFF);
+  vtkTypeMacro(vtkvmtkFWHMFeatureImageFilter, vtkSimpleImageToImageFilter);
 
-  void SetUseImageSpacing ( int value )
-  {
-    DelegateITKInputMacro ( SetUseImageSpacing, (bool) value );
-  }
-
-  void UseImageSpacingOn()
-  {
-    this->SetUseImageSpacing (true);
-  }
-  void UseImageSpacingOff()
-  {
-    this->SetUseImageSpacing (false);
-  }
-
-  int GetUseImageSpacing()
-  { 
-    DelegateITKOutputMacro ( GetUseImageSpacing ); 
-  }
-
-  void SetRadius ( int value[3] )
-  {
-    //    DelegateITKInputMacro ( SetRadius, (int*) value );
-    this->Radius[0] = value[0];
-    this->Radius[1] = value[1];
-    this->Radius[2] = value[2];
-    //BTX
-    typedef ImageFilterType::StructuringElementRadiusType RadiusType;
-    //ETX
-    RadiusType radius;
-    radius[0] = value[0];
-    radius[1] = value[1];
-    radius[2] = value[2];
-    //radius.SetSize(radiusValue);
-    this->GetImageFilterPointer()->SetRadius(radius);
-    this->Modified();
-  }
+  vtkGetMacro(UseImageSpacing,int);
+  vtkSetMacro(UseImageSpacing,int);
+  vtkBooleanMacro(UseImageSpacing,int);
 
   vtkGetVectorMacro(Radius,int,3);
+  vtkSetVectorMacro(Radius,int,3);
 
-  void SetBackgroundValue ( float value )
-  {
-    DelegateITKInputMacro ( SetBackgroundValue, (float) value );
-  }
-
-  float GetBackgroundValue()
-  { 
-    DelegateITKOutputMacro ( GetBackgroundValue ); 
-  }
-
-  void Update()
-  {
-    this->itkImporter->Update();
-    if (this->vtkExporter->GetInput())
-    {
-    } 
-
-#if (VTK_MAJOR_VERSION <= 5)
-    // Force the internal pipeline to update.
-    if (this->GetOutput(0))
-      {
-      this->GetOutput(0)->Update();
-      if ( this->GetOutput(0)->GetSource() )
-        {
-        //          this->SetErrorCode( this->GetOutput(0)->GetSource()->GetErrorCode() );
-        }
-      }
-#endif
-  }
+  vtkGetMacro(BackgroundValue,double);
+  vtkSetMacro(BackgroundValue,double);
 
 protected:
-  //BTX
-  typedef itk::FWHMFeatureImageFilter<Superclass::InputImageType, Superclass::OutputImageType> ImageFilterType;
-  vtkvmtkFWHMFeatureImageFilter() : Superclass ( ImageFilterType::New() )
-    { 
-      this->Radius = new int[3];
-    }
-  ~vtkvmtkFWHMFeatureImageFilter() 
-    { 
-      if (this->Radius)
-        {
-        delete[] this->Radius;
-        this->Radius = NULL;
-        }
-    }
-  ImageFilterType* GetImageFilterPointer() { return dynamic_cast<ImageFilterType*> ( m_Filter.GetPointer() ); }
-  //ETX
+  vtkvmtkFWHMFeatureImageFilter();
+  ~vtkvmtkFWHMFeatureImageFilter();
 
-  int* Radius;
-  float BackgroundValue;
+  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output);
 
 private:
   vtkvmtkFWHMFeatureImageFilter(const vtkvmtkFWHMFeatureImageFilter&);  // Not implemented.
   void operator=(const vtkvmtkFWHMFeatureImageFilter&);  // Not implemented.
+
+  double BackgroundValue;
+  int UseImageSpacing;
+  int* Radius;
 };
 
 #endif

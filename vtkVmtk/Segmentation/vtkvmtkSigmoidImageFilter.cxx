@@ -24,9 +24,41 @@ Version:   $Revision: 1.1 $
 =========================================================================*/
 
 #include "vtkvmtkSigmoidImageFilter.h"
+#include "vtkImageData.h"
 #include "vtkObjectFactory.h"
 
+#include "vtkvmtkITKFilterUtilities.h"
+
+#include "itkSigmoidImageFilter.h"
 
 vtkStandardNewMacro(vtkvmtkSigmoidImageFilter);
 
+vtkvmtkSigmoidImageFilter::vtkvmtkSigmoidImageFilter()
+{
+  this->Alpha = 1.0;
+  this->Beta = 1.0;
+  this->OutputMinimum = 0.0;
+  this->OutputMaximum = 1.0;
+}
+
+void vtkvmtkSigmoidImageFilter::SimpleExecute(vtkImageData* input, vtkImageData* output)
+{
+  typedef itk::Image<float,3> ImageType;
+
+  ImageType::Pointer inImage = ImageType::New();
+
+  vtkvmtkITKFilterUtilities::VTKToITKImage<ImageType>(input,inImage);
+
+  typedef itk::SigmoidImageFilter<ImageType,ImageType> SigmoidFilterType;
+
+  SigmoidFilterType::Pointer sigmoidFilter = SigmoidFilterType::New();
+  sigmoidFilter->SetInput(inImage);
+  sigmoidFilter->SetAlpha(this->Alpha);
+  sigmoidFilter->SetBeta(this->Beta);
+  sigmoidFilter->SetOutputMinimum(this->OutputMinimum);
+  sigmoidFilter->SetOutputMaximum(this->OutputMaximum);
+  sigmoidFilter->Update();
+
+  vtkvmtkITKFilterUtilities::ITKToVTKImage<ImageType>(sigmoidFilter->GetOutput(),output);
+}
 
