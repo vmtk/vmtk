@@ -140,7 +140,7 @@ public:
 
   ///
   /// Set the Input of the filter.
-  virtual void SetInput(vtkImageData *Input)
+  virtual void SetInputData(vtkImageData *Input)
   {
 #if (VTK_MAJOR_VERSION <= 5)
     this->vtkCast->SetInput(Input);
