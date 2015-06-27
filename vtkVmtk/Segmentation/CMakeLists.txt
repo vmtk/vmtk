@@ -1,4 +1,5 @@
-set(VTK_VMTK_SEGMENTATION_TARGET_LINK_LIBRARIES vtkvmtkDifferentialGeometry vtkvmtkITK ${ITK_LIBRARIES})
+#set(VTK_VMTK_SEGMENTATION_TARGET_LINK_LIBRARIES vtkvmtkDifferentialGeometry vtkvmtkITK ${ITK_LIBRARIES})
+set(VTK_VMTK_SEGMENTATION_TARGET_LINK_LIBRARIES vtkvmtkDifferentialGeometry ${ITK_LIBRARIES})
 
 if( ${VTK_VERSION_MAJOR} GREATER 5 )
   set( VTK_VMTK_SEGMENTATION_COMPONENTS
@@ -16,11 +17,11 @@ if( ${VTK_VERSION_MAJOR} GREATER 5 )
   find_package( VTK 6.2 COMPONENTS ${VTK_VMTK_SEGMENTATION_COMPONENTS} REQUIRED )
   include( ${VTK_USE_FILE} )
   list( APPEND VTK_VMTK_SEGMENTATION_TARGET_LINK_LIBRARIES ${VTK_LIBRARIES} )
-  if (VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
-    list(APPEND VTK_VMTK_SEGMENTATION_TARGET_LINK_LIBRARIES
-      vtkvmtkITKPythonD
-      )
-  endif(VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
+  #if (VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
+  #  list(APPEND VTK_VMTK_SEGMENTATION_TARGET_LINK_LIBRARIES
+  #    vtkvmtkITKPythonD
+  #    )
+  #endif(VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
 else( ${VTK_VERSION_MAJOR} GREATER 5 )
   list( APPEND VTK_VMTK_SEGMENTATION_TARGET_LINK_LIBRARIES
     vtkCommon
@@ -28,11 +29,11 @@ else( ${VTK_VERSION_MAJOR} GREATER 5 )
     vtkGraphics
     vtkImaging
     )
-  if (VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
-    list(APPEND VTK_VMTK_SEGMENTATION_TARGET_LINK_LIBRARIES
-      vtkvmtkITKPythonD
-      )
-  endif(VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
+  #if (VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
+  #  list(APPEND VTK_VMTK_SEGMENTATION_TARGET_LINK_LIBRARIES
+  #    vtkvmtkITKPythonD
+  #    )
+  #endif(VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
 endif( ${VTK_VERSION_MAJOR} GREATER 5 )
 
 SET (VTK_VMTK_SEGMENTATION_SRCS
@@ -64,7 +65,7 @@ SET (VTK_VMTK_SEGMENTATION_SRCS
   vtkvmtkThresholdSegmentationLevelSetImageFilter.cxx
   vtkvmtkUpwindGradientMagnitudeImageFilter.cxx
   vtkvmtkVesselEnhancingDiffusionImageFilter.cxx
-  vtkvmtkVesselEnhancingDiffusion3DImageFilter.cxx
+  #vtkvmtkVesselEnhancingDiffusion3DImageFilter.cxx
   vtkvmtkVesselnessMeasureImageFilter.cxx
   )
 
@@ -82,10 +83,10 @@ SET (VTK_VMTK_SEGMENTATION_ITK_HEADERS
   itkVesselEnhancingDiffusion3DImageFilter.txx
 )
 
-SET (VTK_VMTK_SEGMENTATION_INCLUDE_DIRS
-  ${vtkvmtkITK_SOURCE_DIR}
-  ${vtkvmtkITK_BINARY_DIR}
-  )
+#SET (VTK_VMTK_SEGMENTATION_INCLUDE_DIRS
+#  ${vtkvmtkITK_SOURCE_DIR}
+#  ${vtkvmtkITK_BINARY_DIR}
+#  )
 
 vmtk_build_library(
   NAME Segmentation
