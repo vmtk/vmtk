@@ -26,7 +26,34 @@ Version:   $Revision: 1.1 $
 #include "vtkvmtkGradientMagnitudeRecursiveGaussian2DImageFilter.h"
 #include "vtkObjectFactory.h"
 
+#include "vtkvmtkITKFilterUtilities.h"
+
+#include "itkGradientMagnitudeRecursiveGaussianImageFilter.h"
 
 vtkStandardNewMacro(vtkvmtkGradientMagnitudeRecursiveGaussian2DImageFilter);
 
+vtkvmtkGradientMagnitudeRecursiveGaussian2DImageFilter::vtkvmtkGradientMagnitudeRecursiveGaussian2DImageFilter()
+{
+  this->Sigma = 1.0;
+  this->NormalizeAcrossScale = 0;
+}
+
+void vtkvmtkGradientMagnitudeRecursiveGaussian2DImageFilter::SimpleExecute(vtkImageData* input, vtkImageData* output)
+{
+  typedef itk::Image<float,2> ImageType;
+
+  ImageType::Pointer inImage = ImageType::New();
+
+  vtkvmtkITKFilterUtilities::VTKToITKImage<ImageType>(input,inImage);
+
+  typedef itk::GradientMagnitudeRecursiveGaussianImageFilter<ImageType,ImageType> GradientMagnitudeFilterType;
+
+  GradientMagnitudeFilterType::Pointer gradientMagnitudeFilter = GradientMagnitudeFilterType::New();
+  gradientMagnitudeFilter->SetInput(inImage);
+  gradientMagnitudeFilter->SetSigma(this->Sigma);
+  gradientMagnitudeFilter->SetNormalizeAcrossScale(this->NormalizeAcrossScale);
+  gradientMagnitudeFilter->Update();
+
+  vtkvmtkITKFilterUtilities::ITKToVTKImage<ImageType>(gradientMagnitudeFilter->GetOutput(),output);
+}
 

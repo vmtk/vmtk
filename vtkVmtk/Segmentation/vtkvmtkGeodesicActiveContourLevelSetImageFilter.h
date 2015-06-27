@@ -31,200 +31,94 @@ Version:   $Revision: 1.4 $
 #ifndef __vtkvmtkGeodesicActiveContourLevelSetImageFilter_h
 #define __vtkvmtkGeodesicActiveContourLevelSetImageFilter_h
 
-
-#include "vtkvmtkITKImageToImageFilterFF.h"
-#include "itkGeodesicActiveContourLevelSetImageFilter.h"
+#include "vtkSimpleImageToImageFilter.h"
 #include "vtkvmtkWin32Header.h"
-#include "vtkVersion.h"
 
-class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkGeodesicActiveContourLevelSetImageFilter : public vtkvmtkITKImageToImageFilterFF
+#include "vtkImageData.h"
+
+class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkGeodesicActiveContourLevelSetImageFilter : public vtkSimpleImageToImageFilter
 {
  public:
   static vtkvmtkGeodesicActiveContourLevelSetImageFilter *New();
-  vtkTypeMacro(vtkvmtkGeodesicActiveContourLevelSetImageFilter, vtkvmtkITKImageToImageFilterFF);
+  vtkTypeMacro(vtkvmtkGeodesicActiveContourLevelSetImageFilter, vtkSimpleImageToImageFilter);
 
-  float GetIsoSurfaceValue ()
-  {
-    DelegateITKOutputMacro(GetIsoSurfaceValue) ;
-  };
+  vtkGetMacro(IsoSurfaceValue,double);
+  vtkSetMacro(IsoSurfaceValue,double);
 
-  void SetIsoSurfaceValue ( float value )
-  {
-     DelegateITKInputMacro ( SetIsoSurfaceValue, value );
-  };
-  
-  void SetNumberOfIterations ( int value )
-  {
-    DelegateITKInputMacro ( SetNumberOfIterations, value );
-  };
+  vtkGetMacro(NumberOfIterations,int);
+  vtkSetMacro(NumberOfIterations,int);
 
-  void SetPropagationScaling ( float value )
-  {
-    DelegateITKInputMacro ( SetPropagationScaling, value );
-  };
+  vtkGetMacro(PropagationScaling,double);
+  vtkSetMacro(PropagationScaling,double);
 
-  void SetCurvatureScaling ( float value )
-  {
-    DelegateITKInputMacro ( SetCurvatureScaling, value );
-  };
+  vtkGetMacro(CurvatureScaling,double);
+  vtkSetMacro(CurvatureScaling,double);
 
-  void SetAdvectionScaling ( float value )
-  {
-    DelegateITKInputMacro ( SetAdvectionScaling, value );
-  };
+  vtkGetMacro(AdvectionScaling,double);
+  vtkSetMacro(AdvectionScaling,double);
 
-  void SetMaximumRMSError ( float value )
-  {
-    DelegateITKInputMacro ( SetMaximumRMSError, value );
-  };
+  vtkGetMacro(MaximumRMSError,double);
+  vtkSetMacro(MaximumRMSError,double);
 
-  void SetUseNegativeFeatures (int value )
-  {
-    DelegateITKInputMacro( SetUseNegativeFeatures, value);
-  }
+  vtkGetMacro(UseNegativeFeatures,int);
+  vtkSetMacro(UseNegativeFeatures,int);
+  vtkBooleanMacro(UseNegativeFeatures,int);
 
-  void SetUseImageSpacing (int value )
-  {
-    DelegateITKInputMacro( SetUseImageSpacing, value);
-  }
+  vtkGetMacro(AutoGenerateSpeedAdvection,int);
+  vtkSetMacro(AutoGenerateSpeedAdvection,int);
+  vtkBooleanMacro(AutoGenerateSpeedAdvection,int);
 
-  void SetAutoGenerateSpeedAdvection (int value )
-  {
-    DelegateITKInputMacro( SetAutoGenerateSpeedAdvection, value);
-  }
+  vtkGetMacro(InterpolateSurfaceLocation,int);
+  vtkSetMacro(InterpolateSurfaceLocation,int);
+  vtkBooleanMacro(InterpolateSurfaceLocation,int);
 
-  void SetInterpolateSurfaceLocation (int value )
-  {
-    DelegateITKInputMacro( SetInterpolateSurfaceLocation, value);
-  }
-  
-  void SetDerivativeSigma ( float value )
-  {
-    DelegateITKInputMacro ( SetDerivativeSigma, value );
-  };
+  vtkGetMacro(UseImageSpacing,int);
+  vtkSetMacro(UseImageSpacing,int);
+  vtkBooleanMacro(UseImageSpacing,int);
 
-  void SetFeatureImage ( vtkImageData *value)
-  {
-#if (VTK_MAJOR_VERSION <= 5)
-    this->vtkFeatureExporter->SetInput(value);
-#else
-    this->vtkFeatureExporter->SetInputData(value);
-#endif
-  }
+  vtkGetMacro(DerivativeSigma,double);
+  vtkSetMacro(DerivativeSigma,double);
 
-  vtkImageData *GetSpeedImage()
-  {
-    this->vtkSpeedImporter->Update();
-    return this->vtkSpeedImporter->GetOutput();
-  }
+  vtkGetObjectMacro(FeatureImage,vtkImageData);
+  vtkSetObjectMacro(FeatureImage,vtkImageData);
 
-  void SetFeatureScaling ( float value )
-  {
-    DelegateITKInputMacro ( SetFeatureScaling, value );
-  };
+  vtkGetObjectMacro(SpeedImage,vtkImageData);
+  vtkSetObjectMacro(SpeedImage,vtkImageData);
 
-   float GetRMSChange ()
-  {
-    DelegateITKOutputMacro(GetRMSChange);
-  };
+  vtkGetMacro(FeatureScaling,double);
+  vtkSetMacro(FeatureScaling,double);
 
-  int GetElapsedIterations()
-  {
-    DelegateITKOutputMacro(GetElapsedIterations);
-  };
+  vtkGetMacro(RMSChange,double);
 
-  float GetPropagationScaling ( )
-  {
-    DelegateITKOutputMacro ( GetPropagationScaling );
-  };
+  vtkGetMacro(ElapsedIterations,int);
 
-  float GetCurvatureScaling ( )
-  {
-    DelegateITKOutputMacro ( GetCurvatureScaling );
-  };
-
-  float GetAdvectionScaling ( )
-  {
-    DelegateITKOutputMacro ( GetAdvectionScaling );
-  };
-
-  int GetAutoGenerateSpeedAdvection ( )
-  {
-    DelegateITKOutputMacro( GetAutoGenerateSpeedAdvection );
-  }
-
-  int GetInterpolateSurfaceLocation ( )
-  {
-    DelegateITKOutputMacro( GetInterpolateSurfaceLocation );
-  }
-
-  float GetDerivativeSigma ( )
-  {
-    DelegateITKOutputMacro ( GetDerivativeSigma );
-  };
-  
-  // Description: Override vtkSource's Update so that we can access this class's GetOutput(). vtkSource's GetOutput is not virtual.
-  void Update()
-  {
-    if (this->vtkFeatureExporter->GetInput())
-      {
-        this->itkFeatureImporter->Update();
-#if (VTK_MAJOR_VERSION <= 5)
-        if (this->GetOutput(0))
-          {
-            this->GetOutput(0)->Update();
-            if ( this->GetOutput(0)->GetSource() )
-              {
-                //          this->SetErrorCode( this->GetOutput(0)->GetSource()->GetErrorCode() );
-              }
-          }
-#endif
-      }
-  }
-    
 protected:
-  //BTX
-  typedef itk::GeodesicActiveContourLevelSetImageFilter<Superclass::InputImageType,Superclass::OutputImageType> ImageFilterType;
-  typedef itk::VTKImageImport<InputImageType> FeatureImageImportType;
-  typedef itk::VTKImageExport<InputImageType> SpeedImageExportType;
-  
-  vtkvmtkGeodesicActiveContourLevelSetImageFilter() : Superclass ( ImageFilterType::New() )
-  {
-    this->vtkFeatureExporter = vtkImageExport::New();
-    this->itkFeatureImporter = FeatureImageImportType::New();
-    this->itkSpeedExporter = SpeedImageExportType::New();
-    this->vtkSpeedImporter = vtkImageImport::New();
-#if VTK_MAJOR_VERSION > 5 || (VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION > 2)
-    this->vtkSpeedImporter->SetScalarArrayName("Scalars_");
-#endif
-    ConnectPipelines(this->itkSpeedExporter, this->vtkSpeedImporter);
-    ConnectPipelines(this->vtkFeatureExporter, this->itkFeatureImporter);
-    (dynamic_cast<ImageFilterType*>(m_Filter.GetPointer()))->SetFeatureImage(this->itkFeatureImporter->GetOutput());
-    this->itkSpeedExporter->SetInput((dynamic_cast<ImageFilterType*>(m_Filter.GetPointer()))->GetSpeedImage());
-  };
-  ~vtkvmtkGeodesicActiveContourLevelSetImageFilter() 
-  {
-    this->vtkSpeedImporter->Delete();
-    this->vtkFeatureExporter->Delete();
-  };
-  ImageFilterType* GetImageFilterPointer() { return dynamic_cast<ImageFilterType*> ( m_Filter.GetPointer() ); }
-  
-  FeatureImageImportType::Pointer itkFeatureImporter;
-  SpeedImageExportType::Pointer itkSpeedExporter;
-  //ETX
+  vtkvmtkGeodesicActiveContourLevelSetImageFilter();
+  ~vtkvmtkGeodesicActiveContourLevelSetImageFilter();
 
-  vtkImageExport *vtkFeatureExporter;
-  vtkImageImport *vtkSpeedImporter;
-  
+  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output);
+
 private:
   vtkvmtkGeodesicActiveContourLevelSetImageFilter(const vtkvmtkGeodesicActiveContourLevelSetImageFilter&);  // Not implemented.
-  void operator=(const vtkvmtkGeodesicActiveContourLevelSetImageFilter&);  //
-                                                                          // Not implemented
-  
+  void operator=(const vtkvmtkGeodesicActiveContourLevelSetImageFilter&);  // Not implemented
+
+  double IsoSurfaceValue;
+  int NumberOfIterations;
+  double PropagationScaling;
+  double CurvatureScaling;
+  double AdvectionScaling;
+  double MaximumRMSError;
+  int UseNegativeFeatures;
+  int AutoGenerateSpeedAdvection;
+  int InterpolateSurfaceLocation;
+  int UseImageSpacing;
+  double FeatureScaling;
+  double DerivativeSigma;
+  double RMSChange;
+  int ElapsedIterations;
+  vtkImageData* FeatureImage;
+  vtkImageData* SpeedImage;
 };
 
 #endif
-
-
-
 

@@ -31,26 +31,21 @@ Version:   $Revision: 1.3 $
 #ifndef __vtkvmtkGradientMagnitudeImageFilter_h
 #define __vtkvmtkGradientMagnitudeImageFilter_h
 
-
-#include "vtkvmtkITKImageToImageFilterFF.h"
-#include "itkGradientMagnitudeImageFilter.h"
+#include "vtkSimpleImageToImageFilter.h"
 #include "vtkvmtkWin32Header.h"
 
-class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkGradientMagnitudeImageFilter : public vtkvmtkITKImageToImageFilterFF
+class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkGradientMagnitudeImageFilter : public vtkSimpleImageToImageFilter
 {
  public:
   static vtkvmtkGradientMagnitudeImageFilter *New();
-  vtkTypeMacro(vtkvmtkGradientMagnitudeImageFilter, vtkvmtkITKImageToImageFilterFF);
+  vtkTypeMacro(vtkvmtkGradientMagnitudeImageFilter, vtkSimpleImageToImageFilter);
 
 protected:
-  //BTX
-  typedef itk::GradientMagnitudeImageFilter<Superclass::InputImageType,Superclass::OutputImageType> ImageFilterType;
-  vtkvmtkGradientMagnitudeImageFilter() : Superclass ( ImageFilterType::New() ){};
+  vtkvmtkGradientMagnitudeImageFilter() {};
   ~vtkvmtkGradientMagnitudeImageFilter() {};
-  ImageFilterType* GetImageFilterPointer() { return dynamic_cast<ImageFilterType*> ( m_Filter.GetPointer() ); }
 
-  //ETX
-  
+  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output);
+
 private:
   vtkvmtkGradientMagnitudeImageFilter(const vtkvmtkGradientMagnitudeImageFilter&);  // Not implemented.
   void operator=(const vtkvmtkGradientMagnitudeImageFilter&);  // Not implemented.

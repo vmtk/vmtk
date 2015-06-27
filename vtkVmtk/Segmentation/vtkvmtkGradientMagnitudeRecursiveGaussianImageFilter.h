@@ -31,48 +31,35 @@ Version:   $Revision: 1.3 $
 #ifndef __vtkvmtkGradientMagnitudeRecursiveGaussianImageFilter_h
 #define __vtkvmtkGradientMagnitudeRecursiveGaussianImageFilter_h
 
-
-#include "vtkvmtkITKImageToImageFilterFF.h"
-#include "itkGradientMagnitudeRecursiveGaussianImageFilter.h"
+#include "vtkSimpleImageToImageFilter.h"
 #include "vtkvmtkWin32Header.h"
 
-class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkGradientMagnitudeRecursiveGaussianImageFilter : public vtkvmtkITKImageToImageFilterFF
+class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkGradientMagnitudeRecursiveGaussianImageFilter : public vtkSimpleImageToImageFilter
 {
  public:
   static vtkvmtkGradientMagnitudeRecursiveGaussianImageFilter *New();
-  vtkTypeMacro(vtkvmtkGradientMagnitudeRecursiveGaussianImageFilter, vtkvmtkITKImageToImageFilterFF);
+  vtkTypeMacro(vtkvmtkGradientMagnitudeRecursiveGaussianImageFilter, vtkSimpleImageToImageFilter);
 
-  void SetSigma ( float value )
-  {
-    DelegateITKInputMacro ( SetSigma, value );
-  };
+  vtkGetMacro(Sigma,double);
+  vtkSetMacro(Sigma,double);
 
-  void SetNormalizeAcrossScale ( int value )
-  {
-    DelegateITKInputMacro ( SetNormalizeAcrossScale, value );
-  };
-
-  int GetNormalizeAcrossScale()
-  {
-    DelegateITKOutputMacro( GetNormalizeAcrossScale );
-  };
+  vtkGetMacro(NormalizeAcrossScale,int);
+  vtkSetMacro(NormalizeAcrossScale,int);
+  vtkBooleanMacro(NormalizeAcrossScale,int);
 
 protected:
-  //BTX
-  typedef itk::GradientMagnitudeRecursiveGaussianImageFilter<Superclass::InputImageType,Superclass::OutputImageType> ImageFilterType;
-  vtkvmtkGradientMagnitudeRecursiveGaussianImageFilter() : Superclass ( ImageFilterType::New() ){};
+  vtkvmtkGradientMagnitudeRecursiveGaussianImageFilter();
   ~vtkvmtkGradientMagnitudeRecursiveGaussianImageFilter() {};
-  ImageFilterType* GetImageFilterPointer() { return dynamic_cast<ImageFilterType*> ( m_Filter.GetPointer() ); }
 
-  //ETX
-  
+  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output);
+
 private:
   vtkvmtkGradientMagnitudeRecursiveGaussianImageFilter(const vtkvmtkGradientMagnitudeRecursiveGaussianImageFilter&);  // Not implemented.
   void operator=(const vtkvmtkGradientMagnitudeRecursiveGaussianImageFilter&);  // Not implemented.
+
+  double Sigma;
+  int NormalizeAcrossScale;
 };
 
 #endif
-
-
-
 
