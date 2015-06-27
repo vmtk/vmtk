@@ -26,7 +26,38 @@ Version:   $Revision: 1.1 $
 #include "vtkvmtkRecursiveGaussianImageFilter.h"
 #include "vtkObjectFactory.h"
 
+#include "vtkvmtkITKFilterUtilities.h"
+
+#include "itkRecursiveGaussianImageFilter.h"
 
 vtkStandardNewMacro(vtkvmtkRecursiveGaussianImageFilter);
 
+vtkvmtkRecursiveGaussianImageFilter::vtkvmtkRecursiveGaussianImageFilter()
+{
+  this->Sigma = 1.0;
+  this->NormalizeAcrossScale = 0;
+}
+
+void vtkvmtkRecursiveGaussianImageFilter::SimpleExecute(vtkImageData* input, vtkImageData* output)
+{
+  typedef float PixelType;
+  const int Dimension = 3;
+  typedef itk::Image<PixelType, Dimension> ImageType;
+
+  ImageType::Pointer inImage = ImageType::New();
+
+  vtkvmtkITKFilterUtilities::VTKToITKImage<ImageType>(input,inImage);
+
+  typedef itk::RecursiveGaussianImageFilter<ImageType,ImageType> GaussianFilterType;
+
+  GaussianFilterType::Pointer gaussianFilter = GaussianFilterType::New();
+  gaussianFilter->SetInput(inImage);
+  gaussianFilter->SetSigma(this->Sigma);
+  gaussianFilter->SetNormalizeAcrossScale(this->NormalizeAcrossScale);
+  gaussianFilter->Update();
+
+  ImageType::Pointer outputImage = gaussianFilter->GetOutput();
+
+  vtkvmtkITKFilterUtilities::ITKToVTKImage<ImageType>(outputImage,output);
+}
 

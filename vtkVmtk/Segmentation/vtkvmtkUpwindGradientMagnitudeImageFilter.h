@@ -32,33 +32,29 @@ Version:   $Revision: 1.3 $
 #define __vtkvmtkUpwindGradientMagnitudeImageFilter_h
 
 
-#include "vtkvmtkITKImageToImageFilterFF.h"
-#include "itkUpwindGradientMagnitudeImageFilter.h"
+#include "vtkSimpleImageToImageFilter.h"
 #include "vtkvmtkWin32Header.h"
 
-class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkUpwindGradientMagnitudeImageFilter : public vtkvmtkITKImageToImageFilterFF
+class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkUpwindGradientMagnitudeImageFilter : public vtkSimpleImageToImageFilter
 {
  public:
   static vtkvmtkUpwindGradientMagnitudeImageFilter *New();
-  vtkTypeMacro(vtkvmtkUpwindGradientMagnitudeImageFilter, vtkvmtkITKImageToImageFilterFF);
+  vtkTypeMacro(vtkvmtkUpwindGradientMagnitudeImageFilter, vtkSimpleImageToImageFilter);
 
-  void SetUpwindFactor ( float value )
-  {
-    DelegateITKInputMacro ( SetUpwindFactor, value );
-  };
+  vtkGetMacro(UpwindFactor,double);
+  vtkSetMacro(UpwindFactor,double);
 
 protected:
-  //BTX
-  typedef itk::UpwindGradientMagnitudeImageFilter<Superclass::InputImageType,Superclass::OutputImageType> ImageFilterType;
-  vtkvmtkUpwindGradientMagnitudeImageFilter() : Superclass ( ImageFilterType::New() ){};
+  vtkvmtkUpwindGradientMagnitudeImageFilter();
   ~vtkvmtkUpwindGradientMagnitudeImageFilter() {};
-  ImageFilterType* GetImageFilterPointer() { return dynamic_cast<ImageFilterType*> ( m_Filter.GetPointer() ); }
 
-  //ETX
-  
+  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output);
+
 private:
   vtkvmtkUpwindGradientMagnitudeImageFilter(const vtkvmtkUpwindGradientMagnitudeImageFilter&);  // Not implemented.
   void operator=(const vtkvmtkUpwindGradientMagnitudeImageFilter&);  // Not implemented.
+
+  double UpwindFactor;
 };
 
 #endif

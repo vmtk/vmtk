@@ -31,48 +31,35 @@ Version:   $Revision: 1.2 $
 #ifndef __vtkvmtkRecursiveGaussianImageFilter_h
 #define __vtkvmtkRecursiveGaussianImageFilter_h
 
-
-#include "vtkvmtkITKImageToImageFilterFF.h"
-#include "itkRecursiveGaussianImageFilter.h"
+#include "vtkSimpleImageToImageFilter.h"
 #include "vtkvmtkWin32Header.h"
 
-class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkRecursiveGaussianImageFilter : public vtkvmtkITKImageToImageFilterFF
+class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkRecursiveGaussianImageFilter : public vtkSimpleImageToImageFilter
 {
  public:
   static vtkvmtkRecursiveGaussianImageFilter *New();
-  vtkTypeMacro(vtkvmtkRecursiveGaussianImageFilter, vtkvmtkITKImageToImageFilterFF);
+  vtkTypeMacro(vtkvmtkRecursiveGaussianImageFilter, vtkSimpleImageToImageFilter);
 
-  void SetSigma ( float value )
-  {
-    DelegateITKInputMacro ( SetSigma, value );
-  };
+  vtkGetMacro(Sigma,double);
+  vtkSetMacro(Sigma,double);
 
-  void SetNormalizeAcrossScale ( int value )
-  {
-    DelegateITKInputMacro ( SetNormalizeAcrossScale, value );
-  };
+  vtkGetMacro(NormalizeAcrossScale,int);
+  vtkSetMacro(NormalizeAcrossScale,int);
+  vtkBooleanMacro(NormalizeAcrossScale,int);
 
-  int GetNormalizeAcrossScale()
-  {
-    DelegateITKOutputMacro( GetNormalizeAcrossScale );
-  };
-
-protected:
-  //BTX
-  typedef itk::RecursiveGaussianImageFilter<Superclass::InputImageType,Superclass::OutputImageType> ImageFilterType;
-  vtkvmtkRecursiveGaussianImageFilter() : Superclass ( ImageFilterType::New() ){};
+ protected:
+  vtkvmtkRecursiveGaussianImageFilter();
   ~vtkvmtkRecursiveGaussianImageFilter() {};
-  ImageFilterType* GetImageFilterPointer() { return dynamic_cast<ImageFilterType*> ( m_Filter.GetPointer() ); }
 
-  //ETX
-  
-private:
+  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output);
+
+ private:
   vtkvmtkRecursiveGaussianImageFilter(const vtkvmtkRecursiveGaussianImageFilter&);  // Not implemented.
   void operator=(const vtkvmtkRecursiveGaussianImageFilter&);  // Not implemented.
+
+  double Sigma;
+  int NormalizeAcrossScale;
 };
 
 #endif
-
-
-
 
