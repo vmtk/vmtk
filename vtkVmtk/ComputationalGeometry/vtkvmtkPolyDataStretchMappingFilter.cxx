@@ -37,6 +37,7 @@
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
+#include "vtkVersion.h"
 
 #include "vtkvmtkPolyDataBranchUtilities.h"
 
@@ -204,7 +205,11 @@ int vtkvmtkPolyDataStretchMappingFilter::RequestData(
 
     // extract boundaries and look at values there.
     vtkvmtkPolyDataBoundaryExtractor* boundaryExtractor = vtkvmtkPolyDataBoundaryExtractor::New();    
+#if (VTK_MAJOR_VERSION <= 5)
     boundaryExtractor->SetInput(cylinder);
+#else
+    boundaryExtractor->SetInputData(cylinder);
+#endif
     boundaryExtractor->Update();
     
     int numberOfBoundaries = boundaryExtractor->GetOutput()->GetNumberOfCells();
@@ -283,7 +288,11 @@ int vtkvmtkPolyDataStretchMappingFilter::RequestData(
     boundaryExtractor->Delete();
 
     vtkContourFilter* contourFilter = vtkContourFilter::New();
+#if (VTK_MAJOR_VERSION <= 5)
     contourFilter->SetInput(cylinder);
+#else
+    contourFilter->SetInputData(cylinder);
+#endif
     contourFilter->SetValue(0,0.5);
     contourFilter->Update();
 
@@ -297,7 +306,11 @@ int vtkvmtkPolyDataStretchMappingFilter::RequestData(
     contourFilter->Update();
 
     vtkStripper* contourStripper = vtkStripper::New();
+#if (VTK_MAJOR_VERSION <= 5)
     contourStripper->SetInput(contourFilter->GetOutput());  
+#else
+    contourStripper->SetInputConnection(contourFilter->GetOutputPort());  
+#endif
     contourStripper->Update();
 
     vtkPolyData* contours = contourStripper->GetOutput();

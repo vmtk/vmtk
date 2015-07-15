@@ -200,6 +200,8 @@ class vmtkImageVOISelector(pypes.pypeScript):
         if self.Image == None:
             self.PrintError('Error: no Image.')
 
+        self.Image.Update()
+
         self.CroppedImage.DeepCopy(self.Image)
 
         if self.Interactive == 1:

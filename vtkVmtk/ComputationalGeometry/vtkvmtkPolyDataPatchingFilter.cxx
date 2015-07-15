@@ -36,6 +36,7 @@
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
+#include "vtkVersion.h"
 
 #include "vtkvmtkPolyDataBranchUtilities.h"
 
@@ -293,27 +294,47 @@ int vtkvmtkPolyDataPatchingFilter::RequestData(
     cylinder->GetPointData()->SetActiveScalars(this->LongitudinalMappingArrayName);
 
     vtkClipPolyData* longitudinalClipper0 = vtkClipPolyData::New();
+#if (VTK_MAJOR_VERSION <= 5)
     longitudinalClipper0->SetInput(cylinder);
+#else
+    longitudinalClipper0->SetInputData(cylinder);
+#endif
     longitudinalClipper0->GenerateClipScalarsOff();
     longitudinalClipper0->InsideOutOff();
 
     vtkClipPolyData* longitudinalClipper1 = vtkClipPolyData::New();
+#if (VTK_MAJOR_VERSION <= 5)
     longitudinalClipper1->SetInput(longitudinalClipper0->GetOutput());
+#else
+    longitudinalClipper1->SetInputConnection(longitudinalClipper0->GetOutputPort());
+#endif
     longitudinalClipper1->GenerateClipScalarsOff();
     longitudinalClipper1->InsideOutOn();
 
     vtkClipPolyData* circularClipper0 = vtkClipPolyData::New();
+#if (VTK_MAJOR_VERSION <= 5)
     circularClipper0->SetInput(longitudinalClipper1->GetOutput());
+#else
+    circularClipper0->SetInputConnection(longitudinalClipper1->GetOutputPort());
+#endif
     circularClipper0->GenerateClipScalarsOff();
     circularClipper0->InsideOutOff();
 
     vtkClipPolyData* circularClipper1 = vtkClipPolyData::New();
+#if (VTK_MAJOR_VERSION <= 5)
     circularClipper1->SetInput(circularClipper0->GetOutput());
+#else
+    circularClipper1->SetInputConnection(circularClipper0->GetOutputPort());
+#endif
     circularClipper1->GenerateClipScalarsOff();
     circularClipper1->InsideOutOn();
 
     vtkPolyDataConnectivityFilter* patchConnectivityFilter = vtkPolyDataConnectivityFilter::New();
+#if (VTK_MAJOR_VERSION <= 5)
     patchConnectivityFilter->SetInput(circularClipper1->GetOutput());
+#else
+    patchConnectivityFilter->SetInputConnection(circularClipper1->GetOutputPort());
+#endif
     patchConnectivityFilter->SetExtractionModeToLargestRegion();
 
     double longitudinalMappingRange[2];
@@ -428,24 +449,44 @@ int vtkvmtkPolyDataPatchingFilter::RequestData(
           {
           if (this->CircularPatching)
             {
+#if (VTK_MAJOR_VERSION <= 5)
             patchConnectivityFilter->SetInput(circularClipper1->GetOutput());
+#else
+            patchConnectivityFilter->SetInputConnection(circularClipper1->GetOutputPort());
+#endif
             }
           else
             {
+#if (VTK_MAJOR_VERSION <= 5)
             patchConnectivityFilter->SetInput(longitudinalClipper1->GetOutput());
+#else
+            patchConnectivityFilter->SetInputConnection(longitudinalClipper1->GetOutputPort());
+#endif
             }
           patchConnectivityFilter->Update();
+#if (VTK_MAJOR_VERSION <= 5)
           patchTriangleFilter->SetInput(patchConnectivityFilter->GetOutput());
+#else
+          patchTriangleFilter->SetInputConnection(patchConnectivityFilter->GetOutputPort());
+#endif
           }
         else
           {
           if (this->CircularPatching)
             {
+#if (VTK_MAJOR_VERSION <= 5)
             patchTriangleFilter->SetInput(circularClipper1->GetOutput());
+#else
+            patchTriangleFilter->SetInputConnection(circularClipper1->GetOutputPort());
+#endif
             }
           else
             {
+#if (VTK_MAJOR_VERSION <= 5)
             patchTriangleFilter->SetInput(longitudinalClipper1->GetOutput());
+#else
+            patchTriangleFilter->SetInputConnection(longitudinalClipper1->GetOutputPort());
+#endif
             }
           }
 
@@ -601,7 +642,11 @@ int vtkvmtkPolyDataPatchingFilter::RequestData(
         patch->GetCellData()->AddArray(circularPatchNumberArray);
         patch->GetCellData()->AddArray(patchAreaArray);
 
+#if (VTK_MAJOR_VERSION <= 5)
         patchAppendFilter->AddInput(patch);
+#else
+        patchAppendFilter->AddInputData(patch);
+#endif
 
         patch->Delete();
         patchTriangleFilter->Delete();
@@ -626,7 +671,9 @@ int vtkvmtkPolyDataPatchingFilter::RequestData(
   
   this->PatchedData->SetOrigin(0.0,0.0,0.0);
   this->PatchedData->SetSpacing(circumferentialActualPatchSize,this->PatchSize[0],1.0);
+#if (VTK_MAJOR_VERSION <= 5)
   this->PatchedData->SetWholeExtent(0,numberOfPreviousPatchDataLines-1,0,circularPatchEndIndex-circularPatchStartIndex,0,0);
+#endif
   this->PatchedData->SetExtent(0,circularPatchEndIndex-circularPatchStartIndex,0,numberOfPreviousPatchDataLines-1,0,0);
 
   this->PatchedData->GetPointData()->AddArray(patchedDataLongitudinalPatchNumberArray);

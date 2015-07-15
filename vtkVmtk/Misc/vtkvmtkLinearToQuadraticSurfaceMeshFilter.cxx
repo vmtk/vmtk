@@ -32,6 +32,7 @@ Version:   $Revision: 1.3 $
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
+#include "vtkVersion.h"
 
 
 vtkStandardNewMacro(vtkvmtkLinearToQuadraticSurfaceMeshFilter);
@@ -65,7 +66,11 @@ int vtkvmtkLinearToQuadraticSurfaceMeshFilter::RequestData(
   vtkInterpolatingSubdivisionFilter* subdivisionFilter;
 
   geometryFilter = vtkGeometryFilter::New();
+#if (VTK_MAJOR_VERSION <= 5)
   geometryFilter->SetInput(input);
+#else
+  geometryFilter->SetInputData(input);
+#endif
   geometryFilter->MergingOff();
 
   switch (this->SubdivisionMethod)
@@ -81,7 +86,11 @@ int vtkvmtkLinearToQuadraticSurfaceMeshFilter::RequestData(
       return 1;
     }
 
+#if (VTK_MAJOR_VERSION <= 5)
   subdivisionFilter->SetInput(geometryFilter->GetOutput());
+#else
+  subdivisionFilter->SetInputConnection(geometryFilter->GetOutputPort());
+#endif
   subdivisionFilter->SetNumberOfSubdivisions(1);
   subdivisionFilter->Update();
   

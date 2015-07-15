@@ -20,7 +20,6 @@ details.
 #define __vtkvmtkITKImageToImageFilterSUL_h
 
 
-#include "vtkImageToImageFilter.h"
 #include "vtkvmtkITKImageToImageFilter.h"
 #include "itkImageToImageFilter.h"
 #include "itkVTKImageExport.h"

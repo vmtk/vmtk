@@ -34,6 +34,7 @@
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
+#include "vtkVersion.h"
 
 
 vtkStandardNewMacro(vtkvmtkPolyDataSurfaceRemeshing);
@@ -191,7 +192,11 @@ int vtkvmtkPolyDataSurfaceRemeshing::RequestData(
     }
 
   vtkPolyDataNormals* normals = vtkPolyDataNormals::New();
+#if (VTK_MAJOR_VERSION <= 5)
   normals->SetInput(input);
+#else
+  normals->SetInputData(input);
+#endif
   normals->ComputePointNormalsOff();
   normals->ComputeCellNormalsOn();
   normals->AutoOrientNormalsOn();
@@ -264,7 +269,11 @@ int vtkvmtkPolyDataSurfaceRemeshing::RequestData(
     }
 
   vtkvmtkPolyDataBoundaryExtractor* boundaryExtractor = vtkvmtkPolyDataBoundaryExtractor::New();
+#if (VTK_MAJOR_VERSION <= 5)
   boundaryExtractor->SetInput(input);
+#else
+  boundaryExtractor->SetInputData(input);
+#endif
   boundaryExtractor->Update();
 
   this->InputBoundary = vtkPolyData::New();

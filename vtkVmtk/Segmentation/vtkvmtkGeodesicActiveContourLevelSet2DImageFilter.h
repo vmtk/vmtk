@@ -35,6 +35,7 @@ Version:   $Revision: 1.4 $
 #include "vtkvmtkITKImageToImageFilter2DFF.h"
 #include "itkGeodesicActiveContourLevelSetImageFilter.h"
 #include "vtkvmtkWin32Header.h"
+#include "vtkVersion.h"
 
 class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkGeodesicActiveContourLevelSet2DImageFilter : public vtkvmtkITKImageToImageFilter2DFF
 {
@@ -104,7 +105,11 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkGeodesicActiveContourLevelSet2DImageFi
 
   void SetFeatureImage ( vtkImageData *value)
   {
+#if (VTK_MAJOR_VERSION <= 5)
     this->vtkFeatureExporter->SetInput(value);
+#else
+    this->vtkFeatureExporter->SetInputData(value);
+#endif
   }
 
   vtkImageData *GetSpeedImage()
@@ -164,7 +169,7 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkGeodesicActiveContourLevelSet2DImageFi
     if (this->vtkFeatureExporter->GetInput())
       {
         this->itkFeatureImporter->Update();
-        
+#if (VTK_MAJOR_VERSION <= 5)
         if (this->GetOutput(0))
           {
             this->GetOutput(0)->Update();
@@ -173,6 +178,7 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkGeodesicActiveContourLevelSet2DImageFi
                 //          this->SetErrorCode( this->GetOutput(0)->GetSource()->GetErrorCode() );
               }
           }
+#endif
       }
   }
     

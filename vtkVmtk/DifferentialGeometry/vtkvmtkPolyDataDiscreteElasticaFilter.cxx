@@ -28,6 +28,7 @@
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
+#include "vtkVersion.h"
 
 
 vtkStandardNewMacro(vtkvmtkPolyDataDiscreteElasticaFilter);
@@ -212,14 +213,22 @@ int vtkvmtkPolyDataDiscreteElasticaFilter::RequestData(
   surface->DeepCopy(input);
 
   vtkPolyDataNormals* normalsFilter = vtkPolyDataNormals::New();
+#if (VTK_MAJOR_VERSION <= 5)
   normalsFilter->SetInput(surface);
+#else
+  normalsFilter->SetInputData(surface);
+#endif
   normalsFilter->FlipNormalsOff();
   normalsFilter->ConsistencyOn();
   normalsFilter->ComputePointNormalsOn();
   normalsFilter->ComputeCellNormalsOn();
 
   vtkCurvatures* curvaturesFilter = vtkCurvatures::New();
+#if (VTK_MAJOR_VERSION <= 5)
   curvaturesFilter->SetInput(surface);
+#else
+  curvaturesFilter->SetInputData(surface);
+#endif
 //  curvaturesFilter->InvertMeanCurvatureOn();
 
   vtkvmtkPolyDataManifoldNeighborhood* neighborhood = vtkvmtkPolyDataManifoldNeighborhood::New();

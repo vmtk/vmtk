@@ -35,6 +35,7 @@ Version:   $Revision: 1.4 $
 #include "itkCollidingFrontsImageFilter.h"
 #include "vtkIdList.h"
 #include "vtkvmtkWin32Header.h"
+#include "vtkVersion.h"
 
 class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkCollidingFrontsImageFilter : public vtkvmtkITKImageToImageFilterFF
 {
@@ -123,7 +124,7 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkCollidingFrontsImageFilter : public vt
       }
     this->GetImageFilterPointer()->SetSeedPoints2(seeds2);
     } 
-     
+#if (VTK_MAJOR_VERSION <= 5)
     // Force the internal pipeline to update.
     if (this->GetOutput(0))
       {
@@ -133,6 +134,7 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkCollidingFrontsImageFilter : public vt
         //          this->SetErrorCode( this->GetOutput(0)->GetSource()->GetErrorCode() );
         }
       }
+#endif
   //ETX
   }
 

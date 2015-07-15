@@ -23,6 +23,7 @@ Version:   $Revision: 1.6 $
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
+#include "vtkVersion.h"
 
 #include "vtkvmtkConstants.h"
 
@@ -75,7 +76,11 @@ int vtkvmtkStreamlineClusteringFilter::RequestData(
   int numberOfClusters = 4;
 
   vtkSplineFilter* splineFilter = vtkSplineFilter::New();
+#if (VTK_MAJOR_VERSION <= 5)
   splineFilter->SetInput(input);
+#else
+  splineFilter->SetInputData(input);
+#endif
   splineFilter->SetSubdivideToLength();
   splineFilter->SetLength(resampleLength);
   splineFilter->Update();

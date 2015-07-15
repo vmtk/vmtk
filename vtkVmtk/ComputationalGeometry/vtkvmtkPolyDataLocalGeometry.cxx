@@ -30,6 +30,8 @@ Version:   $Revision: 1.5 $
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
+#include "vtkVersion.h"
+
 #include "vtkvmtkConstants.h"
 
 
@@ -483,11 +485,19 @@ void vtkvmtkPolyDataLocalGeometry::AdjustBoundaryQuantities(vtkPolyData* output)
   vtkDataArray* centerlineVectorsArray = NULL;
 
   vtkTriangleFilter* triangleFilter = vtkTriangleFilter::New();
+#if (VTK_MAJOR_VERSION <= 5)
   triangleFilter->SetInput(output);
+#else
+  triangleFilter->SetInputData(output);
+#endif
   triangleFilter->Update();
 
   vtkvmtkPolyDataBoundaryExtractor* boundaryExtractor = vtkvmtkPolyDataBoundaryExtractor::New();
+#if (VTK_MAJOR_VERSION <= 5)
   boundaryExtractor->SetInput(triangleFilter->GetOutput());
+#else
+  boundaryExtractor->SetInputConnection(triangleFilter->GetOutputPort());
+#endif
   boundaryExtractor->Update();
 
   vtkPolyData* boundaries = boundaryExtractor->GetOutput();
