@@ -30,7 +30,7 @@ class vmtkImageWriter(pypes.pypeScript):
         self.Format = ''
         self.GuessFormat = 1
         self.UseITKIO = 1
-        self.ApplyTransform = 0
+        self.ApplyTransform = 1
         self.OutputFileName = ''
         self.OutputRawFileName = ''
         self.OutputDirectoryName = ''
