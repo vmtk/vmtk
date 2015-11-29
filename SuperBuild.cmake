@@ -47,7 +47,7 @@ if( NOT USE_SYSTEM_ITK )
   set( proj ITK )
   ExternalProject_Add( ${proj}
     GIT_REPOSITORY "${GIT_PROTOCOL}://github.com/Kitware/ITK.git"
-    GIT_TAG "v4.7.2"
+    GIT_TAG "v4.8.2"
     SOURCE_DIR "${CMAKE_BINARY_DIR}/ITK"
     BINARY_DIR ITK-Build
     CMAKE_GENERATOR ${gen}
@@ -84,9 +84,8 @@ endif( NOT USE_SYSTEM_ITK )
 if( NOT USE_SYSTEM_VTK )
 
   if( USE_VTK6_SUPERBUILD )
-    #set(VTK_GIT_TAG "v6.2.0-vmtk")
-    set(VTK_GIT_TAG "v6.2.0")
-    SET( VTK_VERSION 6.2 )
+    set(VTK_GIT_TAG "v6.3.0")
+    SET( VTK_VERSION 6.3 )
   else( USE_VTK6_SUPERBUILD )
     set(VTK_GIT_TAG "v5.10.0-vmtk")
     SET( VTK_VERSION 5.10 )

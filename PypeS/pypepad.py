@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!${PYTHON_SHEBANG}
 
 ## Program:   Pype Pad
 ## Module:    $RCSfile: pypepad.py,v $

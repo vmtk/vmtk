@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!${PYTHON_SHEBANG}
 
 import sys
 import os

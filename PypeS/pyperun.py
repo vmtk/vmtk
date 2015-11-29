@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!${PYTHON_SHEBANG}
 
 ## Program:   PypeS
 ## Module:    $RCSfile: pype.py,v $

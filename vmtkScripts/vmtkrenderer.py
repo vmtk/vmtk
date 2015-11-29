@@ -138,10 +138,10 @@ class vmtkRenderer(pypes.pypeScript):
             self.Renderer.RemoveActor(self.TextInputActor)
         self.RenderWindow.Render()
 
-    def KeyPressCallback(self, obj, event):
+    def CharCallback(self, obj, event):
         return
 
-    def CharCallback(self, obj, event):
+    def KeyPressCallback(self, obj, event):
         key = self.RenderWindowInteractor.GetKeySym()
         if key =='Escape':
             if self.TextInputMode:
