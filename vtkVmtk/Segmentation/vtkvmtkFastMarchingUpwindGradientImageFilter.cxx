@@ -72,11 +72,11 @@ void vtkvmtkFastMarchingUpwindGradientImageFilter::SimpleExecute(vtkImageData* i
   fastMarchingFilter->SetTargetOffset(this->TargetOffset);
   if (this->TargetReachedMode == ONE_TARGET)
     {
-      fastMarchingFilter->SetTargetReachedMode(FastMarchingFilterType::OneTarget);
+    fastMarchingFilter->SetTargetReachedMode(FastMarchingFilterType::OneTarget);
     }
   else
     {
-      fastMarchingFilter->SetTargetReachedMode(FastMarchingFilterType::AllTargets);
+    fastMarchingFilter->SetTargetReachedMode(FastMarchingFilterType::AllTargets);
     }
 
   FastMarchingFilterType::NodeContainerPointer seeds = FastMarchingFilterType::NodeContainer::New();
