@@ -84,13 +84,18 @@ void vtkvmtkThresholdSegmentationLevelSetImageFilter::SimpleExecute(vtkImageData
   ImageType::Pointer featureImage = ImageType::New();
   ImageType::Pointer speedImage = ImageType::New();
 
-  vtkvmtkITKFilterUtilities::VTKToITKImage<ImageType>(this->FeatureImage,featureImage);
-  vtkvmtkITKFilterUtilities::VTKToITKImage<ImageType>(this->SpeedImage,speedImage);
-
   LevelSetFilterType::Pointer levelSetFilter = LevelSetFilterType::New();
   levelSetFilter->SetInput(inImage);
-  levelSetFilter->SetFeatureImage(featureImage);
-  levelSetFilter->SetSpeedImage(speedImage);
+  if (this->FeatureImage)
+  {
+    vtkvmtkITKFilterUtilities::VTKToITKImage<ImageType>(this->FeatureImage,featureImage);
+    levelSetFilter->SetFeatureImage(featureImage);
+  }
+  if (this->SpeedImage)
+  {
+    vtkvmtkITKFilterUtilities::VTKToITKImage<ImageType>(this->SpeedImage,speedImage);
+    levelSetFilter->SetSpeedImage(speedImage);
+  }
   levelSetFilter->SetUpperThreshold(this->UpperThreshold);
   levelSetFilter->SetLowerThreshold(this->LowerThreshold);
   levelSetFilter->SetEdgeWeight(this->EdgeWeight);

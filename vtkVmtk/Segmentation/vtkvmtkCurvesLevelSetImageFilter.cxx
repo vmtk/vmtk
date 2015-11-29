@@ -79,9 +79,6 @@ void vtkvmtkCurvesLevelSetImageFilter::SimpleExecute(vtkImageData* input, vtkIma
   ImageType::Pointer speedImage = ImageType::New();
   ImageType::Pointer featureImage = ImageType::New();
 
-  vtkvmtkITKFilterUtilities::VTKToITKImage<ImageType>(this->SpeedImage,speedImage);
-  vtkvmtkITKFilterUtilities::VTKToITKImage<ImageType>(this->FeatureImage,featureImage);
-
   typedef itk::CurvesLevelSetImageFilter<ImageType,ImageType> CurvesLevelSetFilterType;
 
   CurvesLevelSetFilterType::Pointer curvesLevelSetFilter = CurvesLevelSetFilterType::New();
@@ -98,8 +95,16 @@ void vtkvmtkCurvesLevelSetImageFilter::SimpleExecute(vtkImageData* input, vtkIma
   curvesLevelSetFilter->SetInterpolateSurfaceLocation(this->InterpolateSurfaceLocation);
   curvesLevelSetFilter->SetDerivativeSigma(this->DerivativeSigma);
   curvesLevelSetFilter->SetFeatureScaling(this->FeatureScaling);
-  curvesLevelSetFilter->SetSpeedImage(speedImage);
-  curvesLevelSetFilter->SetFeatureImage(featureImage);
+  if (this->SpeedImage)
+  {
+    vtkvmtkITKFilterUtilities::VTKToITKImage<ImageType>(this->SpeedImage,speedImage);
+    curvesLevelSetFilter->SetSpeedImage(speedImage);
+  }
+  if (this->FeatureImage)
+  {
+    vtkvmtkITKFilterUtilities::VTKToITKImage<ImageType>(this->FeatureImage,featureImage);
+    curvesLevelSetFilter->SetFeatureImage(featureImage);
+  }
   curvesLevelSetFilter->Update();
 
   this->RMSChange = curvesLevelSetFilter->GetRMSChange();

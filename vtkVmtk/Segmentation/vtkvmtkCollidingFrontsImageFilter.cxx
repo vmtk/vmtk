@@ -29,6 +29,10 @@ Version:   $Revision: 1.1 $
 
 #include "itkCollidingFrontsImageFilter.h"
 
+// TODO Remove
+#include "vtkPointData.h"
+#include "vtkDataArray.h"
+
 vtkStandardNewMacro(vtkvmtkCollidingFrontsImageFilter);
 
 vtkvmtkCollidingFrontsImageFilter::vtkvmtkCollidingFrontsImageFilter()
@@ -37,7 +41,7 @@ vtkvmtkCollidingFrontsImageFilter::vtkvmtkCollidingFrontsImageFilter()
   this->Seeds2 = NULL;
 
   this->ApplyConnectivity = 0;
-  this->NegativeEpsilon = -1E-4;
+  this->NegativeEpsilon = -1E-6;
   this->StopOnTargets = 0;
 }
 
@@ -58,6 +62,7 @@ vtkvmtkCollidingFrontsImageFilter::~vtkvmtkCollidingFrontsImageFilter()
 
 void vtkvmtkCollidingFrontsImageFilter::SimpleExecute(vtkImageData* input, vtkImageData* output)
 {
+  std::cout<<input->GetScalarType()<<std::endl;
   typedef itk::Image<float,3> ImageType;
 
   ImageType::Pointer inImage = ImageType::New();
