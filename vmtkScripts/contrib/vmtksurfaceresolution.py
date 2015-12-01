@@ -25,7 +25,6 @@ import vtk
 import sys
 
 import vtkvmtk
-import vtkvmtkcontrib
 import vmtkrenderer
 import pypes
 
@@ -57,7 +56,7 @@ class vmtkSufaceResolution(pypes.pypeScript):
         self.ExamineSpheresActor = None
         self.ExamineText = None
         
-        self.SetScriptName('vtksurfaceresolution')
+        self.SetScriptName('vmtksurfaceresolution')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
             ['ResolutionArrayName','resolutionarray','str',1,'','array storing the desired edge length'],
@@ -71,7 +70,7 @@ class vmtkSufaceResolution(pypes.pypeScript):
     
     
     def ComputeArray(self):
-        rbf = vtkvmtkcontrib.vtkvmtkRBFInterpolation2()
+        rbf = vtkvmtk.vtkvmtkRBFInterpolation2()
         rbf.SetSourceData(self.Spheres)
         if self.RBFType == "thinplatespline":
             rbf.SetRBFTypeToThinPlateSpline()
@@ -80,7 +79,7 @@ class vmtkSufaceResolution(pypes.pypeScript):
         elif self.RBFType == "triharmonic":
             rbf.SetRBFTypeToTriharmonic()
         rbf.ComputeCoefficients()
-        sampler = vtkvmtkcontrib.vtkvmtkPolyDataSampleFunction()
+        sampler = vtkvmtk.vtkvmtkPolyDataSampleFunction()
         sampler.SetInputData(self.Surface)
         sampler.SetImplicitFunction(rbf)
         sampler.SetSampleArrayName(self.ResolutionArrayName)

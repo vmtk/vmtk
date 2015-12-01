@@ -24,7 +24,6 @@ import vtk
 import sys
 
 import vtkvmtk
-import vtkvmtkcontrib
 import vmtkrenderer
 import vmtkscripts
 
@@ -145,7 +144,7 @@ class vmtkMeshClipCenterlines(pypes.pypeScript):
       #if we have no values return
       if self.SpheresRadii.GetNumberOfTuples() == 0:
         return;
-      interpolator = vtkvmtkcontrib.vtkvmtkCenterlineInterpolateArray()
+      interpolator = vtkvmtk.vtkvmtkCenterlineInterpolateArray()
       interpolator.SetInputData(self.Centerlines)
       interpolator.SetValues(self.SpheresRadii)
       interpolator.SetValuesIds(self.SpheresIndices)
@@ -165,7 +164,7 @@ class vmtkMeshClipCenterlines(pypes.pypeScript):
         #interpolate the radius array
         self.InterpolateRadius()
         if self.PolyBallType==1:
-          self.PolyBall = vtkvmtkcontrib.vtkvmtkPolyBallLine2()
+          self.PolyBall = vtkvmtk.vtkvmtkPolyBallLine2()
         else:
           self.PolyBall = vtkvmtk.vtkvmtkPolyBallLine()
         self.PolyBall.SetInputData(self.Centerlines)
@@ -237,7 +236,7 @@ class vmtkMeshClipCenterlines(pypes.pypeScript):
         #if self.PolyBallActor.GetVisibility():
             #self.BuildPolyBallSurface()
             
-        #lineIntersector = vtkvmtkcontrib.vtkvmtkPolyBallLineIntersector()
+        #lineIntersector = vtkvmtk.vtkvmtkPolyBallLineIntersector()
         #lineIntersector.SetImplicitFunction(self.PolyBall)
         #self.LineClipper.SetLineIntersector(lineIntersector)
         #self.LineClipper.Update()
@@ -247,7 +246,7 @@ class vmtkMeshClipCenterlines(pypes.pypeScript):
     #Recreate the surface cells on the clipped and project the cell entity ids
     def CreateSurfaceCells(self,inMesh):
         #Remove the surface cells from the mesh
-        cellDimFilter = vtkvmtkcontrib.vtkvmtkCellDimensionFilter()
+        cellDimFilter = vtkvmtk.vtkvmtkCellDimensionFilter()
         cellDimFilter.SetInputData(inMesh)
         cellDimFilter.ThresholdByUpper(3)
         cellDimFilter.Update()
@@ -280,7 +279,7 @@ class vmtkMeshClipCenterlines(pypes.pypeScript):
             
             #Project the entity ids form the old surface cells to the new surface cells
             #TODO: This is hackish(need for a tolerance), find a beeter way
-            projector = vtkvmtkcontrib.vtkvmtkSurfaceProjectCellArray()
+            projector = vtkvmtk.vtkvmtkSurfaceProjectCellArray()
             projector.SetInputData(surfaceCellsToSurface.Surface)
             projector.SetReferenceSurface(meshToSurface.Surface)
             projector.SetProjectedArrayName(self.CellEntityIdsArrayName)

@@ -12,4 +12,7 @@ from vtkvmtkMiscPython import *
 from vtkvmtkRenderingPython import *
 from vtkvmtkSegmentationPython import *
 from vtkvmtkITKPython import *
-
+try:
+  from vtkvmtkContribPython import *
+except:
+  pass

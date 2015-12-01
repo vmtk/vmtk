@@ -24,7 +24,6 @@ import vtk
 import sys
 
 import vtkvmtk
-import vtkvmtkcontrib
 import vmtkrenderer
 import pypes
 
@@ -90,7 +89,7 @@ class vmtkDistanceToSpheres(pypes.pypeScript):
     
     
     def ComputeDistances(self):
-        distanceToSpheresFilter = vtkvmtkcontrib.vtkvmtkPolyDataDistanceToSpheres()
+        distanceToSpheresFilter = vtkvmtk.vtkvmtkPolyDataDistanceToSpheres()
         distanceToSpheresFilter.SetInputData(self.Surface)
         distanceToSpheresFilter.SetSpheres(self.Spheres)
         distanceToSpheresFilter.SetDistanceOffset(self.DistanceOffset)

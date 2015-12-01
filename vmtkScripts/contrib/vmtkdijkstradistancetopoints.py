@@ -26,7 +26,6 @@ import vtk
 import sys
 
 import vtkvmtk
-import vtkvmtkcontrib
 import vmtkrenderer
 import pypes
 
@@ -90,7 +89,7 @@ class vmtkDijkstraDistanceToPoints(pypes.pypeScript):
         
         
     def ComputeDistances(self):
-        dijkstraFilter = vtkvmtkcontrib.vtkvmtkPolyDataDijkstraDistanceToPoints()
+        dijkstraFilter = vtkvmtk.vtkvmtkPolyDataDijkstraDistanceToPoints()
         dijkstraFilter.SetInputData(self.Surface)
         dijkstraFilter.SetSeedIds(self.SeedIds)
         dijkstraFilter.SetDistanceOffset(self.DistanceOffset)

@@ -26,7 +26,6 @@ import vtk
 import sys
 
 import vtkvmtk
-import vtkvmtkcontrib
 import vmtkrenderer
 import pypes
 
@@ -73,7 +72,7 @@ class vmtkGeodesicSurfaceResolution(pypes.pypeScript):
     
     
     def ComputeArray(self):
-        rbf = vtkvmtkcontrib.vtkvmtkPolyDataGeodesicRBFInterpolation()
+        rbf = vtkvmtk.vtkvmtkPolyDataGeodesicRBFInterpolation()
         rbf.SetSeedIds(self.SphereIds)
         seedValues = self.Spheres.GetPointData().GetScalars()
         rbf.SetSeedValues(seedValues)

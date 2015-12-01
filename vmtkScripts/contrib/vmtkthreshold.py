@@ -3,16 +3,17 @@
 import sys
 import math
 import vtk
-from vmtk import pypes
-from vmtk import vmtkscripts
+import pypes
+import vmtkscripts
+import vmtkcontribscripts
 
-vmtkthreshold = 'VmtkThreshold'
+vmtkthreshold = 'vmtkThreshold'
 
-class VmtkThreshold(pypes.pypeScript):
+class vmtkThreshold(pypes.pypeScript):
     def __init__(self):
         pypes.pypeScript.__init__(self)
 
-        self.SetScriptName(vmtkthreshold)
+        self.SetScriptName('vmtkthreshold')
         self.SetScriptDoc('Extract part of surface or mesh with cell entitiy ids between given thresholds.')
 
         self.Surface = None
@@ -27,7 +28,7 @@ class VmtkThreshold(pypes.pypeScript):
                  'the input surface', 'vmtksurfacereader'],
                 ['Mesh', 'imesh', 'vtkUnstructuredGrid', 1, '',
                  'the input mesh', 'vmtkmeshreader'],
-                ['CellEntityIdsArrayName', 'entityidsarray', 'str', 1, 'CellEntityIds',
+                ['CellEntityIdsArrayName', 'entityidsarray', 'str', 1, '',
                  'name of the array where entity ids have been stored'],
                 ['LowThreshold', 'lowthreshold', 'int', 1, '',
                  'lower threshold for surface filtering', ''],
@@ -39,7 +40,7 @@ class VmtkThreshold(pypes.pypeScript):
                  'the output surface', 'vmtksurfacewriter'],
                 ['Mesh', 'omesh', 'vtkUnstructuredGrid', 1, '',
                  'the output mesh', 'vmtkmeshwriter'],
-                ['CellEntityIdsArrayName', 'entityidsarray', 'str', 1, 'CellEntityIds',
+                ['CellEntityIdsArrayName', 'entityidsarray', 'str', 1, '',
                  'name of the array where entity ids have been stored'],
                 ])
 

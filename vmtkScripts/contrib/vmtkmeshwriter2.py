@@ -25,7 +25,6 @@
 import sys
 import vtk
 import vtkvmtk
-import vtkvmtkcontrib
 
 import pypes
 
@@ -240,7 +239,7 @@ class vmtkMeshWriter2(pypes.pypeScript):
         self.PrintLog('Writing Dolfin file.')
         if self.Compressed:
             self.OutputFileName += '.gz'
-        writer = vtkvmtkcontrib.vtkvmtkDolfinWriter2()
+        writer = vtkvmtk.vtkvmtkDolfinWriter2()
         writer.SetInputData(self.Mesh)
         writer.SetFileName(self.OutputFileName)
         if self.CellEntityIdsArrayName != '':
