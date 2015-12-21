@@ -84,9 +84,13 @@ endif( NOT USE_SYSTEM_ITK )
 if( NOT USE_SYSTEM_VTK )
 
   if( USE_VTK6_SUPERBUILD )
-    set(VTK_GIT_TAG "v6.3.0")
-    SET( VTK_VERSION 6.3 )
+    SET(VTK_GIT_REPOSITORY "${GIT_PROTOCOL}://github.com/Kitware/VTK.git")
+    #set(VTK_GIT_TAG "v6.3.0")
+    #SET( VTK_VERSION 6.3 )
+    set(VTK_GIT_TAG "v7.0.0.rc1")
+    SET( VTK_VERSION 7.0 )
   else( USE_VTK6_SUPERBUILD )
+    SET(VTK_GIT_REPOSITORY "${GIT_PROTOCOL}://github.com/vmtk/VTK.git")
     set(VTK_GIT_TAG "v5.10.0-vmtk")
     SET( VTK_VERSION 5.10 )
   endif( USE_VTK6_SUPERBUILD )
@@ -96,8 +100,7 @@ if( NOT USE_SYSTEM_VTK )
   ##
   set( proj VTK )
   ExternalProject_Add( VTK
-    #GIT_REPOSITORY "${GIT_PROTOCOL}://github.com/vmtk/VTK.git"
-    GIT_REPOSITORY "${GIT_PROTOCOL}://github.com/Kitware/VTK.git"
+    GIT_REPOSITORY ${VTK_GIT_REPOSITORY}
     GIT_TAG ${VTK_GIT_TAG}
     SOURCE_DIR "${CMAKE_BINARY_DIR}/VTK"
     BINARY_DIR VTK-Build

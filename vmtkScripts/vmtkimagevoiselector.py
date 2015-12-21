@@ -61,11 +61,11 @@ class vmtkImageVOISelector(pypes.pypeScript):
             ['Image','o','vtkImageData',1,'','the output image','vmtkimagewriter']
             ])
 
-    def InteractCallback(self, obj):
-        if self.BoxWidget.GetEnabled() == 1:
-            self.BoxWidget.SetEnabled(0)
-        else:
-            self.BoxWidget.SetEnabled(1)
+    #def InteractCallback(self, obj):
+    #    if self.BoxWidget.GetEnabled() == 1:
+    #        self.BoxWidget.SetEnabled(0)
+    #    else:
+    #        self.BoxWidget.SetEnabled(1)
 
     def HideCube(self,object, event):
         self.CubeActor.VisibilityOff()
@@ -185,12 +185,6 @@ class vmtkImageVOISelector(pypes.pypeScript):
 
         self.CroppedImage.DeepCopy(extractVOI.GetOutput())
 
-    def InteractCallback(self):
-        if self.BoxWidget.GetEnabled() == 1:
-            self.BoxWidget.SetEnabled(0)
-        else:
-            self.BoxWidget.SetEnabled(1)
-
     def Execute(self):
 	
         if self.Image == None:
@@ -215,7 +209,7 @@ class vmtkImageVOISelector(pypes.pypeScript):
             self.BoxWidget = vtk.vtkBoxWidget()
             self.BoxWidget.SetInteractor(self.vmtkRenderer.RenderWindowInteractor)
 
-            self.vmtkRenderer.AddKeyBinding('i','Interact.',self.InteractCallback)
+            #self.vmtkRenderer.AddKeyBinding('i','Interact.',self.InteractCallback)
             self.InputInfo("Press 'i' to activate interactor")
 
             self.Display()

@@ -37,7 +37,6 @@ __all__ = [
   'vmtkimagefeaturecorrection',
   'vmtkimagefeatures',
   'vmtkimageinitialization',
-  'vmtkimagelinetracer',
   'vmtkimagemipviewer',
   'vmtkimagemorphology',
   'vmtkimagenormalize',

@@ -82,10 +82,11 @@ class vmtkSurfaceClipper(pypes.pypeScript):
         self.ClipWidget.Off()
 
     def InteractCallback(self, obj):
-        if self.ClipWidget.GetEnabled() == 1:
-            self.ClipWidget.SetEnabled(0)
-        else:
-            self.ClipWidget.SetEnabled(1)
+        pass
+    #    if self.ClipWidget.GetEnabled() == 1:
+    #        self.ClipWidget.SetEnabled(0)
+    #    else:
+    #        self.ClipWidget.SetEnabled(1)
 
     def Display(self):
 

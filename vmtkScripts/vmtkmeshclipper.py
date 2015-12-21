@@ -60,10 +60,11 @@ class vmtkMeshClipper(pypes.pypeScript):
             ])
 
     def InteractCallback(self, obj):
-        if self.BoxWidget.GetEnabled() == 1:
-            self.BoxWidget.SetEnabled(0)
-        else:
-            self.BoxWidget.SetEnabled(1)
+        pass
+        #if self.BoxWidget.GetEnabled() == 1:
+        #    self.BoxWidget.SetEnabled(0)
+        #else:
+        #    self.BoxWidget.SetEnabled(1)
 
     def ClipCallback(self, obj):
         if self.BoxWidget.GetEnabled() != 1:
@@ -71,7 +72,7 @@ class vmtkMeshClipper(pypes.pypeScript):
         self.BoxWidget.GetPlanes(self.Planes)
         self.Clipper.Update()
         self.Mesh.DeepCopy(self.Clipper.GetOutput())
-        self.ClippedMesh.DeepCopy(self.Clipper.GetClippedOutputData())
+        self.ClippedMesh.DeepCopy(self.Clipper.GetClippedOutput())
         self.Cutter.Update()
         self.Surface.DeepCopy(self.Cutter.GetOutput())
         mapper = vtk.vtkDataSetMapper()
@@ -151,7 +152,7 @@ class vmtkMeshClipper(pypes.pypeScript):
 
             self.Mesh = self.Clipper.GetOutput()
             self.Surface = self.Cutter.GetOutput()
-            self.ClippedMesh = self.Clipper.GetClippedOutputData()
+            self.ClippedMesh = self.Clipper.GetClippedOutput()
         
 
 

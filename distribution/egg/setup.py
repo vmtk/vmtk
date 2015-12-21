@@ -42,7 +42,7 @@ AUTHOR              = "Luca Antiga"
 AUTHOR_EMAIL        = "luca.antiga@orobix.com"
 PLATFORMS           = "Linux/MacOSX/Windows"
 ISRELEASED          = True
-VERSION             = '1.2'
+VERSION             = '1.3'
 
 def list_files(directory):
     '''A specialized version of os.walk() that list files only in the current directory

@@ -43,7 +43,6 @@ SET(SCRIPTS_SRCS
   vmtkimagefeaturecorrection.py
   vmtkimagefeatures.py
   vmtkimageinitialization.py
-  vmtkimagelinetracer.py
   vmtkimagemipviewer.py
   vmtkimagemorphology.py
   vmtkimagenormalize.py

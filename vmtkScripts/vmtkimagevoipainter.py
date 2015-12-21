@@ -62,10 +62,11 @@ class vmtkImageVOIPainter(pypes.pypeScript):
             ])
 
     def InteractCallback(self, obj):
-        if self.BoxWidget.GetEnabled() == 1:
-            self.BoxWidget.SetEnabled(0)
-        else:
-            self.BoxWidget.SetEnabled(1)
+        pass
+        #if self.BoxWidget.GetEnabled() == 1:
+        #    self.BoxWidget.SetEnabled(0)
+        #else:
+        #    self.BoxWidget.SetEnabled(1)
 
     def HideCube(self,object, event):
         self.CubeActor.VisibilityOff()
