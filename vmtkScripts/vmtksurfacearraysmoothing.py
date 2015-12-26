@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 ## Program:   VMTK
 ## Module:    $RCSfile: vmtksurfacearraysmoothing.py,v $
 ## Language:  Python
@@ -19,7 +17,7 @@
 
 import vtk
 import sys
-from vmtk import pypes
+import pypes
 import math
 
 vmtksurfacearraysmoothing = 'vmtkSurfaceArraySmoothing'

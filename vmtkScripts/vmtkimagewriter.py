@@ -38,7 +38,7 @@ class vmtkImageWriter(pypes.pypeScript):
         self.Image = None
         self.Input = None
       	self.WindowLevel = [1.0, 0.0]
-        self.RasToIjkMatrixCoefficients = [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1]
+        self.RasToIjkMatrixCoefficients = None #[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1]
 
         self.SetScriptName('vmtkimagewriter')
         self.SetScriptDoc('write an image to disk')
@@ -184,10 +184,20 @@ class vmtkImageWriter(pypes.pypeScript):
         writer.SetInputData(self.Image)
         writer.SetFileName(self.OutputFileName)
         writer.SetUseCompression(1)
-        if self.ApplyTransform and self.RasToIjkMatrixCoefficients:
+        if self.ApplyTransform == 0:
+            origin = self.Image.GetOrigin()
+            spacing = self.Image.GetSpacing()
+            matrix = vtk.vtkMatrix4x4()
+            matrix.DeepCopy((1/spacing[0], 0, 0, - origin[0]/spacing[0], 
+                         0, 1/spacing[1], 0, - origin[1]/spacing[1],
+                         0, 0, 1/spacing[2], - origin[2]/spacing[2],
+                         0, 0, 0, 1)) #LPI convention with correct origin and spacing 
+        else:
+            if self.RasToIjkMatrixCoefficients == None:
+                self.PrintError('Error: no RasToIjkMatrixCoefficients.')
             matrix = vtk.vtkMatrix4x4()
             matrix.DeepCopy(self.RasToIjkMatrixCoefficients)
-            writer.SetRasToIJKMatrix(matrix)
+        writer.SetRasToIJKMatrix(matrix)
         writer.Write()
  
     def Execute(self):

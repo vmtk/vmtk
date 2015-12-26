@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 ## Program:   VMTK
 ## Module:    $RCSfile: vmtksurfacecliploop.py,v $
 ## Language:  Python
@@ -19,8 +17,8 @@
 
 import vtk
 import sys
-from vmtk import pypes
-from vmtk import vmtkscripts
+import pypes
+import vmtkscripts
 
 vmtksurfacecliploop = 'vmtkSurfaceClipLoop'
 

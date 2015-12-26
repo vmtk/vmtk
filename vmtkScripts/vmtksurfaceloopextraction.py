@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 ## Program:   VMTK
 ## Module:    $RCSfile: vmtksurfaceloopextraction.py,v $
 ## Language:  Python
@@ -19,9 +17,9 @@
 
 import vtk
 import sys
-from vmtk import vmtkrenderer
-from vmtk import pypes
-from vmtk import vmtkscripts
+import vmtkrenderer
+import pypes
+import vmtkscripts
 
 vmtksurfaceloopextraction = 'vmtkSurfaceLoopExtraction'
 
