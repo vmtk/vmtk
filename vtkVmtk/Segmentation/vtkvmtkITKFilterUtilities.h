@@ -36,6 +36,7 @@ Version:   $Revision: 1.2 $
 
 #include "vtkImageData.h"
 #include "itkImage.h"
+#include "itkCommand.h"
 
 class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkITKFilterUtilities
 {
@@ -151,6 +152,21 @@ public:
     output->AllocateScalars(dataType,components);
 
     memcpy(static_cast<PixelType*>(output->GetScalarPointer()),input->GetBufferPointer(),input->GetBufferedRegion().GetNumberOfPixels()*sizeof(PixelType));
+  }
+
+  static void
+  ProgressCallback(itk::Object *o, const itk::EventObject &, void *data)
+  {
+    ((vtkAlgorithm*)data)->UpdateProgress(dynamic_cast<const itk::ProcessObject*>(o)->GetProgress());
+  }
+
+  static void
+  ConnectProgress(itk::Object* obj, vtkAlgorithm* alg)
+  {
+    itk::CStyleCommand::Pointer progressCommand = itk::CStyleCommand::New();
+    progressCommand->SetCallback(vtkvmtkITKFilterUtilities::ProgressCallback);
+    progressCommand->SetClientData(alg);
+    obj->AddObserver(itk::ProgressEvent(),progressCommand);
   }
 
 protected:

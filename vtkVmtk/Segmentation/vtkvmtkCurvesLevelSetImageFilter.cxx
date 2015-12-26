@@ -45,7 +45,6 @@ vtkvmtkCurvesLevelSetImageFilter::vtkvmtkCurvesLevelSetImageFilter()
   this->AutoGenerateSpeedAdvection = 1;
   this->InterpolateSurfaceLocation = 1;
   this->DerivativeSigma = 0.0;
-  this->FeatureScaling = 1.0;
   this->RMSChange = 0.0;
   this->ElapsedIterations = 0;
 
@@ -94,7 +93,6 @@ void vtkvmtkCurvesLevelSetImageFilter::SimpleExecute(vtkImageData* input, vtkIma
   curvesLevelSetFilter->SetAutoGenerateSpeedAdvection(this->AutoGenerateSpeedAdvection);
   curvesLevelSetFilter->SetInterpolateSurfaceLocation(this->InterpolateSurfaceLocation);
   curvesLevelSetFilter->SetDerivativeSigma(this->DerivativeSigma);
-  curvesLevelSetFilter->SetFeatureScaling(this->FeatureScaling);
   if (this->SpeedImage)
   {
     vtkvmtkITKFilterUtilities::VTKToITKImage<ImageType>(this->SpeedImage,speedImage);
@@ -105,6 +103,7 @@ void vtkvmtkCurvesLevelSetImageFilter::SimpleExecute(vtkImageData* input, vtkIma
     vtkvmtkITKFilterUtilities::VTKToITKImage<ImageType>(this->FeatureImage,featureImage);
     curvesLevelSetFilter->SetFeatureImage(featureImage);
   }
+  vtkvmtkITKFilterUtilities::ConnectProgress(curvesLevelSetFilter,this);
   curvesLevelSetFilter->Update();
 
   this->RMSChange = curvesLevelSetFilter->GetRMSChange();

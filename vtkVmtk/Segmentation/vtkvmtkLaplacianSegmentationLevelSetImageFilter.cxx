@@ -44,7 +44,6 @@ vtkvmtkLaplacianSegmentationLevelSetImageFilter::vtkvmtkLaplacianSegmentationLev
   this->AutoGenerateSpeedAdvection = 1;
   this->InterpolateSurfaceLocation = 1;
   this->UseImageSpacing = 1;
-  this->FeatureScaling = 1.0;
   this->RMSChange = 0.0;
   this->ElapsedIterations = 0;
   this->FeatureImage = NULL;
@@ -96,11 +95,11 @@ void vtkvmtkLaplacianSegmentationLevelSetImageFilter::SimpleExecute(vtkImageData
   levelSetFilter->SetCurvatureScaling(this->CurvatureScaling);
   levelSetFilter->SetAdvectionScaling(this->AdvectionScaling);
   levelSetFilter->SetMaximumRMSError(this->MaximumRMSError);
-  levelSetFilter->SetUseNegativeFeatures(this->UseNegativeFeatures);
+  levelSetFilter->SetReverseExpansionDirection(this->UseNegativeFeatures);
   levelSetFilter->SetAutoGenerateSpeedAdvection(this->AutoGenerateSpeedAdvection);
   levelSetFilter->SetInterpolateSurfaceLocation(this->InterpolateSurfaceLocation);
   levelSetFilter->SetUseImageSpacing(this->UseImageSpacing);
-  levelSetFilter->SetFeatureScaling(this->FeatureScaling);
+  vtkvmtkITKFilterUtilities::ConnectProgress(levelSetFilter,this);
   levelSetFilter->Update();
 
   this->RMSChange = levelSetFilter->GetRMSChange();

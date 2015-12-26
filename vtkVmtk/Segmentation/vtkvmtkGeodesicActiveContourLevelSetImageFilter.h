@@ -85,9 +85,6 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkGeodesicActiveContourLevelSetImageFilt
   vtkGetObjectMacro(SpeedImage,vtkImageData);
   vtkSetObjectMacro(SpeedImage,vtkImageData);
 
-  vtkGetMacro(FeatureScaling,double);
-  vtkSetMacro(FeatureScaling,double);
-
   vtkGetMacro(RMSChange,double);
 
   vtkGetMacro(ElapsedIterations,int);
@@ -112,7 +109,6 @@ private:
   int AutoGenerateSpeedAdvection;
   int InterpolateSurfaceLocation;
   int UseImageSpacing;
-  double FeatureScaling;
   double DerivativeSigma;
   double RMSChange;
   int ElapsedIterations;

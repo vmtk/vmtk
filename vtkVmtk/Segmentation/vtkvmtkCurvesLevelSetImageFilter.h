@@ -84,9 +84,6 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkCurvesLevelSetImageFilter : public vtk
   vtkGetObjectMacro(SpeedImage,vtkImageData);
   vtkSetObjectMacro(SpeedImage,vtkImageData);
 
-  vtkGetMacro(FeatureScaling,double);
-  vtkSetMacro(FeatureScaling,double);
-
   vtkGetMacro(RMSChange,double);
 
   vtkGetMacro(ElapsedIterations,int);
@@ -114,7 +111,6 @@ private:
   int AutoGenerateSpeedAdvection;
   int InterpolateSurfaceLocation;
   double DerivativeSigma;
-  double FeatureScaling;
   double RMSChange;
   int ElapsedIterations;
 
