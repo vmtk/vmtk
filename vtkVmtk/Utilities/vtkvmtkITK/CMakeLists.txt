@@ -30,9 +30,6 @@ SET(vtkvmtkITK_SRCS
     vtkvmtkITKArchetypeImageSeriesReader.cxx
     vtkvmtkITKArchetypeImageSeriesScalarReader.cxx
     vtkvmtkITKImageWriter.cxx
-    vtkvmtkITKImageToImageFilter.h
-    vtkvmtkITKImageToImageFilter2DFF.h
-    vtkvmtkITKImageToImageFilterFF.h
 )
 
 SET(VTK_VMTK_ITK_EXTRA_INCLUDES
