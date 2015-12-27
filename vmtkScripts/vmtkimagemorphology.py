@@ -30,7 +30,6 @@ class vmtkImageMorphology(pypes.pypeScript):
         
         self.Image = None
 
-        self.Grayscale = 1
         self.BallRadius = [1,1,1]
         self.Operation = 'closing'
 
@@ -39,8 +38,7 @@ class vmtkImageMorphology(pypes.pypeScript):
         self.SetInputMembers([
             ['Image','i','vtkImageData',1,'','the input image','vmtkimagereader'],
             ['BallRadius','radius','int',3,'(0,)','the radius of the structuring element'],
-            ['Operation','operation','str',1,'["dilate","erode","open","close"]','the morphological operation to perform'],
-            ['Grayscale','grayscale','bool',1,'','perform binary or grayscale morphology']
+            ['Operation','operation','str',1,'["dilate","erode","open","close"]','the morphological operation to perform']
             ])
         self.SetOutputMembers([
             ['Image','o','vtkImageData',1,'','the output image','vmtkimagewriter']
@@ -51,24 +49,22 @@ class vmtkImageMorphology(pypes.pypeScript):
         if self.Image == None:
             self.PrintError('Error: No input image.')
 
-        if self.Grayscale:
-            morphologyFilter = vtkvmtk.vtkvmtkGrayscaleMorphologyImageFilter()
-            if self.Operation == 'close':
-                morphologyFilter.SetOperationToClose()
-            elif self.Operation == 'open':
-                morphologyFilter.SetOperationToOpen()
-            elif self.Operation == 'dilate':
-                morphologyFilter.SetOperationToDilate()
-            elif self.Operation == 'erode':
-                morphologyFilter.SetOperationToErode()
+        morphologyFilter = vtkvmtk.vtkvmtkGrayscaleMorphologyImageFilter()
+        if self.Operation == 'close':
+            morphologyFilter.SetOperationToClose()
+        elif self.Operation == 'open':
+            morphologyFilter.SetOperationToOpen()
+        elif self.Operation == 'dilate':
+            morphologyFilter.SetOperationToDilate()
+        elif self.Operation == 'erode':
+            morphologyFilter.SetOperationToErode()
 
-            cast = vtk.vtkImageCast()
-            cast.SetInputData(self.Image)
-            cast.SetOutputScalarTypeToFloat()
-            cast.Update()
+        cast = vtk.vtkImageCast()
+        cast.SetInputData(self.Image)
+        cast.SetOutputScalarTypeToFloat()
+        cast.Update()
 
-            morphologyFilter.SetInputConnection(cast.GetOutputPort())
-
+        morphologyFilter.SetInputConnection(cast.GetOutputPort())
         morphologyFilter.SetBallRadius(self.BallRadius)
         morphologyFilter.Update()
 
