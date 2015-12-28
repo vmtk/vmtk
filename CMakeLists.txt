@@ -7,6 +7,7 @@ PROJECT(VMTK)
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 IF(COMMAND cmake_policy)
   cmake_policy(SET CMP0003 NEW)
+  cmake_policy(SET CMP0054 NEW)
 ENDIF(COMMAND cmake_policy)
 
 # vmtk versions number
@@ -28,7 +29,15 @@ IF(VMTK_WITH_LIBRARY_VERSION)
 ENDIF(VMTK_WITH_LIBRARY_VERSION)
 
 IF (APPLE)
+  OPTION(VMTK_BREW_PYTHON "Link against Homebrew Python" ON)
   SET(PYTHON_SHEBANG ${PYTHON_EXECUTABLE})
+  #IF(VMTK_BREW_PYTHON)
+  #  EXECUTE_PROCESS(
+  #    COMMAND /usr/local/bin/python -c "from distutils import sysconfig; print sysconfig.get_python_inc()"
+  #    OUTPUT_VARIABLE PYTHON_INCLUDE_DIR 
+  #    OUTPUT_STRIP_TRAILING_WHITESPACE)
+  #  SET(PYTHON_LIBRARY ${PYTHON_INCLUDE_DIR}../../lib/libpython2.7.dylib)
+  #ENDIF(VMTK_BREW_PYTHON)
 ELSEIF (UNIX)
   SET(PYTHON_SHEBANG "/usr/bin/env python")
 ENDIF ()
@@ -52,9 +61,6 @@ if( USE_SYSTEM_VTK )
     include( ${VTK_USE_FILE} )
   endif( ${VTK_VERSION_MAJOR} LESS 6 )
 endif( USE_SYSTEM_VTK )
-
-option( USE_VTK6_SUPERBUILD
-  "Download and build against VTK6." OFF )
 
 #-----------------------------------------------------------------------------
 # Superbuild setup
@@ -180,8 +186,12 @@ IF(NOT VMTK_INSTALL_BIN_DIR)
   SET(VMTK_INSTALL_BIN_DIR bin)
 ENDIF(NOT VMTK_INSTALL_BIN_DIR)
 
+IF(NOT VMTK_INSTALL_LIB_DIR)
+  SET(VMTK_INSTALL_LIB_DIR lib)
+ENDIF(NOT VMTK_INSTALL_LIB_DIR)
+
 IF(NOT VMTK_MODULE_INSTALL_LIB_DIR)
-  SET(VMTK_MODULE_INSTALL_LIB_DIR lib/vmtk/vmtk)
+  SET(VMTK_MODULE_INSTALL_LIB_DIR lib/python2.7/site-packages/vmtk)
 ENDIF(NOT VMTK_MODULE_INSTALL_LIB_DIR)
 
 IF(VMTK_SCRIPTS_ENABLED)
