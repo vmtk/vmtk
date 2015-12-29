@@ -60,8 +60,8 @@ class Pype(object):
             indentation = indentation + indentUnit
         self.OutputStream.write(indentation + logMessage + '\n')
         
-    def PrintError(self,logMessage):
-        self.OutputStream.write(logMessage + '\n')
+    def PrintError(self,errorMessage):
+        self.OutputStream.write(errorMessage + '\n')
         raise RuntimeError(errorMessage)
 
     def SetArgumentsString(self,argumentsString):
