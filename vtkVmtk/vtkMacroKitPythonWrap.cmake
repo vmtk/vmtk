@@ -23,7 +23,7 @@ include(CMakeParseArguments)
 
 macro(vtkMacroKitPythonWrap)
   set(options)
-  set(oneValueArgs KIT_NAME KIT_INSTALL_BIN_DIR KIT_INSTALL_LIB_DIR)
+  set(oneValueArgs KIT_NAME KIT_INSTALL_BIN_DIR KIT_INSTALL_LIB_DIR KIT_MODULE_INSTALL_LIB_DIR)
   set(multiValueArgs KIT_SRCS KIT_PYTHON_EXTRA_SRCS KIT_WRAP_HEADERS KIT_PYTHON_LIBRARIES)
   cmake_parse_arguments(MY "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
@@ -36,7 +36,7 @@ macro(vtkMacroKitPythonWrap)
     endif()
   endforeach()
 
-  set(expected_nonempty_vars KIT_NAME KIT_INSTALL_BIN_DIR KIT_INSTALL_LIB_DIR)
+  set(expected_nonempty_vars KIT_NAME KIT_INSTALL_BIN_DIR KIT_INSTALL_LIB_DIR KIT_MODULE_INSTALL_LIB_DIR)
   foreach(var ${expected_nonempty_vars})
     if("${MY_${var}}" STREQUAL "")
       message(FATAL_ERROR "error: ${var} CMake variable is empty !")
@@ -126,9 +126,9 @@ macro(vtkMacroKitPythonWrap)
     set_target_properties(${MY_KIT_NAME}Python PROPERTIES PREFIX "")
 
     install(TARGETS ${MY_KIT_NAME}Python
-      RUNTIME DESTINATION ${MY_KIT_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries
-      LIBRARY DESTINATION ${MY_KIT_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
-      ARCHIVE DESTINATION ${MY_KIT_INSTALL_LIB_DIR} COMPONENT Development
+      RUNTIME DESTINATION ${MY_KIT_MODULE_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries
+      LIBRARY DESTINATION ${MY_KIT_MODULE_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
+      ARCHIVE DESTINATION ${MY_KIT_MODULE_INSTALL_LIB_DIR} COMPONENT Development
       )
   endif()
 
