@@ -18,7 +18,7 @@ set(dirs
   Segmentation
   )
 
-IF (VTMK_USE_RENDERING)
+IF (VMTK_USE_RENDERING)
   list(APPEND dirs Rendering)
 ENDIF (VMTK_USE_RENDERING)
 
