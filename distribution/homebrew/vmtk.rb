@@ -33,6 +33,8 @@ class Vmtk < Formula
     args << "-DVMTK_USE_SUPERBUILD=OFF"
     args << "-DUSE_VTK6_SUPERBUILD=OFF"
 
+    args << "-DVMTK_USE_RENDERING=ON"
+
     args << "-DVTK_WRAP_PYTHON=ON"
 
     args << "-DPYTHON_EXECUTABLE=/usr/local/bin/python"
