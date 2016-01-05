@@ -56,15 +56,23 @@ public:
     input->GetSpacing(spacing);
     double origin[3];
     input->GetOrigin(origin);
+    int extent[6];
+    input->GetExtent(extent);
 
     output->GetPixelContainer()->SetImportPointer(static_cast<PixelType*>(input->GetScalarPointer()),dims[0]*dims[1]*dims[2],false);
     typename ImageType::RegionType region;
     typename ImageType::IndexType index;
     typename ImageType::SizeType size;
-    index[0] = index[1] = index[2] = 0;
-    size[0] = dims[0];
-    size[1] = dims[1];
-    size[2] = dims[2];
+    //index[0] = index[1] = index[2] = 0;
+    //size[0] = dims[0];
+    //size[1] = dims[1];
+    //size[2] = dims[2];
+    index[0] = extent[0];
+    index[1] = extent[2];
+    index[2] = extent[4];
+    size[0] = extent[1] - extent[0] + 1;
+    size[1] = extent[3] - extent[2] + 1;
+    size[2] = extent[5] - extent[4] + 1;
     region.SetIndex(index);
     region.SetSize(size);
     output->SetLargestPossibleRegion(region);
@@ -89,15 +97,23 @@ public:
     int components = input->GetNumberOfScalarComponents();
     double origin[3];
     input->GetOrigin(origin);
+    int extent[6];
+    input->GetExtent(extent);
 
     output->GetPixelContainer()->SetImportPointer(static_cast<InternalPixelType*>(input->GetScalarPointer()),dims[0]*dims[1]*dims[2]*components,false);
     typename ImageType::RegionType region;
     typename ImageType::IndexType index;
     typename ImageType::SizeType size;
-    index[0] = index[1] = index[2] = 0;
-    size[0] = dims[0];
-    size[1] = dims[1];
-    size[2] = dims[2];
+    //index[0] = index[1] = index[2] = 0;
+    //size[0] = dims[0];
+    //size[1] = dims[1];
+    //size[2] = dims[2];
+    index[0] = extent[0];
+    index[1] = extent[2];
+    index[2] = extent[4];
+    size[0] = extent[1] - extent[0] + 1;
+    size[1] = extent[3] - extent[2] + 1;
+    size[2] = extent[5] - extent[4] + 1;
     region.SetIndex(index);
     region.SetSize(size);
     output->SetLargestPossibleRegion(region);
@@ -138,17 +154,26 @@ public:
     output->SetSpacing(outputSpacing);
 
     RegionType region = input->GetBufferedRegion();
+    IndexType index = region.GetIndex();
     SizeType size = region.GetSize();
 
-    int dimensions[3];
-    dimensions[0] = size[0];
-    dimensions[1] = size[1];
-    dimensions[2] = size[2];
+    //int dimensions[3];
+    //dimensions[0] = size[0];
+    //dimensions[1] = size[1];
+    //dimensions[2] = size[2];
+    int extent[6];
+    extent[0] = index[0];
+    extent[1] = index[0] + size[0] - 1;
+    extent[2] = index[1];
+    extent[3] = index[1] + size[1] - 1;
+    extent[4] = index[2];
+    extent[5] = index[2] + size[2] - 1;
 
     int components = input->GetNumberOfComponentsPerPixel();
     int dataType = output->GetScalarType(); // WARNING: we delegate setting type to caller
 
-    output->SetDimensions(dimensions);
+    //output->SetDimensions(dimensions);
+    output->SetExtent(extent);
     output->AllocateScalars(dataType,components);
 
     memcpy(static_cast<PixelType*>(output->GetScalarPointer()),input->GetBufferPointer(),input->GetBufferedRegion().GetNumberOfPixels()*sizeof(PixelType));
