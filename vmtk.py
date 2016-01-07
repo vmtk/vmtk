@@ -5,60 +5,29 @@ import os
 
 if __name__ == '__main__':
 
-    if sys.platform == 'darwin':
-    	ldEnvironmentVariable = "DYLD_LIBRARY_PATH"
-    
-    elif sys.platform == 'win32':
-    	ldEnvironmentVariable = "PATH"
-    
-    else:
-    	ldEnvironmentVariable = "LD_LIBRARY_PATH"
-    
-    currentEnviron = dict()
-    currentEnviron[ldEnvironmentVariable] = ""
-    currentEnviron["PYTHONPATH"] = ""
-    
-    if os.environ.has_key(ldEnvironmentVariable):
-    	currentEnviron[ldEnvironmentVariable] = os.environ[ldEnvironmentVariable]
-    
-    if os.environ.has_key("PYTHONPATH"):
-    	currentEnviron["PYTHONPATH"] = os.environ["PYTHONPATH"]
-    newEnviron = {}
-    
-    vmtkhome = os.path.dirname(os.path.abspath(__file__))
-    
-    if vmtkhome.endswith('bin'):
-        vmtkhome = os.path.join(os.path.dirname(os.path.abspath(__file__)),"..")
-    else:
-        vmtkhome = os.path.join(os.path.dirname(os.path.abspath(__file__)),"..","..","..")
-    
-    try:
-        vtkdir = [el for el in os.listdir(os.path.join(vmtkhome,"lib")) if el.startswith('vtk') and os.path.isdir(el)][0]
-        newEnviron[ldEnvironmentVariable] = os.path.join(vmtkhome,"bin") + os.path.pathsep + \
-    								        os.path.join(vmtkhome,"lib",vtkdir) + os.path.pathsep + \
-    								        os.path.join(vmtkhome,"lib","vmtk") + os.path.pathsep + \
-    								        os.path.join(vmtkhome,"lib","InsightToolkit")
-    	sys.path.append(os.path.join(vmtkhome,"bin","Python"))
-        sys.path.append(os.path.join(vmtkhome,"lib",vtkdir))
-        sys.path.append(os.path.join(vmtkhome,"lib","vmtk"))
-        
-    except Exception:
-        vtkdir = (os.path.join(vmtkhome,"lib"))
-        newEnviron[ldEnvironmentVariable] = os.path.join(vmtkhome,"bin") + os.path.pathsep + \
-                                            os.path.join(vtkdir) + os.path.pathsep + \
-                                            os.path.join(vmtkhome) + os.path.pathsep + \
-                                            os.path.join(vmtkhome,"vtk")
-        sys.path.append(os.path.join(vmtkhome,"bin"))
-        sys.path.append(os.path.join(vtkdir))
-        sys.path.append(os.path.join(vmtkhome))
-        sys.path.append(os.path.join(vmtkhome,"vtk"))
+    if sys.platform == 'win32':
 
-    os.environ[ldEnvironmentVariable] = newEnviron[ldEnvironmentVariable] + os.path.pathsep + currentEnviron[ldEnvironmentVariable]
-        
+        vmtkhome = os.path.dirname(os.path.abspath(__file__))
+
+        if vmtkhome.endswith('bin'):
+            vmtkhome = os.path.join(os.path.dirname(os.path.abspath(__file__)),"..")
+        else:
+            vmtkhome = os.path.join(os.path.dirname(os.path.abspath(__file__)),"..","..","..")
+
+        if ( vmtkhome == os.path.join("C:",os.path.sep,"Python27","Lib","site-packages","vmtk","bin","..") ):
+            os.environ["PYTHONPATH"] = os.path.join(vmtkhome)
+        else:
+            os.environ["PYTHONPATH"] = os.path.join(vmtkhome,"lib","python2.7","site-packages")
+
+        sys.path.append(os.path.join(vmtkhome,"bin"))
+        sys.path.append(os.environ["PYTHONPATH"])
+        os.environ["PATH"] += os.path.pathsep + os.path.join(vmtkhome,"bin")
+
+    import vtk
     from vmtk import pypes
-    
+
     vmtkOptions = ['--help', '--ui', '--file']
-    
+
     if len(sys.argv) > 1 and sys.argv[1] not in vmtkOptions:
         arguments = sys.argv[1:]
         print "Executing", ' '.join(arguments)
@@ -84,7 +53,7 @@ if __name__ == '__main__':
                 pipe.ExitOnError = 0
                 pipe.Arguments = line.split()
                 pipe.ParseArguments()
-                pipe.Execute()          
+                pipe.Execute()
     elif '--help' in sys.argv:
         print 'Usage: \tvmtk [--ui pad|console]\t\tStart in interactive mode\n\tvmtk [PYPE]\t\t\tExecute the pype [PYPE]\n\tvmtk --file [FILE]\t\tExecute the content of file [FILE]'
         sys.exit(0)
@@ -92,15 +61,16 @@ if __name__ == '__main__':
         ui = 'pad'
         if '--ui' in sys.argv and sys.argv.index('--ui') != len(sys.argv)-1:
             ui = sys.argv[sys.argv.index('--ui')+1]
-    
+
         if ui == 'pad':
             try:
                 from vmtk import pypepad
             except ImportError:
+                print "error"
                 ui = 'console'
             else:
                 pypepad.RunPypeTkPad()
-        
+
         if ui == 'console':
             try:
                 import readline
@@ -108,7 +78,7 @@ if __name__ == '__main__':
                 pass
             else:
                 readline.parse_and_bind("tab: complete")
-            
+
             while 1:
                 try:
                     inputString = raw_input("vmtk> ")
@@ -123,7 +93,8 @@ if __name__ == '__main__':
                 pipe.ExitOnError = 0
                 pipe.Arguments = inputString.split()
                 pipe.ParseArguments()
-                try: 
-                    pipe.Execute() 
+                try:
+                    pipe.Execute()
                 except Exception:
                     continue
+
