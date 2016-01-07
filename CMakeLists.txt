@@ -5,10 +5,19 @@ endif( APPLE AND NOT CMAKE_CXX_COMPILER)
 PROJECT(VMTK)
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
-IF(COMMAND cmake_policy)
-  cmake_policy(SET CMP0003 NEW)
-  cmake_policy(SET CMP0054 NEW)
-ENDIF(COMMAND cmake_policy)
+
+foreach(p
+    CMP0003
+    #CMP0020 # CMake 2.8.11
+    #CMP0022 # CMake 2.8.12
+    #CMP0025 # CMake 3.0
+    #CMP0053 # CMake 3.1
+    CMP0054 # CMake 3.1
+    )
+  if(POLICY ${p})
+    cmake_policy(SET ${p} NEW)
+  endif()
+endforeach()
 
 # vmtk versions number
 SET(VMTK_VERSION_MAJOR 1)
