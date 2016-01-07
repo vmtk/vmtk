@@ -13,7 +13,7 @@ def ReadPolyData(filename):
 
 def WritePolyData(input,filename):
    writer = vtk.vtkXMLPolyDataWriter()
-   writer.SetInput(input)
+   writer.SetInputData(input)
    writer.SetFileName(filename)
    writer.Write()
 
@@ -66,7 +66,7 @@ def MaskWithPatch(id,t,c,r,maskArray,centerlines,voronoi):
    patch = ExtractPatch(id,centerlines)
 
    tubeFunction = vtkvmtk.vtkvmtkPolyBallLine()
-   tubeFunction.SetInput(patch)
+   tubeFunction.SetInputData(patch)
    tubeFunction.SetPolyBallRadiusArrayName(radiusArrayName)
 
    lastSphere = vtk.vtkSphere()

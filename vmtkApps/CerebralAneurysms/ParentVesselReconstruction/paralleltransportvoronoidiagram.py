@@ -14,7 +14,7 @@ def ReadPolyData(filename):
 def WritePolyData(input,filename):
    writer = vtk.vtkXMLPolyDataWriter()
    writer.SetFileName(filename)
-   writer.SetInput(input)
+   writer.SetInputData(input)
    writer.Write()
   
 def ExtractCylindricInterpolationVoronoiDiagram(cellId,pointId,cylinderRadius,voronoi,centerlines):
@@ -516,14 +516,14 @@ WritePolyData(completeVoronoiDiagram,completeVoronoiFilename)
 
 print 'Reconstructing Surface from Voronoi Diagram'
 modeller = vtkvmtk.vtkvmtkPolyBallModeller()
-modeller.SetInput(completeVoronoiDiagram)
+modeller.SetInputData(completeVoronoiDiagram)
 modeller.SetRadiusArrayName(radiusArrayName)
 modeller.UsePolyBallLineOff()
 modeller.SetSampleDimensions(polyBallImageSize)
 modeller.Update()
 
 marchingCube = vtk.vtkMarchingCubes()
-marchingCube.SetInput(modeller.GetOutput())
+marchingCube.SetInputData(modeller.GetOutput())
 marchingCube.SetValue(0,0.0)
 marchingCube.Update()  
 envelope = marchingCube.GetOutput()

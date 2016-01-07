@@ -14,7 +14,7 @@ def ReadPolyData(filename):
 def WritePolyData(input,filename):
    writer = vtk.vtkXMLPolyDataWriter()
    writer.SetFileName(filename)
-   writer.SetInput(input)
+   writer.SetInputData(input)
    writer.Write()
 
 def SaveParentArtery(centerlines):
@@ -284,7 +284,7 @@ def InterpolatePatchCenterlines(patchCenterlines,parentCenterlines):
    interpolatedLines.SetLines(interpolatedCellArray)
  
    attributeFilter = vtkvmtk.vtkvmtkCenterlineAttributesFilter()
-   attributeFilter.SetInput(interpolatedLines)
+   attributeFilter.SetInputData(interpolatedLines)
    attributeFilter.SetAbscissasArrayName(abscissasArrayName)
    attributeFilter.SetParallelTransportNormalsArrayName(parallelTransportNormalsArrayName)
    attributeFilter.Update()
