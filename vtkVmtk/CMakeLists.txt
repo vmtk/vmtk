@@ -1,10 +1,19 @@
 PROJECT(VTK_VMTK)
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
-IF(COMMAND cmake_policy)
-  cmake_policy(SET CMP0003 NEW)
-  cmake_policy(SET CMP0054 NEW)
-ENDIF(COMMAND cmake_policy)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
+
+foreach(p
+    CMP0003
+    #CMP0020 # CMake 2.8.11
+    #CMP0022 # CMake 2.8.12
+    #CMP0025 # CMake 3.0
+    #CMP0053 # CMake 3.1
+    CMP0054 # CMake 3.1
+    )
+  if(POLICY ${p})
+    cmake_policy(SET ${p} NEW)
+  endif()
+endforeach()
 
 include(${VTK_VMTK_SOURCE_DIR}/vmtkFunctions.cmake)
 
