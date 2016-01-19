@@ -93,7 +93,7 @@ class vmtkSurfaceClipper(pypes.pypeScript):
       	self.ClipWidget.SetInputData(self.Surface)
       	self.ClipWidget.PlaceWidget()
 
-        if self.Transform:
+        if self.Transform and self.WidgetType == "box":
             self.ClipWidget.SetTransform(self.Transform)
             self.ClipWidget.On()
       	
@@ -162,7 +162,8 @@ class vmtkSurfaceClipper(pypes.pypeScript):
             self.Display()
 
             self.Transform = vtk.vtkTransform()
-            self.ClipWidget.GetTransform(self.Transform)
+            if self.WidgetType == "box":
+                self.ClipWidget.GetTransform(self.Transform)
 
             if self.OwnRenderer:
                 self.vmtkRenderer.Deallocate()
