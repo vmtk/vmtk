@@ -40,6 +40,7 @@ SET (VTK_VMTK_MISC_SRCS
   vtkvmtkMeshVorticity.cxx
   vtkvmtkMeshWallShearRate.cxx
   vtkvmtkPolyDataNetworkExtraction.cxx
+  vtkvmtkPolyDataNormalPlaneEstimator.cxx
   vtkvmtkPolyDataKiteRemovalFilter.cxx
   vtkvmtkPolyDataSizingFunction.cxx
   vtkvmtkPolyDataToUnstructuredGridFilter.cxx
@@ -53,6 +54,7 @@ SET (VTK_VMTK_MISC_SRCS
   vtkvmtkStreamlineToParticlesFilter.cxx
   vtkvmtkSurfaceDistance.cxx
   vtkvmtkSurfaceProjection.cxx
+  vtkvmtkTopologicalSeamFilter.cxx
   vtkvmtkUnstructuredGridTetraFilter.cxx
   )
 
