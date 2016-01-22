@@ -1,9 +1,9 @@
 class Vmtk < Formula
   desc "The Vascular Modeling Toolkit"
   homepage "http://www.vmtk.org"
-  url "https://github.com/vmtk/vmtk/archive/v1.3-beta1.tar.gz"
-  version "1.3-beta1"
-  sha256 "60180520e6c496b62d7dba3bf3b714f75929ca6109186fd9434f0d920b9ef5bf"
+  url "https://github.com/vmtk/vmtk/archive/v1.3.tar.gz"
+  version "1.3"
+  sha256 "0c3a2572a9e1282e0ada791634f01c413dfbcabe13f6115bb49288428a3fc293"
   head "https://github.com/vmtk/vmtk.git"
 
   # bottle do
