@@ -23,6 +23,7 @@ Version:   $Revision: 1.1 $
 
 #include "vtkPolyDataConnectivityFilter.h"
 #include "vtkFloatArray.h"
+#include "vtkIdTypeArray.h"
 #include "vtkIdList.h"
 #include "vtkMath.h"
 #include "vtkPointData.h"
