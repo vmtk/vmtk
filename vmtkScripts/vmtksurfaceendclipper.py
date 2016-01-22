@@ -178,8 +178,6 @@ class vmtkSurfaceEndClipper(pypes.pypeScript):
         self.SourcePoints = []
         self.TargetPoints = []
 
-        self.Actor = None
-
         self.CleanOutput = 1
 
         self.SetScriptName('vmtksurfaceendclipper')
@@ -283,6 +281,9 @@ class vmtkSurfaceEndClipper(pypes.pypeScript):
             clippedSurface = surfaceTriangulator.GetOutput()
 
         self.Surface = clippedSurface
+
+        if self.OwnRenderer:
+            self.vmtkRenderer.Deallocate()
 
 
 if __name__=='__main__':
