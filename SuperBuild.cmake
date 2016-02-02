@@ -94,7 +94,7 @@ endif( NOT USE_SYSTEM_ITK )
 if( NOT USE_SYSTEM_VTK )
 
   SET(VTK_GIT_REPOSITORY "${GIT_PROTOCOL}://github.com/Kitware/VTK.git")
-  set(VTK_GIT_TAG "v7.0.0.rc1")
+  set(VTK_GIT_TAG "v7.0.0")
   SET( VTK_VERSION 7.0 )
 
   ##
