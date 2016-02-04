@@ -76,6 +76,9 @@ endif( USE_SYSTEM_VTK )
 option( VMTK_USE_SUPERBUILD
   "Build VMTK and the projects it depends on via SuperBuild.cmake." ON )
 
+option( VMTK_USE_VTK7
+  "Compile vmtk against VTK 7. OFF is VTK 6.3." ON )
+
 option( VMTK_BUNJEE_BUILD
   "Build VMTK and the projects it depends on ready for being linked from Bunjee." OFF )
 
