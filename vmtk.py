@@ -11,12 +11,9 @@ if __name__ == '__main__':
 
         if vmtkhome.endswith('bin'):
             vmtkhome = os.path.join(os.path.dirname(os.path.abspath(__file__)),"..")
-        else:
-            vmtkhome = os.path.join(os.path.dirname(os.path.abspath(__file__)),"..","..","..")
-
-        if ( vmtkhome == os.path.join("C:",os.path.sep,"Python27","Lib","site-packages","vmtk","bin","..") ):
             os.environ["PYTHONPATH"] = os.path.join(vmtkhome)
         else:
+            vmtkhome = os.path.join(os.path.dirname(os.path.abspath(__file__)),"..","..","..")
             os.environ["PYTHONPATH"] = os.path.join(vmtkhome,"lib","python2.7","site-packages")
 
         sys.path.append(os.path.join(vmtkhome,"bin"))
@@ -97,4 +94,3 @@ if __name__ == '__main__':
                     pipe.Execute()
                 except Exception:
                     continue
-
