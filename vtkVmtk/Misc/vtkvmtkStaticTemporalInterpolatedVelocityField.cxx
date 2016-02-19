@@ -216,6 +216,7 @@ int vtkvmtkStaticTemporalInterpolatedVelocityField::FunctionValues( double * x, 
     
   return retVal;
 }
+#endif
 
 int vtkvmtkStaticTemporalInterpolatedVelocityField::FunctionValues( vtkDataSet * dataset, double * x, double * f )
 {
@@ -425,7 +426,6 @@ int vtkvmtkStaticTemporalInterpolatedVelocityField::FunctionValues( vtkDataSet *
 
   return  1;
 }
-#endif
 
 void vtkvmtkStaticTemporalInterpolatedVelocityField::CopyParameters( vtkAbstractInterpolatedVelocityField * from )
 {

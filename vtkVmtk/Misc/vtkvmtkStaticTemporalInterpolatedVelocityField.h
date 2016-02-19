@@ -130,7 +130,6 @@ protected:
   vtkvmtkStaticTemporalInterpolatedVelocityField();
   ~vtkvmtkStaticTemporalInterpolatedVelocityField();
 
-#if (VTK_MAJOR_VERSION <= 5)
   // Description:
   // Evaluate the velocity field f at point (x, y, z) in a specified dataset
   // by either involving vtkPointLocator, via vtkPointSet::FindCell(), in
@@ -138,7 +137,6 @@ protected:
   // invoking vtkImageData/vtkRectilinearGrid::FindCell() to fulfill the same
   // task if the point is outside the current cell.
   virtual int FunctionValues( vtkDataSet * ds, double * x, double * f );
-#endif
 
   void FindTimeRowId(double time, int& prevRowId, int& nextRowId, double& p);
 
