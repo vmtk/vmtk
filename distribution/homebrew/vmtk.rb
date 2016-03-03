@@ -5,6 +5,7 @@ class Vmtk < Formula
   version "1.3"
   sha256 "97f894bacea677d7ee910d47b343582b029afad250a23aa0a759f64092540ff9"
   head "https://github.com/vmtk/vmtk.git"
+  revision 1
 
   # bottle do
   #   sha256 "" => :el_capitan
@@ -25,10 +26,10 @@ class Vmtk < Formula
 
     args << ".."
     args << "-DUSE_SYSTEM_ITK=ON"
-    args << "-DITK_DIR=/usr/local/Cellar/insighttoolkit/4.8.2"
+    args << "-DITK_DIR=/usr/local/Cellar/insighttoolkit/4.9.0"
 
     args << "-DUSE_SYSTEM_VTK=ON"
-    args << "-DVTK_DIR=/usr/local/Cellar/vtk/6.3.0"
+    args << "-DVTK_DIR=/usr/local/Cellar/vtk/7.0.0"
 
     args << "-DVMTK_USE_SUPERBUILD=OFF"
     args << "-DUSE_VTK6_SUPERBUILD=OFF"
