@@ -2,7 +2,7 @@ class Vmtk < Formula
   desc "The Vascular Modeling Toolkit"
   homepage "http://www.vmtk.org"
   url "https://github.com/vmtk/vmtk/archive/v1.3.tar.gz"
-  version "1.3"
+  version "1.3.0r1"
   sha256 "97f894bacea677d7ee910d47b343582b029afad250a23aa0a759f64092540ff9"
   head "https://github.com/vmtk/vmtk.git"
   revision 1
