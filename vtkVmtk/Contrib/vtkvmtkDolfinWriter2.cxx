@@ -323,11 +323,15 @@ void vtkvmtkDolfinWriter2::GetDolfinCellConnectivity(vtkCell* cell, vtkIdList* d
 {
   dolfinConnectivity->Initialize();
   int cellType = cell->GetCellType();
-  vtkIdList* pointIds = vtkIdList::New();
+  vtkIdTypeArray* pointIds = vtkIdTypeArray::New();
   switch(cellType)
     {
     case VTK_TETRA:
-      pointIds->DeepCopy(cell->GetPointIds());
+      pointIds->SetNumberOfTuples(4);
+      pointIds->SetValue(0,cell->GetPointId(0));
+      pointIds->SetValue(1,cell->GetPointId(1));
+      pointIds->SetValue(2,cell->GetPointId(2));
+      pointIds->SetValue(3,cell->GetPointId(3));
       dolfinConnectivity->SetNumberOfIds(4);
       dolfinConnectivity->SetId(0,0);
       dolfinConnectivity->SetId(1,1);
