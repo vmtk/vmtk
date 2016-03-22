@@ -4,7 +4,7 @@ if( ${VTK_VERSION_MAJOR} GREATER 6 )
   set( VTK_VMTK_RENDERING_COMPONENTS
     vtkCommonCore
     vtkInteractionWidgets
-    vtkRenderingOpenGL2
+    vtkRendering${VMTK_RENDERING_BACKEND}
     )
   if (VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
     list(APPEND VTK_VMTK_RENDERING_COMPONENTS
