@@ -26,10 +26,10 @@ class Vmtk < Formula
 
     args << ".."
     args << "-DUSE_SYSTEM_ITK=ON"
-    args << "-DITK_DIR=/usr/local/Cellar/insighttoolkit/4.9.0"
+    args << "-DITK_DIR=#{HOMEBREW_CELLAR}/insighttoolkit/4.9.0"
 
     args << "-DUSE_SYSTEM_VTK=ON"
-    args << "-DVTK_DIR=/usr/local/Cellar/vtk/7.0.0"
+    args << "-DVTK_DIR=#{HOMEBREW_CELLAR}/vtk/7.0.0"
 
     args << "-DVMTK_USE_SUPERBUILD=OFF"
     args << "-DUSE_VTK6_SUPERBUILD=OFF"
@@ -38,7 +38,7 @@ class Vmtk < Formula
 
     args << "-DVTK_WRAP_PYTHON=ON"
 
-    args << "-DPYTHON_EXECUTABLE=/usr/local/bin/python"
+    args << "-DPYTHON_EXECUTABLE=#{HOMEBREW_PREFIX}/bin/python"
     args << "-DPYTHON_LIBRARY='#{`python-config --prefix`.chomp}/lib/libpython2.7.dylib'"
     args << "-DPYTHON_INCLUDE_DIR='#{`python-config --prefix`.chomp}/include/python2.7'"
 
