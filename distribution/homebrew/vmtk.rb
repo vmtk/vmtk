@@ -14,6 +14,7 @@ class Vmtk < Formula
   depends_on "cmake" => :build
   depends_on "vtk"
   depends_on "insightToolkit"
+  depends_on :python
   
   def install
     args = std_cmake_args + %W[
