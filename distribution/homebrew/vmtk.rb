@@ -12,10 +12,10 @@ class Vmtk < Formula
   # end
 
   depends_on "cmake" => :build
-  depends_on "vtk" => "with-python"
-  depends_on "insightToolkit" => :build
-  depends_on :python => :build
-
+  depends_on "vtk"
+  depends_on "insightToolkit"
+  depends_on :python
+  
   def install
     args = std_cmake_args + %W[
       -DBUILD_TESTING=OFF
@@ -38,7 +38,7 @@ class Vmtk < Formula
 
     args << "-DVTK_WRAP_PYTHON=ON"
 
-    args << "-DPYTHON_EXECUTABLE=#{HOMEBREW_PREFIX}/bin/python"
+    args << "-DPYTHON_EXECUTABLE=#{`which python`}"
     args << "-DPYTHON_LIBRARY='#{`python-config --prefix`.chomp}/lib/libpython2.7.dylib'"
     args << "-DPYTHON_INCLUDE_DIR='#{`python-config --prefix`.chomp}/include/python2.7'"
 
