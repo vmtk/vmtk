@@ -23,7 +23,7 @@ endforeach()
 SET(VMTK_VERSION_MAJOR 1)
 SET(VMTK_VERSION_MINOR 3)
 SET(VMTK_VERSION_PATCH 0)
-SET(VMTK_VERSION 
+SET(VMTK_VERSION
     "${VMTK_VERSION_MAJOR}.${VMTK_VERSION_MINOR}.${VMTK_VERSION_PATCH}")
 
 # Append the library version information to the library target properties.
@@ -43,7 +43,7 @@ IF (APPLE)
   #IF(VMTK_BREW_PYTHON)
   #  EXECUTE_PROCESS(
   #    COMMAND /usr/local/bin/python -c "from distutils import sysconfig; print sysconfig.get_python_inc()"
-  #    OUTPUT_VARIABLE PYTHON_INCLUDE_DIR 
+  #    OUTPUT_VARIABLE PYTHON_INCLUDE_DIR
   #    OUTPUT_STRIP_TRAILING_WHITESPACE)
   #  SET(PYTHON_LIBRARY ${PYTHON_INCLUDE_DIR}../../lib/libpython2.7.dylib)
   #ENDIF(VMTK_BREW_PYTHON)
@@ -93,8 +93,8 @@ if( VMTK_USE_SUPERBUILD )
   if( NOT GIT_EXECUTABLE )
     find_package( Git REQUIRED )
   endif( NOT GIT_EXECUTABLE )
-  
-  option( GIT_PROTOCOL_HTTPS 
+
+  option( GIT_PROTOCOL_HTTPS
     "Use HTTPS for git access (useful if behind a firewall)" OFF )
   if( GIT_PROTOCOL_HTTPS )
     set( GIT_PROTOCOL "https" CACHE STRING "Https protocol for file transfer" FORCE )
@@ -133,7 +133,9 @@ if( VMTK_USE_SUPERBUILD )
     set ( VTK_REQUIRED_OBJCXX_FLAGS "-fobjc-gc" CACHE STRING "" FORCE)
   else (VMTK_BUNJEE_BUILD)
     option ( VTK_VMTK_WRAP_PYTHON "Generate Python wrappings for C++ classes." ON )
-    set ( VTK_USE_X ON )
+    if (UNIX)
+      set ( VTK_USE_X ON )
+    endif (UNIX)
     option ( VMTK_CONTRIB_SCRIPTS "Install modules from the vmtkScripts/contrib directory." ON )
     option ( VTK_VMTK_CONTRIB "Build and install classes in the vtkVmtk/Contrib directory." ON )
     option ( VMTK_ENABLE_DISTRIBUTION "Enable distribution targets." OFF )
@@ -218,70 +220,70 @@ IF(VMTK_SCRIPTS_ENABLED)
   FOREACH (SCRIPT_FILE ${VMTK_SRCS})
     CONFIGURE_FILE(${VMTK_SOURCE_DIR}/${SCRIPT_FILE} ${VMTK_BINARY_DIR}/${SCRIPT_FILE} COPYONLY)
   ENDFOREACH (SCRIPT_FILE)
- 
+
   CONFIGURE_FILE(${VMTK_SOURCE_DIR}/__init__.py.in ${VMTK_BINARY_DIR}/__init__.py COPYONLY)
-  
+
   INSTALL(FILES __init__.py.in
     DESTINATION ${VMTK_MODULE_INSTALL_LIB_DIR}
     COMPONENT RuntimeLibraries
     RENAME __init__.py)
-  
+
   IF (NOT WIN32)
-  
+
     SET (STRIPPED_SCRIPTS_SRCS )
-    
+
     FOREACH (SCRIPT_FILE ${VMTK_SRCS})
       CONFIGURE_FILE(${VMTK_SOURCE_DIR}/${SCRIPT_FILE} ${VMTK_BINARY_DIR}/${SCRIPT_FILE} COPYONLY)
       STRING(REGEX REPLACE ".py" "" STRIPPED_SCRIPT_FILE ${SCRIPT_FILE})
       CONFIGURE_FILE(${VMTK_SOURCE_DIR}/${SCRIPT_FILE} ${VMTK_BINARY_DIR}/${STRIPPED_SCRIPT_FILE})
       SET (STRIPPED_SCRIPTS_SRCS ${STRIPPED_SCRIPTS_SRCS} ${VMTK_BINARY_DIR}/${STRIPPED_SCRIPT_FILE})
     ENDFOREACH (SCRIPT_FILE)
-  
+
     INSTALL(PROGRAMS ${STRIPPED_SCRIPTS_SRCS}
       DESTINATION ${VMTK_INSTALL_BIN_DIR}
       COMPONENT RuntimeExecutables)
-  
+
   ELSE (NOT WIN32)
-  
+
     FOREACH (SCRIPT_FILE ${VMTK_SRCS})
       CONFIGURE_FILE(${VMTK_SOURCE_DIR}/${SCRIPT_FILE} ${VMTK_BINARY_DIR}/${SCRIPT_FILE} COPYONLY)
       STRING(REGEX REPLACE ".py" "-exe.py" STRIPPED_SCRIPT_FILE ${SCRIPT_FILE})
       CONFIGURE_FILE(${VMTK_SOURCE_DIR}/${SCRIPT_FILE} ${VMTK_BINARY_DIR}/${STRIPPED_SCRIPT_FILE} COPYONLY)
       SET (STRIPPED_SCRIPTS_SRCS ${STRIPPED_SCRIPTS_SRCS} ${VMTK_BINARY_DIR}/${STRIPPED_SCRIPT_FILE})
     ENDFOREACH (SCRIPT_FILE)
-  
+
     INSTALL(PROGRAMS ${STRIPPED_SCRIPTS_SRCS}
       DESTINATION ${VMTK_INSTALL_BIN_DIR}
       COMPONENT RuntimeExecutables)
-  
+
   ENDIF (NOT WIN32)
-  
+
   OPTION(VMTK_ENABLE_DISTRIBUTION "Enable distribution targets." OFF)
   IF(VMTK_ENABLE_DISTRIBUTION)
     ADD_SUBDIRECTORY(distribution)
   ENDIF(VMTK_ENABLE_DISTRIBUTION)
-  
+
   # Export Build settings and library dependencies
   #  INCLUDE(CMakeExportBuildSettings)
-    
+
   #  CMAKE_EXPORT_BUILD_SETTINGS(
   #    ${VMTK_BINARY_DIR}/VMTKBuildSettings.cmake
   #  )
-    
+
     EXPORT_LIBRARY_DEPENDENCIES(
       ${VMTK_BINARY_DIR}/VMTKLibraryDepends.cmake
     )
-  
+
     CONFIGURE_FILE(
       ${VMTK_SOURCE_DIR}/CMakeInput/VMTKConfig.cmake.in
       ${VMTK_BINARY_DIR}/VMTKConfig.cmake
     @ONLY IMMEDIATE
     )
-    
+
     CONFIGURE_FILE(
       ${VMTK_SOURCE_DIR}/CMakeInput/VMTKUse.cmake.in
       ${VMTK_BINARY_DIR}/VMTKUse.cmake
     @ONLY IMMEDIATE
     )
- 
+
 ENDIF(VMTK_SCRIPTS_ENABLED)
