@@ -51,6 +51,14 @@ ELSEIF (UNIX)
   SET(PYTHON_SHEBANG "/usr/bin/env python")
 ENDIF ()
 
+option( VMTK_USE_X
+  "Compile vmtk with X11." OFF )
+if( VMTK_USE_X )
+  set ( VTK_USE_X ON CACHE BOOL "" FORCE )
+else ( VMTK_USE_X )
+  set ( VTK_USE_X OFF CACHE BOOL "" FORCE )
+endif( VMTK_USE_X )
+
 #-----------------------------------------------------------------------------
 # ITK Setup
 option( USE_SYSTEM_ITK
@@ -121,7 +129,7 @@ if( VMTK_USE_SUPERBUILD )
     set ( VTK_USE_QT OFF )
     set ( VMTK_USE_RENDERING ON )
     set ( VTK_USE_TEXT_ANALYSIS OFF )
-    set ( VTK_USE_X OFF )
+    set (  OFF )
     set ( VTK_WRAP_PYTHON OFF )
     set ( VTK_WRAP_TCL OFF )
     set ( ITK_USE_FLAT_DIRECTORY_INSTALL ON )
@@ -136,6 +144,9 @@ if( VMTK_USE_SUPERBUILD )
     if (UNIX)
       set ( VTK_USE_X ON )
     endif (UNIX)
+    if (APPLE)
+      set ( VTK_USE_X OFF )
+    endif(APPLE)
     option ( VMTK_CONTRIB_SCRIPTS "Install modules from the vmtkScripts/contrib directory." ON )
     option ( VTK_VMTK_CONTRIB "Build and install classes in the vtkVmtk/Contrib directory." ON )
     option ( VMTK_ENABLE_DISTRIBUTION "Enable distribution targets." OFF )
