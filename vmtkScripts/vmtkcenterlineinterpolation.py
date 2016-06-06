@@ -78,7 +78,7 @@ class vmtkCenterlineInterpolation(pypes.pypeScript):
                 point = self.Centerlines.GetPoint(pointId)
 
                 if previousPoint:
-                    abscissa += vtk.vtkDistance2BetweenPoints(point,previousPoint)**0.5
+                    abscissa += vtk.vtkMath.Distance2BetweenPoints(point,previousPoint)**0.5
 
                 abscissaArray.InsertNextValue(abscissa)
 
