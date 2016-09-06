@@ -83,7 +83,7 @@ class vmtkICPRegistration(pypes.pypeScript):
         self.PrintLog('Computing ICP transform.')
 
         icpTransform = vtkvmtk.vtkvmtkIterativeClosestPointTransform()
-        icpTransform.SetSourceData(self.Surface)
+        icpTransform.SetSource(self.Surface)
         icpTransform.SetTarget(self.ReferenceSurface)
         icpTransform.GetLandmarkTransform().SetModeToRigidBody()
         icpTransform.StartByMatchingCentroidsOn()
