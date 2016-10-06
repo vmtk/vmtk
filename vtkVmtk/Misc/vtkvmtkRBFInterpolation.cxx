@@ -23,6 +23,7 @@ Version:   $Revision: 1.2 $
 #include "vtkPointData.h"
 #include "vtkMath.h"
 #include "vtkObjectFactory.h"
+#include "vtkVersion.h"
 
 
 vtkStandardNewMacro(vtkvmtkRBFInterpolation);
@@ -182,7 +183,11 @@ void vtkvmtkRBFInterpolation::EvaluateGradient(double x[3], double n[3])
   vtkWarningMacro("RBF gradient computation not implemented.");
 }
 
+#if (VTK_MAJOR_VERSION < 7)
 unsigned long vtkvmtkRBFInterpolation::GetMTime()
+#else
+vtkMTimeType vtkvmtkRBFInterpolation::GetMTime()
+#endif
 {
   unsigned long mTime=this->Superclass::GetMTime();
   unsigned long sourceMTime;
