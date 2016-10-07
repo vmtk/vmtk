@@ -62,6 +62,8 @@ class VTK_VMTK_CONTRIB_EXPORT vtkvmtkPolyBallLine2 : public vtkImplicitFunction
   // Set / get input poly data.
   virtual void SetInput(vtkPolyData *inp);
   vtkGetObjectMacro(Input,vtkPolyData);
+  void SetInputData(vtkPolyData* input) { SetInput(input); }
+  vtkPolyData* GetInputData() { return GetInput(); }
 
   // Description:
   // Set / get input cell ids used for the function.
