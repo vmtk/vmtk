@@ -52,6 +52,8 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyBall : public vtkImplici
   // Set / get input poly data.
   vtkSetObjectMacro(Input,vtkPolyData);
   vtkGetObjectMacro(Input,vtkPolyData);
+  void SetInputData(vtkPolyData* input) { SetInput(input); }
+  vtkPolyData* GetInputData() { return GetInput(); }
 
   // Description:
   // Set / get poly ball radius array name.

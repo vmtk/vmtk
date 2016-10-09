@@ -174,7 +174,11 @@ void vtkvmtkPolyDataNetworkExtraction::InsertInEdgeTable(vtkIdTypeArray* edgeTab
   vtkIdType edge[2];
   edge[0] = pointId0;
   edge[1] = pointId1;
+#if (VTK_MAJOR_VERSION < 7)
   edgeTable->InsertNextTupleValue(edge);
+#else
+  edgeTable->InsertNextTypedTuple(edge);
+#endif
 }
 
 bool vtkvmtkPolyDataNetworkExtraction::InsertUniqueInEdgeTable(vtkIdTypeArray* edgeTable, vtkIdType pointId0, vtkIdType pointId1)
@@ -186,20 +190,33 @@ bool vtkvmtkPolyDataNetworkExtraction::InsertUniqueInEdgeTable(vtkIdTypeArray* e
   for (i=0; i<edgeTable->GetNumberOfTuples(); i++)
     {
     vtkIdType currentEdge[2];
+#if (VTK_MAJOR_VERSION < 7)
     edgeTable->GetTupleValue(i,currentEdge);
+#else
+    edgeTable->GetTypedTuple(i, currentEdge);
+#endif
     if (currentEdge[0]==edge[0] && currentEdge[1]==edge[1])
       {
       return false;
       }
     }
 
+#if (VTK_MAJOR_VERSION < 7)
   edgeTable->InsertNextTupleValue(edge);
+#else
+  edgeTable->InsertNextTypedTuple(edge);
+#endif
+
   return true;
 }
 
 void vtkvmtkPolyDataNetworkExtraction::GetFromEdgeTable(vtkIdTypeArray* edgeTable, vtkIdType position, vtkIdType edge[2])
 {
+#if (VTK_MAJOR_VERSION < 7)
   edgeTable->GetTupleValue(position,edge);
+#else
+  edgeTable->GetTypedTuple(position, edge);
+#endif
 }
 
 void vtkvmtkPolyDataNetworkExtraction::UpdateEdgeTableCollectionReal(vtkPolyData* model,vtkPolyDataCollection* profiles,vtkCollection* edgeTables)
@@ -1295,8 +1312,12 @@ void vtkvmtkPolyDataNetworkExtraction::BuildSegment(vtkPoints* segmentPoints, vt
   segmentTopologyArray->SetName(TopologyArrayName);
   segmentTopologyArray->SetNumberOfComponents(2);
 
+#if (VTK_MAJOR_VERSION < 7)
   segmentTopologyArray->InsertNextTupleValue(segmentTopology);
-  
+#else
+  segmentTopologyArray->InsertNextTypedTuple(segmentTopology);
+#endif
+
   // start
   if (segmentTopology[0] > 0)
     {
@@ -1540,8 +1561,13 @@ void vtkvmtkPolyDataNetworkExtraction::JoinSegments (vtkPolyData* segment0, vtkP
   vtkIdType segmentTopology0[2];
   vtkIdType segmentTopology1[2];
 
-  segment0TopologyArray->GetTupleValue(0,segmentTopology0);
-  segment1TopologyArray->GetTupleValue(0,segmentTopology1);
+#if (VTK_MAJOR_VERSION < 7)
+  segment0TopologyArray->GetTupleValue(0, segmentTopology0);
+  segment1TopologyArray->GetTupleValue(0, segmentTopology1);
+#else
+  segment0TopologyArray->GetTypedTuple(0, segmentTopology0);
+  segment1TopologyArray->GetTypedTuple(0, segmentTopology1);
+#endif
   
   vtkIdType segmentTopology[2];
     
@@ -1584,7 +1610,11 @@ void vtkvmtkPolyDataNetworkExtraction::JoinSegments (vtkPolyData* segment0, vtkP
       }
     }
  
+#if (VTK_MAJOR_VERSION < 7)
   topologyArray->InsertNextTupleValue(segmentTopology);
+#else
+  topologyArray->InsertNextTypedTuple(segmentTopology);
+#endif
   
   vtkCellArray* segmentCell = vtkCellArray::New();
   segmentCell->InsertNextCell(segmentPoints->GetNumberOfPoints());
@@ -1626,7 +1656,11 @@ void vtkvmtkPolyDataNetworkExtraction::RemoveDegenerateBifurcations(vtkPolyDataC
 //    vtkDoubleArray* radiusArray = vtkDoubleArray::SafeDownCast(segment->GetPointData()->GetArray(RadiusArrayName));
     vtkIdTypeArray* topologyArray = vtkIdTypeArray::SafeDownCast(segment->GetCellData()->GetArray(TopologyArrayName));
     vtkIdType topology[2];
+#if (VTK_MAJOR_VERSION < 7)
     topologyArray->GetTupleValue(0,topology);
+#else
+    topologyArray->GetTypedTuple(0, topology);
+#endif
     vtkIdType bifurcation0 = topology[0];
     if (bifurcation0 > 0)
       {
@@ -1670,7 +1704,11 @@ void vtkvmtkPolyDataNetworkExtraction::RemoveDegenerateBifurcations(vtkPolyDataC
 //      vtkDoubleArray* radiusArray = vtkDoubleArray::SafeDownCast(currentSegment->GetPointData()->GetArray(RadiusArrayName));
       vtkIdTypeArray* topologyArray = vtkIdTypeArray::SafeDownCast(currentSegment->GetCellData()->GetArray(TopologyArrayName));
       vtkIdType topology[2];
+#if (VTK_MAJOR_VERSION < 7)
       topologyArray->GetTupleValue(0,topology);
+#else
+      topologyArray->GetTypedTuple(0,topology);
+#endif
       if (!segment0)
         {
         degenerateId = topology[0];
@@ -1729,7 +1767,11 @@ void vtkvmtkPolyDataNetworkExtraction::RemoveDegenerateBifurcations(vtkPolyDataC
 //    vtkDoubleArray* radiusArray = vtkDoubleArray::SafeDownCast(currentSegment->GetPointData()->GetArray(RadiusArrayName));
     vtkIdTypeArray* topologyArray = vtkIdTypeArray::SafeDownCast(currentSegment->GetCellData()->GetArray(TopologyArrayName));
     vtkIdType topology[2];
-    topologyArray->GetTupleValue(0,topology);
+#if (VTK_MAJOR_VERSION < 7)
+    topologyArray->GetTupleValue(0, topology);
+#else
+    topologyArray->GetTypedTuple(0, topology);
+#endif
     scalar0 = topology[0];
     scalar1 = topology[1];
     if (scalar0 > 0)
@@ -1742,7 +1784,11 @@ void vtkvmtkPolyDataNetworkExtraction::RemoveDegenerateBifurcations(vtkPolyDataC
       position1=realBifurcations->InsertUniqueId(scalar1);
       topology[1] = position1;
       }
+#if (VTK_MAJOR_VERSION < 7)
     topologyArray->InsertTupleValue(0,topology);
+#else
+    topologyArray->InsertTypedTuple(0,topology);
+#endif
     }
 
   realBifurcations->Delete();
@@ -1809,8 +1855,13 @@ void vtkvmtkPolyDataNetworkExtraction::GlobalIteration(vtkPolyData* model, vtkPo
     {
     vtkIdType topology[2];
     vtkIdTypeArray* segmentTopologyArray = vtkIdTypeArray::SafeDownCast(segments->GetNextItem()->GetCellData()->GetArray(TopologyArrayName));
-    segmentTopologyArray->GetTupleValue(0,topology);
+#if (VTK_MAJOR_VERSION < 7)
+    segmentTopologyArray->GetTupleValue(0, topology);
     topologyArray->InsertNextTupleValue(topology);
+#else
+    segmentTopologyArray->GetTypedTuple(0, topology);
+    topologyArray->InsertNextTypedTuple(topology);
+#endif
     }
 
   vtkAppendPolyData* segmentsAppended = vtkAppendPolyData::New();
@@ -1880,7 +1931,11 @@ void vtkvmtkPolyDataNetworkExtraction::Graph(vtkPolyData* network, vtkPolyData* 
     {
     vtkCell* cell = network->GetCell(i);
     vtkIdType topology[2];
-    topologyArray->GetTupleValue(i,topology);
+#if (VTK_MAJOR_VERSION < 7)
+    topologyArray->GetTupleValue(i, topology);
+#else
+    topologyArray->GetTypedTuple(i, topology);
+#endif
 
     vtkIdType numberOfCellPoints = cell->GetNumberOfPoints();
     double meanRadius = 0.0;
