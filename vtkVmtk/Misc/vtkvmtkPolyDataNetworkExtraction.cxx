@@ -174,10 +174,10 @@ void vtkvmtkPolyDataNetworkExtraction::InsertInEdgeTable(vtkIdTypeArray* edgeTab
   vtkIdType edge[2];
   edge[0] = pointId0;
   edge[1] = pointId1;
-#if (VTK_MAJOR_VERSION < 7)
-  edgeTable->InsertNextTupleValue(edge);
-#else
+#if VTK_MAJOR_VERSION >= 7 && VTK_MINOR_VERSION >= 1
   edgeTable->InsertNextTypedTuple(edge);
+#else
+  edgeTable->InsertNextTupleValue(edge);
 #endif
 }
 
@@ -190,10 +190,10 @@ bool vtkvmtkPolyDataNetworkExtraction::InsertUniqueInEdgeTable(vtkIdTypeArray* e
   for (i=0; i<edgeTable->GetNumberOfTuples(); i++)
     {
     vtkIdType currentEdge[2];
-#if (VTK_MAJOR_VERSION < 7)
-    edgeTable->GetTupleValue(i,currentEdge);
-#else
+#if VTK_MAJOR_VERSION >= 7 && VTK_MINOR_VERSION >= 1
     edgeTable->GetTypedTuple(i, currentEdge);
+#else
+    edgeTable->GetTupleValue(i,currentEdge);
 #endif
     if (currentEdge[0]==edge[0] && currentEdge[1]==edge[1])
       {
@@ -201,10 +201,10 @@ bool vtkvmtkPolyDataNetworkExtraction::InsertUniqueInEdgeTable(vtkIdTypeArray* e
       }
     }
 
-#if (VTK_MAJOR_VERSION < 7)
-  edgeTable->InsertNextTupleValue(edge);
-#else
+#if VTK_MAJOR_VERSION >= 7 && VTK_MINOR_VERSION >= 1
   edgeTable->InsertNextTypedTuple(edge);
+#else
+  edgeTable->InsertNextTupleValue(edge);
 #endif
 
   return true;
@@ -212,10 +212,10 @@ bool vtkvmtkPolyDataNetworkExtraction::InsertUniqueInEdgeTable(vtkIdTypeArray* e
 
 void vtkvmtkPolyDataNetworkExtraction::GetFromEdgeTable(vtkIdTypeArray* edgeTable, vtkIdType position, vtkIdType edge[2])
 {
-#if (VTK_MAJOR_VERSION < 7)
-  edgeTable->GetTupleValue(position,edge);
-#else
+#if VTK_MAJOR_VERSION >= 7 && VTK_MINOR_VERSION >= 1
   edgeTable->GetTypedTuple(position, edge);
+#else
+  edgeTable->GetTupleValue(position,edge);
 #endif
 }
 
@@ -1312,10 +1312,10 @@ void vtkvmtkPolyDataNetworkExtraction::BuildSegment(vtkPoints* segmentPoints, vt
   segmentTopologyArray->SetName(TopologyArrayName);
   segmentTopologyArray->SetNumberOfComponents(2);
 
-#if (VTK_MAJOR_VERSION < 7)
-  segmentTopologyArray->InsertNextTupleValue(segmentTopology);
-#else
+#if VTK_MAJOR_VERSION >= 7 && VTK_MINOR_VERSION >= 1
   segmentTopologyArray->InsertNextTypedTuple(segmentTopology);
+#else
+  segmentTopologyArray->InsertNextTupleValue(segmentTopology);
 #endif
 
   // start
@@ -1561,12 +1561,12 @@ void vtkvmtkPolyDataNetworkExtraction::JoinSegments (vtkPolyData* segment0, vtkP
   vtkIdType segmentTopology0[2];
   vtkIdType segmentTopology1[2];
 
-#if (VTK_MAJOR_VERSION < 7)
-  segment0TopologyArray->GetTupleValue(0, segmentTopology0);
-  segment1TopologyArray->GetTupleValue(0, segmentTopology1);
-#else
+#if VTK_MAJOR_VERSION >= 7 && VTK_MINOR_VERSION >= 1
   segment0TopologyArray->GetTypedTuple(0, segmentTopology0);
   segment1TopologyArray->GetTypedTuple(0, segmentTopology1);
+#else
+  segment0TopologyArray->GetTupleValue(0, segmentTopology0);
+  segment1TopologyArray->GetTupleValue(0, segmentTopology1);
 #endif
   
   vtkIdType segmentTopology[2];
@@ -1610,10 +1610,10 @@ void vtkvmtkPolyDataNetworkExtraction::JoinSegments (vtkPolyData* segment0, vtkP
       }
     }
  
-#if (VTK_MAJOR_VERSION < 7)
-  topologyArray->InsertNextTupleValue(segmentTopology);
-#else
+#if VTK_MAJOR_VERSION >= 7 && VTK_MINOR_VERSION >= 1
   topologyArray->InsertNextTypedTuple(segmentTopology);
+#else
+  topologyArray->InsertNextTupleValue(segmentTopology);
 #endif
   
   vtkCellArray* segmentCell = vtkCellArray::New();
@@ -1656,10 +1656,10 @@ void vtkvmtkPolyDataNetworkExtraction::RemoveDegenerateBifurcations(vtkPolyDataC
 //    vtkDoubleArray* radiusArray = vtkDoubleArray::SafeDownCast(segment->GetPointData()->GetArray(RadiusArrayName));
     vtkIdTypeArray* topologyArray = vtkIdTypeArray::SafeDownCast(segment->GetCellData()->GetArray(TopologyArrayName));
     vtkIdType topology[2];
-#if (VTK_MAJOR_VERSION < 7)
-    topologyArray->GetTupleValue(0,topology);
-#else
+#if VTK_MAJOR_VERSION >= 7 && VTK_MINOR_VERSION >= 1
     topologyArray->GetTypedTuple(0, topology);
+#else
+    topologyArray->GetTupleValue(0,topology);
 #endif
     vtkIdType bifurcation0 = topology[0];
     if (bifurcation0 > 0)
@@ -1704,10 +1704,10 @@ void vtkvmtkPolyDataNetworkExtraction::RemoveDegenerateBifurcations(vtkPolyDataC
 //      vtkDoubleArray* radiusArray = vtkDoubleArray::SafeDownCast(currentSegment->GetPointData()->GetArray(RadiusArrayName));
       vtkIdTypeArray* topologyArray = vtkIdTypeArray::SafeDownCast(currentSegment->GetCellData()->GetArray(TopologyArrayName));
       vtkIdType topology[2];
-#if (VTK_MAJOR_VERSION < 7)
-      topologyArray->GetTupleValue(0,topology);
-#else
+#if VTK_MAJOR_VERSION >= 7 && VTK_MINOR_VERSION >= 1
       topologyArray->GetTypedTuple(0,topology);
+#else
+      topologyArray->GetTupleValue(0,topology);
 #endif
       if (!segment0)
         {
@@ -1767,10 +1767,10 @@ void vtkvmtkPolyDataNetworkExtraction::RemoveDegenerateBifurcations(vtkPolyDataC
 //    vtkDoubleArray* radiusArray = vtkDoubleArray::SafeDownCast(currentSegment->GetPointData()->GetArray(RadiusArrayName));
     vtkIdTypeArray* topologyArray = vtkIdTypeArray::SafeDownCast(currentSegment->GetCellData()->GetArray(TopologyArrayName));
     vtkIdType topology[2];
-#if (VTK_MAJOR_VERSION < 7)
-    topologyArray->GetTupleValue(0, topology);
-#else
+#if VTK_MAJOR_VERSION >= 7 && VTK_MINOR_VERSION >= 1
     topologyArray->GetTypedTuple(0, topology);
+#else
+    topologyArray->GetTupleValue(0, topology);
 #endif
     scalar0 = topology[0];
     scalar1 = topology[1];
@@ -1784,10 +1784,10 @@ void vtkvmtkPolyDataNetworkExtraction::RemoveDegenerateBifurcations(vtkPolyDataC
       position1=realBifurcations->InsertUniqueId(scalar1);
       topology[1] = position1;
       }
-#if (VTK_MAJOR_VERSION < 7)
-    topologyArray->InsertTupleValue(0,topology);
-#else
+#if VTK_MAJOR_VERSION >= 7 && VTK_MINOR_VERSION >= 1
     topologyArray->InsertTypedTuple(0,topology);
+#else
+    topologyArray->InsertTupleValue(0,topology);
 #endif
     }
 
@@ -1855,12 +1855,12 @@ void vtkvmtkPolyDataNetworkExtraction::GlobalIteration(vtkPolyData* model, vtkPo
     {
     vtkIdType topology[2];
     vtkIdTypeArray* segmentTopologyArray = vtkIdTypeArray::SafeDownCast(segments->GetNextItem()->GetCellData()->GetArray(TopologyArrayName));
-#if (VTK_MAJOR_VERSION < 7)
-    segmentTopologyArray->GetTupleValue(0, topology);
-    topologyArray->InsertNextTupleValue(topology);
-#else
+#if VTK_MAJOR_VERSION >= 7 && VTK_MINOR_VERSION >= 1
     segmentTopologyArray->GetTypedTuple(0, topology);
     topologyArray->InsertNextTypedTuple(topology);
+#else
+    segmentTopologyArray->GetTupleValue(0, topology);
+    topologyArray->InsertNextTupleValue(topology);
 #endif
     }
 
@@ -1931,10 +1931,10 @@ void vtkvmtkPolyDataNetworkExtraction::Graph(vtkPolyData* network, vtkPolyData* 
     {
     vtkCell* cell = network->GetCell(i);
     vtkIdType topology[2];
-#if (VTK_MAJOR_VERSION < 7)
-    topologyArray->GetTupleValue(i, topology);
-#else
+#if VTK_MAJOR_VERSION >= 7 && VTK_MINOR_VERSION >= 1
     topologyArray->GetTypedTuple(i, topology);
+#else
+    topologyArray->GetTupleValue(i, topology);
 #endif
 
     vtkIdType numberOfCellPoints = cell->GetNumberOfPoints();

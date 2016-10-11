@@ -512,10 +512,10 @@ void vtkvmtkITKImageWriter::Write()
         float outValue[6];
         for(int i=0; i<out->GetNumberOfTuples(); i++)
           {
-#if (VTK_MAJOR_VERSION < 7)
-          in->GetTupleValue(i, inValue);
-#else
+#if VTK_MAJOR_VERSION >= 7 && VTK_MINOR_VERSION >= 1
           in->GetTypedTuple(i, inValue);
+#else
+          in->GetTupleValue(i, inValue);
 #endif
           //ITK expect tensors saved in upper-triangular format
           outValue[0] = inValue[0];

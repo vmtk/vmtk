@@ -17,10 +17,10 @@
 // VTK includes
 #include <vtkCommand.h>
 #include <vtkDataArray.h>
-#if VTK_MAJOR_VERSION < 7
-#include <vtkDataArrayTemplate.h>
-#else
+#if VTK_MAJOR_VERSION >= 7 && VTK_MINOR_VERSION >= 1
 #include <vtkAOSDataArrayTemplate.h>
+#else
+#include <vtkDataArrayTemplate.h>
 #endif
 #include <vtkImageData.h>
 #include <vtkInformation.h>
@@ -38,7 +38,13 @@ vtkStandardNewMacro(vtkvmtkITKArchetypeImageSeriesScalarReader);
 
 namespace {
 
-#if VTK_MAJOR_VERSION < 7
+#if VTK_MAJOR_VERSION >= 7 && VTK_MINOR_VERSION >= 1
+  template <class T>
+  vtkAOSDataArrayTemplate<T>* DownCast(vtkAbstractArray* a)
+  {
+    return vtkAOSDataArrayTemplate<T>::FastDownCast(a);
+  }
+#else
 template <class T>
 vtkDataArrayTemplate<T>* DownCast(vtkAbstractArray* a)
 {
@@ -47,16 +53,6 @@ vtkDataArrayTemplate<T>* DownCast(vtkAbstractArray* a)
 #else
   return vtkDataArrayTemplate<T>::FastDownCast(a);
 #endif
-}
-#else
-template <class T>
-vtkAOSDataArrayTemplate<T>* DownCast(vtkAbstractArray* a)
-{
-  return vtkAOSDataArrayTemplate<T>::FastDownCast(a);
-
-
-
-
 }
 #endif
 };
@@ -110,46 +106,7 @@ int vtkvmtkITKArchetypeImageSeriesScalarReader::RequestData(
 #endif
 
 /// SCALAR MACRO
-#if VTK_MAJOR_VERSION < 7
-#define vtkITKExecuteDataFromSeries(typeN, type) \
-    case typeN: \
-    {\
-      typedef itk::Image<type,3> image##typeN;\
-      typedef itk::ImageSource<image##typeN> FilterType; \
-      FilterType::Pointer filter; \
-      itk::ImageSeriesReader<image##typeN>::Pointer reader##typeN = \
-          itk::ImageSeriesReader<image##typeN>::New(); \
-          itk::CStyleCommand::Pointer pcl=itk::CStyleCommand::New(); \
-          pcl->SetCallback((itk::CStyleCommand::FunctionPointer)&ReadProgressCallback); \
-          pcl->SetClientData(this); \
-          reader##typeN->AddObserver(itk::ProgressEvent(),pcl); \
-      reader##typeN->SetFileNames(this->FileNames); \
-      reader##typeN->ReleaseDataFlagOn(); \
-      if (this->UseNativeCoordinateOrientation) \
-        { \
-        filter = reader##typeN; \
-        } \
-      else \
-        { \
-        itk::OrientImageFilter<image##typeN,image##typeN>::Pointer orient##typeN = \
-            itk::OrientImageFilter<image##typeN,image##typeN>::New(); \
-        if (this->Debug) {orient##typeN->DebugOn();} \
-        orient##typeN->SetInput(reader##typeN->GetOutput()); \
-        orient##typeN->UseImageDirectionOn(); \
-        orient##typeN->SetDesiredCoordinateOrientation(this->DesiredCoordinateOrientation); \
-        filter = orient##typeN; \
-        }\
-      filter->UpdateLargestPossibleRegion(); \
-      itk::ImportImageContainer<itk::SizeValueType, type>::Pointer PixelContainer##typeN;\
-      PixelContainer##typeN = filter->GetOutput()->GetPixelContainer();\
-      void *ptr = static_cast<void *> (PixelContainer##typeN->GetBufferPointer());\
-      DownCast<type>(data->GetPointData()->GetScalars())                \
-        ->SetVoidArray(ptr, PixelContainer##typeN->Size(), 0,\
-                       vtkDataArrayTemplate<type>::VTK_DATA_ARRAY_DELETE);\
-      PixelContainer##typeN->ContainerManageMemoryOff();\
-    }\
-    break
-#else
+#if VTK_MAJOR_VERSION >= 7 && VTK_MINOR_VERSION >= 1
 #define vtkITKExecuteDataFromSeries(typeN, type) \
     case typeN: \
     {\
@@ -185,46 +142,51 @@ int vtkvmtkITKArchetypeImageSeriesScalarReader::RequestData(
       DownCast<type>(data->GetPointData()->GetScalars())                \
         ->SetVoidArray(ptr, PixelContainer##typeN->Size(), 0,\
                        vtkAOSDataArrayTemplate<type>::VTK_DATA_ARRAY_DELETE);\
+      PixelContainer##typeN->ContainerManageMemoryOff();\
+    }\
+    break
+#else
+#define vtkITKExecuteDataFromSeries(typeN, type) \
+    case typeN: \
+      {\
+      typedef itk::Image<type,3> image##typeN;\
+      typedef itk::ImageSource<image##typeN> FilterType; \
+      FilterType::Pointer filter; \
+      itk::ImageSeriesReader<image##typeN>::Pointer reader##typeN = \
+          itk::ImageSeriesReader<image##typeN>::New(); \
+          itk::CStyleCommand::Pointer pcl=itk::CStyleCommand::New(); \
+          pcl->SetCallback((itk::CStyleCommand::FunctionPointer)&ReadProgressCallback); \
+          pcl->SetClientData(this); \
+          reader##typeN->AddObserver(itk::ProgressEvent(),pcl); \
+      reader##typeN->SetFileNames(this->FileNames); \
+      reader##typeN->ReleaseDataFlagOn(); \
+      if (this->UseNativeCoordinateOrientation) \
+              { \
+        filter = reader##typeN; \
+              } \
+        else \
+          { \
+        itk::OrientImageFilter<image##typeN,image##typeN>::Pointer orient##typeN = \
+            itk::OrientImageFilter<image##typeN,image##typeN>::New(); \
+        if (this->Debug) {orient##typeN->DebugOn();} \
+        orient##typeN->SetInput(reader##typeN->GetOutput()); \
+        orient##typeN->UseImageDirectionOn(); \
+        orient##typeN->SetDesiredCoordinateOrientation(this->DesiredCoordinateOrientation); \
+        filter = orient##typeN; \
+          }\
+      filter->UpdateLargestPossibleRegion(); \
+      itk::ImportImageContainer<itk::SizeValueType, type>::Pointer PixelContainer##typeN;\
+      PixelContainer##typeN = filter->GetOutput()->GetPixelContainer();\
+      void *ptr = static_cast<void *> (PixelContainer##typeN->GetBufferPointer());\
+      DownCast<type>(data->GetPointData()->GetScalars())                \
+        ->SetVoidArray(ptr, PixelContainer##typeN->Size(), 0,\
+                       vtkDataArrayTemplate<type>::VTK_DATA_ARRAY_DELETE);\
       PixelContainer##typeN->ContainerManageMemoryOff();\
     }\
     break
 #endif
 
-#if VTK_MAJOR_VERSION < 7
-#define vtkITKExecuteDataFromFile(typeN, type) \
-    case typeN: \
-    {\
-      typedef itk::Image<type,3> image2##typeN;\
-      typedef itk::ImageSource<image2##typeN> FilterType; \
-      FilterType::Pointer filter; \
-      itk::ImageFileReader<image2##typeN>::Pointer reader2##typeN = \
-            itk::ImageFileReader<image2##typeN>::New(); \
-      reader2##typeN->SetFileName(this->FileNames[0].c_str()); \
-      if (this->UseNativeCoordinateOrientation) \
-        { \
-        filter = reader2##typeN; \
-        } \
-      else \
-        { \
-        itk::OrientImageFilter<image2##typeN,image2##typeN>::Pointer orient2##typeN = \
-              itk::OrientImageFilter<image2##typeN,image2##typeN>::New(); \
-        if (this->Debug) {orient2##typeN->DebugOn();} \
-        orient2##typeN->SetInput(reader2##typeN->GetOutput()); \
-        orient2##typeN->UseImageDirectionOn(); \
-        orient2##typeN->SetDesiredCoordinateOrientation(this->DesiredCoordinateOrientation); \
-        filter = orient2##typeN; \
-        } \
-      filter->UpdateLargestPossibleRegion();\
-      itk::ImportImageContainer<itk::SizeValueType, type>::Pointer PixelContainer2##typeN;\
-      PixelContainer2##typeN = filter->GetOutput()->GetPixelContainer();\
-      void *ptr = static_cast<void *> (PixelContainer2##typeN->GetBufferPointer());\
-      DownCast<type>(data->GetPointData()->GetScalars())                \
-        ->SetVoidArray(ptr, PixelContainer2##typeN->Size(), 0,\
-                       vtkDataArrayTemplate<type>::VTK_DATA_ARRAY_DELETE);\
-      PixelContainer2##typeN->ContainerManageMemoryOff();\
-    }\
-    break
-#else
+#if VTK_MAJOR_VERSION >= 7 && VTK_MINOR_VERSION >= 1
 #define vtkITKExecuteDataFromFile(typeN, type) \
     case typeN: \
     {\
@@ -257,6 +219,40 @@ int vtkvmtkITKArchetypeImageSeriesScalarReader::RequestData(
                        vtkAOSDataArrayTemplate<type>::VTK_DATA_ARRAY_DELETE);\
       PixelContainer2##typeN->ContainerManageMemoryOff();\
     }\
+    break
+#else
+#define vtkITKExecuteDataFromFile(typeN, type) \
+    case typeN: \
+        {\
+      typedef itk::Image<type,3> image2##typeN;\
+      typedef itk::ImageSource<image2##typeN> FilterType; \
+      FilterType::Pointer filter; \
+      itk::ImageFileReader<image2##typeN>::Pointer reader2##typeN = \
+            itk::ImageFileReader<image2##typeN>::New(); \
+      reader2##typeN->SetFileName(this->FileNames[0].c_str()); \
+      if (this->UseNativeCoordinateOrientation) \
+              { \
+        filter = reader2##typeN; \
+              } \
+            else \
+                { \
+        itk::OrientImageFilter<image2##typeN,image2##typeN>::Pointer orient2##typeN = \
+              itk::OrientImageFilter<image2##typeN,image2##typeN>::New(); \
+        if (this->Debug) {orient2##typeN->DebugOn();} \
+        orient2##typeN->SetInput(reader2##typeN->GetOutput()); \
+        orient2##typeN->UseImageDirectionOn(); \
+        orient2##typeN->SetDesiredCoordinateOrientation(this->DesiredCoordinateOrientation); \
+        filter = orient2##typeN; \
+                } \
+      filter->UpdateLargestPossibleRegion();\
+      itk::ImportImageContainer<itk::SizeValueType, type>::Pointer PixelContainer2##typeN;\
+      PixelContainer2##typeN = filter->GetOutput()->GetPixelContainer();\
+      void *ptr = static_cast<void *> (PixelContainer2##typeN->GetBufferPointer());\
+      DownCast<type>(data->GetPointData()->GetScalars())                \
+        ->SetVoidArray(ptr, PixelContainer2##typeN->Size(), 0,\
+                       vtkDataArrayTemplate<type>::VTK_DATA_ARRAY_DELETE);\
+      PixelContainer2##typeN->ContainerManageMemoryOff();\
+        }\
     break
 #endif
   /// END SCALAR MACRO
