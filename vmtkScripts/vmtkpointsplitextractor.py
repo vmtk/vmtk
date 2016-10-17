@@ -78,7 +78,7 @@ class vmtkPointSplitExtractor(pypes.pypeScript):
         pointSplitExtractor.SetTolerance(self.Tolerance)
         pointSplitExtractor.Update()
 
-        self.Centerlines = pointSplitExtractor.GetOutputPort()
+        self.Centerlines = pointSplitExtractor.GetOutput()
 
 
 

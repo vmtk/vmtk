@@ -315,7 +315,11 @@ int vtkvmtkMergeCenterlines::RequestData(vtkInformation *vtkNotUsed(request), vt
   tupleValue[0] = tupleValue[1] = -1;
   for (i=0; i<numberOfMergedCells; i++)
     {
-    cellAdditionalEndPointIds->SetTupleValue(i,tupleValue);
+#if VTK_MAJOR_VERSION >= 7 && VTK_MINOR_VERSION >= 1
+    cellAdditionalEndPointIds->SetTypedTuple(i, tupleValue);
+#else
+    cellAdditionalEndPointIds->SetTupleValue(i, tupleValue);
+#endif
     }
 
   for (i=0; i<blankedGroupIds->GetNumberOfIds(); i++)
@@ -352,9 +356,18 @@ int vtkvmtkMergeCenterlines::RequestData(vtkInformation *vtkNotUsed(request), vt
         groupUniqueCellIds->Delete();
         }
       vtkIdType tupleValue[2];
-      cellAdditionalEndPointIds->GetTupleValue(mergedCellId,tupleValue);
+#if VTK_MAJOR_VERSION >= 7 && VTK_MINOR_VERSION >= 1
+      cellAdditionalEndPointIds->GetTypedTuple(mergedCellId,tupleValue);
+#else
+      cellAdditionalEndPointIds->GetTupleValue(mergedCellId, tupleValue);
+#endif
       tupleValue[1] = bifurcationPointId;
-      cellAdditionalEndPointIds->SetTupleValue(mergedCellId,tupleValue);
+#if VTK_MAJOR_VERSION >= 7 && VTK_MINOR_VERSION >= 1
+      cellAdditionalEndPointIds->SetTypedTuple(mergedCellId, tupleValue);
+#else
+      cellAdditionalEndPointIds->SetTupleValue(mergedCellId, tupleValue);
+#endif
+
       }
 
     for (j=0; j<downStreamGroupIds->GetNumberOfIds(); j++)
@@ -373,10 +386,18 @@ int vtkvmtkMergeCenterlines::RequestData(vtkInformation *vtkNotUsed(request), vt
         groupUniqueCellIds->Delete();
         }
       vtkIdType tupleValue[2];
+#if VTK_MAJOR_VERSION >= 7 && VTK_MINOR_VERSION >= 1
+      cellAdditionalEndPointIds->GetTypedTuple(mergedCellId, tupleValue);
+#else
       cellAdditionalEndPointIds->GetTupleValue(mergedCellId,tupleValue);
+#endif
       tupleValue[0] = bifurcationPointId;
+#if VTK_MAJOR_VERSION >= 7 && VTK_MINOR_VERSION >= 1
+      cellAdditionalEndPointIds->SetTypedTuple(mergedCellId, tupleValue);
+#else
       cellAdditionalEndPointIds->SetTupleValue(mergedCellId,tupleValue);
-      }
+#endif
+    }
     if (sourcePointId == -1)
       {
       upStreamGroupIds->Delete();
@@ -400,7 +421,11 @@ int vtkvmtkMergeCenterlines::RequestData(vtkInformation *vtkNotUsed(request), vt
     pts = NULL;
     outputLines->GetNextCell(npts,pts);
     vtkIdType tupleValue[2];
+#if VTK_MAJOR_VERSION >= 7 && VTK_MINOR_VERSION >= 1
+    cellAdditionalEndPointIds->GetTypedTuple(i, tupleValue);
+#else
     cellAdditionalEndPointIds->GetTupleValue(i,tupleValue);
+#endif
     vtkIdType extendedNpts = npts;
     if (tupleValue[0] != -1)
       {

@@ -331,11 +331,20 @@ void vtkvmtkITKImageWriter::Write()
 #if (VTK_MAJOR_VERSION <= 5)
   inputImage->UpdateInformation();
   inputImage->SetUpdateExtent(inputImage->GetWholeExtent());
-#else
+#elif (VTK_MAJOR_VERSION < 7)
   this->UpdateInformation();
   this->SetUpdateExtent(this->GetOutputInformation(0)->Get(
                         vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT()));
+#else
+  if (this->GetOutputInformation(0))
+    {
+    this->GetOutputInformation(0)->Set(
+      vtkStreamingDemandDrivenPipeline::UPDATE_EXTENT(),
+    this->GetOutputInformation(0)->Get(
+      vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT()), 6);
+    }
 #endif
+
   int inputDataType =
     pointData->GetScalars() ? pointData->GetScalars()->GetDataType() :
     pointData->GetTensors() ? pointData->GetTensors()->GetDataType() :
@@ -503,7 +512,11 @@ void vtkvmtkITKImageWriter::Write()
         float outValue[6];
         for(int i=0; i<out->GetNumberOfTuples(); i++)
           {
+#if VTK_MAJOR_VERSION >= 7 && VTK_MINOR_VERSION >= 1
+          in->GetTypedTuple(i, inValue);
+#else
           in->GetTupleValue(i, inValue);
+#endif
           //ITK expect tensors saved in upper-triangular format
           outValue[0] = inValue[0];
           outValue[1] = inValue[1];

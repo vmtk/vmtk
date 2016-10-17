@@ -29,6 +29,7 @@ Version:   $Revision: 1.3 $
 #include "vtkPolyData.h"
 #include "vtkDoubleArray.h"
 #include "vtkvmtkWin32Header.h"
+#include "vtkVersion.h"
 
 class VTK_VMTK_MISC_EXPORT vtkvmtkRBFInterpolation : public vtkImplicitFunction
 {
@@ -73,7 +74,11 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkRBFInterpolation : public vtkImplicitFunction
   };
 //ETX
 
+#ifdef VTK_HAS_MTIME_TYPE
+  vtkMTimeType GetMTime();
+#else
   unsigned long GetMTime();
+#endif
 
   protected:
   vtkvmtkRBFInterpolation();

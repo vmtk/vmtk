@@ -100,12 +100,21 @@ int vtkvmtkCurvedMPRImageFilter::RequestInformation (
       outputImage->SetWholeExtent(outputExtent);
       outputImage->SetUpdateExtent(outputExtent);
       outputImage->AllocateScalars();
-#else
+#elif (VTK_MAJOR_VERSION < 7)
       this->UpdateInformation();
       vtkStreamingDemandDrivenPipeline::SetUpdateExtent(outInfo, outputExtent);
       this->Update();
       outputImage->AllocateScalars(outInfo);
+#else
+      if (this->GetOutputInformation(0))
+        {
+        this->GetOutputInformation(0)->Set(
+          vtkStreamingDemandDrivenPipeline::UPDATE_EXTENT(),
+        this->GetOutputInformation(0)->Get(
+          vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT()), 6);
+        }
 #endif
+
       }
     if ( inputImage == NULL)
       {
@@ -232,11 +241,19 @@ int vtkvmtkCurvedMPRImageFilter::RequestData(
       outputImage->SetWholeExtent(outputExtent);
       outputImage->SetUpdateExtent(outputExtent);
       outputImage->AllocateScalars();
-#else
+#elif (VTK_MAJOR_VERSION < 7)
       this->UpdateInformation();
       vtkStreamingDemandDrivenPipeline::SetUpdateExtent(outInfo, outputExtent);
       this->Update();
       outputImage->AllocateScalars(outInfo);
+#else
+      if (this->GetOutputInformation(0))
+        {
+        this->GetOutputInformation(0)->Set(
+          vtkStreamingDemandDrivenPipeline::UPDATE_EXTENT(),
+          this->GetOutputInformation(0)->Get(
+          vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT()), 6);
+        }
 #endif
       }
    
@@ -309,11 +326,19 @@ int vtkvmtkCurvedMPRImageFilter::RequestData(
   outputImage->SetWholeExtent(outExtent);
   outputImage->SetUpdateExtent(outExtent);
   outputImage->AllocateScalars();
-#else
+#elif (VTK_MAJOR_VERSION < 7)
   this->UpdateInformation();
   vtkStreamingDemandDrivenPipeline::SetUpdateExtent(outInfo, outExtent);
   this->Update();  
   outputImage->AllocateScalars(outInfo);
+#else
+if (this->GetOutputInformation(0))
+  {
+  this->GetOutputInformation(0)->Set(
+    vtkStreamingDemandDrivenPipeline::UPDATE_EXTENT(),
+    this->GetOutputInformation(0)->Get(
+    vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT()), 6);
+  }
 #endif
 
   vtkDataArray* frenetTangentArray = this->Centerline->GetPointData()->GetArray(this->FrenetTangentArrayName); 

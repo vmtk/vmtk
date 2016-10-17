@@ -251,9 +251,11 @@ void vtkvmtkFEShapeFunctions::GetInterpolationFunctions(vtkCell* cell, double* p
     case VTK_QUADRATIC_QUAD:
       vtkQuadraticQuad::SafeDownCast(cell)->InterpolationFunctions(pcoords,sf);
       break;
+#if VTK_MAJOR_VERSION < 7
     case VTK_BIQUADRATIC_QUAD:
       vtkBiQuadraticQuad::SafeDownCast(cell)->InterpolationFunctions(pcoords,sf);
       break;
+#endif
     case VTK_TRIANGLE:
       vtkTriangle::SafeDownCast(cell)->InterpolationFunctions(pcoords,sf);
       break;
@@ -302,9 +304,11 @@ void vtkvmtkFEShapeFunctions::GetInterpolationDerivs(vtkCell* cell, double* pcoo
     case VTK_QUADRATIC_QUAD:
       vtkQuadraticQuad::SafeDownCast(cell)->InterpolationDerivs(pcoords,derivs);
       break;
+#if VTK_MAJOR_VERSION < 7
     case VTK_BIQUADRATIC_QUAD:
       vtkBiQuadraticQuad::SafeDownCast(cell)->InterpolationDerivs(pcoords,derivs);
       break;
+#endif
     case VTK_TRIANGLE:
       vtkTriangle::SafeDownCast(cell)->InterpolationDerivs(pcoords,derivs);
       break;
