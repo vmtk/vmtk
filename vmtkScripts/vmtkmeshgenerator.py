@@ -252,7 +252,8 @@ class vmtkMeshGenerator(pypes.pypeScript):
             if tetgen.Mesh.GetNumberOfCells() == 0 and surfaceToMesh.Mesh.GetNumberOfCells() > 0:
                 self.PrintLog('An error occurred during tetrahedralization. Will only output surface mesh and boundary layer.')
 
-            surfaceToMesh.Mesh.GetCellData().GetArray(self.CellEntityIdsArrayName).FillComponent(0,wallEntityOffset)
+            if not self.BoundaryLayerOnCaps:
+                surfaceToMesh.Mesh.GetCellData().GetArray(self.CellEntityIdsArrayName).FillComponent(0,wallEntityOffset)
 
             self.PrintLog("Assembling final mesh")
             appendFilter = vtkvmtk.vtkvmtkAppendFilter()
