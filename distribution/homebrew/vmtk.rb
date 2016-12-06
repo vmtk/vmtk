@@ -3,7 +3,7 @@ class Vmtk < Formula
   homepage "http://www.vmtk.org"
   url "https://github.com/vmtk/vmtk/archive/v1.3.1.tar.gz"
   version "1.3.1"
-  sha256 "97f894bacea677d7ee910d47b343582b029afad250a23aa0a759f64092540ff9"
+  sha256 "c3220f3442036e4c2824700688044e472d173573fc9d5c65cfdbbe628d6ecc05"
   head "https://github.com/vmtk/vmtk.git"
   revision 1
 
