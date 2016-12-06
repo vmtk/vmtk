@@ -1,8 +1,8 @@
 class Vmtk < Formula
   desc "The Vascular Modeling Toolkit"
   homepage "http://www.vmtk.org"
-  url "https://github.com/vmtk/vmtk/archive/v1.3.tar.gz"
-  version "1.3"
+  url "https://github.com/vmtk/vmtk/archive/v1.3.1.tar.gz"
+  version "1.3.1"
   sha256 "97f894bacea677d7ee910d47b343582b029afad250a23aa0a759f64092540ff9"
   head "https://github.com/vmtk/vmtk.git"
   revision 1
@@ -29,7 +29,7 @@ class Vmtk < Formula
     args << "-DITK_DIR=#{HOMEBREW_CELLAR}/insighttoolkit/4.9.0"
 
     args << "-DUSE_SYSTEM_VTK=ON"
-    args << "-DVTK_DIR=#{HOMEBREW_CELLAR}/vtk/7.0.0"
+    args << "-DVTK_DIR=#{HOMEBREW_CELLAR}/vtk/7.1.0"
 
     args << "-DVMTK_USE_SUPERBUILD=OFF"
     args << "-DUSE_VTK6_SUPERBUILD=OFF"
