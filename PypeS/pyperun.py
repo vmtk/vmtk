@@ -26,8 +26,10 @@ except:
 if __name__=='__main__':
     manager = Manager()
     queue = manager.list()
-    pypeProcess = Process(target=pypeserver.PypeServer, args=(queue,None,None), kwargs={"returnIfEmptyQueue":True})
-    pypeProcess.start()
+
+    if sys.platform != 'darwin':
+        pypeProcess = Process(target=pypeserver.PypeServer, args=(queue,None,None), kwargs={"returnIfEmptyQueue":True})
+        pypeProcess.start()
 
     args = sys.argv[:]
     if sys.argv[0].startswith('pyperun'):
@@ -36,9 +38,13 @@ if __name__=='__main__':
     queue.append(args)
 
     try:
-        pypeProcess.join()
+        if sys.platform != 'darwin':
+            pypeProcess.join()
+        else:
+            pypeserver.PypeServer(queue,None,None,returnIfEmptyQueue=True)
     except KeyboardInterrupt:
         pypeProcess.terminate()
     except BaseException, e:
         print e
+        sys.exit(1)
 
