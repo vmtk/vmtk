@@ -110,15 +110,13 @@ class vmtkImageMIPViewer(pypes.pypeScript):
                 opacityFunction.AddPoint(scalarRange[0] + float(scalarRange[1] - scalarRange[0]) * self.Opacity[0], 1.0)
                 opacityFunction.AddPoint(scalarRange[1] + float(scalarRange[1] - scalarRange[0]) * self.Opacity[1], 0.0)
                 opacityFunction.AddPoint(scalarRange[0], 0.0)
-        else:
-            opacityFunction.AddPoint(scalarRange[0], 0.0)
-            opacityFunction.AddPoint(scalarRange[0], 1.0)
 
         volumeProperty = vtk.vtkVolumeProperty()
         volumeProperty.ShadeOn()
         volumeProperty.SetInterpolationTypeToLinear()
         volumeProperty.SetColor(colorTransferFunction)
-        volumeProperty.SetScalarOpacity(opacityFunction)
+        if self.Opacity is not None:
+            volumeProperty.SetScalarOpacity(opacityFunction)
 
         self.Volume = vtk.vtkVolume()
         self.Volume.SetMapper(volumeMapper)
