@@ -95,21 +95,13 @@ class vmtkImageMIPViewer(pypes.pypeScript):
             volumeMapper.SetSampleDistance(self.SampleDistance)
 
         opacityFunction = vtk.vtkPiecewiseFunction()
-
-        if self.Opacity[0] < 0.3 and self.Opacity[1] < 0.3:
-            self.PrintLog("Warning: opacity < 0.3; image likely not invisible.")
+        imageRange = self.Image.GetScalarRange()
 
         if self.Opacity is not None:
-            if self.Opacity[0] > self.Opacity[1]:
-                opacityFunction.AddPoint(scalarRange[0], 0.0)
-                opacityFunction.AddPoint(scalarRange[0] + float(scalarRange[1] - scalarRange[0]) * self.Opacity[0], 0.0)
-                opacityFunction.AddPoint(scalarRange[1] + float(scalarRange[1] - scalarRange[0]) * self.Opacity[1], 1.0)
-                opacityFunction.AddPoint(scalarRange[0], 1.0)
-            else:
-                opacityFunction.AddPoint(scalarRange[0], 1.0)
-                opacityFunction.AddPoint(scalarRange[0] + float(scalarRange[1] - scalarRange[0]) * self.Opacity[0], 1.0)
-                opacityFunction.AddPoint(scalarRange[1] + float(scalarRange[1] - scalarRange[0]) * self.Opacity[1], 0.0)
-                opacityFunction.AddPoint(scalarRange[0], 0.0)
+            opacityFunction.AddPoint(imageRange[0], 0)
+            opacityFunction.AddPoint(scalarRange[0], self.Opacity[0])
+            opacityFunction.AddPoint(scalarRange[0], self.Opacity[1])
+            opacityFunction.AddPoint(imageRange[1], 1)
 
         volumeProperty = vtk.vtkVolumeProperty()
         volumeProperty.ShadeOn()
