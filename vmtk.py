@@ -1,5 +1,7 @@
 #!${PYTHON_SHEBANG}
 
+from __future__ import print_function
+
 import sys
 import os
 
@@ -27,7 +29,7 @@ if __name__ == '__main__':
 
     if len(sys.argv) > 1 and sys.argv[1] not in vmtkOptions:
         arguments = sys.argv[1:]
-        print "Executing", ' '.join(arguments)
+        print("Executing", ' '.join(arguments))
         pipe = pypes.Pype()
         pipe.ExitOnError = 0
         pipe.Arguments = arguments
@@ -52,7 +54,7 @@ if __name__ == '__main__':
                 pipe.ParseArguments()
                 pipe.Execute()
     elif '--help' in sys.argv:
-        print 'Usage: \tvmtk [--ui pad|console]\t\tStart in interactive mode\n\tvmtk [PYPE]\t\t\tExecute the pype [PYPE]\n\tvmtk --file [FILE]\t\tExecute the content of file [FILE]'
+        print('Usage: \tvmtk [--ui pad|console]\t\tStart in interactive mode\n\tvmtk [PYPE]\t\t\tExecute the pype [PYPE]\n\tvmtk --file [FILE]\t\tExecute the content of file [FILE]')
         sys.exit(0)
     else:
         ui = 'pad'
@@ -63,7 +65,7 @@ if __name__ == '__main__':
             try:
                 from vmtk import pypepad
             except ImportError:
-                print "error"
+                print("error")
                 ui = 'console'
             else:
                 pypepad.RunPypeTkPad()
@@ -84,7 +86,7 @@ if __name__ == '__main__':
                     sys.exit(0)
                 if not inputString:
                     continue
-                print "Executing", inputString
+                print("Executing", inputString)
                 splitString = inputString.split()
                 pipe = pypes.Pype()
                 pipe.ExitOnError = 0

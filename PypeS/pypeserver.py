@@ -10,6 +10,7 @@
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
 ##      PURPOSE.  See the above copyright notices for more information.
 
+from __future__ import print_function
 
 from vmtk import pypes
 import vtk
@@ -44,7 +45,7 @@ def RunPypeProcess(arguments, inputStream=None, outputStream=None, logOn=True):
         pipe.ParseArguments()
         pipe.Execute() 
     except BaseException, e:
-        print traceback.format_exc()
+        print(traceback.format_exc())
     del pipe
 
 
@@ -77,9 +78,9 @@ def PypeServer(queue, output, error, returnIfEmptyQueue=False):
             else:
                 time.sleep(0.5)
         except IOError, e:
-            print "Connection closed"
+            print("Connection closed")
             break
         except KeyboardInterrupt, e:
-            print "Connection closed"
+            print("Connection closed")
             break
 

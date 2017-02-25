@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
+
 import vtk
 import sys
 import math
@@ -190,7 +192,7 @@ def SmoothClippedVoronoiDiagram(voronoi,centerlines):
              maskArray.SetTuple1(j,1)
 
    finalNumberOfMaskedPoints = ComputeNumberOfMaskedPoints(maskArray)
-   print 'from original number of points ', numberOfPoints,'to ',finalNumberOfMaskedPoints
+   print('from original number of points ', numberOfPoints,'to',finalNumberOfMaskedPoints)
 
    smoothedDiagram = vtk.vtkPolyData()
    points = vtk.vtkPoints()
@@ -249,16 +251,16 @@ smoothingFactor = 0.25 		# usually set to  0.25; the bigger the smoothing factor
 ##				smaller the number of removed spheres.
 
 #inputfilename:
-print 'USAGE:'
-print '      ./clipvoronoidiagram.py inputfilesDirectory caseID'
-print ''
+print('USAGE:')
+print('      ./clipvoronoidiagram.py inputfilesDirectory caseID')
+print('')
 
 inputfiledirectory = sys.argv[1]
 ID = sys.argv[2]
 
-print 'Inputfiles Directory	', inputfiledirectory
-print 'case ID			', ID
-print ''
+print('Inputfiles Directory	', inputfiledirectory)
+print('case ID			', ID)
+print('')
 
 voronoiDiagramFilename   = inputfiledirectory + '/' + ID + '/' + ID + '_voronoi.vtp'
 patchCenterlinesFilename = inputfiledirectory + '/' + ID + '/' + ID + '_patchcl.vtp'
@@ -270,13 +272,13 @@ smoothVoronoiDiagramFilename  = inputfiledirectory + '/' + ID + '/' + ID + '_smo
 originalVoronoiDiagram = ReadPolyData(voronoiDiagramFilename)
 patchCenterlines       = ReadPolyData(patchCenterlinesFilename)
 
-print 'Clipping Voronoi Diagram'
+print('Clipping Voronoi Diagram')
 maskedVoronoiArray    = MaskVoronoiDiagram(originalVoronoiDiagram,patchCenterlines)
 clippedVoronoiDiagram = ExtractMaskedVoronoiPoints(originalVoronoiDiagram,maskedVoronoiArray)
 WritePolyData(clippedVoronoiDiagram, clippedVoronoiDiagramFilename)
 
 if (smoothVoronoiDiagram==1):
-   print 'Smoothing Voronoi Diagram',
+   print('Smoothing Voronoi Diagram', end=' ') # end seperator new in py3, will throw error in py2 environments
    smoothVoronoiDiagram = SmoothClippedVoronoiDiagram(clippedVoronoiDiagram,patchCenterlines)
    WritePolyData(smoothVoronoiDiagram,smoothVoronoiDiagramFilename)
 
