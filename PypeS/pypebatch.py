@@ -35,10 +35,10 @@ class pypeBatch(object):
         indentation = ''
         for i in range(indent):
             indentation = indentation + indentUnit
-        print indentation + logMessage
+        print(indentation + logMessage)
         
     def PrintError(self,logMessage):
-        print logMessage
+        print(logMessage)
 
     def ParseArguments(self):
         state = 0

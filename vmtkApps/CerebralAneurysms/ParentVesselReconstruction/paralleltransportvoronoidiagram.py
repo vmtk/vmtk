@@ -113,7 +113,7 @@ def ComputeNumberOfMaskedPoints(dataArray):
    return numberOfPoints
 
 def VoronoiDiagramInterpolation(interpolationcellid,id0,id1,voronoiDataset0,voronoiDataset1,centerlines,direction):
-    print 'Interpolating cells ',id0,id1
+    print('Interpolating cells ',id0,id1)
     cellLine = ExtractLine(interpolationcellid,centerlines)
 
     startPoint = clippingPoints.GetPoint(id0)
@@ -139,7 +139,7 @@ def VoronoiDiagramInterpolation(interpolationcellid,id0,id1,voronoiDataset0,voro
     numberOfInterpolationPoints = voronoiDataset0.GetNumberOfPoints()
     numberOfCenterlinesPoints = cellLine.GetNumberOfPoints()
     numberOfAddedPoints = numberOfGapPoints*numberOfInterpolationPoints
-    print 'from id ',gapStartId,'to id ',gapEndId,'; number of points added ',numberOfAddedPoints
+    print('from id ',gapStartId,'to id ',gapEndId,'; number of points added ',numberOfAddedPoints)
 
     finalNewVoronoiPoints = vtk.vtkPoints()
     cellArray = vtk.vtkCellArray()
@@ -445,17 +445,17 @@ interpolationHalfSize = 3
 polyBallImageSize = [90,90,90]   #size of the image for the evaluation of the polyball function
 
 #inputfilenames:
-print 'USAGE:'
-print '      ./paralleltransportvoronoidiagram.py inputfilesDirectory caseID smoothVoronoi'
-print ''
+print('USAGE:')
+print('      ./paralleltransportvoronoidiagram.py inputfilesDirectory caseID smoothVoronoi')
+print('')
 
 inputfiledirectory = sys.argv[1]
 ID = sys.argv[2]
 smoothedVoronoi = int(sys.argv[3])
 
-print 'Inputfiles Directory	', inputfiledirectory
-print 'case ID			', ID
-print ''
+print('Inputfiles Directory	', inputfiledirectory)
+print('case ID			', ID)
+print('')
 
 interpolatedCenterlinesFilename = inputfiledirectory + '/' + ID + '/' + ID + '_interpolatedcl.vtp'
 patchCenterlinesFilename        = inputfiledirectory + '/' + ID + '/' + ID + '_patchcl.vtp'
@@ -514,7 +514,7 @@ for j in range(1,numberOfInterpolatedCenterlinesCells+1):
 
 WritePolyData(completeVoronoiDiagram,completeVoronoiFilename)
 
-print 'Reconstructing Surface from Voronoi Diagram'
+print('Reconstructing Surface from Voronoi Diagram')
 modeller = vtkvmtk.vtkvmtkPolyBallModeller()
 modeller.SetInputData(completeVoronoiDiagram)
 modeller.SetRadiusArrayName(radiusArrayName)

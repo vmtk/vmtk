@@ -28,7 +28,7 @@ log_file = None
 
 def log(msg):
     if VERBOSE:
-        print msg
+        print(msg)
     if LOGFILE:
         global log_file
         if not log_file:
