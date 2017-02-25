@@ -15,6 +15,8 @@
 ##       Elena Faggiano (elena.faggiano@gmail.com)
 ##       Politecnico di Milano
 
+from __future__ import print_function
+
 import vtk
 import sys
 import pypes

@@ -4,6 +4,8 @@
 Simple build script for VTK, ITK, and vmtk.
 """
 
+from __future__ import print_function
+
 import os
 import sys
 import platform
