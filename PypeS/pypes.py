@@ -3,13 +3,10 @@
 import importlib
 
 __all__ = [
-    'pypescript',
-    'pype',
-    'pypebatch'
+    'vmtk.pypescript',
+    'vmtk.pype',
+    'vmtk.pypebatch'
     ]
 
-globalList = globals()
-
 for item in __all__:
-    moduleToImport = 'vmtk.'+item
-    globalList[moduleToImport] = importlib.import_module(moduleToImport)
+    exec('from '+item+' import *', globals())
