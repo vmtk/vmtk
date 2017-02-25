@@ -117,19 +117,19 @@ class vmtkImageReader(pypes.pypeScript):
         reader.SetDataExtent(self.DataExtent)
         reader.SetDataSpacing(self.DataSpacing)
         reader.SetDataOrigin(self.DataOrigin)
-      	reader.SetHeaderSize(self.HeaderSize)
-      	if self.DataScalarType == 'float':
-      	    reader.SetDataScalarTypeToFloat()
-       	elif self.DataScalarType == 'double':
-      	    reader.SetDataScalarTypeToDouble()
-       	elif self.DataScalarType == 'int':
-      	    reader.SetDataScalarTypeToInt()
-       	elif self.DataScalarType == 'short':
-      	    reader.SetDataScalarTypeToShort()
-       	elif self.DataScalarType == 'ushort':
-      	    reader.SetDataScalarTypeToUnsignedShort()
-      	elif self.DataScalarType == 'uchar':
-      	    reader.SetDataScalarTypeToUnsignedChar()
+        reader.SetHeaderSize(self.HeaderSize)
+        if self.DataScalarType == 'float':
+            reader.SetDataScalarTypeToFloat()
+        elif self.DataScalarType == 'double':
+            reader.SetDataScalarTypeToDouble()
+        elif self.DataScalarType == 'int':
+            reader.SetDataScalarTypeToInt()
+        elif self.DataScalarType == 'short':
+            reader.SetDataScalarTypeToShort()
+        elif self.DataScalarType == 'ushort':
+            reader.SetDataScalarTypeToUnsignedShort()
+        elif self.DataScalarType == 'uchar':
+            reader.SetDataScalarTypeToUnsignedChar()
         reader.Update()
         self.Image = reader.GetOutput()
 

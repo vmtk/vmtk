@@ -54,30 +54,30 @@ class vmtkBranchSections(pypes.pypeScript):
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface, already split into branches','vmtksurfacereader'],
             ['Centerlines','centerlines','vtkPolyData',1,'','the input centerlines, already split into branches','vmtksurfacereader'],
-      	    ['NumberOfDistanceSpheres','distancespheres','int',1,'(0,)','distance from the bifurcation at which the sections have to be taken; the distance is expressed in number of inscribed spheres, where each sphere touches the center of the previous one'],
-      	    ['ReverseDirection','reverse','bool',1,'','toggle start generating sections from the end of the branches rather than the start'],
-      	    ['RadiusArrayName','radiusarray','str',1,'','name of the array where centerline radius is stored'],
-      	    ['GroupIdsArrayName','groupidsarray','str',1,'','name of the array where centerline group ids are stored'],
-      	    ['CenterlineIdsArrayName','centerlineidsarray','str',1,'','name of the array where centerline ids are stored'],
-      	    ['TractIdsArrayName','tractidsarray','str',1,'','name of the array where centerline tract ids are stored'],
-      	    ['BlankingArrayName','blankingarray','str',1,'','name of the array where centerline blanking information about branches is stored'],
-      	    ['BranchSectionGroupIdsArrayName','branchsectiongroupids','str',1,'','name of the array where the group id to which each section belongs has to be stored'],
-      	    ['BranchSectionAreaArrayName','branchsectionarea','str',1,'','name of the array where the area of bifurcation sections have to be stored'],
-      	    ['BranchSectionMinSizeArrayName','branchsectionminsize','str',1,'','name of the array where the minimum diameter of each section has to be stored'],
-      	    ['BranchSectionMaxSizeArrayName','branchsectionmaxsize','str',1,'','name of the array where the maximum diameter of each bifurcation sections has to be stored'],
-      	    ['BranchSectionShapeArrayName','branchsectionshape','str',1,'','name of the array where the shape index, i.e. the ratio between minimum and maximum diameter, of each bifurcation section has to be stored'],
-      	    ['BranchSectionClosedArrayName','branchsectionclosed','str',1,'','name of the array containing 1 if a section is closed and 0 otherwise'],
-      	    ['BranchSectionDistanceSpheresArrayName','branchsectiondistancespheres','str',1,'','name of the array containing the number of distance spheres the section is taken at']
+            ['NumberOfDistanceSpheres','distancespheres','int',1,'(0,)','distance from the bifurcation at which the sections have to be taken; the distance is expressed in number of inscribed spheres, where each sphere touches the center of the previous one'],
+            ['ReverseDirection','reverse','bool',1,'','toggle start generating sections from the end of the branches rather than the start'],
+            ['RadiusArrayName','radiusarray','str',1,'','name of the array where centerline radius is stored'],
+            ['GroupIdsArrayName','groupidsarray','str',1,'','name of the array where centerline group ids are stored'],
+            ['CenterlineIdsArrayName','centerlineidsarray','str',1,'','name of the array where centerline ids are stored'],
+            ['TractIdsArrayName','tractidsarray','str',1,'','name of the array where centerline tract ids are stored'],
+            ['BlankingArrayName','blankingarray','str',1,'','name of the array where centerline blanking information about branches is stored'],
+            ['BranchSectionGroupIdsArrayName','branchsectiongroupids','str',1,'','name of the array where the group id to which each section belongs has to be stored'],
+            ['BranchSectionAreaArrayName','branchsectionarea','str',1,'','name of the array where the area of bifurcation sections have to be stored'],
+            ['BranchSectionMinSizeArrayName','branchsectionminsize','str',1,'','name of the array where the minimum diameter of each section has to be stored'],
+            ['BranchSectionMaxSizeArrayName','branchsectionmaxsize','str',1,'','name of the array where the maximum diameter of each bifurcation sections has to be stored'],
+            ['BranchSectionShapeArrayName','branchsectionshape','str',1,'','name of the array where the shape index, i.e. the ratio between minimum and maximum diameter, of each bifurcation section has to be stored'],
+            ['BranchSectionClosedArrayName','branchsectionclosed','str',1,'','name of the array containing 1 if a section is closed and 0 otherwise'],
+            ['BranchSectionDistanceSpheresArrayName','branchsectiondistancespheres','str',1,'','name of the array containing the number of distance spheres the section is taken at']
             ])
         self.SetOutputMembers([
             ['BranchSections','o','vtkPolyData',1,'','the output sections','vmtksurfacewriter'],
-      	    ['BranchSectionGroupIdsArrayName','branchsectiongroupids','str',1,'','name of the array where the group id to which each section belongs are stored'],
-      	    ['BranchSectionAreaArrayName','branchsectionarea','str',1,'','name of the array where the area of bifurcation sections are stored'],
-      	    ['BranchSectionMinSizeArrayName','branchsectionminsize','str',1,'','name of the array where the minimum diameter of each section are stored'],
-      	    ['BranchSectionMaxSizeArrayName','branchsectionmaxsize','str',1,'','name of the array where the minimum diameter of each bifurcation sections has to be stored'],
-      	    ['BranchSectionShapeArrayName','branchsectionshape','str',1,'','name of the array where the shape index, i.e. the ratio between minimum and maximum diameter, of each bifurcation section are stored'],
-      	    ['BranchSectionClosedArrayName','branchsectionclosed','str',1,'','name of the array containing 1 if a section is closed and 0 otherwise'],
-      	    ['BranchSectionDistanceSpheresArrayName','branchsectiondistancespheres','str',1,'','name of the array containing the number of distance spheres the section is taken at']
+            ['BranchSectionGroupIdsArrayName','branchsectiongroupids','str',1,'','name of the array where the group id to which each section belongs are stored'],
+            ['BranchSectionAreaArrayName','branchsectionarea','str',1,'','name of the array where the area of bifurcation sections are stored'],
+            ['BranchSectionMinSizeArrayName','branchsectionminsize','str',1,'','name of the array where the minimum diameter of each section are stored'],
+            ['BranchSectionMaxSizeArrayName','branchsectionmaxsize','str',1,'','name of the array where the minimum diameter of each bifurcation sections has to be stored'],
+            ['BranchSectionShapeArrayName','branchsectionshape','str',1,'','name of the array where the shape index, i.e. the ratio between minimum and maximum diameter, of each bifurcation section are stored'],
+            ['BranchSectionClosedArrayName','branchsectionclosed','str',1,'','name of the array containing 1 if a section is closed and 0 otherwise'],
+            ['BranchSectionDistanceSpheresArrayName','branchsectiondistancespheres','str',1,'','name of the array containing the number of distance spheres the section is taken at']
             ])
 
     def Execute(self):

@@ -34,10 +34,10 @@ class vmtkImageWriter(pypes.pypeScript):
         self.OutputFileName = ''
         self.OutputRawFileName = ''
         self.OutputDirectoryName = ''
-      	self.PixelRepresentation = ''
+        self.PixelRepresentation = ''
         self.Image = None
         self.Input = None
-      	self.WindowLevel = [1.0, 0.0]
+        self.WindowLevel = [1.0, 0.0]
         self.RasToIjkMatrixCoefficients = None #[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1]
 
         self.SetScriptName('vmtkimagewriter')
@@ -241,7 +241,7 @@ class vmtkImageWriter(pypes.pypeScript):
                 if extension in extensionFormats.keys():
                     self.Format = extensionFormats[extension]
 
-      	if self.PixelRepresentation != '':
+        if self.PixelRepresentation != '':
             cast = vtk.vtkImageCast()
             cast.SetInputData(self.Image)
             if self.PixelRepresentation == 'double':
@@ -250,7 +250,7 @@ class vmtkImageWriter(pypes.pypeScript):
                 cast.SetOutputScalarTypeToFloat()
             elif self.PixelRepresentation == 'short':
                 cast.SetOutputScalarTypeToShort()
-      	    else:
+            else:
                 self.PrintError('Error: unsupported pixel representation '+ self.PixelRepresentation + '.')
             cast.Update()
             self.Image = cast.GetOutput()

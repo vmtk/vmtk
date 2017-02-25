@@ -55,31 +55,31 @@ class vmtkBifurcationVectors(pypes.pypeScript):
         self.SetInputMembers([
             ['Centerlines','i','vtkPolyData',1,'','the input split centerlines','vmtksurfacereader'],
             ['ReferenceSystems','referencesystems','vtkPolyData',1,'','reference systems relative to the split centerlines','vmtksurfacereader'],
-      	    ['RadiusArrayName','radiusarray','str',1,'','name of the array where centerline radius values are stored'],
-      	    ['GroupIdsArrayName','groupidsarray','str',1,'','name of the array where centerline group ids are stored'],
-      	    ['CenterlineIdsArrayName','centerlineidsarray','str',1,'','name of the array where centerline ids are stored'],
-      	    ['TractIdsArrayName','tractidsarray','str',1,'','name of the array where centerline tract ids are stored'],
-      	    ['BlankingArrayName','blankingarray','str',1,'','name of the array where blanking information about branches is stored'],
-      	    ['ReferenceSystemsNormalArrayName','normalarray','str',1,'','name of the array where reference system normal vectors are stored'],
-      	    ['ReferenceSystemsUpNormalArrayName','upnormalarray','str',1,'','name of the array where reference system upnormal vectors are stored'],
-      	    ['BifurcationVectorsArrayName','vectorsarray','str',1,''],
-      	    ['InPlaneBifurcationVectorsArrayName','inplanevectorsarray','str',1,''],
-      	    ['OutOfPlaneBifurcationVectorsArrayName','outofplanevectorsarray','str',1,''],
-      	    ['InPlaneBifurcationVectorAnglesArrayName','inplaneanglesarray','str',1,''],
-      	    ['OutOfPlaneBifurcationVectorAnglesArrayName','outofplaneanglesarray','str',1,''],
-      	    ['BifurcationVectorsOrientationArrayName','orientationarray','str',1,''],
-      	    ['BifurcationGroupIdsArrayName','bifurcationgroupidsarray','str',1,''],
+            ['RadiusArrayName','radiusarray','str',1,'','name of the array where centerline radius values are stored'],
+            ['GroupIdsArrayName','groupidsarray','str',1,'','name of the array where centerline group ids are stored'],
+            ['CenterlineIdsArrayName','centerlineidsarray','str',1,'','name of the array where centerline ids are stored'],
+            ['TractIdsArrayName','tractidsarray','str',1,'','name of the array where centerline tract ids are stored'],
+            ['BlankingArrayName','blankingarray','str',1,'','name of the array where blanking information about branches is stored'],
+            ['ReferenceSystemsNormalArrayName','normalarray','str',1,'','name of the array where reference system normal vectors are stored'],
+            ['ReferenceSystemsUpNormalArrayName','upnormalarray','str',1,'','name of the array where reference system upnormal vectors are stored'],
+            ['BifurcationVectorsArrayName','vectorsarray','str',1,''],
+            ['InPlaneBifurcationVectorsArrayName','inplanevectorsarray','str',1,''],
+            ['OutOfPlaneBifurcationVectorsArrayName','outofplanevectorsarray','str',1,''],
+            ['InPlaneBifurcationVectorAnglesArrayName','inplaneanglesarray','str',1,''],
+            ['OutOfPlaneBifurcationVectorAnglesArrayName','outofplaneanglesarray','str',1,''],
+            ['BifurcationVectorsOrientationArrayName','orientationarray','str',1,''],
+            ['BifurcationGroupIdsArrayName','bifurcationgroupidsarray','str',1,''],
             ['NormalizeBifurcationVectors','normalizevectors','bool',1,'']
             ])
         self.SetOutputMembers([
             ['BifurcationVectors','o','vtkPolyData',1,'','the output data','vmtksurfacewriter'],
-      	    ['BifurcationVectorsArrayName','vectorsarray','str',1,''],
-      	    ['InPlaneBifurcationVectorsArrayName','inplanevectorsarray','str',1,''],
-      	    ['OutOfPlaneBifurcationVectorsArrayName','outofplanevectorsarray','str',1,''],
-      	    ['InPlaneBifurcationVectorAnglesArrayName','inplaneanglesarray','str',1,''],
-      	    ['OutOfPlaneBifurcationVectorAnglesArrayName','outofplaneanglesarray','str',1,''],
-      	    ['BifurcationVectorsOrientationArrayName','orientationarray','str',1,''],
-      	    ['BifurcationGroupIdsArrayName','bifurcationgroupidsarray','str',1,'']
+            ['BifurcationVectorsArrayName','vectorsarray','str',1,''],
+            ['InPlaneBifurcationVectorsArrayName','inplanevectorsarray','str',1,''],
+            ['OutOfPlaneBifurcationVectorsArrayName','outofplanevectorsarray','str',1,''],
+            ['InPlaneBifurcationVectorAnglesArrayName','inplaneanglesarray','str',1,''],
+            ['OutOfPlaneBifurcationVectorAnglesArrayName','outofplaneanglesarray','str',1,''],
+            ['BifurcationVectorsOrientationArrayName','orientationarray','str',1,''],
+            ['BifurcationGroupIdsArrayName','bifurcationgroupidsarray','str',1,'']
             ])
 
     def Execute(self):

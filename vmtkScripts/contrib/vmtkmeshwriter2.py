@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+z#!/usr/bin/env python
 
 ## Program:   VMTK
 ## Module:    $RCSfile: vmtkmeshwriter2.py,v $

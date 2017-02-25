@@ -59,23 +59,23 @@ class vmtkCenterlineOffsetAttributes(pypes.pypeScript):
             ['ReferenceSystems','referencesystems','vtkPolyData',1,'','bifurcation reference systems','vmtksurfacereader'],
             ['ReferenceGroupId','referencegroupid','int',1,'','group id of the reference system to which attributes have to be offset'],
             ['ReplaceAttributes','replaceattributes','bool',1,'','overwrite the existing attributes'],
-	          ['AbscissasArrayName','abscissasarray','str',1,'','name of the array where centerline abscissas are stored'],
-      	    ['NormalsArrayName','normalsarray','str',1,'','name of the array where centerline normals are stored'],
-      	    ['GroupIdsArrayName','groupidsarray','str',1,'','name of the array where centerline group ids are stored'],
-      	    ['CenterlineIdsArrayName','centerlineidsarray','str',1,'','name of the array where centerline ids are stored'],
-      	    ['ReferenceSystemsNormalArrayName','referencesystemsnormalarray','str',1,'','name of the array where reference system normals are stored'],
-      	    ['OffsetAbscissasArrayName','offsetabscissasarray','str',1,'','name of the array where offset centerline abscissas have to be stored if ReplaceAttributes is off'],
-      	    ['OffsetNormalsArrayName','offsetnormalsarray','str',1,'','name of the array where offset centerline normals have to be stored if ReplaceAttributes is off'],
-						['Interactive','interactive','bool',1],
+              ['AbscissasArrayName','abscissasarray','str',1,'','name of the array where centerline abscissas are stored'],
+            ['NormalsArrayName','normalsarray','str',1,'','name of the array where centerline normals are stored'],
+            ['GroupIdsArrayName','groupidsarray','str',1,'','name of the array where centerline group ids are stored'],
+            ['CenterlineIdsArrayName','centerlineidsarray','str',1,'','name of the array where centerline ids are stored'],
+            ['ReferenceSystemsNormalArrayName','referencesystemsnormalarray','str',1,'','name of the array where reference system normals are stored'],
+            ['OffsetAbscissasArrayName','offsetabscissasarray','str',1,'','name of the array where offset centerline abscissas have to be stored if ReplaceAttributes is off'],
+            ['OffsetNormalsArrayName','offsetnormalsarray','str',1,'','name of the array where offset centerline normals have to be stored if ReplaceAttributes is off'],
+                        ['Interactive','interactive','bool',1],
             ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer']
             ])
         self.SetOutputMembers([
             ['Centerlines','o','vtkPolyData',1,'','the output centerlines','vmtksurfacewriter'],
             ['ReferenceGroupId','referencegroupid','int',1,'','group id of the reference system to which attributes are offset'],
-      	    ['OffsetAbscissasArrayName','offsetabscissasarray','str',1,'','name of the array where offset centerline abscissas are stored if ReplaceAttributes is off'],
-      	    ['OffsetNormalsArrayName','offsetnormalsarray','str',1,'','name of the array where offset centerline normals are stored if ReplaceAttributes is off'],
-      	    ['AbscissasArrayName','abscissasarray','str',1,'','name of the array where centerline abscissas are stored'],
-      	    ['NormalsArrayName','normalsarray','str',1,'','name of the array where centerline normals are stored']
+            ['OffsetAbscissasArrayName','offsetabscissasarray','str',1,'','name of the array where offset centerline abscissas are stored if ReplaceAttributes is off'],
+            ['OffsetNormalsArrayName','offsetnormalsarray','str',1,'','name of the array where offset centerline normals are stored if ReplaceAttributes is off'],
+            ['AbscissasArrayName','abscissasarray','str',1,'','name of the array where centerline abscissas are stored'],
+            ['NormalsArrayName','normalsarray','str',1,'','name of the array where centerline normals are stored']
             ])
 
     def GroupIdValidator(self,text):
@@ -113,7 +113,7 @@ class vmtkCenterlineOffsetAttributes(pypes.pypeScript):
             viewer.PrintError = self.PrintError
             viewer.PringLog = self.PrintLog
             viewer.Display = 0
-	    viewer.Execute()
+            viewer.Execute()
             
             groupIdString = self.InputText("Please input the reference groupId:\n",self.GroupIdValidator)
             self.ReferenceGroupId = int(groupIdString)

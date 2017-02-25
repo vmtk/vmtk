@@ -39,7 +39,7 @@ class vmtkMeshViewer(pypes.pypeScript):
         self.Color = [-1.0, -1.0, -1.0]
         self.Legend = 0
         self.FlatInterpolation = 0
-	
+
         self.Representation = 'surface'
 
         self.Actor = None

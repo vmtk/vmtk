@@ -50,7 +50,7 @@ class vmtkTetGen(pypes.pypeScript):
         self.CheckClosure = 0
         self.Order = 1
         self.DoCheck = 0
-      	self.Verbose = 0
+        self.Verbose = 0
         self.UseSizingFunction = 0
         self.SizingFunctionArrayName = ''
         

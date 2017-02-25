@@ -83,8 +83,8 @@ class vmtkMeshClipper(pypes.pypeScript):
 
     def Display(self):
 
-      	self.BoxWidget.SetInputData(self.Mesh)
-      	self.BoxWidget.PlaceWidget()
+        self.BoxWidget.SetInputData(self.Mesh)
+        self.BoxWidget.PlaceWidget()
 
         self.vmtkRenderer.Render()
 

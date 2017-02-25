@@ -219,7 +219,7 @@ class vmtkRenderer(pypes.pypeScript):
             self.RenderWindowInteractor.ExitCallback()
 
     def Render(self,interactive=1):
-	
+
         if interactive:
             self.RenderWindowInteractor.Initialize()
         self.RenderWindow.SetWindowName("vmtk - the Vascular Modeling Toolkit")

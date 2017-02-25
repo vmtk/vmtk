@@ -77,7 +77,7 @@ class vmtkMeshConnectivity(pypes.pypeScript):
         connectivityFilter.Update()
 
         self.Mesh = connectivityFilter.GetOutput()
-	
+
 
 if __name__=='__main__':
 

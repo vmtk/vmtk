@@ -153,8 +153,8 @@ class vmtkCenterlineViewer(pypes.pypeScript):
             scalarBarActor.SetLabelFormat('%.2f')
             scalarBarActor.SetTitle(self.PointDataArrayName)
             self.vmtkRenderer.Renderer.AddActor(scalarBarActor)
-	
-	if self.Display:
+
+        if self.Display:
             self.vmtkRenderer.Render()
 
         if self.OwnRenderer:

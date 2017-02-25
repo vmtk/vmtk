@@ -92,11 +92,11 @@ class vmtkSurfaceConnectivity(pypes.pypeScript):
         connectivityFilter.Update()
 
         self.Surface = connectivityFilter.GetOutput()
-	
-      	if self.CleanOutput == 1:
-      	    cleaner = vtk.vtkCleanPolyData()
-      	    cleaner.SetInputConnection(connectivityFilter.GetOutputPort())
-      	    cleaner.Update()
+
+        if self.CleanOutput == 1:
+            cleaner = vtk.vtkCleanPolyData()
+            cleaner.SetInputConnection(connectivityFilter.GetOutputPort())
+            cleaner.Update()
 
             self.Surface = cleaner.GetOutput()
 

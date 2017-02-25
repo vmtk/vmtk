@@ -102,9 +102,9 @@ class vmtkMeshMergeTimesteps(pypes.pypeScript):
         w_name = self.VelocityComponentsArrayNames.split(' ')[2]
 
         if self.Wsr:
-        	taux_name = self.WsrComponentsArrayNames.split(' ')[0]
-        	tauy_name = self.WsrComponentsArrayNames.split(' ')[1]
-        	tauz_name = self.WsrComponentsArrayNames.split(' ')[2]
+            taux_name = self.WsrComponentsArrayNames.split(' ')[0]
+            tauy_name = self.WsrComponentsArrayNames.split(' ')[1]
+            tauz_name = self.WsrComponentsArrayNames.split(' ')[2]
 
         field = vtk.vtkFieldData()
         field.AllocateArrays(1)
@@ -133,17 +133,17 @@ class vmtkMeshMergeTimesteps(pypes.pypeScript):
                     self.Mesh.GetPointData().AddArray(p)
 
                 if self.Wsr:
-                	taux = mesh.GetPointData().GetArray(taux_name)
-                	taux.SetName(taux_name+str(step))
-                	self.Mesh.GetPointData().AddArray(taux)
+                    taux = mesh.GetPointData().GetArray(taux_name)
+                    taux.SetName(taux_name+str(step))
+                    self.Mesh.GetPointData().AddArray(taux)
 
-                	tauy = mesh.GetPointData().GetArray(tauy_name)
-                	tauy.SetName(tauy_name+str(step))
-                	self.Mesh.GetPointData().AddArray(tauy)
+                    tauy = mesh.GetPointData().GetArray(tauy_name)
+                    tauy.SetName(tauy_name+str(step))
+                    self.Mesh.GetPointData().AddArray(tauy)
 
-                	tauz = mesh.GetPointData().GetArray(tauz_name)
-                	tauz.SetName(tauz_name+str(step))
-                	self.Mesh.GetPointData().AddArray(tauz)
+                    tauz = mesh.GetPointData().GetArray(tauz_name)
+                    tauz.SetName(tauz_name+str(step))
+                    self.Mesh.GetPointData().AddArray(tauz)
 
 
                 if self.VelocityVector:

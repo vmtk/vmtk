@@ -60,7 +60,7 @@ class vmtkMeshViewer2(pypes.pypeScript):
         self.ClipExtract = False
         self.InsideOut = False
         self.ObserverId = -1
-	
+
         self.Actor = None
         self.ScalarBarActor = None
 

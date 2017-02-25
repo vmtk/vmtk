@@ -145,7 +145,7 @@ class vmtkSurfaceCurvature(pypes.pypeScript):
         else:
             self.ReferenceSurface.GetPointData().AddArray(activeScalars)
             self.Surface = self.ReferenceSurface
-	
+
 
 if __name__=='__main__':
 

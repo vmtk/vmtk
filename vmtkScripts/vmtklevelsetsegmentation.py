@@ -63,7 +63,7 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
         self.FeatureImageType = 'gradient'
         
         self.UpwindFactor = 1.0
-	
+
         self.FWHMRadius = [1.0, 1.0, 1.0]
         self.FWHMBackgroundValue = 0.0
         

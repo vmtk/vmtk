@@ -16,7 +16,7 @@ class vmtkImageCompare(pypes.pypeScript):
         self.Image = None
         self.ReferenceImage = None
         self.Method = ''
-	self.Tolerance = 1E-8
+        self.Tolerance = 1E-8
         self.Result = ''
         self.ResultLog = ''
 

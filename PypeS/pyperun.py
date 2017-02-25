@@ -20,7 +20,7 @@ try:
     from vmtk import pypeserver
     from vmtk import pypes
 except:
-    print "Unexpected error:", sys.exc_info()[0]
+    print("Unexpected error:", sys.exc_info()[0])
     raise
 
 if __name__=='__main__':
@@ -44,7 +44,7 @@ if __name__=='__main__':
             pypeserver.PypeServer(queue,None,None,returnIfEmptyQueue=True)
     except KeyboardInterrupt:
         pypeProcess.terminate()
-    except BaseException, e:
-        print e
+    except BaseException as e:
+        print(e)
         sys.exit(1)
 

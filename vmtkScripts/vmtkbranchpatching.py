@@ -42,7 +42,7 @@ class vmtkBranchPatching(pypes.pypeScript):
         self.GroupIdsArrayName = ''
         self.LongitudinalMappingArrayName = ''
         self.CircularMappingArrayName = ''
-	
+
         self.LongitudinalPatchNumberArrayName = 'Slab'
         self.CircularPatchNumberArrayName = 'Sector'
         self.PatchAreaArrayName = 'PatchArea'

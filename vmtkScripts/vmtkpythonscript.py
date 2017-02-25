@@ -59,7 +59,7 @@ class vmtkPythonScript(pypes.pypeScript):
 
         try:
             execfile(self.PythonScriptFileName)
-        except Exception, error:
+        except Exception as error:
             self.PrintError("Python script error: %s" % error)
 
 

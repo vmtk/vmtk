@@ -36,7 +36,7 @@ class vmtkCenterlineInterpolation(pypes.pypeScript):
         self.SetScriptDoc('smooth centerlines with a moving average filter')
         self.SetInputMembers([
             ['Centerlines','i','vtkPolyData',1,'','the input centerlines','vmtksurfacereader'],
-      	    ['MaskArrayName','array','str',1,'','the array used for determining what portion of the centerline has to be reinterpolated is stored'],
+            ['MaskArrayName','array','str',1,'','the array used for determining what portion of the centerline has to be reinterpolated is stored'],
             ['Threshold','threshold','float',1,'','value of the mask array below which (above which, in case insideout is 1) the centerline is reinterpolated'],
             ['InsideOut','insideout','bool',1,'','toggle interpolating below (0) or above (1) the threshold value']
             ])

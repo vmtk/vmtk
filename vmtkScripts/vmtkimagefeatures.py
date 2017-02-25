@@ -97,7 +97,7 @@ class vmtkImageFeatures(pypes.pypeScript):
         fwhmFeatureImageFilter.SetRadius(self.FWHMRadius)
         fwhmFeatureImageFilter.SetBackgroundValue(self.FWHMBackgroundValue)
         fwhmFeatureImageFilter.Update()
-	
+
         self.FeatureImage = vtk.vtkImageData()
         self.FeatureImage.DeepCopy(fwhmFeatureImageFilter.GetOutput())
 

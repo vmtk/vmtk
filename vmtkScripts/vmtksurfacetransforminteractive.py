@@ -93,8 +93,8 @@ class vmtkSurfaceTransformInteractive(pypes.pypeScript):
  
     def Display(self):
         self.Surface.ComputeBounds()
-      	self.BoxWidget.PlaceWidget(self.Surface.GetBounds()) 
-      	#self.vmtkRenderer.RenderWindowInteractor.Initialize() 
+        self.BoxWidget.PlaceWidget(self.Surface.GetBounds())
+        #self.vmtkRenderer.RenderWindowInteractor.Initialize()
         self.vmtkRenderer.Render()
         #self.vmtkRenderer.RenderWindowInteractor.Start()
  
@@ -160,7 +160,7 @@ class vmtkSurfaceTransformInteractive(pypes.pypeScript):
         if self.Scaling:
             self.BoxWidget.ScalingEnabledOn()
             self.BoxWidget.HandlesOn()
- 	
+
         self.vmtkRenderer.RegisterScript(self) 
         
         self.InputInfo('Use the left-mousebutton to rotate the box \nUse the middle-mouse-button to move the box \nPress space to move the surface to its new postion')
@@ -169,7 +169,7 @@ class vmtkSurfaceTransformInteractive(pypes.pypeScript):
         #self.OutputText('Use the middle-mouse-button to move the box \n')
         #self.OutputText('Press space to move the surface to its new postion \n')
         #self.OutputText('Press \'q\' to quit and apply the transform \n')
-	
+
         self.vmtkRenderer.AddKeyBinding('space','Move the surface.',self.MoveCallback)
         self.vmtkRenderer.AddKeyBinding('i','Interact.',self.InteractCallback)
 

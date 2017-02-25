@@ -61,7 +61,7 @@ class vmtkSurfaceNormals(pypes.pypeScript):
         normalsFilter.SetFlipNormals(self.FlipNormals)
         normalsFilter.SetConsistency(self.Consistency)
         normalsFilter.SetComputeCellNormals(self.ComputeCellNormals)
-      	normalsFilter.SplittingOff()
+        normalsFilter.SplittingOff()
         normalsFilter.Update()
 
         self.Surface = normalsFilter.GetOutput()

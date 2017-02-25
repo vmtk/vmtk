@@ -48,17 +48,17 @@ class vmtkPointSplitExtractor(pypes.pypeScript):
             ['TractIdsArrayName','tractidsarray','str',1],
             ['CenterlineIdsArrayName','centerlineidsarray','str',1],
             ['RadiusArrayName','radiusarray','str',1],
-      	    ['BlankingArrayName','blankingarray','str',1],
-      	    ['SplitPoint','splitpoint','float',3],
-      	    ['GapLength','gaplength','float',1,'(0.0,)'],
-      	    ['Tolerance','tolerance','float',1,'(0.0,)']
+            ['BlankingArrayName','blankingarray','str',1],
+            ['SplitPoint','splitpoint','float',3],
+            ['GapLength','gaplength','float',1,'(0.0,)'],
+            ['Tolerance','tolerance','float',1,'(0.0,)']
             ])
         self.SetOutputMembers([
             ['Centerlines','o','vtkPolyData',1,'','','vmtksurfacewriter'],
             ['GroupIdsArrayName','groupidsarray','str',1],
             ['TractIdsArrayName','tractidsarray','str',1],
             ['CenterlineIdsArrayName','centerlineidsarray','str',1],
-      	    ['BlankingArrayName','blankingarray','str',1]
+            ['BlankingArrayName','blankingarray','str',1]
             ])
 
     def Execute(self):
@@ -72,7 +72,7 @@ class vmtkPointSplitExtractor(pypes.pypeScript):
         pointSplitExtractor.SetGroupIdsArrayName(self.GroupIdsArrayName)
         pointSplitExtractor.SetTractIdsArrayName(self.TractIdsArrayName)
         pointSplitExtractor.SetCenterlineIdsArrayName(self.CenterlineIdsArrayName)
-      	pointSplitExtractor.SetBlankingArrayName(self.BlankingArrayName)
+        pointSplitExtractor.SetBlankingArrayName(self.BlankingArrayName)
         pointSplitExtractor.SetSplitPoint(self.SplitPoint)
         pointSplitExtractor.SetGapLength(self.GapLength)
         pointSplitExtractor.SetTolerance(self.Tolerance)

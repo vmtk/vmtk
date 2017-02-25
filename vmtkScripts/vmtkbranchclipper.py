@@ -38,7 +38,7 @@ class vmtkBranchClipper(pypes.pypeScript):
         self.CutoffRadiusFactor = 1E16
         
         self.ClipValue = 0.0
-	
+
         self.BlankingArrayName = ''
         self.GroupIdsArrayName = ''
 
