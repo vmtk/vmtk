@@ -16,7 +16,7 @@ if __name__ == '__main__':
             os.environ["PYTHONPATH"] = os.path.join(vmtkhome)
         else:
             vmtkhome = os.path.join(os.path.dirname(os.path.abspath(__file__)),"..","..","..")
-            os.environ["PYTHONPATH"] = os.path.join(vmtkhome,"lib","python2.7","site-packages")
+            os.environ["PYTHONPATH"] = os.path.join(vmtkhome,"lib","python3.5","site-packages")
 
         sys.path.append(os.path.join(vmtkhome,"bin"))
         sys.path.append(os.environ["PYTHONPATH"])

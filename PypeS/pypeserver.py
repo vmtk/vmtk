@@ -44,7 +44,7 @@ def RunPypeProcess(arguments, inputStream=None, outputStream=None, logOn=True):
     try: 
         pipe.ParseArguments()
         pipe.Execute() 
-    except BaseException, e:
+    except BaseException as e:
         print(traceback.format_exc())
     del pipe
 
@@ -77,10 +77,10 @@ def PypeServer(queue, output, error, returnIfEmptyQueue=False):
                     return
             else:
                 time.sleep(0.5)
-        except IOError, e:
+        except IOError as e:
             print("Connection closed")
             break
-        except KeyboardInterrupt, e:
+        except KeyboardInterrupt as e:
             print("Connection closed")
             break
 
