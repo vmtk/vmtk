@@ -20,7 +20,7 @@
 import vtk
 import sys
 import vtkvmtk
-import vmtkrenderer
+from . import vmtkrenderer
 import pypes
 
 vmtksurfaceendclipper = 'vmtkSurfaceEndClipper'

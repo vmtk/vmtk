@@ -217,18 +217,18 @@ class vmtkImageWriter(pypes.pypeScript):
                             'dat':'pointdata'}
 
         if self.OutputFileName == 'BROWSER':
-            import tkFileDialog
+            import tkinter.filedialog
             import os.path
             initialDir = pypes.pypeScript.lastVisitedPath
-            self.OutputFileName = tkFileDialog.asksaveasfilename(title="Output image",initialdir=initialDir)
+            self.OutputFileName = tkinter.filedialog.asksaveasfilename(title="Output image",initialdir=initialDir)
             pypes.pypeScript.lastVisitedPath = os.path.dirname(self.OutputFileName)
             if not self.OutputFileName:
                 self.PrintError('Error: no OutputFileName.')
 
         if self.OutputDirectoryName == 'BROWSER':
-            import tkFileDialog
+            import tkinter.filedialog
             initialDir = pypes.pypeScript.lastVisitedPath
-            self.OutputDirectoryName = tkFileDialog.askdirectory(title="Output directory",initialdir=initialDir)
+            self.OutputDirectoryName = tkinter.filedialog.askdirectory(title="Output directory",initialdir=initialDir)
             pypes.pypeScript.lastVisitedPath = self.OutputDirectoryName
             if not self.OutputDirectoryName:
                 self.PrintError('Error: no OutputDirectoryName.')
@@ -238,7 +238,7 @@ class vmtkImageWriter(pypes.pypeScript):
             extension = os.path.splitext(self.OutputFileName)[1]
             if extension:
                 extension = extension[1:]
-                if extension in extensionFormats.keys():
+                if extension in list(extensionFormats.keys()):
                     self.Format = extensionFormats[extension]
 
         if self.PixelRepresentation != '':

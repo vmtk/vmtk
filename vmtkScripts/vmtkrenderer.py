@@ -236,7 +236,7 @@ class vmtkRenderer(pypes.pypeScript):
         textActorInputsList = []
 
         for group in groups:
-            sortedKeys = [key for key in self.KeyBindings.keys() if self.KeyBindings[key]['group'] == group]
+            sortedKeys = [key for key in list(self.KeyBindings.keys()) if self.KeyBindings[key]['group'] == group]
             sortedKeys.sort()
             textActorInputs = ['%s: %s' % (key, self.KeyBindings[key]['text']) for key in sortedKeys]
             textActorInputsList.append('\n'.join(textActorInputs))

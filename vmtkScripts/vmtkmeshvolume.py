@@ -54,7 +54,7 @@ class vmtkMeshVolume(pypes.pypeScript):
 
         self.Volume = 0.0
         cellPoints = vtk.vtkIdList()
-        for i in xrange(self.Mesh.GetNumberOfCells()):
+        for i in range(self.Mesh.GetNumberOfCells()):
             self.Mesh.GetCellPoints(i,cellPoints)
             point0 = self.Mesh.GetPoint(cellPoints.GetId(0))
             point1 = self.Mesh.GetPoint(cellPoints.GetId(1))

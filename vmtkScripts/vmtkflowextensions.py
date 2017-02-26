@@ -19,7 +19,7 @@ import sys
 
 import vtkvmtk
 import pypes
-import vmtkrenderer
+from . import vmtkrenderer
 
 vmtkflowextensions = 'vmtkFlowExtensions'
 
@@ -142,7 +142,7 @@ class vmtkFlowExtensions(pypes.pypeScript):
                 labels = [int(label) for label in labelString.split()]
                 ok = True
                 for label in labels:
-                    if label not in range(numberOfBoundaries):
+                    if label not in list(range(numberOfBoundaries)):
                         ok = False
 
             for label in labels:

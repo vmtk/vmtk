@@ -636,7 +636,7 @@ class pypeMain(object):
         self.Arguments = None
 
     def Execute(self):
-        import pype
+        from . import pype
         pipe = pype.Pype()
         pipe.Arguments = self.Arguments
         pipe.ParseArguments()

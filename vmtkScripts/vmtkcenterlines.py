@@ -18,7 +18,7 @@ import vtk
 import sys
 
 import vtkvmtk
-import vmtkrenderer
+from . import vmtkrenderer
 import pypes
 
 vmtkcenterlines = 'vmtkCenterlines'
@@ -630,7 +630,7 @@ class vmtkCenterlines(pypes.pypeScript):
             centerlineFilter.SetDelaunayTolerance(self.DelaunayTolerance)
         if self.UseTetGen==1:
             self.PrintLog('Running TetGen.')
-            import vmtkscripts
+            from . import vmtkscripts
             surfaceToMesh = vmtkscripts.vmtkSurfaceToMesh()
             surfaceToMesh.Surface = centerlineInputSurface
             surfaceToMesh.Execute()

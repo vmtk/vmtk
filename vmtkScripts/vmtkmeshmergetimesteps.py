@@ -22,8 +22,8 @@ import sys
 import os
 
 import vtkvmtk
-import vmtkmeshreader
-import vmtkmeshvectorfromcomponents
+from . import vmtkmeshreader
+from . import vmtkmeshvectorfromcomponents
 import pypes
 
 vmtkmeshmergetimesteps = 'vmtkMeshMergeTimesteps'
@@ -91,7 +91,7 @@ class vmtkMeshMergeTimesteps(pypes.pypeScript):
             if root == self.InputDirectoryName:
                 fileList = [x for x in files if not (x.startswith('.'))]
 
-        timeIndexList = range(self.FirstTimeStep,self.LastTimeStep+1,self.IntervalTimeStep)
+        timeIndexList = list(range(self.FirstTimeStep,self.LastTimeStep+1,self.IntervalTimeStep))
         reader = vmtkmeshreader.vmtkMeshReader()
         #if self.VelocityVector or self.WsrVector:
         if self.WsrVector:

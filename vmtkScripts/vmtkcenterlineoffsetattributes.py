@@ -20,8 +20,8 @@ import sys
 
 import pypes
 
-import vmtkrenderer
-import vmtkcenterlineviewer
+from . import vmtkrenderer
+from . import vmtkcenterlineviewer
 
 vmtkcenterlineoffsetattributes = 'vmtkCenterlineOffsetAttributes'
 

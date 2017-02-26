@@ -268,18 +268,18 @@ class vmtkImageReader(pypes.pypeScript):
                             'png':'png'}
 
         if self.InputFileName == 'BROWSER':
-            import tkFileDialog
+            import tkinter.filedialog
             import os.path
             initialDir = pypes.pypeScript.lastVisitedPath
-            self.InputFileName = tkFileDialog.askopenfilename(title="Input image",initialdir=initialDir)
+            self.InputFileName = tkinter.filedialog.askopenfilename(title="Input image",initialdir=initialDir)
             pypes.pypeScript.lastVisitedPath = os.path.dirname(self.InputFileName)
             if not self.InputFileName:
                 self.PrintError('Error: no InputFileName.')
 
         if self.InputDirectoryName == 'BROWSER':
-            import tkFileDialog
+            import tkinter.filedialog
             initialDir = pypes.pypeScript.lastVisitedPath
-            self.InputDirectoryName = tkFileDialog.askdirectory(title="Input directory",initialdir=initialDir)
+            self.InputDirectoryName = tkinter.filedialog.askdirectory(title="Input directory",initialdir=initialDir)
             pypes.pypeScript.lastVisitedPath = self.InputDirectoryName
             if not self.InputDirectoryName:
                 self.PrintError('Error: no InputDirectoryName.')
@@ -289,7 +289,7 @@ class vmtkImageReader(pypes.pypeScript):
             extension = os.path.splitext(self.InputFileName)[1]
             if extension:
                 extension = extension[1:]
-                if extension in extensionFormats.keys():
+                if extension in list(extensionFormats.keys()):
                     self.Format = extensionFormats[extension]
 
         if self.UseITKIO and self.InputFileName and self.Format not in ['vtkxml','vtk','raw'] and not self.InputDirectoryName:

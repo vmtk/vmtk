@@ -22,7 +22,7 @@ import vtk
 import sys
 
 import pypes
-import vmtkmeshvectorfromcomponents
+from . import vmtkmeshvectorfromcomponents
 
 vmtkmeshextractpointdata = 'vmtkMeshExtractPointData'
 

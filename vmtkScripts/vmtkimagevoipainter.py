@@ -18,7 +18,7 @@ import sys
 import math
 
 import vtkvmtk
-import vmtkrenderer
+from . import vmtkrenderer
 import pypes
 
 vmtkimagevoipainter = 'vmtkImageVOIPainter'

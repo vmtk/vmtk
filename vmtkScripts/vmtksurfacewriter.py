@@ -206,10 +206,10 @@ class vmtkSurfaceWriter(pypes.pypeScript):
                             'dat':'pointdata'}
 
         if self.OutputFileName == 'BROWSER':
-            import tkFileDialog
+            import tkinter.filedialog
             import os.path
             initialDir = pypes.pypeScript.lastVisitedPath
-            self.OutputFileName = tkFileDialog.asksaveasfilename(title="Output surface",initialdir=initialDir)
+            self.OutputFileName = tkinter.filedialog.asksaveasfilename(title="Output surface",initialdir=initialDir)
             pypes.pypeScript.lastVisitedPath = os.path.dirname(self.OutputFileName)
             if not self.OutputFileName:
                 self.PrintError('Error: no OutputFileName.')
@@ -219,7 +219,7 @@ class vmtkSurfaceWriter(pypes.pypeScript):
             extension = os.path.splitext(self.OutputFileName)[1]
             if extension:
                 extension = extension[1:]
-                if extension in extensionFormats.keys():
+                if extension in list(extensionFormats.keys()):
                     self.Format = extensionFormats[extension]
 
         if (self.Format == 'vtk'):

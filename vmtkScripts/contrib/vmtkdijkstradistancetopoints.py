@@ -78,7 +78,7 @@ class vmtkDijkstraDistanceToPoints(pypes.pypeScript):
         if not text:
             return 1
         splitText = text.strip().split(' ')
-        if len(splitText) not in range(1,5):
+        if len(splitText) not in list(range(1,5)):
             return 0
         try:
             for i in range(1,len(splitText)+1):

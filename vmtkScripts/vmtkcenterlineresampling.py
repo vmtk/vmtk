@@ -19,7 +19,7 @@ import sys
 
 import pypes
 
-import vmtklineresampling
+from . import vmtklineresampling
 
 vmtkcenterlineresampling = 'vmtkCenterlineResampling'
 

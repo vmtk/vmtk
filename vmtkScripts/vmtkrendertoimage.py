@@ -16,7 +16,7 @@
 import vtk
 import sys
 
-import vmtkrenderer
+from . import vmtkrenderer
 import pypes
 
 vmtkrendertoimage = 'vmtkRenderToImage'

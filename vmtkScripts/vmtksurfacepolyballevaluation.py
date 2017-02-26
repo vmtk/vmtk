@@ -68,7 +68,7 @@ class vmtkSurfacePolyBallEvaluation(pypes.pypeScript):
         polyball.SetInputData(self.PolyBall)
         polyball.SetPolyBallRadiusArrayName(self.RadiusArrayName)
  
-        for i in xrange(self.Surface.GetNumberOfPoints()):
+        for i in range(self.Surface.GetNumberOfPoints()):
             point = self.Surface.GetPoint(i)
             value = polyball.EvaluateFunction(point)
             evaluationArray.SetValue(i,value)

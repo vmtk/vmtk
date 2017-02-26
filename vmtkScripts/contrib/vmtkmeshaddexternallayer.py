@@ -24,7 +24,7 @@ import vtk
 import vtkvmtk
 import sys
 import vmtkscripts
-import vmtkcontribscripts
+from . import vmtkcontribscripts
 
 import pypes
 

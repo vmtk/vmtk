@@ -88,7 +88,7 @@ class vmtkSurfaceCapper(pypes.pypeScript):
 
         if self.Interactive:
             if not self.vmtkRenderer:
-                import vmtkrenderer
+                from . import vmtkrenderer
                 self.vmtkRenderer = vmtkrenderer.vmtkRenderer()
                 self.vmtkRenderer.Initialize()
                 self.OwnRenderer = 1
@@ -135,7 +135,7 @@ class vmtkSurfaceCapper(pypes.pypeScript):
                 labels = [int(label) for label in labelString.split()]
                 ok = True
                 for label in labels:
-                    if label not in range(numberOfBoundaries):
+                    if label not in list(range(numberOfBoundaries)):
                         ok = False
 
             for label in labels:

@@ -319,9 +319,9 @@ class vmtkMeshWriter2(pypes.pypeScript):
                             'dat':'pointdata'}
 
         if self.OutputFileName == 'BROWSER':
-            import tkFileDialog
+            import tkinter.filedialog
             initialDir = '.'
-            self.OutputFileName = tkFileDialog.asksaveasfilename(title="Output mesh",initialdir=initialDir)
+            self.OutputFileName = tkinter.filedialog.asksaveasfilename(title="Output mesh",initialdir=initialDir)
             if not self.OutputFileName:
                 self.PrintError('Error: no OutputFileName.')
 
@@ -330,7 +330,7 @@ class vmtkMeshWriter2(pypes.pypeScript):
             extension = os.path.splitext(self.OutputFileName)[1]
             if extension:
                 extension = extension[1:]
-                if extension in extensionFormats.keys():
+                if extension in list(extensionFormats.keys()):
                     self.Format = extensionFormats[extension]
 
         if (self.Format == 'vtk'):
