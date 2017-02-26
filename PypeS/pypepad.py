@@ -411,7 +411,7 @@ class PypeTkPad(object):
         scriptnames = []
         exec ('scriptnames = [scriptname for scriptname in '+modulename+'.__all__]')
         menulength = 20
-        for i in range(len(scriptnames)/menulength+1):
+        for i in range(len(scriptnames)//menulength+1):
             subscriptnames = scriptnames[i*menulength:(i+1)*menulength]
             if not subscriptnames:
                 break 
