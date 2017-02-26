@@ -17,8 +17,8 @@ import vtk
 import sys
 import os
 
-import pypes
-import vtkvmtk
+from . import pypes
+from . import vtkvmtk
 
 vmtkrenderer = 'vmtkRenderer'
 

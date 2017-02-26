@@ -14,10 +14,10 @@
 ##      PURPOSE.  See the above copyright notices for more information.
 
 import vtk
-import vtkvmtk
+from . import vtkvmtk
 import sys
 
-import pypes
+from . import pypes
 
 vmtkimagewriter = 'vmtkImageWriter'
 

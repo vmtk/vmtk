@@ -17,8 +17,8 @@
 import sys
 import vtk
 
-import vtkvmtk
-import pypes
+from . import vtkvmtk
+from . import pypes
 
 vmtksurfacecapper = 'vmtkSurfaceCapper'
 
@@ -167,7 +167,7 @@ class vmtkSurfaceCapper(pypes.pypeScript):
             capper.SetInputData(self.Surface)
 
         elif self.Method == 'concaveannular':
-            import vtkvmtkcontrib
+            from . import vtkvmtkcontrib
             capper = vtkvmtkcontrib.vtkvmtkConcaveAnnularCapPolyData()
             capper.SetInputData(self.Surface)
 

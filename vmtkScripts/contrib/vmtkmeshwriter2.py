@@ -24,9 +24,9 @@ z#!/usr/bin/env python
 
 import sys
 import vtk
-import vtkvmtk
+from . import vtkvmtk
 
-import pypes
+from . import pypes
 
 vmtkmeshwriter2 = 'vmtkMeshWriter2'
 

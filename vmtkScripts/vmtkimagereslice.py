@@ -22,7 +22,7 @@
 import vtk
 import sys
 
-import pypes
+from . import pypes
 
 vmtkimagereslice = 'vmtkImageReslice'
 

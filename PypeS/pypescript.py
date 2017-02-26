@@ -582,7 +582,7 @@ class pypeScript(object):
                 exec('filename = self.' + self.GetIOInputFileNameMember(member.MemberName))
                 if filename:
                     try:
-                        exec('import ' + member.MemberIO)
+                        exec('from . import ' + member.MemberIO)
                     except ImportError:
                         self.PrintError('Cannot import module ' + member.MemberIO + ' required for reading ' + member.MemberName)
                     exec('readerName = ' + member.MemberIO + '.' + member.MemberIO)
@@ -602,7 +602,7 @@ class pypeScript(object):
                 exec('input = self.' + member.MemberName)
                 if filename:
                     try:
-                        exec('import ' + member.MemberIO)
+                        exec('from . import ' + member.MemberIO)
                     except ImportError:
                         self.PrintError('Cannot import module ' + member.MemberIO + ' required for writing ' + member.MemberIO)
                     exec('writerName = ' + member.MemberIO + '.' + member.MemberIO)

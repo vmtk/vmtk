@@ -21,12 +21,12 @@
 ## This class builds an external layer around a mesh.
 
 import vtk
-import vtkvmtk
+from . import vtkvmtk
 import sys
-import vmtkscripts
+from . import vmtkscripts
 from . import vmtkcontribscripts
 
-import pypes
+from . import pypes
 
 vmtkmeshaddexternallayer = 'vmtkMeshAddExternalLayer'
 

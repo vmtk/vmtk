@@ -17,7 +17,7 @@ import vtk
 import sys
 
 from . import vmtkrenderer
-import pypes
+from . import pypes
 
 vmtkmeshviewer = 'vmtkMeshViewer'
 

@@ -21,10 +21,10 @@ import vtk
 import sys
 import os
 
-import vtkvmtk
+from . import vtkvmtk
 from . import vmtkmeshreader
 from . import vmtkmeshvectorfromcomponents
-import pypes
+from . import pypes
 
 vmtkmeshmergetimesteps = 'vmtkMeshMergeTimesteps'
 

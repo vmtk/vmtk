@@ -4,9 +4,9 @@ import sys
 import math
 import numpy
 import vtk
-from vmtk import pypes
-from vmtk import vmtkscripts
-from vmtk import vtkvmtk
+from . import pypes
+from . import vmtkscripts
+from . import vtkvmtk
 
 vmtkmeshmerge = 'vmtkMeshMerge'
 

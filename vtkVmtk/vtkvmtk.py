@@ -4,18 +4,18 @@ namespace.  This is a required module."""
 import os
 import vtk
 
-from vtkvmtkCommonPython import *
-from vtkvmtkComputationalGeometryPython import *
-from vtkvmtkDifferentialGeometryPython import *
-from vtkvmtkIOPython import *
-from vtkvmtkMiscPython import *
+from .vtkvmtkCommonPython import *
+from .vtkvmtkComputationalGeometryPython import *
+from .vtkvmtkDifferentialGeometryPython import *
+from .vtkvmtkIOPython import *
+from .vtkvmtkMiscPython import *
 try:
-  from vtkvmtkRenderingPython import *
+  from .vtkvmtkRenderingPython import *
 except:
   pass
-from vtkvmtkSegmentationPython import *
-from vtkvmtkITKPython import *
+from .vtkvmtkSegmentationPython import *
+from .vtkvmtkITKPython import *
 try:
-  from vtkvmtkContribPython import *
+  from .vtkvmtkContribPython import *
 except:
   pass

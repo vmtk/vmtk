@@ -17,9 +17,9 @@ import vtk
 import sys
 import math
 
-import vtkvmtk
+from . import vtkvmtk
 from . import vmtkrenderer
-import pypes
+from . import pypes
 
 vmtkimagevoiselector = 'vmtkImageVOISelector'
 

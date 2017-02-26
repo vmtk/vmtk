@@ -29,10 +29,10 @@
 
 
 import vtk
-import vtkvmtk
+from . import vtkvmtk
 import sys
 
-import pypes
+from . import pypes
 
 vmtkboundarylayer2 = 'vmtkBoundaryLayer2'
 

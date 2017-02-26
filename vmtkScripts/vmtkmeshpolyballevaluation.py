@@ -16,9 +16,9 @@
 
 import sys
 import vtk
-from vmtk import vtkvmtk
+from . import vtkvmtk
 
-import pypes
+from . import pypes
 
 vmtkmeshpolyballevaluation = 'vmtkMeshPolyBallEvaluation'
 

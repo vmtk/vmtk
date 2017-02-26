@@ -18,11 +18,11 @@
 import vtk
 import sys
 
-import vtkvmtk
+from . import vtkvmtk
 from . import vmtkrenderer
 from . import vmtkimageviewer
 from . import vmtkimagefeatures
-import pypes
+from . import pypes
 
 from . import vmtkactivetubes
 

@@ -12,7 +12,7 @@
 
 
 
-from vmtk import pypes
+from . import pypes
 import vtk
 import time
 import traceback

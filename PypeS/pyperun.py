@@ -17,8 +17,8 @@
 import sys
 from multiprocessing import Process, Manager
 try:
-    from vmtk import pypeserver
-    from vmtk import pypes
+    from . import pypeserver
+    from . import pypes
 except:
     print("Unexpected error:", sys.exc_info()[0])
     raise

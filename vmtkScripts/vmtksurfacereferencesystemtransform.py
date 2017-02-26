@@ -18,7 +18,7 @@ import vtk
 import math
 import sys
 
-import pypes
+from . import pypes
 
 vmtksurfacereferencesystemtransform = 'vmtkSurfaceReferenceSystemTransform'
 

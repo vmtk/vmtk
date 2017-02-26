@@ -79,7 +79,7 @@ class pypeBatch(object):
     def Execute(self):
         self.PrintLog('')
         moduleName = self.ScriptName
-        exec('import '+ moduleName)
+        exec('from . import '+ moduleName)
         scriptObjectClassName = ''
         exec ('scriptObjectClassName =  '+moduleName+'.'+moduleName)
         moduleScriptObjectClassName = moduleName+'.'+scriptObjectClassName

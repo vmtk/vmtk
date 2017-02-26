@@ -3,7 +3,7 @@
 import vtk
 import sys
 
-from vmtk import pypes 
+from . import pypes
 
 import unittest
 import datetime

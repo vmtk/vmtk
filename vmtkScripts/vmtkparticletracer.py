@@ -21,8 +21,8 @@ import vtk
 import sys
 import os
 
-import vtkvmtk
-import pypes
+from . import vtkvmtk
+from . import pypes
 
 vmtkparticletracer = 'vmtkParticleTracer'
 

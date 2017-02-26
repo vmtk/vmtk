@@ -19,7 +19,7 @@
 
 import vtk
 import sys
-import pypes
+from . import pypes
 from . import vmtkscripts
 
 vmtksurfacecliploop = 'vmtkSurfaceClipLoop'
