@@ -254,14 +254,11 @@ class Pype(object):
             scriptObject.Arguments = scriptArguments
             scriptObject.LogOn = self.LogOn
             if self.InputStream:
-                print('input stream active')
                 scriptObject.InputStream = self.InputStream
             if self.OutputStream:
-                print('output stream active')
                 scriptObject.OutputStream = self.OutputStream
             scriptObject.ExitOnError = self.ExitOnError
             if self.AutoPipe:
-                print('autopipe active')
                 self.AutoPipeScriptObject(scriptObject)
             self.PrintLog('Parsing options ' + scriptObject.ScriptName)
             execute = scriptObject.ParseArguments()
