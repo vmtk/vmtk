@@ -161,27 +161,27 @@ class vmtkDistanceToSpheres(pypes.pypeScript):
             pickedCellPointIds = self.Surface.GetCell(picker.GetCellId()).GetPointIds()
             minDistance = 1E10
             pickedPointId = -1
-        for i in range(pickedCellPointIds.GetNumberOfIds()):
-            distance = vtk.vtkMath.Distance2BetweenPoints(pickPosition,self.Surface.GetPoint(pickedCellPointIds.GetId(i)))
-            if distance < minDistance:
-                minDistance = distance
-                pickedPointId = pickedCellPointIds.GetId(i)
-            if pickedPointId == -1:
-                pickedPointId = pickedCellPointIds.GetId(0)
-            point = self.Surface.GetPoint(pickedPointId)
-            self.ExamineSpheres.GetPoints().InsertNextPoint(point)
-            length = 0.
-            array = self.ExamineSurface.GetPointData().GetArray(self.DistanceToSpheresArrayName)
-            if (array):
-                length = array.GetComponent(pickedPointId,0)
-            self.ExamineSpheres.GetPointData().GetScalars().InsertNextValue(length)
-            self.ExamineSpheres.Modified()
-            self.vmtkRenderer.RenderWindow.Render()
+            for i in range(pickedCellPointIds.GetNumberOfIds()):
+                distance = vtk.vtkMath.Distance2BetweenPoints(pickPosition,self.Surface.GetPoint(pickedCellPointIds.GetId(i)))
+                if distance < minDistance:
+                    minDistance = distance
+                    pickedPointId = pickedCellPointIds.GetId(i)
+                if pickedPointId == -1:
+                    pickedPointId = pickedCellPointIds.GetId(0)
+                point = self.Surface.GetPoint(pickedPointId)
+                self.ExamineSpheres.GetPoints().InsertNextPoint(point)
+                length = 0.
+                array = self.ExamineSurface.GetPointData().GetArray(self.DistanceToSpheresArrayName)
+                if (array):
+                    length = array.GetComponent(pickedPointId,0)
+                self.ExamineSpheres.GetPointData().GetScalars().InsertNextValue(length)
+                self.ExamineSpheres.Modified()
+        self.vmtkRenderer.RenderWindow.Render()
 
 
     def IncreaseSphereRadiusCallback(self,obj):
         if self.CurrentSphereId != -1:
-        #increase sphere radius
+            #increase sphere radius
             newval = self.Spheres.GetPointData().GetScalars().GetValue(self.CurrentSphereId) + self.Surface.GetLength()*0.01
             self.Spheres.GetPointData().GetScalars().SetValue(self.CurrentSphereId,newval)
             self.Spheres.Modified()
@@ -257,8 +257,8 @@ class vmtkDistanceToSpheres(pypes.pypeScript):
             self.SpheresActor.VisibilityOn()
             self.ExamineSpheresActor.VisibilityOff()
             self.ExamineText.VisibilityOff()
-        if (self.CurrentSphereId!=-1):
-            self.SphereWidget.On()
+            if (self.CurrentSphereId!=-1):
+                self.SphereWidget.On()
         self.vmtkRenderer.RenderWindow.Render()
 
     def Execute(self):

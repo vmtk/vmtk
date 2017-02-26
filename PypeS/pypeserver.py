@@ -37,7 +37,7 @@ def RunPypeProcess(arguments, inputStream=None, outputStream=None, logOn=True):
         pipe.OutputStream = outputStream
     pipe.LogOn = logOn
     pipe.LogOn = True
-    if type(arguments) in [str,unicode]:
+    if type(arguments) in [str, str]:
         pipe.SetArgumentsString(arguments)
     else:
         pipe.Arguments = arguments

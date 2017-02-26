@@ -172,16 +172,16 @@ class vmtkDijkstraDistanceToPoints(pypes.pypeScript):
 
     def AddCallback(self, obj):
         queryString = 'Please input new parameters :\nDistanceOffset('+str(self.DistanceOffset)+') [DistanceScale('+str(self.DistanceScale)+') MinDistance('+str(self.MinDistance)+') MaxDistance('+str(self.MaxDistance)+'): '
-            inputString = self.InputText(queryString,self.DistanceParametersValidator)
-            splitInputString = inputString.strip().split(' ')
-            if len(splitInputString) >= 1 and splitInputString[0] != '':
-                self.DistanceOffset = float(splitInputString[0])
-            if len(splitInputString) >= 2:
-                self.DistanceScale = float(splitInputString[1])
-            if len(splitInputString) >= 3:
-                self.MinDistance = float(splitInputString[2])
-            if len(splitInputString) >= 4:
-                self.MaxDistance = float(splitInputString[3])
+        inputString = self.InputText(queryString,self.DistanceParametersValidator)
+        splitInputString = inputString.strip().split(' ')
+        if len(splitInputString) >= 1 and splitInputString[0] != '':
+            self.DistanceOffset = float(splitInputString[0])
+        if len(splitInputString) >= 2:
+            self.DistanceScale = float(splitInputString[1])
+        if len(splitInputString) >= 3:
+            self.MinDistance = float(splitInputString[2])
+        if len(splitInputString) >= 4:
+            self.MaxDistance = float(splitInputString[3])
 
     def ExamineCallback(self, obj):
         #Switch beetween examien and interact mode

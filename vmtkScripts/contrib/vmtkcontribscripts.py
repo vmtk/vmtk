@@ -14,7 +14,7 @@ __all__ = [
     'vmtkthreshold',
     'vmtkmeshmerge',
     'vmtkentityrenumber',
-  ]
+    ]
 
 for item in __all__:
         exec('from '+item+' import *')
