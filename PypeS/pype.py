@@ -15,7 +15,9 @@
 
 
 import sys
-import os.path 
+import os
+import importlib
+from inspect import isclass
 
 pype = 'Pype'
 
@@ -236,29 +238,30 @@ class Pype(object):
         for scriptNameAndArguments in self.ScriptList:
             self.PrintLog('')
             scriptName = scriptNameAndArguments[0]
-            moduleName = scriptName
             scriptArguments = scriptNameAndArguments[1]
             imported = True
             try:
-                exec('from . import '+ moduleName)
+                module = importlib.import_module('vmtk.'+scriptName)
+                moduleName = module.__name__
+                scriptObjectClasses = [x for x in dir(module) if isclass(getattr(module, x))]
+                scriptObjectClassName = scriptObjectClasses[0]
             except ImportError as e:
                 self.PrintError(str(e))
                 break
-            scriptObjectClassName = ''
-            exec ('scriptObjectClassName =  '+moduleName+'.'+moduleName)
-            moduleScriptObjectClassName = moduleName+'.'+scriptObjectClassName
-            self.PrintLog('Creating ' + scriptObjectClassName + ' instance.')
-            scriptObject = 0
-            exec ('scriptObject = '+moduleScriptObjectClassName+'()')
+            scriptObject = getattr(module, scriptObjectClassName)
+            scriptObject = scriptObject()
             scriptArguments = scriptNameAndArguments[1]
             scriptObject.Arguments = scriptArguments
             scriptObject.LogOn = self.LogOn
             if self.InputStream:
+                print('input stream active')
                 scriptObject.InputStream = self.InputStream
             if self.OutputStream:
+                print('output stream active')
                 scriptObject.OutputStream = self.OutputStream
             scriptObject.ExitOnError = self.ExitOnError
             if self.AutoPipe:
+                print('autopipe active')
                 self.AutoPipeScriptObject(scriptObject)
             self.PrintLog('Parsing options ' + scriptObject.ScriptName)
             execute = scriptObject.ParseArguments()
