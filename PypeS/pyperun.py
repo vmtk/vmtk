@@ -45,6 +45,6 @@ if __name__=='__main__':
     except KeyboardInterrupt:
         pypeProcess.terminate()
     except BaseException as e:
-        print(e)
+        print(str(e))
         sys.exit(1)
 
