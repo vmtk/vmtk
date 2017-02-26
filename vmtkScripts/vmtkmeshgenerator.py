@@ -15,11 +15,11 @@
 
 
 import vtk
-import vtkvmtk
+from . import vtkvmtk
 import sys
-import vmtkscripts
+from . import vmtkscripts
 
-import pypes
+from . import pypes
 
 vmtkmeshgenerator = 'vmtkMeshGenerator'
 

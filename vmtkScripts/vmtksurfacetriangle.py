@@ -17,7 +17,7 @@
 import sys
 import vtk
 
-import pypes
+from . import pypes
 
 vmtksurfacetriangle = 'vmtkSurfaceTriangle'
 

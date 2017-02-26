@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import sys
-from vmtk import pypes
+from . import pypes
 import vtk
 
 vmtkentityrenumber = 'VmtkEntityRenumber'

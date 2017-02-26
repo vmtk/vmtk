@@ -16,9 +16,9 @@
 
 import sys
 import vtk
-import vtkvmtk
+from . import vtkvmtk
 
-import pypes
+from . import pypes
 
 vmtktetgen = 'vmtkTetGen'
 

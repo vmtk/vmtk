@@ -17,9 +17,9 @@
 
 import vtk
 import sys
-import vmtkrenderer
-import pypes
-import vmtkscripts
+from . import vmtkrenderer
+from . import pypes
+from . import vmtkscripts
 
 vmtksurfaceloopextraction = 'vmtkSurfaceLoopExtraction'
 

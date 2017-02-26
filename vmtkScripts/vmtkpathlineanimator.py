@@ -21,10 +21,10 @@ import vtk
 import sys
 import os
 
-import vtkvmtk
-import vmtkrenderer
-import vmtksurfaceviewer
-import pypes
+from . import vtkvmtk
+from . import vmtkrenderer
+from . import vmtksurfaceviewer
+from . import pypes
 
 vmtkpathlineanimator = 'vmtkPathLineAnimator'
 

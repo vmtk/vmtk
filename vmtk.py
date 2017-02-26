@@ -1,6 +1,6 @@
 #!${PYTHON_SHEBANG}
 
-from __future__ import print_function
+
 
 import sys
 import os
@@ -80,7 +80,7 @@ if __name__ == '__main__':
 
             while 1:
                 try:
-                    inputString = raw_input("vmtk> ")
+                    inputString = input("vmtk> ")
                 except EOFError:
                     sys.stdout.write('\n')
                     sys.exit(0)

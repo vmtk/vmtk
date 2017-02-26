@@ -16,9 +16,9 @@
 
 import vtk
 import sys
-import vtkvmtk
+from . import vtkvmtk
 
-import pypes
+from . import pypes
 
 vmtksurfacecurvature = 'vmtkSurfaceCurvature'
 

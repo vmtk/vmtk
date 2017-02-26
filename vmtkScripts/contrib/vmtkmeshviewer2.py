@@ -25,8 +25,8 @@
 import vtk
 import sys
 
-import vmtkrenderer
-import pypes
+from . import vmtkrenderer
+from . import pypes
 
 vmtkmeshviewer2 = 'vmtkMeshViewer2'
 

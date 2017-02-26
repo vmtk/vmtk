@@ -16,8 +16,8 @@
 
 import sys
 
-from vmtk import pypes
-from vmtk import pypeserver
+from . import pypes
+from . import pypeserver
 
 from multiprocessing import Process, Manager
 
@@ -105,18 +105,18 @@ class PypeTkPad(object):
         self.ClearAllCommand()
 
     def OpenCommand(self):
-        import tkFileDialog
+        import tkinter.filedialog
         from tkinter import END
-        openfile = tkFileDialog.askopenfile()
+        openfile = tkinter.filedialog.askopenfile()
         if not openfile:
             return
         for line in openfile.readlines():
             self.text_input.insert(END,line)
  
     def SaveCommand(self):
-        import tkFileDialog
+        import tkinter.filedialog
         from tkinter import END
-        saveasfile = tkFileDialog.asksaveasfile()
+        saveasfile = tkinter.filedialog.asksaveasfile()
         if not saveasfile:
             return
         alltext = self.text_input.get("1.0",END)
@@ -142,8 +142,8 @@ class PypeTkPad(object):
         self.ClearOutputCommand()
 
     def OutputFileCommand(self):
-        import tkFileDialog
-        outputfilename = tkFileDialog.asksaveasfilename()
+        import tkinter.filedialog
+        outputfilename = tkinter.filedialog.asksaveasfilename()
         if sys.platform == 'win32' and len(outputfilename.split()) > 1:
             outputfilename = '"%s"' % outputfilename
         self.output_file_name = outputfilename
@@ -266,7 +266,7 @@ class PypeTkPad(object):
     def GetSuggestionsList(self,word):
         list = []
         try:
-            exec('import vmtkscripts')
+            exec('from . import vmtkscripts')
         except ImportError:
             return None
         if word.startswith('--'):
@@ -276,7 +276,7 @@ class PypeTkPad(object):
             scriptindex = self.text_input.search('vmtk',self.wordIndex[0],backwards=1)
             moduleName  = self.text_input.get( scriptindex,scriptindex+' wordend' )
             try:
-                exec('import '+moduleName)
+                exec('from . import '+moduleName)
                 exec('scriptObjectClassName =  '+moduleName+'.'+moduleName)
                 exec ('scriptObject = '+moduleName+'.'+scriptObjectClassName +'()') 
                 members = scriptObject.InputMembers + scriptObject.OutputMembers
@@ -324,8 +324,8 @@ class PypeTkPad(object):
         
     def InsertFileName(self):
         from tkinter import INSERT
-        import tkFileDialog
-        openfilename = tkFileDialog.askopenfilename()
+        import tkinter.filedialog
+        openfilename = tkinter.filedialog.askopenfilename()
         if not openfilename:
             return
         if len(openfilename.split()) > 1:
@@ -405,7 +405,7 @@ class PypeTkPad(object):
         from tkinter import Menu
         menu = Menu(parentmenu,bd=1,activeborderwidth=0)
         try:
-            exec('import '+ modulename)
+            exec('from . import '+ modulename)
         except ImportError:
             return None
         scriptnames = []

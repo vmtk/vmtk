@@ -23,11 +23,11 @@
 import vtk
 import sys
 
-import vtkvmtk
-import vmtkrenderer
-import vmtkscripts
+from . import vtkvmtk
+from . import vmtkrenderer
+from . import vmtkscripts
 
-import pypes
+from . import pypes
 
 vmtkmeshclipcenterlines = 'vmtkMeshClipCenterlines'
 

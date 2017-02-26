@@ -16,8 +16,8 @@
 import vtk
 import sys
 
-import vmtkrenderer
-import pypes
+from . import vmtkrenderer
+from . import pypes
 
 vmtksurfaceclipper = 'vmtkSurfaceClipper'
 

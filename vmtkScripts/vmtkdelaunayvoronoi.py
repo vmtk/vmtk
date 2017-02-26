@@ -17,9 +17,9 @@
 import vtk
 import sys
 
-import vtkvmtk
-import vmtkrenderer
-import pypes
+from . import vtkvmtk
+from . import vmtkrenderer
+from . import pypes
 
 vmtkdelaunayvoronoi = 'vmtkDelaunayVoronoi'
 
@@ -181,7 +181,7 @@ class vmtkDelaunayVoronoi(pypes.pypeScript):
 
         if self.UseTetGen:
             self.PrintLog('Running TetGen.')
-            import vmtkscripts
+            from . import vmtkscripts
             surfaceToMesh = vmtkscripts.vmtkSurfaceToMesh()
             surfaceToMesh.Surface = inputSurface
             surfaceToMesh.Execute()

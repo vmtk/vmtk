@@ -17,9 +17,9 @@ import sys
 import os
 import gzip
 import vtk
-import vtkvmtk
+from . import vtkvmtk
 
-import pypes
+from . import pypes
 
 vmtkmeshdatareader = 'vmtkMeshDataReader'
 

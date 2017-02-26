@@ -17,7 +17,7 @@
 import vtk
 import sys
 
-import pypes
+from . import pypes
 
 vmtkpythonscript = 'vmtkPythonScript'
 
@@ -58,7 +58,7 @@ class vmtkPythonScript(pypes.pypeScript):
             self.PrintError('Error: no PythonScriptFileName')
 
         try:
-            execfile(self.PythonScriptFileName)
+            exec(compile(open(self.PythonScriptFileName).read(), self.PythonScriptFileName, 'exec'))
         except Exception as error:
             self.PrintError("Python script error: %s" % error)
 

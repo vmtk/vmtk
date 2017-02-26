@@ -13,11 +13,11 @@
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
 ##      PURPOSE.  See the above copyright notices for more information.
 
-from __future__ import print_function
+
 
 import sys
 import os.path
-from vmtk import pypes
+from . import pypes
 
 class PypeWrapper(object):
 
@@ -81,7 +81,7 @@ class PypeWrapper(object):
             moduleName = scriptName
             scriptArguments = scriptNameAndArguments[1]
             try:
-                exec('from vmtk import '+ moduleName)
+                exec('from . import '+ moduleName)
             except ImportError:
                 print('No module named ' + moduleName)
                 break
@@ -101,7 +101,7 @@ class PypeWrapper(object):
             exposedMembers = []
             for member in scriptObject.InputMembers + scriptObject.OutputMembers:
                 exec('member.MemberValue = scriptObject.'+member.MemberName)
-                if exposedOptionsToNamesAndChannels.has_key(member.OptionName):
+                if member.OptionName in exposedOptionsToNamesAndChannels:
                     member.ExposedName = exposedOptionsToNamesAndChannels[member.OptionName][0]
                     member.ExposedChannel = exposedOptionsToNamesAndChannels[member.OptionName][1]
                     exposedMembers.append(member)
@@ -224,7 +224,7 @@ class PypeWrapper(object):
         moduleFile.write('pipe = "%s" %% (%s)\n' % (' '.join(substModulePipeArguments),','.join(allOrderedExposedMemberNames)))
 
         moduleFile.write('\n')
-        moduleFile.write('from vmtk import pypes\n')
+        moduleFile.write('from . import pypes\n')
         moduleFile.write('pypes.PypeRun(pipe)\n')
         moduleFile.write('\n')
 

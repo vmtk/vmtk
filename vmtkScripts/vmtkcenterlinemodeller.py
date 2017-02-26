@@ -16,8 +16,8 @@
 
 import vtk
 import sys
-import vtkvmtk
-import pypes
+from . import vtkvmtk
+from . import pypes
 
 vmtkcenterlinemodeller = 'vmtkCenterlineModeller'
 

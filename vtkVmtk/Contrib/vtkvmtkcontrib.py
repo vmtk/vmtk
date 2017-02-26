@@ -3,7 +3,7 @@ namespace.  This is a required module."""
 
 import os
 import vtk
-import vtkvmtk
+from vmtk import vtkvmtk
 
 if os.name == 'posix':
     from libvtkvmtkContribPython import *

@@ -18,13 +18,13 @@
 import vtk
 import sys
 
-import vtkvmtk
-import vmtkrenderer
-import vmtkimageviewer
-import vmtkimagefeatures
-import pypes
+from . import vtkvmtk
+from . import vmtkrenderer
+from . import vmtkimageviewer
+from . import vmtkimagefeatures
+from . import pypes
 
-import vmtkactivetubes
+from . import vmtkactivetubes
 
 vmtknetworkeditor = 'vmtkNetworkEditor'
 

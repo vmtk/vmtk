@@ -17,8 +17,8 @@
 import vtk
 import sys
 
-import pypes
-import vmtkscripts
+from . import pypes
+from . import vmtkscripts
 
 vmtksurfacesmoothing = 'vmtkSurfaceSmoothing'
 

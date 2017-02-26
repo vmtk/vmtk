@@ -18,7 +18,7 @@
 import vtk
 import sys
 
-import pypes
+from . import pypes
 
 vmtknetworkwriter = 'vmtkNetworkWriter'
 
@@ -112,16 +112,16 @@ class vmtkNetworkWriter(pypes.pypeScript):
                 continue
             pointId0 = cell.GetPointId(0)
             pointId1 = cell.GetPointId(cell.GetNumberOfPoints()-1)
-            if not nodeMap.has_key(pointId0):
+            if pointId0 not in nodeMap:
                 nodeId = len(nodeMap)
                 nodeMap[pointId0] = nodeId
-            if not nodeMap.has_key(pointId1):
+            if pointId1 not in nodeMap:
                 nodeId = len(nodeMap)
                 nodeMap[pointId1] = nodeId
             edgeId = len(edges)
             edgeCellIds.append(edgeId)
             edges.append((nodeMap[pointId0],nodeMap[pointId1]))
-        nodes = nodeMap.values()[:]
+        nodes = list(nodeMap.values())[:]
         nodes.sort()
 
         xmlNodes = xmlNetworkGraph.appendChild(xmlDocument.createElement('nodes'))
@@ -217,10 +217,10 @@ class vmtkNetworkWriter(pypes.pypeScript):
                             'xml':'arch'}
 
         if self.OutputFileName == 'BROWSER':
-            import tkFileDialog
+            import tkinter.filedialog
             import os.path
             initialDir = pypes.pypeScript.lastVisitedPath
-            self.OutputFileName = tkFileDialog.asksaveasfilename(title="Output network",initialdir=initialDir)
+            self.OutputFileName = tkinter.filedialog.asksaveasfilename(title="Output network",initialdir=initialDir)
             pypes.pypeScript.lastVisitedPath = os.path.dirname(self.OutputFileName)
             if not self.OutputFileName:
                 self.PrintError('Error: no OutputFileName.')
@@ -230,7 +230,7 @@ class vmtkNetworkWriter(pypes.pypeScript):
             extension = os.path.splitext(self.OutputFileName)[1]
             if extension:
                 extension = extension[1:]
-                if extension in extensionFormats.keys():
+                if extension in list(extensionFormats.keys()):
                     self.Format = extensionFormats[extension]
 
         if (self.Format == 'vtk'):

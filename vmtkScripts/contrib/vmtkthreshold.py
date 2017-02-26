@@ -3,9 +3,9 @@
 import sys
 import math
 import vtk
-import pypes
-import vmtkscripts
-import vmtkcontribscripts
+from . import pypes
+from . import vmtkscripts
+from . import vmtkcontribscripts
 
 vmtkthreshold = 'vmtkThreshold'
 

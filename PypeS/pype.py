@@ -15,7 +15,9 @@
 
 
 import sys
-import os.path 
+import os
+import importlib
+from inspect import isclass
 
 pype = 'Pype'
 
@@ -103,7 +105,7 @@ class Pype(object):
             if '--query' in pypeArguments:
                 queryScripts = arguments[arguments.index('--query')+1:]
                 for queryScript in queryScripts:
-                    exec('import '+queryScript)
+                    exec('from . import '+queryScript)
                     exec('allScripts = '+queryScript+'.__all__')
                     self.PrintLog('\n'.join(allScripts))
                 return
@@ -236,20 +238,18 @@ class Pype(object):
         for scriptNameAndArguments in self.ScriptList:
             self.PrintLog('')
             scriptName = scriptNameAndArguments[0]
-            moduleName = scriptName
             scriptArguments = scriptNameAndArguments[1]
             imported = True
             try:
-                exec('import '+ moduleName)
+                module = importlib.import_module('vmtk.'+scriptName)
+                moduleName = module.__name__
+                scriptObjectClasses = [x for x in dir(module) if isclass(getattr(module, x))]
+                scriptObjectClassName = scriptObjectClasses[0]
             except ImportError as e:
-                self.PrintError(e.message)
+                self.PrintError(str(e))
                 break
-            scriptObjectClassName = ''
-            exec ('scriptObjectClassName =  '+moduleName+'.'+moduleName)
-            moduleScriptObjectClassName = moduleName+'.'+scriptObjectClassName
-            self.PrintLog('Creating ' + scriptObjectClassName + ' instance.')
-            scriptObject = 0
-            exec ('scriptObject = '+moduleScriptObjectClassName+'()')
+            scriptObject = getattr(module, scriptObjectClassName)
+            scriptObject = scriptObject()
             scriptArguments = scriptNameAndArguments[1]
             scriptObject.Arguments = scriptArguments
             scriptObject.LogOn = self.LogOn
@@ -292,7 +292,7 @@ def PypeRun(arguments):
   
 
 if __name__=='__main__':
-    from vmtk import pypes
+    from . import pypes
     main = pypes.pypeMain()
     main.Arguments = sys.argv
     main.Execute()
