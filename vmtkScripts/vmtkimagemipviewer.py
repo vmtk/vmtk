@@ -22,8 +22,8 @@ import pypes
 
 vmtkimagemipviewer = 'vmtkImageMIPViewer'
 
-class vmtkImageMIPViewer(pypes.pypeScript):
 
+class vmtkImageMIPViewer(pypes.pypeScript):
     def __init__(self):
 
         pypes.pypeScript.__init__(self)
@@ -36,25 +36,28 @@ class vmtkImageMIPViewer(pypes.pypeScript):
 
         self.SampleDistance = 1.0
         self.AutoSampleDistance = 1
-        
+
         self.WindowLevel = [0.0, 0.0]
+        self.Opacity = None
 
         self.Volume = None
 
         self.SetScriptName('vmtkimagemipviewer')
         self.SetScriptDoc('display a 3D image')
         self.SetInputMembers([
-            ['Image','i','vtkImageData',1,'','the input image','vmtkimagereader'],
-            ['ArrayName','array','str',1,'','name of the array to display'],
-            ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer'],
-            ['SampleDistance','sampledistance','float',1,'(0.0,)','the distance at sample projections are generated'],
-            ['AutoSampleDistance','autosampledistance','bool',1,'','toggle automatic sample distance'],
-            ['WindowLevel','windowlevel','float',2,'','the window/level for generating the rendering'],
-            ['Display','display','bool',1,'','toggle rendering']
-            ])
+            ['Image', 'i', 'vtkImageData', 1, '', 'the input image', 'vmtkimagereader'],
+            ['ArrayName', 'array', 'str', 1, '', 'name of the array to display'],
+            ['vmtkRenderer', 'renderer', 'vmtkRenderer', 1, '', 'external renderer'],
+            ['SampleDistance', 'sampledistance', 'float', 1, '(0.0,)',
+             'the distance at sample projections are generated'],
+            ['AutoSampleDistance', 'autosampledistance', 'bool', 1, '', 'toggle automatic sample distance'],
+            ['WindowLevel', 'windowlevel', 'float', 2, '', 'the window/level for generating the rendering'],
+            ['Opacity', 'opacity', 'float', 2, '', 'the opacity range is defined from 0 (transparent) to 1 (opaque)'],
+            ['Display', 'display', 'bool', 1, '', 'toggle rendering']
+        ])
         self.SetOutputMembers([
-            ['Image','o','vtkImageData',1,'','the output image','vmtkimagewriter']
-            ])
+            ['Image', 'o', 'vtkImageData', 1, '', 'the output image', 'vmtkimagewriter']
+        ])
 
     def BuildView(self):
 
@@ -63,7 +66,7 @@ class vmtkImageMIPViewer(pypes.pypeScript):
             self.vmtkRenderer.Initialize()
             self.OwnRenderer = 1
 
-        self.vmtkRenderer.RegisterScript(self) 
+        self.vmtkRenderer.RegisterScript(self)
 
         if self.Volume:
             self.vmtkRenderer.Renderer.RemoveVolume(self.Volume)
@@ -74,7 +77,8 @@ class vmtkImageMIPViewer(pypes.pypeScript):
         scalarRange = [0.0, 0.0]
 
         if self.WindowLevel[0] > 0.0:
-            scalarRange = [self.WindowLevel[1] - self.WindowLevel[0]/2.0, self.WindowLevel[1] + self.WindowLevel[0]/2.0]
+            scalarRange = [self.WindowLevel[1] - self.WindowLevel[0] / 2.0,
+                           self.WindowLevel[1] + self.WindowLevel[0] / 2.0]
         else:
             scalarRange = self.Image.GetScalarRange()
 
@@ -89,16 +93,27 @@ class vmtkImageMIPViewer(pypes.pypeScript):
             volumeMapper.AutoAdjustSampleDistancesOn()
         else:
             volumeMapper.SetSampleDistance(self.SampleDistance)
-        
+
+        opacityFunction = vtk.vtkPiecewiseFunction()
+        imageRange = self.Image.GetScalarRange()
+
+        if self.Opacity is not None:
+            opacityFunction.AddPoint(imageRange[0], 0)
+            opacityFunction.AddPoint(scalarRange[0], self.Opacity[0])
+            opacityFunction.AddPoint(scalarRange[0], self.Opacity[1])
+            opacityFunction.AddPoint(imageRange[1], 1)
+
         volumeProperty = vtk.vtkVolumeProperty()
         volumeProperty.ShadeOn()
         volumeProperty.SetInterpolationTypeToLinear()
         volumeProperty.SetColor(colorTransferFunction)
-        
+        if self.Opacity is not None:
+            volumeProperty.SetScalarOpacity(opacityFunction)
+
         self.Volume = vtk.vtkVolume()
         self.Volume.SetMapper(volumeMapper)
         self.Volume.SetProperty(volumeProperty)
-      
+
         self.vmtkRenderer.Renderer.AddVolume(self.Volume)
 
         if (self.Display == 1):
@@ -111,10 +126,11 @@ class vmtkImageMIPViewer(pypes.pypeScript):
 
         if (self.Image == None) & (self.Display == 1):
             self.PrintError('Error: no Image.')
- 
+
         self.BuildView()
-       
-if __name__=='__main__':
+
+
+if __name__ == '__main__':
     main = pypes.pypeMain()
     main.Arguments = sys.argv
     main.Execute()
