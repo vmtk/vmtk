@@ -278,7 +278,7 @@ clippedVoronoiDiagram = ExtractMaskedVoronoiPoints(originalVoronoiDiagram,masked
 WritePolyData(clippedVoronoiDiagram, clippedVoronoiDiagramFilename)
 
 if (smoothVoronoiDiagram==1):
-   print('Smoothing Voronoi Diagram', end=' ') # end seperator new in py3, will throw error in py2 environments
+   print('Smoothing Voronoi Diagram')
    smoothVoronoiDiagram = SmoothClippedVoronoiDiagram(clippedVoronoiDiagram,patchCenterlines)
    WritePolyData(smoothVoronoiDiagram,smoothVoronoiDiagramFilename)
 
