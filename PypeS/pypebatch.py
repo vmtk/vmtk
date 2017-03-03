@@ -14,7 +14,7 @@
 ##      PURPOSE.  See the above copyright notices for more information.
 
 
-
+from __future__ import print_function # NEED TO STAY AS TOP IMPORT
 import sys
 import os
 import os.path
@@ -79,7 +79,7 @@ class pypeBatch(object):
     def Execute(self):
         self.PrintLog('')
         moduleName = self.ScriptName
-        exec('from . import '+ moduleName)
+        exec('from vmtk import '+ moduleName)
         scriptObjectClassName = ''
         exec ('scriptObjectClassName =  '+moduleName+'.'+moduleName)
         moduleScriptObjectClassName = moduleName+'.'+scriptObjectClassName

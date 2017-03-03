@@ -17,7 +17,7 @@
 import vtk
 import sys
 
-from . import pypes
+from vmtk import pypes
 
 vmtkcenterlineinterpolation = 'vmtkCenterlineInterpolation'
 

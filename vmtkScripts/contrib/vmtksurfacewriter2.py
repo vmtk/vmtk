@@ -25,7 +25,7 @@
 import vtk
 import sys
 
-from . import pypes
+from vmtk import pypes
 
 vmtksurfacewriter2 = 'vmtkSurfaceWriter2'
 

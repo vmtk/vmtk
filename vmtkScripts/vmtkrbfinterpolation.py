@@ -13,11 +13,11 @@
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
 ##      PURPOSE.  See the above copyright notices for more information.
 
-from . import vtkvmtk
+from vmtk import vtkvmtk
 import vtk
 import sys
 
-from . import pypes
+from vmtk import pypes
 
 vmtkrbfinterpolation = 'vmtkRBFInterpolation'
 

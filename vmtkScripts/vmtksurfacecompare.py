@@ -2,9 +2,9 @@
 
 import sys
 import vtk
-from . import vtkvmtk
-from . import pypes
-from . import vmtkscripts
+from vmtk import vtkvmtk
+from vmtk import pypes
+from vmtk import vmtkscripts
 
 
 vmtksurfacecompare = 'vmtkSurfaceCompare'

@@ -18,9 +18,9 @@
 import vtk
 import sys
 
-from . import vtkvmtk
-from . import vmtkrenderer
-from . import pypes
+from vmtk import vtkvmtk
+from vmtk import vmtkrenderer
+from vmtk import pypes
 
 vmtkactivetubes = 'vmtkActiveTubes'
 

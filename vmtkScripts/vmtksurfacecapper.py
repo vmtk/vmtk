@@ -17,8 +17,8 @@
 import sys
 import vtk
 
-from . import vtkvmtk
-from . import pypes
+from vmtk import vtkvmtk
+from vmtk import pypes
 
 vmtksurfacecapper = 'vmtkSurfaceCapper'
 
@@ -88,7 +88,7 @@ class vmtkSurfaceCapper(pypes.pypeScript):
 
         if self.Interactive:
             if not self.vmtkRenderer:
-                from . import vmtkrenderer
+                from vmtk import vmtkrenderer
                 self.vmtkRenderer = vmtkrenderer.vmtkRenderer()
                 self.vmtkRenderer.Initialize()
                 self.OwnRenderer = 1
@@ -167,7 +167,7 @@ class vmtkSurfaceCapper(pypes.pypeScript):
             capper.SetInputData(self.Surface)
 
         elif self.Method == 'concaveannular':
-            from . import vtkvmtkcontrib
+            from vmtk import vtkvmtkcontrib
             capper = vtkvmtkcontrib.vtkvmtkConcaveAnnularCapPolyData()
             capper.SetInputData(self.Surface)
 

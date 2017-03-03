@@ -18,9 +18,9 @@ import math
 import string
 import vtk
 
-from . import vtkvmtk
-from . import vmtkscripts
-from . import pypes
+from vmtk import vtkvmtk
+from vmtk import vmtkscripts
+from vmtk import pypes
 
 vmtkimageinitialization = 'vmtkImageInitialization'
 

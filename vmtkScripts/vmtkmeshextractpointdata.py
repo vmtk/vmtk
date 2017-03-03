@@ -17,12 +17,12 @@
 ##       Simone Manini
 ##       Orobix Srl
 
-from . import vtkvmtk
+from vmtk import vtkvmtk
 import vtk
 import sys
 
-from . import pypes
-from . import vmtkmeshvectorfromcomponents
+from vmtk import pypes
+from vmtk import vmtkmeshvectorfromcomponents
 
 vmtkmeshextractpointdata = 'vmtkMeshExtractPointData'
 

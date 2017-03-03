@@ -16,7 +16,7 @@
 
 import sys
 
-from . import pypes
+from vmtk import pypes
 from . import pypeserver
 
 from multiprocessing import Process, Manager
@@ -266,7 +266,7 @@ class PypeTkPad(object):
     def GetSuggestionsList(self,word):
         list = []
         try:
-            exec('from . import vmtkscripts')
+            exec('from vmtk import vmtkscripts')
         except ImportError:
             return None
         if word.startswith('--'):
@@ -276,7 +276,7 @@ class PypeTkPad(object):
             scriptindex = self.text_input.search('vmtk',self.wordIndex[0],backwards=1)
             moduleName  = self.text_input.get( scriptindex,scriptindex+' wordend' )
             try:
-                exec('from . import '+moduleName)
+                exec('from vmtk import '+moduleName)
                 exec('scriptObjectClassName =  '+moduleName+'.'+moduleName)
                 exec ('scriptObject = '+moduleName+'.'+scriptObjectClassName +'()') 
                 members = scriptObject.InputMembers + scriptObject.OutputMembers
@@ -405,7 +405,7 @@ class PypeTkPad(object):
         from tkinter import Menu
         menu = Menu(parentmenu,bd=1,activeborderwidth=0)
         try:
-            exec('from . import '+ modulename)
+            exec('from vmtk import '+ modulename)
         except ImportError:
             return None
         scriptnames = []

@@ -16,11 +16,11 @@
 ##       Politecnico di Milano
 
 
-
+from __future__ import print_function # NEED TO STAY AS TOP IMPORT
 import vtk
 import sys
-from . import pypes
-from . import vmtkscripts
+from vmtk import pypes
+from vmtk import vmtkscripts
 
 vmtksurfacecliploop = 'vmtkSurfaceClipLoop'
 

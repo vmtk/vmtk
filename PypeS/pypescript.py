@@ -582,7 +582,7 @@ class pypeScript(object):
                 exec('filename = self.' + self.GetIOInputFileNameMember(member.MemberName))
                 if filename:
                     try:
-                        exec('from . import ' + member.MemberIO)
+                        exec('from vmtk import ' + member.MemberIO)
                     except ImportError:
                         self.PrintError('Cannot import module ' + member.MemberIO + ' required for reading ' + member.MemberName)
                     exec('readerName = ' + member.MemberIO + '.' + member.MemberIO)
@@ -602,7 +602,7 @@ class pypeScript(object):
                 exec('input = self.' + member.MemberName, locals(), globals())
                 if filename:
                     try:
-                        exec('from . import ' + member.MemberIO, locals(), globals())
+                        exec('from vmtk import ' + member.MemberIO, locals(), globals())
                     except ImportError:
                         self.PrintError('Cannot import module ' + member.MemberIO + ' required for writing ' + member.MemberIO)
                     exec('writerName = ' + member.MemberIO + '.' + member.MemberIO, locals(), globals())
@@ -636,7 +636,7 @@ class pypeMain(object):
         self.Arguments = None
 
     def Execute(self):
-        from . import pype
+        from vmtk import pype
         pipe = pype.Pype()
         pipe.Arguments = self.Arguments
         pipe.ParseArguments()

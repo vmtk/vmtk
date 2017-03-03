@@ -4,8 +4,8 @@ import sys
 import math
 import numpy
 import vtk
-from . import pypes
-from . import vmtkscripts
+from vmtk import pypes
+from vmtk import vmtkscripts
 
 vmtksurfaceextractinnercylinder = 'VmtkSurfaceExtractInnerCylinder'
 

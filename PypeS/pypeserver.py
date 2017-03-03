@@ -11,8 +11,8 @@
 ##      PURPOSE.  See the above copyright notices for more information.
 
 
-
-from . import pypes
+from __future__ import print_function # NEED TO STAY AS TOP IMPORT
+from vmtk import pypes
 import vtk
 import time
 import traceback

@@ -13,12 +13,12 @@
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
 ##      PURPOSE.  See the above copyright notices for more information.
 
-
+from __future__ import print_function # NEED TO STAY AS TOP IMPORT
 import sys
 from multiprocessing import Process, Manager
 try:
-    from . import pypeserver
-    from . import pypes
+    from vmtk import pypeserver
+    from vmtk import pypes
 except:
     print("Unexpected error:", sys.exc_info()[0])
     raise

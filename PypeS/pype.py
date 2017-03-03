@@ -105,7 +105,7 @@ class Pype(object):
             if '--query' in pypeArguments:
                 queryScripts = arguments[arguments.index('--query')+1:]
                 for queryScript in queryScripts:
-                    exec('from . import '+queryScript)
+                    exec('from vmtk import '+queryScript)
                     exec('allScripts = '+queryScript+'.__all__')
                     self.PrintLog('\n'.join(allScripts))
                 return
@@ -292,7 +292,7 @@ def PypeRun(arguments):
   
 
 if __name__=='__main__':
-    from . import pypes
+    from vmtk import pypes
     main = pypes.pypeMain()
     main.Arguments = sys.argv
     main.Execute()

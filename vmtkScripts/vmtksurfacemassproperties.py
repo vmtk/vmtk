@@ -17,7 +17,7 @@
 import sys
 import vtk
 
-from . import pypes
+from vmtk import pypes
 
 vmtksurfacemassproperties = 'vmtkSurfaceMassProperties'
 

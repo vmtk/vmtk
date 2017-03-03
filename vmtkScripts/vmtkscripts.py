@@ -138,5 +138,5 @@ __all__ = [
   ]
 
 for item in __all__:
-        exec('from .'+item+' import *')
+        exec('from vmtk'+item+' import *')
 

@@ -2,8 +2,8 @@
 
 import sys
 import vtk
-from . import vtkvmtk
-from . import pypes
+from vmtk import vtkvmtk
+from vmtk import pypes
 
 vmtkmeshcompare = 'vmtkMeshCompare'
 

@@ -1,9 +1,10 @@
 #!${PYTHON_SHEBANG}
 
-
-
+from __future__ import print_function # NEED TO STAY AS TOP IMPORT
+from builtins import input # NEED TO STAY AS TOP IMPORT
 import sys
 import os
+
 
 if __name__ == '__main__':
 

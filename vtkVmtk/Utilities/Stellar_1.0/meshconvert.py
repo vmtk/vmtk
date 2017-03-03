@@ -7,7 +7,7 @@ A script to convert between tetrahedral mesh formats.
 
 Created by Bryan Klingner (stellar.b@overt.org) on 2006-12-07.
 """
-
+from __future__ import print_function # NEED TO STAY AS TOP IMPORT
 import sys
 import getopt
 import os

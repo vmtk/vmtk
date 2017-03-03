@@ -16,9 +16,9 @@
 import sys
 import math
 import vtk
-from . import vtkvmtk
+from vmtk import vtkvmtk
 
-from . import pypes
+from vmtk import pypes
 
 vmtktetringenerator = 'vmtkTetrInGenerator'
 

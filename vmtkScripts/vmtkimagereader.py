@@ -14,10 +14,10 @@
 ##      PURPOSE.  See the above copyright notices for more information.
 
 import vtk
-from . import vtkvmtk
+from vmtk import vtkvmtk
 import sys
 
-from . import pypes
+from vmtk import pypes
 
 vmtkimagereader = 'vmtkImageReader'
 

@@ -17,9 +17,9 @@
 import vtk
 import sys
 
-from . import pypes
+from vmtk import pypes
 
-from . import vmtklineresampling
+from vmtk import vmtklineresampling
 
 vmtkcenterlineresampling = 'vmtkCenterlineResampling'
 
