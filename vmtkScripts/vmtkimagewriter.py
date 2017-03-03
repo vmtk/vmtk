@@ -14,10 +14,10 @@
 ##      PURPOSE.  See the above copyright notices for more information.
 
 import vtk
-import vtkvmtk
+from . import vtkvmtk
 import sys
 
-import pypes
+from . import pypes
 
 vmtkimagewriter = 'vmtkImageWriter'
 
@@ -34,10 +34,10 @@ class vmtkImageWriter(pypes.pypeScript):
         self.OutputFileName = ''
         self.OutputRawFileName = ''
         self.OutputDirectoryName = ''
-      	self.PixelRepresentation = ''
+        self.PixelRepresentation = ''
         self.Image = None
         self.Input = None
-      	self.WindowLevel = [1.0, 0.0]
+        self.WindowLevel = [1.0, 0.0]
         self.RasToIjkMatrixCoefficients = None #[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1]
 
         self.SetScriptName('vmtkimagewriter')
@@ -217,18 +217,18 @@ class vmtkImageWriter(pypes.pypeScript):
                             'dat':'pointdata'}
 
         if self.OutputFileName == 'BROWSER':
-            import tkFileDialog
+            import tkinter.filedialog
             import os.path
             initialDir = pypes.pypeScript.lastVisitedPath
-            self.OutputFileName = tkFileDialog.asksaveasfilename(title="Output image",initialdir=initialDir)
+            self.OutputFileName = tkinter.filedialog.asksaveasfilename(title="Output image",initialdir=initialDir)
             pypes.pypeScript.lastVisitedPath = os.path.dirname(self.OutputFileName)
             if not self.OutputFileName:
                 self.PrintError('Error: no OutputFileName.')
 
         if self.OutputDirectoryName == 'BROWSER':
-            import tkFileDialog
+            import tkinter.filedialog
             initialDir = pypes.pypeScript.lastVisitedPath
-            self.OutputDirectoryName = tkFileDialog.askdirectory(title="Output directory",initialdir=initialDir)
+            self.OutputDirectoryName = tkinter.filedialog.askdirectory(title="Output directory",initialdir=initialDir)
             pypes.pypeScript.lastVisitedPath = self.OutputDirectoryName
             if not self.OutputDirectoryName:
                 self.PrintError('Error: no OutputDirectoryName.')
@@ -238,10 +238,10 @@ class vmtkImageWriter(pypes.pypeScript):
             extension = os.path.splitext(self.OutputFileName)[1]
             if extension:
                 extension = extension[1:]
-                if extension in extensionFormats.keys():
+                if extension in list(extensionFormats.keys()):
                     self.Format = extensionFormats[extension]
 
-      	if self.PixelRepresentation != '':
+        if self.PixelRepresentation != '':
             cast = vtk.vtkImageCast()
             cast.SetInputData(self.Image)
             if self.PixelRepresentation == 'double':
@@ -250,7 +250,7 @@ class vmtkImageWriter(pypes.pypeScript):
                 cast.SetOutputScalarTypeToFloat()
             elif self.PixelRepresentation == 'short':
                 cast.SetOutputScalarTypeToShort()
-      	    else:
+            else:
                 self.PrintError('Error: unsupported pixel representation '+ self.PixelRepresentation + '.')
             cast.Update()
             self.Image = cast.GetOutput()

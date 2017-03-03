@@ -2,8 +2,8 @@
 
 import sys
 import vtk
-import vtkvmtk
-import pypes
+from . import vtkvmtk
+from . import pypes
 
 vmtkimagecompare = 'vmtkImageCompare'
 
@@ -16,7 +16,7 @@ class vmtkImageCompare(pypes.pypeScript):
         self.Image = None
         self.ReferenceImage = None
         self.Method = ''
-	self.Tolerance = 1E-8
+        self.Tolerance = 1E-8
         self.Result = ''
         self.ResultLog = ''
 

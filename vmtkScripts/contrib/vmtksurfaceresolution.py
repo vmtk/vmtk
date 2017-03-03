@@ -24,9 +24,9 @@
 import vtk
 import sys
 
-import vtkvmtk
-import vmtkrenderer
-import pypes
+from . import vtkvmtk
+from . import vmtkrenderer
+from . import pypes
 
 vmtksurfaceresolution = 'vmtkSufaceResolution'
 
@@ -135,7 +135,7 @@ class vmtkSufaceResolution(pypes.pypeScript):
         #eventPosition = obj.GetEventPosition()
         result = picker.Pick(float(eventPosition[0]),float(eventPosition[1]),0.0,self.vmtkRenderer.Renderer)
         if result == 0:
-          	return
+            return
         pickPosition = picker.GetPickPosition()
         if (self.InteractionMode==0):	    
             self.CurrentSphereId = self.Spheres.GetPoints().InsertNextPoint(pickPosition)
@@ -276,8 +276,8 @@ class vmtkSufaceResolution(pypes.pypeScript):
         self.ExamineSpheresActor.PickableOff()
         self.ExamineSpheresActor.VisibilityOff()
         self.vmtkRenderer.Renderer.AddActor(self.ExamineSpheresActor)
-	
-	
+
+
         self.vmtkRenderer.AddKeyBinding('u','Undo.',self.UndoCallback)
         self.vmtkRenderer.AddKeyBinding('space','Place picks.',self.PickCallback)
         self.vmtkRenderer.AddKeyBinding('+','Increase sphere radius.',self.IncreaseSphereRadiusCallback)

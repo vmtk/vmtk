@@ -25,8 +25,8 @@
 import vtk
 import sys
 
-import vmtkrenderer
-import pypes
+from . import vmtkrenderer
+from . import pypes
 
 vmtkmeshviewer2 = 'vmtkMeshViewer2'
 
@@ -60,7 +60,7 @@ class vmtkMeshViewer2(pypes.pypeScript):
         self.ClipExtract = False
         self.InsideOut = False
         self.ObserverId = -1
-	
+
         self.Actor = None
         self.ScalarBarActor = None
 

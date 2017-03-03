@@ -524,10 +524,10 @@ class pypeScript(object):
                             memberEntry.ExplicitPipe = 'None'
                     else: 
                         if memberType in self.BuiltinOptionTypes:
-                            exec('castValue = '+memberType+'(\''+value+'\')')
+                            exec('castValue = '+memberType+'(\''+value+'\')', globals())
                             memberValues.append(castValue)
                         elif memberType is 'bool':
-                            exec('castValue = int(\''+value+'\')')
+                            exec('castValue = int(\''+value+'\')', globals())
                             memberValues.append(castValue)
                         else:
                             memberValues.append(value)
@@ -582,7 +582,7 @@ class pypeScript(object):
                 exec('filename = self.' + self.GetIOInputFileNameMember(member.MemberName))
                 if filename:
                     try:
-                        exec('import ' + member.MemberIO)
+                        exec('from . import ' + member.MemberIO)
                     except ImportError:
                         self.PrintError('Cannot import module ' + member.MemberIO + ' required for reading ' + member.MemberName)
                     exec('readerName = ' + member.MemberIO + '.' + member.MemberIO)
@@ -598,16 +598,16 @@ class pypeScript(object):
     def IOWrite(self):
         for member in self.OutputMembers:
             if member.MemberIO:
-                exec('filename = self.' + self.GetIOOutputFileNameMember(member.MemberName))
-                exec('input = self.' + member.MemberName)
+                exec('filename = self.' + self.GetIOOutputFileNameMember(member.MemberName), locals(), globals())
+                exec('input = self.' + member.MemberName, locals(), globals())
                 if filename:
                     try:
-                        exec('import ' + member.MemberIO)
+                        exec('from . import ' + member.MemberIO, locals(), globals())
                     except ImportError:
                         self.PrintError('Cannot import module ' + member.MemberIO + ' required for writing ' + member.MemberIO)
-                    exec('writerName = ' + member.MemberIO + '.' + member.MemberIO)
+                    exec('writerName = ' + member.MemberIO + '.' + member.MemberIO, locals(), globals())
                     writerClassName = member.MemberIO + '.' + writerName
-                    exec('writer = ' + writerClassName + '()')
+                    exec('writer = ' + writerClassName + '()', locals(), globals())
                     writer.Input = input
                     writer.OutputFileName = filename
                     writer.LogOn = self.LogOn
@@ -636,7 +636,7 @@ class pypeMain(object):
         self.Arguments = None
 
     def Execute(self):
-        import pype
+        from . import pype
         pipe = pype.Pype()
         pipe.Arguments = self.Arguments
         pipe.ParseArguments()

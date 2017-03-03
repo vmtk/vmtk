@@ -17,8 +17,8 @@
 import vtk
 import sys
 
-import pypes
-import vtkvmtk
+from . import pypes
+from . import vtkvmtk
 
 vmtkimagefeatures = 'vmtkImageFeatures'
 
@@ -97,7 +97,7 @@ class vmtkImageFeatures(pypes.pypeScript):
         fwhmFeatureImageFilter.SetRadius(self.FWHMRadius)
         fwhmFeatureImageFilter.SetBackgroundValue(self.FWHMBackgroundValue)
         fwhmFeatureImageFilter.Update()
-	
+
         self.FeatureImage = vtk.vtkImageData()
         self.FeatureImage.DeepCopy(fwhmFeatureImageFilter.GetOutput())
 

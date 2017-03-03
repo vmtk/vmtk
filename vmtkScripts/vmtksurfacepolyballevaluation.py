@@ -16,9 +16,9 @@
 
 import sys
 import vtk
-from vmtk import vtkvmtk
+from . import vtkvmtk
 
-import pypes
+from . import pypes
 
 vmtksurfacepolyballevaluation = 'vmtkSurfacePolyBallEvaluation'
 
@@ -68,7 +68,7 @@ class vmtkSurfacePolyBallEvaluation(pypes.pypeScript):
         polyball.SetInputData(self.PolyBall)
         polyball.SetPolyBallRadiusArrayName(self.RadiusArrayName)
  
-        for i in xrange(self.Surface.GetNumberOfPoints()):
+        for i in range(self.Surface.GetNumberOfPoints()):
             point = self.Surface.GetPoint(i)
             value = polyball.EvaluateFunction(point)
             evaluationArray.SetValue(i,value)

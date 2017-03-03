@@ -2,8 +2,8 @@
 
 import sys
 import vtk
-import vtkvmtk
-import pypes
+from . import vtkvmtk
+from . import pypes
 
 vmtkmeshcompare = 'vmtkMeshCompare'
 
@@ -17,7 +17,7 @@ class vmtkMeshCompare(pypes.pypeScript):
         self.ReferenceMesh = None
         self.Method = ''
         self.ArrayName = ''
-	self.Tolerance = 1E-8
+        self.Tolerance = 1E-8
         self.Result = ''
         self.ResultLog = ''
         self.ResultData = None
@@ -116,9 +116,9 @@ class vmtkMeshCompare(pypes.pypeScript):
         referenceQualityRange = referenceQualityOutput.GetCellData().GetArray("Quality").GetRange()
         qualityRangeDifference = (meshQualityRange[0] - referenceQualityRange[0],meshQualityRange[1] - referenceQualityRange[1])
 
-  	self.PrintLog("Mesh Quality Range: "+ str(meshQualityRange))
-  	self.PrintLog("Reference Quality Range: "+ str(referenceQualityRange))
-  	self.PrintLog("Quality Range Difference: "+ str(qualityRangeDifference))
+        self.PrintLog("Mesh Quality Range: "+ str(meshQualityRange))
+        self.PrintLog("Reference Quality Range: "+ str(referenceQualityRange))
+        self.PrintLog("Quality Range Difference: "+ str(qualityRangeDifference))
 
         if max(abs(d) for d in qualityRangeDifference) < self.Tolerance:
             return True

@@ -25,9 +25,9 @@
 import vtk
 import sys
 
-import vtkvmtk
-import vmtkrenderer
-import pypes
+from . import vtkvmtk
+from . import vmtkrenderer
+from . import pypes
 
 vmtkgeodesicsurfaceresolution = 'vmtkGeodesicSurfaceResolution'
 
@@ -216,11 +216,11 @@ class vmtkGeodesicSurfaceResolution(pypes.pypeScript):
         for i in range(pickedCellPointIds.GetNumberOfIds()):
             distance = vtk.vtkMath.Distance2BetweenPoints(pickPosition,self.Surface.GetPoint(pickedCellPointIds.GetId(i)))
             if distance < minDistance:
-        	      minDistance = distance
-        	      pickedPointId = pickedCellPointIds.GetId(i)
+                  minDistance = distance
+                  pickedPointId = pickedCellPointIds.GetId(i)
         if pickedPointId == -1:
             pickedPointId = pickedCellPointIds.GetId(0)
-        	
+
         pickedPoint = self.Surface.GetPoint(pickedPointId)
         if (self.InteractionMode==0):
             self.SphereIds.InsertNextId(pickedPointId)
@@ -286,7 +286,7 @@ class vmtkGeodesicSurfaceResolution(pypes.pypeScript):
         self.ExamineSpheresActor.PickableOff()
         self.ExamineSpheresActor.VisibilityOff()
         self.vmtkRenderer.Renderer.AddActor(self.ExamineSpheresActor)
-	
+
         #self.vmtkRenderer.RenderWindowInteractor.AddObserver("KeyPressEvent", self.KeyPressed)
 
         self.vmtkRenderer.AddKeyBinding('u','undo',self.UndoCallback)

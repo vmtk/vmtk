@@ -15,10 +15,10 @@
 
 
 import vtk
-import vtkvmtk
+from . import vtkvmtk
 import sys
 
-import pypes
+from . import pypes
 
 vmtkcenterlinegeometry = 'vmtkCenterlineGeometry'
 
@@ -49,22 +49,22 @@ class vmtkCenterlineGeometry(pypes.pypeScript):
             ['Centerlines','i','vtkPolyData',1,'','the input centerlines','vmtksurfacereader'],
             ['LengthArrayName','lengtharray','str',1,'','name of the array where length values have to be stored'],
             ['CurvatureArrayName','curvaturearray','str',1,'','name of the array where curvature values have to be stored'],
-      	    ['TorsionArrayName','torsionarray','str',1,'','name of the array where torsion values have to be stored'],
-      	    ['TortuosityArrayName','tortuosityarray','str',1,'','name of the array where tortuosity values have to be stored'],
+            ['TorsionArrayName','torsionarray','str',1,'','name of the array where torsion values have to be stored'],
+            ['TortuosityArrayName','tortuosityarray','str',1,'','name of the array where tortuosity values have to be stored'],
             ['FrenetTangentArrayName','frenettangentarray','str',1,'','name of the array where tangent vectors of the Frenet reference system have to be stored'],
-      	    ['FrenetNormalArrayName','frenetnormalarray','str',1,'','name of the array where normal vectors of the Frenet reference system have to be stored'],
-      	    ['FrenetBinormalArrayName','frenetbinormalarray','str',1,'','name of the array where binormal vectors of the Frenet reference system have to be stored'],
-      	    ['LineSmoothing','smoothing','bool',1,''],
-      	    ['OutputSmoothedLines','outputsmoothed','bool',1,''],
-      	    ['NumberOfSmoothingIterations','iterations','int',1,'(0,)'],
-      	    ['SmoothingFactor','factor','float',1,'(0.0,)']
+            ['FrenetNormalArrayName','frenetnormalarray','str',1,'','name of the array where normal vectors of the Frenet reference system have to be stored'],
+            ['FrenetBinormalArrayName','frenetbinormalarray','str',1,'','name of the array where binormal vectors of the Frenet reference system have to be stored'],
+            ['LineSmoothing','smoothing','bool',1,''],
+            ['OutputSmoothedLines','outputsmoothed','bool',1,''],
+            ['NumberOfSmoothingIterations','iterations','int',1,'(0,)'],
+            ['SmoothingFactor','factor','float',1,'(0.0,)']
             ])
         self.SetOutputMembers([
             ['Centerlines','o','vtkPolyData',1,'','the output centerlines','vmtksurfacewriter'],
             ['LengthArrayName','lengtharray','str',1,'','name of the array where length values are stored'],
             ['CurvatureArrayName','curvaturearray','str',1,'','name of the array where curvature values are stored'],
-	          ['TorsionArrayName','torsionarray','str',1,'','name of the array where torsion values are stored'],
-	          ['TortuosityArrayName','tortuosityarray','str',1,'','name of the array where tortuosity values are stored']
+              ['TorsionArrayName','torsionarray','str',1,'','name of the array where torsion values are stored'],
+              ['TortuosityArrayName','tortuosityarray','str',1,'','name of the array where tortuosity values are stored']
             ])
 
     def Execute(self):
@@ -74,13 +74,13 @@ class vmtkCenterlineGeometry(pypes.pypeScript):
 
         centerlineGeometry = vtkvmtk.vtkvmtkCenterlineGeometry()
         centerlineGeometry.SetInputData(self.Centerlines)
-      	centerlineGeometry.SetLengthArrayName(self.LengthArrayName)
-      	centerlineGeometry.SetCurvatureArrayName(self.CurvatureArrayName)
-      	centerlineGeometry.SetTorsionArrayName(self.TorsionArrayName)
-      	centerlineGeometry.SetTortuosityArrayName(self.TortuosityArrayName)
-      	centerlineGeometry.SetFrenetTangentArrayName(self.FrenetTangentArrayName)
-      	centerlineGeometry.SetFrenetNormalArrayName(self.FrenetNormalArrayName)
-      	centerlineGeometry.SetFrenetBinormalArrayName(self.FrenetBinormalArrayName)
+        centerlineGeometry.SetLengthArrayName(self.LengthArrayName)
+        centerlineGeometry.SetCurvatureArrayName(self.CurvatureArrayName)
+        centerlineGeometry.SetTorsionArrayName(self.TorsionArrayName)
+        centerlineGeometry.SetTortuosityArrayName(self.TortuosityArrayName)
+        centerlineGeometry.SetFrenetTangentArrayName(self.FrenetTangentArrayName)
+        centerlineGeometry.SetFrenetNormalArrayName(self.FrenetNormalArrayName)
+        centerlineGeometry.SetFrenetBinormalArrayName(self.FrenetBinormalArrayName)
         centerlineGeometry.SetLineSmoothing(self.LineSmoothing)
         centerlineGeometry.SetOutputSmoothedLines(self.OutputSmoothedLines)
         centerlineGeometry.SetNumberOfSmoothingIterations(self.NumberOfSmoothingIterations)

@@ -15,8 +15,8 @@
 
 import sys
 import vtk
-import vtkvmtk
-import pypes
+from . import vtkvmtk
+from . import pypes
 
 vmtksurfacekiteremoval = 'vmtkSurfaceKiteRemoval'
 

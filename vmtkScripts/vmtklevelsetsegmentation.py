@@ -18,9 +18,9 @@ import math
 import string
 import vtk
 
-import vtkvmtk
-import vmtkscripts
-import pypes
+from . import vtkvmtk
+from . import vmtkscripts
+from . import pypes
 
 vmtklevelsetsegmentation = 'vmtkLevelSetSegmentation'
 
@@ -63,7 +63,7 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
         self.FeatureImageType = 'gradient'
         
         self.UpwindFactor = 1.0
-	
+
         self.FWHMRadius = [1.0, 1.0, 1.0]
         self.FWHMBackgroundValue = 0.0
         

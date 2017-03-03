@@ -18,9 +18,9 @@ import math
 import string
 import vtk
 
-import vtkvmtk
-import vmtkscripts
-import pypes
+from . import vtkvmtk
+from . import vmtkscripts
+from . import pypes
 
 vmtkimageinitialization = 'vmtkImageInitialization'
 
@@ -155,7 +155,7 @@ class vmtkImageInitialization(pypes.pypeScript):
         scalarRange = self.Image.GetScalarRange()
 
         thresholdedImage = self.Image
-	
+
         if self.LowerThreshold != None or self.UpperThreshold != None:
             threshold = vtk.vtkImageThreshold()
             threshold.SetInputData(self.Image)
@@ -212,7 +212,7 @@ class vmtkImageInitialization(pypes.pypeScript):
         scalarRange = self.Image.GetScalarRange()
 
         thresholdedImage = self.Image
-	
+
         if (self.LowerThreshold is not None) | (self.UpperThreshold is not None):
             threshold = vtk.vtkImageThreshold()
             threshold.SetInputData(self.Image)
@@ -292,7 +292,7 @@ class vmtkImageInitialization(pypes.pypeScript):
             seedIds2.InsertNextId(self.Image.ComputePointId([self.TargetPoints[0],self.TargetPoints[1],self.TargetPoints[2]]))
 
         scalarRange = self.Image.GetScalarRange()
-	
+
         thresholdedImage = self.Image
 
         if (self.LowerThreshold is not None) | (self.UpperThreshold is not None):

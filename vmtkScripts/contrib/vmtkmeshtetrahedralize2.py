@@ -23,9 +23,9 @@
 import vtk
 import sys
 
-import pypes
+from . import pypes
 
-from vmtk import vtkvmtk
+from . import vtkvmtk
 
 vmtkmeshtetrahedralize2 = 'vmtkMeshTetrahedralize2'
 

@@ -17,7 +17,7 @@
 import vtk
 import sys
 
-import pypes
+from . import pypes
 
 vmtkmeshconnectivity = 'vmtkMeshConnectivity'
 
@@ -54,7 +54,7 @@ class vmtkMeshConnectivity(pypes.pypeScript):
         barycenter = [0.0,0.0,0.0]
         if self.Method == 'closest' and self.ClosestPoint == None:
             n = self.ReferenceMesh.GetNumberOfPoints()
-            for i in xrange(n):
+            for i in range(n):
                 point = self.ReferenceMesh.GetPoint(i)
                 barycenter[0] += point[0]
                 barycenter[1] += point[1]
@@ -77,7 +77,7 @@ class vmtkMeshConnectivity(pypes.pypeScript):
         connectivityFilter.Update()
 
         self.Mesh = connectivityFilter.GetOutput()
-	
+
 
 if __name__=='__main__':
 

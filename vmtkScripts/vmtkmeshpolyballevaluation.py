@@ -16,9 +16,9 @@
 
 import sys
 import vtk
-from vmtk import vtkvmtk
+from . import vtkvmtk
 
-import pypes
+from . import pypes
 
 vmtkmeshpolyballevaluation = 'vmtkMeshPolyBallEvaluation'
 
@@ -68,7 +68,7 @@ class vmtkMeshPolyBallEvaluation(pypes.pypeScript):
         polyball.SetInputData(self.PolyBall)
         polyball.SetPolyBallRadiusArrayName(self.RadiusArrayName)
  
-        for i in xrange(self.Mesh.GetNumberOfPoints()):
+        for i in range(self.Mesh.GetNumberOfPoints()):
             point = self.Mesh.GetPoint(i)
             value = polyball.EvaluateFunction(point)
             evaluationArray.SetValue(i,value)

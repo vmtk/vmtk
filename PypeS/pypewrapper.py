@@ -14,9 +14,10 @@
 ##      PURPOSE.  See the above copyright notices for more information.
 
 
+
 import sys
 import os.path
-from vmtk import pypes
+from . import pypes
 
 class PypeWrapper(object):
 
@@ -38,10 +39,10 @@ class PypeWrapper(object):
 
     def ParseArguments(self):
         if '--help' in self.Arguments:
-            print 'hey!'
+            print('hey!')
             return
         if '--pype' not in self.Arguments:
-            print 'complain!'
+            print('complain!')
             return
         if '--mode' in self.Arguments:
             self.Mode = self.Arguments[self.Arguments.index('--mode')+1]
@@ -80,9 +81,9 @@ class PypeWrapper(object):
             moduleName = scriptName
             scriptArguments = scriptNameAndArguments[1]
             try:
-                exec('from vmtk import '+ moduleName)
+                exec('from . import '+ moduleName)
             except ImportError:
-                print 'No module named ' + moduleName
+                print('No module named ' + moduleName)
                 break
             scriptObjectClassName = ''
             exec ('scriptObjectClassName =  '+moduleName+'.'+moduleName)
@@ -100,7 +101,7 @@ class PypeWrapper(object):
             exposedMembers = []
             for member in scriptObject.InputMembers + scriptObject.OutputMembers:
                 exec('member.MemberValue = scriptObject.'+member.MemberName)
-                if exposedOptionsToNamesAndChannels.has_key(member.OptionName):
+                if member.OptionName in exposedOptionsToNamesAndChannels:
                     member.ExposedName = exposedOptionsToNamesAndChannels[member.OptionName][0]
                     member.ExposedChannel = exposedOptionsToNamesAndChannels[member.OptionName][1]
                     exposedMembers.append(member)
@@ -166,7 +167,7 @@ class PypeWrapper(object):
         moduleFile.write('\n')
         moduleFile.write('import sys\n')
         moduleFile.write('if "--xml" in sys.argv:\n')
-        moduleFile.write(self.Indentation+'print xmlDescription\n')
+        moduleFile.write(self.Indentation+'print(xmlDescription\n)')
         moduleFile.write(self.Indentation+'sys.exit(0)\n')
         moduleFile.write('\n')
         moduleFile.write('if "--logo" in sys.argv:\n')
@@ -174,7 +175,7 @@ class PypeWrapper(object):
         moduleFile.write('\n')
         moduleFile.write('import sys\n')
         moduleFile.write('if "--pypewrapper" in sys.argv:\n')
-        moduleFile.write(self.Indentation+'print pypeWrapperCommand\n')
+        moduleFile.write(self.Indentation+'print(pypeWrapperCommand\n)')
         moduleFile.write(self.Indentation+'sys.exit(0)\n')
         moduleFile.write('\n')
 
@@ -223,7 +224,7 @@ class PypeWrapper(object):
         moduleFile.write('pipe = "%s" %% (%s)\n' % (' '.join(substModulePipeArguments),','.join(allOrderedExposedMemberNames)))
 
         moduleFile.write('\n')
-        moduleFile.write('from vmtk import pypes\n')
+        moduleFile.write('from . import pypes\n')
         moduleFile.write('pypes.PypeRun(pipe)\n')
         moduleFile.write('\n')
 

@@ -23,11 +23,11 @@
 import vtk
 import sys
 
-import vtkvmtk
-import vmtkrenderer
-import vmtkscripts
+from . import vtkvmtk
+from . import vmtkrenderer
+from . import vmtkscripts
 
-import pypes
+from . import pypes
 
 vmtkmeshclipcenterlines = 'vmtkMeshClipCenterlines'
 
@@ -492,7 +492,7 @@ class vmtkMeshClipCenterlines(pypes.pypeScript):
 
     def Display(self):
 
-      	self.vmtkRenderer.RenderWindowInteractor.Initialize()
+        self.vmtkRenderer.RenderWindowInteractor.Initialize()
 
         #self.vmtkRenderer.RenderWindowInteractor.AddObserver("KeyPressEvent", self.KeyPressed)
         self.vmtkRenderer.AddKeyBinding('f','Change Polyball type',self.PolyballTypeCallback)

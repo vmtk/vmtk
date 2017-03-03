@@ -15,10 +15,10 @@
 
 
 import vtk
-import vtkvmtk
+from . import vtkvmtk
 import sys
 
-import pypes
+from . import pypes
 
 vmtksurfacenormals = 'vmtkSurfaceNormals'
 
@@ -61,7 +61,7 @@ class vmtkSurfaceNormals(pypes.pypeScript):
         normalsFilter.SetFlipNormals(self.FlipNormals)
         normalsFilter.SetConsistency(self.Consistency)
         normalsFilter.SetComputeCellNormals(self.ComputeCellNormals)
-      	normalsFilter.SplittingOff()
+        normalsFilter.SplittingOff()
         normalsFilter.Update()
 
         self.Surface = normalsFilter.GetOutput()

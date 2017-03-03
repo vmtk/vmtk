@@ -15,10 +15,10 @@
 
 
 import vtk
-import vtkvmtk
+from . import vtkvmtk
 import sys
 
-import pypes
+from . import pypes
 
 vmtkendpointextractor = 'vmtkEndpointExtractor'
 
@@ -38,7 +38,7 @@ class vmtkEndpointExtractor(pypes.pypeScript):
         self.TractIdsArrayName = 'TractIds'
 
         self.NumberOfEndpointSpheres = 2
-      	self.NumberOfGapSpheres = 1
+        self.NumberOfGapSpheres = 1
 
         self.SetScriptName('vmtkendpointextractor')
         self.SetInputMembers([
@@ -47,16 +47,16 @@ class vmtkEndpointExtractor(pypes.pypeScript):
             ['TractIdsArrayName','tractidsarray','str',1],
             ['CenterlineIdsArrayName','centerlineidsarray','str',1],
             ['RadiusArrayName','radiusarray','str',1],
-      	    ['BlankingArrayName','blankingarray','str',1],
-      	    ['NumberOfEndpointSpheres','numberofendpointspheres','int',1,'(0.0,)'],
-      	    ['NumberOfGapSpheres','numberofgapspheres','int',1,'(0.0,)']
+            ['BlankingArrayName','blankingarray','str',1],
+            ['NumberOfEndpointSpheres','numberofendpointspheres','int',1,'(0.0,)'],
+            ['NumberOfGapSpheres','numberofgapspheres','int',1,'(0.0,)']
             ])
         self.SetOutputMembers([
             ['Centerlines','o','vtkPolyData',1,'','','vmtksurfacewriter'],
             ['GroupIdsArrayName','groupidsarray','str',1],
             ['TractIdsArrayName','tractidsarray','str',1],
             ['CenterlineIdsArrayName','centerlineidsarray','str',1],
-      	    ['BlankingArrayName','blankingarray','str',1]
+            ['BlankingArrayName','blankingarray','str',1]
             ])
 
     def Execute(self):
@@ -70,9 +70,9 @@ class vmtkEndpointExtractor(pypes.pypeScript):
         endpointExtractor.SetGroupIdsArrayName(self.GroupIdsArrayName)
         endpointExtractor.SetTractIdsArrayName(self.TractIdsArrayName)
         endpointExtractor.SetCenterlineIdsArrayName(self.CenterlineIdsArrayName)
-      	endpointExtractor.SetBlankingArrayName(self.BlankingArrayName)
-      	endpointExtractor.SetNumberOfEndpointSpheres(self.NumberOfEndpointSpheres)
-      	endpointExtractor.SetNumberOfGapSpheres(self.NumberOfGapSpheres)
+        endpointExtractor.SetBlankingArrayName(self.BlankingArrayName)
+        endpointExtractor.SetNumberOfEndpointSpheres(self.NumberOfEndpointSpheres)
+        endpointExtractor.SetNumberOfGapSpheres(self.NumberOfGapSpheres)
         endpointExtractor.Update()
 
         self.Centerlines = endpointExtractor.GetOutput()

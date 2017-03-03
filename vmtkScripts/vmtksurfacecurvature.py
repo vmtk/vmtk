@@ -16,9 +16,9 @@
 
 import vtk
 import sys
-import vtkvmtk
+from . import vtkvmtk
 
-import pypes
+from . import pypes
 
 vmtksurfacecurvature = 'vmtkSurfaceCurvature'
 
@@ -145,7 +145,7 @@ class vmtkSurfaceCurvature(pypes.pypeScript):
         else:
             self.ReferenceSurface.GetPointData().AddArray(activeScalars)
             self.Surface = self.ReferenceSurface
-	
+
 
 if __name__=='__main__':
 

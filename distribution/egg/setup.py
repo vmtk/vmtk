@@ -2,7 +2,7 @@ import sys
 import os
 import glob
 import shutil
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import zipfile
 from setuptools import setup, find_packages
 from setuptools.command.install import install as _install
@@ -57,9 +57,11 @@ class vmtk_build_win_i386(_build):
         VMTKPATH = "../../../vmtk-build-i386/Install"
         vmtk_path = os.path.abspath(VMTKPATH)
 
-        shutil.copytree(os.path.join(vmtk_path,'lib','python2.7','site-packages','vmtk'), 'vmtk')
-        shutil.copytree(os.path.join(vmtk_path,'lib','python2.7','site-packages','vtk'), os.path.join('vmtk','vtk'))
-        shutil.copytree(os.path.join(vmtk_path,'lib'), os.path.join('vmtk','lib'), symlinks=True, ignore=shutil.ignore_patterns('cmake','python2.7'))
+        shutil.copytree(os.path.join(vmtk_path,'lib','python3.5','site-packages','vmtk'), 'vmtk')
+        shutil.copytree(os.path.join(vmtk_path,'lib','python3.5','site-packages','vtk'), os.path.join('vmtk','vtk'))
+        shutil.copytree(os.path.join(vmtk_path,'lib'),
+                os.path.join('vmtk','lib'), symlinks=True,
+                ignore=shutil.ignore_patterns('cmake','python3.5'))
         shutil.copytree(os.path.join(vmtk_path,'bin'), os.path.join('vmtk','bin'))
 
         if sys.platform == "win32":
@@ -67,7 +69,7 @@ class vmtk_build_win_i386(_build):
             shutil.copy(os.path.join(os.getcwd(),'vmtk-icon.ico'),os.path.join('vmtk','bin','vmtk-icon.ico'))
             #copy c++ dll files
             windows_architecture = 'i386'
-            dll_zip = urllib.urlretrieve('https://s3.amazonaws.com/vmtk-installers/1.3/i386.zip','i386.zip')
+            dll_zip = urllib.request.urlretrieve('https://s3.amazonaws.com/vmtk-installers/1.3/i386.zip','i386.zip')
             fh = open(dll_zip[0],'rb')
             z = zipfile.ZipFile(fh)
             z.extractall(os.path.join('vmtk','bin'))
@@ -82,16 +84,18 @@ class vmtk_build(_build):
         VMTKPATH = "../../../vmtk-build/Install"
         vmtk_path = os.path.abspath(VMTKPATH)
 
-        shutil.copytree(os.path.join(vmtk_path,'lib','python2.7','site-packages','vmtk'), 'vmtk')
-        shutil.copytree(os.path.join(vmtk_path,'lib','python2.7','site-packages','vtk'), os.path.join('vmtk','vtk'))
-        shutil.copytree(os.path.join(vmtk_path,'lib'), os.path.join('vmtk','lib'), symlinks=True, ignore=shutil.ignore_patterns('cmake','python2.7'))
+        shutil.copytree(os.path.join(vmtk_path,'lib','python3.5','site-packages','vmtk'), 'vmtk')
+        shutil.copytree(os.path.join(vmtk_path,'lib','python3.5','site-packages','vtk'), os.path.join('vmtk','vtk'))
+        shutil.copytree(os.path.join(vmtk_path,'lib'),
+                os.path.join('vmtk','lib'), symlinks=True,
+                ignore=shutil.ignore_patterns('cmake','python3.5'))
         shutil.copytree(os.path.join(vmtk_path,'bin'), os.path.join('vmtk','bin'))
 
         if sys.platform == "win32":
             #copy favicon
             shutil.copy(os.path.join(os.getcwd(),'vmtk-icon.ico'),os.path.join('vmtk','bin','vmtk-icon.ico'))
             #copy c++ dll files
-            dll_zip = urllib.urlretrieve('https://s3.amazonaws.com/vmtk-installers/1.3/x8664.zip','x8664.zip')
+            dll_zip = urllib.request.urlretrieve('https://s3.amazonaws.com/vmtk-installers/1.3/x8664.zip','x8664.zip')
             fh = open(dll_zip[0],'rb')
             z = zipfile.ZipFile(fh)
             z.extractall(os.path.join('vmtk','bin'))

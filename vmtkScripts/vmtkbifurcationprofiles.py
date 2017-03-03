@@ -15,10 +15,10 @@
 
 
 import vtk
-import vtkvmtk
+from . import vtkvmtk
 import sys
 
-import pypes
+from . import pypes
 
 vmtkbifurcationprofiles = 'vmtkBifurcationProfiles'
 
@@ -47,20 +47,20 @@ class vmtkBifurcationProfiles(pypes.pypeScript):
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface, already split into branches','vmtksurfacereader'],
             ['Centerlines','centerlines','vtkPolyData',1,'','the input centerlines, already split into branches','vmtksurfacereader'],
-      	    ['RadiusArrayName','radiusarray','str',1,'','name of the array where centerline radius is stored'],
-      	    ['GroupIdsArrayName','groupidsarray','str',1,'','name of the array where centerline group ids are stored'],
-      	    ['CenterlineIdsArrayName','centerlineidsarray','str',1,'','name of the array where centerline ids are stored'],
-      	    ['TractIdsArrayName','tractidsarray','str',1,'','name of the array where centerline tract ids are stored'],
-      	    ['BlankingArrayName','blankingarray','str',1,'','name of the array where centerline blanking information about branches is stored'],
-      	    ['BifurcationProfileGroupIdsArrayName','bifurcationprofilegroupids','str',1,'','name of the array where the group id to which each profile belongs has to be stored'],
-      	    ['BifurcationProfileBifurcationGroupIdsArrayName','bifurcationprofilebifurcationgroupids','str',1,'','name of the array where the bifurcation group id to which each profile belongs has to be stored'],
-      	    ['BifurcationProfileOrientationArrayName','bifurcationprofileorientation','str',1,'','name of the array containing 0 if a profile is upstream and 0 downstream its bifurcation']
+            ['RadiusArrayName','radiusarray','str',1,'','name of the array where centerline radius is stored'],
+            ['GroupIdsArrayName','groupidsarray','str',1,'','name of the array where centerline group ids are stored'],
+            ['CenterlineIdsArrayName','centerlineidsarray','str',1,'','name of the array where centerline ids are stored'],
+            ['TractIdsArrayName','tractidsarray','str',1,'','name of the array where centerline tract ids are stored'],
+            ['BlankingArrayName','blankingarray','str',1,'','name of the array where centerline blanking information about branches is stored'],
+            ['BifurcationProfileGroupIdsArrayName','bifurcationprofilegroupids','str',1,'','name of the array where the group id to which each profile belongs has to be stored'],
+            ['BifurcationProfileBifurcationGroupIdsArrayName','bifurcationprofilebifurcationgroupids','str',1,'','name of the array where the bifurcation group id to which each profile belongs has to be stored'],
+            ['BifurcationProfileOrientationArrayName','bifurcationprofileorientation','str',1,'','name of the array containing 0 if a profile is upstream and 0 downstream its bifurcation']
             ])
         self.SetOutputMembers([
             ['BifurcationProfiles','o','vtkPolyData',1,'','the output sections','vmtksurfacewriter'],
-      	    ['BifurcationProfileGroupIdsArrayName','bifurcationprofilegroupids','str',1,'','name of the array where the group id to which each profile belongs are stored'],
-      	    ['BifurcationProfileBifurcationGroupIdsArrayName','bifurcationprofilebifurcationgroupids','str',1,'','name of the array where the bifurcation group id to which each profile belongs has to be stored'],
-      	    ['BifurcationProfileOrientationArrayName','bifurcationprofileorientation','str',1,'','name of the array containing 0 if a profile is upstream and 0 downstream its bifurcation']
+            ['BifurcationProfileGroupIdsArrayName','bifurcationprofilegroupids','str',1,'','name of the array where the group id to which each profile belongs are stored'],
+            ['BifurcationProfileBifurcationGroupIdsArrayName','bifurcationprofilebifurcationgroupids','str',1,'','name of the array where the bifurcation group id to which each profile belongs has to be stored'],
+            ['BifurcationProfileOrientationArrayName','bifurcationprofileorientation','str',1,'','name of the array containing 0 if a profile is upstream and 0 downstream its bifurcation']
             ])
 
     def Execute(self):

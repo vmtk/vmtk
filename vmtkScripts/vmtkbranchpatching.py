@@ -15,10 +15,10 @@
 
 
 import vtk
-import vtkvmtk
+from . import vtkvmtk
 import sys
 
-import pypes
+from . import pypes
 
 vmtkbranchpatching = 'vmtkBranchPatching'
 
@@ -42,7 +42,7 @@ class vmtkBranchPatching(pypes.pypeScript):
         self.GroupIdsArrayName = ''
         self.LongitudinalMappingArrayName = ''
         self.CircularMappingArrayName = ''
-	
+
         self.LongitudinalPatchNumberArrayName = 'Slab'
         self.CircularPatchNumberArrayName = 'Sector'
         self.PatchAreaArrayName = 'PatchArea'

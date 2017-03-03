@@ -15,13 +15,13 @@
 
 
 import vtk
-import vtkvmtk
+from . import vtkvmtk
 import sys
 
-import pypes
+from . import pypes
 
-import vmtkrenderer
-import vmtkcenterlineviewer
+from . import vmtkrenderer
+from . import vmtkcenterlineviewer
 
 vmtkbranchclipper = 'vmtkBranchClipper'
 
@@ -38,7 +38,7 @@ class vmtkBranchClipper(pypes.pypeScript):
         self.CutoffRadiusFactor = 1E16
         
         self.ClipValue = 0.0
-	
+
         self.BlankingArrayName = ''
         self.GroupIdsArrayName = ''
 

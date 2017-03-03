@@ -17,9 +17,9 @@ import vtk
 import sys
 import math
 
-import vtkvmtk
-import vmtkrenderer
-import pypes
+from . import vtkvmtk
+from . import vmtkrenderer
+from . import pypes
 
 vmtkimagevoiselector = 'vmtkImageVOISelector'
 
@@ -141,7 +141,7 @@ class vmtkImageVOISelector(pypes.pypeScript):
         self.CubeActor.GetProperty().SetOpacity(0.25)
         self.CubeActor.VisibilityOff()
         self.vmtkRenderer.Renderer.AddActor(self.CubeActor)
-	    
+
         self.vmtkRenderer.Renderer.ResetCamera()
 
         self.vmtkRenderer.Render()
@@ -186,7 +186,7 @@ class vmtkImageVOISelector(pypes.pypeScript):
         self.CroppedImage.DeepCopy(extractVOI.GetOutput())
 
     def Execute(self):
-	
+
         if self.Image == None:
             self.PrintError('Error: no Image.')
 

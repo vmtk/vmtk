@@ -17,11 +17,11 @@
 import vtk
 import sys
 
-import vtkvmtk
-import vmtkrenderer
-import pypes
+from . import vtkvmtk
+from . import vmtkrenderer
+from . import pypes
 
-import vmtkcenterlineviewer
+from . import vmtkcenterlineviewer
 
 vmtkcenterlinelabeler = 'vmtkCenterlineLabeler'
 

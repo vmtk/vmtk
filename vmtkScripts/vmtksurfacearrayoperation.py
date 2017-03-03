@@ -15,10 +15,10 @@
 
 
 import vtk
-import vtkvmtk
+from . import vtkvmtk
 import sys
 
-import pypes
+from . import pypes
 
 vmtksurfacearrayoperation = 'vmtkSurfaceArrayOperation'
 
@@ -74,7 +74,7 @@ class vmtkSurfaceArrayOperation(pypes.pypeScript):
         resultArray.DeepCopy(array1)
         resultArray.SetName(self.ResultArrayName)
 
-        for i in xrange(array1.GetNumberOfTuples()):
+        for i in range(array1.GetNumberOfTuples()):
             value1 = array1.GetTuple1(i)
             value2 = None
             if array2:

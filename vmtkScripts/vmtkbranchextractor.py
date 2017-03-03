@@ -15,10 +15,10 @@
 
 
 import vtk
-import vtkvmtk
+from . import vtkvmtk
 import sys
 
-import pypes
+from . import pypes
 
 vmtkbranchextractor = 'vmtkBranchExtractor'
 
@@ -31,7 +31,7 @@ class vmtkBranchExtractor(pypes.pypeScript):
         self.Centerlines = None
 
         self.RadiusArrayName = ''
-	
+
         self.BlankingArrayName = 'Blanking'
         self.GroupIdsArrayName = 'GroupIds'
         self.CenterlineIdsArrayName = 'CenterlineIds'
@@ -44,14 +44,14 @@ class vmtkBranchExtractor(pypes.pypeScript):
             ['GroupIdsArrayName','groupidsarray','str',1],
             ['CenterlineIdsArrayName','centerlineidsarray','str',1],
             ['TractIdsArrayName','tractidsarray','str',1],
-				    ['BlankingArrayName','blankingarray','str',1],
+                    ['BlankingArrayName','blankingarray','str',1],
             ])
         self.SetOutputMembers([
             ['Centerlines','o','vtkPolyData',1,'','','vmtksurfacewriter'],
             ['GroupIdsArrayName','groupidsarray','str',1],
             ['CenterlineIdsArrayName','centerlineidsarray','str',1],
             ['TractIdsArrayName','tractidsarray','str',1],
-      	    ['BlankingArrayName','blankingarray','str',1]
+            ['BlankingArrayName','blankingarray','str',1]
             ])
 
     def Execute(self):

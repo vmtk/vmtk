@@ -11,7 +11,8 @@
 ##      PURPOSE.  See the above copyright notices for more information.
 
 
-from vmtk import pypes
+
+from . import pypes
 import vtk
 import time
 import traceback
@@ -36,15 +37,15 @@ def RunPypeProcess(arguments, inputStream=None, outputStream=None, logOn=True):
         pipe.OutputStream = outputStream
     pipe.LogOn = logOn
     pipe.LogOn = True
-    if type(arguments) in [str,unicode]:
+    if type(arguments) in [str, str]:
         pipe.SetArgumentsString(arguments)
     else:
         pipe.Arguments = arguments
     try: 
         pipe.ParseArguments()
         pipe.Execute() 
-    except BaseException, e:
-        print traceback.format_exc()
+    except BaseException as e:
+        print(traceback.format_exc())
     del pipe
 
 
@@ -76,10 +77,10 @@ def PypeServer(queue, output, error, returnIfEmptyQueue=False):
                     return
             else:
                 time.sleep(0.5)
-        except IOError, e:
-            print "Connection closed"
+        except IOError as e:
+            print("Connection closed")
             break
-        except KeyboardInterrupt, e:
-            print "Connection closed"
+        except KeyboardInterrupt as e:
+            print("Connection closed")
             break
 

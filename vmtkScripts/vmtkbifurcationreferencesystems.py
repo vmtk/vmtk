@@ -15,10 +15,10 @@
 
 
 import vtk
-import vtkvmtk
+from . import vtkvmtk
 import sys
 
-import pypes
+from . import pypes
 
 vmtkbifurcationreferencesystems = 'vmtkBifurcationReferenceSystems'
 
@@ -32,17 +32,17 @@ class vmtkBifurcationReferenceSystems(pypes.pypeScript):
         self.ReferenceSystems = None
 
         self.RadiusArrayName = ''
-      	self.BlankingArrayName = ''
+        self.BlankingArrayName = ''
         self.GroupIdsArrayName = ''
-      	self.ReferenceSystemsNormalArrayName = 'Normal'
-      	self.ReferenceSystemsUpNormalArrayName = 'UpNormal'
+        self.ReferenceSystemsNormalArrayName = 'Normal'
+        self.ReferenceSystemsUpNormalArrayName = 'UpNormal'
 
         self.SetScriptName('vmtkbifurcationreferencesystems')
         self.SetScriptDoc('compute reference systems for each bifurcation of a tree. The script takes in input the centerlines already split into branches.')
         self.SetInputMembers([
             ['Centerlines','i','vtkPolyData',1,'','the input split centerlines','vmtksurfacereader'],
             ['RadiusArrayName','radiusarray','str',1,'','the name of the array where centerline radius values are stored'],
-	          ['BlankingArrayName','blankingarray','str',1,'','the name of the array where centerline blanking information about branches is stored'],
+              ['BlankingArrayName','blankingarray','str',1,'','the name of the array where centerline blanking information about branches is stored'],
             ['GroupIdsArrayName','groupidsarray','str',1,'','the name of the array where centerline group ids are stored'],
             ['ReferenceSystemsNormalArrayName','normalarray','str',1,'','the name of the array where reference system plane normals have to be stored'],
             ['ReferenceSystemsUpNormalArrayName','upnormalarray','str',1,'','the name of the array where reference system upnormals have to be stored']
@@ -61,7 +61,7 @@ class vmtkBifurcationReferenceSystems(pypes.pypeScript):
         bifurcationReferenceSystems = vtkvmtk.vtkvmtkCenterlineBifurcationReferenceSystems()
         bifurcationReferenceSystems.SetInputData(self.Centerlines)
         bifurcationReferenceSystems.SetRadiusArrayName(self.RadiusArrayName)
-      	bifurcationReferenceSystems.SetBlankingArrayName(self.BlankingArrayName)
+        bifurcationReferenceSystems.SetBlankingArrayName(self.BlankingArrayName)
         bifurcationReferenceSystems.SetGroupIdsArrayName(self.GroupIdsArrayName)
         bifurcationReferenceSystems.SetNormalArrayName(self.ReferenceSystemsNormalArrayName)
         bifurcationReferenceSystems.SetUpNormalArrayName(self.ReferenceSystemsUpNormalArrayName)

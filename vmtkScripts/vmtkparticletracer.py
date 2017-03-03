@@ -21,8 +21,8 @@ import vtk
 import sys
 import os
 
-import vtkvmtk
-import pypes
+from . import vtkvmtk
+from . import pypes
 
 vmtkparticletracer = 'vmtkParticleTracer'
 
@@ -103,7 +103,7 @@ class vmtkParticleTracer(pypes.pypeScript):
                 i+=1
             firstTimeStep = indexList[0]
         else:
-            indexList = range(self.FirstTimeStep,self.LastTimeStep+1,self.IntervalTimeStep)
+            indexList = list(range(self.FirstTimeStep,self.LastTimeStep+1,self.IntervalTimeStep))
             firstTimeStep = self.FirstTimeStep
         
         indexColumn = vtk.vtkIntArray()

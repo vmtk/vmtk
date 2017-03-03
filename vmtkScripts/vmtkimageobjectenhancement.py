@@ -17,8 +17,8 @@
 import vtk
 import sys
 
-import pypes
-import vtkvmtk
+from . import pypes
+from . import vtkvmtk
 
 vmtkimageobjectenhancement = 'vmtkImageObjectEnhancement'
 

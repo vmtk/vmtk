@@ -15,10 +15,10 @@
 
 
 import vtk
-import vtkvmtk
+from . import vtkvmtk
 import sys
 
-import pypes
+from . import pypes
 
 vmtkbranchmapping = 'vmtkBranchMapping'
 
@@ -54,19 +54,19 @@ class vmtkBranchMapping(pypes.pypeScript):
             ['Surface','i','vtkPolyData',1,'','','vmtksurfacereader'],
             ['Centerlines','centerlines','vtkPolyData',1,'','','vmtksurfacereader'],
             ['ReferenceSystems','referencesystems','vtkPolyData',1,'','','vmtksurfacereader'],
-      	    ['AbscissasArrayName','abscissasarray','str',1],
-      	    ['NormalsArrayName','normalsarray','str',1],
-      	    ['GroupIdsArrayName','groupidsarray','str',1],
-      	    ['CenterlineIdsArrayName','centerlineidsarray','str',1],
-      	    ['TractIdsArrayName','tractidsarray','str',1],
-      	    ['ReferenceSystemsNormalArrayName','referencesystemsnormalarray','str',1],
-      	    ['RadiusArrayName','radiusarray','str',1],
-      	    ['BlankingArrayName','blankingarray','str',1],
-      	    ['AngularMetricArrayName','angularmetricarray','str',1],
-      	    ['HarmonicMappingArrayName','harmonicmappingarray','str',1],
-      	    ['AbscissaMetricArrayName','abscissametricarray','str',1],
-      	    ['BoundaryMetricArrayName','boundarymetricarray','str',1],
-      	    ['StretchedMappingArrayName','stretchedmappingarray','str',1]
+            ['AbscissasArrayName','abscissasarray','str',1],
+            ['NormalsArrayName','normalsarray','str',1],
+            ['GroupIdsArrayName','groupidsarray','str',1],
+            ['CenterlineIdsArrayName','centerlineidsarray','str',1],
+            ['TractIdsArrayName','tractidsarray','str',1],
+            ['ReferenceSystemsNormalArrayName','referencesystemsnormalarray','str',1],
+            ['RadiusArrayName','radiusarray','str',1],
+            ['BlankingArrayName','blankingarray','str',1],
+            ['AngularMetricArrayName','angularmetricarray','str',1],
+            ['HarmonicMappingArrayName','harmonicmappingarray','str',1],
+            ['AbscissaMetricArrayName','abscissametricarray','str',1],
+            ['BoundaryMetricArrayName','boundarymetricarray','str',1],
+            ['StretchedMappingArrayName','stretchedmappingarray','str',1]
             ])
         self.SetOutputMembers([
             ['Surface','o','vtkPolyData',1,'','','vmtksurfacewriter'],

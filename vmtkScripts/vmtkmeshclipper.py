@@ -16,8 +16,8 @@
 import vtk
 import sys
 
-import vmtkrenderer
-import pypes
+from . import vmtkrenderer
+from . import pypes
 
 vmtkmeshclipper = 'vmtkMeshClipper'
 
@@ -83,8 +83,8 @@ class vmtkMeshClipper(pypes.pypeScript):
 
     def Display(self):
 
-      	self.BoxWidget.SetInputData(self.Mesh)
-      	self.BoxWidget.PlaceWidget()
+        self.BoxWidget.SetInputData(self.Mesh)
+        self.BoxWidget.PlaceWidget()
 
         self.vmtkRenderer.Render()
 

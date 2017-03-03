@@ -16,8 +16,8 @@
 import vtk
 import sys
 
-import vmtkrenderer
-import pypes
+from . import vmtkrenderer
+from . import pypes
 
 vmtkmeshviewer = 'vmtkMeshViewer'
 
@@ -39,7 +39,7 @@ class vmtkMeshViewer(pypes.pypeScript):
         self.Color = [-1.0, -1.0, -1.0]
         self.Legend = 0
         self.FlatInterpolation = 0
-	
+
         self.Representation = 'surface'
 
         self.Actor = None

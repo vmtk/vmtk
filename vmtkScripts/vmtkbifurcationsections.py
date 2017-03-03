@@ -15,10 +15,10 @@
 
 
 import vtk
-import vtkvmtk
+from . import vtkvmtk
 import sys
 
-import pypes
+from . import pypes
 
 vmtkbifurcationsections = 'vmtkBifurcationSections'
 
@@ -63,42 +63,42 @@ class vmtkBifurcationSections(pypes.pypeScript):
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface, already split into branches','vmtksurfacereader'],
             ['Centerlines','centerlines','vtkPolyData',1,'','the input centerlines, already split into branches','vmtksurfacereader'],
-      	    ['NumberOfDistanceSpheres','distancespheres','int',1,'','distance from the bifurcation at which the sections have to be taken; the distance is expressed in number of inscribed spheres, where each sphere touches the center of the previous one'],
-      	    ['RadiusArrayName','radiusarray','str',1,'','name of the array where centerline radius is stored'],
-      	    ['GroupIdsArrayName','groupidsarray','str',1,'','name of the array where centerline group ids are stored'],
-      	    ['CenterlineIdsArrayName','centerlineidsarray','str',1,'','name of the array where centerline ids are stored'],
-      	    ['TractIdsArrayName','tractidsarray','str',1,'','name of the array where centerline tract ids are stored'],
-      	    ['BlankingArrayName','blankingarray','str',1,'','name of the array where centerline blanking information about branches is stored'],
-      	    ['BifurcationSectionGroupIdsArrayName','bifurcationsectiongroupids','str',1,'','name of the array where the group id to which each section belongs has to be stored'],
-      	    ['BifurcationSectionBifurcationGroupIdsArrayName','bifurcationsectionbifurcationgroupids','str',1,'','name of the array where the bifurcation group id to which each section belongs has to be stored'],
-      	    ['BifurcationSectionPointArrayName','bifurcationsectionpoint','str',1,'','name of the array where the point at which bifurcation sections are defined have to be stored'],
-      	    ['BifurcationSectionNormalArrayName','bifurcationsectionnormal','str',1,'','name of the array where the bifurcation section normals have to be stored'],
-      	    ['BifurcationSectionAreaArrayName','bifurcationsectionarea','str',1,'','name of the array where the area of bifurcation sections have to be stored'],
-      	    ['BifurcationSectionMinSizeArrayName','bifurcationsectionminsize','str',1,'','name of the array where the minimum diameter of each section has to be stored'],
-      	    ['BifurcationSectionMaxSizeArrayName','bifurcationsectionmaxsize','str',1,'','name of the array where the maximum diameter of each bifurcation sections has to be stored'],
-      	    ['BifurcationSectionShapeArrayName','bifurcationsectionshape','str',1,'','name of the array where the shape index, i.e. the ratio between minimum and maximum diameter, of each bifurcation section has to be stored'],
-      	    ['BifurcationSectionClosedArrayName','bifurcationsectionclosed','str',1,'','name of the array containing 1 if a section is closed and 0 otherwise'],
-      	    ['BifurcationSectionOrientationArrayName','bifurcationsectionorientation','str',1,'','name of the array containing 0 if a section is upstream and 0 downstream its bifurcation'],
-      	    ['BifurcationSectionDistanceSpheresArrayName','bifurcationsectiondistancespheres','str',1,'','name of the array containing the number of spheres away from the bifurcation the section is located at'],
-      	    ['OutputSectionPointGroupId','sectionpointgroupid','int',1,'(0,)'],
-      	    ['OutputSectionPointBifurcationGroupId','sectionpointbifurcationgroupid','int',1,'(0,)']
+            ['NumberOfDistanceSpheres','distancespheres','int',1,'','distance from the bifurcation at which the sections have to be taken; the distance is expressed in number of inscribed spheres, where each sphere touches the center of the previous one'],
+            ['RadiusArrayName','radiusarray','str',1,'','name of the array where centerline radius is stored'],
+            ['GroupIdsArrayName','groupidsarray','str',1,'','name of the array where centerline group ids are stored'],
+            ['CenterlineIdsArrayName','centerlineidsarray','str',1,'','name of the array where centerline ids are stored'],
+            ['TractIdsArrayName','tractidsarray','str',1,'','name of the array where centerline tract ids are stored'],
+            ['BlankingArrayName','blankingarray','str',1,'','name of the array where centerline blanking information about branches is stored'],
+            ['BifurcationSectionGroupIdsArrayName','bifurcationsectiongroupids','str',1,'','name of the array where the group id to which each section belongs has to be stored'],
+            ['BifurcationSectionBifurcationGroupIdsArrayName','bifurcationsectionbifurcationgroupids','str',1,'','name of the array where the bifurcation group id to which each section belongs has to be stored'],
+            ['BifurcationSectionPointArrayName','bifurcationsectionpoint','str',1,'','name of the array where the point at which bifurcation sections are defined have to be stored'],
+            ['BifurcationSectionNormalArrayName','bifurcationsectionnormal','str',1,'','name of the array where the bifurcation section normals have to be stored'],
+            ['BifurcationSectionAreaArrayName','bifurcationsectionarea','str',1,'','name of the array where the area of bifurcation sections have to be stored'],
+            ['BifurcationSectionMinSizeArrayName','bifurcationsectionminsize','str',1,'','name of the array where the minimum diameter of each section has to be stored'],
+            ['BifurcationSectionMaxSizeArrayName','bifurcationsectionmaxsize','str',1,'','name of the array where the maximum diameter of each bifurcation sections has to be stored'],
+            ['BifurcationSectionShapeArrayName','bifurcationsectionshape','str',1,'','name of the array where the shape index, i.e. the ratio between minimum and maximum diameter, of each bifurcation section has to be stored'],
+            ['BifurcationSectionClosedArrayName','bifurcationsectionclosed','str',1,'','name of the array containing 1 if a section is closed and 0 otherwise'],
+            ['BifurcationSectionOrientationArrayName','bifurcationsectionorientation','str',1,'','name of the array containing 0 if a section is upstream and 0 downstream its bifurcation'],
+            ['BifurcationSectionDistanceSpheresArrayName','bifurcationsectiondistancespheres','str',1,'','name of the array containing the number of spheres away from the bifurcation the section is located at'],
+            ['OutputSectionPointGroupId','sectionpointgroupid','int',1,'(0,)'],
+            ['OutputSectionPointBifurcationGroupId','sectionpointbifurcationgroupid','int',1,'(0,)']
             ])
         self.SetOutputMembers([
             ['BifurcationSections','o','vtkPolyData',1,'','the output sections','vmtksurfacewriter'],
-      	    ['BifurcationSectionGroupIdsArrayName','bifurcationsectiongroupids','str',1,'','name of the array where the group id to which each section belongs are stored'],
-      	    ['BifurcationSectionBifurcationGroupIdsArrayName','bifurcationsectionbifurcationgroupids','str',1,'','name of the array where the bifurcation group id to which each section belongs has to be stored'],
-      	    ['BifurcationSectionPointArrayName','bifurcationsectionpoint','str',1,'','name of the array where the point at which bifurcation sections are defined are stored'],
-      	    ['BifurcationSectionNormalArrayName','bifurcationsectionnormal','str',1,'','name of the array where bifurcation section normals are stored'],
-      	    ['BifurcationSectionAreaArrayName','bifurcationsectionarea','str',1,'','name of the array where the area of bifurcation sections are stored'],
-      	    ['BifurcationSectionMinSizeArrayName','bifurcationsectionminsize','str',1,'','name of the array where the minimum diameter of each section are stored'],
-      	    ['BifurcationSectionMaxSizeArrayName','bifurcationsectionmaxsize','str',1,'','name of the array where the minimum diameter of each bifurcation sections has to be stored'],
-      	    ['BifurcationSectionShapeArrayName','bifurcationsectionshape','str',1,'','name of the array where the shape index, i.e. the ratio between minimum and maximum diameter, of each bifurcation section are stored'],
-      	    ['BifurcationSectionClosedArrayName','bifurcationsectionclosed','str',1,'','name of the array containing 1 if a section is closed and 0 otherwise'],
-      	    ['BifurcationSectionOrientationArrayName','bifurcationsectionorientation','str',1,'','name of the array containing 0 if a section is upstream and 0 downstream its bifurcation'],
-      	    ['BifurcationSectionDistanceSpheresArrayName','bifurcationsectiondistancespheres','str',1,'','name of the array containing the number of spheres away from the bifurcation the section is located at'],
-      	    ['OutputSectionPoint','sectionpoint','float',3],
-      	    ['OutputSectionNormal','sectionnormal','float',3],
-      	    ['OutputSectionArea','sectionarea','float',1]
+            ['BifurcationSectionGroupIdsArrayName','bifurcationsectiongroupids','str',1,'','name of the array where the group id to which each section belongs are stored'],
+            ['BifurcationSectionBifurcationGroupIdsArrayName','bifurcationsectionbifurcationgroupids','str',1,'','name of the array where the bifurcation group id to which each section belongs has to be stored'],
+            ['BifurcationSectionPointArrayName','bifurcationsectionpoint','str',1,'','name of the array where the point at which bifurcation sections are defined are stored'],
+            ['BifurcationSectionNormalArrayName','bifurcationsectionnormal','str',1,'','name of the array where bifurcation section normals are stored'],
+            ['BifurcationSectionAreaArrayName','bifurcationsectionarea','str',1,'','name of the array where the area of bifurcation sections are stored'],
+            ['BifurcationSectionMinSizeArrayName','bifurcationsectionminsize','str',1,'','name of the array where the minimum diameter of each section are stored'],
+            ['BifurcationSectionMaxSizeArrayName','bifurcationsectionmaxsize','str',1,'','name of the array where the minimum diameter of each bifurcation sections has to be stored'],
+            ['BifurcationSectionShapeArrayName','bifurcationsectionshape','str',1,'','name of the array where the shape index, i.e. the ratio between minimum and maximum diameter, of each bifurcation section are stored'],
+            ['BifurcationSectionClosedArrayName','bifurcationsectionclosed','str',1,'','name of the array containing 1 if a section is closed and 0 otherwise'],
+            ['BifurcationSectionOrientationArrayName','bifurcationsectionorientation','str',1,'','name of the array containing 0 if a section is upstream and 0 downstream its bifurcation'],
+            ['BifurcationSectionDistanceSpheresArrayName','bifurcationsectiondistancespheres','str',1,'','name of the array containing the number of spheres away from the bifurcation the section is located at'],
+            ['OutputSectionPoint','sectionpoint','float',3],
+            ['OutputSectionNormal','sectionnormal','float',3],
+            ['OutputSectionArea','sectionarea','float',1]
             ])
 
     def Execute(self):

@@ -15,10 +15,10 @@
 
 
 import vtk
-from vmtk import vtkvmtk
+from . import vtkvmtk
 import sys
 
-import pypes
+from . import pypes
 
 vmtkimageotsuthresholds = 'vmtkImageOtsuThresholds'
 
