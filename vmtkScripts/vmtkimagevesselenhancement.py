@@ -20,7 +20,6 @@ import sys
 from vmtk import pypes
 from vmtk import vtkvmtk
 
-vmtkimagevesselenhancement = 'vmtkImageVesselEnhancement'
 
 class vmtkImageVesselEnhancement(pypes.pypeScript):
 

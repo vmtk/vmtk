@@ -20,7 +20,6 @@ import sys
 
 from vmtk import pypes
 
-vmtkpointsplitextractor = 'vmtkPointSplitExtractor'
 
 class vmtkPointSplitExtractor(pypes.pypeScript):
 

@@ -20,7 +20,6 @@ import sys
 
 from vmtk import pypes
 
-vmtkbranchsections = 'vmtkBranchSections'
 
 class vmtkBranchSections(pypes.pypeScript):
 

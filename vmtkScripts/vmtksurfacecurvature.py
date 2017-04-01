@@ -20,7 +20,6 @@ from vmtk import vtkvmtk
 
 from vmtk import pypes
 
-vmtksurfacecurvature = 'vmtkSurfaceCurvature'
 
 class vmtkSurfaceCurvature(pypes.pypeScript):
 

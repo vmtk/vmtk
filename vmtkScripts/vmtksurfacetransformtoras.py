@@ -18,7 +18,6 @@ import sys
 
 from vmtk import pypes
 
-vmtksurfacetransformtoras = 'vmtkSurfaceTransformToRAS'
 
 class vmtkSurfaceTransformToRAS(pypes.pypeScript):
 

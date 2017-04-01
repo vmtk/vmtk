@@ -23,7 +23,6 @@ from vmtk import vtkvmtk
 from vmtk import vmtkrenderer
 from vmtk import pypes
 
-vmtksurfaceendclipper = 'vmtkSurfaceEndClipper'
 
 
 ## TODO: make SeedSelector a separate pype script to be used in other contexts

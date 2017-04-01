@@ -20,7 +20,6 @@ import sys
 
 from vmtk import pypes
 
-vmtksurfacenormals = 'vmtkSurfaceNormals'
 
 class vmtkSurfaceNormals(pypes.pypeScript):
 

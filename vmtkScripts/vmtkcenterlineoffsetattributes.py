@@ -23,7 +23,6 @@ from vmtk import pypes
 from vmtk import vmtkrenderer
 from vmtk import vmtkcenterlineviewer
 
-vmtkcenterlineoffsetattributes = 'vmtkCenterlineOffsetAttributes'
 
 class vmtkCenterlineOffsetAttributes(pypes.pypeScript):
 

@@ -20,7 +20,6 @@ import sys
 
 from vmtk import pypes
 
-vmtklocalgeometry = 'vmtkLocalGeometry'
 
 class vmtkLocalGeometry(pypes.pypeScript):
 

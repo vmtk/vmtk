@@ -20,7 +20,6 @@ import sys
 
 from vmtk import pypes
 
-vmtkmeshprojection = 'vmtkMeshProjection'
 
 class vmtkMeshProjection(pypes.pypeScript):
 

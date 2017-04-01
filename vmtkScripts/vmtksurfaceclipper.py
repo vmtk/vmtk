@@ -19,8 +19,6 @@ import sys
 from vmtk import vmtkrenderer
 from vmtk import pypes
 
-vmtksurfaceclipper = 'vmtkSurfaceClipper'
-
 class vmtkSurfaceClipper(pypes.pypeScript):
 
     def __init__(self):

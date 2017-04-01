@@ -19,7 +19,6 @@ import sys
 
 from vmtk import pypes
 
-vmtkimagewriter = 'vmtkImageWriter'
 
 class vmtkImageWriter(pypes.pypeScript):
 

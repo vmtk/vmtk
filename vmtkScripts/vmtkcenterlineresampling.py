@@ -21,7 +21,6 @@ from vmtk import pypes
 
 from vmtk import vmtklineresampling
 
-vmtkcenterlineresampling = 'vmtkCenterlineResampling'
 
 class vmtkCenterlineResampling(pypes.pypeScript):
 

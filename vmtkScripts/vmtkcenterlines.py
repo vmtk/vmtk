@@ -21,7 +21,6 @@ from vmtk import vtkvmtk
 from vmtk import vmtkrenderer
 from vmtk import pypes
 
-vmtkcenterlines = 'vmtkCenterlines'
 
 
 ## TODO: make SeedSelector a separate pype script to be used in other contexts

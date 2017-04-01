@@ -20,7 +20,6 @@ import sys
 
 from vmtk import pypes
 
-vmtkicpregistration = 'vmtkICPRegistration'
 
 class vmtkICPRegistration(pypes.pypeScript):
 

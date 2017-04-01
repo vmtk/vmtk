@@ -20,7 +20,6 @@ import sys
 
 from vmtk import pypes
 
-vmtkdistancetocenterlines = 'vmtkDistanceToCenterlines'
 
 class vmtkDistanceToCenterlines(pypes.pypeScript):
 

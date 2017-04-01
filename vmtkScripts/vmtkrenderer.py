@@ -20,7 +20,6 @@ import os
 from vmtk import pypes
 from vmtk import vtkvmtk
 
-vmtkrenderer = 'vmtkRenderer'
 
 
 class vmtkRendererInputStream(object):

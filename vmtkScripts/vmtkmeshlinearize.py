@@ -21,8 +21,6 @@ from vmtk import pypes
 
 from vmtk import vtkvmtk
 
-vmtkmeshlinearize = 'vmtkMeshLinearize'
-
 class vmtkMeshLinearize(pypes.pypeScript):
 
     def __init__(self):

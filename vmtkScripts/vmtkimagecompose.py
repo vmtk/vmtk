@@ -19,8 +19,6 @@ import sys
 
 from vmtk import pypes
 
-vmtkimagecompose = 'vmtkImageCompose'
-
 class vmtkImageCompose(pypes.pypeScript):
 
     def __init__(self):

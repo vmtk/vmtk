@@ -23,7 +23,6 @@ from vmtk import pypes
 
 from vmtk import vmtkcenterlineviewer
 
-vmtkcenterlinelabeler = 'vmtkCenterlineLabeler'
 
 
 class vmtkCenterlineLabeler(pypes.pypeScript):

@@ -24,7 +24,6 @@ import sys
 
 from vmtk import pypes
 
-vmtksurfacetransform = 'vmtkSurfaceTransform'
 
 class vmtkSurfaceTransform(pypes.pypeScript):
 

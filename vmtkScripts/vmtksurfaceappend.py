@@ -18,7 +18,6 @@ import sys
 
 from vmtk import pypes
 
-vmtksurfaceappend = 'vmtkSurfaceAppend'
 
 class vmtkSurfaceAppend(pypes.pypeScript):
 

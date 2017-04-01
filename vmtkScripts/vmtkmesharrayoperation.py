@@ -20,7 +20,6 @@ import sys
 
 from vmtk import pypes
 
-vmtkmesharrayoperation = 'vmtkMeshArrayOperation'
 
 class vmtkMeshArrayOperation(pypes.pypeScript):
 

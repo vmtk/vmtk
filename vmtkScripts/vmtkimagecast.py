@@ -19,8 +19,6 @@ import sys
 
 from vmtk import pypes
 
-vmtkimagecast = 'vmtkImageCast'
-
 class vmtkImageCast(pypes.pypeScript):
 
     def __init__(self):

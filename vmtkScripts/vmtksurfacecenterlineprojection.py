@@ -20,7 +20,6 @@ import sys
 
 from vmtk import pypes
 
-vmtksurfacecenterlineprojection = 'vmtkSurfaceCenterlineProjection'
 
 class vmtkSurfaceCenterlineProjection(pypes.pypeScript):
 

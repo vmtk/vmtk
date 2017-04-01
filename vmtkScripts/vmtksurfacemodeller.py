@@ -19,7 +19,6 @@ import sys
 
 from vmtk import pypes
 
-vmtksurfacemodeller = 'vmtkSurfaceModeller'
 
 class vmtkSurfaceModeller(pypes.pypeScript):
 

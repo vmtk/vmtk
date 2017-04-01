@@ -20,7 +20,6 @@ from vmtk import vtkvmtk
 from vmtk import vmtkrenderer
 from vmtk import pypes
 
-vmtkimageviewer = 'vmtkImageViewer'
 
 class vmtkImageViewer(pypes.pypeScript):
 

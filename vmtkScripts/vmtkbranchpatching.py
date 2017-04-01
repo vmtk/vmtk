@@ -20,7 +20,6 @@ import sys
 
 from vmtk import pypes
 
-vmtkbranchpatching = 'vmtkBranchPatching'
 
 class vmtkBranchPatching(pypes.pypeScript):
 

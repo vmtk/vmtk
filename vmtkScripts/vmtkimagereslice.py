@@ -24,7 +24,6 @@ import sys
 
 from vmtk import pypes
 
-vmtkimagereslice = 'vmtkImageReslice'
 
 class vmtkImageReslice(pypes.pypeScript):
 

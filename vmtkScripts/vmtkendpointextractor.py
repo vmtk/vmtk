@@ -20,7 +20,6 @@ import sys
 
 from vmtk import pypes
 
-vmtkendpointextractor = 'vmtkEndpointExtractor'
 
 class vmtkEndpointExtractor(pypes.pypeScript):
 

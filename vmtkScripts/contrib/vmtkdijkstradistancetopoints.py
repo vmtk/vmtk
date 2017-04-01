@@ -29,7 +29,6 @@ from vmtk import vtkvmtk
 from vmtk import vmtkrenderer
 from vmtk import pypes
 
-vmtkdijkstradistancetopoints = 'vmtkDijkstraDistanceToPoints'
 
 
 class vmtkDijkstraDistanceToPoints(pypes.pypeScript):

@@ -5,7 +5,6 @@ import vtk
 from vmtk import vtkvmtk
 from vmtk import pypes
 
-vmtkimagecompare = 'vmtkImageCompare'
 
 class vmtkImageCompare(pypes.pypeScript):
 

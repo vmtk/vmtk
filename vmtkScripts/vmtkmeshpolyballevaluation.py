@@ -20,7 +20,6 @@ from vmtk import vtkvmtk
 
 from vmtk import pypes
 
-vmtkmeshpolyballevaluation = 'vmtkMeshPolyBallEvaluation'
 
 class vmtkMeshPolyBallEvaluation(pypes.pypeScript):
 

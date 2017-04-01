@@ -20,8 +20,6 @@ import sys
 
 from vmtk import pypes
 
-vmtkbranchgeometry = 'vmtkBranchGeometry'
-
 class vmtkBranchGeometry(pypes.pypeScript):
 
     def __init__(self):

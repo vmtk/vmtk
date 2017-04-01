@@ -18,7 +18,6 @@ import vtk
 from vmtk import vtkvmtk
 from vmtk import pypes
 
-vmtksurfacekiteremoval = 'vmtkSurfaceKiteRemoval'
 
 class vmtkSurfaceKiteRemoval(pypes.pypeScript):
 

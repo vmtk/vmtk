@@ -29,7 +29,6 @@ from vmtk import vmtkscripts
 
 from vmtk import pypes
 
-vmtkmeshclipcenterlines = 'vmtkMeshClipCenterlines'
 
 class vmtkMeshClipCenterlines(pypes.pypeScript):
 

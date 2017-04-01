@@ -7,7 +7,6 @@ from vmtk import pypes
 from vmtk import vmtkscripts
 from vmtk import vmtkcontribscripts
 
-vmtkthreshold = 'vmtkThreshold'
 
 class vmtkThreshold(pypes.pypeScript):
     def __init__(self):

@@ -20,7 +20,6 @@ import sys
 
 from vmtk import pypes
 
-vmtkimageotsuthresholds = 'vmtkImageOtsuThresholds'
 
 class vmtkImageOtsuThresholds(pypes.pypeScript):
 

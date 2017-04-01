@@ -20,7 +20,6 @@ import sys
 
 from vmtk import pypes
 
-vmtksurfacebooleanoperation = 'vmtkSurfaceBooleanOperation'
 
 class vmtkSurfaceBooleanOperation(pypes.pypeScript):
 

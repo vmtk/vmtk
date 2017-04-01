@@ -19,7 +19,6 @@ import sys
 
 from vmtk import pypes
 
-vmtkrbfinterpolation = 'vmtkRBFInterpolation'
 
 class vmtkRBFInterpolation(pypes.pypeScript):
 

@@ -19,7 +19,6 @@ import sys
 
 from vmtk import pypes
 
-vmtksurfacedecimation = 'vmtkSurfaceDecimation'
 
 class vmtkSurfaceDecimation(pypes.pypeScript):
 

@@ -20,7 +20,6 @@ import sys
 
 from vmtk import pypes
 
-vmtkcenterlinegeometry = 'vmtkCenterlineGeometry'
 
 class vmtkCenterlineGeometry(pypes.pypeScript):
 

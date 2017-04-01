@@ -24,7 +24,6 @@ import os
 from vmtk import vtkvmtk
 from vmtk import pypes
 
-vmtkparticletracer = 'vmtkParticleTracer'
 
 class vmtkParticleTracer(pypes.pypeScript):
 

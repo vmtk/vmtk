@@ -22,7 +22,6 @@ import sys
 from vmtk import pypes
 from vmtk import vmtkscripts
 
-vmtksurfacecliploop = 'vmtkSurfaceClipLoop'
 
 class vmtkSurfaceClipLoop(pypes.pypeScript):
 

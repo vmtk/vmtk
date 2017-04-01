@@ -29,7 +29,6 @@ from vmtk import vtkvmtk
 from vmtk import vmtkrenderer
 from vmtk import pypes
 
-vmtkgeodesicsurfaceresolution = 'vmtkGeodesicSurfaceResolution'
 
 
 class vmtkGeodesicSurfaceResolution(pypes.pypeScript):

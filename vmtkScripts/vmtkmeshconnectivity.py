@@ -19,7 +19,6 @@ import sys
 
 from vmtk import pypes
 
-vmtkmeshconnectivity = 'vmtkMeshConnectivity'
 
 class vmtkMeshConnectivity(pypes.pypeScript):
 

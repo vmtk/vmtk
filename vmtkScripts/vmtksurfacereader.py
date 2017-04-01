@@ -18,7 +18,6 @@ import sys
 
 from vmtk import pypes
 
-vmtksurfacereader = 'vmtkSurfaceReader'
 
 class vmtkSurfaceReader(pypes.pypeScript):
 

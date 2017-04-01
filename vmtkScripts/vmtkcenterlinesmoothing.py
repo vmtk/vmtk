@@ -20,7 +20,6 @@ import sys
 
 from vmtk import pypes
 
-vmtkcenterlinesmoothing = 'vmtkCenterlineSmoothing'
 
 class vmtkCenterlineSmoothing(pypes.pypeScript):
 

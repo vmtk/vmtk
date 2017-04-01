@@ -20,7 +20,6 @@ import sys
 
 from vmtk import pypes
 
-vmtkbranchmetrics = 'vmtkBranchMetrics'
 
 class vmtkBranchMetrics(pypes.pypeScript):
 

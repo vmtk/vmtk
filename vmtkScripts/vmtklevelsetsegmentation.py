@@ -22,7 +22,6 @@ from vmtk import vtkvmtk
 from vmtk import vmtkscripts
 from vmtk import pypes
 
-vmtklevelsetsegmentation = 'vmtkLevelSetSegmentation'
 
 class vmtkLevelSetSegmentation(pypes.pypeScript):
 

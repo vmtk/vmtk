@@ -21,7 +21,6 @@ from vmtk import vmtkrenderer
 from vmtk import pypes
 from vmtk import vmtkscripts
 
-vmtksurfaceloopextraction = 'vmtkSurfaceLoopExtraction'
 
 class vmtkSurfaceLoopExtraction(pypes.pypeScript):
 

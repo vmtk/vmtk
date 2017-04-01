@@ -20,7 +20,6 @@ import sys
 
 from vmtk import pypes
 
-vmtksurfacedistance = 'vmtkSurfaceDistance'
 
 class vmtkSurfaceDistance(pypes.pypeScript):
 

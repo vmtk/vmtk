@@ -20,7 +20,6 @@ import sys
 
 from vmtk import pypes
 
-vmtkimagemorphology = 'vmtkImageMorphology'
 
 class vmtkImageMorphology(pypes.pypeScript):
 

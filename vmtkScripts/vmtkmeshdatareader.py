@@ -21,7 +21,6 @@ from vmtk import vtkvmtk
 
 from vmtk import pypes
 
-vmtkmeshdatareader = 'vmtkMeshDataReader'
 
 class vmtkMeshDataReader(pypes.pypeScript):
 

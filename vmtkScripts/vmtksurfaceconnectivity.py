@@ -19,7 +19,6 @@ import sys
 
 from vmtk import pypes
 
-vmtksurfaceconnectivity = 'vmtkSurfaceConnectivity'
 
 class vmtkSurfaceConnectivity(pypes.pypeScript):
 

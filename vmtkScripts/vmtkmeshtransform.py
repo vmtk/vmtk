@@ -24,7 +24,6 @@ import sys
 
 from vmtk import pypes
 
-vmtkmeshtransform = 'vmtkMeshTransform'
 
 class vmtkMeshTransform(pypes.pypeScript):
 

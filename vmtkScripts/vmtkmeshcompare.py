@@ -5,7 +5,6 @@ import vtk
 from vmtk import vtkvmtk
 from vmtk import pypes
 
-vmtkmeshcompare = 'vmtkMeshCompare'
 
 class vmtkMeshCompare(pypes.pypeScript):
 

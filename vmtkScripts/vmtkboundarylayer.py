@@ -20,7 +20,6 @@ import sys
 
 from vmtk import pypes
 
-vmtkboundarylayer = 'vmtkBoundaryLayer'
 
 class vmtkBoundaryLayer(pypes.pypeScript):
 

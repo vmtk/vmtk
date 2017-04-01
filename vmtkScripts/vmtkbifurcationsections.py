@@ -20,7 +20,6 @@ import sys
 
 from vmtk import pypes
 
-vmtkbifurcationsections = 'vmtkBifurcationSections'
 
 class vmtkBifurcationSections(pypes.pypeScript):
 

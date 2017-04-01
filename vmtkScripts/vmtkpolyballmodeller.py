@@ -19,7 +19,6 @@ import sys
 from vmtk import vtkvmtk
 from vmtk import pypes
 
-vmtkpolyballmodeller = 'vmtkPolyBallModeller'
 
 class vmtkPolyBallModeller(pypes.pypeScript):
 

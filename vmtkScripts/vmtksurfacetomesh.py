@@ -20,7 +20,6 @@ import sys
 
 from vmtk import pypes
 
-vmtksurfacetomesh = 'vmtkSurfaceToMesh'
 
 class vmtkSurfaceToMesh(pypes.pypeScript):
 

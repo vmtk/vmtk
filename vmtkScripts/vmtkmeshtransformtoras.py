@@ -18,7 +18,6 @@ import sys
 
 from vmtk import pypes
 
-vmtkmeshtransformtoras = 'vmtkMeshTransformToRAS'
 
 class vmtkMeshTransformToRAS(pypes.pypeScript):
 

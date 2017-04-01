@@ -19,7 +19,6 @@ import sys
 
 from vmtk import pypes
 
-vmtksurfacesubdivision = 'vmtkSurfaceSubdivision'
 
 class vmtkSurfaceSubdivision(pypes.pypeScript):
 

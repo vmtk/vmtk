@@ -18,7 +18,6 @@ import sys
 
 from vmtk import pypes
 
-vmtkmeshscaling = 'vmtkMeshScaling'
 
 class vmtkMeshScaling(pypes.pypeScript):
 

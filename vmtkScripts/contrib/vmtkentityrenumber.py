@@ -4,7 +4,6 @@ import sys
 from vmtk import pypes
 import vtk
 
-vmtkentityrenumber = 'VmtkEntityRenumber'
 
 class VmtkEntityRenumber(pypes.pypeScript):
     def __init__(self):

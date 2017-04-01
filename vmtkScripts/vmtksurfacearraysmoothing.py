@@ -20,7 +20,6 @@ import sys
 from vmtk import pypes
 import math
 
-vmtksurfacearraysmoothing = 'vmtkSurfaceArraySmoothing'
 
 class vmtkSurfaceArraySmoothing(pypes.pypeScript):
 

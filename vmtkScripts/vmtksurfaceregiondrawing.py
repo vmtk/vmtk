@@ -19,7 +19,6 @@ import sys
 from vmtk import vmtkrenderer
 from vmtk import pypes
 
-vmtksurfaceregiondrawing = 'vmtkSurfaceRegionDrawing'
 
 class vmtkSurfaceRegionDrawing(pypes.pypeScript):
 

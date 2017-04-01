@@ -19,7 +19,6 @@ import sys
 
 from vmtk import pypes
 
-vmtkmeshlambda2 = 'vmtkMeshLambda2'
 
 class vmtkMeshLambda2(pypes.pypeScript):
 

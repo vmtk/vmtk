@@ -20,7 +20,6 @@ import sys
 
 from vmtk import pypes
 
-vmtknetworkwriter = 'vmtkNetworkWriter'
 
 class vmtkNetworkWriter(pypes.pypeScript):
 

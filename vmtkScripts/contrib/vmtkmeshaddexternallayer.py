@@ -28,7 +28,6 @@ from vmtk import vmtkcontribscripts
 
 from vmtk import pypes
 
-vmtkmeshaddexternallayer = 'vmtkMeshAddExternalLayer'
 
 class vmtkMeshAddExternalLayer(pypes.pypeScript):
 

@@ -24,7 +24,6 @@ import sys
 
 from vmtk import pypes
 
-vmtkimageshiftscale = 'vmtkImageShiftScale'
 
 class vmtkImageShiftScale(pypes.pypeScript):
 

@@ -21,7 +21,6 @@ from vmtk import vmtkscripts
 
 from vmtk import pypes
 
-vmtkmeshgenerator = 'vmtkMeshGenerator'
 
 class vmtkMeshGenerator(pypes.pypeScript):
 

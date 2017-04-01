@@ -20,7 +20,6 @@ import sys
 
 from vmtk import pypes
 
-vmtkimagenormalize = 'vmtkImageNormalize'
 
 class vmtkImageNormalize(pypes.pypeScript):
 

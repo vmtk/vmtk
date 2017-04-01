@@ -25,7 +25,6 @@ from vmtk import vtkvmtk
 from vmtk import vmtkrenderer
 from vmtk import pypes
 
-vmtkimagecurvedmpr = 'vmtkImageCurvedMPR'
 
 class vmtkImageCurvedMPR(pypes.pypeScript):
 

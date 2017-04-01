@@ -18,7 +18,6 @@ import sys
 
 from vmtk import pypes
 
-vmtksurfacescaling = 'vmtkSurfaceScaling'
 
 class vmtkSurfaceScaling(pypes.pypeScript):
 

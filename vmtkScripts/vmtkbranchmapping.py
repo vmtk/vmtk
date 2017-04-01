@@ -20,7 +20,6 @@ import sys
 
 from vmtk import pypes
 
-vmtkbranchmapping = 'vmtkBranchMapping'
 
 class vmtkBranchMapping(pypes.pypeScript):
 

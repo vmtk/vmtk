@@ -20,7 +20,6 @@ import sys
 
 from vmtk import pypes
 
-vmtkcenterlineattributes = 'vmtkCenterlineAttributes'
 
 class vmtkCenterlineAttributes(pypes.pypeScript):
 

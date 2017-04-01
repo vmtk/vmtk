@@ -20,7 +20,6 @@ import sys
 from vmtk import pypes
 from vmtk import vmtkscripts
 
-vmtksurfacesmoothing = 'vmtkSurfaceSmoothing'
 
 class vmtkSurfaceSmoothing(pypes.pypeScript):
 

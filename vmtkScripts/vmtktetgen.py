@@ -20,7 +20,6 @@ from vmtk import vtkvmtk
 
 from vmtk import pypes
 
-vmtktetgen = 'vmtkTetGen'
 
 class vmtkTetGen(pypes.pypeScript):
 

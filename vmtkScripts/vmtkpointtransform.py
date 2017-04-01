@@ -18,7 +18,6 @@ import sys
 
 from vmtk import pypes
 
-vmtkpointtransform = 'vmtkPointTransform'
 
 class vmtkPointTransform(pypes.pypeScript):
 

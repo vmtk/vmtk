@@ -20,7 +20,6 @@ import sys
 
 from vmtk import pypes
 
-vmtksurfacereferencesystemtransform = 'vmtkSurfaceReferenceSystemTransform'
 
 class vmtkSurfaceReferenceSystemTransform(pypes.pypeScript):
 

@@ -19,7 +19,6 @@ import sys
 
 from vmtk import pypes
 
-vmtkpythonscript = 'vmtkPythonScript'
 
 class vmtkPythonScript(pypes.pypeScript):
 

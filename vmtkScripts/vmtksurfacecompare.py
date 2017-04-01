@@ -7,8 +7,6 @@ from vmtk import pypes
 from vmtk import vmtkscripts
 
 
-vmtksurfacecompare = 'vmtkSurfaceCompare'
-
 class vmtkSurfaceCompare(pypes.pypeScript):
 
     def __init__(self):

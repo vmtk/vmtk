@@ -20,7 +20,6 @@ import sys
 
 from vmtk import pypes
 
-vmtksurfacearrayoperation = 'vmtkSurfaceArrayOperation'
 
 class vmtkSurfaceArrayOperation(pypes.pypeScript):
 

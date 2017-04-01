@@ -7,7 +7,6 @@ import vtk
 from vmtk import pypes
 from vmtk import vmtkscripts
 
-vmtksurfaceextractinnercylinder = 'VmtkSurfaceExtractInnerCylinder'
 
 class VmtkSurfaceExtractInnerCylinder(pypes.pypeScript):
     def __init__(self):

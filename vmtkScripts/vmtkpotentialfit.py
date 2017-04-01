@@ -19,7 +19,6 @@ import sys
 
 from vmtk import pypes
 
-vmtkpotentialfit = 'vmtkPotentialFit'
 
 class vmtkPotentialFit(pypes.pypeScript):
 

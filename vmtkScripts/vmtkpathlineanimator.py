@@ -26,7 +26,6 @@ from vmtk import vmtkrenderer
 from vmtk import vmtksurfaceviewer
 from vmtk import pypes
 
-vmtkpathlineanimator = 'vmtkPathLineAnimator'
 
 class vmtkPathLineAnimator(pypes.pypeScript):
 

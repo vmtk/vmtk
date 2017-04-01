@@ -21,7 +21,6 @@ from vmtk import vtkvmtk
 from vmtk import vmtkrenderer
 from vmtk import pypes
 
-vmtkdelaunayvoronoi = 'vmtkDelaunayVoronoi'
 
 class vmtkNonManifoldSurfaceChecker(object):
 

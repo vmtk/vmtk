@@ -28,7 +28,6 @@ from vmtk import vtkvmtk
 
 from vmtk import pypes
 
-vmtkmeshwriter2 = 'vmtkMeshWriter2'
 
 class vmtkMeshWriter2(pypes.pypeScript):
 

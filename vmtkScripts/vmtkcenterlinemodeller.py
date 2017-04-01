@@ -19,7 +19,6 @@ import sys
 from vmtk import vtkvmtk
 from vmtk import pypes
 
-vmtkcenterlinemodeller = 'vmtkCenterlineModeller'
 
 class vmtkCenterlineModeller(pypes.pypeScript):
 

@@ -20,7 +20,6 @@ import sys
 
 from vmtk import pypes
 
-vmtkcenterlinesections = 'vmtkCenterlineSections'
 
 class vmtkCenterlineSections(pypes.pypeScript):
 

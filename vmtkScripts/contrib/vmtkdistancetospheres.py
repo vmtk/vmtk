@@ -27,7 +27,6 @@ from vmtk import vtkvmtk
 from vmtk import vmtkrenderer
 from vmtk import pypes
 
-vmtkdistancetospheres = 'vmtkDistanceToSpheres'
 
 
 class vmtkDistanceToSpheres(pypes.pypeScript):

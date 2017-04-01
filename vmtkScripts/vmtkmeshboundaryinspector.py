@@ -21,7 +21,6 @@ from vmtk import vtkvmtk
 from vmtk import vmtkrenderer
 from vmtk import pypes
 
-vmtkmeshboundaryinspector = 'vmtkMeshBoundaryInspector'
 
 class vmtkMeshBoundaryInspector(pypes.pypeScript):
 

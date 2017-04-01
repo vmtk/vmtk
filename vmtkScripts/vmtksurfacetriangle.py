@@ -19,7 +19,6 @@ import vtk
 
 from vmtk import pypes
 
-vmtksurfacetriangle = 'vmtkSurfaceTriangle'
 
 class vmtkSurfaceTriangle(pypes.pypeScript):
 

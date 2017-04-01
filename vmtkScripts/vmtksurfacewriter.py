@@ -18,7 +18,6 @@ import sys
 
 from vmtk import pypes
 
-vmtksurfacewriter = 'vmtkSurfaceWriter'
 
 class vmtkSurfaceWriter(pypes.pypeScript):
 

@@ -20,7 +20,6 @@ import sys
 
 from vmtk import pypes
 
-vmtklineartoquadratic = 'vmtkLinearToQuadratic'
 
 class vmtkLinearToQuadratic(pypes.pypeScript):
 

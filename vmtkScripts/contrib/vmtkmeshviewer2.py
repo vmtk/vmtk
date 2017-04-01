@@ -28,7 +28,6 @@ import sys
 from vmtk import vmtkrenderer
 from vmtk import pypes
 
-vmtkmeshviewer2 = 'vmtkMeshViewer2'
 
 class vmtkMeshViewer2(pypes.pypeScript):
 

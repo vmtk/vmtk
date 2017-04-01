@@ -26,7 +26,6 @@ from vmtk import pypes
 
 from vmtk import vmtkactivetubes
 
-vmtknetworkeditor = 'vmtkNetworkEditor'
 
 class vmtkNetworkEditor(pypes.pypeScript):
 

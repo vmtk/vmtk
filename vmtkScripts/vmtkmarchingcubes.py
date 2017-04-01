@@ -19,7 +19,6 @@ import sys
 
 from vmtk import pypes
 
-vmtkmarchingcubes = 'vmtkMarchingCubes'
 
 class vmtkMarchingCubes(pypes.pypeScript):
 

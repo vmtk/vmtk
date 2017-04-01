@@ -22,7 +22,6 @@ from vmtk import vtkvmtk
 from vmtk import vmtkrenderer
 from vmtk import pypes
 
-vmtkactivetubes = 'vmtkActiveTubes'
 
 class vmtkActiveTubes(pypes.pypeScript):
 

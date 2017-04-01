@@ -19,7 +19,6 @@ import sys
 
 from vmtk import pypes
 
-vmtknetworkextraction = 'vmtkNetworkExtraction'
 
 class vmtkNetworkExtraction(pypes.pypeScript):
 

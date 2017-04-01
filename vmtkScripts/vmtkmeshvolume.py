@@ -19,7 +19,6 @@ import sys
 
 from vmtk import pypes
 
-vmtkmeshvolume = 'vmtkMeshVolume'
 
 class vmtkMeshVolume(pypes.pypeScript):
 

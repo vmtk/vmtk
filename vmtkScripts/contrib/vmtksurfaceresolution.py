@@ -28,7 +28,6 @@ from vmtk import vtkvmtk
 from vmtk import vmtkrenderer
 from vmtk import pypes
 
-vmtksurfaceresolution = 'vmtkSufaceResolution'
 
 
 class vmtkSufaceResolution(pypes.pypeScript):

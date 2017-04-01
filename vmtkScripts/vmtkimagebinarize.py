@@ -19,8 +19,6 @@ import sys
 
 from vmtk import pypes
 
-vmtkimagebinarize = 'vmtkImageBinarize'
-
 class vmtkImageBinarize(pypes.pypeScript):
 
     def __init__(self):

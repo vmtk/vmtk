@@ -26,7 +26,6 @@ from vmtk import vmtkmeshreader
 from vmtk import vmtkmeshvectorfromcomponents
 from vmtk import pypes
 
-vmtkmeshmergetimesteps = 'vmtkMeshMergeTimesteps'
 
 class vmtkMeshMergeTimesteps(pypes.pypeScript):
 

@@ -21,8 +21,6 @@ from vmtk import vtkvmtk
 from vmtk import vmtkrenderer
 from vmtk import pypes
 
-vmtkimagevoipainter = 'vmtkImageVOIPainter'
-
 class vmtkImageVOIPainter(pypes.pypeScript):
 
     def __init__(self):

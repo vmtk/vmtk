@@ -20,7 +20,6 @@ import vtk
 from vmtk import vtkvmtk
 from vmtk import pypes
 
-vmtksurfacecapper = 'vmtkSurfaceCapper'
 
 class vmtkSurfaceCapper(pypes.pypeScript):
 

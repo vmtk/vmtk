@@ -20,7 +20,6 @@ import sys
 
 from vmtk import pypes
 
-vmtkboundaryreferencesystems = 'vmtkBoundaryReferenceSystems'
 
 class vmtkBoundaryReferenceSystems(pypes.pypeScript):
 

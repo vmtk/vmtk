@@ -19,7 +19,6 @@ import sys
 
 from vmtk import pypes
 
-vmtkmeshwallshearrate = 'vmtkMeshWallShearRate'
 
 class vmtkMeshWallShearRate(pypes.pypeScript):
 

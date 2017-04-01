@@ -27,7 +27,6 @@ from vmtk import pypes
 
 from vmtk import vtkvmtk
 
-vmtkmeshtetrahedralize2 = 'vmtkMeshTetrahedralize2'
 
 class vmtkMeshTetrahedralize2(pypes.pypeScript):
 

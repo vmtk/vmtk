@@ -20,7 +20,6 @@ import sys
 from vmtk import pypes
 from vmtk import vtkvmtk
 
-vmtkimagefeatures = 'vmtkImageFeatures'
 
 class vmtkImageFeatures(pypes.pypeScript):
 

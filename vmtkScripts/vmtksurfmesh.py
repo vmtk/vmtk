@@ -20,7 +20,6 @@ import sys
 
 from vmtk import pypes
 
-vmtksurfmesh = 'vmtkSurfMesh'
 
 class vmtkSurfMesh(pypes.pypeScript):
 

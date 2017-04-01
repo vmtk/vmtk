@@ -18,7 +18,6 @@ import sys
 
 from vmtk import pypes
 
-vmtkmeshvectorfromcomponents = 'vmtkMeshVectorFromComponents'
 
 class vmtkMeshVectorFromComponents(pypes.pypeScript):
 

@@ -20,7 +20,6 @@ import sys
 
 from vmtk import pypes
 
-vmtkcenterlinemeshsections = 'vmtkCenterlineMeshSections'
 
 class vmtkCenterlineMeshSections(pypes.pypeScript):
 

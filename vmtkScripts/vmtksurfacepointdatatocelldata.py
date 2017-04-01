@@ -20,7 +20,6 @@ import sys
 
 from vmtk import pypes
 
-vmtksurfacepointdatatocelldata = 'vmtkSurfacePointDataToCellData'
 
 class vmtkSurfacePointDataToCellData(pypes.pypeScript):
 
