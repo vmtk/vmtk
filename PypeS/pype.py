@@ -18,6 +18,7 @@ import sys
 import os
 import importlib
 from inspect import isclass
+from . import pypes
 
 pype = 'Pype'
 
@@ -243,7 +244,7 @@ class Pype(object):
             try:
                 module = importlib.import_module('vmtk.'+scriptName)
                 moduleName = module.__name__
-                scriptObjectClasses = [x for x in dir(module) if isclass(getattr(module, x))]
+                scriptObjectClasses = [x for x in dir(module) if isclass(getattr(module, x)) and issubclass(getattr(module, x), pypes.pypeScript)]
                 scriptObjectClassName = scriptObjectClasses[0]
             except ImportError as e:
                 self.PrintError(str(e))
