@@ -579,15 +579,15 @@ class pypeScript(object):
     def IORead(self):
         for member in self.InputMembers:
             if member.MemberIO:
-                exec('filename = self.' + self.GetIOInputFileNameMember(member.MemberName))
+                filename = eval('self.' + self.GetIOInputFileNameMember(member.MemberName))
                 if filename:
                     try:
                         exec('from vmtk import ' + member.MemberIO)
                     except ImportError:
                         self.PrintError('Cannot import module ' + member.MemberIO + ' required for reading ' + member.MemberName)
-                    exec('readerName = ' + member.MemberIO + '.' + member.MemberIO)
+                    readerName = eval(member.MemberIO + '.' + member.MemberIO)
                     readerClassName = member.MemberIO + '.' + readerName
-                    exec('reader = ' + readerClassName + '()')
+                    reader = eval(readerClassName + '()')
                     reader.InputFileName = filename
                     reader.LogOn = self.LogOn
                     reader.InputStream = self.InputStream
