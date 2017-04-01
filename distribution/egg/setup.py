@@ -57,11 +57,11 @@ class vmtk_build_win_i386(_build):
         VMTKPATH = "../../../vmtk-build-i386/Install"
         vmtk_path = os.path.abspath(VMTKPATH)
 
-        shutil.copytree(os.path.join(vmtk_path,'lib','python3.5','site-packages','vmtk'), 'vmtk')
-        shutil.copytree(os.path.join(vmtk_path,'lib','python3.5','site-packages','vtk'), os.path.join('vmtk','vtk'))
+        shutil.copytree(os.path.join(vmtk_path,'lib','python3.6','site-packages','vmtk'), 'vmtk')
+        shutil.copytree(os.path.join(vmtk_path,'lib','python3.6','site-packages','vtk'), os.path.join('vmtk','vtk'))
         shutil.copytree(os.path.join(vmtk_path,'lib'),
                 os.path.join('vmtk','lib'), symlinks=True,
-                ignore=shutil.ignore_patterns('cmake','python3.5'))
+                ignore=shutil.ignore_patterns('cmake','python3.6'))
         shutil.copytree(os.path.join(vmtk_path,'bin'), os.path.join('vmtk','bin'))
 
         if sys.platform == "win32":
@@ -84,11 +84,11 @@ class vmtk_build(_build):
         VMTKPATH = "../../../vmtk-build/Install"
         vmtk_path = os.path.abspath(VMTKPATH)
 
-        shutil.copytree(os.path.join(vmtk_path,'lib','python3.5','site-packages','vmtk'), 'vmtk')
-        shutil.copytree(os.path.join(vmtk_path,'lib','python3.5','site-packages','vtk'), os.path.join('vmtk','vtk'))
+        shutil.copytree(os.path.join(vmtk_path,'lib','python3.6','site-packages','vmtk'), 'vmtk')
+        shutil.copytree(os.path.join(vmtk_path,'lib','python3.6','site-packages','vtk'), os.path.join('vmtk','vtk'))
         shutil.copytree(os.path.join(vmtk_path,'lib'),
                 os.path.join('vmtk','lib'), symlinks=True,
-                ignore=shutil.ignore_patterns('cmake','python3.5'))
+                ignore=shutil.ignore_patterns('cmake','python3.6'))
         shutil.copytree(os.path.join(vmtk_path,'bin'), os.path.join('vmtk','bin'))
 
         if sys.platform == "win32":
