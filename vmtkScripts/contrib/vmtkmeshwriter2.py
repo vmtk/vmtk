@@ -22,6 +22,7 @@ z#!/usr/bin/env python
 ## An option has been added to write ascii files.
 ## The Dolphin writer has been modified (see vtkvmtkDolfinWriter2)
 
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import sys
 import vtk
 from vmtk import vtkvmtk

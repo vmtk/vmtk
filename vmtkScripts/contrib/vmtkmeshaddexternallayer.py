@@ -20,6 +20,7 @@
 
 ## This class builds an external layer around a mesh.
 
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import vtk
 from vmtk import vtkvmtk
 import sys

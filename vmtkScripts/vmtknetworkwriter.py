@@ -15,6 +15,7 @@
 
 ##   Developed with support from the EC FP7/2007-2013: ARCH, Project n. 224390
 
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import vtk
 import sys
 

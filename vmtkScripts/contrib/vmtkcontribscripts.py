@@ -1,3 +1,5 @@
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
+
 __all__ = [
     'vmtk.vmtkboundarylayer2',
     'vmtk.vmtkdijkstradistancetopoints',

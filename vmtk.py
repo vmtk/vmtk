@@ -1,6 +1,6 @@
 #!${PYTHON_SHEBANG}
 
-from __future__ import print_function # NEED TO STAY AS TOP IMPORT
+from __future__ import print_function, absolute_import # NEED TO STAY AS TOP IMPORT
 from builtins import input # NEED TO STAY AS TOP IMPORT
 import sys
 import os

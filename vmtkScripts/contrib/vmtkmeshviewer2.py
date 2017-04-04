@@ -22,6 +22,7 @@
 ## which allows for per-cell array visualization, mesh clipping 
 ## and thresholding based on array values.
 
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import vtk
 import sys
 

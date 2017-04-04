@@ -20,6 +20,7 @@
 
 ## Interactively clip a mesh using the distance to centerlines
 
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import vtk
 import sys
 

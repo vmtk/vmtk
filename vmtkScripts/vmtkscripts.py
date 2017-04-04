@@ -1,3 +1,5 @@
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
+
 __all__ = [
   'vmtkactivetubes',
   'vmtkbifurcationprofiles',
@@ -138,5 +140,5 @@ __all__ = [
   ]
 
 for item in __all__:
-        exec('from vmtk.'+item+' import *')
+    exec('from vmtk.'+item+' import *')
 

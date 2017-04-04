@@ -21,7 +21,7 @@
 ## This class computes the geodesic distance on the graph of a surface
 ## from a set of user-selected points on the surface using the Dijkstra algorithm.
 
-
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import vtk
 import sys
 

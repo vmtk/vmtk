@@ -5,7 +5,7 @@ Simple build script for VTK, ITK, and vmtk.
 """
 
 
-from __future__ import print_function # NEED TO STAY AS TOP IMPORT
+from __future__ import print_function, absolute_import # NEED TO STAY AS TOP IMPORT
 import os
 import sys
 import platform
