@@ -41,7 +41,7 @@ def RunPypeProcess(arguments, inputStream=None, outputStream=None, logOn=True):
         pipe.SetArgumentsString(arguments)
     else:
         pipe.Arguments = arguments
-    try: 
+    try:
         pipe.ParseArguments()
         pipe.Execute() 
     except BaseException as e:

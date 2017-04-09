@@ -13,17 +13,17 @@
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
 ##      PURPOSE.  See the above copyright notices for more information.
 
-from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
+from __future__ import absolute_import
 import sys
 import os
 import importlib
 from inspect import isclass
-from . import pypes
+import vmtk.pypes
 
 pype = 'Pype'
 
 class NullOutputStream(object):
-  
+
     def __init__(self):
         pass
 
@@ -46,6 +46,7 @@ class Pype(object):
         self.InputStream = sys.stdin
         self.OutputStream = sys.stdout
         self.Arguments = None
+
 
     def GetUsageString(self):
         usageString = 'Usage: pype --nolog --noauto --query firstScriptName -scriptOptionName scriptOptionValue --pipe secondScriptName -scriptOptionName scriptOptionValue -scriptOptionName @firstScriptName.scriptOptionName -id 2 --pipe thirdScriptName -scriptOptionName @secondScriptName-2.scriptOptionName'
@@ -243,8 +244,7 @@ class Pype(object):
             imported = True
             try:
                 module = importlib.import_module('vmtk.'+scriptName)
-                moduleName = module.__name__
-                scriptObjectClasses = [x for x in dir(module) if isclass(getattr(module, x)) and issubclass(getattr(module, x), pypes.pypeScript)]
+                scriptObjectClasses = [x for x in dir(module) if isclass(getattr(module, x)) and hasattr(getattr(module, x), 'SetScriptName')]
                 scriptObjectClassName = scriptObjectClasses[0]
             except ImportError as e:
                 self.PrintError(str(e))
