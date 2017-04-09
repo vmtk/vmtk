@@ -45,7 +45,7 @@ IF (APPLE)
   #    COMMAND /usr/local/bin/python -c "from distutils import sysconfig; print sysconfig.get_python_inc()"
   #    OUTPUT_VARIABLE PYTHON_INCLUDE_DIR
   #    OUTPUT_STRIP_TRAILING_WHITESPACE)
-  #  SET(PYTHON_LIBRARY ${PYTHON_INCLUDE_DIR}../../lib/libpython2.7.dylib)
+  #  SET(PYTHON_LIBRARY ${PYTHON_INCLUDE_DIR}../../lib/libpython3.6.dylib)
   #ENDIF(VMTK_BREW_PYTHON)
 ELSEIF (UNIX)
   SET(PYTHON_SHEBANG "/usr/bin/env python")
@@ -223,7 +223,7 @@ IF(NOT VMTK_INSTALL_LIB_DIR)
 ENDIF(NOT VMTK_INSTALL_LIB_DIR)
 
 IF(NOT VMTK_MODULE_INSTALL_LIB_DIR)
-  SET(VMTK_MODULE_INSTALL_LIB_DIR lib/python2.7/site-packages/vmtk)
+  SET(VMTK_MODULE_INSTALL_LIB_DIR lib/python3.6/site-packages/vmtk)
 ENDIF(NOT VMTK_MODULE_INSTALL_LIB_DIR)
 
 IF(VMTK_SCRIPTS_ENABLED)
