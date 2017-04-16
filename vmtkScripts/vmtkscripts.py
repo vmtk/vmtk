@@ -27,6 +27,7 @@ __all__ = [
   'vmtkcenterlineviewer',
   'vmtkdelaunayvoronoi',
   'vmtkdistancetocenterlines',
+  'vmtkdistancetospheres',
   'vmtkendpointextractor',
   'vmtkflowextensions',
   'vmtkicpregistration',
