@@ -17,6 +17,8 @@ from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py
 import sys
 import string
 import os.path
+import importlib
+from inspect import isclass
 
 class pypeMember(object):
 
@@ -582,33 +584,48 @@ class pypeScript(object):
                 filename = eval('self.' + self.GetIOInputFileNameMember(member.MemberName))
                 if filename:
                     try:
-                        exec('from vmtk import ' + member.MemberIO)
+                        readerModule = importlib.import_module('vmtk.'+member.MemberIO)
+                        # Find the principle class to instantiate the requested action defined inside the requested writerModule script.
+                        # Returns a single member list (containing the principle class name) which satisfies the following criteria:
+                        #   1) is a class defined within the script
+                        #   2) the class contains an attribute named 'self.SetScriptName'
+                        # This makes the assumption that only one class per vmtkscript file contains the self.SetScriptName attribute, and that
+                        # the class containing this attribute is the primary class to instantiate a new call to the scripts functionality
+                        readerModuleClasses = [x for x in dir(readerModule) if isclass(getattr(readerModule, x)) and hasattr(getattr(readerModule, x), 'SetScriptName')]
+                        readerModuleClassName = readerModuleClasses[0]
                     except ImportError:
                         self.PrintError('Cannot import module ' + member.MemberIO + ' required for reading ' + member.MemberName)
-                    readerName = eval(member.MemberIO + '.' + member.MemberIO)
-                    readerClassName = member.MemberIO + '.' + readerName
-                    reader = eval(readerClassName + '()')
+                    reader = getattr(readerModule, readerModuleClassName)
+                    reader = reader()
                     reader.InputFileName = filename
                     reader.LogOn = self.LogOn
                     reader.InputStream = self.InputStream
                     reader.OutputStream = self.OutputStream
                     reader.Execute()
-                    exec('self.' + member.MemberName + ' = reader.Output')
+                    eval('self.' + member.MemberName + ' = reader.Output')
 
     def IOWrite(self):
         for member in self.OutputMembers:
             if member.MemberIO:
-                exec('filename = self.' + self.GetIOOutputFileNameMember(member.MemberName), locals(), globals())
-                exec('input = self.' + member.MemberName, locals(), globals())
+                filename = eval('self.' + self.GetIOOutputFileNameMember(member.MemberName))
+                writerInput = eval('self.' + member.MemberName)
                 if filename:
+                    # Create code object representing local import of requested IO script
                     try:
-                        exec('from vmtk import ' + member.MemberIO, locals(), globals())
+                        writerModule = importlib.import_module('vmtk.'+member.MemberIO)
+                        # Find the principle class to instantiate the requested action defined inside the requested writerModule script.
+                        # Returns a single member list (containing the principle class name) which satisfies the following criteria:
+                        #   1) is a class defined within the script
+                        #   2) the class contains an attribute named 'self.SetScriptName'
+                        # This makes the assumption that only one class per vmtkscript file contains the self.SetScriptName attribute, and that
+                        # the class containing this attribute is the primary class to instantiate a new call to the scripts functionality
+                        writerModuleClasses = [x for x in dir(writerModule) if isclass(getattr(writerModule, x)) and hasattr(getattr(writerModule, x), 'SetScriptName')]
+                        writerModuleClassName = writerModuleClasses[0]
                     except ImportError:
                         self.PrintError('Cannot import module ' + member.MemberIO + ' required for writing ' + member.MemberIO)
-                    exec('writerName = ' + member.MemberIO + '.' + member.MemberIO, locals(), globals())
-                    writerClassName = member.MemberIO + '.' + writerName
-                    exec('writer = ' + writerClassName + '()', locals(), globals())
-                    writer.Input = input
+                    writer = getattr(writerModule, writerModuleClassName)
+                    writer = writer()
+                    writer.Input = writerInput
                     writer.OutputFileName = filename
                     writer.LogOn = self.LogOn
                     writer.InputStream = self.InputStream
