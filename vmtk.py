@@ -1,12 +1,18 @@
 #!${PYTHON_SHEBANG}
 
 from __future__ import print_function, absolute_import # NEED TO STAY AS TOP IMPORT
-from builtins import input # NEED TO STAY AS TOP IMPORT
 import sys
 import os
 
 
 if __name__ == '__main__':
+
+    # hack for code compatibility in python 2 and 3 as there is no __future__ module which remaps the new
+    # python 3 style input to the equivalent raw_input function in python 2
+    try:
+        input = raw_input
+    except NameError:
+        pass
 
     if sys.platform == 'win32':
 
@@ -17,7 +23,7 @@ if __name__ == '__main__':
             os.environ["PYTHONPATH"] = os.path.join(vmtkhome)
         else:
             vmtkhome = os.path.join(os.path.dirname(os.path.abspath(__file__)),"..","..","..")
-            os.environ["PYTHONPATH"] = os.path.join(vmtkhome,"lib","python3.6","site-packages")
+            os.environ["PYTHONPATH"] = os.path.join(vmtkhome,"lib","${VMTK_PYTHON_VERSION}","site-packages")
 
         sys.path.append(os.path.join(vmtkhome,"bin"))
         sys.path.append(os.environ["PYTHONPATH"])

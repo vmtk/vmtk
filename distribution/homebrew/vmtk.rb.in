@@ -38,9 +38,9 @@ class Vmtk < Formula
 
     args << "-DVTK_WRAP_PYTHON=ON"
 
-    args << "-DPYTHON_EXECUTABLE=#{`which python`}"
-    args << "-DPYTHON_LIBRARY='#{`python-config --prefix`.chomp}/lib/libpython3.6.dylib'"
-    args << "-DPYTHON_INCLUDE_DIR='#{`python-config --prefix`.chomp}/include/python3.6'"
+    args << "-DPYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}"
+    args << "-DPYTHON_LIBRARY='#{`python-config --prefix`.chomp}/lib/lib${VMTK_PYTHON_VERSION}.dylib'"
+    args << "-DPYTHON_INCLUDE_DIR='#{`python-config --prefix`.chomp}/include/${VMTK_PYTHON_VERSION}'"
 
     args << ".."
 
