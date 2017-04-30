@@ -13,11 +13,11 @@
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
 ##      PURPOSE.  See the above copyright notices for more information.
 
-from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
+from __future__ import absolute_import, unicode_literals #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import sys
 
 from vmtk import pypes
-from . import pypeserver
+from vmtk import pypeserver
 
 from multiprocessing import Process, Manager
 
@@ -206,7 +206,8 @@ class PypeTkPad(object):
    
     def GetLogicalLines(self):
         from tkinter import END
-        physicallines = self.text_input.get("1.0",END).split('\n')
+        # Python 2 hack to remove the u'...' prefix from unicode literal strings. does not change py3 behavior
+        physicallines = [str(line) for line in self.text_input.get("1.0",END).split('\n')]
         lines = []
         indexes = [0] * len(physicallines)
         lineid = 0
