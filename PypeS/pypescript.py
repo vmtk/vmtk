@@ -602,7 +602,7 @@ class pypeScript(object):
                     reader.InputStream = self.InputStream
                     reader.OutputStream = self.OutputStream
                     reader.Execute()
-                    eval('self.' + member.MemberName + ' = reader.Output')
+                    exec('self.' + member.MemberName + ' = reader.Output')
 
     def IOWrite(self):
         for member in self.OutputMembers:
