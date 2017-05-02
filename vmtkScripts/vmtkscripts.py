@@ -139,19 +139,6 @@ __all__ = [
     'vmtk.vmtktetringenerator'
     ]
 
-# importing the following modules throws an error on python2. i'm not sure why, but preventing them from being
-# imported seems to work.
-nonImportList = [
-    'vmtk.vmtklevelsetsegmentation',
-    'vmtk.vmtkmeshgenerator',
-    'vmtk.vmtksurfacecliploop',
-    'vmtk.vmtksurfaceloopextraction',
-    'vmtk.vmtksurfacesmoothing'
-    ]
-
 for item in __all__:
-    if item in nonImportList:
-        continue
-    else:
-        exec('from '+item+' import *')
+    exec('from '+item+' import *')
 

@@ -20,6 +20,8 @@ from vmtk import pypes
 from vmtk import pypeserver
 
 from multiprocessing import Process, Manager
+import importlib
+from inspect import isclass, getmembers
 
 class TkPadOutputStream(object):
 
@@ -267,7 +269,7 @@ class PypeTkPad(object):
     def GetSuggestionsList(self,word):
         list = []
         try:
-            exec('from vmtk import vmtkscripts')
+            from vmtk import vmtkscripts
         except ImportError:
             return None
         if word.startswith('--'):
@@ -277,17 +279,26 @@ class PypeTkPad(object):
             scriptindex = self.text_input.search('vmtk',self.wordIndex[0],backwards=1)
             moduleName  = self.text_input.get( scriptindex,scriptindex+' wordend' )
             try:
-                exec('from vmtk import '+moduleName)
-                exec('scriptObjectClassName =  '+moduleName+'.'+moduleName)
-                exec ('scriptObject = '+moduleName+'.'+scriptObjectClassName +'()') 
+                module = importlib.import_module('vmtk.'+moduleName)
+                scriptObjectClasses = [x for x in dir(module) if isclass(getattr(module, x)) and hasattr(getattr(module, x), 'SetScriptName')]
+                scriptObjectClassName = scriptObjectClasses[0]
+                scriptObject = getattr(module, scriptObjectClassName)
+                scriptObject = scriptObject()
                 members = scriptObject.InputMembers + scriptObject.OutputMembers
                 for member in members:
                     optionlist.append('-'+member.OptionName)
-                exec('list = [option for option in optionlist if option.count(word)]')
+                list = [option for option in optionlist if option.count(word)]
             except:
                 return list
         else:
-            exec('list = [scriptname for scriptname in vmtkscripts.__all__ if scriptname.count(word) ]')
+            list = [scriptname for scriptname in vmtkscripts.__all__ if scriptname.count(word)]
+            for index, item in enumerate(list):
+                # check if scriptname contains starting prefix 'vmtk.' and remove it before returning list to the user.
+                if 'vmtk.' == item[0:5]:
+                    splitList = item.split('.')
+                    list[index] = splitList[1]
+                else:
+                    continue
         return list
 
     def FillSuggestionsList(self,word):

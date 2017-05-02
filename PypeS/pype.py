@@ -240,8 +240,6 @@ class Pype(object):
         for scriptNameAndArguments in self.ScriptList:
             self.PrintLog('')
             scriptName = scriptNameAndArguments[0]
-            scriptArguments = scriptNameAndArguments[1]
-            imported = True
             try:
                 module = importlib.import_module('vmtk.'+scriptName)
                 # Find the principle class to instantiate the requested action defined inside the requested writerModule script.
