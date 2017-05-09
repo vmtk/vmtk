@@ -13,16 +13,15 @@
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
 ##      PURPOSE.  See the above copyright notices for more information.
 
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import sys
 import math
 import string
 import vtk
 
-import vtkvmtk
-import vmtkscripts
-import pypes
+from vmtk import vtkvmtk
+from vmtk import pypes
 
-vmtklevelsetsegmentation = 'vmtkLevelSetSegmentation'
 
 class vmtkLevelSetSegmentation(pypes.pypeScript):
 
@@ -63,7 +62,7 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
         self.FeatureImageType = 'gradient'
         
         self.UpwindFactor = 1.0
-	
+
         self.FWHMRadius = [1.0, 1.0, 1.0]
         self.FWHMBackgroundValue = 0.0
         
@@ -244,7 +243,8 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
             return 0
         return 1
 
-    def Execute(self): 
+    def Execute(self):
+        from vmtk import vmtkscripts
         if self.Image == None:
             self.PrintError('Error: no Image.')
 

@@ -27,14 +27,13 @@
 ## Cell entity ids can also be output for the volume and surface elements.
 ## Surface elements are numbered in increasing numbers, using the openProfilesIds if specified.
 
-
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import vtk
-import vtkvmtk
+from vmtk import vtkvmtk
 import sys
 
-import pypes
+from vmtk import pypes
 
-vmtkboundarylayer2 = 'vmtkBoundaryLayer2'
 
 class vmtkBoundaryLayer2(pypes.pypeScript):
 

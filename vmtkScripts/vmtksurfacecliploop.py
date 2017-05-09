@@ -15,12 +15,12 @@
 ##       Elena Faggiano (elena.faggiano@gmail.com)
 ##       Politecnico di Milano
 
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
+from __future__ import print_function # NEED TO STAY AS TOP IMPORT
 import vtk
 import sys
-import pypes
-import vmtkscripts
+from vmtk import pypes
 
-vmtksurfacecliploop = 'vmtkSurfaceClipLoop'
 
 class vmtkSurfaceClipLoop(pypes.pypeScript):
 
@@ -44,6 +44,8 @@ class vmtkSurfaceClipLoop(pypes.pypeScript):
             ])
 
     def Execute(self):
+
+        from vmtk import vmtkscripts
         if self.Surface == None:
             self.PrintError('Error: no Surface.')
 
@@ -72,7 +74,7 @@ class vmtkSurfaceClipLoop(pypes.pypeScript):
         centroid[0] = centroid[0] / self.Loop.GetNumberOfPoints()
         centroid[1] = centroid[1] / self.Loop.GetNumberOfPoints()
         centroid[2] = centroid[2] / self.Loop.GetNumberOfPoints()
-        print "loop centroid", centroid
+        print("loop centroid", centroid)
 
         locator = vtk.vtkPointLocator()
         locator.SetDataSet(self.Surface)
@@ -88,8 +90,8 @@ class vmtkSurfaceClipLoop(pypes.pypeScript):
             self.Surface = normalsFilter.Surface
         normalsurface = [0.0,0.0,0.0]
         self.Surface.GetPointData().GetNormals().GetTuple(idsurface,normalsurface)
-        print "loop normal: ", normal
-        print "surface normal inside the loop: ", normalsurface
+        print("loop normal: ", normal)
+        print("surface normal inside the loop: ", normalsurface)
         check = vtk.vtkMath.Dot(normalsurface,normal)
         if check < 0:
             normal[0] = - normal[0]

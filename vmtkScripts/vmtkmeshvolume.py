@@ -13,13 +13,12 @@
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
 ##      PURPOSE.  See the above copyright notices for more information.
 
-
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import vtk
 import sys
 
-import pypes
+from vmtk import pypes
 
-vmtkmeshvolume = 'vmtkMeshVolume'
 
 class vmtkMeshVolume(pypes.pypeScript):
 
@@ -54,7 +53,7 @@ class vmtkMeshVolume(pypes.pypeScript):
 
         self.Volume = 0.0
         cellPoints = vtk.vtkIdList()
-        for i in xrange(self.Mesh.GetNumberOfCells()):
+        for i in range(self.Mesh.GetNumberOfCells()):
             self.Mesh.GetCellPoints(i,cellPoints)
             point0 = self.Mesh.GetPoint(cellPoints.GetId(0))
             point1 = self.Mesh.GetPoint(cellPoints.GetId(1))

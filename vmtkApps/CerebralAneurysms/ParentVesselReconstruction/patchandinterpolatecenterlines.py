@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+
+from __future__ import print_function, absolute_import # NEED TO STAY AS TOP IMPORT
 import vtk
 import sys
 import math
@@ -118,7 +120,7 @@ def CreateParentArteryPatches(parentCenterlines,clipPoints):
    patchedRadiusArray = vtk.vtkDoubleArray()
 
    clipIds,numberOfPatchedCenterlinesPoints = ExtractPatchesIds(parentCenterlines,clipPoints)
-   print 'Clipping Point Ids ', clipIds
+   print('Clipping Point Ids ', clipIds)
 
    radiusArray = vtk.vtkDoubleArray()
    radiusArray.SetNumberOfComponents(1)
@@ -362,18 +364,18 @@ setClippingPoints = 0                    # set to 1 if clipping points will be p
 divergingRatioToSpacingTolerance = 2.0   # commonly 2.0; the DivergingTolerange for the identification of diverging points on each couple of centerlines is computed as (centerlineSpacing / DivergingRatioToSpacingTolerance)
 
 #inputfilename:
-print 'USAGE:'
-print '      ./patchandinterpolatecenterlines.py inputfilesDirectory caseID aneurysmType'
-print ''
+print('USAGE:')
+print('      ./patchandinterpolatecenterlines.py inputfilesDirectory caseID aneurysmType')
+print('')
 
 inputfiledirectory = sys.argv[1]
 ID = sys.argv[2]
 aneurysmType = sys.argv[3]
 
-print 'Inputfiles Directory	', inputfiledirectory
-print 'case ID			', ID
-print 'Aneurysm Type		', aneurysmType 
-print ''
+print('Inputfiles Directory	', inputfiledirectory)
+print('case ID			', ID)
+print('Aneurysm Type		', aneurysmType)
+print('')
 
 # outputfilenames:
 divergingPointsFilename         = inputfiledirectory + '/' + ID + '/' + ID + '_divergingpoints.vtp'
@@ -399,7 +401,7 @@ if (aneurysmType == 'lateral'):
       clippingPoints = vtk.vtkPoints()
       divergingPoints = vtk.vtkPoints()
       
-      print 'Computing Clipping Points'
+      print('Computing Clipping Points')
       upstreamClippingPoint,upstreamDivergingPoint = FindClippingPointOnParentArtery(forwardCenterlines,parentArteryCenterlines,divergingTolerance)
       clippingPoints.InsertNextPoint(upstreamClippingPoint)
       divergingPoints.InsertNextPoint(upstreamDivergingPoint)
@@ -414,18 +416,18 @@ if (aneurysmType == 'lateral'):
       SaveClippingPoints(divergingPoints,divergingPointsFilename)
 
    elif (setClippingPoints == 1):
-      print 'Clipping Points and Parent Vessel Centerlines provided'
+      print('Clipping Points and Parent Vessel Centerlines provided')
       parentArteryFileName   = inputfiledirectory + '/' + ID + '/' + ID + '_parentvessel.vtp'
       clippingPointsFileName = inputfiledirectory + '/' + ID + '/' + ID + '_clippingpoints.vtp'
 
       clippingPoints          = ReadPolyData(clippingPointsFileName)
       parentArteryCenterlines = ReadPolyData(parentArteryFileName)
 
-   print 'Creating Patched Centerlines'
+   print('Creating Patched Centerlines')
    patchParentArteryCenterlines = CreateParentArteryPatches(parentArteryCenterlines,clippingPoints)
    WritePolyData(patchParentArteryCenterlines,patchParentArteryFilename)
 
-   print 'Interpolating Patched Centerlines'
+   print('Interpolating Patched Centerlines')
    interpolatedCenterlines = InterpolatePatchCenterlines(patchParentArteryCenterlines,parentArteryCenterlines)
 
    WritePolyData(interpolatedCenterlines,interpolatedCenterlinesFilename)
@@ -469,18 +471,18 @@ if (aneurysmType == 'terminal'):
       SaveClippingPoints(divergingPoints,divergingPointsFilename)
 
    elif (setClippingPoints == 1):
-      print 'Clipping Points and Parent Vessel Centerlines provided'
+      print('Clipping Points and Parent Vessel Centerlines provided')
       parentArteryFileName   = inputfiledirectory + '/' + ID + '/' + ID + '_parentvessel.vtp'
       clippingPointsFileName = inputfiledirectory + '/' + ID + '/' + ID + '_clippingpoints.vtp'
 
       clippingPoints          = ReadPolyData(clippingPointsFileName)
       parentArteryCenterlines = ReadPolyData(parentArteryFileName)
 
-   print 'Creating Patched Centerlines'
+   print('Creating Patched Centerlines')
    patchParentArteryCenterlines = CreateParentArteryPatches(parentArteryCenterlines,clippingPoints)
    WritePolyData(patchParentArteryCenterlines,patchParentArteryFilename)
 
-   print 'Interpolating Patched Centerlines'
+   print('Interpolating Patched Centerlines')
    interpolatedCenterlines = InterpolatePatchCenterlines(patchParentArteryCenterlines,parentArteryCenterlines)
 
    WritePolyData(interpolatedCenterlines,interpolatedCenterlinesFilename)

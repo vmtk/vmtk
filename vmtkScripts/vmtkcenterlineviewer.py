@@ -13,15 +13,14 @@
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
 ##      PURPOSE.  See the above copyright notices for more information.
 
-
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import vtk
 import sys
 
-import vtkvmtk
-import vmtkrenderer
-import pypes
+from vmtk import vtkvmtk
+from vmtk import vmtkrenderer
+from vmtk import pypes
 
-vmtkcenterlineviewer = 'vmtkCenterlineViewer'
 
 class vmtkCenterlineViewer(pypes.pypeScript):
 
@@ -153,8 +152,8 @@ class vmtkCenterlineViewer(pypes.pypeScript):
             scalarBarActor.SetLabelFormat('%.2f')
             scalarBarActor.SetTitle(self.PointDataArrayName)
             self.vmtkRenderer.Renderer.AddActor(scalarBarActor)
-	
-	if self.Display:
+
+        if self.Display:
             self.vmtkRenderer.Render()
 
         if self.OwnRenderer:

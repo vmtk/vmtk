@@ -13,13 +13,13 @@
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
 ##      PURPOSE.  See the above copyright notices for more information.
 
-import vtkvmtk
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
+from vmtk import vtkvmtk
 import vtk
 import sys
 
-import pypes
+from vmtk import pypes
 
-vmtkmeshwallshearrate = 'vmtkMeshWallShearRate'
 
 class vmtkMeshWallShearRate(pypes.pypeScript):
 

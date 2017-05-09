@@ -7,7 +7,7 @@ A script to convert between tetrahedral mesh formats.
 
 Created by Bryan Klingner (stellar.b@overt.org) on 2006-12-07.
 """
-
+from __future__ import print_function, absolute_import # NEED TO STAY AS TOP IMPORT
 import sys
 import getopt
 import os
@@ -92,7 +92,7 @@ def main(argv=None):
         try:
             try:
                 opts, args = getopt.getopt(argv[1:], "hs:", ["help",])
-            except getopt.error, msg:
+            except getopt.error as msg:
                 raise Usage(msg)
             
             # option processing
@@ -101,18 +101,18 @@ def main(argv=None):
                     doscale = True
                     scale = float(value)
                 if option in ("-h", "--help"):
-                    print help_message
+                    print(help_message)
                     return 1
-        except Usage, err:
-            print >> sys.stderr, sys.argv[0].split("/")[-1] + ": " + str(err.msg)
-            print >> sys.stderr, "\t for help use --help"
+        except Usage as err:
+            print(sys.stderr, sys.argv[0].split("/")[-1] + ": " + str(err.msg))
+            print(sys.stderr, "\t for help use --help")
             return 2
     else:
-        print help_message
+        print(help_message)
         return 1
     
     if len(argv) < 3:
-        print "Not enough arguments. For help, use --help."
+        print("Not enough arguments. For help, use --help.")
     
     # determine the input and output formats, and check that they make sense
     inFileName = argv[-2]
@@ -121,16 +121,16 @@ def main(argv=None):
     outFileNameBase, outType = os.path.splitext(outFileName)
     
     if inType not in readDict.keys():
-        print "Don't know how to read input format '%s'; invoke with --help for a list of supported formats." % (inType)
+        print("Don't know how to read input format '%s'; invoke with --help for a list of supported formats." % (inType))
         return 2
     if outType not in writeDict.keys():
-        print "Don't know how to write output format '%s'; invoke with --help for a list of supported formats." % (outType)
+        print("Don't know how to write output format '%s'; invoke with --help for a list of supported formats." % (outType))
         return 2
     
     # read the input mesh
     points, tets, boundFaces = readDict[inType](inFileNameBase)
     if doscale:
-        print "Scaling vertices by %g", scale
+        print("Scaling vertices by %g", scale)
         points = [vscale(scale, point) for point in points]
     # write the output mesh
     writeDict[outType](points, tets, boundFaces, outFileNameBase)
@@ -171,7 +171,7 @@ def readTet(meshFileName):
         d = points[tet[3]-1]
         # if tet is negative orientation, flip two verts
         if orient3d(a,b,c,d) == 0:
-            print "WHOA! input zero-volume tet...\n"
+            print("WHOA! input zero-volume tet...\n")
         if orient3d(a,b,c,d) < 0:
             temp = tet[0]
             tets[tetNum][0] = tet[1]
@@ -217,7 +217,7 @@ def readMesh(meshFileName):
         d = points[tet[3]-1]
         # if tet is negative orientation, flip two verts
         if orient3d(a,b,c,d) == 0:
-            print "WHOA! input zero-volume tet...\n"
+            print("WHOA! input zero-volume tet...\n")
             sys.exit(1)
         if orient3d(a,b,c,d) < 0:
             temp = tet[0]
@@ -300,7 +300,7 @@ def readVmesh(meshFileName):
         d = points[tet[3]-1]
         # if tet is negative orientation, flip two verts
         if orient3d(a,b,c,d) == 0:
-            print "WHOA! input zero-volume tet...\n"
+            print("WHOA! input zero-volume tet...\n")
         if orient3d(a,b,c,d) < 0:
             temp = tet[0]
             tets[tetNum][0] = tet[1]
@@ -324,13 +324,13 @@ def readNodeEle(filename, computeTopo=True):
         d = points[tet[3]]
         # if tet is negative orientation, flip two verts
         if orient3d(a,b,c,d) == 0.0:
-            print "WHOA! input zero-volume tet#%d...", tetNum
-            print "a=", ' '.join(['%0.18g' % x for x in a])
-            print "b=", ' '.join(['%0.18g' % x for x in b])
-            print "c=", ' '.join(['%0.18g' % x for x in c])
-            print "d=", ' '.join(['%0.18g' % x for x in d])
+            print("WHOA! input zero-volume tet#%d...", tetNum)
+            print("a=", ' '.join(['%0.18g' % x for x in a]))
+            print("b=", ' '.join(['%0.18g' % x for x in b]))
+            print("c=", ' '.join(['%0.18g' % x for x in c]))
+            print("d=", ' '.join(['%0.18g' % x for x in d]))
         if orient3d(a,b,c,d) < 0.0:
-            print "correcting inverted tet #%d", tetNum
+            print("correcting inverted tet #%d", tetNum)
             temp = tet[0]
             tets[tetNum][0] = tet[1]
             tets[tetNum][1] = temp
@@ -394,8 +394,8 @@ def GetFaceTopo(tets):
             else:
                 # the second entry must not have a tet yet
                 if (face2tet[face][1] != -1):
-                    print "whoa, fount more than two tets for a face?"
-                    print "tetnum is %d, face2tet[face] is" % tetNum, face2tet[face]
+                    print("whoa, fount more than two tets for a face?")
+                    print("tetnum is %d, face2tet[face] is" % tetNum, face2tet[face])
                 assert(face2tet[face][1] == -1)
                 face2tet[face][1] = tetNum
 
@@ -486,7 +486,7 @@ def ReadOFF(fileName):
     # read second line "numverts numfaces 0"
     numPoints, numTris, blah = map(int, infile.readline().strip().split())
 
-    print "reading OFF numPoints is %d numTris is %d" % (numPoints, numTris)
+    print("reading OFF numPoints is %d numTris is %d" % (numPoints, numTris))
 
     # read in points
     points = []

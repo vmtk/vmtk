@@ -13,15 +13,14 @@
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
 ##      PURPOSE.  See the above copyright notices for more information.
 
-
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import vtk
 import sys
 
-import vtkvmtk
-import vmtkrenderer
-import pypes
+from vmtk import vtkvmtk
+from vmtk import vmtkrenderer
+from vmtk import pypes
 
-vmtkcenterlines = 'vmtkCenterlines'
 
 
 ## TODO: make SeedSelector a separate pype script to be used in other contexts
@@ -630,7 +629,7 @@ class vmtkCenterlines(pypes.pypeScript):
             centerlineFilter.SetDelaunayTolerance(self.DelaunayTolerance)
         if self.UseTetGen==1:
             self.PrintLog('Running TetGen.')
-            import vmtkscripts
+            from vmtk import vmtkscripts
             surfaceToMesh = vmtkscripts.vmtkSurfaceToMesh()
             surfaceToMesh.Surface = centerlineInputSurface
             surfaceToMesh.Execute()

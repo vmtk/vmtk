@@ -17,16 +17,16 @@
 ##       Simone Manini
 ##       Orobix Srl
 
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import vtk
 import sys
 import os
 
-import vtkvmtk
-import vmtkmeshreader
-import vmtkmeshvectorfromcomponents
-import pypes
+from vmtk import vtkvmtk
+from vmtk import vmtkmeshreader
+from vmtk import vmtkmeshvectorfromcomponents
+from vmtk import pypes
 
-vmtkmeshmergetimesteps = 'vmtkMeshMergeTimesteps'
 
 class vmtkMeshMergeTimesteps(pypes.pypeScript):
 
@@ -91,7 +91,7 @@ class vmtkMeshMergeTimesteps(pypes.pypeScript):
             if root == self.InputDirectoryName:
                 fileList = [x for x in files if not (x.startswith('.'))]
 
-        timeIndexList = range(self.FirstTimeStep,self.LastTimeStep+1,self.IntervalTimeStep)
+        timeIndexList = list(range(self.FirstTimeStep,self.LastTimeStep+1,self.IntervalTimeStep))
         reader = vmtkmeshreader.vmtkMeshReader()
         #if self.VelocityVector or self.WsrVector:
         if self.WsrVector:
@@ -102,9 +102,9 @@ class vmtkMeshMergeTimesteps(pypes.pypeScript):
         w_name = self.VelocityComponentsArrayNames.split(' ')[2]
 
         if self.Wsr:
-        	taux_name = self.WsrComponentsArrayNames.split(' ')[0]
-        	tauy_name = self.WsrComponentsArrayNames.split(' ')[1]
-        	tauz_name = self.WsrComponentsArrayNames.split(' ')[2]
+            taux_name = self.WsrComponentsArrayNames.split(' ')[0]
+            tauy_name = self.WsrComponentsArrayNames.split(' ')[1]
+            tauz_name = self.WsrComponentsArrayNames.split(' ')[2]
 
         field = vtk.vtkFieldData()
         field.AllocateArrays(1)
@@ -133,17 +133,17 @@ class vmtkMeshMergeTimesteps(pypes.pypeScript):
                     self.Mesh.GetPointData().AddArray(p)
 
                 if self.Wsr:
-                	taux = mesh.GetPointData().GetArray(taux_name)
-                	taux.SetName(taux_name+str(step))
-                	self.Mesh.GetPointData().AddArray(taux)
+                    taux = mesh.GetPointData().GetArray(taux_name)
+                    taux.SetName(taux_name+str(step))
+                    self.Mesh.GetPointData().AddArray(taux)
 
-                	tauy = mesh.GetPointData().GetArray(tauy_name)
-                	tauy.SetName(tauy_name+str(step))
-                	self.Mesh.GetPointData().AddArray(tauy)
+                    tauy = mesh.GetPointData().GetArray(tauy_name)
+                    tauy.SetName(tauy_name+str(step))
+                    self.Mesh.GetPointData().AddArray(tauy)
 
-                	tauz = mesh.GetPointData().GetArray(tauz_name)
-                	tauz.SetName(tauz_name+str(step))
-                	self.Mesh.GetPointData().AddArray(tauz)
+                    tauz = mesh.GetPointData().GetArray(tauz_name)
+                    tauz.SetName(tauz_name+str(step))
+                    self.Mesh.GetPointData().AddArray(tauz)
 
 
                 if self.VelocityVector:

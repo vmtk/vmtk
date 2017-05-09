@@ -22,14 +22,14 @@
 ## The array is produced by RBF interpolation of values specified by the user by positioning spheres
 ## This version use the geodesic distance along the surface instead of hte 3D euclidean distance for hte RBF
 
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import vtk
 import sys
 
-import vtkvmtk
-import vmtkrenderer
-import pypes
+from vmtk import vtkvmtk
+from vmtk import vmtkrenderer
+from vmtk import pypes
 
-vmtkgeodesicsurfaceresolution = 'vmtkGeodesicSurfaceResolution'
 
 
 class vmtkGeodesicSurfaceResolution(pypes.pypeScript):
@@ -216,11 +216,11 @@ class vmtkGeodesicSurfaceResolution(pypes.pypeScript):
         for i in range(pickedCellPointIds.GetNumberOfIds()):
             distance = vtk.vtkMath.Distance2BetweenPoints(pickPosition,self.Surface.GetPoint(pickedCellPointIds.GetId(i)))
             if distance < minDistance:
-        	      minDistance = distance
-        	      pickedPointId = pickedCellPointIds.GetId(i)
+                  minDistance = distance
+                  pickedPointId = pickedCellPointIds.GetId(i)
         if pickedPointId == -1:
             pickedPointId = pickedCellPointIds.GetId(0)
-        	
+
         pickedPoint = self.Surface.GetPoint(pickedPointId)
         if (self.InteractionMode==0):
             self.SphereIds.InsertNextId(pickedPointId)
@@ -286,7 +286,7 @@ class vmtkGeodesicSurfaceResolution(pypes.pypeScript):
         self.ExamineSpheresActor.PickableOff()
         self.ExamineSpheresActor.VisibilityOff()
         self.vmtkRenderer.Renderer.AddActor(self.ExamineSpheresActor)
-	
+
         #self.vmtkRenderer.RenderWindowInteractor.AddObserver("KeyPressEvent", self.KeyPressed)
 
         self.vmtkRenderer.AddKeyBinding('u','undo',self.UndoCallback)

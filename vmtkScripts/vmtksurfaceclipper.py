@@ -13,13 +13,12 @@
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
 ##      PURPOSE.  See the above copyright notices for more information.
 
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import vtk
 import sys
 
-import vmtkrenderer
-import pypes
-
-vmtksurfaceclipper = 'vmtkSurfaceClipper'
+from vmtk import vmtkrenderer
+from vmtk import pypes
 
 class vmtkSurfaceClipper(pypes.pypeScript):
 
@@ -90,13 +89,13 @@ class vmtkSurfaceClipper(pypes.pypeScript):
 
     def Display(self):
 
-      	self.ClipWidget.SetInputData(self.Surface)
-      	self.ClipWidget.PlaceWidget()
+        self.ClipWidget.SetInputData(self.Surface)
+        self.ClipWidget.PlaceWidget()
 
         if self.Transform and self.WidgetType == "box":
             self.ClipWidget.SetTransform(self.Transform)
             self.ClipWidget.On()
-      	
+
         #self.vmtkRenderer.RenderWindowInteractor.Initialize()
         self.vmtkRenderer.Render()
         #self.vmtkRenderer.RenderWindowInteractor.Start()

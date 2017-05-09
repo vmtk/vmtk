@@ -13,10 +13,12 @@
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
 ##      PURPOSE.  See the above copyright notices for more information.
 
-
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import sys
 import string
 import os.path
+import importlib
+from inspect import isclass
 
 class pypeMember(object):
 
@@ -524,10 +526,10 @@ class pypeScript(object):
                             memberEntry.ExplicitPipe = 'None'
                     else: 
                         if memberType in self.BuiltinOptionTypes:
-                            exec('castValue = '+memberType+'(\''+value+'\')')
+                            exec('castValue = '+memberType+'(\''+value+'\')', globals())
                             memberValues.append(castValue)
                         elif memberType is 'bool':
-                            exec('castValue = int(\''+value+'\')')
+                            exec('castValue = int(\''+value+'\')', globals())
                             memberValues.append(castValue)
                         else:
                             memberValues.append(value)
@@ -577,17 +579,26 @@ class pypeScript(object):
         return 1
 
     def IORead(self):
+        try:
+            from vmtk import pypes
+        except ImportError:
+            return None
         for member in self.InputMembers:
             if member.MemberIO:
-                exec('filename = self.' + self.GetIOInputFileNameMember(member.MemberName))
+                filename = eval('self.' + self.GetIOInputFileNameMember(member.MemberName))
                 if filename:
                     try:
-                        exec('import ' + member.MemberIO)
+                        readerModule = importlib.import_module('vmtk.'+member.MemberIO)
+                        # Find the principle class to instantiate the requested action defined inside the requested writerModule script.
+                        # Returns a single member list (containing the principle class name) which satisfies the following criteria:
+                        #   1) is a class defined within the script
+                        #   2) the class is a subclass of pypes.pypescript
+                        readerModuleClasses = [x for x in dir(readerModule) if isclass(getattr(readerModule, x)) and issubclass(getattr(readerModule, x), pypes.pypeScript)]
+                        readerModuleClassName = readerModuleClasses[0]
                     except ImportError:
                         self.PrintError('Cannot import module ' + member.MemberIO + ' required for reading ' + member.MemberName)
-                    exec('readerName = ' + member.MemberIO + '.' + member.MemberIO)
-                    readerClassName = member.MemberIO + '.' + readerName
-                    exec('reader = ' + readerClassName + '()')
+                    reader = getattr(readerModule, readerModuleClassName)
+                    reader = reader()
                     reader.InputFileName = filename
                     reader.LogOn = self.LogOn
                     reader.InputStream = self.InputStream
@@ -596,19 +607,29 @@ class pypeScript(object):
                     exec('self.' + member.MemberName + ' = reader.Output')
 
     def IOWrite(self):
+        try:
+            from vmtk import pypes
+        except ImportError:
+            return None
         for member in self.OutputMembers:
             if member.MemberIO:
-                exec('filename = self.' + self.GetIOOutputFileNameMember(member.MemberName))
-                exec('input = self.' + member.MemberName)
+                filename = eval('self.' + self.GetIOOutputFileNameMember(member.MemberName))
+                writerInput = eval('self.' + member.MemberName)
                 if filename:
+                    # Create code object representing local import of requested IO script
                     try:
-                        exec('import ' + member.MemberIO)
+                        writerModule = importlib.import_module('vmtk.'+member.MemberIO)
+                        # Find the principle class to instantiate the requested action defined inside the requested writerModule script.
+                        # Returns a single member list (containing the principle class name) which satisfies the following criteria:
+                        #   1) is a class defined within the script
+                        #   2) the class is a subclass of pypes.pypescript
+                        writerModuleClasses = [x for x in dir(writerModule) if isclass(getattr(writerModule, x)) and issubclass(getattr(writerModule, x), pypes.pypeScript)]
+                        writerModuleClassName = writerModuleClasses[0]
                     except ImportError:
                         self.PrintError('Cannot import module ' + member.MemberIO + ' required for writing ' + member.MemberIO)
-                    exec('writerName = ' + member.MemberIO + '.' + member.MemberIO)
-                    writerClassName = member.MemberIO + '.' + writerName
-                    exec('writer = ' + writerClassName + '()')
-                    writer.Input = input
+                    writer = getattr(writerModule, writerModuleClassName)
+                    writer = writer()
+                    writer.Input = writerInput
                     writer.OutputFileName = filename
                     writer.LogOn = self.LogOn
                     writer.InputStream = self.InputStream
@@ -636,7 +657,7 @@ class pypeMain(object):
         self.Arguments = None
 
     def Execute(self):
-        import pype
+        from vmtk import pype
         pipe = pype.Pype()
         pipe.Arguments = self.Arguments
         pipe.ParseArguments()

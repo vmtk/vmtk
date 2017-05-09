@@ -22,13 +22,13 @@
 ## An option has been added to write ascii files.
 ## The Dolphin writer has been modified (see vtkvmtkDolfinWriter2)
 
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import sys
 import vtk
-import vtkvmtk
+from vmtk import vtkvmtk
 
-import pypes
+from vmtk import pypes
 
-vmtkmeshwriter2 = 'vmtkMeshWriter2'
 
 class vmtkMeshWriter2(pypes.pypeScript):
 
@@ -319,9 +319,9 @@ class vmtkMeshWriter2(pypes.pypeScript):
                             'dat':'pointdata'}
 
         if self.OutputFileName == 'BROWSER':
-            import tkFileDialog
+            import tkinter.filedialog
             initialDir = '.'
-            self.OutputFileName = tkFileDialog.asksaveasfilename(title="Output mesh",initialdir=initialDir)
+            self.OutputFileName = tkinter.filedialog.asksaveasfilename(title="Output mesh",initialdir=initialDir)
             if not self.OutputFileName:
                 self.PrintError('Error: no OutputFileName.')
 
@@ -330,7 +330,7 @@ class vmtkMeshWriter2(pypes.pypeScript):
             extension = os.path.splitext(self.OutputFileName)[1]
             if extension:
                 extension = extension[1:]
-                if extension in extensionFormats.keys():
+                if extension in list(extensionFormats.keys()):
                     self.Format = extensionFormats[extension]
 
         if (self.Format == 'vtk'):

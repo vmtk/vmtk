@@ -13,17 +13,16 @@
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
 ##      PURPOSE.  See the above copyright notices for more information.
 
-
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import vtk
-import vtkvmtk
+from vmtk import vtkvmtk
 import sys
 
-import pypes
+from vmtk import pypes
 
-import vmtkrenderer
-import vmtkcenterlineviewer
+from vmtk import vmtkrenderer
+from vmtk import vmtkcenterlineviewer
 
-vmtkmeshbranchclipper = 'vmtkMeshBranchClipper'
 
 class vmtkMeshBranchClipper(pypes.pypeScript):
 
@@ -33,7 +32,7 @@ class vmtkMeshBranchClipper(pypes.pypeScript):
         
         self.Mesh = None
         self.Centerlines = None
-		
+
         self.RadiusArrayName = ''
         self.CutoffRadiusFactor = 1E16
         
@@ -61,10 +60,10 @@ class vmtkMeshBranchClipper(pypes.pypeScript):
             ['InsideOut','insideout','bool',1],
             ['UseRadiusInformation','useradius','bool',1],
             ['RadiusArrayName','radiusarray','str',1],
-				    ['BlankingArrayName','blankingarray','str',1],
-						['CutoffRadiusFactor','cutoffradiusfactor','float',1,'(0.0,)'],
-						['ClipValue','clipvalue','float',1],
-						['Interactive','interactive','bool',1],
+            ['BlankingArrayName','blankingarray','str',1],
+            ['CutoffRadiusFactor','cutoffradiusfactor','float',1,'(0.0,)'],
+            ['ClipValue','clipvalue','float',1],
+            ['Interactive','interactive','bool',1],
             ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer']
             ])
         self.SetOutputMembers([
@@ -108,7 +107,7 @@ class vmtkMeshBranchClipper(pypes.pypeScript):
             viewer.OutputText = self.OutputText
             viewer.PrintError = self.PrintError
             viewer.PringLog = self.PrintLog
-	    viewer.Display = 0
+            viewer.Display = 0
             viewer.Execute()
            
             groupIdsString = self.InputText("Please input groupIds to clip:\n",self.GroupIdsValidator)

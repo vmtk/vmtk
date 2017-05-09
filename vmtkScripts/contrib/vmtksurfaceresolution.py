@@ -21,14 +21,14 @@
 ## This allows the user to specify a edge-length array to be used to specify resolution for surface remeshing
 ## The array is produced by RBF interpolation of values specified by the user by positioning spheres
 
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import vtk
 import sys
 
-import vtkvmtk
-import vmtkrenderer
-import pypes
+from vmtk import vtkvmtk
+from vmtk import vmtkrenderer
+from vmtk import pypes
 
-vmtksurfaceresolution = 'vmtkSufaceResolution'
 
 
 class vmtkSufaceResolution(pypes.pypeScript):
@@ -135,7 +135,7 @@ class vmtkSufaceResolution(pypes.pypeScript):
         #eventPosition = obj.GetEventPosition()
         result = picker.Pick(float(eventPosition[0]),float(eventPosition[1]),0.0,self.vmtkRenderer.Renderer)
         if result == 0:
-          	return
+            return
         pickPosition = picker.GetPickPosition()
         if (self.InteractionMode==0):	    
             self.CurrentSphereId = self.Spheres.GetPoints().InsertNextPoint(pickPosition)
@@ -276,8 +276,8 @@ class vmtkSufaceResolution(pypes.pypeScript):
         self.ExamineSpheresActor.PickableOff()
         self.ExamineSpheresActor.VisibilityOff()
         self.vmtkRenderer.Renderer.AddActor(self.ExamineSpheresActor)
-	
-	
+
+
         self.vmtkRenderer.AddKeyBinding('u','Undo.',self.UndoCallback)
         self.vmtkRenderer.AddKeyBinding('space','Place picks.',self.PickCallback)
         self.vmtkRenderer.AddKeyBinding('+','Increase sphere radius.',self.IncreaseSphereRadiusCallback)

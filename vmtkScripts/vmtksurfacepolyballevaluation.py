@@ -13,14 +13,13 @@
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
 ##      PURPOSE.  See the above copyright notices for more information.
 
-
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import sys
 import vtk
 from vmtk import vtkvmtk
 
-import pypes
+from vmtk import pypes
 
-vmtksurfacepolyballevaluation = 'vmtkSurfacePolyBallEvaluation'
 
 class vmtkSurfacePolyBallEvaluation(pypes.pypeScript):
 
@@ -68,7 +67,7 @@ class vmtkSurfacePolyBallEvaluation(pypes.pypeScript):
         polyball.SetInputData(self.PolyBall)
         polyball.SetPolyBallRadiusArrayName(self.RadiusArrayName)
  
-        for i in xrange(self.Surface.GetNumberOfPoints()):
+        for i in range(self.Surface.GetNumberOfPoints()):
             point = self.Surface.GetPoint(i)
             value = polyball.EvaluateFunction(point)
             evaluationArray.SetValue(i,value)

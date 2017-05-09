@@ -1,9 +1,10 @@
 #!${PYTHON_SHEBANG}
 
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import vtk
 import sys
 
-from vmtk import pypes 
+from vmtk import pypes
 
 import unittest
 import datetime
@@ -119,7 +120,7 @@ class PypeTestRunner(pypes.pypeScript):
             xmlCasePype = xmlCase.appendChild(xmlDocument.createElement('CasePype'))
             xmlCasePype.appendChild(xmlDocument.createTextNode(case['pype']))
             del case['pype']
-            for k,v in case.iteritems():
+            for k,v in case.items():
                 xmlCase.setAttribute(k,v)
 
         xmlFile = open(self.LogFileName,'w')
@@ -180,7 +181,7 @@ class PypeTestRunner(pypes.pypeScript):
             extension = os.path.splitext(self.LogFileName)[1]
             if extension:
                 extension = extension[1:]
-                if extension in extensionFormats.keys():
+                if extension in list(extensionFormats.keys()):
                     self.Format = extensionFormats[extension]
 
         if self.LogFileName:

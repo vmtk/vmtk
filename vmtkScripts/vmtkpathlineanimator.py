@@ -17,16 +17,16 @@
 ##       Simone Manini
 ##       Orobix Srl
 
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import vtk
 import sys
 import os
 
-import vtkvmtk
-import vmtkrenderer
-import vmtksurfaceviewer
-import pypes
+from vmtk import vtkvmtk
+from vmtk import vmtkrenderer
+from vmtk import vmtksurfaceviewer
+from vmtk import pypes
 
-vmtkpathlineanimator = 'vmtkPathLineAnimator'
 
 class vmtkPathLineAnimator(pypes.pypeScript):
 

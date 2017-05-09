@@ -18,14 +18,14 @@
 ##       Academic Medical Centre - University of Amsterdam
 ##       Dept. Biomedical Engineering  & Physics
 
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import vtk
 import sys
 
-import vtkvmtk
-import vmtkrenderer
-import pypes
+from vmtk import vtkvmtk
+from vmtk import vmtkrenderer
+from vmtk import pypes
 
-vmtkimagecurvedmpr = 'vmtkImageCurvedMPR'
 
 class vmtkImageCurvedMPR(pypes.pypeScript):
 
@@ -47,10 +47,10 @@ class vmtkImageCurvedMPR(pypes.pypeScript):
         self.SetInputMembers([
             ['Image','i','vtkImageData',1,'','the input image','vmtkimagereader'],
             ['Centerlines','centerlines','vtkPolyData',1,'','the input centerlines','vmtksurfacereader'],
-      	    ['NormalsArrayName','normalsarray','str',1,'','name of the array where parallel transport normals to the centerlines are stored'],
-      	    ['InplaneOutputSize','size','int',1,'(1,)','size of the square in pixels that each resulting MPR image should have'],
-      	    ['ReslicingBackgroundLevel','background','float',1,'','value of the pixels in the mpr image that are outside of the inputimage'],
-      	    ['InplaneOutputSpacing','spacing','float',1,'(0.001,)','spacing between the pixels in the output MPR images'],
+            ['NormalsArrayName','normalsarray','str',1,'','name of the array where parallel transport normals to the centerlines are stored'],
+            ['InplaneOutputSize','size','int',1,'(1,)','size of the square in pixels that each resulting MPR image should have'],
+            ['ReslicingBackgroundLevel','background','float',1,'','value of the pixels in the mpr image that are outside of the inputimage'],
+            ['InplaneOutputSpacing','spacing','float',1,'(0.001,)','spacing between the pixels in the output MPR images'],
             ['FrenetTangentArrayName','frenettangentarray','str',1,'','name of the array where tangent vectors of the Frenet reference system are stored']
             ])
         self.SetOutputMembers([

@@ -13,14 +13,13 @@
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
 ##      PURPOSE.  See the above copyright notices for more information.
 
-
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import vtk
 import math
 import sys
 
-import pypes
+from vmtk import pypes
 
-vmtksurfacereferencesystemtransform = 'vmtkSurfaceReferenceSystemTransform'
 
 class vmtkSurfaceReferenceSystemTransform(pypes.pypeScript):
 
@@ -45,14 +44,14 @@ class vmtkSurfaceReferenceSystemTransform(pypes.pypeScript):
         self.SetScriptDoc('translate and rotate a surface in order to orient its reference system with a target reference system')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
-      	    ['ReferenceOrigin','referenceorigin','float',3,'','origin of the target reference system'],
-      	    ['ReferenceNormal1','referencenormal1','float',3,'','first normal of the target reference system'],
-      	    ['ReferenceNormal2','referencenormal2','float',3,'','second normal of the target reference system'],
+            ['ReferenceOrigin','referenceorigin','float',3,'','origin of the target reference system'],
+            ['ReferenceNormal1','referencenormal1','float',3,'','first normal of the target reference system'],
+            ['ReferenceNormal2','referencenormal2','float',3,'','second normal of the target reference system'],
             ['ReferenceSystems','referencesystems','vtkPolyData',1,'','reference systems of the input surface represented by a set of points with two normals each','vmtksurfacereader'],
             ['ReferenceSystemId','referencesystemid','int',1,'','id of the reference system to use'],
             ['ReferenceSystemsIdArrayName','referencesystemidsarray','str',1,'','name of the array where reference system ids are stored'],
-      	    ['ReferenceSystemsNormal1ArrayName','normal1array','str',1,'','name of the array where the first normals defining the reference systems are stored'],
-      	    ['ReferenceSystemsNormal2ArrayName','normal2array','str',1,'','name of the array where the second normals defining the reference systems are stored']
+            ['ReferenceSystemsNormal1ArrayName','normal1array','str',1,'','name of the array where the first normals defining the reference systems are stored'],
+            ['ReferenceSystemsNormal2ArrayName','normal2array','str',1,'','name of the array where the second normals defining the reference systems are stored']
             ])
         self.SetOutputMembers([
             ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter']

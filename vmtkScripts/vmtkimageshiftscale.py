@@ -18,13 +18,12 @@
 ##       Academic Medical Centre - University of Amsterdam
 ##       Dept. Biomedical Engineering  & Physics
 
-
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import vtk
 import sys
 
-import pypes
+from vmtk import pypes
 
-vmtkimageshiftscale = 'vmtkImageShiftScale'
 
 class vmtkImageShiftScale(pypes.pypeScript):
 

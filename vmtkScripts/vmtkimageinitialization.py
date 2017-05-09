@@ -13,16 +13,16 @@
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
 ##      PURPOSE.  See the above copyright notices for more information.
 
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import sys
 import math
 import string
 import vtk
 
-import vtkvmtk
-import vmtkscripts
-import pypes
+from vmtk import vtkvmtk
 
-vmtkimageinitialization = 'vmtkImageInitialization'
+from vmtk import pypes
+
 
 class vmtkImageInitialization(pypes.pypeScript):
 
@@ -155,7 +155,7 @@ class vmtkImageInitialization(pypes.pypeScript):
         scalarRange = self.Image.GetScalarRange()
 
         thresholdedImage = self.Image
-	
+
         if self.LowerThreshold != None or self.UpperThreshold != None:
             threshold = vtk.vtkImageThreshold()
             threshold.SetInputData(self.Image)
@@ -212,7 +212,7 @@ class vmtkImageInitialization(pypes.pypeScript):
         scalarRange = self.Image.GetScalarRange()
 
         thresholdedImage = self.Image
-	
+
         if (self.LowerThreshold is not None) | (self.UpperThreshold is not None):
             threshold = vtk.vtkImageThreshold()
             threshold.SetInputData(self.Image)
@@ -292,7 +292,7 @@ class vmtkImageInitialization(pypes.pypeScript):
             seedIds2.InsertNextId(self.Image.ComputePointId([self.TargetPoints[0],self.TargetPoints[1],self.TargetPoints[2]]))
 
         scalarRange = self.Image.GetScalarRange()
-	
+
         thresholdedImage = self.Image
 
         if (self.LowerThreshold is not None) | (self.UpperThreshold is not None):
@@ -422,7 +422,8 @@ class vmtkImageInitialization(pypes.pypeScript):
             minFilter.Update()
             self.MergedInitialLevelSets = minFilter.GetOutput()
 
-    def Execute(self):    
+    def Execute(self):
+        from vmtk import vmtkscripts
         if self.Image == None:
             self.PrintError('Error: no Image.')
 

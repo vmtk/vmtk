@@ -4,10 +4,12 @@
 Simple build script for VTK, ITK, and vmtk.
 """
 
+
+from __future__ import print_function, absolute_import # NEED TO STAY AS TOP IMPORT
 import os
 import sys
 import platform
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import tarfile
 import atexit
 
@@ -28,7 +30,7 @@ log_file = None
 
 def log(msg):
     if VERBOSE:
-        print msg
+        print(msg)
     if LOGFILE:
         global log_file
         if not log_file:
@@ -56,7 +58,7 @@ def on_x64():
 
 def download(url, filename):
     log("Downloading %s..." % filename)
-    urllib.urlretrieve(url, filename)
+    urllib.request.urlretrieve(url, filename)
 
 def tarextract(filename, path='.'):
     tar = tarfile.open(filename)

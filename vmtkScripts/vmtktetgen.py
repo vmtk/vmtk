@@ -13,14 +13,13 @@
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
 ##      PURPOSE.  See the above copyright notices for more information.
 
-
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import sys
 import vtk
-import vtkvmtk
+from vmtk import vtkvmtk
 
-import pypes
+from vmtk import pypes
 
-vmtktetgen = 'vmtkTetGen'
 
 class vmtkTetGen(pypes.pypeScript):
 
@@ -50,7 +49,7 @@ class vmtkTetGen(pypes.pypeScript):
         self.CheckClosure = 0
         self.Order = 1
         self.DoCheck = 0
-      	self.Verbose = 0
+        self.Verbose = 0
         self.UseSizingFunction = 0
         self.SizingFunctionArrayName = ''
         

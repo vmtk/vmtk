@@ -15,18 +15,18 @@
 
 ##   Developed with support from the EC FP7/2007-2013: ARCH, Project n. 224390
 
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import vtk
 import sys
 
-import vtkvmtk
-import vmtkrenderer
-import vmtkimageviewer
-import vmtkimagefeatures
-import pypes
+from vmtk import vtkvmtk
+from vmtk import vmtkrenderer
+from vmtk import vmtkimageviewer
+from vmtk import vmtkimagefeatures
+from vmtk import pypes
 
-import vmtkactivetubes
+from vmtk import vmtkactivetubes
 
-vmtknetworkeditor = 'vmtkNetworkEditor'
 
 class vmtkNetworkEditor(pypes.pypeScript):
 

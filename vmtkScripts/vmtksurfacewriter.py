@@ -13,12 +13,12 @@
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
 ##      PURPOSE.  See the above copyright notices for more information.
 
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import vtk
 import sys
 
-import pypes
+from vmtk import pypes
 
-vmtksurfacewriter = 'vmtkSurfaceWriter'
 
 class vmtkSurfaceWriter(pypes.pypeScript):
 
@@ -206,10 +206,10 @@ class vmtkSurfaceWriter(pypes.pypeScript):
                             'dat':'pointdata'}
 
         if self.OutputFileName == 'BROWSER':
-            import tkFileDialog
+            import tkinter.filedialog
             import os.path
             initialDir = pypes.pypeScript.lastVisitedPath
-            self.OutputFileName = tkFileDialog.asksaveasfilename(title="Output surface",initialdir=initialDir)
+            self.OutputFileName = tkinter.filedialog.asksaveasfilename(title="Output surface",initialdir=initialDir)
             pypes.pypeScript.lastVisitedPath = os.path.dirname(self.OutputFileName)
             if not self.OutputFileName:
                 self.PrintError('Error: no OutputFileName.')
@@ -219,7 +219,7 @@ class vmtkSurfaceWriter(pypes.pypeScript):
             extension = os.path.splitext(self.OutputFileName)[1]
             if extension:
                 extension = extension[1:]
-                if extension in extensionFormats.keys():
+                if extension in list(extensionFormats.keys()):
                     self.Format = extensionFormats[extension]
 
         if (self.Format == 'vtk'):

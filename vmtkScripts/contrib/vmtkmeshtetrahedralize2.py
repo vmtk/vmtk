@@ -20,14 +20,14 @@
 
 ## Bug fix for VTK 5.0
 
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import vtk
 import sys
 
-import pypes
+from vmtk import pypes
 
 from vmtk import vtkvmtk
 
-vmtkmeshtetrahedralize2 = 'vmtkMeshTetrahedralize2'
 
 class vmtkMeshTetrahedralize2(pypes.pypeScript):
 

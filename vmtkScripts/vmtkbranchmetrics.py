@@ -13,14 +13,13 @@
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
 ##      PURPOSE.  See the above copyright notices for more information.
 
-
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import vtk
-import vtkvmtk
+from vmtk import vtkvmtk
 import sys
 
-import pypes
+from vmtk import pypes
 
-vmtkbranchmetrics = 'vmtkBranchMetrics'
 
 class vmtkBranchMetrics(pypes.pypeScript):
 
@@ -50,21 +49,21 @@ class vmtkBranchMetrics(pypes.pypeScript):
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','','vmtksurfacereader'],
             ['Centerlines','centerlines','vtkPolyData',1,'','','vmtksurfacereader'],
-      	    ['ComputeAbscissaMetric','abscissametric','bool',1],
-      	    ['ComputeAngularMetric','angularmetric','bool',1],
-      	    ['AbscissasArrayName','abscissasarray','str',1],
-      	    ['NormalsArrayName','normalsarray','str',1],
-      	    ['GroupIdsArrayName','groupidsarray','str',1],
-      	    ['CenterlineIdsArrayName','centerlineidsarray','str',1],
-      	    ['TractIdsArrayName','tractidsarray','str',1],
-      	    ['RadiusArrayName','radiusarray','str',1],
-      	    ['BlankingArrayName','blankingarray','str',1],
-      	    ['AngularMetricArrayName','angularmetricarray','str',1],
-      	    ['AbscissaMetricArrayName','abscissametricarray','str',1]
+            ['ComputeAbscissaMetric','abscissametric','bool',1],
+            ['ComputeAngularMetric','angularmetric','bool',1],
+            ['AbscissasArrayName','abscissasarray','str',1],
+            ['NormalsArrayName','normalsarray','str',1],
+            ['GroupIdsArrayName','groupidsarray','str',1],
+            ['CenterlineIdsArrayName','centerlineidsarray','str',1],
+            ['TractIdsArrayName','tractidsarray','str',1],
+            ['RadiusArrayName','radiusarray','str',1],
+            ['BlankingArrayName','blankingarray','str',1],
+            ['AngularMetricArrayName','angularmetricarray','str',1],
+            ['AbscissaMetricArrayName','abscissametricarray','str',1]
             ])
         self.SetOutputMembers([
             ['Surface','o','vtkPolyData',1,'','','vmtksurfacewriter'],
-      	    ['AngularMetricArrayName','angularmetricarray','str',1],
+            ['AngularMetricArrayName','angularmetricarray','str',1],
             ['AbscissaMetricArrayName','abscissametricarray','str',1]
             ])
 

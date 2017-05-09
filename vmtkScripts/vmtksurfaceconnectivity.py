@@ -13,13 +13,12 @@
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
 ##      PURPOSE.  See the above copyright notices for more information.
 
-
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import vtk
 import sys
 
-import pypes
+from vmtk import pypes
 
-vmtksurfaceconnectivity = 'vmtkSurfaceConnectivity'
 
 class vmtkSurfaceConnectivity(pypes.pypeScript):
 
@@ -65,7 +64,7 @@ class vmtkSurfaceConnectivity(pypes.pypeScript):
         barycenter = [0.0,0.0,0.0]
         if self.Method == 'closest' and self.ClosestPoint == None:
             n = self.ReferenceSurface.GetNumberOfPoints()
-            for i in xrange(n):
+            for i in range(n):
                 point = self.ReferenceSurface.GetPoint(i)
                 barycenter[0] += point[0]
                 barycenter[1] += point[1]
@@ -92,11 +91,11 @@ class vmtkSurfaceConnectivity(pypes.pypeScript):
         connectivityFilter.Update()
 
         self.Surface = connectivityFilter.GetOutput()
-	
-      	if self.CleanOutput == 1:
-      	    cleaner = vtk.vtkCleanPolyData()
-      	    cleaner.SetInputConnection(connectivityFilter.GetOutputPort())
-      	    cleaner.Update()
+
+        if self.CleanOutput == 1:
+            cleaner = vtk.vtkCleanPolyData()
+            cleaner.SetInputConnection(connectivityFilter.GetOutputPort())
+            cleaner.Update()
 
             self.Surface = cleaner.GetOutput()
 

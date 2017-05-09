@@ -13,14 +13,17 @@
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
 ##      PURPOSE.  See the above copyright notices for more information.
 
-
+from __future__ import absolute_import # NEEDS TO STAY AS TOP LEVEL IMPORT
 import sys
-import os.path 
+import os
+import importlib
+from inspect import isclass
+
 
 pype = 'Pype'
 
 class NullOutputStream(object):
-  
+
     def __init__(self):
         pass
 
@@ -43,6 +46,7 @@ class Pype(object):
         self.InputStream = sys.stdin
         self.OutputStream = sys.stdout
         self.Arguments = None
+
 
     def GetUsageString(self):
         usageString = 'Usage: pype --nolog --noauto --query firstScriptName -scriptOptionName scriptOptionValue --pipe secondScriptName -scriptOptionName scriptOptionValue -scriptOptionName @firstScriptName.scriptOptionName -id 2 --pipe thirdScriptName -scriptOptionName @secondScriptName-2.scriptOptionName'
@@ -103,7 +107,7 @@ class Pype(object):
             if '--query' in pypeArguments:
                 queryScripts = arguments[arguments.index('--query')+1:]
                 for queryScript in queryScripts:
-                    exec('import '+queryScript)
+                    exec('from vmtk import '+queryScript)
                     exec('allScripts = '+queryScript+'.__all__')
                     self.PrintLog('\n'.join(allScripts))
                 return
@@ -232,24 +236,27 @@ class Pype(object):
             exec ('scriptObject.'+memberEntry.MemberName+'='+'pipedScriptObject.'+pipedMemberName)
                
     def Execute(self):
+        try:
+            from vmtk import pypes
+        except ImportError:
+            return None
         self.ScriptObjectList = []
         for scriptNameAndArguments in self.ScriptList:
             self.PrintLog('')
             scriptName = scriptNameAndArguments[0]
-            moduleName = scriptName
-            scriptArguments = scriptNameAndArguments[1]
-            imported = True
             try:
-                exec('import '+ moduleName)
-            except ImportError, e:
-                self.PrintError(e.message)
+                module = importlib.import_module('vmtk.'+scriptName)
+                # Find the principle class to instantiate the requested action defined inside the requested writerModule script.
+                # Returns a single member list (containing the principle class name) which satisfies the following criteria:
+                #   1) is a class defined within the script
+                #   2) the class is a subclass of pypes.pypescript
+                scriptObjectClasses = [x for x in dir(module) if isclass(getattr(module, x)) and issubclass(getattr(module, x), pypes.pypeScript)]
+                scriptObjectClassName = scriptObjectClasses[0]
+            except ImportError as e:
+                self.PrintError(str(e))
                 break
-            scriptObjectClassName = ''
-            exec ('scriptObjectClassName =  '+moduleName+'.'+moduleName)
-            moduleScriptObjectClassName = moduleName+'.'+scriptObjectClassName
-            self.PrintLog('Creating ' + scriptObjectClassName + ' instance.')
-            scriptObject = 0
-            exec ('scriptObject = '+moduleScriptObjectClassName+'()')
+            scriptObject = getattr(module, scriptObjectClassName)
+            scriptObject = scriptObject()
             scriptArguments = scriptNameAndArguments[1]
             scriptObject.Arguments = scriptArguments
             scriptObject.LogOn = self.LogOn

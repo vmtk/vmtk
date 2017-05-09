@@ -13,14 +13,13 @@
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
 ##      PURPOSE.  See the above copyright notices for more information.
 
-
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import vtk
-import vtkvmtk
+from vmtk import vtkvmtk
 import sys
 
-import pypes
+from vmtk import pypes
 
-vmtkcenterlinesections = 'vmtkCenterlineSections'
 
 class vmtkCenterlineSections(pypes.pypeScript):
 
@@ -43,20 +42,20 @@ class vmtkCenterlineSections(pypes.pypeScript):
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
             ['Centerlines','centerlines','vtkPolyData',1,'','the input centerlines','vmtksurfacereader'],
-      	    ['CenterlineSectionAreaArrayName','branchsectionarea','str',1,'','name of the array where the area of bifurcation sections have to be stored'],
-      	    ['CenterlineSectionMinSizeArrayName','branchsectionminsize','str',1,'','name of the array where the minimum diameter of each section has to be stored'],
-      	    ['CenterlineSectionMaxSizeArrayName','branchsectionmaxsize','str',1,'','name of the array where the maximum diameter of each bifurcation sections has to be stored'],
-      	    ['CenterlineSectionShapeArrayName','centerlinesectionshape','str',1,'','name of the array where the shape index, i.e. the ratio between minimum and maximum diameter, of each bifurcation section has to be stored'],
-      	    ['CenterlineSectionClosedArrayName','branchsectionclosed','str',1,'','name of the array containing 1 if a section is closed and 0 otherwise']
+            ['CenterlineSectionAreaArrayName','branchsectionarea','str',1,'','name of the array where the area of bifurcation sections have to be stored'],
+            ['CenterlineSectionMinSizeArrayName','branchsectionminsize','str',1,'','name of the array where the minimum diameter of each section has to be stored'],
+            ['CenterlineSectionMaxSizeArrayName','branchsectionmaxsize','str',1,'','name of the array where the maximum diameter of each bifurcation sections has to be stored'],
+            ['CenterlineSectionShapeArrayName','centerlinesectionshape','str',1,'','name of the array where the shape index, i.e. the ratio between minimum and maximum diameter, of each bifurcation section has to be stored'],
+            ['CenterlineSectionClosedArrayName','branchsectionclosed','str',1,'','name of the array containing 1 if a section is closed and 0 otherwise']
             ])
         self.SetOutputMembers([
             ['CenterlineSections','o','vtkPolyData',1,'','the output sections','vmtksurfacewriter'],
             ['Centerlines','ocenterlines','vtkPolyData',1,'','the output centerlines','vmtksurfacewriter'],
-      	    ['CenterlineSectionAreaArrayName','branchsectionarea','str',1,'','name of the array where the area of bifurcation sections are stored'],
-      	    ['CenterlineSectionMinSizeArrayName','branchsectionminsize','str',1,'','name of the array where the minimum diameter of each section are stored'],
-      	    ['CenterlineSectionMaxSizeArrayName','branchsectionmaxsize','str',1,'','name of the array where the minimum diameter of each bifurcation sections has to be stored'],
-      	    ['CenterlineSectionShapeArrayName','centerlinesectionshape','str',1,'','name of the array where the shape index, i.e. the ratio between minimum and maximum diameter, of each bifurcation section are stored'],
-      	    ['CenterlineSectionClosedArrayName','branchsectionclosed','str',1,'','name of the array containing 1 if a section is closed and 0 otherwise']
+            ['CenterlineSectionAreaArrayName','branchsectionarea','str',1,'','name of the array where the area of bifurcation sections are stored'],
+            ['CenterlineSectionMinSizeArrayName','branchsectionminsize','str',1,'','name of the array where the minimum diameter of each section are stored'],
+            ['CenterlineSectionMaxSizeArrayName','branchsectionmaxsize','str',1,'','name of the array where the minimum diameter of each bifurcation sections has to be stored'],
+            ['CenterlineSectionShapeArrayName','centerlinesectionshape','str',1,'','name of the array where the shape index, i.e. the ratio between minimum and maximum diameter, of each bifurcation section are stored'],
+            ['CenterlineSectionClosedArrayName','branchsectionclosed','str',1,'','name of the array containing 1 if a section is closed and 0 otherwise']
             ])
 
     def Execute(self):

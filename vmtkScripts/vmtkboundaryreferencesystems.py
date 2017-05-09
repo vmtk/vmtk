@@ -13,14 +13,13 @@
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
 ##      PURPOSE.  See the above copyright notices for more information.
 
-
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import vtk
-import vtkvmtk
+from vmtk import vtkvmtk
 import sys
 
-import pypes
+from vmtk import pypes
 
-vmtkboundaryreferencesystems = 'vmtkBoundaryReferenceSystems'
 
 class vmtkBoundaryReferenceSystems(pypes.pypeScript):
 
@@ -33,8 +32,8 @@ class vmtkBoundaryReferenceSystems(pypes.pypeScript):
 
         self.BoundaryRadiusArrayName = 'BoundaryRadius'
         self.BoundaryNormalsArrayName = 'BoundaryNormals'
-      	self.Point1ArrayName = 'Point1'
-      	self.Point2ArrayName = 'Point2'
+        self.Point1ArrayName = 'Point1'
+        self.Point2ArrayName = 'Point2'
 
         self.SetScriptName('vmtkboundaryreferencesystems')
         self.SetScriptDoc('compute the reference systems relative to each open boundary of a model; a typical use is the specification of boundary conditions for CFD simulations; reference systems are given both as origin and normal, and as origin, a first point defining the x axis with the origin and a second point defining the xy plane with the former two')

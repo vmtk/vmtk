@@ -13,14 +13,13 @@
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
-
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import sys
 import vtk
 
-import vtkvmtk
-import pypes
+from vmtk import vtkvmtk
+from vmtk import pypes
 
-vmtksurfacecapper = 'vmtkSurfaceCapper'
 
 class vmtkSurfaceCapper(pypes.pypeScript):
 
@@ -88,7 +87,7 @@ class vmtkSurfaceCapper(pypes.pypeScript):
 
         if self.Interactive:
             if not self.vmtkRenderer:
-                import vmtkrenderer
+                from vmtk import vmtkrenderer
                 self.vmtkRenderer = vmtkrenderer.vmtkRenderer()
                 self.vmtkRenderer.Initialize()
                 self.OwnRenderer = 1
@@ -135,7 +134,7 @@ class vmtkSurfaceCapper(pypes.pypeScript):
                 labels = [int(label) for label in labelString.split()]
                 ok = True
                 for label in labels:
-                    if label not in range(numberOfBoundaries):
+                    if label not in list(range(numberOfBoundaries)):
                         ok = False
 
             for label in labels:
@@ -167,7 +166,7 @@ class vmtkSurfaceCapper(pypes.pypeScript):
             capper.SetInputData(self.Surface)
 
         elif self.Method == 'concaveannular':
-            import vtkvmtkcontrib
+            from vmtk import vtkvmtkcontrib
             capper = vtkvmtkcontrib.vtkvmtkConcaveAnnularCapPolyData()
             capper.SetInputData(self.Surface)
 

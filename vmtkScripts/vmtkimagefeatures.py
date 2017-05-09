@@ -13,14 +13,13 @@
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
 ##      PURPOSE.  See the above copyright notices for more information.
 
-
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import vtk
 import sys
 
-import pypes
-import vtkvmtk
+from vmtk import pypes
+from vmtk import vtkvmtk
 
-vmtkimagefeatures = 'vmtkImageFeatures'
 
 class vmtkImageFeatures(pypes.pypeScript):
 
@@ -97,7 +96,7 @@ class vmtkImageFeatures(pypes.pypeScript):
         fwhmFeatureImageFilter.SetRadius(self.FWHMRadius)
         fwhmFeatureImageFilter.SetBackgroundValue(self.FWHMBackgroundValue)
         fwhmFeatureImageFilter.Update()
-	
+
         self.FeatureImage = vtk.vtkImageData()
         self.FeatureImage.DeepCopy(fwhmFeatureImageFilter.GetOutput())
 

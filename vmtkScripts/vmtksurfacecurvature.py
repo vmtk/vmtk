@@ -13,14 +13,13 @@
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
 ##      PURPOSE.  See the above copyright notices for more information.
 
-
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import vtk
 import sys
-import vtkvmtk
+from vmtk import vtkvmtk
 
-import pypes
+from vmtk import pypes
 
-vmtksurfacecurvature = 'vmtkSurfaceCurvature'
 
 class vmtkSurfaceCurvature(pypes.pypeScript):
 
@@ -145,7 +144,7 @@ class vmtkSurfaceCurvature(pypes.pypeScript):
         else:
             self.ReferenceSurface.GetPointData().AddArray(activeScalars)
             self.Surface = self.ReferenceSurface
-	
+
 
 if __name__=='__main__':
 

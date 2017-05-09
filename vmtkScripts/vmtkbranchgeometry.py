@@ -13,14 +13,12 @@
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
 ##      PURPOSE.  See the above copyright notices for more information.
 
-
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import vtk
-import vtkvmtk
+from vmtk import vtkvmtk
 import sys
 
-import pypes
-
-vmtkbranchgeometry = 'vmtkBranchGeometry'
+from vmtk import pypes
 
 class vmtkBranchGeometry(pypes.pypeScript):
 
@@ -29,7 +27,7 @@ class vmtkBranchGeometry(pypes.pypeScript):
         pypes.pypeScript.__init__(self)
         
         self.Centerlines = None
-      	self.GeometryData = None
+        self.GeometryData = None
 
         self.RadiusArrayName = ''
         self.GroupIdsArrayName = ''
@@ -48,23 +46,23 @@ class vmtkBranchGeometry(pypes.pypeScript):
         self.SetScriptDoc('compute geometric parameters for each branch of a tree. The script takes in input the centerlines already split into branches.')
         self.SetInputMembers([
             ['Centerlines','i','vtkPolyData',1,'','the input split centerlines','vmtksurfacereader'],
-      	    ['RadiusArrayName','radiusarray','str',1,'','name of the array where centerline radius values are stored'],
-      	    ['GroupIdsArrayName','groupidsarray','str',1,'','name of the array where centerline group ids are stored'],
-      	    ['BlankingArrayName','blankingarray','str',1,'','name of the array where blanking information about branches is stored'],
-      	    ['LengthArrayName','lengtharray','str',1,'','name of the array where the average length of each branch has to be stored'],
-      	    ['CurvatureArrayName','curvaturearray','str',1,'','name of the array where the average curvature of each branch has to be stored'],
-      	    ['TorsionArrayName','torsionarray','str',1,'','name of the array where the average torsion of each branch has to be stored'],
-      	    ['TortuosityArrayName','tortuosityarray','str',1,'','name of the array where the average tortuosity of each branch, defined as the length of a line divided by the distance of its endpoints, has to be stored'],
-      	    ['LineSmoothing','smoothing','bool',1,''],
-      	    ['NumberOfSmoothingIterations','iterations','int',1,'(0,)'],
-      	    ['SmoothingFactor','factor','float',1,'(0.0,)']
+            ['RadiusArrayName','radiusarray','str',1,'','name of the array where centerline radius values are stored'],
+            ['GroupIdsArrayName','groupidsarray','str',1,'','name of the array where centerline group ids are stored'],
+            ['BlankingArrayName','blankingarray','str',1,'','name of the array where blanking information about branches is stored'],
+            ['LengthArrayName','lengtharray','str',1,'','name of the array where the average length of each branch has to be stored'],
+            ['CurvatureArrayName','curvaturearray','str',1,'','name of the array where the average curvature of each branch has to be stored'],
+            ['TorsionArrayName','torsionarray','str',1,'','name of the array where the average torsion of each branch has to be stored'],
+            ['TortuosityArrayName','tortuosityarray','str',1,'','name of the array where the average tortuosity of each branch, defined as the length of a line divided by the distance of its endpoints, has to be stored'],
+            ['LineSmoothing','smoothing','bool',1,''],
+            ['NumberOfSmoothingIterations','iterations','int',1,'(0,)'],
+            ['SmoothingFactor','factor','float',1,'(0.0,)']
             ])
         self.SetOutputMembers([
             ['GeometryData','o','vtkPolyData',1,'','the output data set','vmtksurfacewriter'],
             ['LengthArrayName','lengtharray','str',1,'','name of the array where the average length of each branch is stored'],
             ['CurvatureArrayName','curvaturearray','str',1,'','name of the array where the average curvature of each branch is stored'],
             ['TorsionArrayName','torsionarray','str',1,'','name of the array where the average torsion of each branch is stored'],
-      	    ['TortuosityArrayName','tortuosityarray','str',1,'','name of the array where the average tortuosity of each branch, defined as the length of a line divided by the distance of its endpoints minus one (L/D - 1), is stored']
+            ['TortuosityArrayName','tortuosityarray','str',1,'','name of the array where the average tortuosity of each branch, defined as the length of a line divided by the distance of its endpoints minus one (L/D - 1), is stored']
             ])
 
     def Execute(self):

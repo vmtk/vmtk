@@ -13,14 +13,13 @@
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
 ##      PURPOSE.  See the above copyright notices for more information.
 
-
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import vtk
-import vtkvmtk
+from vmtk import vtkvmtk
 import sys
 
-import pypes
+from vmtk import pypes
 
-vmtkbranchextractor = 'vmtkBranchExtractor'
 
 class vmtkBranchExtractor(pypes.pypeScript):
 
@@ -31,7 +30,7 @@ class vmtkBranchExtractor(pypes.pypeScript):
         self.Centerlines = None
 
         self.RadiusArrayName = ''
-	
+
         self.BlankingArrayName = 'Blanking'
         self.GroupIdsArrayName = 'GroupIds'
         self.CenterlineIdsArrayName = 'CenterlineIds'
@@ -44,14 +43,14 @@ class vmtkBranchExtractor(pypes.pypeScript):
             ['GroupIdsArrayName','groupidsarray','str',1],
             ['CenterlineIdsArrayName','centerlineidsarray','str',1],
             ['TractIdsArrayName','tractidsarray','str',1],
-				    ['BlankingArrayName','blankingarray','str',1],
+                    ['BlankingArrayName','blankingarray','str',1],
             ])
         self.SetOutputMembers([
             ['Centerlines','o','vtkPolyData',1,'','','vmtksurfacewriter'],
             ['GroupIdsArrayName','groupidsarray','str',1],
             ['CenterlineIdsArrayName','centerlineidsarray','str',1],
             ['TractIdsArrayName','tractidsarray','str',1],
-      	    ['BlankingArrayName','blankingarray','str',1]
+            ['BlankingArrayName','blankingarray','str',1]
             ])
 
     def Execute(self):

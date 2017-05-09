@@ -22,13 +22,13 @@
 ## which allows for per-cell array visualization, mesh clipping 
 ## and thresholding based on array values.
 
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import vtk
 import sys
 
-import vmtkrenderer
-import pypes
+from vmtk import vmtkrenderer
+from vmtk import pypes
 
-vmtkmeshviewer2 = 'vmtkMeshViewer2'
 
 class vmtkMeshViewer2(pypes.pypeScript):
 
@@ -60,7 +60,7 @@ class vmtkMeshViewer2(pypes.pypeScript):
         self.ClipExtract = False
         self.InsideOut = False
         self.ObserverId = -1
-	
+
         self.Actor = None
         self.ScalarBarActor = None
 

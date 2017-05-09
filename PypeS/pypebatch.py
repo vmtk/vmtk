@@ -13,6 +13,8 @@
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
 ##      PURPOSE.  See the above copyright notices for more information.
 
+
+from __future__ import print_function, absolute_import # NEED TO STAY AS TOP IMPORT
 import sys
 import os
 import os.path
@@ -35,10 +37,10 @@ class pypeBatch(object):
         indentation = ''
         for i in range(indent):
             indentation = indentation + indentUnit
-        print indentation + logMessage
+        print(indentation + logMessage)
         
     def PrintError(self,logMessage):
-        print logMessage
+        print(logMessage)
 
     def ParseArguments(self):
         state = 0
@@ -77,7 +79,7 @@ class pypeBatch(object):
     def Execute(self):
         self.PrintLog('')
         moduleName = self.ScriptName
-        exec('import '+ moduleName)
+        exec('from vmtk import '+ moduleName)
         scriptObjectClassName = ''
         exec ('scriptObjectClassName =  '+moduleName+'.'+moduleName)
         moduleScriptObjectClassName = moduleName+'.'+scriptObjectClassName

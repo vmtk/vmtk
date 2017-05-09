@@ -13,14 +13,13 @@
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
 ##      PURPOSE.  See the above copyright notices for more information.
 
-
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import vtk
-import vtkvmtk
+from vmtk import vtkvmtk
 import sys
 
-import pypes
+from vmtk import pypes
 
-vmtkmesharrayoperation = 'vmtkMeshArrayOperation'
 
 class vmtkMeshArrayOperation(pypes.pypeScript):
 
@@ -74,7 +73,7 @@ class vmtkMeshArrayOperation(pypes.pypeScript):
         resultArray.DeepCopy(array1)
         resultArray.SetName(self.ResultArrayName)
 
-        for i in xrange(array1.GetNumberOfTuples()):
+        for i in range(array1.GetNumberOfTuples()):
             value1 = array1.GetTuple1(i)
             value2 = None
             if array2:

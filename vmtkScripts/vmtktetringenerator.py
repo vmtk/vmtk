@@ -13,14 +13,14 @@
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
 ##      PURPOSE.  See the above copyright notices for more information.
 
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import sys
 import math
 import vtk
-import vtkvmtk
+from vmtk import vtkvmtk
 
-import pypes
+from vmtk import pypes
 
-vmtktetringenerator = 'vmtkTetrInGenerator'
 
 class SectionProperties:
 

@@ -13,14 +13,13 @@
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
 ##      PURPOSE.  See the above copyright notices for more information.
 
-
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import vtk
 import sys
 
-import pypes
-import vmtkscripts
+from vmtk import pypes
 
-vmtksurfacesmoothing = 'vmtkSurfaceSmoothing'
+
 
 class vmtkSurfaceSmoothing(pypes.pypeScript):
 
@@ -55,6 +54,7 @@ class vmtkSurfaceSmoothing(pypes.pypeScript):
 
     def Execute(self):
 
+        from vmtk import vmtkscripts
         if self.Surface == None:
             self.PrintError('Error: No input surface.')
 

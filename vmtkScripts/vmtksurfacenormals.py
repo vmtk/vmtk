@@ -13,14 +13,13 @@
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
 ##      PURPOSE.  See the above copyright notices for more information.
 
-
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import vtk
-import vtkvmtk
+from vmtk import vtkvmtk
 import sys
 
-import pypes
+from vmtk import pypes
 
-vmtksurfacenormals = 'vmtkSurfaceNormals'
 
 class vmtkSurfaceNormals(pypes.pypeScript):
 
@@ -61,7 +60,7 @@ class vmtkSurfaceNormals(pypes.pypeScript):
         normalsFilter.SetFlipNormals(self.FlipNormals)
         normalsFilter.SetConsistency(self.Consistency)
         normalsFilter.SetComputeCellNormals(self.ComputeCellNormals)
-      	normalsFilter.SplittingOff()
+        normalsFilter.SplittingOff()
         normalsFilter.Update()
 
         self.Surface = normalsFilter.GetOutput()

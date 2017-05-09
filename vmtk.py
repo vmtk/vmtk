@@ -1,9 +1,18 @@
 #!${PYTHON_SHEBANG}
 
+from __future__ import print_function, absolute_import # NEED TO STAY AS TOP IMPORT
 import sys
 import os
 
+
 if __name__ == '__main__':
+
+    # hack for code compatibility in python 2 and 3 as there is no __future__ module which remaps the new
+    # python 3 style input to the equivalent raw_input function in python 2
+    try:
+        input = raw_input
+    except NameError:
+        pass
 
     if sys.platform == 'win32':
 
@@ -14,7 +23,7 @@ if __name__ == '__main__':
             os.environ["PYTHONPATH"] = os.path.join(vmtkhome)
         else:
             vmtkhome = os.path.join(os.path.dirname(os.path.abspath(__file__)),"..","..","..")
-            os.environ["PYTHONPATH"] = os.path.join(vmtkhome,"lib","python2.7","site-packages")
+            os.environ["PYTHONPATH"] = os.path.join(vmtkhome,"lib","${VMTK_PYTHON_VERSION}","site-packages")
 
         sys.path.append(os.path.join(vmtkhome,"bin"))
         sys.path.append(os.environ["PYTHONPATH"])
@@ -27,7 +36,7 @@ if __name__ == '__main__':
 
     if len(sys.argv) > 1 and sys.argv[1] not in vmtkOptions:
         arguments = sys.argv[1:]
-        print "Executing", ' '.join(arguments)
+        print("Executing", ' '.join(arguments))
         pipe = pypes.Pype()
         pipe.ExitOnError = 0
         pipe.Arguments = arguments
@@ -52,7 +61,7 @@ if __name__ == '__main__':
                 pipe.ParseArguments()
                 pipe.Execute()
     elif '--help' in sys.argv:
-        print 'Usage: \tvmtk [--ui pad|console]\t\tStart in interactive mode\n\tvmtk [PYPE]\t\t\tExecute the pype [PYPE]\n\tvmtk --file [FILE]\t\tExecute the content of file [FILE]'
+        print('Usage: \tvmtk [--ui pad|console]\t\tStart in interactive mode\n\tvmtk [PYPE]\t\t\tExecute the pype [PYPE]\n\tvmtk --file [FILE]\t\tExecute the content of file [FILE]')
         sys.exit(0)
     else:
         ui = 'pad'
@@ -63,7 +72,7 @@ if __name__ == '__main__':
             try:
                 from vmtk import pypepad
             except ImportError:
-                print "error"
+                print("error")
                 ui = 'console'
             else:
                 pypepad.RunPypeTkPad()
@@ -78,13 +87,13 @@ if __name__ == '__main__':
 
             while 1:
                 try:
-                    inputString = raw_input("vmtk> ")
+                    inputString = input("vmtk> ")
                 except EOFError:
                     sys.stdout.write('\n')
                     sys.exit(0)
                 if not inputString:
                     continue
-                print "Executing", inputString
+                print("Executing", inputString)
                 splitString = inputString.split()
                 pipe = pypes.Pype()
                 pipe.ExitOnError = 0

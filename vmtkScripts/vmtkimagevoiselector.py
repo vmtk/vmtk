@@ -13,15 +13,15 @@
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
 ##      PURPOSE.  See the above copyright notices for more information.
 
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import vtk
 import sys
 import math
 
-import vtkvmtk
-import vmtkrenderer
-import pypes
+from vmtk import vtkvmtk
+from vmtk import vmtkrenderer
+from vmtk import pypes
 
-vmtkimagevoiselector = 'vmtkImageVOISelector'
 
 class vmtkImageVOISelector(pypes.pypeScript):
 
@@ -141,7 +141,7 @@ class vmtkImageVOISelector(pypes.pypeScript):
         self.CubeActor.GetProperty().SetOpacity(0.25)
         self.CubeActor.VisibilityOff()
         self.vmtkRenderer.Renderer.AddActor(self.CubeActor)
-	    
+
         self.vmtkRenderer.Renderer.ResetCamera()
 
         self.vmtkRenderer.Render()
@@ -186,7 +186,7 @@ class vmtkImageVOISelector(pypes.pypeScript):
         self.CroppedImage.DeepCopy(extractVOI.GetOutput())
 
     def Execute(self):
-	
+
         if self.Image == None:
             self.PrintError('Error: no Image.')
 

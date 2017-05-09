@@ -13,15 +13,14 @@
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
 ##      PURPOSE.  See the above copyright notices for more information.
 
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import vtk
 import sys
 import math
 
-import vtkvmtk
-import vmtkrenderer
-import pypes
-
-vmtkimagevoipainter = 'vmtkImageVOIPainter'
+from vmtk import vtkvmtk
+from vmtk import vmtkrenderer
+from vmtk import pypes
 
 class vmtkImageVOIPainter(pypes.pypeScript):
 

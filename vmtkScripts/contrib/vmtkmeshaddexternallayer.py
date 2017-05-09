@@ -20,15 +20,15 @@
 
 ## This class builds an external layer around a mesh.
 
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import vtk
-import vtkvmtk
+from vmtk import vtkvmtk
 import sys
-import vmtkscripts
-import vmtkcontribscripts
+from vmtk import vmtkscripts
+from vmtk import vmtkcontribscripts
 
-import pypes
+from vmtk import pypes
 
-vmtkmeshaddexternallayer = 'vmtkMeshAddExternalLayer'
 
 class vmtkMeshAddExternalLayer(pypes.pypeScript):
 

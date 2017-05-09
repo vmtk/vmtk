@@ -13,14 +13,14 @@
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
 ##      PURPOSE.  See the above copyright notices for more information.
 
-
+from __future__ import print_function, absolute_import # NEED TO STAY AS TOP IMPORT
 import sys
 from multiprocessing import Process, Manager
 try:
     from vmtk import pypeserver
     from vmtk import pypes
 except:
-    print "Unexpected error:", sys.exc_info()[0]
+    print("Unexpected error:", sys.exc_info()[0])
     raise
 
 if __name__=='__main__':
@@ -44,7 +44,7 @@ if __name__=='__main__':
             pypeserver.PypeServer(queue,None,None,returnIfEmptyQueue=True)
     except KeyboardInterrupt:
         pypeProcess.terminate()
-    except BaseException, e:
-        print e
+    except BaseException as e:
+        print(str(e))
         sys.exit(1)
 

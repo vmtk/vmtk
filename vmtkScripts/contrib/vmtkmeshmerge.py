@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import sys
 import math
 import numpy
@@ -8,7 +9,6 @@ from vmtk import pypes
 from vmtk import vmtkscripts
 from vmtk import vtkvmtk
 
-vmtkmeshmerge = 'vmtkMeshMerge'
 
 class vmtkMeshMerge(pypes.pypeScript):
     def __init__(self):

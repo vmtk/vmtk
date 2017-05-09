@@ -13,15 +13,14 @@
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
 ##      PURPOSE.  See the above copyright notices for more information.
 
-
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import vtk
 import sys
 
-import vtkvmtk
-import pypes
-import vmtkrenderer
+from vmtk import vtkvmtk
+from vmtk import pypes
+from vmtk import vmtkrenderer
 
-vmtkflowextensions = 'vmtkFlowExtensions'
 
 class vmtkFlowExtensions(pypes.pypeScript):
 
@@ -142,7 +141,7 @@ class vmtkFlowExtensions(pypes.pypeScript):
                 labels = [int(label) for label in labelString.split()]
                 ok = True
                 for label in labels:
-                    if label not in range(numberOfBoundaries):
+                    if label not in list(range(numberOfBoundaries)):
                         ok = False
 
             for label in labels:

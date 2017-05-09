@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import sys
 import vtk
-import vtkvmtk
-import pypes
+from vmtk import vtkvmtk
+from vmtk import pypes
 
-vmtkimagecompare = 'vmtkImageCompare'
 
 class vmtkImageCompare(pypes.pypeScript):
 
@@ -16,7 +16,7 @@ class vmtkImageCompare(pypes.pypeScript):
         self.Image = None
         self.ReferenceImage = None
         self.Method = ''
-	self.Tolerance = 1E-8
+        self.Tolerance = 1E-8
         self.Result = ''
         self.ResultLog = ''
 

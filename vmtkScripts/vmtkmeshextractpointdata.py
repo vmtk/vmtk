@@ -17,14 +17,14 @@
 ##       Simone Manini
 ##       Orobix Srl
 
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 from vmtk import vtkvmtk
 import vtk
 import sys
 
-import pypes
-import vmtkmeshvectorfromcomponents
+from vmtk import pypes
+from vmtk import vmtkmeshvectorfromcomponents
 
-vmtkmeshextractpointdata = 'vmtkMeshExtractPointData'
 
 class vmtkMeshExtractPointData(pypes.pypeScript):
 

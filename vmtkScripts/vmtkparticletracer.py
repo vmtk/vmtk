@@ -17,14 +17,14 @@
 ##       Simone Manini
 ##       Orobix Srl
 
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import vtk
 import sys
 import os
 
-import vtkvmtk
-import pypes
+from vmtk import vtkvmtk
+from vmtk import pypes
 
-vmtkparticletracer = 'vmtkParticleTracer'
 
 class vmtkParticleTracer(pypes.pypeScript):
 
@@ -103,7 +103,7 @@ class vmtkParticleTracer(pypes.pypeScript):
                 i+=1
             firstTimeStep = indexList[0]
         else:
-            indexList = range(self.FirstTimeStep,self.LastTimeStep+1,self.IntervalTimeStep)
+            indexList = list(range(self.FirstTimeStep,self.LastTimeStep+1,self.IntervalTimeStep))
             firstTimeStep = self.FirstTimeStep
         
         indexColumn = vtk.vtkIntArray()

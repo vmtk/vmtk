@@ -13,13 +13,12 @@
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
 ##      PURPOSE.  See the above copyright notices for more information.
 
-
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import vtk
 import sys
 
-import pypes
+from vmtk import pypes
 
-vmtkpythonscript = 'vmtkPythonScript'
 
 class vmtkPythonScript(pypes.pypeScript):
 
@@ -58,8 +57,8 @@ class vmtkPythonScript(pypes.pypeScript):
             self.PrintError('Error: no PythonScriptFileName')
 
         try:
-            execfile(self.PythonScriptFileName)
-        except Exception, error:
+            exec(compile(open(self.PythonScriptFileName).read(), self.PythonScriptFileName, 'exec'))
+        except Exception as error:
             self.PrintError("Python script error: %s" % error)
 
 

@@ -13,13 +13,12 @@
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
 ##      PURPOSE.  See the above copyright notices for more information.
 
-
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import sys
 import vtk
 
-import pypes
+from vmtk import pypes
 
-vmtksurfacemassproperties = 'vmtkSurfaceMassProperties'
 
 class vmtkSurfaceMassProperties(pypes.pypeScript):
 

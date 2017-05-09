@@ -13,14 +13,13 @@
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
 ##      PURPOSE.  See the above copyright notices for more information.
 
-
+from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import vtk
-import vtkvmtk
+from vmtk import vtkvmtk
 import sys
 
-import pypes
+from vmtk import pypes
 
-vmtkcenterlineattributes = 'vmtkCenterlineAttributes'
 
 class vmtkCenterlineAttributes(pypes.pypeScript):
 
@@ -38,12 +37,12 @@ class vmtkCenterlineAttributes(pypes.pypeScript):
         self.SetInputMembers([
             ['Centerlines','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
             ['AbscissasArrayName','abscissasarray','str',1,'','name of the array where centerline abscissas have to be stored'],
-      	    ['NormalsArrayName','normalsarray','str',1,'','name of the array where parallel transport normals to the centerlines have to be stored']
+            ['NormalsArrayName','normalsarray','str',1,'','name of the array where parallel transport normals to the centerlines have to be stored']
             ])
         self.SetOutputMembers([
             ['Centerlines','o','vtkPolyData',1,'','','vmtksurfacewriter'],
             ['AbscissasArrayName','abscissasarray','str',1,'','name of the array where centerline abscissas are stored'],
-	          ['NormalsArrayName','normalsarray','str',1,'','name of the array where parallel transport normals to the centerlines are stored']
+              ['NormalsArrayName','normalsarray','str',1,'','name of the array where parallel transport normals to the centerlines are stored']
             ])
 
     def Execute(self):
@@ -53,8 +52,8 @@ class vmtkCenterlineAttributes(pypes.pypeScript):
 
         centerlineAttributes = vtkvmtk.vtkvmtkCenterlineAttributesFilter()
         centerlineAttributes.SetInputData(self.Centerlines)
-      	centerlineAttributes.SetAbscissasArrayName(self.AbscissasArrayName)
-      	centerlineAttributes.SetParallelTransportNormalsArrayName(self.NormalsArrayName)
+        centerlineAttributes.SetAbscissasArrayName(self.AbscissasArrayName)
+        centerlineAttributes.SetParallelTransportNormalsArrayName(self.NormalsArrayName)
         centerlineAttributes.Update()
 
         self.Centerlines = centerlineAttributes.GetOutput()
