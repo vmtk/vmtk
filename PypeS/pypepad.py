@@ -421,11 +421,17 @@ class PypeTkPad(object):
         from tkinter import Menu
         menu = Menu(parentmenu,bd=1,activeborderwidth=0)
         try:
-            exec('from vmtk import '+ modulename)
+            module = importlib.import_module('vmtk.'+modulename)
         except ImportError:
             return None
-        scriptnames = []
-        exec ('scriptnames = [scriptname for scriptname in '+modulename+'.__all__]')
+        scriptnames = [scriptname for scriptname in getattr(module, '__all__')]
+        for index, scriptname in enumerate(scriptnames):
+            # check if scriptname contains starting prefix 'vmtk.' and remove it before returning list to the user.
+            if 'vmtk.' == scriptname[0:5]:
+                splitList = scriptname.split('.')
+                scriptnames[index] = splitList[1]
+            else:
+                continue
         menulength = 20
         for i in range(len(scriptnames)//menulength+1):
             subscriptnames = scriptnames[i*menulength:(i+1)*menulength]
