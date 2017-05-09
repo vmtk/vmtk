@@ -18,7 +18,7 @@ import sys
 import os
 import importlib
 from inspect import isclass
-import vmtk.pypes
+
 
 pype = 'Pype'
 
@@ -236,6 +236,10 @@ class Pype(object):
             exec ('scriptObject.'+memberEntry.MemberName+'='+'pipedScriptObject.'+pipedMemberName)
                
     def Execute(self):
+        try:
+            from vmtk import pypes
+        except ImportError:
+            return None
         self.ScriptObjectList = []
         for scriptNameAndArguments in self.ScriptList:
             self.PrintLog('')
@@ -245,10 +249,8 @@ class Pype(object):
                 # Find the principle class to instantiate the requested action defined inside the requested writerModule script.
                 # Returns a single member list (containing the principle class name) which satisfies the following criteria:
                 #   1) is a class defined within the script
-                #   2) the class contains an attribute named 'self.SetScriptName'
-                # This makes the assumption that only one class per vmtkscript file contains the self.SetScriptName attribute, and that
-                # the class containing this attribute is the primary class to instantiate a new call to the scripts functionality
-                scriptObjectClasses = [x for x in dir(module) if isclass(getattr(module, x)) and hasattr(getattr(module, x), 'SetScriptName')]
+                #   2) the class is a subclass of pypes.pypescript
+                scriptObjectClasses = [x for x in dir(module) if isclass(getattr(module, x)) and issubclass(getattr(module, x), pypes.pypeScript)]
                 scriptObjectClassName = scriptObjectClasses[0]
             except ImportError as e:
                 self.PrintError(str(e))

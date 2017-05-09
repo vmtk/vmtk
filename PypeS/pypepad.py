@@ -16,7 +16,6 @@
 from __future__ import absolute_import, unicode_literals #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import sys
 
-from vmtk import pypes
 from vmtk import pypeserver
 
 from multiprocessing import Process, Manager
@@ -270,6 +269,7 @@ class PypeTkPad(object):
         list = []
         try:
             from vmtk import vmtkscripts
+            from vmtk import pypes
         except ImportError:
             return None
         if word.startswith('--'):
@@ -280,7 +280,7 @@ class PypeTkPad(object):
             moduleName  = self.text_input.get( scriptindex,scriptindex+' wordend' )
             try:
                 module = importlib.import_module('vmtk.'+moduleName)
-                scriptObjectClasses = [x for x in dir(module) if isclass(getattr(module, x)) and hasattr(getattr(module, x), 'SetScriptName')]
+                scriptObjectClasses = [x for x in dir(module) if isclass(getattr(module, x)) and issubclass(getattr(module, x), pypes.pypeScript)]
                 scriptObjectClassName = scriptObjectClasses[0]
                 scriptObject = getattr(module, scriptObjectClassName)
                 scriptObject = scriptObject()

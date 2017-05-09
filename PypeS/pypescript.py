@@ -579,6 +579,10 @@ class pypeScript(object):
         return 1
 
     def IORead(self):
+        try:
+            from vmtk import pypes
+        except ImportError:
+            return None
         for member in self.InputMembers:
             if member.MemberIO:
                 filename = eval('self.' + self.GetIOInputFileNameMember(member.MemberName))
@@ -591,7 +595,7 @@ class pypeScript(object):
                         #   2) the class contains an attribute named 'self.SetScriptName'
                         # This makes the assumption that only one class per vmtkscript file contains the self.SetScriptName attribute, and that
                         # the class containing this attribute is the primary class to instantiate a new call to the scripts functionality
-                        readerModuleClasses = [x for x in dir(readerModule) if isclass(getattr(readerModule, x)) and hasattr(getattr(readerModule, x), 'SetScriptName')]
+                        readerModuleClasses = [x for x in dir(readerModule) if isclass(getattr(readerModule, x)) and issubclass(getattr(readerModule, x), pypes.pypeScript)]
                         readerModuleClassName = readerModuleClasses[0]
                     except ImportError:
                         self.PrintError('Cannot import module ' + member.MemberIO + ' required for reading ' + member.MemberName)
@@ -605,6 +609,10 @@ class pypeScript(object):
                     exec('self.' + member.MemberName + ' = reader.Output')
 
     def IOWrite(self):
+        try:
+            from vmtk import pypes
+        except ImportError:
+            return None
         for member in self.OutputMembers:
             if member.MemberIO:
                 filename = eval('self.' + self.GetIOOutputFileNameMember(member.MemberName))
@@ -619,7 +627,7 @@ class pypeScript(object):
                         #   2) the class contains an attribute named 'self.SetScriptName'
                         # This makes the assumption that only one class per vmtkscript file contains the self.SetScriptName attribute, and that
                         # the class containing this attribute is the primary class to instantiate a new call to the scripts functionality
-                        writerModuleClasses = [x for x in dir(writerModule) if isclass(getattr(writerModule, x)) and hasattr(getattr(writerModule, x), 'SetScriptName')]
+                        writerModuleClasses = [x for x in dir(writerModule) if isclass(getattr(writerModule, x)) and issubclass(getattr(writerModule, x), pypes.pypeScript)]
                         writerModuleClassName = writerModuleClasses[0]
                     except ImportError:
                         self.PrintError('Cannot import module ' + member.MemberIO + ' required for writing ' + member.MemberIO)
