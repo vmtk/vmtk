@@ -18,7 +18,7 @@ import vtk
 import sys
 
 from vmtk import pypes
-from vmtk import vmtkscripts
+
 
 
 class vmtkSurfaceSmoothing(pypes.pypeScript):
@@ -54,6 +54,7 @@ class vmtkSurfaceSmoothing(pypes.pypeScript):
 
     def Execute(self):
 
+        from vmtk import vmtkscripts
         if self.Surface == None:
             self.PrintError('Error: No input surface.')
 

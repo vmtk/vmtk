@@ -20,7 +20,7 @@ import string
 import vtk
 
 from vmtk import vtkvmtk
-from vmtk import vmtkscripts
+
 from vmtk import pypes
 
 
@@ -422,7 +422,8 @@ class vmtkImageInitialization(pypes.pypeScript):
             minFilter.Update()
             self.MergedInitialLevelSets = minFilter.GetOutput()
 
-    def Execute(self):    
+    def Execute(self):
+        from vmtk import vmtkscripts
         if self.Image == None:
             self.PrintError('Error: no Image.')
 

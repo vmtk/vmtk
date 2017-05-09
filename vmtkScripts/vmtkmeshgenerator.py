@@ -17,8 +17,6 @@ from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py
 import vtk
 from vmtk import vtkvmtk
 import sys
-from vmtk import vmtkscripts
-
 from vmtk import pypes
 
 
@@ -99,6 +97,7 @@ class vmtkMeshGenerator(pypes.pypeScript):
 
     def Execute(self):
 
+        from vmtk import vmtkscripts
         if self.Surface == None:
             self.PrintError('Error: No input surface.')
 

@@ -20,7 +20,6 @@ from __future__ import print_function # NEED TO STAY AS TOP IMPORT
 import vtk
 import sys
 from vmtk import pypes
-from vmtk import vmtkscripts
 
 
 class vmtkSurfaceClipLoop(pypes.pypeScript):
@@ -45,6 +44,8 @@ class vmtkSurfaceClipLoop(pypes.pypeScript):
             ])
 
     def Execute(self):
+
+        from vmtk import vmtkscripts
         if self.Surface == None:
             self.PrintError('Error: no Surface.')
 

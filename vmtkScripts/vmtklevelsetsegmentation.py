@@ -20,7 +20,6 @@ import string
 import vtk
 
 from vmtk import vtkvmtk
-from vmtk import vmtkscripts
 from vmtk import pypes
 
 
@@ -244,7 +243,8 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
             return 0
         return 1
 
-    def Execute(self): 
+    def Execute(self):
+        from vmtk import vmtkscripts
         if self.Image == None:
             self.PrintError('Error: no Image.')
 

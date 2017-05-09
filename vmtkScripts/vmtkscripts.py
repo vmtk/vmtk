@@ -1,4 +1,5 @@
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
+import inspect
 
 __all__ = [
     'vmtk.vmtkactivetubes',
@@ -38,7 +39,7 @@ __all__ = [
     'vmtk.vmtkimagecurvedmpr',
     'vmtk.vmtkimagefeaturecorrection',
     'vmtk.vmtkimagefeatures',
-    #'vmtk.vmtkimageinitialization',
+    'vmtk.vmtkimageinitialization',
     'vmtk.vmtkimagemipviewer',
     'vmtk.vmtkimagemorphology',
     'vmtk.vmtkimagenormalize',
@@ -54,7 +55,7 @@ __all__ = [
     'vmtk.vmtkimagevoipainter',
     'vmtk.vmtkimagevoiselector',
     'vmtk.vmtkimagewriter',
-    #'vmtk.vmtklevelsetsegmentation',
+    'vmtk.vmtklevelsetsegmentation',
     'vmtk.vmtklineartoquadratic',
     'vmtk.vmtklineresampling',
     'vmtk.vmtklocalgeometry',
@@ -69,7 +70,7 @@ __all__ = [
     'vmtk.vmtkmeshextractpointdata',
     'vmtk.vmtkmeshlambda2',
     'vmtk.vmtkmeshlinearize',
-    #'vmtk.vmtkmeshgenerator',
+    'vmtk.vmtkmeshgenerator',
     'vmtk.vmtkmeshmergetimesteps',
     'vmtk.vmtkmeshpolyballevaluation',
     'vmtk.vmtkmeshprojection',
@@ -106,14 +107,14 @@ __all__ = [
     'vmtk.vmtksurfacecelldatatopointdata',
     'vmtk.vmtksurfacecenterlineprojection',
     'vmtk.vmtksurfaceclipper',
-    #'vmtk.vmtksurfacecliploop',
+    'vmtk.vmtksurfacecliploop',
     'vmtk.vmtksurfaceconnectivity',
     'vmtk.vmtksurfacecurvature',
     'vmtk.vmtksurfacedecimation',
     'vmtk.vmtksurfacedistance',
     'vmtk.vmtksurfaceendclipper',
     'vmtk.vmtksurfacekiteremoval',
-    #'vmtk.vmtksurfaceloopextraction',
+    'vmtk.vmtksurfaceloopextraction',
     'vmtk.vmtksurfacemassproperties',
     'vmtk.vmtksurfacemodeller',
     'vmtk.vmtksurfacenormals',
@@ -125,7 +126,7 @@ __all__ = [
     'vmtk.vmtksurfaceregiondrawing',
     'vmtk.vmtksurfaceremeshing',
     'vmtk.vmtksurfacescaling',
-    #'vmtk.vmtksurfacesmoothing',
+    'vmtk.vmtksurfacesmoothing',
     'vmtk.vmtksurfacesubdivision',
     'vmtk.vmtksurfacetransform',
     'vmtk.vmtksurfacetransforminteractive',
@@ -141,4 +142,25 @@ __all__ = [
 
 for item in __all__:
     exec('from '+item+' import *')
+    # # determine the module calling the import and prevent execution
+    # # so that a circular import loop is not created (only an issue in python2)
+    # noImportList = [
+
+    # ]
+    #
+    # frm = inspect.stack()[1]
+    # mod = inspect.getmodule(frm[0])
+    # print mod.__name__
+    # if mod.__name__ in noImportList:
+    #     doNotImport = True
+    # else:
+    #     doNotImport=False
+    #
+    # if doNotImport is True:
+    #     if item in noImportList:
+    #         continue
+    #     else:
+    #         exec ('from ' + item + ' import *')
+    # else:
+    #     exec('from '+item+' import *')
 

@@ -20,7 +20,7 @@ import vtk
 import sys
 from vmtk import vmtkrenderer
 from vmtk import pypes
-from vmtk import vmtkscripts
+
 
 
 class vmtkSurfaceLoopExtraction(pypes.pypeScript):
@@ -92,6 +92,7 @@ class vmtkSurfaceLoopExtraction(pypes.pypeScript):
         self.vmtkRenderer.Render()
 
     def Execute(self):
+        from vmtk import vmtkscripts
         if self.Surface == None:
             self.PrintError('Error: no Surface.')
 
