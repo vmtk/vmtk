@@ -280,6 +280,10 @@ class PypeTkPad(object):
             moduleName  = self.text_input.get( scriptindex,scriptindex+' wordend' )
             try:
                 module = importlib.import_module('vmtk.'+moduleName)
+                # Find the principle class to instantiate the requested action defined inside the requested writerModule script.
+                # Returns a single member list (containing the principle class name) which satisfies the following criteria:
+                #   1) is a class defined within the script
+                #   2) the class is a subclass of pypes.pypescript
                 scriptObjectClasses = [x for x in dir(module) if isclass(getattr(module, x)) and issubclass(getattr(module, x), pypes.pypeScript)]
                 scriptObjectClassName = scriptObjectClasses[0]
                 scriptObject = getattr(module, scriptObjectClassName)

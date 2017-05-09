@@ -592,9 +592,7 @@ class pypeScript(object):
                         # Find the principle class to instantiate the requested action defined inside the requested writerModule script.
                         # Returns a single member list (containing the principle class name) which satisfies the following criteria:
                         #   1) is a class defined within the script
-                        #   2) the class contains an attribute named 'self.SetScriptName'
-                        # This makes the assumption that only one class per vmtkscript file contains the self.SetScriptName attribute, and that
-                        # the class containing this attribute is the primary class to instantiate a new call to the scripts functionality
+                        #   2) the class is a subclass of pypes.pypescript
                         readerModuleClasses = [x for x in dir(readerModule) if isclass(getattr(readerModule, x)) and issubclass(getattr(readerModule, x), pypes.pypeScript)]
                         readerModuleClassName = readerModuleClasses[0]
                     except ImportError:
@@ -624,9 +622,7 @@ class pypeScript(object):
                         # Find the principle class to instantiate the requested action defined inside the requested writerModule script.
                         # Returns a single member list (containing the principle class name) which satisfies the following criteria:
                         #   1) is a class defined within the script
-                        #   2) the class contains an attribute named 'self.SetScriptName'
-                        # This makes the assumption that only one class per vmtkscript file contains the self.SetScriptName attribute, and that
-                        # the class containing this attribute is the primary class to instantiate a new call to the scripts functionality
+                        #   2) the class is a subclass of pypes.pypescript
                         writerModuleClasses = [x for x in dir(writerModule) if isclass(getattr(writerModule, x)) and issubclass(getattr(writerModule, x), pypes.pypeScript)]
                         writerModuleClassName = writerModuleClasses[0]
                     except ImportError:
