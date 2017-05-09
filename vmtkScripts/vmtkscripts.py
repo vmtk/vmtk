@@ -1,5 +1,4 @@
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
-import inspect
 
 __all__ = [
     'vmtk.vmtkactivetubes',
@@ -142,25 +141,3 @@ __all__ = [
 
 for item in __all__:
     exec('from '+item+' import *')
-    # # determine the module calling the import and prevent execution
-    # # so that a circular import loop is not created (only an issue in python2)
-    # noImportList = [
-
-    # ]
-    #
-    # frm = inspect.stack()[1]
-    # mod = inspect.getmodule(frm[0])
-    # print mod.__name__
-    # if mod.__name__ in noImportList:
-    #     doNotImport = True
-    # else:
-    #     doNotImport=False
-    #
-    # if doNotImport is True:
-    #     if item in noImportList:
-    #         continue
-    #     else:
-    #         exec ('from ' + item + ' import *')
-    # else:
-    #     exec('from '+item+' import *')
-
