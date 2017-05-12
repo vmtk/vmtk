@@ -1,8 +1,9 @@
 #!/bin/sh
 
 # unpack.
-mkdir vmtk-build
-cd vmtk-build
+# TODO: replace vmtk-build-test-anaconda with vmtk-build
+mkdir vmtk-build-test-anaconda
+cd vmtk-build-test-anaconda
 
 # build.
 cmake ../vmtk \
