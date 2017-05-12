@@ -1,0 +1,25 @@
+package:
+  name: vmtk
+  version: "v1.4"
+
+source:
+  git-rev: v1.4-beta.0
+  git-url: https://github.com/vmtk/vmtk.git
+
+requirements:
+  build:
+    - python
+    - future
+    - cmake
+
+about:
+  home: www.vmtk.org
+  license: Copyright.txt
+  summary: " vmtk - the Vascular Modeling Toolkit
+            ------------------------------------
+
+            The Vascular Modeling Toolkit is a collection of libraries and
+            tools for 3D reconstruction, geometric analysis, mesh generation
+            and surface data analysis for image-based modeling of blood vessels.
+
+            See www.vmtk.org/ for details. "
