@@ -15,6 +15,7 @@ class Vmtk < Formula
   depends_on "vtk"
   depends_on "insightToolkit"
   depends_on :python
+  depends_on :python3 => :optional
 
   def install
     args = std_cmake_args + %W[
@@ -23,6 +24,14 @@ class Vmtk < Formula
       -DCMAKE_INSTALL_RPATH:STRING=#{lib}
       -DCMAKE_INSTALL_NAME_DIR:STRING=#{lib}
     ]
+
+    python_executable = `which python`.strip if build.with? "python"
+    python_executable = `which python3`.strip if build.with? "python3"
+
+    python_prefix = `#{python_executable} -c 'import sys;print(sys.prefix)'`.chomp
+    python_include = `#{python_executable} -c 'from distutils import sysconfig;print(sysconfig.get_python_inc(True))'`.chomp
+    python_version = "python" + `#{python_executable} -c 'import sys;print(sys.version[:3])'`.chomp
+    py_site_packages = "#{lib}/#{python_version}/site-packages"
 
     args << ".."
     args << "-DUSE_SYSTEM_ITK=ON"
@@ -37,10 +46,22 @@ class Vmtk < Formula
     args << "-DVMTK_USE_RENDERING=ON"
 
     args << "-DVTK_WRAP_PYTHON=ON"
-
-    args << "-DPYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}"
-    args << "-DPYTHON_LIBRARY='#{`python-config --prefix`.chomp}/lib/lib${VMTK_PYTHON_VERSION}.dylib'"
-    args << "-DPYTHON_INCLUDE_DIR='#{`python-config --prefix`.chomp}/include/${VMTK_PYTHON_VERSION}'"
+    args << "-DPYTHON_EXECUTABLE='#{python_executable}'"
+    args << "-DPYTHON_INCLUDE_DIR='#{python_include}'"
+    # CMake picks up the system's python dylib, even if we have a brewed one.
+    if File.exist? "#{python_prefix}/Python"
+      args << "-DPYTHON_LIBRARY='#{python_prefix}/Python'"
+    elsif File.exist? "#{python_prefix}/lib/lib#{python_version}.a"
+      args << "-DPYTHON_LIBRARY='#{python_prefix}/lib/lib#{python_version}.a'"
+    elsif File.exist? "#{python_prefix}/lib/lib#{python_version}.#{dylib}"
+      args << "-DPYTHON_LIBRARY='#{python_prefix}/lib/lib#{python_version}.#{dylib}'"
+    elsif File.exist? "#{python_prefix}/lib/x86_64-linux-gnu/lib#{python_version}.#{dylib}"
+      args << "-DPYTHON_LIBRARY='#{python_prefix}/lib/x86_64-linux-gnu/lib#{python_version}.so'"
+    else
+      odie "No libpythonX.Y.{dylib|so|a} file found!"
+    end
+    # Set the prefix for the python bindings to the Cellar
+    args << "-DVTK_INSTALL_PYTHON_MODULE_DIR='#{py_site_packages}/'"
 
     args << ".."
 
