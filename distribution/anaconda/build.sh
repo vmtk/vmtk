@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# mkdir vmtk-build
+mkdir vmtk-build
 cd ./vmtk-build
 
 cmake ../ \
