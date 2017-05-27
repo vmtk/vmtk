@@ -5,7 +5,7 @@ mkdir vmtk-build
 cd vmtk-build
 
 # build.
-cmake ../vmtk-source \
+cmake ../vmtk \
     -DLIBRARY_OUTPUT_PATH=$PATH \
     -DEXECUTABLE_OUTPUT_PATH=$PATH \
     -DVMTK_INSTALL_BIN_DIR=$PREFIX/bin \
