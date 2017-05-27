@@ -5,8 +5,10 @@ mkdir vmtk-build
 cd vmtk-build
 
 # build.
-cmake ../vmtk \
-    -DCMAKE_INSTALL_PREFIX=$PREFIX
-    .. | tee cmake.log 2>&1
+cmake ../vmtk-source \
+    -DLIBRARY_OUTPUT_PATH=$PATH \
+    -DEXECUTABLE_OUTPUT_PATH=$PATH \
+    -DVMTK_INSTALL_BIN_DIR=$PREFIX/bin \
+    -DVMTK_INSTALL_LIB_DIR=$PREFIX/lib
 
 make -j 7

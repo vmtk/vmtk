@@ -11,6 +11,10 @@ requirements:
     - python
     - future
     - cmake
+    - git
+
+  run:
+    - python
 
 about:
   home: www.vmtk.org
