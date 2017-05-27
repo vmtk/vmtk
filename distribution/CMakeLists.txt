@@ -41,6 +41,10 @@ IF(EXISTS "${VTK_DIR}/Wrapping/Python/vtk")
     )
 ENDIF(EXISTS "${VTK_DIR}/Wrapping/Python/vtk")
 
+IF(UNIX)
+    CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/egg/setup.py.in ${CMAKE_CURRENT_BINARY_DIR}/egg/setup.py)
+ENDIF(UNIX)
+
 IF(APPLE)
   # Use the bundle-generator on osx ...
   SET(CPACK_GENERATOR "Bundle")

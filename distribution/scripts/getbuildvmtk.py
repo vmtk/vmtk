@@ -22,7 +22,7 @@ WORK_DIR = os.path.abspath(os.path.curdir)
 VTK_BUILD_DIR = os.path.join(WORK_DIR, 'vtk-build')
 ITK_BUILD_DIR = os.path.join(WORK_DIR, 'itk-build')
 VMTK_BUILD_DIR = os.path.join(WORK_DIR, 'vmtk-build')
-PARALLEL_JOBS = 3
+PARALLEL_JOBS = 7
 
 VERBOSE = True
 LOGFILE = True
@@ -87,7 +87,7 @@ def create_do_configure(build_dir, cmd):
         lines = "#!/bin/bash \n\n"
         lines += ' \\\n '.join(cmd.split())
     lines += '\n'
-    file(do_configure, 'w').writelines(lines)
+    open(do_configure, 'w').writelines(lines)
     if not on_windows():
         os.chmod(do_configure, S_IRUSR|S_IWUSR|S_IXUSR)
 
@@ -130,24 +130,24 @@ def build_cmake_project(build_dir, source_dir, options="", install=False):
     os.chdir(WORK_DIR)
 
 def build_vtk():
-    filename = "vtk-5.6.0.tar.gz"
-    url = "http://www.vtk.org/files/release/5.6/" + filename
-    source_dir = os.path.join(WORK_DIR, 'VTK')
+    filename = "VTK-7.1.1.tar.gz"
+    url = "http://www.vtk.org/files/release/7.1/" + filename
+    source_dir = os.path.join(WORK_DIR, 'VTK-7.1.1')
     install_dir = os.path.join(WORK_DIR, 'vtk-bin')
     if not os.path.exists(filename):
         download(url, filename)
     if not os.path.isdir(source_dir):
         tarextract(filename)
     # minor fix for installing VTK Python Wrappers (avoid using setuptools)
-    setup_py = os.path.join(source_dir, 'Wrapping', 'Python', 'setup.py.in')
-    lines = file(setup_py, 'r').readlines()
+    setup_py = os.path.join(source_dir, 'Wrapping', 'Python', 'compile_all_vtk.py.in')
+    lines = open(setup_py, 'r').readlines()
     newlines = []
     for line in lines:
         newlines.append(line)
         if 'has_setup_tools = 1' in line:
             newlines.append('has_setup_tools = 0\n')
     os.chmod(setup_py, S_IRUSR|S_IWUSR)  # make the file read/writable
-    file(setup_py, 'w').writelines(newlines)
+    open(setup_py, 'w').writelines(newlines)
 
     options = ['-DCMAKE_BUILD_TYPE:STRING=' + BUILD_TYPE,
                '-DCMAKE_INSTALL_PREFIX:PATH=' + repr(install_dir)[1:-1],
@@ -156,6 +156,7 @@ def build_vtk():
                '-DVTK_WRAP_PYTHON:BOOL=ON',
                '-DVTK_WRAP_TCL:BOOL=OFF',
                '-DVTK_INSTALL_PYTHON_USING_CMAKE:BOOL=ON',
+               '-VMTK_USE_VTK7:BOOL=ON'
                ]
     if on_osx():
         options.extend(['-DCMAKE_OSX_ARCHITECTURES:STRING="%s"' % OSX_ARCHITECTURES,
@@ -181,9 +182,9 @@ def build_vtk():
     build_cmake_project(VTK_BUILD_DIR, source_dir, options)
 
 def build_itk():
-    filename = "InsightToolkit-3.18.0.tar.gz"
-    url = "http://downloads.sourceforge.net/project/itk/itk/3.18/" + filename
-    source_dir = os.path.join(WORK_DIR, 'InsightToolkit-3.18.0')
+    filename = "InsightToolkit-4.10.1.tar.gz"
+    url = "http://downloads.sourceforge.net/project/itk/itk/4.10/" + filename
+    source_dir = os.path.join(WORK_DIR, 'InsightToolkit-4.10.1')
     install_dir = os.path.join(WORK_DIR, 'itk-bin')
     if not os.path.exists(filename):
         download(url, filename)
@@ -207,19 +208,20 @@ def build_itk():
     build_cmake_project(ITK_BUILD_DIR, source_dir, options)
 
 def build_vmtk():
-    source_dir = os.path.join(WORK_DIR, 'vmtk-packaging')
+    source_dir = WORK_DIR # os.path.join(WORK_DIR, 'vmtk-packaging')
     install_dir = os.path.join(WORK_DIR, 'vmtk-bin')
-    if not os.path.isdir(source_dir):
-        cmd = "bzr branch lp:vmtk-packaging"
-        failure, output = getstatusoutput(cmd)
-        log(output)
-        if failure:
-            msg = "Unable to run '%s'\nError message: %s" % (cmd, output)
-            raise Exception(msg)
+    # if not os.path.isdir(source_dir):
+    #     cmd = "bzr branch lp:vmtk-packaging"
+    #     failure, output = getstatusoutput(cmd)
+    #     log(output)
+    #     if failure:
+    #         msg = "Unable to run '%s'\nError message: %s" % (cmd, output)
+    #         raise Exception(msg)
 
     options = ['-DCMAKE_BUILD_TYPE:STRING=' + BUILD_TYPE,
                '-DCMAKE_INSTALL_PREFIX:PATH=' + repr(install_dir)[1:-1],
                '-DBUILD_SHARED_LIBS:BOOL=ON',
+               '-DVMTK_USE_SUPERBUILD:BOOL=OFF'
                '-DITK_DIR:PATH=' + repr(ITK_BUILD_DIR)[1:-1],
                '-DVTK_DIR:PATH=' + repr(VTK_BUILD_DIR)[1:-1],
                '-DVTK_VMTK_WRAP_PYTHON:BOOL=ON',
@@ -251,6 +253,7 @@ def build_vmtk():
     build_cmake_project(VMTK_BUILD_DIR, source_dir, options)
 
 def generate_package(generator=None):
+    generator="TGZ"
     os.chdir(VMTK_BUILD_DIR)
     cmd = "cpack"
     if generator is not None:
