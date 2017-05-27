@@ -1,9 +1,9 @@
 #!/bin/sh
 
-mkdir ${PREFIX}/vmtk-build
-cd ${PREFIX}/vmtk-build
+mkdir vmtk-build
+cd vmtk-build
 
-cmake ${PREFIX}/vmtk-1.4-beta.3/ \
+cmake ../vmtk-1.4-beta.3/ \
     -DCMAKE_BUILD_TYPE:STRING=Debug
 
 make -j7
