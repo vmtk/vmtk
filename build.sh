@@ -14,6 +14,5 @@ if [ `uname` == Linux ]; then
     cp -r "./Install/bin"/* "${PREFIX}/bin/"
     cp -r "./Install/include"/* "${PREFIX}/include/"
     cp -r "./Install/share"/* "${PREFIX}/share/"
-
 fi
 
