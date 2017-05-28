@@ -1,6 +1,6 @@
 package:
   name: vmtk
-  version: "v1.4"
+  version: "1.4"
 
 source:
   # fn: vmtk-1.4-beta.3.tar.gz
