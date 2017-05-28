@@ -10,7 +10,7 @@ requirements:
   build:
     - python
     - future
-    - cmake >= 3.8
+    - cmake
     - git
 
   run:
