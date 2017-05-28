@@ -3,8 +3,9 @@ package:
   version: "v1.4"
 
 source:
-  fn: vmtk-1.4-beta.3.tar.gz
-  url: https://github.com/vmtk/vmtk/archive/v1.4-beta.3.tar.gz
+  # fn: vmtk-1.4-beta.3.tar.gz
+  # url: https://github.com/vmtk/vmtk/archive/v1.4-beta.3.tar.gz
+  path: /home/rick/projects/vmtk/vmtk-source
 
 requirements:
   build:
