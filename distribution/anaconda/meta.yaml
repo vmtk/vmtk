@@ -8,14 +8,12 @@ source:
 
 requirements:
   build:
-    - gcc [linux]
     - python
     - future
-    - cmake
+    - cmake >= 3.8
     - git
 
   run:
-    - libgcc [linux]
     - python
     - future
 
