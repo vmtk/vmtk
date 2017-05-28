@@ -8,13 +8,16 @@ source:
 
 requirements:
   build:
+    - gcc [linux]
     - python
     - future
     - cmake
     - git
 
   run:
+    - libgcc [linux]
     - python
+    - future
 
 about:
   home: www.vmtk.org
