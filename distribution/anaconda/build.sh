@@ -25,7 +25,7 @@ cd ./vmtk-build
 
 if [ `uname` == Linux ]; then
     cmake ../ \
-        -DCMAKE_BUILD_TYPE:STRING="Debug"
+        -DCMAKE_BUILD_TYPE:STRING="Release"
 
     make -j7
 
