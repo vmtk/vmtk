@@ -27,7 +27,7 @@ if [ `uname` == Linux ]; then
     cmake ../ \
         -DCMAKE_BUILD_TYPE:STRING="Release"
 
-    make -j7
+    make -j${CPU_COUNT}
 
     rm -r "./Install/lib/cmake"
     cp -r "./Install/lib"/* "${PREFIX}/lib/"
