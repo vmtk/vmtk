@@ -12,6 +12,7 @@ import platform
 import urllib.request, urllib.parse, urllib.error
 import tarfile
 import atexit
+import multiprocessing
 
 from stat import S_IRUSR, S_IWUSR, S_IXUSR
 
@@ -22,7 +23,7 @@ WORK_DIR = os.path.abspath(os.path.curdir)
 VTK_BUILD_DIR = os.path.join(WORK_DIR, 'vtk-build')
 ITK_BUILD_DIR = os.path.join(WORK_DIR, 'itk-build')
 VMTK_BUILD_DIR = os.path.join(WORK_DIR, 'vmtk-build')
-PARALLEL_JOBS = 7
+PARALLEL_JOBS = multiprocessing.cpu_count() - 1
 
 VERBOSE = True
 LOGFILE = True
