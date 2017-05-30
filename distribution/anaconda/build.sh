@@ -26,8 +26,7 @@ cd ./vmtk-build
 if [ `uname` == Linux ]; then
     cmake ../ \
         -DCMAKE_BUILD_TYPE:STRING="Release" \
-        -DUSE_SYSTEM_VTK:BOOL=ON \
-        -DPACKAGE_VMTK_WITH_ANACONDA:BOOL=ON
+        -DUSE_SYSTEM_VTK:BOOL=ON
 
     make -j${CPU_COUNT}
 
