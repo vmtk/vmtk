@@ -72,11 +72,21 @@ if( USE_SYSTEM_ITK )
   include( ${ITK_USE_FILE} )
 endif( USE_SYSTEM_ITK )
 
-IF (APPLE)
-  SET(VMTK_RENDERING_BACKEND "OpenGL2" CACHE STRING "Graphic backend for VTK")
-ELSE (APPLE)
-  SET(VMTK_RENDERING_BACKEND "OpenGL" CACHE STRING "Graphic backend for VTK")
-ENDIF (APPLE)
+option (PACKAGE_VMTK_WITH_ANACODA
+  "Turn on if packaging with the anaconda python distrubution" OFF)
+IF (PACKAGE_VMTK_WITH_ANACONDA)
+  IF (APPLE OR UNIX)
+    SET(VMTK_RENDERING_BACKEND "OpenGL2" CACHE STRING "Graphic backend for VTK")
+  ELSE (APPLE OR UNIX)
+    SET(VMTK_RENDERING_BACKEND "OpenGL" CACHE STRING "Graphic backend for VTK")
+  ENDIF (APPLE OR UNIX)
+ELSE (PACKAGE_VMTK_WITH_ANACONDA)
+  IF (APPLE)
+    SET(VMTK_RENDERING_BACKEND "OpenGL2" CACHE STRING "Graphic backend for VTK")
+  ELSE (APPLE)
+    SET(VMTK_RENDERING_BACKEND "OpenGL" CACHE STRING "Graphic backend for VTK")
+  ENDIF (APPLE)
+ENDIF (PACKAGE_VMTK_WITH_ANACONDA)
 
 #-----------------------------------------------------------------------------
 # VTK Setup
