@@ -26,14 +26,10 @@ cd ./vmtk-build
 if [ `uname` == Linux ]; then
     cmake ../ \
         -DCMAKE_BUILD_TYPE:STRING="Release" \
-        -DUSE_SYSTEM_VTK:BOOL=ON
+        -DUSE_SYSTEM_VTK:BOOL=ON \
+        -DSUPERBUILD_INSTALL_PREFIX:STRING=${PREFIX}
 
     make -j${CPU_COUNT}
 
-    rm -r "./Install/lib/cmake"
-    cp -r "./Install/lib"/* "${PREFIX}/lib/"
-    cp -r "./Install/bin"/* "${PREFIX}/bin/"
-    cp -r "./Install/include"/* "${PREFIX}/include/"
-    cp -r "./Install/share"/* "${PREFIX}/share/"
 fi
 
