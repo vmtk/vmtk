@@ -72,11 +72,7 @@ if( USE_SYSTEM_ITK )
   include( ${ITK_USE_FILE} )
 endif( USE_SYSTEM_ITK )
 
-IF (APPLE OR UNIX)
-  SET(VMTK_RENDERING_BACKEND "OpenGL2" CACHE STRING "Graphic backend for VTK")
-ELSE (APPLE OR UNIX)
-  SET(VMTK_RENDERING_BACKEND "OpenGL" CACHE STRING "Graphic backend for VTK")
-ENDIF (APPLE OR UNIX)
+SET(VMTK_RENDERING_BACKEND "OpenGL2" CACHE STRING "Graphic backend for VTK")
 
 #-----------------------------------------------------------------------------
 # VTK Setup

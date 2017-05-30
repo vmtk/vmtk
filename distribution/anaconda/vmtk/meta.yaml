@@ -1,0 +1,52 @@
+## Program:   VMTK
+## Module:    Anaconda Distribution
+## Language:  Python
+## Date:      May 29, 2017
+
+##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
+##   See LICENCE file for details.
+
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+##      PURPOSE.  See the above copyright notices for more information.
+
+## Note: this class was contributed by
+##       Richard Izzo (Github @rlizzo)
+##       University at Buffalo; The Jacobs Institute
+
+## This file contains the packaging and distribution metadata for packaging
+## VMTK via the Continuum Analytics Anaconda Python distribution.
+## See https://www.continuum.io/ for distribution info
+
+package:
+  name: vmtk
+  version: "1.4"
+
+source:
+  git_rev: v1.4-beta.3
+  git_url: https://github.com/vmtk/vmtk.git
+
+requirements:
+  build:
+    - python
+    - future              [py27]
+    - cmake
+    - git
+    - vtk
+
+  run:
+    - python
+    - future              [py27]
+    - vtk
+
+about:
+  home: www.vmtk.org
+  license: "See http://www.vmtk.org/license.html"
+  summary: "vmtk - the Vascular Modeling Toolkit. See www.vmtk.org/ for details."
+
+
+extra:
+  recipe-maintainers:
+    -rlizzo
+    -lantiga
+
