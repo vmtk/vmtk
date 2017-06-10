@@ -64,14 +64,25 @@ class vmtkNumpyToSurface(pypes.pypeScript):
             if pointDataDType.find('int') != -1:
                 pointDataArray = vtk.vtkIntArray()
 
-            pointDataArray.SetNumberOfComponents(1)
+            try:
+                pointDataComponents = self.InputDict['PointData'][key].shape[1]
+            except IndexError:
+                pointDataComponents = 1
+
+            pointDataArray.SetNumberOfComponents(pointDataComponents)
             pointDataArray.SetName(key)
 
-            for pointData in self.InputDict['PointData'][key]:
-                pointDataArray.InsertNextValue(pointData)
+            if pointDataComponents == 1:
+                for pointData in self.InputDict['PointData'][key]:
+                    pointDataArray.InsertNextValue(pointData)
+                polyData.GetPointData().SetActiveScalars(key)
+                polyData.GetPointData().SetScalars(pointDataArray)
+            else:
+                for pointData in self.InputDict['PointData'][key]:
+                    pointDataArray.InsertNextTuple(pointData)
+                polyData.GetPointData().SetActiveVectors(key)
+                polyData.GetPointData().SetVectors(pointDataArray)
 
-            polyData.GetPointData().SetActiveScalars(key)
-            polyData.GetPointData().SetScalars(pointDataArray)
 
         def mkVtkIdList(it):
             vil = vtk.vtkIdList()
