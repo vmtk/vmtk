@@ -17,7 +17,6 @@
 
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import vtk
-from vtk.numpy_interface import dataset_adapter as dsa
 import sys
 
 from vmtk import vtkvmtk
@@ -39,7 +38,7 @@ class vmtkNumpyToSurface(pypes.pypeScript):
 
         self.SetScriptName('vmtkNumpyToSurface')
         self.SetScriptDoc('Takes a nested python dictionary containg numpy arrays specifying vertex '
-                          'points, associated scalar data, and cell data yielding triangle connectivity' 
+                          'points, associated scalar data, and cell data specifying triangle connectivity' 
                           'and returns a VTK triangulated surface vtkPolyData file')
         self.SetInputMembers([
             ['InputDict','i','dict',1,'','the input dictionary']])
