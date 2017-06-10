@@ -2,6 +2,7 @@ PROJECT(VMTK_CONTRIB_SCRIPTS)
 
 SET(CONTRIB_SCRIPTS_SRCS
     vmtkboundarylayer2.py
+    vmtkcenterlinestonumpy.py
     vmtkdijkstradistancetopoints.py
     vmtkdistancetospheres.py
     vmtkgeodesicsurfaceresolution.py
@@ -11,6 +12,7 @@ SET(CONTRIB_SCRIPTS_SRCS
     vmtkmeshviewer2.py
     vmtkmeshwriter2.py
     vmtksurfaceresolution.py
+    vmtksurfacetonumpy.py
     vmtksurfacewriter2.py
     vmtksurfaceextractannularwalls.py
     vmtksurfaceextractinnercylinder.py
