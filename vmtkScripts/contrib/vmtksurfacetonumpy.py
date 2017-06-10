@@ -46,34 +46,28 @@ class vmtkSurfaceToNumpy(pypes.pypeScript):
         pypes.pypeScript.__init__(self)
 
         self.Surface = None
-        self.OutputVariableName = None
 
-        self.SurfaceArrayDict = vividict()
+        self.OutputArray = vividict()
 
         self.SetScriptName('vmtkSurfaceToNumpy')
         self.SetScriptDoc('Takes a VTK triangulated surface vtkPolyData file (optionally containing point data scalar '
                           'arrays) and returns a nested python dictionary containing numpy arrays specifying vertex '
                           'points, associated scalar data, and cell data yielding triangle connectivity')
         self.SetInputMembers([
-            ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
-            ['OutputVariableName','outputvariablename','str',1,'','variable name to store the dictionary']])
+            ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader']])
         self.SetOutputMembers([
-            ['SurfaceArrayDict','o','dict',1]
-            ])
+            ['OutputArray','o','dict',1]])
 
     def Execute(self):
 
         if self.Surface == None:
             self.PrintError('Error: No input surface.')
 
-        # if self.OutputVariableName == None:
-        #     self.PrintError('Error: No variable name specified for output dictionary')
-
         self.PrintLog('converting any cell data to point data')
         try:
             from vmtk import vmtksurfacecelldatatopointdata
         except ImportError:
-            raise ImportError('unable to import vmtksurfacecelldata to point data module')
+            raise ImportError('unable to import vmtksurfacecelldatatopointdata module')
         surfaceCellToPoint = vmtksurfacecelldatatopointdata.vmtkSurfaceCellDataToPointData()
         surfaceCellToPoint.Surface = self.Surface
         surfaceCellToPoint.Execute()
@@ -82,12 +76,12 @@ class vmtkSurfaceToNumpy(pypes.pypeScript):
         wrappedSurface = dsa.WrapDataObject(surfaceCellToPoint.Surface)
 
         self.PrintLog('writing vertex points to dictionary')
-        self.SurfaceArrayDict['Points'] = np.array(wrappedSurface.Points)
+        self.OutputArray['Points'] = np.array(wrappedSurface.Points)
 
         self.PrintLog('writing point data scalars to dictionary')
         pointDataKeys = wrappedSurface.PointData.keys()
         for key in pointDataKeys:
-            self.SurfaceArrayDict['PointData'][key] = np.array(wrappedSurface.PointData.GetArray(key))
+            self.OutputArray['PointData'][key] = np.array(wrappedSurface.PointData.GetArray(key))
 
         self.PrintLog('writing cell data to dictionary')
         numberOfCells = surfaceCellToPoint.Surface.GetNumberOfCells()
@@ -99,7 +93,7 @@ class vmtkSurfaceToNumpy(pypes.pypeScript):
             for point in range(numberOfPointsPerCell):
                 cellArray[cellId, point] = cell.GetPointId(point)
 
-        self.SurfaceArrayDict['CellData']['CellPointIds'] = cellArray
+        self.OutputArray['CellData']['CellPointIds'] = cellArray
 
 
 if __name__=='__main__':

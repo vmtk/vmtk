@@ -30,7 +30,7 @@ from vmtk import pypes
 try:
     import numpy as np
 except ImportError:
-    raise ImportError('Unable to Import vmtksurfacetonumpy module, numpy is not installed')
+    raise ImportError('Unable to Import vmtkcenterlinestonumpy module, numpy is not installed')
 
 
 # convenience class for nested disctionaries
@@ -46,28 +46,22 @@ class vmtkCenterlinesToNumpy(pypes.pypeScript):
         pypes.pypeScript.__init__(self)
 
         self.Centerlines = None
-        self.OutputVariableName = None
 
-        self.CenterlinesArrayDict = vividict()
+        self.OutputArray = vividict()
 
         self.SetScriptName('vmtkCenterlinesToNumpy')
         self.SetScriptDoc('Takes a VTK centerlines vtkPolyData file (optionally containing point data scalar '
                           'arrays or cell data scalar arrays) and returns a nested python dictionary containing numpy '
                           'arrays specifying vertex points, associated scalar data, and cell data yielding connectivity')
         self.SetInputMembers([
-            ['Centerlines','i','vtkPolyData',1,'','the input centerlines','vmtksurfacereader'],
-            ['OutputVariableName','outputvariablename','str',1,'','variable name to store the dictionary']])
+            ['Centerlines','i','vtkPolyData',1,'','the input centerlines','vmtksurfacereader']])
         self.SetOutputMembers([
-            ['CenterlinesArrayDict','o','dict',1]
-            ])
+            ['OutputArray','o','dict',1]])
 
     def Execute(self):
 
         if self.Centerlines == None:
             self.PrintError('Error: No input centerlines.')
-
-        # if self.OutputVariableName == None:
-        #     self.PrintError('Error: No variable name specified for output dictionary')
 
         self.PrintLog('converting any cell data to point data')
         try:
@@ -82,12 +76,12 @@ class vmtkCenterlinesToNumpy(pypes.pypeScript):
         wrappedCenterlines = dsa.WrapDataObject(centerlinesCellToPoint.Surface)
 
         self.PrintLog('writing vertex points to dictionary')
-        self.CenterlinesArrayDict['Points'] = np.array(wrappedCenterlines.Points)
+        self.OutputArray['Points'] = np.array(wrappedCenterlines.Points)
 
         self.PrintLog('writing point data scalars to dictionary')
         pointDataKeys = wrappedCenterlines.PointData.keys()
         for key in pointDataKeys:
-            self.CenterlinesArrayDict['PointData'][key] = np.array(wrappedCenterlines.PointData.GetArray(key))
+            self.OutputArray['PointData'][key] = np.array(wrappedCenterlines.PointData.GetArray(key))
 
         self.PrintLog('writing cell data to dictionary')
         numberOfCells = centerlinesCellToPoint.Surface.GetNumberOfCells()
@@ -99,7 +93,7 @@ class vmtkCenterlinesToNumpy(pypes.pypeScript):
             for point in range(numberOfPointsPerCell):
                 cellArray[point] = cell.GetPointId(point)
 
-            self.CenterlinesArrayDict['CellData']['CellPointIds'][str(cellId)] = cellArray
+            self.OutputArray['CellData']['CellPointIds'][str(cellId)] = cellArray
 
 
 if __name__=='__main__':

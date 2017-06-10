@@ -89,6 +89,8 @@ __all__ = [
     'vmtk.vmtknetworkeditor',
     'vmtk.vmtknetworkextraction',
     'vmtk.vmtknetworkwriter',
+    'vmtk.vmtknumpytocenterlines',
+    'vmtk.vmtknumpytosurface',
     'vmtk.vmtkparticletracer',
     'vmtk.vmtkpathlineanimator',
     'vmtk.vmtkpointsplitextractor',
