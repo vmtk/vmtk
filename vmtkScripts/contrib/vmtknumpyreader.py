@@ -27,7 +27,7 @@ try:
 except ImportError:
     raise ImportError('Unable to Import vmtknumpyreader module, numpy is not installed')
 
-class vmtkNumpyWriter(pypes.pypeScript):
+class vmtkNumpyReader(pypes.pypeScript):
 
     def __init__(self):
 
