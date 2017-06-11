@@ -13,6 +13,7 @@ SET(CONTRIB_SCRIPTS_SRCS
     vmtkmeshwriter2.py
     vmtknumpytocenterlines.py
     vmtknumpytosurface.py
+    vmtknumpywriter.py
     vmtksurfaceresolution.py
     vmtksurfacetonumpy.py
     vmtksurfacewriter2.py
