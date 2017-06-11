@@ -55,6 +55,7 @@ class vmtkNumpyToSurface(pypes.pypeScript):
 
         polyData.SetPoints(points)
 
+        self.PrintLog('converting numpy array to surface')
         pointDataKeys = self.ArrayDict['PointData'].keys()
         for key in pointDataKeys:
 

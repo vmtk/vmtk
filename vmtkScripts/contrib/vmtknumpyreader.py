@@ -56,6 +56,7 @@ class vmtkNumpyReader(pypes.pypeScript):
             if not self.InputFileName:
                 self.PrintError('Error: no InputFileName.')
 
+        self.PrintLog('Reading File')
         with open(self.InputFileName, 'rb') as infile:
             self.ArrayDict = pickle.load(infile)
 

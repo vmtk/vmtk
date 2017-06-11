@@ -63,6 +63,7 @@ class vmtkNumpyWriter(pypes.pypeScript):
             if not self.OutputFileName:
                 self.PrintError('Error: no Output File Name.')
 
+        self.PrintLog('Writing File')
         with open(self.OutputFileName, 'wb') as outfile:
             pickle.dump(self.ArrayDict, outfile, protocol=pickle.HIGHEST_PROTOCOL)
 

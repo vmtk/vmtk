@@ -63,6 +63,7 @@ class vmtkNumpyToImage(pypes.pypeScript):
                                 0, self.ArrayDict['Dimensions'][1] - 1,
                                 0, self.ArrayDict['Dimensions'][2] - 1,))
 
+        self.PrintLog('Converting Numpy Array to vtkImageData')
         pointDataKeys = self.ArrayDict['PointData'].keys()
         for key in pointDataKeys:
             pointDataDType = str(self.ArrayDict['PointData'][key].dtype)

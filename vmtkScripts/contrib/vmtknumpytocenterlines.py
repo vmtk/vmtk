@@ -54,6 +54,7 @@ class vmtkNumpyToCenterlines(pypes.pypeScript):
 
         polyData.SetPoints(points)
 
+        self.PrintLog('converting numpy array to centerlines')
         pointDataKeys = self.ArrayDict['PointData'].keys()
         for key in pointDataKeys:
 

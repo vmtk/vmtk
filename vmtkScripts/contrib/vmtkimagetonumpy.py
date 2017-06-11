@@ -69,6 +69,7 @@ class vmtkImageToNumpy(pypes.pypeScript):
         pointData = imageData.GetPointData()
         pointDataKeys = pointData.keys()
 
+        self.PrintLog('Converting Image to Numpy Array')
         for index, key in enumerate(pointDataKeys):
             flatArray = np.array(pointData.GetArray(index))
             reshapedArray = np.zeros(shape=self.ArrayDict['Dimensions'])
