@@ -34,14 +34,14 @@ class vmtkNumpyToSurface(pypes.pypeScript):
 
         pypes.pypeScript.__init__(self)
 
-        self.InputDict = None
+        self.ArrayDict = None
 
         self.SetScriptName('vmtkNumpyToSurface')
         self.SetScriptDoc('Takes a nested python dictionary containg numpy arrays specifying vertex '
                           'points, associated scalar data, and cell data specifying triangle connectivity' 
                           'and returns a VTK triangulated surface vtkPolyData file')
         self.SetInputMembers([
-            ['InputDict','i','dict',1,'','the input dictionary']])
+            ['ArrayDict','i','dict',1,'','the input dictionary']])
         self.SetOutputMembers([
             ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter']])
 
@@ -50,22 +50,22 @@ class vmtkNumpyToSurface(pypes.pypeScript):
         polyData = vtk.vtkPolyData()
 
         points = vtk.vtkPoints()
-        for xyzPoint in self.InputDict['Points']:
+        for xyzPoint in self.ArrayDict['Points']:
             points.InsertNextPoint(xyzPoint)
 
         polyData.SetPoints(points)
 
-        pointDataKeys = self.InputDict['PointData'].keys()
+        pointDataKeys = self.ArrayDict['PointData'].keys()
         for key in pointDataKeys:
 
-            pointDataDType = str(self.InputDict['PointData'][key].dtype)
+            pointDataDType = str(self.ArrayDict['PointData'][key].dtype)
             if pointDataDType.find('float') != -1:
                 pointDataArray = vtk.vtkFloatArray()
             if pointDataDType.find('int') != -1:
                 pointDataArray = vtk.vtkIntArray()
 
             try:
-                pointDataComponents = self.InputDict['PointData'][key].shape[1]
+                pointDataComponents = self.ArrayDict['PointData'][key].shape[1]
             except IndexError:
                 pointDataComponents = 1
 
@@ -73,12 +73,12 @@ class vmtkNumpyToSurface(pypes.pypeScript):
             pointDataArray.SetName(key)
 
             if pointDataComponents == 1:
-                for pointData in self.InputDict['PointData'][key]:
+                for pointData in self.ArrayDict['PointData'][key]:
                     pointDataArray.InsertNextValue(pointData)
                 polyData.GetPointData().SetActiveScalars(key)
                 polyData.GetPointData().SetScalars(pointDataArray)
             else:
-                for pointData in self.InputDict['PointData'][key]:
+                for pointData in self.ArrayDict['PointData'][key]:
                     pointDataArray.InsertNextTuple(pointData)
                 polyData.GetPointData().SetActiveVectors(key)
                 polyData.GetPointData().SetVectors(pointDataArray)
@@ -91,7 +91,7 @@ class vmtkNumpyToSurface(pypes.pypeScript):
             return vil
 
         cellDataArray = vtk.vtkCellArray()
-        for cell in self.InputDict['CellData']['CellPointIds']:
+        for cell in self.ArrayDict['CellData']['CellPointIds']:
             cellDataArray.InsertNextCell(mkVtkIdList(cell))
 
         polyData.SetPolys(cellDataArray)

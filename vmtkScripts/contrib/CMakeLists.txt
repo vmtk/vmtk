@@ -11,6 +11,7 @@ SET(CONTRIB_SCRIPTS_SRCS
     vmtkmeshtetrahedralize2.py
     vmtkmeshviewer2.py
     vmtkmeshwriter2.py
+    vmtknumpyreader.py
     vmtknumpytocenterlines.py
     vmtknumpytosurface.py
     vmtknumpywriter.py

@@ -42,13 +42,13 @@ class vmtkNumpyWriter(pypes.pypeScript):
         self.SetScriptDoc('Writes a dictionary containing numpy array data to a file')
 
         self.SetInputMembers([
-            ['InputDict','i','dict',1,'','the input dictionary'],
+            ['ArrayDict','i','dict',1,'','the input dictionary'],
             ['OutputFileName','ofile','str',1,'','the output file name']])
         self.SetOutputMembers([])
 
     def Execute(self):
 
-        if self.InputDict == None:
+        if self.ArrayDict == None:
             self.PrintError('Error: no input dictionary')
 
         if self.OutputFileName == '':
@@ -64,7 +64,7 @@ class vmtkNumpyWriter(pypes.pypeScript):
                 self.PrintError('Error: no Output File Name.')
 
         with open(self.OutputFileName, 'wb') as outfile:
-            pickle.dump(self.InputDict, outfile, protocol=pickle.HIGHEST_PROTOCOL)
+            pickle.dump(self.ArrayDict, outfile, protocol=pickle.HIGHEST_PROTOCOL)
 
 if __name__=='__main__':
     main = pypes.pypeMain()

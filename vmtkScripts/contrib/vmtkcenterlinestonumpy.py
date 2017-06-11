@@ -47,7 +47,7 @@ class vmtkCenterlinesToNumpy(pypes.pypeScript):
 
         self.Centerlines = None
 
-        self.OutputArray = vividict()
+        self.ArrayDict = vividict()
 
         self.SetScriptName('vmtkCenterlinesToNumpy')
         self.SetScriptDoc('Takes a VTK centerlines vtkPolyData file (optionally containing point data scalar '
@@ -56,7 +56,7 @@ class vmtkCenterlinesToNumpy(pypes.pypeScript):
         self.SetInputMembers([
             ['Centerlines','i','vtkPolyData',1,'','the input centerlines','vmtksurfacereader']])
         self.SetOutputMembers([
-            ['OutputArray','o','dict',1]])
+            ['ArrayDict','o','dict',1]])
 
     def Execute(self):
 
@@ -76,12 +76,12 @@ class vmtkCenterlinesToNumpy(pypes.pypeScript):
         wrappedCenterlines = dsa.WrapDataObject(centerlinesCellToPoint.Surface)
 
         self.PrintLog('writing vertex points to dictionary')
-        self.OutputArray['Points'] = np.array(wrappedCenterlines.Points)
+        self.ArrayDict['Points'] = np.array(wrappedCenterlines.Points)
 
         self.PrintLog('writing point data scalars to dictionary')
         pointDataKeys = wrappedCenterlines.PointData.keys()
         for key in pointDataKeys:
-            self.OutputArray['PointData'][key] = np.array(wrappedCenterlines.PointData.GetArray(key))
+            self.ArrayDict['PointData'][key] = np.array(wrappedCenterlines.PointData.GetArray(key))
 
         self.PrintLog('writing cell data to dictionary')
         numberOfCells = centerlinesCellToPoint.Surface.GetNumberOfCells()
@@ -93,7 +93,7 @@ class vmtkCenterlinesToNumpy(pypes.pypeScript):
             for point in range(numberOfPointsPerCell):
                 cellArray[point] = cell.GetPointId(point)
 
-            self.OutputArray['CellData']['CellPointIds'][str(cellId)] = cellArray
+            self.ArrayDict['CellData']['CellPointIds'][str(cellId)] = cellArray
 
 
 if __name__=='__main__':

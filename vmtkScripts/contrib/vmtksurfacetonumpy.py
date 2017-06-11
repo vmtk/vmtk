@@ -47,7 +47,7 @@ class vmtkSurfaceToNumpy(pypes.pypeScript):
 
         self.Surface = None
 
-        self.OutputArray = vividict()
+        self.ArrayDict = vividict()
 
         self.SetScriptName('vmtkSurfaceToNumpy')
         self.SetScriptDoc('Takes a VTK triangulated surface vtkPolyData file (optionally containing point data scalar '
@@ -56,7 +56,7 @@ class vmtkSurfaceToNumpy(pypes.pypeScript):
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader']])
         self.SetOutputMembers([
-            ['OutputArray','o','dict',1]])
+            ['ArrayDict','o','dict',1]])
 
     def Execute(self):
 
@@ -76,12 +76,12 @@ class vmtkSurfaceToNumpy(pypes.pypeScript):
         wrappedSurface = dsa.WrapDataObject(surfaceCellToPoint.Surface)
 
         self.PrintLog('writing vertex points to dictionary')
-        self.OutputArray['Points'] = np.array(wrappedSurface.Points)
+        self.ArrayDict['Points'] = np.array(wrappedSurface.Points)
 
         self.PrintLog('writing point data scalars to dictionary')
         pointDataKeys = wrappedSurface.PointData.keys()
         for key in pointDataKeys:
-            self.OutputArray['PointData'][key] = np.array(wrappedSurface.PointData.GetArray(key))
+            self.ArrayDict['PointData'][key] = np.array(wrappedSurface.PointData.GetArray(key))
 
         self.PrintLog('writing cell data to dictionary')
         numberOfCells = surfaceCellToPoint.Surface.GetNumberOfCells()
@@ -93,7 +93,7 @@ class vmtkSurfaceToNumpy(pypes.pypeScript):
             for point in range(numberOfPointsPerCell):
                 cellArray[cellId, point] = cell.GetPointId(point)
 
-        self.OutputArray['CellData']['CellPointIds'] = cellArray
+        self.ArrayDict['CellData']['CellPointIds'] = cellArray
 
 
 if __name__=='__main__':
