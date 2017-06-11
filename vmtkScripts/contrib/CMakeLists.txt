@@ -6,6 +6,7 @@ SET(CONTRIB_SCRIPTS_SRCS
     vmtkdijkstradistancetopoints.py
     vmtkdistancetospheres.py
     vmtkgeodesicsurfaceresolution.py
+    vmtkimagetonumpy.py
     vmtkmeshaddexternallayer.py
     vmtkmeshclipcenterlines.py
     vmtkmeshtetrahedralize2.py
@@ -13,6 +14,7 @@ SET(CONTRIB_SCRIPTS_SRCS
     vmtkmeshwriter2.py
     vmtknumpyreader.py
     vmtknumpytocenterlines.py
+    vmtknumpytoimage.py
     vmtknumpytosurface.py
     vmtknumpywriter.py
     vmtksurfaceresolution.py
