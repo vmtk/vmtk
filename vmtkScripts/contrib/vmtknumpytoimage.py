@@ -32,7 +32,7 @@ except ImportError:
     raise ImportError('Unable to Import vmtkimagetonumpy module, numpy is not installed')
 
 
-# convenience class for nested disctionaries
+# convenience class for nested dictionaries
 class vividict(dict):
     def __missing__(self, key):
         value = self[key] = type(self)()
@@ -65,11 +65,12 @@ class vmtkNumpyToImage(pypes.pypeScript):
 
         self.PrintLog('Converting Numpy Array to vtkImageData')
         pointDataKeys = self.ArrayDict['PointData'].keys()
+
         for key in pointDataKeys:
-            pointDataDType = str(self.ArrayDict['PointData'][key].dtype)
-            if pointDataDType.find('float') != -1:
+
+            if np.issubdtype(self.ArrayDict['PointData'][key], float):
                 pointDataArray = vtk.vtkFloatArray()
-            if pointDataDType.find('int') != -1:
+            if np.issubdtype(self.ArrayDict['PointData'][key], int):
                 pointDataArray = vtk.vtkIntArray()
 
             pointDataArray.SetNumberOfComponents(1)

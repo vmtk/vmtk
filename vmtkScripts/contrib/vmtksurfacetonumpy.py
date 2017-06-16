@@ -33,7 +33,7 @@ except ImportError:
     raise ImportError('Unable to Import vmtksurfacetonumpy module, numpy is not installed')
 
 
-# convenience class for nested disctionaries
+# convenience class for nested dictionaries
 class vividict(dict):
     def __missing__(self, key):
         value = self[key] = type(self)()
