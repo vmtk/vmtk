@@ -68,17 +68,19 @@ class vmtkNumpyToImage(pypes.pypeScript):
 
         for key in pointDataKeys:
 
-            if np.issubdtype(self.ArrayDict['PointData'][key], float):
+            if np.issubdtype(self.ArrayDict['PointData'][key].dtype, float):
                 pointDataArray = vtk.vtkFloatArray()
-            if np.issubdtype(self.ArrayDict['PointData'][key], int):
+            if np.issubdtype(self.ArrayDict['PointData'][key].dtype, int):
                 pointDataArray = vtk.vtkIntArray()
+
+            flatArray = self.ArrayDict['PointData'][key].ravel(order='F')
 
             pointDataArray.SetNumberOfComponents(1)
             pointDataArray.SetName(key)
+            pointDataArray.SetNumberOfValues(flatArray.size)
 
-            flatArray = self.ArrayDict['PointData'][key].ravel(order='F')
-            for pointData in flatArray:
-                pointDataArray.InsertNextValue(pointData)
+            for index, pointData in enumerate(flatArray):
+                pointDataArray.SetValue(index, pointData)
             self.Image.GetPointData().SetActiveScalars(key)
             self.Image.GetPointData().SetScalars(pointDataArray)
 

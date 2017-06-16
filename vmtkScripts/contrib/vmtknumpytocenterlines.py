@@ -58,9 +58,9 @@ class vmtkNumpyToCenterlines(pypes.pypeScript):
         pointDataKeys = self.ArrayDict['PointData'].keys()
         for key in pointDataKeys:
 
-            if np.issubdtype(self.ArrayDict['PointData'][key], float):
+            if np.issubdtype(self.ArrayDict['PointData'][key].dtype, float):
                 pointDataArray = vtk.vtkFloatArray()
-            if np.issubdtype(self.ArrayDict['PointData'][key], int):
+            if np.issubdtype(self.ArrayDict['PointData'][key].dtype, int):
                 pointDataArray = vtk.vtkIntArray()
 
             try:
@@ -72,13 +72,16 @@ class vmtkNumpyToCenterlines(pypes.pypeScript):
             pointDataArray.SetName(key)
 
             if pointDataComponents == 1:
-                for pointData in self.ArrayDict['PointData'][key]:
-                    pointDataArray.InsertNextValue(pointData)
+                pointDataArray.SetNumberOfValues(self.ArrayDict['PointData'][key].size)
+                for index, pointData in enumerate(self.ArrayDict['PointData'][key]):
+                    pointDataArray.SetValue(index, pointData)
                 polyData.GetPointData().SetActiveScalars(key)
                 polyData.GetPointData().SetScalars(pointDataArray)
+
             else:
-                for pointData in self.ArrayDict['PointData'][key]:
-                    pointDataArray.InsertNextTuple(pointData)
+                pointDataArray.SetNumberOfValues(self.ArrayDict['PointData']['key'].shape[0])
+                for index, pointData in enumerate(self.ArrayDict['PointData'][key]):
+                    pointDataArray.SetTupleValue(index, pointData)
                 polyData.GetPointData().SetActiveVectors(key)
                 polyData.GetPointData().SetVectors(pointDataArray)
 
