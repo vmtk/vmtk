@@ -37,14 +37,48 @@ class vmtkNumpyWriter(pypes.pypeScript):
 
         self.InputDict = None
         self.OutputFileName = ''
+        self.Format = 'pickle'
 
         self.SetScriptName('vmtkNumpyWriter')
         self.SetScriptDoc('Writes a dictionary containing numpy array data to a file')
 
         self.SetInputMembers([
             ['ArrayDict','i','dict',1,'','the input dictionary'],
-            ['OutputFileName','ofile','str',1,'','the output file name']])
+            ['OutputFileName','ofile','str',1,'','the output file name'],
+            ['Format','format','str',1,'["pickle","hdf5"]','write files as pickled object or hdf5 file format']])
         self.SetOutputMembers([])
+
+    def WritePickledObjectFile(self):
+        self.PrintLog('Writing Pickled Object File')
+        pickleFileName = self.OutputFileName + '.pickle'
+        with open(pickleFileName, 'wb') as outfile:
+            pickle.dump(self.ArrayDict, outfile, protocol=pickle.HIGHEST_PROTOCOL)
+
+    def WriteHDF5File(self): # dic, filename, objectname=None):
+        """
+        Save a dictionary whose contents are only strings, np.float64, np.int64,
+        np.ndarray, and other dictionaries following this structure
+        to an HDF5 file. These are the sorts of dictionaries that are meant
+        to be produced by the ReportInterface__to_dict__() method.
+        """
+
+        def recursively_save_dict_contents_to_group(h5file, path, dic):
+            """
+            Take an already open HDF5 file and insert the contents of a dictionary
+            at the current path location. Can call itself recursively to fill
+            out HDF5 files with the contents of a dictionary.
+            """
+            for key, item in dic.items():
+                if isinstance(item, (np.ndarray, np.int64, np.float64, str, bytes)):
+                    h5file[path + key] = item
+                elif isinstance(item, dict):
+                    recursively_save_dict_contents_to_group(h5file, path + key + '/', item)
+                else:
+                    raise ValueError('Cannot save %s type' % type(item))
+
+        hdf5FileName = self.OutputFileName + '.hdf5'
+        with h5py.File(hdf5FileName, 'w') as h5file:
+            recursively_save_dict_contents_to_group(h5file, '/', self.ArrayDict)
 
     def Execute(self):
 
@@ -63,9 +97,15 @@ class vmtkNumpyWriter(pypes.pypeScript):
             if not self.OutputFileName:
                 self.PrintError('Error: no Output File Name.')
 
-        self.PrintLog('Writing File')
-        with open(self.OutputFileName, 'wb') as outfile:
-            pickle.dump(self.ArrayDict, outfile, protocol=pickle.HIGHEST_PROTOCOL)
+        self.OutputFileName = self.OutputFileName.rsplit( ".", 1 )[ 0 ]
+
+        if self.Format == 'pickle':
+            self.WritePickledObjectFile()
+        if self.Format == 'hdf5':
+            self.WriteHDF5File()
+        else:
+            self.PrintError('Error: unsupported format '+ self.Format + '.')
+
 
 if __name__=='__main__':
     main = pypes.pypeMain()
