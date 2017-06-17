@@ -79,9 +79,8 @@ class vmtkNumpyToCenterlines(pypes.pypeScript):
                 polyData.GetPointData().SetScalars(pointDataArray)
 
             else:
-                pointDataArray.SetNumberOfValues(self.ArrayDict['PointData']['key'].shape[0])
-                for index, pointData in enumerate(self.ArrayDict['PointData'][key]):
-                    pointDataArray.SetTupleValue(index, pointData)
+                for pointData in self.ArrayDict['PointData'][key]:
+                    pointDataArray.InsertNextTuple(pointData)
                 polyData.GetPointData().SetActiveVectors(key)
                 polyData.GetPointData().SetVectors(pointDataArray)
 
