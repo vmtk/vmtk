@@ -41,7 +41,7 @@ class vmtkNumpyToSurface(pypes.pypeScript):
                           'points, associated scalar data, and cell data specifying triangle connectivity' 
                           'and returns a VTK triangulated surface vtkPolyData file')
         self.SetInputMembers([
-            ['ArrayDict','i','dict',1,'','the input dictionary']])
+            ['ArrayDict','i','dict',1,'','the input array dictionary','vmtknumpyreader']])
         self.SetOutputMembers([
             ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter']])
 

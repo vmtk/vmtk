@@ -56,7 +56,7 @@ class vmtkSurfaceToNumpy(pypes.pypeScript):
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader']])
         self.SetOutputMembers([
-            ['ArrayDict','o','dict',1]])
+            ['ArrayDict','o','dict',1,'','the output dictionary','vmtknumpywriter']])
 
     def Execute(self):
 

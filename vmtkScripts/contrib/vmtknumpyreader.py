@@ -45,9 +45,9 @@ class vmtkNumpyReader(pypes.pypeScript):
         self.SetInputMembers([
             ['Format','f','str',1,'["pickle","hdf5"]','file format'],
             ['GuessFormat','guessformat','bool', 1,'','guess file format from extension'],
-            ['InputFileName','i','str',1,'','the input file name'],])
+            ['InputFileName','ifile','str',1,'','the input file name']])
         self.SetOutputMembers([
-            ['ArrayDict','ofile','dict',1,'','the output dictionary']
+            ['ArrayDict','o','dict',1,'','the output dictionary']
         ])
 
 

@@ -44,7 +44,7 @@ class vmtkNumpyWriter(pypes.pypeScript):
         self.SetScriptDoc('Writes a dictionary containing numpy array data to a file')
 
         self.SetInputMembers([
-            ['ArrayDict','i','dict',1,'','the input dictionary'],
+            ['ArrayDict','i','dict',1,'','the input array dictionary','vmtknumpyreader'],
             ['OutputFileName','ofile','str',1,'','the output file name'],
             ['Format','format','str',1,'["pickle","hdf5"]','write files as pickled object or hdf5 file format']])
         self.SetOutputMembers([])

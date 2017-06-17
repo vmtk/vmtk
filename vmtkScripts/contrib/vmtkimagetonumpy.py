@@ -54,7 +54,7 @@ class vmtkImageToNumpy(pypes.pypeScript):
         self.SetInputMembers([
             ['Image','i','vtkImageData',1,'','the input image','vmtkimagereader']])
         self.SetOutputMembers([
-            ['ArrayDict','o','dict',1]])
+            ['ArrayDict','o','dict',1,'','the output dictionary','vmtknumpywriter']])
 
     def Execute(self):
 

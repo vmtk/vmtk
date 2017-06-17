@@ -40,7 +40,7 @@ class vmtkNumpyToCenterlines(pypes.pypeScript):
                           'points, associated scalar data, and cell data specifying line connectivity'
                           'and returns a VTK centerlines vtkPolyData file')
         self.SetInputMembers([
-            ['ArrayDict','i','dict',1,'','the input dictionary']])
+            ['ArrayDict','i','dict',1,'','the input array dictionary','vmtknumpyreader']])
         self.SetOutputMembers([
             ['Centerlines','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter']])
 
