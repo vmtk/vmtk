@@ -43,8 +43,8 @@ class vmtkNumpyReader(pypes.pypeScript):
         self.SetScriptDoc('reads a pickled file containing a numpy dictionary into an output array')
 
         self.SetInputMembers([
-            ['Format', 'f', 'str', 1, '["picle","hdf5"]', 'file format'],
-            ['GuessFormat', 'guessformat', 'bool', 1, '', 'guess file format from extension'],
+            ['Format','f','str',1,'["pickle","hdf5"]','file format'],
+            ['GuessFormat','guessformat','bool', 1,'','guess file format from extension'],
             ['InputFileName','i','str',1,'','the input file name'],])
         self.SetOutputMembers([
             ['ArrayDict','ofile','dict',1,'','the output dictionary']
