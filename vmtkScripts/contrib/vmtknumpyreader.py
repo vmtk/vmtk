@@ -58,11 +58,7 @@ class vmtkNumpyReader(pypes.pypeScript):
 
     def ReadHDF5File(self):
         """
-        Load a dictionary whose contents are only strings, floats, ints,
-        numpy arrays, and other dictionaries following this structure
-        from an HDF5 file. These dictionaries can then be used to reconstruct
-        ReportInterface subclass instances using the
-        ReportInterface.__from_dict__() method.
+        Load a dictionary from an HDF5 file.
         """
 
         try:
@@ -84,11 +80,11 @@ class vmtkNumpyReader(pypes.pypeScript):
                     ans[key] = recursively_load_dict_contents_from_group(h5file, path + key + '/')
             return ans
 
-        with h5py.File(filename, 'r') as h5file:
+        with h5py.File(self.InputFileName, 'r') as h5file:
             self.ArrayDict = recursively_load_dict_contents_from_group(h5file, '/')
 
     def Execute(self):
-        extensionFormats = {'pickle':'vtkxml',
+        extensionFormats = {'pickle':'pickle',
                             'hdf5':'hdf5'}
 
         if self.InputFileName == 'BROWSER':
@@ -114,7 +110,7 @@ class vmtkNumpyReader(pypes.pypeScript):
         self.PrintLog('Reading File')
         if self.Format == 'pickle':
             self.ReadPickleFile()
-        if self.Format = 'hdf5':
+        elif self.Format == 'hdf5':
             self.ReadHDF5File()
         else:
             self.PrintError('Error: unsupported format '+ self.Format + '.')

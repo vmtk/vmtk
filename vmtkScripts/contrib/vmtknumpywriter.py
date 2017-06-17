@@ -57,10 +57,7 @@ class vmtkNumpyWriter(pypes.pypeScript):
 
     def WriteHDF5File(self): # dic, filename, objectname=None):
         """
-        Save a dictionary whose contents are only strings, np.float64, np.int64,
-        np.ndarray, and other dictionaries following this structure
-        to an HDF5 file. These are the sorts of dictionaries that are meant
-        to be produced by the ReportInterface__to_dict__() method.
+        Save a dictionary to an HDF5 file.
         """
 
         try:
@@ -76,13 +73,12 @@ class vmtkNumpyWriter(pypes.pypeScript):
             out HDF5 files with the contents of a dictionary.
             """
             for key, item in dic.items():
-                if isinstance(item, (np.ndarray, np.int64, np.float64, str, bytes)):
-                    h5file[path + key] = item
-                elif isinstance(item, dict):
+                if isinstance(item, dict):
                     recursively_save_dict_contents_to_group(h5file, path + key + '/', item)
                 else:
-                    raise ValueError('Cannot save %s type' % type(item))
+                    h5file[path + key] = item
 
+        self.PrintLog('Writing HDF5 File')
         hdf5FileName = self.OutputFileName + '.hdf5'
         with h5py.File(hdf5FileName, 'w') as h5file:
             recursively_save_dict_contents_to_group(h5file, '/', self.ArrayDict)
@@ -106,9 +102,10 @@ class vmtkNumpyWriter(pypes.pypeScript):
 
         self.OutputFileName = self.OutputFileName.rsplit( ".", 1 )[ 0 ]
 
+        self.PrintLog('Writing File')
         if self.Format == 'pickle':
             self.WritePickledObjectFile()
-        if self.Format == 'hdf5':
+        elif self.Format == 'hdf5':
             self.WriteHDF5File()
         else:
             self.PrintError('Error: unsupported format '+ self.Format + '.')
