@@ -23,6 +23,7 @@ from vmtk import vtkvmtk
 from vmtk import vmtkrenderer
 from vmtk import pypes
 import pickle
+import os
 
 try:
     import numpy as np
@@ -61,6 +62,12 @@ class vmtkNumpyWriter(pypes.pypeScript):
         to an HDF5 file. These are the sorts of dictionaries that are meant
         to be produced by the ReportInterface__to_dict__() method.
         """
+
+        try:
+            import h5py
+        except ImportError:
+            self.PrintError('ImportError: Unable to Write to hdf5. h5py module not installed')
+            raise ImportError('Unable to Write to hdf5. h5py module not installed')
 
         def recursively_save_dict_contents_to_group(h5file, path, dic):
             """

@@ -21,6 +21,7 @@ import sys
 
 from vmtk import pypes
 import pickle
+import os
 
 try:
     import numpy as np
@@ -63,6 +64,12 @@ class vmtkNumpyReader(pypes.pypeScript):
         ReportInterface subclass instances using the
         ReportInterface.__from_dict__() method.
         """
+
+        try:
+            import h5py
+        except ImportError:
+            self.PrintError('ImportError: Unable to Write to hdf5. h5py module not installed')
+            raise ImportError('Unable to Write to hdf5. h5py module not installed')
 
         def recursively_load_dict_contents_from_group(h5file, path):
             """
