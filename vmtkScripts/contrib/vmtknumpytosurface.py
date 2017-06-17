@@ -61,8 +61,14 @@ class vmtkNumpyToSurface(pypes.pypeScript):
 
             if np.issubdtype(self.ArrayDict['PointData'][key].dtype, float):
                 pointDataArray = vtk.vtkFloatArray()
-            if np.issubdtype(self.ArrayDict['PointData'][key].dtype, int):
-                pointDataArray = vtk.vtkIntArray()
+
+            possibleIntDtypes = [int, np.uint8, np.uint16, np.uint32, np.uint64]
+            for checkDt in possibleIntDtypes:
+                if np.issubdtype(self.ArrayDict['PointData'][key].dtype, checkDt) == True:
+                    pointDataArray = vtk.vtkIntArray()
+                    break
+                else:
+                    continue
 
             try:
                 pointDataComponents = self.ArrayDict['PointData'][key].shape[1]
