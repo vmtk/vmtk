@@ -114,7 +114,7 @@ class vmtkSurfaceToNumpy(pypes.pypeScript):
         for x in it:
             x[...] = surfWrapper.VTKObject.GetCell(it.multi_index[0]).GetPointId(it.multi_index[1])
 
-        self.ArrayDict['CellData']['CellPointIds'] = [cellArray]
+        self.ArrayDict['CellData']['CellPointIds'] = cellArray
 
 
 if __name__=='__main__':
