@@ -55,6 +55,7 @@ class vmtkNumpyToImage(pypes.pypeScript):
 
     def Execute(self):
 
+        self.PrintLog('Converting Numpy Array to vtkImageData')
         self.Image = vtk.vtkImageData()
         self.Image.SetDimensions(self.ArrayDict['Dimensions'])
         self.Image.SetOrigin(self.ArrayDict['Origin'])
@@ -63,31 +64,29 @@ class vmtkNumpyToImage(pypes.pypeScript):
                                 0, self.ArrayDict['Dimensions'][1] - 1,
                                 0, self.ArrayDict['Dimensions'][2] - 1,))
 
-        self.PrintLog('Converting Numpy Array to vtkImageData')
-        pointDataKeys = self.ArrayDict['PointData'].keys()
 
-        for key in pointDataKeys:
-
-            if np.issubdtype(self.ArrayDict['PointData'][key].dtype, float):
+        self.PrintLog('converting point data')
+        for pointKey in self.ArrayDict['PointData'].keys():
+            if np.issubdtype(self.ArrayDict['PointData'][pointKey].dtype, float):
                 pointDataArray = vtk.vtkFloatArray()
+            else:
+                for checkDt in [int, np.uint8, np.uint16, np.uint32, np.uint64]:
+                    if np.issubdtype(self.ArrayDict['PointData'][pointKey].dtype, checkDt):
+                        pointDataArray = vtk.vtkIntArray()
+                        break
+                    else:
+                        continue
 
-            possibleIntDtypes = [int, np.uint8, np.uint16, np.uint32, np.uint64]
-            for checkDt in possibleIntDtypes:
-                if np.issubdtype(self.ArrayDict['PointData'][key].dtype, checkDt) == True:
-                    pointDataArray = vtk.vtkIntArray()
-                    break
-                else:
-                    continue
-
-            flatArray = self.ArrayDict['PointData'][key].ravel(order='F')
+            flatArray = self.ArrayDict['PointData'][pointKey].ravel(order='F')
 
             pointDataArray.SetNumberOfComponents(1)
-            pointDataArray.SetName(key)
+            pointDataArray.SetName(pointKey)
             pointDataArray.SetNumberOfValues(flatArray.size)
 
-            for index, pointData in enumerate(flatArray):
-                pointDataArray.SetValue(index, pointData)
-            self.Image.GetPointData().SetActiveScalars(key)
+            it = np.nditer(flatArray, flags=['multi_index'])
+            for x in it:
+                pointDataArray.SetValue(it.multi_index[0], x)
+            self.Image.GetPointData().SetActiveScalars(pointKey)
             self.Image.GetPointData().SetScalars(pointDataArray)
 
 

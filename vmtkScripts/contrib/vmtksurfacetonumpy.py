@@ -46,7 +46,7 @@ class vmtkSurfaceToNumpy(pypes.pypeScript):
         pypes.pypeScript.__init__(self)
 
         self.Surface = None
-
+        self.ConvertCellToPoint = 0
         self.ArrayDict = vividict()
 
         self.SetScriptName('vmtkSurfaceToNumpy')
@@ -54,7 +54,8 @@ class vmtkSurfaceToNumpy(pypes.pypeScript):
                           'arrays) and returns a nested python dictionary containing numpy arrays specifying vertex '
                           'points, associated scalar data, and cell data yielding triangle connectivity')
         self.SetInputMembers([
-            ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader']])
+            ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
+            ['ConvertCellToPoint', 'celltopoint', 'bool', 1, '', 'convert cell data to point data']])
         self.SetOutputMembers([
             ['ArrayDict','o','dict',1,'','the output dictionary','vmtknumpywriter']])
 
@@ -63,37 +64,57 @@ class vmtkSurfaceToNumpy(pypes.pypeScript):
         if self.Surface == None:
             self.PrintError('Error: No input surface.')
 
-        self.PrintLog('converting any cell data to point data')
-        try:
-            from vmtk import vmtksurfacecelldatatopointdata
-        except ImportError:
-            raise ImportError('unable to import vmtksurfacecelldatatopointdata module')
-        surfaceCellToPoint = vmtksurfacecelldatatopointdata.vmtkSurfaceCellDataToPointData()
-        surfaceCellToPoint.Surface = self.Surface
-        surfaceCellToPoint.Execute()
+        if self.ConvertCellToPoint == 1:
 
-        self.PrintLog('wrapping vtkPolyData object')
-        wrappedSurface = dsa.WrapDataObject(surfaceCellToPoint.Surface)
+            self.PrintLog('converting any cell data to point data')
+            try:
+                from vmtk import vmtksurfacecelldatatopointdata
+            except ImportError:
+                raise ImportError('unable to import vmtksurfacecelldatatopointdata module')
+            surfaceCellToPoint = vmtksurfacecelldatatopointdata.vmtkSurfaceCellDataToPointData()
+            surfaceCellToPoint.Surface = self.Surface
+            surfaceCellToPoint.Execute()
 
-        self.PrintLog('writing vertex points to dictionary')
-        self.ArrayDict['Points'] = np.array(wrappedSurface.Points)
+            self.PrintLog('wrapping vtkPolyData object')
+            surfWrapper = dsa.WrapDataObject(surfaceCellToPoint.Surface)
 
-        self.PrintLog('writing point data scalars to dictionary')
-        pointDataKeys = wrappedSurface.PointData.keys()
-        for key in pointDataKeys:
-            self.ArrayDict['PointData'][key] = np.array(wrappedSurface.PointData.GetArray(key))
+        else:
+            self.PrintLog('wrapping vtkPolyData object')
+            surfWrapper = dsa.WrapDataObject(self.Surface)
 
-        self.PrintLog('writing cell data to dictionary')
-        numberOfCells = surfaceCellToPoint.Surface.GetNumberOfCells()
-        numberOfPointsPerCell = surfaceCellToPoint.Surface.GetCell(0).GetNumberOfPoints()
+            self.PrintLog('converting cell data: ')
+            for cellKey in surfWrapper.CellData.keys():
+                self.PrintLog(cellKey)
+                self.ArrayDict['CellData'][cellKey] = np.array(surfWrapper.CellData.GetArray(cellKey))
+
+
+        self.PrintLog('converting points')
+        self.ArrayDict['Points'] = np.array(surfWrapper.Points)
+
+        self.PrintLog('converting point data: ')
+        for pointKey in surfWrapper.PointData.keys():
+            self.PrintLog(pointKey)
+            self.ArrayDict['PointData'][pointKey] = np.array(surfWrapper.PointData.GetArray(pointKey))
+
+        self.PrintLog('converting cell connectivity list')
+        numberOfCells = surfWrapper.VTKObject.GetNumberOfCells()
+        numberOfPointsPerCell = surfWrapper.VTKObject.GetCell(0).GetNumberOfPoints()
 
         cellArray = np.zeros(shape=(numberOfCells, numberOfPointsPerCell), dtype=np.int32)
-        for cellId in range(numberOfCells):
-            cell = surfaceCellToPoint.Surface.GetCell(cellId)
-            for point in range(numberOfPointsPerCell):
-                cellArray[cellId, point] = cell.GetPointId(point)
+        it = np.nditer(cellArray, flags=['multi_index'], op_flags=['readwrite'])
 
-        self.ArrayDict['CellData']['CellPointIds'] = cellArray
+        # this is an efficient ndarray iterator method. the loop "for x in it" pulls an element out of
+        # the cellArray iterator (it) and with the elipses syntax (x[...]) writes the point id.
+        # this is equivalent to writing
+        # for cellId in range(numberOfCells):
+        #     cell = surfWrapper.VTKObject.GetCell(cellId)
+        #     for point in range(numberOfPointsPerCell):
+        #         cellArray[cellId, point] = cell.GetPointId(point)
+
+        for x in it:
+            x[...] = surfWrapper.VTKObject.GetCell(it.multi_index[0]).GetPointId(it.multi_index[1])
+
+        self.ArrayDict['CellData']['CellPointIds'] = [cellArray]
 
 
 if __name__=='__main__':

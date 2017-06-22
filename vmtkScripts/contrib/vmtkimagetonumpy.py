@@ -46,7 +46,6 @@ class vmtkImageToNumpy(pypes.pypeScript):
         pypes.pypeScript.__init__(self)
 
         self.Image = None
-
         self.ArrayDict = vividict()
 
         self.SetScriptName('vmtkImageToNumpy')
@@ -61,26 +60,46 @@ class vmtkImageToNumpy(pypes.pypeScript):
         if self.Image == None:
             self.PrintError('Error: no input image.')
 
-        self.ArrayDict['Origin'] = self.Image.GetOrigin()
-        self.ArrayDict['Dimensions'] = self.Image.GetDimensions()
-        self.ArrayDict['Spacing'] = self.Image.GetSpacing()
+        self.PrintLog('wrapping vtkDataObject')
+        imWrapped = dsa.WrapDataObject(self.Image)
 
-        imageData = dsa.WrapDataObject(self.Image)
-        pointData = imageData.GetPointData()
-        pointDataKeys = pointData.keys()
+        self.PrintLog('setting origin')
+        self.PrintLog('setting dimensions')
+        self.PrintLog('setting spacing')
 
-        self.PrintLog('Converting Image to Numpy Array')
-        for index, key in enumerate(pointDataKeys):
-            flatArray = np.array(pointData.GetArray(index))
-            reshapedArray = np.zeros(shape=self.ArrayDict['Dimensions'])
+        self.ArrayDict['Origin'] = np.array(self.Image.GetOrigin())
+        self.ArrayDict['Dimensions'] = np.array(self.Image.GetDimensions())
+        self.ArrayDict['Spacing'] = np.array(self.Image.GetSpacing())
 
-            for xId in range(self.ArrayDict['Dimensions'][0]):
-                for yId in range(self.ArrayDict['Dimensions'][1]):
-                    for zId in range(self.ArrayDict['Dimensions'][2]):
-                        pointId = self.Image.ComputePointId((xId, yId, zId))
-                        reshapedArray[xId, yId, zId] = flatArray[pointId]
+        self.PrintLog('writing point data: ')
+        for pointKey in imWrapped.PointData.keys():
+            flatPointArray = np.array(imWrapped.PointData.GetArray(pointKey))
+            pointArray = np.empty(shape=self.ArrayDict['Dimensions'], dtype=flatPointArray.dtype)
 
-            self.ArrayDict['PointData'][key] = reshapedArray.astype(flatArray.dtype)
+            # this is an efficient ndarray iterator method. the loop "for x in it" pulls an element out of
+            # the cellArray iterator (it) and with the elipses syntax (x[...]) writes the point id.
+            # this is equivalent to writing
+            # pointData = imageData.GetPointData()
+            # pointDataKeys = pointData.keys()
+            #
+            # self.PrintLog('Converting Image to Numpy Array')
+            # for index, key in enumerate(pointDataKeys):
+            #     flatArray = np.array(pointData.GetArray(index))
+            #     reshapedArray = np.zeros(shape=self.ArrayDict['Dimensions'])
+            #
+            #     for xId in range(self.ArrayDict['Dimensions'][0]):
+            #         for yId in range(self.ArrayDict['Dimensions'][1]):
+            #             for zId in range(self.ArrayDict['Dimensions'][2]):
+            #                 pointId = self.Image.ComputePointId((xId, yId, zId))
+            #                 reshapedArray[xId, yId, zId] = flatArray[pointId]
+            #
+            #     self.ArrayDict['PointData'][key] = reshapedArray.astype(flatArray.dtype)
+
+            it = np.nditer(pointArray, flags=['multi_index'], op_flags=['readwrite'])
+            for x in it:
+                x[...] = flatPointArray[self.Image.ComputePointId(it.multi_index)]
+
+            self.ArrayDict['PointData'][pointKey] = pointArray
 
 if __name__=='__main__':
     main = pypes.pypeMain()

@@ -48,68 +48,88 @@ class vmtkNumpyToCenterlines(pypes.pypeScript):
 
         polyData = vtk.vtkPolyData()
 
+        self.PrintLog('converting points')
         points = vtk.vtkPoints()
         for xyzPoint in self.ArrayDict['Points']:
             points.InsertNextPoint(xyzPoint)
 
         polyData.SetPoints(points)
 
-        self.PrintLog('converting numpy array to centerlines')
-        pointDataKeys = self.ArrayDict['PointData'].keys()
-        for key in pointDataKeys:
+        self.PrintLog('converting point data')
+        for pointKey in self.ArrayDict['PointData'].keys():
 
-            if np.issubdtype(self.ArrayDict['PointData'][key].dtype, float):
+            if np.issubdtype(self.ArrayDict['PointData'][pointKey].dtype, float):
                 pointDataArray = vtk.vtkFloatArray()
-
-            possibleIntDtypes = [int, np.uint8, np.uint16, np.uint32, np.uint64]
-            for checkDt in possibleIntDtypes:
-                if np.issubdtype(self.ArrayDict['PointData'][key].dtype, checkDt) == True:
-                    pointDataArray = vtk.vtkIntArray()
-                    break
-                else:
-                    continue
+            else:
+                for checkDt in [int, np.uint8, np.uint16, np.uint32, np.uint64]:
+                    if np.issubdtype(self.ArrayDict['PointData'][pointKey].dtype, checkDt):
+                        pointDataArray = vtk.vtkIntArray()
+                        break
+                    else:
+                        continue
 
             try:
-                pointDataComponents = self.ArrayDict['PointData'][key].shape[1]
+                pointDataComponents = self.ArrayDict['PointData'][pointKey].shape[1]
             except IndexError:
                 pointDataComponents = 1
 
             pointDataArray.SetNumberOfComponents(pointDataComponents)
-            pointDataArray.SetName(key)
+            pointDataArray.SetName(pointKey)
 
             if pointDataComponents == 1:
-                pointDataArray.SetNumberOfValues(self.ArrayDict['PointData'][key].size)
-                for index, pointData in enumerate(self.ArrayDict['PointData'][key]):
+                pointDataArray.SetNumberOfValues(self.ArrayDict['PointData'][pointKey].size)
+                for index, pointData in enumerate(self.ArrayDict['PointData'][pointKey]):
                     pointDataArray.SetValue(index, pointData)
-                polyData.GetPointData().SetActiveScalars(key)
+                polyData.GetPointData().SetActiveScalars(pointKey)
                 polyData.GetPointData().SetScalars(pointDataArray)
-
             else:
-                for pointData in self.ArrayDict['PointData'][key]:
+                for pointData in self.ArrayDict['PointData'][pointKey]:
                     pointDataArray.InsertNextTuple(pointData)
-                polyData.GetPointData().SetActiveVectors(key)
+                polyData.GetPointData().SetActiveVectors(pointKey)
                 polyData.GetPointData().SetVectors(pointDataArray)
 
-        cellDataArray = vtk.vtkCellArray()
-        numberOfCells = len(self.ArrayDict['CellData']['CellPointIds'].keys())
-        for cellId in range(numberOfCells):
-            numberOfCellPoints = self.ArrayDict['CellData']['CellPointIds'][str(cellId)].size
-            cellDataArray.InsertNextCell(numberOfCellPoints)
-            for cellPoint in self.ArrayDict['CellData']['CellPointIds'][str(cellId)]:
-                cellDataArray.InsertCellPoint(cellPoint)
+        self.PrintLog('converting cell data')
+        for cellKey in self.ArrayDict['CellData'].keys():
 
-        polyData.SetLines(cellDataArray)
+            if cellKey == 'CellPointIds':
+                cellDataArray = vtk.vtkCellArray()
+                for cellId in self.ArrayDict['CellData']['CellPointIds']:
+                    numberOfCellPoints = cellId.size
+                    cellDataArray.InsertNextCell(numberOfCellPoints)
+                    for cellPoint in cellId:
+                        cellDataArray.InsertCellPoint(cellPoint)
 
-        try:
-            from vmtk import vmtksurfacepointdatatocelldata
-        except ImportError:
-            raise ImportError('unable to import vmtksurfacepointdatatocelldata module')
+                polyData.SetLines(cellDataArray)
 
-        pointToCell = vmtksurfacepointdatatocelldata.vmtkSurfacePointDataToCellData()
-        pointToCell.Surface = polyData
-        pointToCell.Execute()
+            else:
 
-        self.Centerlines = pointToCell.Surface
+                if np.issubdtype(self.ArrayDict['CellData'][cellKey].dtype, float):
+                    cellDataArray = vtk.vtkFloatArray()
+                if np.issubdtype(self.ArrayDict['CellData'][cellKey].dtype, int):
+                    cellDataArray = vtk.vtkIntArray()
+
+                try:
+                    cellDataComponents = self.ArrayDict['CellData'][cellKey].shape[1]
+                except IndexError:
+                    cellDataComponents = 1
+
+                cellDataArray.SetNumberOfComponents(cellDataComponents)
+                cellDataArray.SetName(cellKey)
+
+                if cellDataComponents == 1:
+                    cellDataArray.SetNumberOfValues(self.ArrayDict['CellData'][cellKey].size)
+                    for index, cellData in enumerate(self.ArrayDict['CellData'][cellKey]):
+                        cellDataArray.SetValue(index, cellData)
+                    polyData.GetCellData().SetActiveScalars(cellKey)
+                    polyData.GetCellData().SetScalars(cellDataArray)
+
+                else:
+                    for cellData in self.ArrayDict['CellData'][cellKey]:
+                        pointDataArray.InsertNextTuple(cellData)
+                    polyData.GetCellData().SetActiveVectors(cellKey)
+                    polyData.GetCellData().SetVectors(cellDataArray)
+
+        self.Centerlines = polyData
 
 
 if __name__ == '__main__':

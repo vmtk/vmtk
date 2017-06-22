@@ -46,7 +46,7 @@ class vmtkCenterlinesToNumpy(pypes.pypeScript):
         pypes.pypeScript.__init__(self)
 
         self.Centerlines = None
-
+        self.ConvertCellToPoint = 0
         self.ArrayDict = vividict()
 
         self.SetScriptName('vmtkCenterlinesToNumpy')
@@ -54,7 +54,8 @@ class vmtkCenterlinesToNumpy(pypes.pypeScript):
                           'arrays or cell data scalar arrays) and returns a nested python dictionary containing numpy '
                           'arrays specifying vertex points, associated scalar data, and cell data yielding connectivity')
         self.SetInputMembers([
-            ['Centerlines','i','vtkPolyData',1,'','the input centerlines','vmtksurfacereader']])
+            ['Centerlines','i','vtkPolyData',1,'','the input centerlines','vmtksurfacereader'],
+            ['ConvertCellToPoint','celltopoint','bool',1,'','convert cell data to point data']])
         self.SetOutputMembers([
             ['ArrayDict','o','dict',1,'','the output dictionary','vmtknumpywriter']])
 
@@ -63,38 +64,48 @@ class vmtkCenterlinesToNumpy(pypes.pypeScript):
         if self.Centerlines == None:
             self.PrintError('Error: No input centerlines.')
 
-        self.PrintLog('converting any cell data to point data')
-        try:
-            from vmtk import vmtksurfacecelldatatopointdata
-        except ImportError:
-            raise ImportError('unable to import vmtksurfacecelldata to point data module')
-        centerlinesCellToPoint = vmtksurfacecelldatatopointdata.vmtkSurfaceCellDataToPointData()
-        centerlinesCellToPoint.Surface = self.Centerlines
-        centerlinesCellToPoint.Execute()
+        if self.ConvertCellToPoint == 1:
+            self.PrintLog('converting cell data to point data')
+            try:
+                from vmtk import vmtksurfacecelldatatopointdata
+            except ImportError:
+                raise ImportError('unable to import vmtksurfacecelldata to point data module')
 
-        self.PrintLog('wrapping vtkPolyData object')
-        wrappedCenterlines = dsa.WrapDataObject(centerlinesCellToPoint.Surface)
+            centerlinesCellToPoint = vmtksurfacecelldatatopointdata.vmtkSurfaceCellDataToPointData()
+            centerlinesCellToPoint.Surface = self.Centerlines
+            centerlinesCellToPoint.Execute()
+            self.PrintLog('wrapping vtkPolyData object')
+            clWrapper = dsa.WrapDataObject(centerlinesCellToPoint.Surface)
 
-        self.PrintLog('writing vertex points to dictionary')
-        self.ArrayDict['Points'] = np.array(wrappedCenterlines.Points)
+        else:
+            self.PrintLog('wrapping vtkPolyData object')
+            clWrapper = dsa.WrapDataObject(self.Centerlines)
 
-        self.PrintLog('writing point data scalars to dictionary')
-        pointDataKeys = wrappedCenterlines.PointData.keys()
-        for key in pointDataKeys:
-            self.ArrayDict['PointData'][key] = np.array(wrappedCenterlines.PointData.GetArray(key))
+            self.PrintLog('converting cell data: ')
+            for cellKey in clWrapper.CellData.keys():
+                self.PrintLog(cellKey)
+                self.ArrayDict['CellData'][cellKey] = np.array(clWrapper.CellData.GetArray(cellKey))
 
-        self.PrintLog('writing cell data to dictionary')
-        numberOfCells = centerlinesCellToPoint.Surface.GetNumberOfCells()
+        self.PrintLog('converting points')
+        self.ArrayDict['Points'] = np.array(clWrapper.Points)
+
+        self.PrintLog('converting point data: ')
+        for pointKey in clWrapper.PointData.keys():
+            self.PrintLog(pointKey)
+            self.ArrayDict['PointData'][pointKey] = np.array(clWrapper.PointData.GetArray(pointKey))
+
+        self.PrintLog('converting cell connectivity list')
+        cellPointIdsList = []
+        numberOfCells = clWrapper.VTKObject.GetNumberOfCells()
         for cellId in range(numberOfCells):
-            cell = centerlinesCellToPoint.Surface.GetCell(cellId)
+            cell = clWrapper.VTKObject.GetCell(cellId)
             numberOfPointsPerCell = cell.GetNumberOfPoints()
-
             cellArray = np.zeros(shape=numberOfPointsPerCell, dtype=np.int32)
             for point in range(numberOfPointsPerCell):
                 cellArray[point] = cell.GetPointId(point)
+            cellPointIdsList.append(cellArray)
 
-            self.ArrayDict['CellData']['CellPointIds'][str(cellId)] = cellArray
-
+        self.ArrayDict['CellData']['CellPointIds'] = cellPointIdsList
 
 if __name__=='__main__':
     main = pypes.pypeMain()
