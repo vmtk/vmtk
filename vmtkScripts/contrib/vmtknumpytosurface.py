@@ -100,8 +100,11 @@ class vmtkNumpyToSurface(pypes.pypeScript):
             if cellKey == 'CellPointIds':
                 cellDataArray = vtk.vtkCellArray()
                 for cellId in self.ArrayDict['CellData'][cellKey]:
-                    for cell in cellId:
-                        cellDataArray.InsertNextCell(mkVtkIdList(cell))
+                    if type(cellId) is np.ndarray:
+                        cellDataArray.InsertNextCell(mkVtkIdList(cellId))
+                    else:
+                        for cell in cellId:
+                            cellDataArray.InsertNextCell(mkVtkIdList(cell))
                 polyData.SetPolys(cellDataArray)
 
             else:
