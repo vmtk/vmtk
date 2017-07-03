@@ -684,6 +684,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::IsPointOnEntityBoundary(vtkIdType pointId)
     return 1;
     }
 
+  ptCells->Delete();
   return 0;
 }
 

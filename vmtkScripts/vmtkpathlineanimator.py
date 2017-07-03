@@ -187,7 +187,7 @@ class vmtkPathLineAnimator(pypes.pypeScript):
         if (self.ArrayMax == None and self.ArrayName == "Velocity"):
             self.ArrayMax = round(self.Traces.GetPointData().GetArray('Speed').GetRange()[1],0)
         
-        if self.Method is 'particles':
+        if self.Method == 'particles':
             particleTime = minTime
             imageNumber = 0
             while particleTime <= maxTime:
@@ -220,7 +220,7 @@ class vmtkPathLineAnimator(pypes.pypeScript):
                 currentTime+=self.TimeStep
                 imageNumber+=1
 
-        elif self.Method is 'streaklines':
+        elif self.Method == 'streaklines':
             particleTime = minTime
             imageNumber = 0
             while particleTime <= maxTime:
