@@ -60,7 +60,7 @@ class vmtkSurfaceSmoothing(pypes.pypeScript):
 
         smoothingFilter = None
 
-        if self.Method is 'taubin':
+        if self.Method == 'taubin':
             smoothingFilter = vtk.vtkWindowedSincPolyDataFilter()
             smoothingFilter.SetInputData(self.Surface)
             smoothingFilter.SetNumberOfIterations(self.NumberOfIterations)
@@ -68,7 +68,7 @@ class vmtkSurfaceSmoothing(pypes.pypeScript):
             smoothingFilter.SetBoundarySmoothing(self.BoundarySmoothing)
             smoothingFilter.SetNormalizeCoordinates(self.NormalizeCoordinates)
             smoothingFilter.Update()
-        elif self.Method is 'laplace':
+        elif self.Method == 'laplace':
             smoothingFilter = vtk.vtkSmoothPolyDataFilter()
             smoothingFilter.SetInputData(self.Surface)
             smoothingFilter.SetNumberOfIterations(self.NumberOfIterations)
