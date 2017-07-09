@@ -512,7 +512,7 @@ void vtkvmtkITKImageWriter::Write()
         float outValue[6];
         for(int i=0; i<out->GetNumberOfTuples(); i++)
           {
-#if VTK_MAJOR_VERSION >= 7 && VTK_MINOR_VERSION >= 1
+#if VTK_MAJOR_VERSION >= 8  || (VTK_MAJOR_VERSION >= 7 && VTK_MINOR_VERSION >= 1)
           in->GetTypedTuple(i, inValue);
 #else
           in->GetTupleValue(i, inValue);

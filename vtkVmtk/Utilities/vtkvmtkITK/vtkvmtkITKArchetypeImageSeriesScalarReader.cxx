@@ -17,7 +17,7 @@
 // VTK includes
 #include <vtkCommand.h>
 #include <vtkDataArray.h>
-#if VTK_MAJOR_VERSION >= 7 && VTK_MINOR_VERSION >= 1
+#if VTK_MAJOR_VERSION >= 8  || (VTK_MAJOR_VERSION >= 7 && VTK_MINOR_VERSION >= 1)
 #include <vtkAOSDataArrayTemplate.h>
 #else
 #include <vtkDataArrayTemplate.h>
@@ -38,7 +38,7 @@ vtkStandardNewMacro(vtkvmtkITKArchetypeImageSeriesScalarReader);
 
 namespace {
 
-#if VTK_MAJOR_VERSION >= 7 && VTK_MINOR_VERSION >= 1
+#if VTK_MAJOR_VERSION >= 8  || (VTK_MAJOR_VERSION >= 7 && VTK_MINOR_VERSION >= 1)
   template <class T>
   vtkAOSDataArrayTemplate<T>* DownCast(vtkAbstractArray* a)
   {
@@ -106,7 +106,7 @@ int vtkvmtkITKArchetypeImageSeriesScalarReader::RequestData(
 #endif
 
 /// SCALAR MACRO
-#if VTK_MAJOR_VERSION >= 7 && VTK_MINOR_VERSION >= 1
+#if VTK_MAJOR_VERSION >= 8  || (VTK_MAJOR_VERSION >= 7 && VTK_MINOR_VERSION >= 1)
 #define vtkITKExecuteDataFromSeries(typeN, type) \
     case typeN: \
     {\
@@ -186,7 +186,7 @@ int vtkvmtkITKArchetypeImageSeriesScalarReader::RequestData(
     break
 #endif
 
-#if VTK_MAJOR_VERSION >= 7 && VTK_MINOR_VERSION >= 1
+#if VTK_MAJOR_VERSION >= 8  || (VTK_MAJOR_VERSION >= 7 && VTK_MINOR_VERSION >= 1)
 #define vtkITKExecuteDataFromFile(typeN, type) \
     case typeN: \
     {\
