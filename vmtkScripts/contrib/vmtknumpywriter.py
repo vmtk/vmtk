@@ -36,7 +36,7 @@ class vmtkNumpyWriter(pypes.pypeScript):
 
         pypes.pypeScript.__init__(self)
 
-        self.InputDict = None
+        self.ArrayDict = None
         self.OutputFileName = ''
         self.Format = 'pickle'
 
@@ -75,6 +75,9 @@ class vmtkNumpyWriter(pypes.pypeScript):
             for key, item in dic.items():
                 if isinstance(item, dict):
                     recursively_save_dict_contents_to_group(h5file, path + key + '/', item)
+                elif isinstance(item, list):
+                    for index, element in enumerate(item):
+                        h5file[path + key + '/' + index] = element
                 else:
                     h5file[path + key] = item
 
