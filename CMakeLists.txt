@@ -19,6 +19,10 @@ foreach(p
   endif()
 endforeach()
 
+if(NOT DEFINED CMAKE_MACOSX_RPATH)
+  set(CMAKE_MACOSX_RPATH 0)
+endif()
+
 # vmtk versions number
 SET(VMTK_VERSION_MAJOR 1)
 SET(VMTK_VERSION_MINOR 4)
