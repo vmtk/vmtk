@@ -55,6 +55,8 @@ class vmtkNumpyWriter(pypes.pypeScript):
         with open(pickleFileName, 'wb') as outfile:
             pickle.dump(self.ArrayDict, outfile, protocol=pickle.HIGHEST_PROTOCOL)
 
+        return
+
     def WriteHDF5File(self): # dic, filename, objectname=None):
         """
         Save a dictionary to an HDF5 file.
@@ -85,6 +87,8 @@ class vmtkNumpyWriter(pypes.pypeScript):
         hdf5FileName = self.OutputFileName + '.hdf5'
         with h5py.File(hdf5FileName, 'w') as h5file:
             recursively_save_dict_contents_to_group(h5file, '/', self.ArrayDict)
+
+        return
 
     def Execute(self):
 
