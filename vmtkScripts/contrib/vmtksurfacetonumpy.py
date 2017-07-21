@@ -96,6 +96,9 @@ class vmtkSurfaceToNumpy(pypes.pypeScript):
             self.PrintLog(pointKey)
             self.ArrayDict['PointData'][pointKey] = np.array(surfWrapper.PointData.GetArray(pointKey))
 
+        if not surfWrapper.PointData.keys():
+            self.ArrayDict['PointData'] = {}
+
         self.PrintLog('converting cell connectivity list')
         numberOfCells = surfWrapper.VTKObject.GetNumberOfCells()
         numberOfPointsPerCell = surfWrapper.VTKObject.GetCell(0).GetNumberOfPoints()
