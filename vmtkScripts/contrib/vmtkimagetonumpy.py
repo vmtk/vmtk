@@ -21,6 +21,7 @@
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import vtk
 from vtk.numpy_interface import dataset_adapter as dsa
+from vtk.util import numpy_support
 import sys
 
 from vmtk import vtkvmtk
@@ -73,33 +74,10 @@ class vmtkImageToNumpy(pypes.pypeScript):
 
         self.PrintLog('writing point data: ')
         for pointKey in imWrapped.PointData.keys():
+
             flatPointArray = np.array(imWrapped.PointData.GetArray(pointKey))
-            pointArray = np.empty(shape=self.ArrayDict['Dimensions'], dtype=flatPointArray.dtype)
+            self.ArrayDict['PointData'][pointKey] = flatPointArray.reshape(self.ArrayDict['Dimensions'], order='F')
 
-            # this is an efficient ndarray iterator method. the loop "for x in it" pulls an element out of
-            # the cellArray iterator (it) and with the elipses syntax (x[...]) writes the point id.
-            # this is equivalent to writing
-            # pointData = imageData.GetPointData()
-            # pointDataKeys = pointData.keys()
-            #
-            # self.PrintLog('Converting Image to Numpy Array')
-            # for index, key in enumerate(pointDataKeys):
-            #     flatArray = np.array(pointData.GetArray(index))
-            #     reshapedArray = np.zeros(shape=self.ArrayDict['Dimensions'])
-            #
-            #     for xId in range(self.ArrayDict['Dimensions'][0]):
-            #         for yId in range(self.ArrayDict['Dimensions'][1]):
-            #             for zId in range(self.ArrayDict['Dimensions'][2]):
-            #                 pointId = self.Image.ComputePointId((xId, yId, zId))
-            #                 reshapedArray[xId, yId, zId] = flatArray[pointId]
-            #
-            #     self.ArrayDict['PointData'][key] = reshapedArray.astype(flatArray.dtype)
-
-            it = np.nditer(pointArray, flags=['multi_index'], op_flags=['readwrite'])
-            for x in it:
-                x[...] = flatPointArray[self.Image.ComputePointId(it.multi_index)]
-
-            self.ArrayDict['PointData'][pointKey] = pointArray
 
 if __name__=='__main__':
     main = pypes.pypeMain()
