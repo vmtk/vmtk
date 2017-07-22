@@ -26,6 +26,9 @@ from vmtk import vtkvmtk
 from vmtk import vmtkrenderer
 from vmtk import pypes
 
+from vtk.numpy_interface import dataset_adapter as dsa
+from vtk.util import numpy_support
+
 try:
     import numpy as np
 except ImportError:
@@ -68,24 +71,19 @@ class vmtkNumpyToImage(pypes.pypeScript):
         self.PrintLog('converting point data')
         for pointKey in self.ArrayDict['PointData'].keys():
             if np.issubdtype(self.ArrayDict['PointData'][pointKey].dtype, float):
-                pointDataArray = vtk.vtkFloatArray()
+                pointDataArrayType = vtk.VTK_FLOAT
             else:
                 for checkDt in [int, np.uint8, np.uint16, np.uint32, np.uint64]:
                     if np.issubdtype(self.ArrayDict['PointData'][pointKey].dtype, checkDt):
-                        pointDataArray = vtk.vtkIntArray()
+                        pointDataArrayType = vtk.VTK_INT
                         break
                     else:
                         continue
 
             flatArray = self.ArrayDict['PointData'][pointKey].ravel(order='F')
 
-            pointDataArray.SetNumberOfComponents(1)
-            pointDataArray.SetName(pointKey)
-            pointDataArray.SetNumberOfValues(flatArray.size)
+            pointDataArray = dsa.numpyTovtkDataArray(flatArray, name=pointKey, array_type=pointDataArrayType)
 
-            it = np.nditer(flatArray, flags=['multi_index'])
-            for x in it:
-                pointDataArray.SetValue(it.multi_index[0], x)
             self.Image.GetPointData().SetActiveScalars(pointKey)
             self.Image.GetPointData().SetScalars(pointDataArray)
 
