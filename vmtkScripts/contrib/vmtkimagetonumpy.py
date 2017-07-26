@@ -50,7 +50,7 @@ class vmtkImageToNumpy(pypes.pypeScript):
         self.ArrayDict = vividict()
 
         self.SetScriptName('vmtkImageToNumpy')
-        self.SetScriptDoc('Takes a vtkImageData object and returns a numpy')
+        self.SetScriptDoc('Takes a vtkImageData object and returns a nested dictionary of numpy arrays')
         self.SetInputMembers([
             ['Image','i','vtkImageData',1,'','the input image','vmtkimagereader']])
         self.SetOutputMembers([

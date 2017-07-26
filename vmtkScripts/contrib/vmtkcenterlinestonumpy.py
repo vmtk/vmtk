@@ -50,8 +50,7 @@ class vmtkCenterlinesToNumpy(pypes.pypeScript):
         self.ArrayDict = vividict()
 
         self.SetScriptName('vmtkCenterlinesToNumpy')
-        self.SetScriptDoc('Takes a VTK centerlines vtkPolyData file (optionally containing point data scalar '
-                          'arrays or cell data scalar arrays) and returns a nested python dictionary containing numpy '
+        self.SetScriptDoc('Takes a VTK centerlines vtkPolyData file and returns a nested python dictionary containing numpy'
                           'arrays specifying vertex points, associated scalar data, and cell data yielding connectivity')
         self.SetInputMembers([
             ['Centerlines','i','vtkPolyData',1,'','the input centerlines','vmtksurfacereader'],

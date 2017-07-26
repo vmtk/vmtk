@@ -50,7 +50,8 @@ class vmtkNumpyToImage(pypes.pypeScript):
         self.ArrayDict = None
 
         self.SetScriptName('vmtkNumpyToImage')
-        self.SetScriptDoc('Takes a dictionary of numpy arrays and returns a vtkImageData object.')
+        self.SetScriptDoc('Takes a dictionary of numpy arrays specifying dimensions, origin, spacing, and the image '
+                          'point data and returns a vtkImageData object.')
         self.SetInputMembers([
             ['ArrayDict','i','dict',1,'','the input array dictionary','vmtknumpyreader']])
         self.SetOutputMembers([
