@@ -36,7 +36,7 @@ class vmtkNumpyToCenterlines(pypes.pypeScript):
         self.ArrayDict = None
 
         self.SetScriptName('vmtkNumpyToCenterlines')
-        self.SetScriptDoc('Takes a nested python dictionary containg numpy arrays specifying vertex '
+        self.SetScriptDoc('Takes a nested python dictionary containing numpy arrays specifying vertex '
                           'points, associated scalar data, and cell data specifying line connectivity'
                           'and returns a VTK centerlines vtkPolyData file')
         self.SetInputMembers([

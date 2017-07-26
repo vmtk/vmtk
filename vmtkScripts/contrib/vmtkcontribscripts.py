@@ -2,20 +2,28 @@ from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py
 
 __all__ = [
     'vmtk.vmtkboundarylayer2',
+    'vmtk.vmtkcenterlinestonumpy',
     'vmtk.vmtkdijkstradistancetopoints',
     'vmtk.vmtkdistancetospheres',
+    'vmtk.vmtkentityrenumber',
     'vmtk.vmtkgeodesicsurfaceresolution',
+    'vmtk.vmtkimagetonumpy',
     'vmtk.vmtkmeshaddexternallayer',
     'vmtk.vmtkmeshclipcenterlines',
+    'vmtk.vmtkmeshmerge',
     'vmtk.vmtkmeshtetrahedralize2',
     'vmtk.vmtkmeshviewer2',
     'vmtk.vmtkmeshwriter2',
-    'vmtk.vmtksurfaceresolution',
-    'vmtk.vmtksurfacewriter2',
+    'vmtk.vmtknumpyreader',
+    'vmtk.vmtknumpytocenterlines',
+    'vmtk.vmtknumpytoimage',
+    'vmtk.vmtknumpytosurface',
+    'vmtk.vmtknumpywriter',
     'vmtk.vmtksurfaceextractinnercylinder',
+    'vmtk.vmtksurfaceresolution',
+    'vmtk.vmtksurfacetonumpy',
+    'vmtk.vmtksurfacewriter2',
     'vmtk.vmtkthreshold',
-    'vmtk.vmtkmeshmerge',
-    'vmtk.vmtkentityrenumber',
     ]
 
 for item in __all__:

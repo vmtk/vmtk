@@ -37,7 +37,7 @@ class vmtkNumpyToSurface(pypes.pypeScript):
         self.ArrayDict = None
 
         self.SetScriptName('vmtkNumpyToSurface')
-        self.SetScriptDoc('Takes a nested python dictionary containg numpy arrays specifying vertex '
+        self.SetScriptDoc('Takes a nested python dictionary containing numpy arrays specifying vertex '
                           'points, associated scalar data, and cell data specifying triangle connectivity' 
                           'and returns a VTK triangulated surface vtkPolyData file')
         self.SetInputMembers([
