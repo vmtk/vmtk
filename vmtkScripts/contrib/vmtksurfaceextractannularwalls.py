@@ -13,7 +13,7 @@ class VmtkSurfaceExtractAnnularWalls(pypes.pypeScript):
     def __init__(self):
         pypes.pypeScript.__init__(self)
 
-        self.SetScriptName(vmtksurfaceextractannularwalls)
+        self.SetScriptName('vmtksurfaceextractannularwalls')
         self.SetScriptDoc('Extract wall surfaces from an annular-cylindric surface.')
 
         # Define members

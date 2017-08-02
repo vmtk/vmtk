@@ -10,7 +10,7 @@ class VmtkEntityRenumber(pypes.pypeScript):
     def __init__(self):
         pypes.pypeScript.__init__(self)
 
-        self.SetScriptName(vmtkentityrenumber)
+        self.SetScriptName('vmtkentityrenumber')
         self.SetScriptDoc('Renumber cell entity id array.')
 
         self.Mesh = None
