@@ -13,7 +13,7 @@ class VmtkSurfaceExtractInnerCylinder(pypes.pypeScript):
     def __init__(self):
         pypes.pypeScript.__init__(self)
 
-        self.SetScriptName(vmtksurfaceextractinnercylinder)
+        self.SetScriptName('vmtksurfaceextractinnercylinder')
         self.SetScriptDoc('Extract inner surface from an annular-cylindric volume.')
 
         # Define members
