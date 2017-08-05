@@ -91,7 +91,7 @@ class vmtkNumpyWriter(pypes.pypeScript):
                 elif isinstance(item, list):
                     for index, element in enumerate(item):
                         if self.Compression == 1:
-                            h5file.create_dataset(path + key, data=element, compression='gzip',
+                            h5file.create_dataset(path + key + '/' + index, data=element, compression='gzip',
                                                   compression_opts=self.CompressionLevel)
                         else:
                             h5file[path + key + '/' + index] = element
