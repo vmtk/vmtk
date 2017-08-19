@@ -342,9 +342,9 @@ void vtkvmtkCenterlineBifurcationReferenceSystems::ComputeGroupReferenceSystem(v
 
       for (int n=0; n<numberOfPolygonPoints; n++)
         {        
-        vtkIdType vertexId0 = (i-1+numberOfPolygonPoints) % numberOfPolygonPoints;
+        vtkIdType vertexId0 = (n-1+numberOfPolygonPoints) % numberOfPolygonPoints;
         vtkIdType vertexId1 = n;
-        vtkIdType vertexId2 = (i+1) % numberOfPolygonPoints;
+        vtkIdType vertexId2 = (n+1) % numberOfPolygonPoints;
         vertexPoints->GetPoint(vertexId0,vertexPoint0);
         vertexPoints->GetPoint(vertexId1,vertexPoint1);
         vertexPoints->GetPoint(vertexId2,vertexPoint2);
