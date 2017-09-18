@@ -813,7 +813,7 @@ class vmtkNetworkEditor(pypes.pypeScript):
         self.vmtkRenderer.Renderer.AddActor(self.ActiveSegmentActor)
 
         activeTube = vtk.vtkTubeFilter()
-        activeTube.SetInputConnection(activeSegmentMapper.GetInputPort())
+        activeTube.SetInputData(activeSegmentMapper.GetInput())
         activeTube.SetVaryRadiusToVaryRadiusByAbsoluteScalar()
         activeTube.SetNumberOfSides(20)
         activeTubeMapper = vtk.vtkPolyDataMapper()
