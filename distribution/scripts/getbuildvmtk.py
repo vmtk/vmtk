@@ -157,7 +157,7 @@ def build_vtk():
                '-DVTK_WRAP_PYTHON:BOOL=ON',
                '-DVTK_WRAP_TCL:BOOL=OFF',
                '-DVTK_INSTALL_PYTHON_USING_CMAKE:BOOL=ON',
-               '-VMTK_USE_VTK7:BOOL=ON'
+               '-VMTK_USE_VTK8:BOOL=ON'
                ]
     if on_osx():
         options.extend(['-DCMAKE_OSX_ARCHITECTURES:STRING="%s"' % OSX_ARCHITECTURES,
