@@ -3,7 +3,7 @@
 ## Program:   VMTK
 ## Module:    $RCSfile: surfacelippercenterline.py,v $
 ## Language:  Python
-## Date:      $Date: 2015/12/01 14:45:13 $
+## Date:      $Date: 2017/10/09 11:34:08 $
 ## Version:   $Revision: 1.0 $
 
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
@@ -16,6 +16,8 @@
 ## Note: this class was contributed by
 ##       Simone Manini
 ##       Orobix Srl
+## And adapted and modified by
+##       Kurt Sansom
 
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import vtk
