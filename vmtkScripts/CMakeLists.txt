@@ -116,6 +116,7 @@ SET(SCRIPTS_SRCS
   vmtksurfacedecimation.py
   vmtksurfacedistance.py
   vmtksurfaceendclipper.py
+  vmtksurfaceclippercenterline.py
   vmtksurfacekiteremoval.py
   vmtksurfaceloopextraction.py
   vmtksurfacemassproperties.py
@@ -187,4 +188,3 @@ INSTALL(PROGRAMS ${STRIPPED_SCRIPTS_SRCS}
   COMPONENT RuntimeExecutables)
 
 ENDIF (NOT WIN32 AND NOT VMTK_MINIMAL_INSTALL)
-
