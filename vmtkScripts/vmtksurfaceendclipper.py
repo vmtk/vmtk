@@ -237,6 +237,7 @@ class vmtkSurfaceEndClipper(pypes.pypeScript):
         self.SeedSelector.Script = self
 
         if (self.CenterlineNormals):
+            self.SeedSelector.SetOutlets = 1
         self.SeedSelector.SetSurface(self.Surface)
         self.SeedSelector.InputInfo = self.InputInfo
         self.SeedSelector.InputText = self.InputText
