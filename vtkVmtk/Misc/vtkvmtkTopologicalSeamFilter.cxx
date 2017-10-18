@@ -43,7 +43,7 @@ vtkStandardNewMacro(vtkvmtkTopologicalSeamFilter);
 
 vtkvmtkTopologicalSeamFilter::vtkvmtkTopologicalSeamFilter()
 {
-  this->ClosestPoint[0] = this->ClosestPoint[1] = this->ClosestPoint[0] = 0.0;
+  this->ClosestPoint[0] = this->ClosestPoint[1] = this->ClosestPoint[2] = 0.0;
   this->SeamScalarsArrayName = NULL;
   this->SeamFunction = NULL;
 }
@@ -106,7 +106,7 @@ int vtkvmtkTopologicalSeamFilter::RequestData(vtkInformation *vtkNotUsed(request
       sourceArray->SetValue(i,value);
     }
   }
-  
+
   vtkIdType numberOfCells = input->GetNumberOfCells();
 
   vtkUnsignedCharArray* visitedArray = vtkUnsignedCharArray::New();
@@ -125,7 +125,7 @@ int vtkvmtkTopologicalSeamFilter::RequestData(vtkInformation *vtkNotUsed(request
   double minDist = VTK_VMTK_LARGE_DOUBLE;
 
   vtkIdType npts, *pts;
-
+  // get the point that is closest to the implicit plane
   for (vtkIdType i=0; i<numberOfCells; i++)
   {
     input->GetCellPoints(i,npts,pts);
