@@ -16,6 +16,8 @@
 ## Note: this class was contributed by
 ##       Simone Manini
 ##       Orobix Srl
+## And adapted and modified by
+##       Kurt Sansom
 
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import vtk
@@ -32,6 +34,7 @@ class vmtkSeedSelector(object):
     def __init__(self):
         self._Surface = None
         self._SeedIds = None
+        self._MainBodySeedIds = vtk.vtkIdList()
         self._SourceSeedIds = vtk.vtkIdList()
         self._TargetSeedIds = vtk.vtkIdList()
         self.PrintError = None
@@ -44,6 +47,9 @@ class vmtkSeedSelector(object):
         self._Surface = surface
     def GetSurface(self):
         return self._Surface
+
+    def GetMainBodySeedIds(self):
+        return self._MainBodySeedIds
 
     def GetSourceSeedIds(self):
         return self._SourceSeedIds
@@ -63,6 +69,7 @@ class vmtkPickPointSeedSelector(vmtkSeedSelector):
         self.vmtkRenderer = None
         self.OwnRenderer = 0
         self.Script = None
+        self.SetOutlets = 0
 
     def UndoCallback(self, obj):
         self.InitializeSeeds()
@@ -105,6 +112,7 @@ class vmtkPickPointSeedSelector(vmtkSeedSelector):
             self.PrintError('vmtkPickPointSeedSelector Error: Surface not set.')
             return
 
+        self._MainBodySeedIds.Initialize()
         self._SourceSeedIds.Initialize()
         self._TargetSeedIds.Initialize()
 
@@ -148,16 +156,29 @@ class vmtkPickPointSeedSelector(vmtkSeedSelector):
             self.InitializeSeeds()
             self.vmtkRenderer.Render()
             any = self.PickedSeedIds.GetNumberOfIds()
-        self._SourceSeedIds.DeepCopy(self.PickedSeedIds)
+        self._MainBodySeedIds.DeepCopy(self.PickedSeedIds)
 
-        self.InputInfo('Please position the mouse and press space to add points at clip locations, \'u\' to undo\n')
+        if( self.SetOutlets ):
+            self.InputInfo('Please position the mouse and press space to add point on vessel wall near each Inlet location, \'u\' to undo\n')
+        else:
+            self.InputInfo('Please position the mouse and press space to add points at clip locations, \'u\' to undo\n')
 
         any = 0
         while any == 0:
             self.InitializeSeeds()
             self.vmtkRenderer.Render()
             any = self.PickedSeedIds.GetNumberOfIds()
-        self._TargetSeedIds.DeepCopy(self.PickedSeedIds)
+        self._SourceSeedIds.DeepCopy(self.PickedSeedIds)
+
+        if(self.SetOutlets):
+            self.InputInfo('Please position the mouse and press space to add point on vessel wall near each Outlet location, \'u\' to undo\n')
+
+            any = 0
+            while any == 0:
+                self.InitializeSeeds()
+                self.vmtkRenderer.Render()
+                any = self.PickedSeedIds.GetNumberOfIds()
+            self._TargetSeedIds.DeepCopy(self.PickedSeedIds)
 
         if self.OwnRenderer:
             self.vmtkRenderer.Deallocate()
@@ -168,6 +189,10 @@ class vmtkSurfaceEndClipper(pypes.pypeScript):
     def __init__(self):
 
         pypes.pypeScript.__init__(self)
+
+        self.Centerlines = None
+        self.CenterlineNormals = 0
+        self.FrenetTangentArrayName = 'FrenetTangent'
 
         self.Surface = None
         self.vmtkRenderer = None
@@ -184,6 +209,9 @@ class vmtkSurfaceEndClipper(pypes.pypeScript):
         self.SetScriptDoc('interactively clip a tubular surface with normals estimated at seed locations')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
+            ['CenterlineNormals','centerlinenormal','bool',1,'','toggle using centerline tangent for normal estimation'],
+            ['Centerlines','centerlines','vtkPolyData',1,'','the input centerlines','vmtksurfacereader'],
+            ['FrenetTangentArrayName','frenettangentarray','str',1,'','name of the array where centerline tangent vectors of the Frenet reference system are stored'],
             ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer']
             ])
         self.SetOutputMembers([
@@ -195,6 +223,10 @@ class vmtkSurfaceEndClipper(pypes.pypeScript):
         if self.Surface == None:
             self.PrintError('Error: no Surface.')
 
+        if (self.CenterlineNormals):
+            if (self.Centerlines == None):
+                    self.PrintError('Error: No input centerlines.')
+
         if not self.vmtkRenderer:
             self.vmtkRenderer = vmtkrenderer.vmtkRenderer()
             self.vmtkRenderer.Initialize()
@@ -204,6 +236,7 @@ class vmtkSurfaceEndClipper(pypes.pypeScript):
         self.SeedSelector.vmtkRenderer = self.vmtkRenderer
         self.SeedSelector.Script = self
 
+        if (self.CenterlineNormals):
         self.SeedSelector.SetSurface(self.Surface)
         self.SeedSelector.InputInfo = self.InputInfo
         self.SeedSelector.InputText = self.InputText
@@ -212,11 +245,11 @@ class vmtkSurfaceEndClipper(pypes.pypeScript):
         self.SeedSelector.PrintLog = self.PrintLog
         self.SeedSelector.Execute()
 
-        mainBodySeedIds = self.SeedSelector.GetSourceSeedIds()
+        mainBodySeedIds = self.SeedSelector.GetMainBodySeedIds()
         mainBodySeedId = mainBodySeedIds.GetId(0)
         mainBodyPoint = self.Surface.GetPoint(mainBodySeedId)
 
-        clipSeedIds = self.SeedSelector.GetTargetSeedIds()
+        clipSeedIds = self.SeedSelector.GetSourceSeedIds()
 
         surfaceCleaner = vtk.vtkCleanPolyData()
         surfaceCleaner.SetInputData(self.Surface)
@@ -230,25 +263,45 @@ class vmtkSurfaceEndClipper(pypes.pypeScript):
 
         clippedSurface = surfaceTriangulator.GetOutput()
 
+        n_seeds = clipSeedIds.GetNumberOfIds() # get the number of inlets
+        if (self.CenterlineNormals):
+            targetSeedIds = self.SeedSelector.GetTargetSeedIds()
+            for i in range(targetSeedIds.GetNumberOfIds()):
+                clipSeedIds.InsertNextId(targetSeedIds.GetId(i))
+            locator_ctr = vtk.vtkPointLocator()
+            locator_ctr.SetDataSet(self.Centerlines)
+            locator_ctr.BuildLocator()
+
         for i in range(clipSeedIds.GetNumberOfIds()):
 
             seedId = clipSeedIds.GetId(i)
-
-            locator = vtk.vtkPointLocator()
-            locator.SetDataSet(clippedSurface)
-            locator.BuildLocator()
-
             seedPoint = self.Surface.GetPoint(seedId)
-            seedPointId = locator.FindClosestPoint(seedPoint)
 
-            planeEstimator = vtkvmtk.vtkvmtkPolyDataNormalPlaneEstimator()
-            planeEstimator.SetInputData(clippedSurface)
-            planeEstimator.SetOriginPointId(seedPointId)
-            planeEstimator.Update()
+            # the frenet tangent must be inverted as it is directed outwards
+            # the seam filter requires an inward facing normal
+            if (self.CenterlineNormals):
+                centerlinePointId = locator_ctr.FindClosestPoint(seedPoint)
+                origin = self.Centerlines.GetPoint(centerlinePointId)
+                normal = self.Centerlines.GetPointData().GetArray(self.FrenetTangentArrayName).GetTuple(centerlinePointId)
+                if( i >= n_seeds ):
+                    # invert outward facing normals
+                    normal = tuple( -p for p in normal)
+            else:
+                locator = vtk.vtkPointLocator()
+                locator.SetDataSet(clippedSurface)
+                locator.BuildLocator()
+                seedPointId = locator.FindClosestPoint(seedPoint)
+
+                planeEstimator = vtkvmtk.vtkvmtkPolyDataNormalPlaneEstimator()
+                planeEstimator.SetInputData(clippedSurface)
+                planeEstimator.SetOriginPointId(seedPointId)
+                planeEstimator.Update()
+                origin = planeEstimator.GetOrigin()
+                normal = planeEstimator.GetNormal()
 
             plane = vtk.vtkPlane()
-            plane.SetOrigin(planeEstimator.GetOrigin())
-            plane.SetNormal(planeEstimator.GetNormal())
+            plane.SetOrigin(origin)
+            plane.SetNormal(normal)
 
             seamFilter = vtkvmtk.vtkvmtkTopologicalSeamFilter()
             seamFilter.SetInputData(clippedSurface)
