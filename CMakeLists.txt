@@ -1,10 +1,29 @@
-if( APPLE AND NOT CMAKE_CXX_COMPILER)
-  set ( CMAKE_CXX_COMPILER "/usr/bin/g++" CACHE STRING "CXX compiler." FORCE)
-endif( APPLE AND NOT CMAKE_CXX_COMPILER)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
+
+#-----------------------------------------------------------------------------
+# Enable C++11
+#-----------------------------------------------------------------------------
+
+set(_msg "Setting C++ standard")
+message(STATUS "${_msg}")
+if("${VTK_VERSION_MAJOR}" STREQUAL "8")
+  set(CMAKE_CXX_STANDARD 11)
+  # Since SimpleITK requires CMP0067 to properly support C++11, requires
+  # the corresponding CMake version.
+  if(CMAKE_VERSION VERSION_LESS "3.8.2")
+    message(FATAL_ERROR "CMake >= 3.8.2 is required to enable C++11 support")
+  endif()
+else()
+  set(CMAKE_CXX_STANDARD 98)
+endif()
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+message(STATUS "${_msg} - C++${CMAKE_CXX_STANDARD}")
+
+#-----------------------------------------------------------------------------
+
 
 PROJECT(VMTK)
-
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
 foreach(p
     CMP0003
@@ -18,10 +37,6 @@ foreach(p
     cmake_policy(SET ${p} NEW)
   endif()
 endforeach()
-
-if(NOT DEFINED CMAKE_MACOSX_RPATH)
-  set(CMAKE_MACOSX_RPATH 0)
-endif()
 
 # vmtk versions number
 SET(VMTK_VERSION_MAJOR 1)

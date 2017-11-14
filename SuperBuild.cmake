@@ -17,7 +17,7 @@ set_property( DIRECTORY PROPERTY EP_BASE ${base} )
 #endif()
 #set( testing OFF )
 #set( examples OFF )
-#set( build_type "Debug" )
+#set( build_type "Release" )
 #if( CMAKE_BUILD_TYPE )
 #  set( build_type "${CMAKE_BUILD_TYPE}" )
 #endif()
@@ -62,7 +62,7 @@ if( NOT USE_SYSTEM_ITK )
   set( proj ITK )
   ExternalProject_Add( ${proj}
     GIT_REPOSITORY "${GIT_PROTOCOL}://github.com/Kitware/ITK.git"
-    GIT_TAG "v4.10.1"
+    GIT_TAG "v4.12.2"
     SOURCE_DIR "${CMAKE_BINARY_DIR}/ITK"
     BINARY_DIR ITK-Build
     CMAKE_GENERATOR ${gen}
@@ -196,6 +196,7 @@ ExternalProject_Add( ${proj}
     -DVMTK_CONTRIB_SCRIPTS:BOOL=${VMTK_CONTRIB_SCRIPTS}
     -DVTK_VMTK_CONTRIB:BOOL=${VTK_VMTK_CONTRIB}
     -DVMTK_SCRIPTS_ENABLED:BOOL=${VMTK_SCRIPTS_ENABLED}
+    -DVTK_ENABLE_VTKPYTHON:BOOL=OFF
     -DVMTK_MINIMAL_INSTALL:BOOL=OFF
     -DVMTK_ENABLE_DISTRIBUTION:BOOL=${VMTK_ENABLE_DISTRIBUTION}
     -DVMTK_WITH_LIBRARY_VERSION:BOOL=OFF

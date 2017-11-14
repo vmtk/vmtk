@@ -71,19 +71,15 @@ macro(vtkMacroKitPythonWrap)
       vtkOpenGLKit
       vtkInteractionKit
       vtkViewsKit
-      vtkParallelKit
-      vtkWrappingKit
       )
     foreach(c ${VTK_LIBRARIES} ${vtk_kits})
       if(${c} MATCHES "^vtk.+" AND TARGET ${c}PythonD) # exclude system libraries
         list(APPEND VTK_KIT_PYTHON_LIBRARIES ${c}PythonD)
       endif()
     endforeach()
-    if(${VTK_VERSION_MAJOR} GREATER 5)
-      set(VTK_PYTHON_CORE vtkWrappingPythonCore)
-    else()
-      set(VTK_PYTHON_CORE vtkPythonCore)
-    endif()
+
+    set(VTK_PYTHON_CORE vtkWrappingPythonCore)
+
     target_link_libraries(
       ${MY_KIT_NAME}PythonD
       ${MY_KIT_NAME}
