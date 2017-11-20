@@ -1,28 +1,5 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
-#-----------------------------------------------------------------------------
-# Enable C++11
-#-----------------------------------------------------------------------------
-
-set(_msg "Setting C++ standard")
-message(STATUS "${_msg}")
-if("${VTK_VERSION_MAJOR}" STREQUAL "8")
-  set(CMAKE_CXX_STANDARD 11)
-  # Since SimpleITK requires CMP0067 to properly support C++11, requires
-  # the corresponding CMake version.
-  if(CMAKE_VERSION VERSION_LESS "3.8.2")
-    message(FATAL_ERROR "CMake >= 3.8.2 is required to enable C++11 support")
-  endif()
-else()
-  set(CMAKE_CXX_STANDARD 98)
-endif()
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
-message(STATUS "${_msg} - C++${CMAKE_CXX_STANDARD}")
-
-#-----------------------------------------------------------------------------
-
-
 PROJECT(VMTK)
 
 foreach(p
@@ -113,8 +90,8 @@ endif( USE_SYSTEM_VTK )
 option( VMTK_USE_SUPERBUILD
   "Build VMTK and the projects it depends on via SuperBuild.cmake." ON )
 
-#option( VMTK_USE_VTK7
-#  "Compile vmtk against VTK 7. OFF is VTK 6.3." OFF )
+# option( VMTK_USE_VTK7
+#  "Compile vmtk against VTK 7. OFF is VTK 6.3." ON )
 
 option( VMTK_USE_VTK8
   "Compile vmtk against VTK 8. OFF is VTK 7.1" ON )
@@ -160,7 +137,7 @@ if( VMTK_USE_SUPERBUILD )
     set ( VTK_WRAP_TCL OFF )
     set ( ITK_USE_FLAT_DIRECTORY_INSTALL ON )
     set ( CMAKE_OSX_ARCHITECTURES "x86_64" CACHE STRING "" FORCE )
-    set ( CMAKE_BUILD_TYPE "Release" CACHE STRING "" FORCE )
+    set ( CMAKE_BUILD_TYPE "Debug" CACHE STRING "" FORCE )
     set ( ITK_NO_LIBRARY_VERSION ON )
     set ( VTK_NO_LIBRARY_VERSION ON )
     set ( VMTK_WITH_LIBRARY_VERSION OFF )
@@ -182,7 +159,7 @@ if( VMTK_USE_SUPERBUILD )
       option ( VTK_VMTK_USE_COCOA "Build with Cocoa support." ON )
       set ( CMAKE_OSX_ARCHITECTURES "x86_64" CACHE STRING "" FORCE )
     endif (APPLE)
-    set ( CMAKE_BUILD_TYPE "Release" CACHE STRING "" FORCE )
+    set ( CMAKE_BUILD_TYPE "Debug" CACHE STRING "" FORCE )
     option ( BUILD_SHARED_LIBS "Build shared libraries." ON )
     option ( VMTK_USE_RENDERING "Build VMTK rendering classes." ON )
     #option ( VTK_USE_HYBRID "Build VTK Hybrid classes." ON )
