@@ -79,11 +79,9 @@ macro(vtkMacroKitPythonWrap)
         list(APPEND VTK_KIT_PYTHON_LIBRARIES ${c}PythonD)
       endif()
     endforeach()
-    if(${VTK_VERSION_MAJOR} GREATER 5)
-      set(VTK_PYTHON_CORE vtkWrappingPythonCore)
-    else()
-      set(VTK_PYTHON_CORE vtkPythonCore)
-    endif()
+
+    set(VTK_PYTHON_CORE vtkWrappingPythonCore)
+
     target_link_libraries(
       ${MY_KIT_NAME}PythonD
       ${MY_KIT_NAME}
@@ -91,6 +89,7 @@ macro(vtkMacroKitPythonWrap)
       ${VTK_PYTHON_LIBRARIES}
       ${VTK_KIT_PYTHON_LIBRARIES}
       ${MY_KIT_PYTHON_LIBRARIES}
+      vtkCommonExecutionModelPythonD
       )
 
     install(TARGETS ${MY_KIT_NAME}PythonD
@@ -114,7 +113,10 @@ macro(vtkMacroKitPythonWrap)
     # Create a python module that can be loaded dynamically.  It links to
     # the shared library containing the wrappers for this kit.
     add_library(${MY_KIT_NAME}Python MODULE ${MY_KIT_NAME}PythonInit.cxx)
-    target_link_libraries(${MY_KIT_NAME}Python ${MY_KIT_NAME}PythonD)
+    target_link_libraries(${MY_KIT_NAME}Python
+                          ${MY_KIT_NAME}PythonD
+                          vtkWrappingPythonCore
+                          vtkCommonExecutionModelPythonD)
 
     # Python extension modules on Windows must have the extension ".pyd"
     # instead of ".dll" as of Python 2.5.  Older python versions do support

@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """ This module loads all the classes from the vtkVmtk library into its
 namespace.  This is a required module."""
 

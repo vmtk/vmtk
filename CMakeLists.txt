@@ -1,10 +1,6 @@
-if( APPLE AND NOT CMAKE_CXX_COMPILER)
-  set ( CMAKE_CXX_COMPILER "/usr/bin/g++" CACHE STRING "CXX compiler." FORCE)
-endif( APPLE AND NOT CMAKE_CXX_COMPILER)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
 PROJECT(VMTK)
-
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
 foreach(p
     CMP0003
@@ -18,10 +14,6 @@ foreach(p
     cmake_policy(SET ${p} NEW)
   endif()
 endforeach()
-
-if(NOT DEFINED CMAKE_MACOSX_RPATH)
-  set(CMAKE_MACOSX_RPATH 0)
-endif()
 
 # vmtk versions number
 SET(VMTK_VERSION_MAJOR 1)
@@ -98,8 +90,8 @@ endif( USE_SYSTEM_VTK )
 option( VMTK_USE_SUPERBUILD
   "Build VMTK and the projects it depends on via SuperBuild.cmake." ON )
 
-#option( VMTK_USE_VTK7
-#  "Compile vmtk against VTK 7. OFF is VTK 6.3." OFF )
+# option( VMTK_USE_VTK7
+#  "Compile vmtk against VTK 7. OFF is VTK 6.3." ON )
 
 option( VMTK_USE_VTK8
   "Compile vmtk against VTK 8. OFF is VTK 7.1" ON )
