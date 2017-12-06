@@ -89,7 +89,6 @@ macro(vtkMacroKitPythonWrap)
       ${VTK_PYTHON_LIBRARIES}
       ${VTK_KIT_PYTHON_LIBRARIES}
       ${MY_KIT_PYTHON_LIBRARIES}
-      vtkCommonExecutionModelPythonD
       )
 
     install(TARGETS ${MY_KIT_NAME}PythonD
@@ -116,7 +115,7 @@ macro(vtkMacroKitPythonWrap)
     target_link_libraries(${MY_KIT_NAME}Python
                           ${MY_KIT_NAME}PythonD
                           vtkWrappingPythonCore
-                          vtkCommonExecutionModelPythonD)
+                          )
 
     # Python extension modules on Windows must have the extension ".pyd"
     # instead of ".dll" as of Python 2.5.  Older python versions do support
