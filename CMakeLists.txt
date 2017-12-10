@@ -1,4 +1,4 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.3)
 
 PROJECT(VMTK)
 
@@ -6,12 +6,20 @@ foreach(p
     CMP0003
     #CMP0020 # CMake 2.8.11
     #CMP0022 # CMake 2.8.12
-    #CMP0025 # CMake 3.0
+    CMP0025 # CMake 3.0
     #CMP0053 # CMake 3.1
     CMP0054 # CMake 3.1
     )
   if(POLICY ${p})
     cmake_policy(SET ${p} NEW)
+  endif()
+endforeach()
+
+foreach(p
+    CMP0033
+    )
+  if(POLICY ${p})
+    cmake_policy(SET ${p} OLD)
   endif()
 endforeach()
 
