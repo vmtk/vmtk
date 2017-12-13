@@ -1,6 +1,7 @@
 PROJECT(VMTK_SCRIPTS)
 
 SET(SCRIPTS_SRCS
+  __init__.py
   vmtkmeshcompare.py
   vmtkimagecompare.py
   vmtksurfacecompare.py
