@@ -17,6 +17,7 @@ endforeach()
 
 foreach(p
     CMP0033
+    CMP0022 # CMake 2.8.12
     )
   if(POLICY ${p})
     cmake_policy(SET ${p} OLD)
