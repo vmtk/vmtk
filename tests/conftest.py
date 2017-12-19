@@ -1,289 +1,173 @@
-# #!${PYTHON_SHEBANG}
-
-from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
-import vtk
-import sys
-from vmtk import pypes
-
-import unittest
-import datetime
-import traceback
 import pytest
 
-@pytest.fixture(scope='class')
-def pypetestcase_class():
-    class PypeTestCase(unittest.TestCase):
-        def __init__(self,line,lineno):
-            unittest.TestCase.__init__(self)
-            self.Line = line
-            self.LineNo = lineno
-            self.Name = 'unavailable'
-
-        def setUp(self):
-            self.Pipe = pypes.Pype()
-            self.Pipe.SetArgumentsString(self.Line)
-            self.Pipe.LogOn = 0
-
-        def runTest(self):
-            self.Pipe.ParseArguments()
-            if self.Pipe.Arguments:
-                self.Name = self.Pipe.Arguments[self.Pipe.Arguments.index('-name') + 1]
-            self.Pipe.Execute()
-            self.Log = self.Pipe.GetScriptObject('pypetest','0').PypeTestLog
-            splitLog = self.Log.split('.')
-            self.Result = splitLog[1]
-            self.assertEqual(self.Result,'passed')
-    request.cls.PypeTestCase = PypeTestCase()
-
-@pytest.fixture(scope='class')
-def pypetestresult_class():
-    class PypeTestResult(unittest.TestResult):
-        def appendLogLine(self,logline):
-            try:
-                self.ResultList.append(logline)
-            except:
-                self.ResultList = []
-                self.ResultList.append(logline)
-
-        def startTest(self,test):
-            self.testLog = {'id':str(test.LineNo),'error':'None'}
-
-        def stopTest(self,test):
-            self.testLog['name'] = test.Name
-            self.testLog['pype'] = test.Line
-            self.testLog['date'] = datetime.datetime.now().strftime('%d-%m-%Y')
-            self.testLog['time'] = datetime.datetime.now().strftime('%H:%M:%S')
-            self.appendLogLine(self.testLog)
-            self.testsRun += 1
-
-        def addError(self,test,err):
-            self.testLog['result'] = 'error'
-            self.testLog['error'] = err
-            self.errors.append([test,err])
-
-        def addFailure(self,test,err):
-            self.testLog['result'] = 'failed'
-            self.testLog['error'] = err
-            self.failures.append([test,err])
-
-        def addSuccess(self,test):
-            self.testLog['result'] = 'passed'
-    request.cls.PypeTestResult = PypeTestResult()
-
-@pytest.fixture(scope='class')
-def pypetestrunner_class():
-
-    class PypeTestRunner(pypes.pypeScript):
-
-        def __init__(self):
-
-            pypes.pypeScript.__init__(self)
-            
-            self.SuiteName = None
-            self.TestSuiteFileName = None
-            self.LogFileName = ''
-            self.TestSuiteLog = ''
-            self.Format = ''
-            self.GuessFormat = 1
-
-            self.SetScriptName('pypetestrunner')
-            self.SetScriptDoc('Run a set of tests from a given list')
-            self.SetInputMembers([
-                ['SuiteName','name','str',1,'','name of the test suite'],
-                ['TestSuiteFileName','testsuitefile','str',1,'','test suitefilename'],
-                ['LogFileName','logfile','str',1,'','Log filename'],
-                ['Format','f','str',1,'["text","xml"]','file format'],
-                ['GuessFormat','guessformat','bool',1,'','guess file format from extension'],
-                ])
-            self.SetOutputMembers([
-                ['TestSuiteLog','log','str',1,'','log']
-                ])
-
-        def WriteXMLLogFile(self):
-            self.PrintLog('Writing XML Test Suite Log')
-            from xml.dom import minidom
-            xmlDocument = minidom.Document()
-            xmlTestSuite = xmlDocument.appendChild(xmlDocument.createElement('TestSuite'))
-            xmlTestSuite.setAttribute('name',self.SuiteName)
-            xmlTestSuite.setAttribute('tests_run',str(self.Result.testsRun))
-            xmlTestSuite.setAttribute('tests_errors',str(len(self.Result.errors)))
-            xmlTestSuite.setAttribute('tests_failed',str(len(self.Result.failures)))
-            xmlTestSuite.setAttribute('date',self.Date)
-            xmlTestSuite.setAttribute('time',self.Time)
-            xmlTestSuite.setAttribute('outcome',self.Success)
-
-            for case in self.Result.ResultList:
-                xmlCase = xmlTestSuite.appendChild(xmlDocument.createElement('TestCase'))
-                if case['error'] != 'None':
-                    caseError = case['error']
-                    editedError = ''
-                    caseException = traceback.format_exception(caseError[0],caseError[1],caseError[2])
-                    for line in caseException:
-                        editedError += line
-                    xmlCaseError = xmlCase.appendChild(xmlDocument.createElement('CaseError'))
-                    errorText = xmlDocument.createTextNode(editedError)
-                    xmlCaseError.appendChild(errorText) 
-                    del case['error']
-                xmlCasePype = xmlCase.appendChild(xmlDocument.createElement('CasePype'))
-                xmlCasePype.appendChild(xmlDocument.createTextNode(case['pype']))
-                del case['pype']
-                for k,v in case.items():
-                    xmlCase.setAttribute(k,v)
-
-            xmlFile = open(self.LogFileName,'w')
-            xmlFile.write(xmlDocument.toprettyxml())
-            xmlFile.close()
-
-        def WriteTEXTLogFile(self):
-            self.PrintLog('Writing TEXT Test Suite Log')
-            txtDocument = open(self.LogFileName, 'w')
-            txtDocument.write(self.TestSuiteLog)
-
-        def Execute(self):
-
-            self.PrintLog('Testing')
-
-            if not self.TestSuiteFileName:
-                self.PrintError('Error: No Test list.')
-            if not self.SuiteName:
-                self.PrintError('Error: No test name.')
-
-            extensionFormats = {'txt':'text', 
-                                'xml':'xml'}
-
-            self.Suite = unittest.TestSuite()
-            self.Success = 'FAILED'
-            lineno = 1
-            self.TestSuiteLog = ''
-
-            with open(self.TestSuiteFileName) as suitefile:
-                for line in suitefile.readlines():
-                    if line.strip():
-                        self.Suite.addTest(PypeTestCase(line,lineno))
-                        lineno += 1
-
-            self.Result = PypeTestResult()
-            self.Suite.run(self.Result)
-            if self.Result.wasSuccessful(): 
-                self.Success = 'SUCCESS' 
-
-            self.TestSuiteLog += '\nID NAME RESULT'
-            for case in self.Result.ResultList:
-                resultline = '\n'+ case['id'] +' '+ case['name'] +' '+ case['result']
-                self.TestSuiteLog += resultline
-
-            self.Date = datetime.datetime.now().strftime('%d-%m-%Y')
-            self.Time = datetime.datetime.now().strftime('%H:%M:%S')
-
-            self.TestSuiteLog += '\n\nTEST SUITE NAME: ' + self.SuiteName
-            self.TestSuiteLog += '\nDATE: ' + self.Date
-            self.TestSuiteLog += '\nTIME: ' + self.Time
-            self.TestSuiteLog += '\nTOTAL TESTS RUN: ' + str(self.Result.testsRun)
-            self.TestSuiteLog += '\nTOTAL TEST ERRORS: ' + str(len(self.Result.errors))
-            self.TestSuiteLog += '\nTOTAL TEST FAILURES: ' + str(len(self.Result.failures))
-            self.TestSuiteLog += '\nTEST SUITE OUTCOME: ' + self.Success
-
-            if self.GuessFormat and self.LogFileName and not self.Format:
-                import os.path
-                extension = os.path.splitext(self.LogFileName)[1]
-                if extension:
-                    extension = extension[1:]
-                    if extension in list(extensionFormats.keys()):
-                        self.Format = extensionFormats[extension]
-
-            if self.LogFileName:
-                if (self.Format == 'text'):
-                    self.WriteTEXTLogFile()
-                elif (self.Format == 'xml'):
-                    self.WriteXMLLogFile()
-                else:
-                    self.PrintError('Error: unsupported format '+ self.Format + '.')
-
-    request.cls.PypeTestResult = PypeTestResult()
-
-@pytest.fixture(scope='class')
-def pypetest_class():
-
-    class pypeTest(pypes.pypeScript):
-
-        def __init__(self):
-
-            pypes.pypeScript.__init__(self)
-            
-            self.TestName = None
-            self.PypeTestLog = ''
-            self.TestInput = None
-            self.Condition = None
-            self.ConditionValue = None
-            self.ConditionType = None
-
-            self.SetScriptName('pypetest')
-            self.SetScriptDoc('tests a script property against a condition')
-            self.SetInputMembers([
-                ['TestName','name','str',1,'','name of the test'],
-                ['TestInput','i','test',1,'','log'],
-                ['Condition','condition','str',1,'["equalto","differentfrom","greaterthan","lessthan","nonnone"]','condition type'],
-                ['ConditionValue','value','str',1,'','condition value'],
-                ['ConditionType','type','str',1,'["str","int","float","bool"]','condition type']
-                ])
-            self.SetOutputMembers([
-                ['PypeTestLog','log','str',1,'','log']
-                ])
-
-        def castValue(self,val):
-            if not self.ConditionType:
-                self.PrintError('Error: No condition type.')
-            if self.ConditionType == 'str':
-                return str(val)
-            elif self.ConditionType == 'int':
-                return int(val)
-            elif self.ConditionType == 'float':
-                return float(val)
-            elif self.ConditionType == 'bool':
-                if val == True or val in ['1','True','true']:
-                    return True
-                else:
-                    return False
-
-        def Execute(self):
-
-            self.PrintLog('Testing')
-
-            if not self.TestName:
-                self.PrintError('Error: No test name.')
-            if self.TestInput == None:
-                self.PrintError('Error: No test input.')
-            if not self.Condition:
-                self.PrintError('Error: No condition.')
-
-            passed = False
-            self.CompareLog = 'failed'
-
-            if self.Condition == 'equalto':
-                if self.ConditionValue and self.castValue(self.TestInput) == self.castValue(self.ConditionValue):
-                    passed = True
-            elif self.Condition == 'differentfrom':
-                if self.ConditionValue and self.castValue(self.TestInput) != self.castValue(self.ConditionValue):
-                    passed = True
-            elif self.Condition == 'greaterthan':
-                if self.ConditionValue and self.castValue(self.TestInput) > self.castValue(self.ConditionValue):
-                    passed = True
-            elif self.Condition == 'lessthan':
-                if self.ConditionValue and self.castValue(self.TestInput) < self.castValue(self.ConditionValue):
-                    passed = True
-            elif self.Condition == 'nonnone':
-                if self.TestInput != None :
-                    passed = True
-
-            if passed:
-                self.CompareLog = 'passed'
-
-            self.PypeTestLog = "%s.%s" % (self.TestName, self.CompareLog)
-
-    request.cls.pypeTest = pypeTest()
-
-
-if __name__=='__main__':
-    main = pypes.pypeMain()
-    main.Arguments = sys.argv
-    main.Execute()
+@pytest.fixture(scope='function')
+def vmtk_scripts():
+    allscripts =  [
+	    'vmtk.vmtkactivetubes',
+	    'vmtk.vmtkbifurcationprofiles',
+	    'vmtk.vmtkbifurcationreferencesystems',
+	    'vmtk.vmtkbifurcationsections',
+	    'vmtk.vmtkbifurcationvectors',
+	    'vmtk.vmtkboundarylayer',
+	    'vmtk.vmtkboundaryreferencesystems',
+	    'vmtk.vmtkbranchclipper',
+	    'vmtk.vmtkbranchextractor',
+	    'vmtk.vmtkbranchgeometry',
+	    'vmtk.vmtkbranchmapping',
+	    'vmtk.vmtkbranchmetrics',
+	    'vmtk.vmtkbranchpatching',
+	    'vmtk.vmtkbranchsections',
+	    'vmtk.vmtkcenterlineattributes',
+	    'vmtk.vmtkcenterlinegeometry',
+	    'vmtk.vmtkcenterlineinterpolation',
+	    'vmtk.vmtkcenterlinelabeler',
+	    'vmtk.vmtkcenterlinemerge',
+	    'vmtk.vmtkcenterlinemodeller',
+	    'vmtk.vmtkcenterlineoffsetattributes',
+	    'vmtk.vmtkcenterlineresampling',
+	    'vmtk.vmtkcenterlines',
+	    'vmtk.vmtkcenterlinestonumpy',
+	    'vmtk.vmtkcenterlinesections',
+	    'vmtk.vmtkcenterlinesmoothing',
+	    'vmtk.vmtkcenterlineviewer',
+	    'vmtk.vmtkdelaunayvoronoi',
+	    'vmtk.vmtkdistancetocenterlines',
+	    'vmtk.vmtkendpointextractor',
+	    'vmtk.vmtkflowextensions',
+	    'vmtk.vmtkicpregistration',
+	    'vmtk.vmtkimagebinarize',
+	    'vmtk.vmtkimagecast',
+	    'vmtk.vmtkimagecompose',
+	    'vmtk.vmtkimagecurvedmpr',
+	    'vmtk.vmtkimagefeaturecorrection',
+	    'vmtk.vmtkimagefeatures',
+	    'vmtk.vmtkimageinitialization',
+	    'vmtk.vmtkimagemipviewer',
+	    'vmtk.vmtkimagemorphology',
+	    'vmtk.vmtkimagenormalize',
+	    'vmtk.vmtkimageobjectenhancement',
+	    'vmtk.vmtkimageotsuthresholds',
+	    'vmtk.vmtkimagereader',
+	    'vmtk.vmtkimagereslice',
+	    'vmtk.vmtkimageseeder',
+	    'vmtk.vmtkimageshiftscale',
+	    'vmtk.vmtkimagesmoothing',
+	    'vmtk.vmtkimagetonumpy',
+	    'vmtk.vmtkimageviewer',
+	    'vmtk.vmtkimagevesselenhancement',
+	    'vmtk.vmtkimagevoipainter',
+	    'vmtk.vmtkimagevoiselector',
+	    'vmtk.vmtkimagewriter',
+	    'vmtk.vmtklevelsetsegmentation',
+	    'vmtk.vmtklineartoquadratic',
+	    'vmtk.vmtklineresampling',
+	    'vmtk.vmtklocalgeometry',
+	    'vmtk.vmtkmarchingcubes',
+	    'vmtk.vmtkmesharrayoperation',
+	    'vmtk.vmtkmeshboundaryinspector',
+	    'vmtk.vmtkmeshbranchclipper',
+	    'vmtk.vmtkmeshclipper',
+	    'vmtk.vmtkmeshconnectivity',
+	    'vmtk.vmtkmeshcutter',
+	    'vmtk.vmtkmeshdatareader',
+	    'vmtk.vmtkmeshextractpointdata',
+	    'vmtk.vmtkmeshlambda2',
+	    'vmtk.vmtkmeshlinearize',
+	    'vmtk.vmtkmeshgenerator',
+	    'vmtk.vmtkmeshmergetimesteps',
+	    'vmtk.vmtkmeshpolyballevaluation',
+	    'vmtk.vmtkmeshprojection',
+	    'vmtk.vmtkmeshreader',
+	    'vmtk.vmtkmeshscaling',
+	    'vmtk.vmtkmeshtetrahedralize',
+	    'vmtk.vmtkmeshtosurface',
+	    'vmtk.vmtkmeshtransform',
+	    'vmtk.vmtkmeshtransformtoras',
+	    'vmtk.vmtkmeshvectorfromcomponents',
+	    'vmtk.vmtkmeshviewer',
+	    'vmtk.vmtkmeshvolume',
+	    'vmtk.vmtkmeshvorticityhelicity',
+	    'vmtk.vmtkmeshwallshearrate',
+	    'vmtk.vmtkmeshwriter',
+	    'vmtk.vmtknetworkeditor',
+	    'vmtk.vmtknetworkextraction',
+	    'vmtk.vmtknetworkwriter',
+	    'vmtk.vmtknumpyreader',
+	    'vmtk.vmtknumpytocenterlines',
+	    'vmtk.vmtknumpytoimage',
+	    'vmtk.vmtknumpytosurface',
+	    'vmtk.vmtknumpywriter',
+	    'vmtk.vmtkparticletracer',
+	    'vmtk.vmtkpathlineanimator',
+	    'vmtk.vmtkpointsplitextractor',
+	    'vmtk.vmtkpointtransform',
+	    'vmtk.vmtkpolyballmodeller',
+	    'vmtk.vmtkpotentialfit',
+	    'vmtk.vmtkpythonscript',
+	    'vmtk.vmtkrenderer',
+	    'vmtk.vmtkrendertoimage',
+	    'vmtk.vmtkrbfinterpolation',
+	    'vmtk.vmtksurfaceappend',
+	    'vmtk.vmtksurfacearraysmoothing',
+	    'vmtk.vmtksurfacearrayoperation',
+	    'vmtk.vmtksurfacebooleanoperation',
+	    'vmtk.vmtksurfacecapper',
+	    'vmtk.vmtksurfacecelldatatopointdata',
+	    'vmtk.vmtksurfacecenterlineprojection',
+	    'vmtk.vmtksurfaceclipper',
+	    'vmtk.vmtksurfacecliploop',
+	    'vmtk.vmtksurfaceconnectivity',
+	    'vmtk.vmtksurfacecurvature',
+	    'vmtk.vmtksurfacedecimation',
+	    'vmtk.vmtksurfacedistance',
+	    'vmtk.vmtksurfaceendclipper',
+	    'vmtk.vmtksurfacekiteremoval',
+	    'vmtk.vmtksurfaceloopextraction',
+	    'vmtk.vmtksurfacemassproperties',
+	    'vmtk.vmtksurfacemodeller',
+	    'vmtk.vmtksurfacenormals',
+	    'vmtk.vmtksurfacepointdatatocelldata',
+	    'vmtk.vmtksurfacepolyballevaluation',
+	    'vmtk.vmtksurfaceprojection',
+	    'vmtk.vmtksurfacereader',
+	    'vmtk.vmtksurfacereferencesystemtransform',
+	    'vmtk.vmtksurfaceregiondrawing',
+	    'vmtk.vmtksurfaceremeshing',
+	    'vmtk.vmtksurfacescaling',
+	    'vmtk.vmtksurfacesmoothing',
+	    'vmtk.vmtksurfacesubdivision',
+	    'vmtk.vmtksurfacetonumpy',
+	    'vmtk.vmtksurfacetransform',
+	    'vmtk.vmtksurfacetransforminteractive',
+	    'vmtk.vmtksurfacetransformtoras',
+	    'vmtk.vmtksurfacetriangle',
+	    'vmtk.vmtksurfacetomesh',
+	    'vmtk.vmtksurfaceviewer',
+	    'vmtk.vmtksurfacewriter',
+	    'vmtk.vmtksurfmesh',
+	    'vmtk.vmtktetgen',
+	    'vmtk.vmtktetringenerator',
+	    'vmtk.vmtkboundarylayer2',
+	    'vmtk.vmtkcenterlinestonumpy',
+	    'vmtk.vmtkdijkstradistancetopoints',
+	    'vmtk.vmtkdistancetospheres',
+	    'vmtk.vmtkentityrenumber',
+	    'vmtk.vmtkgeodesicsurfaceresolution',
+	    'vmtk.vmtkimagetonumpy',
+	    'vmtk.vmtkmeshaddexternallayer',
+	    'vmtk.vmtkmeshclipcenterlines',
+	    'vmtk.vmtkmeshmerge',
+	    'vmtk.vmtkmeshtetrahedralize2',
+	    'vmtk.vmtkmeshviewer2',
+	    'vmtk.vmtkmeshwriter2',
+	    'vmtk.vmtknumpyreader',
+	    'vmtk.vmtknumpytocenterlines',
+	    'vmtk.vmtknumpytoimage',
+	    'vmtk.vmtknumpytosurface',
+	    'vmtk.vmtknumpywriter',
+	    'vmtk.vmtksurfaceextractinnercylinder',
+	    'vmtk.vmtksurfaceresolution',
+	    'vmtk.vmtksurfacetonumpy',
+	    'vmtk.vmtksurfacewriter2',
+	    'vmtk.vmtkthreshold' ]
+    return allscripts
