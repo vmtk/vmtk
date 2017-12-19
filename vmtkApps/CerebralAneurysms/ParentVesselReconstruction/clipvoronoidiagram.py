@@ -68,7 +68,7 @@ def MaskWithPatch(id,t,c,r,maskArray,centerlines,voronoi):
    patch = ExtractPatch(id,centerlines)
 
    tubeFunction = vtkvmtk.vtkvmtkPolyBallLine()
-   tubeFunction.SetInputData(patch)
+   tubeFunction.SetInput(patch)
    tubeFunction.SetPolyBallRadiusArrayName(radiusArrayName)
 
    lastSphere = vtk.vtkSphere()
