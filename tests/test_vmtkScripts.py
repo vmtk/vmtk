@@ -20,6 +20,15 @@
 import pytest
 import unittest
 
-def test_import_pypes():
-    from vmtk import pypes
-    assert pypes.Pype
+def test_import_vmtkScripts(vmtk_scripts):
+	import importlib
+	print(vmtk_scripts)
+	for name in vmtk_scripts:
+		assert importlib.import_module(name)
+
+def test_read_surface():
+	import vmtk.vmtksurfacereader as r
+	reader = r.vmtkSurfaceReader()
+	reader.InputFileName = './testData/cow.vtp'
+	reader.Execute()
+	assert reader.Surface
