@@ -237,7 +237,7 @@ IF(VMTK_SCRIPTS_ENABLED)
 
   INSTALL(FILES __init__.py.in
     DESTINATION ${VMTK_MODULE_INSTALL_LIB_DIR}
-    COMPONENT RuntimeLibraries
+    COMPONENT PythonRuntimeLibraries
     RENAME __init__.py)
 
   IF (NOT WIN32)
