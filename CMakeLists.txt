@@ -2,15 +2,6 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.3)
 
 PROJECT(VMTK)
 
-foreach(p
-    CMP0033
-    CMP0022 # CMake 2.8.12
-    )
-  if(POLICY ${p})
-    cmake_policy(SET ${p} OLD)
-  endif()
-endforeach()
-
 # vmtk versions number
 SET(VMTK_VERSION_MAJOR 1)
 SET(VMTK_VERSION_MINOR 4)
@@ -275,27 +266,18 @@ IF(VMTK_SCRIPTS_ENABLED)
     ADD_SUBDIRECTORY(distribution)
   ENDIF(VMTK_ENABLE_DISTRIBUTION)
 
-  # Export Build settings and library dependencies
-  #  INCLUDE(CMakeExportBuildSettings)
+  INSTALL(EXPORT VMTK-Targets DESTINATION ${VMTK_BINARY_DIR})
 
-  #  CMAKE_EXPORT_BUILD_SETTINGS(
-  #    ${VMTK_BINARY_DIR}/VMTKBuildSettings.cmake
-  #  )
+  CONFIGURE_FILE(
+    ${VMTK_SOURCE_DIR}/CMakeInput/VMTKConfig.cmake.in
+    ${VMTK_BINARY_DIR}/VMTKConfig.cmake
+  @ONLY IMMEDIATE
+  )
 
-    EXPORT_LIBRARY_DEPENDENCIES(
-      ${VMTK_BINARY_DIR}/VMTKLibraryDepends.cmake
-    )
-
-    CONFIGURE_FILE(
-      ${VMTK_SOURCE_DIR}/CMakeInput/VMTKConfig.cmake.in
-      ${VMTK_BINARY_DIR}/VMTKConfig.cmake
-    @ONLY IMMEDIATE
-    )
-
-    CONFIGURE_FILE(
-      ${VMTK_SOURCE_DIR}/CMakeInput/VMTKUse.cmake.in
-      ${VMTK_BINARY_DIR}/VMTKUse.cmake
-    @ONLY IMMEDIATE
-    )
+  CONFIGURE_FILE(
+    ${VMTK_SOURCE_DIR}/CMakeInput/VMTKUse.cmake.in
+    ${VMTK_BINARY_DIR}/VMTKUse.cmake
+  @ONLY IMMEDIATE
+  )
 
 ENDIF(VMTK_SCRIPTS_ENABLED)
