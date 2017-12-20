@@ -1,20 +1,5 @@
 PROJECT(VTK_VMTK)
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
-
-foreach(p
-    CMP0003
-    #CMP0020 # CMake 2.8.11
-    #CMP0022 # CMake 2.8.12
-    #CMP0025 # CMake 3.0
-    #CMP0053 # CMake 3.1
-    CMP0054 # CMake 3.1
-    )
-  if(POLICY ${p})
-    cmake_policy(SET ${p} NEW)
-  endif()
-endforeach()
-
 include(${VTK_VMTK_SOURCE_DIR}/vmtkFunctions.cmake)
 
 set(dirs
@@ -101,7 +86,7 @@ IF (VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
   CONFIGURE_FILE(${VTK_VMTK_SOURCE_DIR}/vtkvmtk.py ${VTK_VMTK_BINARY_DIR}/vtkvmtk.py COPYONLY)
   INSTALL(FILES ${VTK_VMTK_BINARY_DIR}/vtkvmtk.py
     DESTINATION ${VTK_VMTK_MODULE_INSTALL_LIB_DIR}
-    COMPONENT RuntimeLibraries)
+    COMPONENT PythonRuntimeLibraries)
 ENDIF (VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
 
 SET(TETGEN_SOURCE_DIR "${VTK_VMTK_SOURCE_DIR}/Utilities/tetgen1.4.3")
