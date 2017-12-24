@@ -78,7 +78,11 @@ class VTK_VMTK_CONTRIB_EXPORT vtkvmtkRBFInterpolation2 : public vtkImplicitFunct
   };
 //ETX
 
-  unsigned long GetMTime();
+  #ifdef VTK_HAS_MTIME_TYPE
+    vtkMTimeType GetMTime();
+  #else
+    unsigned long GetMTime();
+  #endif
 
   protected:
   vtkvmtkRBFInterpolation2();
