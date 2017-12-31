@@ -110,7 +110,7 @@ protected:
                                 const LevelSetImageType * output);
 
   virtual void UpdateNeighbors( const IndexType& index,
-                                const SpeedImageType *, LevelSetImageType * );
+                                const SpeedImageType *, LevelSetImageType * ) ITK_OVERRIDE;
 
 private:
   FastMarchingDirectionalFreezeImageFilter(const Self&); //purposely not implemented

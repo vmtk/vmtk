@@ -128,7 +128,7 @@ protected:
    * \sa ImageToImageFilter::ThreadedGenerateData(),
    *     ImageToImageFilter::GenerateData() */
   void ThreadedGenerateData(const OutputImageRegionType& outputRegionForThread,
-                            ThreadIdType threadId );
+                            ThreadIdType threadId ) ITK_OVERRIDE;
 
   void PrintSelf(std::ostream&, Indent) const ITK_OVERRIDE;
 

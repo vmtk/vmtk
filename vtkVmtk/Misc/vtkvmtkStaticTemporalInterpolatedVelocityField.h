@@ -121,7 +121,7 @@ public:
   
   // Description:
   // Set the cell id cached by the last evaluation.
-  virtual void SetLastCellId( vtkIdType c ) 
+  virtual void SetLastCellId( vtkIdType c ) VTK_OVERRIDE
     { this->Superclass::SetLastCellId( c ); }
 
   virtual void CopyParameters( vtkAbstractInterpolatedVelocityField * from ) VTK_OVERRIDE;
