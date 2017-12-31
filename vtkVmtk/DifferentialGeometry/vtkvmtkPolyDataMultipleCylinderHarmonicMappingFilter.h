@@ -45,7 +45,7 @@ protected:
   vtkvmtkPolyDataMultipleCylinderHarmonicMappingFilter();
   ~vtkvmtkPolyDataMultipleCylinderHarmonicMappingFilter();
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
 
   char* HarmonicMappingArrayName;
   char* GroupIdsArrayName;

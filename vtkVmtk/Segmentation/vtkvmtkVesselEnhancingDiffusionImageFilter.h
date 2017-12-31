@@ -103,7 +103,7 @@ protected:
   vtkvmtkVesselEnhancingDiffusionImageFilter();
   ~vtkvmtkVesselEnhancingDiffusionImageFilter() {};
 
-  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output);
+  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output) VTK_OVERRIDE;
 
 private:
   vtkvmtkVesselEnhancingDiffusionImageFilter(const vtkvmtkVesselEnhancingDiffusionImageFilter&);  // Not implemented.

@@ -40,7 +40,7 @@ class VTK_VMTK_CONTRIB_EXPORT vtkvmtkCellDimensionFilter : public vtkUnstructure
 {
   public: 
   vtkTypeMacro(vtkvmtkCellDimensionFilter,vtkUnstructuredGridAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent); 
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE; 
 
   static vtkvmtkCellDimensionFilter* New();
 
@@ -66,9 +66,9 @@ class VTK_VMTK_CONTRIB_EXPORT vtkvmtkCellDimensionFilter : public vtkUnstructure
   vtkvmtkCellDimensionFilter();
   ~vtkvmtkCellDimensionFilter();  
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
 
-  virtual int FillInputPortInformation(int port, vtkInformation *info);
+  virtual int FillInputPortInformation(int port, vtkInformation *info) VTK_OVERRIDE;
 
   vtkThreshold *Threshold;
   

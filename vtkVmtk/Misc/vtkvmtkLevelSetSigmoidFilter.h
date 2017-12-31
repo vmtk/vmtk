@@ -33,7 +33,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkLevelSetSigmoidFilter : public vtkSimpleImageT
 {
   public: 
   vtkTypeMacro(vtkvmtkLevelSetSigmoidFilter,vtkSimpleImageToImageFilter);
-  void PrintSelf(ostream& os, vtkIndent indent); 
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE; 
 
   static vtkvmtkLevelSetSigmoidFilter *New();
 
@@ -54,7 +54,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkLevelSetSigmoidFilter : public vtkSimpleImageT
   vtkvmtkLevelSetSigmoidFilter();
   ~vtkvmtkLevelSetSigmoidFilter();  
 
-  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output);
+  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output) VTK_OVERRIDE;
 
   vtkImageData *LevelSetsImage;
 

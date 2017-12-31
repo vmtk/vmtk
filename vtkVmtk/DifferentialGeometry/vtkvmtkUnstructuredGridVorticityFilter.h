@@ -57,7 +57,7 @@ protected:
   vtkvmtkUnstructuredGridVorticityFilter();
   ~vtkvmtkUnstructuredGridVorticityFilter();
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
 
   char* VelocityArrayName;
   char* VorticityArrayName;

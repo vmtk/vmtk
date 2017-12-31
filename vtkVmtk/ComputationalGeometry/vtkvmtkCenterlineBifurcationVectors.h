@@ -38,7 +38,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkCenterlineBifurcationVectors
 {
   public: 
   vtkTypeMacro(vtkvmtkCenterlineBifurcationVectors,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent); 
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE; 
 
   static vtkvmtkCenterlineBifurcationVectors* New();
 
@@ -104,7 +104,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkCenterlineBifurcationVectors
   vtkvmtkCenterlineBifurcationVectors();
   ~vtkvmtkCenterlineBifurcationVectors();  
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
 
   void ComputeBifurcationVectors(vtkPolyData* input, int bifurcationGroupId, vtkIdList* bifurcationVectorsGroupIds, vtkIntArray* bifurcationVectorsOrientation, vtkDoubleArray* bifurcationVectors, vtkPoints* bifurcationVectorsPoints);
 

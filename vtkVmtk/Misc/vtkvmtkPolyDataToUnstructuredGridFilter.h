@@ -34,7 +34,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkPolyDataToUnstructuredGridFilter : public vtkU
 {
 public:
   vtkTypeMacro(vtkvmtkPolyDataToUnstructuredGridFilter,vtkUnstructuredGridAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   static vtkvmtkPolyDataToUnstructuredGridFilter *New();
 
@@ -42,8 +42,8 @@ protected:
   vtkvmtkPolyDataToUnstructuredGridFilter() {}
   ~vtkvmtkPolyDataToUnstructuredGridFilter() {}
 
-  int FillInputPortInformation(int, vtkInformation *info);
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  int FillInputPortInformation(int, vtkInformation *info) VTK_OVERRIDE;
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
   
 private:
   vtkvmtkPolyDataToUnstructuredGridFilter(const vtkvmtkPolyDataToUnstructuredGridFilter&);  // Not implemented.

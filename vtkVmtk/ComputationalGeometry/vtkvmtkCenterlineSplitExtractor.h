@@ -32,7 +32,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkCenterlineSplitExtractor : p
 {
   public: 
   vtkTypeMacro(vtkvmtkCenterlineSplitExtractor,vtkvmtkCenterlineSplittingAndGroupingFilter);
-  void PrintSelf(ostream& os, vtkIndent indent); 
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE; 
 
   static vtkvmtkCenterlineSplitExtractor *New();
 

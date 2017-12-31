@@ -33,7 +33,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkSurfMeshWrapper : public vtkPolyDataAlgorithm
   public: 
   static vtkvmtkSurfMeshWrapper *New();
   vtkTypeMacro(vtkvmtkSurfMeshWrapper,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent); 
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE; 
 
   vtkSetMacro(NodeSpacing,double);
   vtkGetMacro(NodeSpacing,double);
@@ -42,7 +42,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkSurfMeshWrapper : public vtkPolyDataAlgorithm
   vtkvmtkSurfMeshWrapper();
   ~vtkvmtkSurfMeshWrapper();
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
 
   double NodeSpacing;
 

@@ -39,7 +39,7 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkConstrainedLaplacianPolyDataFilter : p
 {
   public: 
   vtkTypeMacro(vtkvmtkConstrainedLaplacianPolyDataFilter,vtkPolyDataToPolyDataFilter);
-  void PrintSelf(ostream& os, vtkIndent indent); 
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE; 
 
   static vtkvmtkConstrainedLaplacianPolyDataFilter *New();
 

@@ -34,7 +34,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkPolyDataSizingFunction : public vtkPolyDataAlg
 {
   public: 
   vtkTypeMacro(vtkvmtkPolyDataSizingFunction,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent); 
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE; 
 
   static vtkvmtkPolyDataSizingFunction *New();
   
@@ -48,7 +48,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkPolyDataSizingFunction : public vtkPolyDataAlg
   vtkvmtkPolyDataSizingFunction();
   ~vtkvmtkPolyDataSizingFunction();  
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
 
   char* SizingFunctionArrayName;
   double ScaleFactor;

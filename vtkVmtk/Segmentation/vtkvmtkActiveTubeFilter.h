@@ -42,7 +42,7 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkActiveTubeFilter : public vtkPolyDataA
 {
   public: 
   vtkTypeMacro(vtkvmtkActiveTubeFilter,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent); 
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE; 
 
   static vtkvmtkActiveTubeFilter *New();
 
@@ -93,7 +93,7 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkActiveTubeFilter : public vtkPolyDataA
   vtkvmtkActiveTubeFilter();
   ~vtkvmtkActiveTubeFilter();  
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
 
   void EvaluateForce(double point[3], double force[3], bool normalize);
   double EvaluatePotential(double point[3]);

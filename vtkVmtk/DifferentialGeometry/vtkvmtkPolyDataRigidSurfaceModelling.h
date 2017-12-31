@@ -35,13 +35,13 @@ public:
 
   static vtkvmtkPolyDataRigidSurfaceModelling *New();
   vtkTypeMacro(vtkvmtkPolyDataRigidSurfaceModelling,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent); 
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE; 
 
 protected:
   vtkvmtkPolyDataRigidSurfaceModelling();
   ~vtkvmtkPolyDataRigidSurfaceModelling();
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
 
 private:
   vtkvmtkPolyDataRigidSurfaceModelling(const vtkvmtkPolyDataRigidSurfaceModelling&);  // Not implemented.

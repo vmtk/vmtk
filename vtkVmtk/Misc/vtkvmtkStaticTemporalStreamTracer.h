@@ -49,7 +49,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkStaticTemporalStreamTracer : public vtkStreamT
 {
 public:
   vtkTypeMacro(vtkvmtkStaticTemporalStreamTracer,vtkStreamTracer);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   static vtkvmtkStaticTemporalStreamTracer *New();
 
@@ -90,7 +90,7 @@ protected:
   vtkvmtkStaticTemporalStreamTracer();
   ~vtkvmtkStaticTemporalStreamTracer();
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
 
   void InitializeDefaultInterpolatorPrototype();
 

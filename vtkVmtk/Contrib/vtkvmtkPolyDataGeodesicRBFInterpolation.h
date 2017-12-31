@@ -74,7 +74,7 @@ protected:
   vtkvmtkPolyDataGeodesicRBFInterpolation();
   ~vtkvmtkPolyDataGeodesicRBFInterpolation();
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
 
   double EvaluateRBF(double r);
   

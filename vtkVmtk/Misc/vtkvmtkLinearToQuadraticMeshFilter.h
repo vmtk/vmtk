@@ -34,7 +34,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkLinearToQuadraticMeshFilter : public vtkUnstru
 {
   public: 
   vtkTypeMacro(vtkvmtkLinearToQuadraticMeshFilter,vtkUnstructuredGridAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent); 
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE; 
 
   static vtkvmtkLinearToQuadraticMeshFilter *New();
   
@@ -72,7 +72,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkLinearToQuadraticMeshFilter : public vtkUnstru
   vtkvmtkLinearToQuadraticMeshFilter();
   ~vtkvmtkLinearToQuadraticMeshFilter();
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
 
   bool HasJacobianChangedSign(vtkCell* linearVolumeCell, vtkCell* quadraticVolumeCell);
   double ComputeJacobian(vtkCell* cell, double pcoords[3]);

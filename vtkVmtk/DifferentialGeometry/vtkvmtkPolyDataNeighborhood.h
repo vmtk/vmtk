@@ -42,7 +42,7 @@ public:
 
   // Description:
   // Build the neighborhood.
-  virtual void Build();
+  virtual void Build() VTK_OVERRIDE;
 
 protected:
   vtkvmtkPolyDataNeighborhood() {};

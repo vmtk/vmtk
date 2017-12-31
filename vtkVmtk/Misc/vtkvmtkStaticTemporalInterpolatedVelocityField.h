@@ -67,7 +67,7 @@ public:
                       vtkInterpolatedVelocityField );
 
 #endif
-  void PrintSelf( ostream & os, vtkIndent indent );
+  void PrintSelf( ostream & os, vtkIndent indent ) VTK_OVERRIDE;
 
   // Description:
   // Construct a vtkvmtkStaticTemporalInterpolatedVelocityField without an initial dataset.
@@ -112,19 +112,19 @@ public:
 #if (VTK_MAJOR_VERSION <= 5)
   // Description:
   // Evaluate the velocity field f at point (x, y, z, t).
-  virtual int FunctionValues( double * x, double * f );
+  virtual int FunctionValues( double * x, double * f ) VTK_OVERRIDE;
 #endif
   
   // Description:
   // Set the cell id cached by the last evaluation within a specified dataset.
-  virtual void SetLastCellId( vtkIdType c, int dataindex );
+  virtual void SetLastCellId( vtkIdType c, int dataindex ) VTK_OVERRIDE;
   
   // Description:
   // Set the cell id cached by the last evaluation.
   virtual void SetLastCellId( vtkIdType c ) 
     { this->Superclass::SetLastCellId( c ); }
 
-  virtual void CopyParameters( vtkAbstractInterpolatedVelocityField * from );
+  virtual void CopyParameters( vtkAbstractInterpolatedVelocityField * from ) VTK_OVERRIDE;
 
 protected:
   vtkvmtkStaticTemporalInterpolatedVelocityField();
@@ -136,7 +136,7 @@ protected:
   // locating the next cell (for datasets of type vtkPointSet) or simply
   // invoking vtkImageData/vtkRectilinearGrid::FindCell() to fulfill the same
   // task if the point is outside the current cell.
-  virtual int FunctionValues( vtkDataSet * ds, double * x, double * f );
+  virtual int FunctionValues( vtkDataSet * ds, double * x, double * f ) VTK_OVERRIDE;
 
   void FindTimeRowId(double time, int& prevRowId, int& nextRowId, double& p);
 

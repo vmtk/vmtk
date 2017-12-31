@@ -38,7 +38,7 @@ protected:
   vtkvmtkPolyDataCylinderHarmonicMappingFilter();
   ~vtkvmtkPolyDataCylinderHarmonicMappingFilter();
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
 
 private:
   vtkvmtkPolyDataCylinderHarmonicMappingFilter(const vtkvmtkPolyDataCylinderHarmonicMappingFilter&);  // Not implemented.

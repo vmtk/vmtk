@@ -32,7 +32,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkLinearizeMeshFilter : public vtkUnstructuredGr
 {
   public: 
   vtkTypeMacro(vtkvmtkLinearizeMeshFilter,vtkUnstructuredGridAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent); 
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE; 
 
   static vtkvmtkLinearizeMeshFilter *New();
   
@@ -44,7 +44,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkLinearizeMeshFilter : public vtkUnstructuredGr
   vtkvmtkLinearizeMeshFilter();
   ~vtkvmtkLinearizeMeshFilter();
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
 
   int CleanOutput;
 

@@ -45,7 +45,7 @@ class VTK_VMTK_CONTRIB_EXPORT vtkvmtkBoundaryLayerGenerator2 : public vtkvmtkBou
 {
   public: 
   vtkTypeMacro(vtkvmtkBoundaryLayerGenerator2,vtkvmtkBoundaryLayerGenerator);
-  void PrintSelf(ostream& os, vtkIndent indent); 
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE; 
 
   static vtkvmtkBoundaryLayerGenerator2 *New();
 
@@ -89,7 +89,7 @@ class VTK_VMTK_CONTRIB_EXPORT vtkvmtkBoundaryLayerGenerator2 : public vtkvmtkBou
   vtkvmtkBoundaryLayerGenerator2();
   ~vtkvmtkBoundaryLayerGenerator2();
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
 
   char *CellEntityIdsArrayName;
  

@@ -28,7 +28,7 @@ public:
 
   vtkTypeMacro(vtkvmtkCurvedMPRImageFilter,vtkImageAlgorithm);
 
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
     // Description: 
   // Set/Get the centerline along which the MPR should be made

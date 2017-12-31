@@ -49,7 +49,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataLocalGeometry : publ
 {
   public: 
   vtkTypeMacro(vtkvmtkPolyDataLocalGeometry,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent); 
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE; 
 
   static vtkvmtkPolyDataLocalGeometry *New();
   
@@ -168,7 +168,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataLocalGeometry : publ
   vtkvmtkPolyDataLocalGeometry();
   ~vtkvmtkPolyDataLocalGeometry();  
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
 
   void AdjustBoundaryQuantities(vtkPolyData* output);
 

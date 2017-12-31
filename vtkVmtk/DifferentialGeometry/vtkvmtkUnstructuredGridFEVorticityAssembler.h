@@ -35,7 +35,7 @@ public:
   static vtkvmtkUnstructuredGridFEVorticityAssembler* New();
   vtkTypeMacro(vtkvmtkUnstructuredGridFEVorticityAssembler,vtkvmtkFEAssembler);
 
-  virtual void Build();
+  virtual void Build() VTK_OVERRIDE;
 
   vtkSetStringMacro(VelocityArrayName);
   vtkGetStringMacro(VelocityArrayName);

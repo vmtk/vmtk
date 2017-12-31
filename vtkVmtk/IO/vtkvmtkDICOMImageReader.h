@@ -32,7 +32,7 @@ class VTK_VMTK_IO_EXPORT vtkvmtkDICOMImageReader : public vtkDICOMImageReader
 {
   public:
   vtkTypeMacro(vtkvmtkDICOMImageReader,vtkDICOMImageReader);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   static vtkvmtkDICOMImageReader *New();
 

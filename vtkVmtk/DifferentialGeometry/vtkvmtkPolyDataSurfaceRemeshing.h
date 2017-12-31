@@ -39,7 +39,7 @@ public:
 
   static vtkvmtkPolyDataSurfaceRemeshing *New();
   vtkTypeMacro(vtkvmtkPolyDataSurfaceRemeshing,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent); 
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE; 
 
   vtkSetMacro(AspectRatioThreshold,double);
   vtkGetMacro(AspectRatioThreshold,double);
@@ -139,7 +139,7 @@ protected:
   vtkvmtkPolyDataSurfaceRemeshing();
   ~vtkvmtkPolyDataSurfaceRemeshing();
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
 
   void BuildEntityBoundary(vtkPolyData* input, vtkPolyData* entityBoundary);
 

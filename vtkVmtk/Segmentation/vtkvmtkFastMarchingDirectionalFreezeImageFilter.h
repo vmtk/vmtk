@@ -79,7 +79,7 @@ protected:
   vtkvmtkFastMarchingDirectionalFreezeImageFilter();
   ~vtkvmtkFastMarchingDirectionalFreezeImageFilter();
 
-  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output);
+  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output) VTK_OVERRIDE;
 
 private:
   vtkvmtkFastMarchingDirectionalFreezeImageFilter(const vtkvmtkFastMarchingDirectionalFreezeImageFilter&);  // Not implemented.

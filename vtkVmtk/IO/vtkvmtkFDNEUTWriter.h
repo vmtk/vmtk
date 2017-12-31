@@ -37,7 +37,7 @@ class VTK_VMTK_IO_EXPORT vtkvmtkFDNEUTWriter : public vtkUnstructuredGridWriter
 public:
   static vtkvmtkFDNEUTWriter *New();
   vtkTypeMacro(vtkvmtkFDNEUTWriter,vtkUnstructuredGridWriter);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   //BTX
   enum
@@ -55,7 +55,7 @@ protected:
   vtkvmtkFDNEUTWriter();
   ~vtkvmtkFDNEUTWriter();
 
-  void WriteData();
+  void WriteData() VTK_OVERRIDE;
 
   static void ZeroToOneOffset(vtkIdType npts, vtkIdType* pts)
   { for (int i=0; i<npts; i++) ++pts[i]; }

@@ -36,7 +36,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkBoundaryLayerGenerator : public vtkUnstructure
 {
   public: 
   vtkTypeMacro(vtkvmtkBoundaryLayerGenerator,vtkUnstructuredGridAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent); 
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE; 
 
   static vtkvmtkBoundaryLayerGenerator *New();
   
@@ -111,7 +111,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkBoundaryLayerGenerator : public vtkUnstructure
   vtkvmtkBoundaryLayerGenerator();
   ~vtkvmtkBoundaryLayerGenerator();
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
 
   void BuildWarpVectors(vtkUnstructuredGrid* input);
   void IncrementalWarpPoints(vtkUnstructuredGrid* input, vtkPoints* basePoints, vtkPoints* warpedPoints, int substep, int numberOfSubsteps, double relaxation);

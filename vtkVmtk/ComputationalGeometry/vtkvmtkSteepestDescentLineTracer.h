@@ -50,7 +50,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkSteepestDescentLineTracer : 
 {
 public:
   vtkTypeMacro(vtkvmtkSteepestDescentLineTracer,vtkvmtkNonManifoldSteepestDescent);
-  void PrintSelf(ostream& os, vtkIndent indent); 
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE; 
 
   static vtkvmtkSteepestDescentLineTracer *New();
 
@@ -102,7 +102,7 @@ protected:
   vtkvmtkSteepestDescentLineTracer();
   ~vtkvmtkSteepestDescentLineTracer();
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
 
   void Backtrace(vtkPolyData* input, vtkIdType seedId);
 

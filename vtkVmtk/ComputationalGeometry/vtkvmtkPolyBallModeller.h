@@ -34,7 +34,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyBallModeller : public vt
 {
   public:
   vtkTypeMacro(vtkvmtkPolyBallModeller,vtkImageAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   static vtkvmtkPolyBallModeller *New();
   
@@ -67,9 +67,9 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyBallModeller : public vt
   vtkvmtkPolyBallModeller();
   ~vtkvmtkPolyBallModeller();
 
-  int FillInputPortInformation(int, vtkInformation *info);
-  virtual int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  int FillInputPortInformation(int, vtkInformation *info) VTK_OVERRIDE;
+  virtual int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
 
   int SampleDimensions[3];
   double ModelBounds[6];

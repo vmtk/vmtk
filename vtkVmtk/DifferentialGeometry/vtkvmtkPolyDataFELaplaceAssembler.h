@@ -35,7 +35,7 @@ public:
   static vtkvmtkPolyDataFELaplaceAssembler* New();
   vtkTypeMacro(vtkvmtkPolyDataFELaplaceAssembler,vtkvmtkFEAssembler);
 
-  virtual void Build();
+  virtual void Build() VTK_OVERRIDE;
 
 protected:
   vtkvmtkPolyDataFELaplaceAssembler();

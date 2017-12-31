@@ -93,7 +93,7 @@ protected:
   vtkvmtkGeodesicActiveContourLevelSet2DImageFilter();
   ~vtkvmtkGeodesicActiveContourLevelSet2DImageFilter();
 
-  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output);
+  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output) VTK_OVERRIDE;
 
 private:
   vtkvmtkGeodesicActiveContourLevelSet2DImageFilter(const vtkvmtkGeodesicActiveContourLevelSet2DImageFilter&);  // Not implemented.

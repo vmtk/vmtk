@@ -54,7 +54,7 @@ protected:
   vtkvmtkFWHMFeatureImageFilter();
   ~vtkvmtkFWHMFeatureImageFilter();
 
-  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output);
+  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output) VTK_OVERRIDE;
 
 private:
   vtkvmtkFWHMFeatureImageFilter(const vtkvmtkFWHMFeatureImageFilter&);  // Not implemented.

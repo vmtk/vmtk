@@ -93,7 +93,7 @@ protected:
   vtkvmtkCurvesLevelSetImageFilter();
   ~vtkvmtkCurvesLevelSetImageFilter();
 
-  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output);
+  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output) VTK_OVERRIDE;
 
 private:
   vtkvmtkCurvesLevelSetImageFilter(const vtkvmtkCurvesLevelSetImageFilter&);  // Not implemented.

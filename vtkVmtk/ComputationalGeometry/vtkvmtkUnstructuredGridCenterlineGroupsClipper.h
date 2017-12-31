@@ -35,7 +35,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkUnstructuredGridCenterlineGr
 {
   public: 
   vtkTypeMacro(vtkvmtkUnstructuredGridCenterlineGroupsClipper,vtkUnstructuredGridAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent); 
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE; 
 
   static vtkvmtkUnstructuredGridCenterlineGroupsClipper *New();
   
@@ -81,7 +81,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkUnstructuredGridCenterlineGr
   vtkvmtkUnstructuredGridCenterlineGroupsClipper();
   ~vtkvmtkUnstructuredGridCenterlineGroupsClipper();
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
 
   vtkPolyData* Centerlines;
 

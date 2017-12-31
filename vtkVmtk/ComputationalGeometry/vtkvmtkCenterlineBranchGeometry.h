@@ -38,7 +38,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkCenterlineBranchGeometry : p
 {
   public: 
   vtkTypeMacro(vtkvmtkCenterlineBranchGeometry,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent); 
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE; 
 
   static vtkvmtkCenterlineBranchGeometry* New();
 
@@ -88,7 +88,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkCenterlineBranchGeometry : p
   vtkvmtkCenterlineBranchGeometry();
   ~vtkvmtkCenterlineBranchGeometry();  
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
 
   double ComputeGroupLength(vtkPolyData* input, int branchGroupId);
   double ComputeGroupCurvature(vtkPolyData* input, int branchGroupId);
