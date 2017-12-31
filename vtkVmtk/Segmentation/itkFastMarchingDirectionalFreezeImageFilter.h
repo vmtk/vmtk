@@ -99,9 +99,9 @@ public:
 protected:
   FastMarchingDirectionalFreezeImageFilter();
   ~FastMarchingDirectionalFreezeImageFilter(){};
-  void PrintSelf( std::ostream& os, Indent indent ) const;
+  void PrintSelf( std::ostream& os, Indent indent ) const ITK_OVERRIDE;
 
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
   void AllocateSpeedGradientImage();
   void ComputeSpeedGradientImage();

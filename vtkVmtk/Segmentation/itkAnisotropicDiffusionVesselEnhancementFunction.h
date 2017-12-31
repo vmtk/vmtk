@@ -123,7 +123,7 @@ public:
                      const FloatOffsetType& = FloatOffsetType(0.0));
 
   /** Computes the time step for an update given a global data structure. */
-  virtual TimeStepType ComputeGlobalTimeStep(void *GlobalData) const;
+  virtual TimeStepType ComputeGlobalTimeStep(void *GlobalData) const ITK_OVERRIDE;
 
   /** Returns a pointer to a global data structure that is passed to this
    * object from the solver at each calculation.*/
@@ -153,7 +153,7 @@ protected:
   AnisotropicDiffusionVesselEnhancementFunction();
 
   virtual ~AnisotropicDiffusionVesselEnhancementFunction() {}
-  void PrintSelf(std::ostream &s, Indent indent) const;
+  void PrintSelf(std::ostream &s, Indent indent) const ITK_OVERRIDE;
   
   /** Slices for the ND neighborhood. */
   std::slice x_slice[itkGetStaticConstMacro(ImageDimension)];
