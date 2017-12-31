@@ -41,7 +41,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyBall : public vtkImplici
   // Description
   // Evaluate polyball.
   double EvaluateFunction(double x[3]) VTK_OVERRIDE;
-  double EvaluateFunction(double x, double y, double z)
+  double EvaluateFunction(double x, double y, double z) VTK_OVERRIDE
   {return this->vtkImplicitFunction::EvaluateFunction(x, y, z); } ;
 
   // Description

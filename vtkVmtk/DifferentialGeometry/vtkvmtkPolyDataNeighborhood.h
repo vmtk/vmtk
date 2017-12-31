@@ -38,7 +38,7 @@ public:
   static vtkvmtkPolyDataNeighborhood *New();
   vtkTypeMacro(vtkvmtkPolyDataNeighborhood,vtkvmtkNeighborhood);
 
-  virtual vtkIdType GetItemType() {return VTK_VMTK_POLYDATA_NEIGHBORHOOD;};
+  virtual vtkIdType GetItemType() VTK_OVERRIDE {return VTK_VMTK_POLYDATA_NEIGHBORHOOD;};
 
   // Description:
   // Build the neighborhood.
