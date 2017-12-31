@@ -66,7 +66,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkCenterlineSplitExtractor : p
   vtkvmtkCenterlineSplitExtractor();
   ~vtkvmtkCenterlineSplitExtractor();  
 
-  virtual void ComputeCenterlineSplitting(vtkPolyData* input, vtkIdType cellId);
+  virtual void ComputeCenterlineSplitting(vtkPolyData* input, vtkIdType cellId) VTK_OVERRIDE;
   virtual void ComputePointAndGapCenterlineSplitting(vtkPolyData* input, vtkIdType cellId);
   virtual void ComputeBetweenPointsCenterlineSplitting(vtkPolyData* input, vtkIdType cellId);
 

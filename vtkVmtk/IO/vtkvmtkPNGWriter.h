@@ -48,7 +48,7 @@ public:
   vtkGetMacro(FlipImage,int);
   vtkBooleanMacro(FlipImage,int);
 
-  virtual void Write();
+  virtual void Write() VTK_OVERRIDE;
 
 protected:
   vtkvmtkPNGWriter();

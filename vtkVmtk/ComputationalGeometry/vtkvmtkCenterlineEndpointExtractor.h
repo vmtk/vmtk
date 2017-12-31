@@ -56,7 +56,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkCenterlineEndpointExtractor 
   vtkvmtkCenterlineEndpointExtractor();
   ~vtkvmtkCenterlineEndpointExtractor();  
 
-  virtual void ComputeCenterlineSplitting(vtkPolyData* input, vtkIdType cellId);
+  virtual void ComputeCenterlineSplitting(vtkPolyData* input, vtkIdType cellId) VTK_OVERRIDE;
 
   int NumberOfEndpointSpheres;
   int NumberOfGapSpheres;

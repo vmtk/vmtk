@@ -41,7 +41,7 @@ protected:
   vtkvmtkInteractorStyleTrackballCamera() {};
   ~vtkvmtkInteractorStyleTrackballCamera() {};
 
-  virtual void OnChar();
+  virtual void OnChar() VTK_OVERRIDE;
 
 private:
   vtkvmtkInteractorStyleTrackballCamera(const vtkvmtkInteractorStyleTrackballCamera&);  //Not implemented
