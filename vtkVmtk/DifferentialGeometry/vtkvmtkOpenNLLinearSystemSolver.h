@@ -35,7 +35,7 @@ public:
   static vtkvmtkOpenNLLinearSystemSolver* New();
   vtkTypeMacro(vtkvmtkOpenNLLinearSystemSolver,vtkvmtkLinearSystemSolver);
 
-  int Solve();
+  int Solve() override;
 
   vtkSetMacro(SolverType,int);
   vtkGetMacro(SolverType,int);
