@@ -23,3 +23,4 @@ import unittest
 def test_import_pypes():
     from vmtk import pypes
     assert pypes.Pype
+
