@@ -2776,7 +2776,7 @@ void dtpsv(
     static char *UL[2] = { "U", "L" };
     static char *T[3]  = { "N", "T", 0 };
     static char *D[2]  = { "U", "N" };
-    NL_FORTRAN_WRAP(dtpsv)(UL[(int)uplo],T[(int)trans],D[(int)diag],&n,AP,x,&incx); 
+    NL_FORTRAN_WRAP(dtpsv)(UL[(int)uplo],T[(int)trans],D[(int)diag],&n,AP,x,&incx,0,0,0); 
 }
 
 /** y <- alpha*A*x + beta*y,  y <- alpha*A^T*x + beta*y,   A-(m,n) */
