@@ -1,4 +1,11 @@
 import pytest
+import os
+
+@pytest.fixture(scope='function')
+def test_data():
+	cwd = os.path.dirname(os.path.abspath(__file__))
+	datadir = os.path.join(os.path.dirname(cwd), 'testData')
+	return datadir
 
 @pytest.fixture(scope='function')
 def vmtk_scripts():
