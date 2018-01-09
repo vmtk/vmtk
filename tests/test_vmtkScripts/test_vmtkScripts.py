@@ -19,6 +19,7 @@
 
 import pytest
 import unittest
+import os
 
 def test_import_vmtkScripts(vmtk_scripts):
 	import importlib
@@ -26,9 +27,3 @@ def test_import_vmtkScripts(vmtk_scripts):
 	for name in vmtk_scripts:
 		assert importlib.import_module(name)
 
-def test_read_surface():
-    import vmtk.vmtksurfacereader as r
-    reader = r.vmtkSurfaceReader()
-    reader.InputFileName = './testData/cow.vtp'
-    reader.Execute()
-    assert reader.Surface
