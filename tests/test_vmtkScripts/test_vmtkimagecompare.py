@@ -7,27 +7,21 @@ import vmtk.vmtkimagecompare as comp
 import vmtk.vmtkimagereader as r
 
 
-def test_compare_same_image(test_data):
-    reader = r.vmtkImageReader()
-    reader.InputFileName = os.path.join(test_data, 'aorta.mha')
-    reader.Execute()
+def test_compare_same_image(aorta_image):
 
     comparer = comp.vmtkImageCompare()
     comparer.Method = 'range'
-    comparer.Image = reader.Image
-    comparer.ReferenceImage = reader.Image
+    comparer.Image = aorta_image
+    comparer.ReferenceImage = aorta_image
     comparer.Execute()
 
     assert comparer.Result is True
 
 
-def test_compare_not_same_image(test_data):
-    reader = r.vmtkImageReader()
-    reader.InputFileName = os.path.join(test_data, 'aorta.mha')
-    reader.Execute()
+def test_compare_not_same_image(aorta_image):
 
     wraper = wrap.vmtkImageToNumpy()
-    wraper.Image = reader.Image
+    wraper.Image = aorta_image
     wraper.Execute()
 
     multiplied = wraper.ArrayDict
@@ -39,7 +33,7 @@ def test_compare_not_same_image(test_data):
 
     comparer = comp.vmtkImageCompare()
     comparer.Method = 'range'
-    comparer.Image = reader.Image
+    comparer.Image = aorta_image
     comparer.ReferenceImage = back.Image
     comparer.Execute()
 

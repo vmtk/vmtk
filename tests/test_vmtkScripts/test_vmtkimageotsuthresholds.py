@@ -5,19 +5,14 @@ import vmtk.vmtkimagetonumpy as wrap
 import vmtk.vmtkimageotsuthresholds as otsu
 import vmtk.vmtkimagereader as r
 
-
 @pytest.mark.parametrize("thresholds,expected_hash", [
     (1, 'd692f244d88a2f4544fd111d26a337048568b75e'),
     (2, '4f3320f66ca6d50e53ef7da620bb3cc2c90e6069'),
     (3, '46381069b0def5db65f51a27568d0a6ed19ee790'),
 ])
-def test_otsu_image_multiple_thresholds(test_data, thresholds, expected_hash):
-    reader = r.vmtkImageReader()
-    reader.InputFileName = os.path.join(test_data, 'aorta.mha')
-    reader.Execute()
-
+def test_otsu_image_multiple_thresholds(aorta_image, thresholds, expected_hash):
     otsuer = otsu.vmtkImageOtsuThresholds()
-    otsuer.Image = reader.Image
+    otsuer.Image = aorta_image
     otsuer.NumberOfThresholds = thresholds
     otsuer.Execute()
 
@@ -30,13 +25,10 @@ def test_otsu_image_multiple_thresholds(test_data, thresholds, expected_hash):
     assert sha1(check).hexdigest() == expected_hash
 
 
-def test_otsu_image_256_histogram_bins(test_data):
-    reader = r.vmtkImageReader()
-    reader.InputFileName = os.path.join(test_data, 'aorta.mha')
-    reader.Execute()
+def test_otsu_image_256_histogram_bins(aorta_image):
 
     otsuer = otsu.vmtkImageOtsuThresholds()
-    otsuer.Image = reader.Image
+    otsuer.Image = aorta_image
     otsuer.NumberOfHistogramBins = 256
     otsuer.Execute()
 
