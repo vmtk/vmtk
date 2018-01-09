@@ -32,7 +32,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkPolyDataBoundaryExtractor : public vtkPolyData
 {
   public: 
   vtkTypeMacro(vtkvmtkPolyDataBoundaryExtractor,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent); 
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE; 
 
   static vtkvmtkPolyDataBoundaryExtractor *New();
   
@@ -40,7 +40,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkPolyDataBoundaryExtractor : public vtkPolyData
   vtkvmtkPolyDataBoundaryExtractor();
   ~vtkvmtkPolyDataBoundaryExtractor() {}
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
  
   private:
   vtkvmtkPolyDataBoundaryExtractor(const vtkvmtkPolyDataBoundaryExtractor&);  // Not implemented.

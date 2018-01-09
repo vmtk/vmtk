@@ -44,7 +44,7 @@ protected:
   vtkvmtkGradientMagnitudeImageFilter() {};
   ~vtkvmtkGradientMagnitudeImageFilter() {};
 
-  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output);
+  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output) VTK_OVERRIDE;
 
 private:
   vtkvmtkGradientMagnitudeImageFilter(const vtkvmtkGradientMagnitudeImageFilter&);  // Not implemented.

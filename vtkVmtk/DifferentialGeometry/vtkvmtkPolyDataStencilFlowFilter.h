@@ -70,7 +70,7 @@ protected:
   vtkvmtkPolyDataStencilFlowFilter();
   ~vtkvmtkPolyDataStencilFlowFilter();
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
 
   void ReleaseStencils();
   

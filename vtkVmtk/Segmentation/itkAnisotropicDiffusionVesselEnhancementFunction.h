@@ -113,7 +113,7 @@ public:
   /** Compute the equation value. */
   virtual PixelType ComputeUpdate(const NeighborhoodType &neighborhood,
                                 void *globalData,
-                                const FloatOffsetType& = FloatOffsetType(0.0));
+                                const FloatOffsetType& = FloatOffsetType(0.0)) ITK_OVERRIDE;
   
   /** Compute the equation value. */
   virtual PixelType ComputeUpdate(
@@ -123,17 +123,17 @@ public:
                      const FloatOffsetType& = FloatOffsetType(0.0));
 
   /** Computes the time step for an update given a global data structure. */
-  virtual TimeStepType ComputeGlobalTimeStep(void *GlobalData) const;
+  virtual TimeStepType ComputeGlobalTimeStep(void *GlobalData) const ITK_OVERRIDE;
 
   /** Returns a pointer to a global data structure that is passed to this
    * object from the solver at each calculation.*/
-  virtual void *GetGlobalDataPointer() const
+  virtual void *GetGlobalDataPointer() const ITK_OVERRIDE
     {
     GlobalDataStruct *ans = new GlobalDataStruct();
     return ans; 
     }
 
-  virtual void ReleaseGlobalDataPointer(void *GlobalData) const
+  virtual void ReleaseGlobalDataPointer(void *GlobalData) const ITK_OVERRIDE
     { delete (GlobalDataStruct *) GlobalData; }
 
   /** Set/Get the time step. For this class of anisotropic diffusion filters,
@@ -153,7 +153,7 @@ protected:
   AnisotropicDiffusionVesselEnhancementFunction();
 
   virtual ~AnisotropicDiffusionVesselEnhancementFunction() {}
-  void PrintSelf(std::ostream &s, Indent indent) const;
+  void PrintSelf(std::ostream &s, Indent indent) const ITK_OVERRIDE;
   
   /** Slices for the ND neighborhood. */
   std::slice x_slice[itkGetStaticConstMacro(ImageDimension)];

@@ -51,7 +51,7 @@ public:
 
   // Description:
   // Standard DeepCopy method.
-  virtual void DeepCopy(vtkvmtkItem *src);
+  virtual void DeepCopy(vtkvmtkItem *src) VTK_OVERRIDE;
 
   vtkSetMacro(ReallocateOnBuild,int)
   vtkGetMacro(ReallocateOnBuild,int)

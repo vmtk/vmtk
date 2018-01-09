@@ -51,7 +51,7 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkRecursiveGaussianImageFilter : public 
   vtkvmtkRecursiveGaussianImageFilter();
   ~vtkvmtkRecursiveGaussianImageFilter() {};
 
-  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output);
+  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output) VTK_OVERRIDE;
 
  private:
   vtkvmtkRecursiveGaussianImageFilter(const vtkvmtkRecursiveGaussianImageFilter&);  // Not implemented.

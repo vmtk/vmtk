@@ -35,13 +35,13 @@ public:
 
   static vtkvmtkPolyDataDiscreteElasticaFilter *New();
   vtkTypeMacro(vtkvmtkPolyDataDiscreteElasticaFilter,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent); 
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE; 
 
 protected:
   vtkvmtkPolyDataDiscreteElasticaFilter();
   ~vtkvmtkPolyDataDiscreteElasticaFilter();
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
 
 private:
   vtkvmtkPolyDataDiscreteElasticaFilter(const vtkvmtkPolyDataDiscreteElasticaFilter&);  // Not implemented.

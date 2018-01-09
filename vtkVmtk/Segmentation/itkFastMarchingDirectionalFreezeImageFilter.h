@@ -99,9 +99,9 @@ public:
 protected:
   FastMarchingDirectionalFreezeImageFilter();
   ~FastMarchingDirectionalFreezeImageFilter(){};
-  void PrintSelf( std::ostream& os, Indent indent ) const;
+  void PrintSelf( std::ostream& os, Indent indent ) const ITK_OVERRIDE;
 
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
   void AllocateSpeedGradientImage();
   void ComputeSpeedGradientImage();
@@ -110,7 +110,7 @@ protected:
                                 const LevelSetImageType * output);
 
   virtual void UpdateNeighbors( const IndexType& index,
-                                const SpeedImageType *, LevelSetImageType * );
+                                const SpeedImageType *, LevelSetImageType * ) ITK_OVERRIDE;
 
 private:
   FastMarchingDirectionalFreezeImageFilter(const Self&); //purposely not implemented

@@ -37,7 +37,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkBoundaryReferenceSystems : p
 {
   public: 
   vtkTypeMacro(vtkvmtkBoundaryReferenceSystems,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent); 
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE; 
 
   static vtkvmtkBoundaryReferenceSystems *New();
 
@@ -71,7 +71,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkBoundaryReferenceSystems : p
   vtkvmtkBoundaryReferenceSystems();
   ~vtkvmtkBoundaryReferenceSystems();  
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
 
   char* BoundaryRadiusArrayName;
   char* BoundaryNormalsArrayName;

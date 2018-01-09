@@ -35,7 +35,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkCenterlineAttributesFilter :
 {
   public: 
   vtkTypeMacro(vtkvmtkCenterlineAttributesFilter,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent); 
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE; 
 
   static vtkvmtkCenterlineAttributesFilter* New();
 
@@ -49,7 +49,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkCenterlineAttributesFilter :
   vtkvmtkCenterlineAttributesFilter();
   ~vtkvmtkCenterlineAttributesFilter();  
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
 
   void ComputeAbscissas(vtkPolyData* input, vtkDoubleArray* abscissasArray);
   void ComputeParallelTransportNormals(vtkPolyData* input, vtkDoubleArray* parallelTransportNormalsArray);

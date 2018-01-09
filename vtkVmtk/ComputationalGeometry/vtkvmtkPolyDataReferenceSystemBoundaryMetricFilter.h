@@ -74,7 +74,7 @@ protected:
   vtkvmtkPolyDataReferenceSystemBoundaryMetricFilter();
   ~vtkvmtkPolyDataReferenceSystemBoundaryMetricFilter();
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
 
   char* BoundaryMetricArrayName;
 

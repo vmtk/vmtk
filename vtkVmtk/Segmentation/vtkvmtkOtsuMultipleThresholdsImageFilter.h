@@ -57,8 +57,8 @@ protected:
   vtkvmtkOtsuMultipleThresholdsImageFilter();
   ~vtkvmtkOtsuMultipleThresholdsImageFilter();
 
-  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output);
-  virtual int RequestInformation(vtkInformation * vtkNotUsed(request), vtkInformationVector **inputVector, vtkInformationVector *outputVector);
+  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output) VTK_OVERRIDE;
+  virtual int RequestInformation(vtkInformation * vtkNotUsed(request), vtkInformationVector **inputVector, vtkInformationVector *outputVector) VTK_OVERRIDE;
 
 private:
   vtkvmtkOtsuMultipleThresholdsImageFilter(const vtkvmtkOtsuMultipleThresholdsImageFilter&);  // Not implemented.

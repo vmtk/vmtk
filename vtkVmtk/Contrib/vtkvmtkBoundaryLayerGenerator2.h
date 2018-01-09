@@ -45,12 +45,12 @@ class VTK_VMTK_CONTRIB_EXPORT vtkvmtkBoundaryLayerGenerator2 : public vtkvmtkBou
 {
   public: 
   vtkTypeMacro(vtkvmtkBoundaryLayerGenerator2,vtkvmtkBoundaryLayerGenerator);
-  void PrintSelf(ostream& os, vtkIndent indent); 
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE; 
 
   static vtkvmtkBoundaryLayerGenerator2 *New();
 
-  vtkGetStringMacro(CellEntityIdsArrayName);
-  vtkSetStringMacro(CellEntityIdsArrayName);
+  // vtkGetStringMacro(CellEntityIdsArrayName);
+  // vtkSetStringMacro(CellEntityIdsArrayName);
   
   vtkGetStringMacro(OpenProfilesIdsArrayName);
   vtkSetStringMacro(OpenProfilesIdsArrayName);
@@ -89,9 +89,9 @@ class VTK_VMTK_CONTRIB_EXPORT vtkvmtkBoundaryLayerGenerator2 : public vtkvmtkBou
   vtkvmtkBoundaryLayerGenerator2();
   ~vtkvmtkBoundaryLayerGenerator2();
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
 
-  char *CellEntityIdsArrayName;
+  // char *CellEntityIdsArrayName;
  
  //A per-vertex array indicating which vertices are situated on the open profiles of the surface.
  //Elements with value -1 are assumed to be on the inner surface

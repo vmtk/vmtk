@@ -50,7 +50,7 @@ protected:
   vtkvmtkPolyDataGradientFilter();
   ~vtkvmtkPolyDataGradientFilter();
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
 
   char* InputArrayName;
   char* GradientArrayName;

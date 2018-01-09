@@ -72,7 +72,7 @@ protected:
   vtkvmtkPolyDataHarmonicMappingFilter();
   ~vtkvmtkPolyDataHarmonicMappingFilter();
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
 
   vtkIdList* BoundaryPointIds;
   vtkDoubleArray* BoundaryValues;

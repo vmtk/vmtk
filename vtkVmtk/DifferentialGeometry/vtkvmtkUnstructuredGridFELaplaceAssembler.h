@@ -35,7 +35,7 @@ public:
   static vtkvmtkUnstructuredGridFELaplaceAssembler* New();
   vtkTypeMacro(vtkvmtkUnstructuredGridFELaplaceAssembler,vtkvmtkFEAssembler);
 
-  virtual void Build();
+  virtual void Build() VTK_OVERRIDE;
 
 protected:
   vtkvmtkUnstructuredGridFELaplaceAssembler();

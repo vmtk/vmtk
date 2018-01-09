@@ -39,9 +39,9 @@ public:
 
   // Description:
   // Build the stencil.
-  void Build();
+  void Build() VTK_OVERRIDE;
 
-  virtual vtkIdType GetItemType() {return VTK_VMTK_EMPTY_STENCIL;};
+  virtual vtkIdType GetItemType() VTK_OVERRIDE {return VTK_VMTK_EMPTY_STENCIL;};
 
 protected:
   vtkvmtkEmptyStencil() {};

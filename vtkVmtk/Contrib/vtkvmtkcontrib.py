@@ -7,7 +7,7 @@ import vtk
 from vmtk import vtkvmtk
 
 if os.name == 'posix':
-    from libvtkvmtkContribPython import *
+    from .libvtkvmtkContribPython import *
 else:
-    from vtkvmtkContribPython import *
+    from .vtkvmtkContribPython import *
     

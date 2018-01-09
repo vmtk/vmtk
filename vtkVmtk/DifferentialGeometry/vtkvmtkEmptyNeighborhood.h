@@ -37,11 +37,11 @@ public:
   static vtkvmtkEmptyNeighborhood* New();
   vtkTypeMacro(vtkvmtkEmptyNeighborhood,vtkvmtkNeighborhood);
 
-  virtual vtkIdType GetItemType() {return VTK_VMTK_EMPTY_NEIGHBORHOOD;};
+  virtual vtkIdType GetItemType() VTK_OVERRIDE {return VTK_VMTK_EMPTY_NEIGHBORHOOD;};
 
   // Description:
   // Build the stencil.
-  void Build();
+  void Build() VTK_OVERRIDE;
 
 protected:
   vtkvmtkEmptyNeighborhood() {};

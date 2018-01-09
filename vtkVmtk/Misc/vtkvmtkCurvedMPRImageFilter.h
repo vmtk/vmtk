@@ -28,7 +28,7 @@ public:
 
   vtkTypeMacro(vtkvmtkCurvedMPRImageFilter,vtkImageAlgorithm);
 
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
     // Description: 
   // Set/Get the centerline along which the MPR should be made
@@ -87,17 +87,17 @@ public:
   // This method is called by the superclass and sets the update extent of the input image to the wholeextent 
   virtual int RequestUpdateExtent (vtkInformation *, 
                                    vtkInformationVector **, 
-                                   vtkInformationVector *);
+                                   vtkInformationVector *) VTK_OVERRIDE;
   // Description:
   // This method is called by the superclass and performs the actual computation of the MPR image
   virtual int RequestData(vtkInformation *, 
                           vtkInformationVector **, 
-                          vtkInformationVector *);
+                          vtkInformationVector *) VTK_OVERRIDE;
    // Description:
   // This method is called by the superclass and compute the output extent, origin and spacing
   virtual int RequestInformation  (vtkInformation * vtkNotUsed(request),
                                   vtkInformationVector **inputVector,
-                                  vtkInformationVector *outputVector);
+                                  vtkInformationVector *outputVector) VTK_OVERRIDE;
 
   vtkPolyData * Centerline;
   double InplaneOutputSpacing[2];

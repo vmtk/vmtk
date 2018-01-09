@@ -39,7 +39,7 @@ class VTK_VMTK_IO_EXPORT vtkvmtkDolfinWriter : public vtkUnstructuredGridWriter
 public:
   static vtkvmtkDolfinWriter *New();
   vtkTypeMacro(vtkvmtkDolfinWriter,vtkUnstructuredGridWriter);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   vtkSetStringMacro(BoundaryDataArrayName);
   vtkGetStringMacro(BoundaryDataArrayName);
@@ -54,7 +54,7 @@ protected:
   vtkvmtkDolfinWriter();
   ~vtkvmtkDolfinWriter();
 
-  void WriteData();
+  void WriteData() VTK_OVERRIDE;
 
   char* BoundaryDataArrayName;
   int BoundaryDataIdOffset;

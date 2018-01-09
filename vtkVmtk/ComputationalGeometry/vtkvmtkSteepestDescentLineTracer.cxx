@@ -232,8 +232,8 @@ void vtkvmtkSteepestDescentLineTracer::Backtrace(vtkPolyData* input, vtkIdType s
 
     if (numIterations > 0 &&
 			(
-				(currentEdge[0] == previousEdge2[0] && currentEdge[1] == previousEdge2[1] && fabs(previousS2 - currentS) < VTK_VMTK_DOUBLE_TOL) ||
-				(currentEdge[0] == previousEdge2[1] && currentEdge[1] == previousEdge2[0]) && fabs(1.0 - previousS2 - currentS) < VTK_VMTK_DOUBLE_TOL
+				((currentEdge[0] == previousEdge2[0] && currentEdge[1] == previousEdge2[1] && fabs(previousS2 - currentS) < VTK_VMTK_DOUBLE_TOL)) ||
+				((currentEdge[0] == previousEdge2[1] && currentEdge[1] == previousEdge2[0]) && fabs(1.0 - previousS2 - currentS) < VTK_VMTK_DOUBLE_TOL)
 			)
 		)
       {

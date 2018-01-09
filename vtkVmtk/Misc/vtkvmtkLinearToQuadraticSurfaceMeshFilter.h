@@ -32,7 +32,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkLinearToQuadraticSurfaceMeshFilter : public vt
 {
   public: 
   vtkTypeMacro(vtkvmtkLinearToQuadraticSurfaceMeshFilter,vtkUnstructuredGridAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent); 
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE; 
 
   static vtkvmtkLinearToQuadraticSurfaceMeshFilter *New();
   
@@ -47,7 +47,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkLinearToQuadraticSurfaceMeshFilter : public vt
   vtkvmtkLinearToQuadraticSurfaceMeshFilter();
   ~vtkvmtkLinearToQuadraticSurfaceMeshFilter();
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
 
   int SubdivisionMethod;
 

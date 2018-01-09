@@ -106,9 +106,9 @@ protected:
   FWHMFeatureImageFilter();
   virtual ~FWHMFeatureImageFilter() {}
 
-  void GenerateData();
+  void GenerateData() ITK_OVERRIDE;
 
-  void PrintSelf(std::ostream&, Indent) const;
+  void PrintSelf(std::ostream&, Indent) const ITK_OVERRIDE;
   
 private:
   FWHMFeatureImageFilter(const Self&); //purposely not implemented

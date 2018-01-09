@@ -64,7 +64,7 @@ protected:
   vtkvmtkNeighborhoods() {};
   ~vtkvmtkNeighborhoods() {};
 
-  virtual vtkvmtkItem* InstantiateNewItem(int itemType);
+  virtual vtkvmtkItem* InstantiateNewItem(int itemType) VTK_OVERRIDE;
 
 private:
   vtkvmtkNeighborhoods(const vtkvmtkNeighborhoods&);  // Not implemented.

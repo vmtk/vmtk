@@ -32,7 +32,7 @@ class VTK_VMTK_IO_EXPORT vtkvmtkDICOMImageReader : public vtkDICOMImageReader
 {
   public:
   vtkTypeMacro(vtkvmtkDICOMImageReader,vtkDICOMImageReader);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   static vtkvmtkDICOMImageReader *New();
 
@@ -48,8 +48,8 @@ class VTK_VMTK_IO_EXPORT vtkvmtkDICOMImageReader : public vtkDICOMImageReader
   vtkvmtkDICOMImageReader();
   ~vtkvmtkDICOMImageReader();
 
-  virtual void ExecuteInformation();
-  virtual void ExecuteData(vtkDataObject *out);
+  virtual void ExecuteInformation() VTK_OVERRIDE;
+  virtual void ExecuteData(vtkDataObject *out) VTK_OVERRIDE;
 
   void ComputeOutputVoxelSpacing();
   void GenerateOrientationString(float direction[3], char* orientationString);

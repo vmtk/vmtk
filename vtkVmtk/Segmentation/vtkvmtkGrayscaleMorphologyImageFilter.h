@@ -66,8 +66,8 @@ protected:
   vtkvmtkGrayscaleMorphologyImageFilter();
   ~vtkvmtkGrayscaleMorphologyImageFilter();
 
-  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output);
-  virtual int RequestInformation(vtkInformation * vtkNotUsed(request), vtkInformationVector **inputVector, vtkInformationVector *outputVector);
+  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output) VTK_OVERRIDE;
+  virtual int RequestInformation(vtkInformation * vtkNotUsed(request), vtkInformationVector **inputVector, vtkInformationVector *outputVector) VTK_OVERRIDE;
 
   int BallRadius[3];
   int Operation;

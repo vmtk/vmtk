@@ -44,7 +44,7 @@ protected:
   vtkvmtkPolyDataCenterlineAbscissaMetricFilter();
   ~vtkvmtkPolyDataCenterlineAbscissaMetricFilter();
 
-  virtual void EvaluateMetric(vtkIdType pointId, double point[3], vtkIdType groupId, vtkDataArray* metricArray);
+  virtual void EvaluateMetric(vtkIdType pointId, double point[3], vtkIdType groupId, vtkDataArray* metricArray) VTK_OVERRIDE;
 
   char* AbscissasArrayName;
 

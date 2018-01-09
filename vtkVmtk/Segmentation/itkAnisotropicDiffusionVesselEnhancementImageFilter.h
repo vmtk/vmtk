@@ -150,20 +150,20 @@ public:
 protected:
   AnisotropicDiffusionVesselEnhancementImageFilter();
  ~AnisotropicDiffusionVesselEnhancementImageFilter() {}
-  void PrintSelf(std::ostream& os, Indent indent) const;
+  void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 
   /* overloaded GenerateData method */
-  virtual void GenerateData(); 
+  virtual void GenerateData() ITK_OVERRIDE; 
 
   /** A simple method to copy the data from the input to the output. ( Supports
    * "read-only" image adaptors in the case where the input image type converts
    * to a different output image type. )  */
-  virtual void CopyInputToOutput();
+  virtual void CopyInputToOutput() ITK_OVERRIDE;
 
   /** This method applies changes from the m_UpdateBuffer to the output using
    * the ThreadedApplyUpdate() method and a multithreading mechanism.  "dt" is
    * the time step to use for the update of each pixel. */
-  virtual void ApplyUpdate(const TimeStepType& dt);
+  virtual void ApplyUpdate(const TimeStepType& dt) ITK_OVERRIDE;
 
   /** Method to allow subclasses to get direct access to the update
    * buffer */
@@ -173,11 +173,11 @@ protected:
   /** This method populates an update buffer with changes for each pixel in the
    * output using the ThreadedCalculateChange() method and a multithreading
    * mechanism. Returns value is a time step to be used for the update. */
-  virtual TimeStepType CalculateChange();
+  virtual TimeStepType CalculateChange() ITK_OVERRIDE;
 
   /** This method allocates storage in m_UpdateBuffer.  It is called from
    * Superclass::GenerateData(). */
-  virtual void AllocateUpdateBuffer();
+  virtual void AllocateUpdateBuffer() ITK_OVERRIDE;
 
   /** This method allocates storage for the diffusion tensor image */
   void AllocateDiffusionTensorImage();
@@ -214,7 +214,7 @@ protected:
                ThreadIdType threadId);
 
   /** Prepare for the iteration process. */
-  virtual void InitializeIteration();
+  virtual void InitializeIteration() ITK_OVERRIDE;
 
 private:
   //purposely not implemented

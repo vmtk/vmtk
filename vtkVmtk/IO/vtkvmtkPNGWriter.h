@@ -35,7 +35,7 @@ class VTK_VMTK_IO_EXPORT vtkvmtkPNGWriter : public vtkPNGWriter
 public:
   static vtkvmtkPNGWriter *New();
   vtkTypeMacro(vtkvmtkPNGWriter,vtkPNGWriter);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   vtkGetStringMacro(Base64Image);
   vtkSetStringMacro(Base64Image);
@@ -48,7 +48,7 @@ public:
   vtkGetMacro(FlipImage,int);
   vtkBooleanMacro(FlipImage,int);
 
-  virtual void Write();
+  virtual void Write() VTK_OVERRIDE;
 
 protected:
   vtkvmtkPNGWriter();

@@ -39,7 +39,7 @@ class VTK_VMTK_IO_EXPORT vtkvmtkFluentWriter : public vtkUnstructuredGridWriter
 public:
   static vtkvmtkFluentWriter *New();
   vtkTypeMacro(vtkvmtkFluentWriter,vtkUnstructuredGridWriter);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
   vtkSetStringMacro(BoundaryDataArrayName);
   vtkGetStringMacro(BoundaryDataArrayName);
@@ -50,7 +50,7 @@ protected:
 
   void ConvertFaceToLeftHanded(vtkUnstructuredGrid* input, vtkIdType tetraCellId, vtkIdType& id0, vtkIdType& id1, vtkIdType& id2);
 
-  void WriteData();
+  void WriteData() VTK_OVERRIDE;
 
   char* BoundaryDataArrayName;
 

@@ -77,7 +77,7 @@ protected:
   vtkvmtkSatoVesselnessMeasureImageFilter();
   ~vtkvmtkSatoVesselnessMeasureImageFilter();
 
-  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output);
+  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output) VTK_OVERRIDE;
 
 private:
   vtkvmtkSatoVesselnessMeasureImageFilter(const vtkvmtkSatoVesselnessMeasureImageFilter&);  // Not implemented.
