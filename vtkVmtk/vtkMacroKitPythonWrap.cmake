@@ -92,6 +92,7 @@ macro(vtkMacroKitPythonWrap)
       )
 
     install(TARGETS ${MY_KIT_NAME}PythonD
+      EXPORT VMTK-Targets
       RUNTIME DESTINATION ${MY_KIT_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries
       LIBRARY DESTINATION ${MY_KIT_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
       ARCHIVE DESTINATION ${MY_KIT_INSTALL_LIB_DIR} COMPONENT Development
@@ -128,6 +129,7 @@ macro(vtkMacroKitPythonWrap)
     set_target_properties(${MY_KIT_NAME}Python PROPERTIES PREFIX "")
 
     install(TARGETS ${MY_KIT_NAME}Python
+      EXPORT VMTK-Targets
       RUNTIME DESTINATION ${MY_KIT_MODULE_INSTALL_BIN_DIR} COMPONENT PythonRuntimeLibraries
       LIBRARY DESTINATION ${MY_KIT_MODULE_INSTALL_LIB_DIR} COMPONENT PythonRuntimeLibraries
       ARCHIVE DESTINATION ${MY_KIT_MODULE_INSTALL_LIB_DIR} COMPONENT Development
