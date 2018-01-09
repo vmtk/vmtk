@@ -3,15 +3,10 @@ import os
 from hashlib import sha1
 import vmtk.vmtkimagetonumpy as wrap
 import vmtk.vmtkimagenormalize as norm
-import vmtk.vmtkimagereader as r
 
-def test_normalize_image(test_data):
-    reader = r.vmtkImageReader()
-    reader.InputFileName = os.path.join(test_data, 'aorta.mha')
-    reader.Execute()
-
+def test_normalize_image(aorta_image):
     normer = norm.vmtkImageNormalize()
-    normer.Image = reader.Image
+    normer.Image = aorta_image
     normer.Execute()
 
     conv = wrap.vmtkImageToNumpy()

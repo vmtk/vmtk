@@ -5,13 +5,9 @@ import vmtk.vmtkimagetonumpy as wrap
 import vmtk.vmtkimagemorphology as morph
 import vmtk.vmtkimagereader as r
 
-def test_dilate_grayscale_image(test_data):
-    reader = r.vmtkImageReader()
-    reader.InputFileName = os.path.join(test_data, 'aorta.mha')
-    reader.Execute()
-
+def test_dilate_grayscale_image(aorta_image):
     morpher = morph.vmtkImageMorphology()
-    morpher.Image = reader.Image
+    morpher.Image = aorta_image
     morpher.Operation = 'dilate'
     morpher.Execute()
 
@@ -24,13 +20,9 @@ def test_dilate_grayscale_image(test_data):
     assert sha1(check).hexdigest() == '489fc2a5f372426e6c2cd4d29a95c81383e9bbcc'
 
 
-def test_erode_grayscale_image(test_data):
-    reader = r.vmtkImageReader()
-    reader.InputFileName = os.path.join(test_data, 'aorta.mha')
-    reader.Execute()
-
+def test_erode_grayscale_image(aorta_image):
     morpher = morph.vmtkImageMorphology()
-    morpher.Image = reader.Image
+    morpher.Image = aorta_image
     morpher.Operation = 'erode'
     morpher.Execute()
 
@@ -43,13 +35,9 @@ def test_erode_grayscale_image(test_data):
     assert sha1(check).hexdigest() == 'eacee45a6e32c1cef043644cafbd5f823c3ef5d9'
 
 
-def test_open_grayscale_image(test_data):
-    reader = r.vmtkImageReader()
-    reader.InputFileName = os.path.join(test_data, 'aorta.mha')
-    reader.Execute()
-
+def test_open_grayscale_image(aorta_image):
     morpher = morph.vmtkImageMorphology()
-    morpher.Image = reader.Image
+    morpher.Image = aorta_image
     morpher.Operation = 'open'
     morpher.Execute()
 
@@ -62,13 +50,9 @@ def test_open_grayscale_image(test_data):
     assert sha1(check).hexdigest() == '83419dc74e3785f4c9689ef5d0c404fca035fd2b'
 
 
-def test_close_grayscale_image(test_data):
-    reader = r.vmtkImageReader()
-    reader.InputFileName = os.path.join(test_data, 'aorta.mha')
-    reader.Execute()
-
+def test_close_grayscale_image(aorta_image):
     morpher = morph.vmtkImageMorphology()
-    morpher.Image = reader.Image
+    morpher.Image = aorta_image
     morpher.Operation = 'close'
     morpher.Execute()
 
@@ -81,13 +65,9 @@ def test_close_grayscale_image(test_data):
     assert sha1(check).hexdigest() == '56c558031c5a5251dd2aa5d8d1503736d68252f5'
 
 
-def test_change_ball_radius_dilate_grayscale_image(test_data):
-    reader = r.vmtkImageReader()
-    reader.InputFileName = os.path.join(test_data, 'aorta.mha')
-    reader.Execute()
-
+def test_change_ball_radius_dilate_grayscale_image(aorta_image):
     morpher = morph.vmtkImageMorphology()
-    morpher.Image = reader.Image
+    morpher.Image = aorta_image
     morpher.Operation = 'dilate'
     morpher.BallRadius = [2, 2, 2]
     morpher.Execute()
