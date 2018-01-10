@@ -21,8 +21,12 @@ import vmtk.vmtkimagetonumpy as imagetonumpy
 from hashlib import sha1
 
 
+
 @pytest.fixture(scope='function')
 def test_data():
+    '''
+    returns a path to the vmtk/tests/testData directory
+    '''
     cwd = os.path.dirname(os.path.abspath(__file__))
     datadir = os.path.join(os.path.dirname(cwd), 'testData')
     return datadir
