@@ -22,8 +22,8 @@ import unittest
 import os
 
 def test_import_vmtkScripts(vmtk_scripts):
-	import importlib
-	print(vmtk_scripts)
-	for name in vmtk_scripts:
-		assert importlib.import_module(name)
+    import importlib
+    print(vmtk_scripts)
+    for name in vmtk_scripts:
+        assert importlib.import_module(name)
 
