@@ -48,6 +48,26 @@ def image_to_sha():
         return sha1(check).hexdigest()
     return make_image_to_sha
 
+@pytest.fixture()
+def fast_marching_source_points():
+    # this data was pulled from the aorta_image data set manually.
+    return [71, 213, 16]
+
+@pytest.fixture()
+def fast_marching_target_points():
+    # this data was pulled from the aorta_image data set manually.
+    return [58, 78, 22,
+            96, 78, 21]
+
+@pytest.fixture()
+def colliding_fronts_source_points():
+    # this data was pulled from the aorta_image data set manually.
+    return [71, 213, 16]
+
+@pytest.fixture()
+def colliding_fronts_target_points():
+    # this data was pulled from the aorta_image data set manually.
+    return [58, 78, 22]
 
 @pytest.fixture(scope='function')
 def vmtk_scripts():
