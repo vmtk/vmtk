@@ -85,6 +85,13 @@ option( VMTK_USE_SUPERBUILD
 option( VMTK_USE_VTK8
   "Compile vmtk against VTK 8. OFF is VTK 7.1" ON )
 
+option( VMTK_BUILD_TESTING
+  "Build the VMTK testing libraries" OFF)
+
+IF(VMTK_BUILD_TESTING)
+  add_subdirectory(tests)
+ENDIF(VMTK_BUILD_TESTING)
+
 option( VMTK_BUNJEE_BUILD
   "Build VMTK and the projects it depends on ready for being linked from Bunjee." OFF )
 
@@ -111,7 +118,7 @@ if( VMTK_USE_SUPERBUILD )
     set ( VMTK_SCRIPTS_ENABLED OFF CACHE BOOL "" FORCE )
     set ( BUILD_EXAMPLES OFF CACHE BOOL "" FORCE )
     set ( BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE )
-    set ( BUILD_TESTING OFF CACHE BOOL "" FORCE )
+    # set ( BUILD_TESTING OFF CACHE BOOL "" FORCE )
     set ( VTK_USE_CARBON OFF )
     set ( VTK_USE_COCOA ON )
     set ( VTK_VMTK_USE_COCOA ON )
