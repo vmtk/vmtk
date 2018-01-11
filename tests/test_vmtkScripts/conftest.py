@@ -17,7 +17,9 @@
 import pytest
 import os
 import vmtk.vmtkimagereader as imagereader
+import vmtk.vmtksurfacereader as surfacereader
 import vmtk.vmtkimagetonumpy as imagetonumpy
+import vmtk.vmtksurfacetonumpy as surfacetonumpy
 from hashlib import sha1
 import copy
 
@@ -40,6 +42,14 @@ def aorta_image(test_data):
     return reader.Image
 
 
+@pytest.fixture(scope='function')
+def aorta_surface(test_data):
+    reader = surfacereader.vmtkSurfaceReader()
+    reader.InputFileName = os.path.join(test_data, 'aorta-surface.vtp')
+    reader.Execute()
+    return reader.Surface
+
+
 # this is a hack because pytest doesn't currently let you define functions
 # with inputs as fixtures. This way we return a function which accepts the input
 # and returns the sha.
@@ -52,6 +62,16 @@ def image_to_sha():
         check = converter.ArrayDict['PointData']['ImageScalars'].copy(order='C')
         return sha1(check).hexdigest()
     return make_image_to_sha
+
+
+@pytest.fixture()
+def poly_to_np():
+    def make_poly_to_np(surface):
+        converter = surfacetonumpy.vmtkSurfaceToNumpy()
+        converter.Surface = surface
+        converter.Execute()
+        return converter.ArrayDict
+    return make_poly_to_np
 
 
 @pytest.fixture()
