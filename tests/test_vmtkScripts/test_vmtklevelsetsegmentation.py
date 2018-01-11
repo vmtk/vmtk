@@ -16,7 +16,6 @@
 
 import pytest
 import vmtk.vmtklevelsetsegmentation as levelsetsegmentation
-import vmtk.vmtkimageviewer as viewer
 
 
 @pytest.fixture(scope='function')
