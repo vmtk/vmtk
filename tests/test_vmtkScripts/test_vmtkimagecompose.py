@@ -17,27 +17,30 @@
 import pytest
 import vmtk.vmtkimagecompose as comp
 
-def test_multiply_images(aorta_image, image_to_sha):
+def test_multiply_images(aorta_image, compare_images):
+    name = __name__ + '_test_multiply_images.mha'
     composer = comp.vmtkImageCompose()
     composer.Operation = 'multiply'
     composer.Image = aorta_image
     composer.Image2 = aorta_image
     composer.Execute()
 
-    assert image_to_sha(composer.Image) == '9b87984045e3756840562fe06fbf88e63be3c7d3'
+    assert compare_images(composer.Image, name) == True
 
 
-def test_subtract_images(aorta_image, image_to_sha):
+def test_subtract_images(aorta_image, compare_images):
+    name = __name__ + '_test_subtract_images.mha'
     composer = comp.vmtkImageCompose()
     composer.Operation = 'subtract'
     composer.Image = aorta_image
     composer.Image2 = aorta_image
     composer.Execute()
 
-    assert image_to_sha(composer.Image) == '2d717c12ea94d12d75c2b2412661cbb1e193c5e2'
+    assert compare_images(composer.Image, name) == True
 
 
-def test_negate_image2_and_multiply(aorta_image, image_to_sha):
+def test_negate_image2_and_multiply(aorta_image, compare_images):
+    name = __name__ + '_test_negate_image2_and_multiply.mha'
     composer = comp.vmtkImageCompose()
     composer.Operation = 'multiply'
     composer.NegateImage2 = True
@@ -45,10 +48,11 @@ def test_negate_image2_and_multiply(aorta_image, image_to_sha):
     composer.Image2 = aorta_image
     composer.Execute()
 
-    assert image_to_sha(composer.Image) == '002b8f78b7da8375bc31d762edcba8867bcb79bf'
+    assert compare_images(composer.Image, name) == True
 
 
-def test_negate_image2_and_min(aorta_image, image_to_sha):
+def test_negate_image2_and_min(aorta_image, compare_images):
+    name = __name__ + '_test_negate_image2_and_min.mha'
     composer = comp.vmtkImageCompose()
     composer.Operation = 'min'
     composer.NegateImage2 = True
@@ -56,10 +60,11 @@ def test_negate_image2_and_min(aorta_image, image_to_sha):
     composer.Image2 = aorta_image
     composer.Execute()
 
-    assert image_to_sha(composer.Image) == 'be29a3a239cc798c3de812921f2d3a9c82b9cd2f'
+    assert compare_images(composer.Image, name) == True
 
 
-def test_negate_image2_and_max(aorta_image, image_to_sha):
+def test_negate_image2_and_max(aorta_image, compare_images):
+    name = __name__ + '_test_negate_image2_and_max.mha'
     composer = comp.vmtkImageCompose()
     composer.Operation = 'max'
     composer.NegateImage2 = True
@@ -67,4 +72,4 @@ def test_negate_image2_and_max(aorta_image, image_to_sha):
     composer.Image2 = aorta_image
     composer.Execute()
 
-    assert image_to_sha(composer.Image) == 'd84290a3d556f5eb7c5e25a8075c9078791ec57d'
+    assert compare_images(composer.Image, name) == True

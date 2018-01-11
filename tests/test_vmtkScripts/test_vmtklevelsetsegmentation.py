@@ -19,22 +19,22 @@ import vmtk.vmtklevelsetsegmentation as levelsetsegmentation
 
 
 @pytest.fixture(scope='function')
-def initial_level_sets(test_data):
+def initial_level_sets(input_datadir):
     import vmtk.vmtkimagereader as reader
     import os
     read = reader.vmtkImageReader()
-    read.InputFileName = os.path.join(test_data, 'aorta-fastmarching-initial-levelset.mha')
+    read.InputFileName = os.path.join(input_datadir, 'aorta-fastmarching-initial-levelset.mha')
     read.Execute()
 
     return read.Image
 
 
 @pytest.fixture(scope='function')
-def feature_image(test_data):
+def feature_image(input_datadir):
     import vmtk.vmtkimagereader as reader
     import os
     read = reader.vmtkImageReader()
-    read.InputFileName = os.path.join(test_data, 'aorta-feature-image.mha')
+    read.InputFileName = os.path.join(input_datadir, 'aorta-feature-image.mha')
     read.Execute()
 
     return read.Image

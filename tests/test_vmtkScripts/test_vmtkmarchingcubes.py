@@ -19,11 +19,11 @@ import vmtk.vmtkmarchingcubes as marchingcubes
 import numpy as np
 
 @pytest.fixture()
-def level_set_image(test_data):
+def level_set_image(input_datadir):
     import vmtk.vmtkimagereader as reader
     import os
     read = reader.vmtkImageReader()
-    read.InputFileName = os.path.join(test_data, 'aorta-final-levelset.mha')
+    read.InputFileName = os.path.join(input_datadir, 'aorta-final-levelset.mha')
     read.Execute()
 
     return read.Image

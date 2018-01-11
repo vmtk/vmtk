@@ -19,7 +19,8 @@ import vmtk.vmtkimageinitialization as imageinitialization
 
 #TODO: How do we test interaction?
 
-def test_threshold_initialization_output_level_sets(aorta_image, image_to_sha):
+def test_threshold_initialization_output_level_sets(aorta_image, compare_images):
+    name = __name__ + '_test_threshold_initialization_output_level_sets.mha'
     initializer = imageinitialization.vmtkImageInitialization()
     initializer.Image = aorta_image
     initializer.Interactive = 0
@@ -28,10 +29,10 @@ def test_threshold_initialization_output_level_sets(aorta_image, image_to_sha):
     initializer.UpperThreshold = 1000
     initializer.Execute()
 
-    assert image_to_sha(initializer.InitialLevelSets) == '97346fc4a6758a072ec28f940ee120aa3d4b0215'
+    assert compare_images(initializer.InitialLevelSets, name) == True
 
 
-def test_threshold_initialization_isosurface_value_is_zero(aorta_image, image_to_sha):
+def test_threshold_initialization_isosurface_value_is_zero(aorta_image):
     initializer = imageinitialization.vmtkImageInitialization()
     initializer.Image = aorta_image
     initializer.Interactive = 0
@@ -43,7 +44,7 @@ def test_threshold_initialization_isosurface_value_is_zero(aorta_image, image_to
     assert initializer.IsoSurfaceValue == 0
 
 
-def test_threshold_initialization_no_output_surface(aorta_image, image_to_sha):
+def test_threshold_initialization_no_output_surface(aorta_image):
     initializer = imageinitialization.vmtkImageInitialization()
     initializer.Image = aorta_image
     initializer.Interactive = 0
@@ -55,7 +56,8 @@ def test_threshold_initialization_no_output_surface(aorta_image, image_to_sha):
     assert initializer.Surface is None
 
 
-def test_isosurface_initialization_output_level_sets(aorta_image, image_to_sha):
+def test_isosurface_initialization_output_level_sets(aorta_image, compare_images):
+    name = __name__ + '_test_isosurface_initialization_output_level_sets.mha'
     initializer = imageinitialization.vmtkImageInitialization()
     initializer.Image = aorta_image
     initializer.Interactive = 0
@@ -63,7 +65,7 @@ def test_isosurface_initialization_output_level_sets(aorta_image, image_to_sha):
     initializer.IsoSurfaceValue = 500
     initializer.Execute()
 
-    assert image_to_sha(initializer.InitialLevelSets) == '59ef68393e5aa7f9c53deb4d16f4cb89b0980f37'
+    assert compare_images(initializer.InitialLevelSets, name) == True
 
 
 def test_isosurface_initialization_output_isosurface_value(aorta_image):
@@ -81,9 +83,10 @@ def test_isosurface_initialization_output_isosurface_value(aorta_image):
     assert initializer.IsoSurfaceValue == 0
 
 
-def test_fastmarching_initialization_output_level_sets(aorta_image, image_to_sha,
+def test_fastmarching_initialization_output_level_sets(aorta_image, compare_images,
                                                        fast_marching_source_points,
                                                        fast_marching_target_points):
+    name = __name__ + '_test_fastmarching_initialization_output_level_sets.mha'
     initializer = imageinitialization.vmtkImageInitialization()
     initializer.Image = aorta_image
     initializer.Interactive = 0
@@ -93,12 +96,13 @@ def test_fastmarching_initialization_output_level_sets(aorta_image, image_to_sha
     initializer.TargetPoints = fast_marching_target_points
     initializer.Execute()
 
-    assert image_to_sha(initializer.InitialLevelSets) == '1c444633e686b45bf6b17f7e9632048b146a2531'
+    assert compare_images(initializer.InitialLevelSets, name) == True
 
 
-def test_collidingfronts_initialization_output_level_sets(aorta_image, image_to_sha,
-                                                       colliding_fronts_source_points,
-                                                       colliding_fronts_target_points):
+def test_collidingfronts_initialization_output_level_sets(aorta_image, compare_images,
+                                                          colliding_fronts_source_points,
+                                                          colliding_fronts_target_points):
+    name = __name__ + '_test_collidingfronts_initialization_output_level_sets.mha'
     initializer = imageinitialization.vmtkImageInitialization()
     initializer.Image = aorta_image
     initializer.Interactive = 0
@@ -108,4 +112,4 @@ def test_collidingfronts_initialization_output_level_sets(aorta_image, image_to_
     initializer.TargetPoints = colliding_fronts_target_points
     initializer.Execute()
 
-    assert image_to_sha(initializer.InitialLevelSets) == 'b2377783d57625ce6638656c75cf64bad378b725'
+    assert compare_images(initializer.InitialLevelSets, name) == True
