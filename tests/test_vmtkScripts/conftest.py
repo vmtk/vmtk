@@ -19,7 +19,7 @@ import os
 import vmtk.vmtkimagereader as imagereader
 import vmtk.vmtkimagetonumpy as imagetonumpy
 from hashlib import sha1
-
+import copy
 
 
 @pytest.fixture(scope='function')
@@ -39,6 +39,7 @@ def aorta_image(test_data):
     reader.Execute()
     return reader.Image
 
+
 # this is a hack because pytest doesn't currently let you define functions
 # with inputs as fixtures. This way we return a function which accepts the input
 # and returns the sha.
@@ -52,10 +53,12 @@ def image_to_sha():
         return sha1(check).hexdigest()
     return make_image_to_sha
 
+
 @pytest.fixture()
 def fast_marching_source_points():
     # this data was pulled from the aorta_image data set manually.
     return [71, 213, 16]
+
 
 @pytest.fixture()
 def fast_marching_target_points():
@@ -63,15 +66,18 @@ def fast_marching_target_points():
     return [58, 78, 22,
             96, 78, 21]
 
+
 @pytest.fixture()
 def colliding_fronts_source_points():
     # this data was pulled from the aorta_image data set manually.
     return [71, 213, 16]
 
+
 @pytest.fixture()
 def colliding_fronts_target_points():
     # this data was pulled from the aorta_image data set manually.
     return [58, 78, 22]
+
 
 @pytest.fixture(scope='function')
 def vmtk_scripts():
