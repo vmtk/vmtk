@@ -26,7 +26,7 @@ import vmtk.vmtkimagereader as r
 def test_compare_same_image(aorta_image):
 
     comparer = comp.vmtkImageCompare()
-    comparer.Method = 'range'
+    comparer.Method = 'subtraction'
     comparer.Image = aorta_image
     comparer.ReferenceImage = aorta_image
     comparer.Execute()
@@ -48,7 +48,7 @@ def test_compare_not_same_image(aorta_image):
     back.Execute()
 
     comparer = comp.vmtkImageCompare()
-    comparer.Method = 'range'
+    comparer.Method = 'subtraction'
     comparer.Image = aorta_image
     comparer.ReferenceImage = back.Image
     comparer.Execute()

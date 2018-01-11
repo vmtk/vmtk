@@ -20,32 +20,33 @@ import vmtk.vmtkimagereader as imagereader
 import vmtk.vmtksurfacereader as surfacereader
 import vmtk.vmtkimagetonumpy as imagetonumpy
 import vmtk.vmtksurfacetonumpy as surfacetonumpy
+import vmtk.vmtkimagewriter as imagewriter
+import vmtk.vmtkimagecompare as compare
 from hashlib import sha1
 import copy
 
 
 @pytest.fixture(scope='function')
-def test_data():
+def input_datadir():
     '''
     returns a path to the vmtk/tests/testData directory
     '''
-    cwd = os.path.dirname(os.path.abspath(__file__))
-    datadir = os.path.join(os.path.dirname(cwd), 'testData')
+    datadir = '/Users/rick/projects/vmtk/vmtk-test-data/input'
     return datadir
 
 
 @pytest.fixture(scope='function')
-def aorta_image(test_data):
+def aorta_image(input_datadir):
     reader = imagereader.vmtkImageReader()
-    reader.InputFileName = os.path.join(test_data, 'aorta.mha')
+    reader.InputFileName = os.path.join(input_datadir, 'aorta.mha')
     reader.Execute()
     return reader.Image
 
 
 @pytest.fixture(scope='function')
-def aorta_surface(test_data):
+def aorta_surface(input_datadir):
     reader = surfacereader.vmtkSurfaceReader()
-    reader.InputFileName = os.path.join(test_data, 'aorta-surface.vtp')
+    reader.InputFileName = os.path.join(input_datadir, 'aorta-surface.vtp')
     reader.Execute()
     return reader.Surface
 
@@ -72,6 +73,34 @@ def poly_to_np():
         converter.Execute()
         return converter.ArrayDict
     return make_poly_to_np
+
+@pytest.fixture()
+def write_image():
+    def make_write_image(image, filename):
+        writer = imagewriter.vmtkImageWriter()
+        writer.Image = image
+        writer.OutputFileName = os.path.join('/Users/rick/projects/vmtk/vmtk-test-data/imagereference', filename)
+        writer.Execute()
+        return
+    return make_write_image
+
+
+@pytest.fixture()
+def compare_images():
+    def make_compare_images(image, reference_file):
+        reader = imagereader.vmtkImageReader()
+        reader.InputFileName = os.path.join('/Users/rick/projects/vmtk/vmtk-test-data/imagereference', reference_file)
+        reader.Execute()
+
+        comp = compare.vmtkImageCompare()
+        comp.Image = image
+        comp.ReferenceImage = reader.Image
+        comp.Method = 'subtraction'
+        comp.Tolerance = 0.1
+        comp.Execute()
+
+        return comp.Result
+    return make_compare_images
 
 
 @pytest.fixture()
