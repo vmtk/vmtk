@@ -33,7 +33,6 @@ class vmtkImageReader(pypes.pypeScript):
         self.InputFileName = ''
         self.InputFilePrefix = ''
         self.InputFilePattern = ''
-        self.InputDirectoryName = ''
         self.Image = 0
         self.Output = 0
 
@@ -60,7 +59,6 @@ class vmtkImageReader(pypes.pypeScript):
             ['InputFileName','ifile','str',1,'','input file name'],
             ['InputFilePrefix','prefix','str',1,'','input file prefix (e.g. foo_)'],
             ['InputFilePattern','pattern','str',1,'','input file pattern (e.g. %s%04d.png)'],
-            ['InputDirectoryName','d','str',1,'','input directory name - dicom only'],
             ['DataExtent','extent','int',6,'','3D extent of the image - raw and png'],
             ['HeaderSize','headersize','int',1,'(0,)','size of the image header - raw only'],
             ['DataSpacing','spacing','float',3,'','spacing of the image - raw, tiff, png, itk'],
@@ -180,26 +178,6 @@ class vmtkImageReader(pypes.pypeScript):
         reader.Update()
         self.Image = reader.GetOutput()
 
-    def ReadDICOMFile(self):
-        if (self.InputFileName == ''):
-            self.PrintError('Error: no InputFileName.')
-        self.PrintLog('Reading DICOM file.')
-        reader = vtkvmtk.vtkvmtkDICOMImageReader()
-        reader.SetFileName(self.InputFileName)
-        reader.SetAutoOrientImage(self.AutoOrientDICOMImage)
-        reader.Update()
-        self.Image = reader.GetOutput()
-
-    def ReadDICOMDirectory(self):
-        if (self.InputDirectoryName == ''):
-            self.PrintError('Error: no InputDirectoryName.')
-        self.PrintLog('Reading DICOM directory.')
-        reader = vtkvmtk.vtkvmtkDICOMImageReader()
-        reader.SetDirectoryName(self.InputDirectoryName)
-        reader.SetAutoOrientImage(self.AutoOrientDICOMImage)
-        reader.Update()
-        self.Image = reader.GetOutput()
-
     def ReadITKIO(self):
         if self.InputFileName == '':
             self.PrintError('Error: no InputFileName.')
@@ -276,14 +254,6 @@ class vmtkImageReader(pypes.pypeScript):
             if not self.InputFileName:
                 self.PrintError('Error: no InputFileName.')
 
-        if self.InputDirectoryName == 'BROWSER':
-            import tkinter.filedialog
-            initialDir = pypes.pypeScript.lastVisitedPath
-            self.InputDirectoryName = tkinter.filedialog.askdirectory(title="Input directory",initialdir=initialDir)
-            pypes.pypeScript.lastVisitedPath = self.InputDirectoryName
-            if not self.InputDirectoryName:
-                self.PrintError('Error: no InputDirectoryName.')
-
         if self.GuessFormat and self.InputFileName and not self.Format:
             import os.path
             extension = os.path.splitext(self.InputFileName)[1]
@@ -292,18 +262,13 @@ class vmtkImageReader(pypes.pypeScript):
                 if extension in list(extensionFormats.keys()):
                     self.Format = extensionFormats[extension]
 
-        if self.UseITKIO and self.InputFileName and self.Format not in ['vtkxml','vtk','raw'] and not self.InputDirectoryName:
+        if self.UseITKIO and self.InputFileName and self.Format not in ['vtkxml','vtk','raw']:
             self.ReadITKIO()    
         else:
             if self.Format == 'vtkxml':
                 self.ReadVTKXMLImageFile()
             elif self.Format == 'vtk':
                 self.ReadVTKImageFile()
-            elif self.Format == 'dicom':
-                if self.InputDirectoryName != '':
-                    self.ReadDICOMDirectory()
-                else:
-                    self.ReadDICOMFile()
             elif self.Format == 'raw':
                 self.ReadRawImageFile()
             elif self.Format == 'meta':
@@ -312,6 +277,8 @@ class vmtkImageReader(pypes.pypeScript):
                 self.ReadPNGImageFile()
             elif self.Format == 'tiff':
                 self.ReadTIFFImageFile()
+            elif self.Format == 'dicom':
+                self.PrintError('Error: please enable parameter UseITKIO in order to read dicom files')
             else:
                 self.PrintError('Error: unsupported format '+ self.Format + '.')
 
