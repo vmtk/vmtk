@@ -5,7 +5,6 @@ vtkCommonCore
 vtkIOImage
 vtkIOLegacy
 vtkImagingCore
-vtkDICOMParser
 )
 if (VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
 list(APPEND VTK_VMTK_IO_COMPONENTS
@@ -18,7 +17,6 @@ list( APPEND VTK_VMTK_IO_TARGET_LINK_LIBRARIES ${VTK_LIBRARIES} )
 
 
 SET (VTK_VMTK_IO_SRCS
-  vtkvmtkDICOMImageReader.cxx
   vtkvmtkDolfinWriter.cxx
   vtkvmtkFDNEUTReader.cxx
   vtkvmtkFDNEUTWriter.cxx
