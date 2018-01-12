@@ -62,9 +62,9 @@ class vmtkImageCompare(pypes.pypeScript):
             
         imageScalarType = self.Image.GetScalarType()
         referenceScalarType = self.ReferenceImage.GetScalarType()
-        minScalarType = min(imageScalarType,referenceScalarType)
-        self.Image.SetScalarType(minScalarType) 
-        self.ReferenceImage.SetScalarType(minScalarType) 
+        if imageScalarType != referenceScalarType:
+            self.PrintError('Error: Input image and reference image are not of \
+                the same type. Please cast images to the same type.')
 
         imageMath = vtk.vtkImageMathematics()
         imageMath.SetInput1Data(self.Image) 
