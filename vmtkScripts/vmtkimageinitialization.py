@@ -204,9 +204,9 @@ class vmtkImageInitialization(pypes.pypeScript):
                 targetSeedIds.InsertNextId(self.Image.FindPoint(targetSeeds.GetPoint(i)))
 
         else:
-            for i in range(int(len(self.SourcePoints)/3)):
+            for i in range(len(self.SourcePoints)/3):
                 sourceSeedIds.InsertNextId(self.Image.ComputePointId([self.SourcePoints[3*i+0],self.SourcePoints[3*i+1],self.SourcePoints[3*i+2]]))
-            for i in range(int(len(self.TargetPoints)/3)):
+            for i in range(len(self.TargetPoints)/3):
                 targetSeedIds.InsertNextId(self.Image.ComputePointId([self.TargetPoints[3*i+0],self.TargetPoints[3*i+1],self.TargetPoints[3*i+2]]))
 
         scalarRange = self.Image.GetScalarRange()
