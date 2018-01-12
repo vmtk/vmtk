@@ -18,25 +18,26 @@ import pytest
 import vmtk.vmtkimageotsuthresholds as otsu
 
 
-@pytest.mark.parametrize("thresholds,expected_hash", [
-    (1, 'd692f244d88a2f4544fd111d26a337048568b75e'),
-    (2, '4f3320f66ca6d50e53ef7da620bb3cc2c90e6069'),
-    (3, '46381069b0def5db65f51a27568d0a6ed19ee790'),
+@pytest.mark.parametrize("thresholds,paramid", [
+    (1, '0'),
+    (2, '1'),
+    (3, '2'),
 ])
-def test_otsu_image_multiple_thresholds(aorta_image, image_to_sha, thresholds, expected_hash):
+def test_otsu_image_multiple_thresholds(aorta_image, compare_images, thresholds, paramid):
+    name = __name__ + '_test_otsu_image_multiple_thresholds_' + paramid + '.mha'
     otsuer = otsu.vmtkImageOtsuThresholds()
     otsuer.Image = aorta_image
     otsuer.NumberOfThresholds = thresholds
     otsuer.Execute()
 
-    assert image_to_sha(otsuer.Image) == expected_hash
+    assert compare_images(otsuer.Image, name) == True
 
 
-def test_otsu_image_256_histogram_bins(aorta_image, image_to_sha):
-
+def test_otsu_image_256_histogram_bins(aorta_image, compare_images):
+    name = __name__ + '_test_otsu_image_256_histogram_bins.mha'
     otsuer = otsu.vmtkImageOtsuThresholds()
     otsuer.Image = aorta_image
     otsuer.NumberOfHistogramBins = 256
     otsuer.Execute()
 
-    assert image_to_sha(otsuer.Image) == '2666f107392cbc193d3c9cd1572637e2a1d17f6c'
+    assert compare_images(otsuer.Image, name) == True

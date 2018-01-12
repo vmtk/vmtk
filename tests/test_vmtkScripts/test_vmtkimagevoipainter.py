@@ -16,14 +16,21 @@
 
 import pytest
 import vmtk.vmtkimagevoipainter as voipainter
+import vmtk.vmtkimageviewer as imageviewer
 
 #TODO: Figure out why this fails.
 @pytest.mark.skip(reason='this currently does not work. getting error "BoxExtent exceeds input WholeExtent"')
-def test_voi_painter(aorta_image, image_to_sha):
+def test_voi_painter(aorta_image, compare_images):
+    name = __name__ + '_test_voi_painter.mha'
     painter = voipainter.vmtkImageVOIPainter()
     painter.Image = aorta_image
     painter.Interactive = 0
-    painter.BoxBounds = [157.0, 186.0, 31.0, 67.0, 10.0, 20.0]
+    painter.PaintValue = 1500.0
+    painter.BoxBounds = [158.0, 250.0, 26.0, 300.0, 3.0, 30.0]
     painter.Execute()
 
-    print(image_to_sha(painter.Image))
+    print(painter.Image)
+    viewer = imageviewer.vmtkImageViewer()
+    viewer.Image = painter.Image
+    viewer.Execute()
+    # assert compare_images(painter.Image, name) == True

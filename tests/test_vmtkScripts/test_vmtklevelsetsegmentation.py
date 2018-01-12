@@ -40,13 +40,14 @@ def feature_image(input_datadir):
     return read.Image
 
 
-@pytest.mark.parametrize("level_sets_type,expected_hash", [
-    ("geodesic", 'd59c250b798684ed9f0b414001e7b29503529b23'),
-    ("curves", '8e3a2d00c1e79b706f6ca92f886d13fb58522211'),
-    ("laplacian", '88561c10dcfaf6c64ae1509094c443aabc9c6e5d'),
+@pytest.mark.parametrize("level_sets_type,paramid", [
+    ("geodesic", '0'),
+    ("curves", '1'),
+    ("laplacian", '2'),
 ])
 def test_level_sets(aorta_image, initial_level_sets, feature_image,
-                    level_sets_type, expected_hash, image_to_sha):
+                    level_sets_type, paramid, compare_images):
+    name = __name__ + '_test_level_sets_' + paramid + '.mha'
     ls = levelsetsegmentation.vmtkLevelSetSegmentation()
     ls.Image = aorta_image
     ls.InitialLevelSets = initial_level_sets
@@ -55,18 +56,19 @@ def test_level_sets(aorta_image, initial_level_sets, feature_image,
     ls.NumberOfIterations = 10
     ls.Execute()
 
-    assert image_to_sha(ls.LevelSets) == expected_hash
+    assert compare_images(ls.LevelSets, name) == True
 
 
-@pytest.mark.parametrize('iterations,propogation,curvature,advection,expected_hash,', [
-    (20, 0.0, 0.0, 1.0, '83904b7c0a395af6c0fabdd3c172a7fcca518259'),
-    (10, 2.0, 0.0, 1.0, '647aa580aa8f465b02e0a39c620d6b356c4d322d'),
-    (10, 0.0, 4.0, 1.0, '93d118c14f6202e3183e52d48477635127ed3cca'),
-    (10, 0.0, 0.0, 3.0, '6fb5f1088d0a371baab82e4bec6f3f0795d10df0'),
+@pytest.mark.parametrize('iterations,propogation,curvature,advection,paramid,', [
+    (20, 0.0, 0.0, 1.0, '0'),
+    (10, 2.0, 0.0, 1.0, '1'),
+    (10, 0.0, 4.0, 1.0, '2'),
+    (10, 0.0, 0.0, 3.0, '3'),
 ])
 def test_geodesic_level_set_parameters(aorta_image, initial_level_sets, feature_image,
                                        iterations, propogation, curvature, advection,
-                                       expected_hash, image_to_sha):
+                                       paramid, compare_images):
+    name = __name__ + '_test_geodesic_level_set_parameters_' + paramid + '.mha'
     ls = levelsetsegmentation.vmtkLevelSetSegmentation()
     ls.Image = aorta_image
     ls.InitialLevelSets = initial_level_sets
@@ -78,4 +80,4 @@ def test_geodesic_level_set_parameters(aorta_image, initial_level_sets, feature_
     ls.AdvectionScaling = advection
     ls.Execute()
 
-    assert image_to_sha(ls.LevelSets) == expected_hash
+    assert compare_images(ls.LevelSets, name) == True

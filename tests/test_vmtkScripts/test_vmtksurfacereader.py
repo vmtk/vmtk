@@ -18,21 +18,21 @@ import pytest
 import os
 from hashlib import sha1
 import vmtk.vmtksurfacetonumpy as wrap
+import vmtk.vmtksurfacereader as r
+
 
 def test_read_vtp_surface(input_datadir):
-    import vmtk.vmtksurfacereader as r
     reader = r.vmtkSurfaceReader()
-    reader.InputFileName = os.path.join(input_datadir, 'cow.vtp')
+    reader.InputFileName = os.path.join(input_datadir, 'aorta-surface.vtp')
     reader.Execute()
 
     conv = wrap.vmtkSurfaceToNumpy()
     conv.Surface = reader.Surface
     conv.Execute()
 
-    assert sha1(conv.ArrayDict['Points']).hexdigest() == 'f8f8bdc4e08a266cf6418f51e805aa689dc2f448'
+    assert sha1(conv.ArrayDict['Points']).hexdigest() == '2d589cf877f713cf805d7be952fa5bdb2f2ef0ee'
 
 def test_read_stl_surface(input_datadir):
-    import vmtk.vmtksurfacereader as r
     reader = r.vmtkSurfaceReader()
     reader.InputFileName = os.path.join(input_datadir, 'fixture.stl')
     reader.Execute()
