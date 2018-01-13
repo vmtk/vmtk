@@ -3,7 +3,6 @@ PROJECT(VMTK_TESTING)
 set(VMTK_TESTING_DIRECTORIES
   test_PypeS
   test_vmtkScripts
-  testData
   )
 
 FOREACH (TEST_DIR ${VMTK_TESTING_DIRECTORIES})
