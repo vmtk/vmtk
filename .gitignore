@@ -4,4 +4,4 @@
 __pycache__
 *.pyc
 .cache
-*.DS_Store
+.DS_Store
