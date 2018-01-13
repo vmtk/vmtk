@@ -19,6 +19,30 @@ import vmtk.vmtkimageinitialization as imageinitialization
 
 #TODO: How do we test interaction?
 
+@pytest.fixture()
+def fast_marching_source_points():
+    # this data was pulled from the aorta_image data set manually.
+    return [71, 213, 16]
+
+
+@pytest.fixture()
+def fast_marching_target_points():
+    # this data was pulled from the aorta_image data set manually.
+    return [58, 78, 22,
+            96, 78, 21]
+
+
+@pytest.fixture()
+def colliding_fronts_source_points():
+    # this data was pulled from the aorta_image data set manually.
+    return [71, 213, 16]
+
+
+@pytest.fixture()
+def colliding_fronts_target_points():
+    # this data was pulled from the aorta_image data set manually.
+    return [58, 78, 22]
+
 def test_threshold_initialization_output_level_sets(aorta_image, compare_images):
     name = __name__ + '_test_threshold_initialization_output_level_sets.mha'
     initializer = imageinitialization.vmtkImageInitialization()
