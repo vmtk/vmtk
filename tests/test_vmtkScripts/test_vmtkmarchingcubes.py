@@ -16,7 +16,6 @@
 
 import pytest
 import vmtk.vmtkmarchingcubes as marchingcubes
-import numpy as np
 
 @pytest.fixture()
 def level_set_image(input_datadir):
@@ -29,15 +28,11 @@ def level_set_image(input_datadir):
     return read.Image
 
 
-def test_marching_cubes_default(aorta_surface, level_set_image, poly_to_np):
+def test_marching_cubes_default(level_set_image, compare_surfaces):
+    name = __name__ + '_test_marching_cubes_default.vtp'
     mc = marchingcubes.vmtkMarchingCubes()
     mc.Image = level_set_image
     mc.Level = 0.0
     mc.Execute()
 
-    referencesurf = poly_to_np(aorta_surface)
-    comparesurf = poly_to_np(mc.Surface)
-
-    assert np.allclose(referencesurf['Points'], comparesurf['Points'])
-    assert np.allclose(referencesurf['CellData']['CellPointIds'], comparesurf['CellData']['CellPointIds'])
-
+    assert compare_surfaces(mc.Surface, name) == True

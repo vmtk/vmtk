@@ -16,14 +16,19 @@
 
 import pytest
 import os
-import vmtk.vmtkimagereader as imagereader
-import vmtk.vmtksurfacereader as surfacereader
-import vmtk.vmtkimagetonumpy as imagetonumpy
-import vmtk.vmtksurfacetonumpy as surfacetonumpy
-import vmtk.vmtkimagewriter as imagewriter
-import vmtk.vmtkimagecompare as compare
-from hashlib import sha1
 import copy
+from hashlib import sha1
+
+import vmtk.vmtkimagereader as imagereader
+import vmtk.vmtkimagetonumpy as imagetonumpy
+import vmtk.vmtkimagewriter as imagewriter
+import vmtk.vmtkimagecompare as imagecompare
+
+import vmtk.vmtksurfacereader as surfacereader
+import vmtk.vmtksurfacetonumpy as surfacetonumpy
+import vmtk.vmtksurfacecompare as surfacecompare
+import vmtk.vmtksurfacewriter as surfacewriter
+
 
 
 @pytest.fixture(scope='function')
@@ -35,20 +40,17 @@ def input_datadir():
     return datadir
 
 
+# **************************************************
+# Image Functions
+# **************************************************
+
+
 @pytest.fixture(scope='function')
 def aorta_image(input_datadir):
     reader = imagereader.vmtkImageReader()
     reader.InputFileName = os.path.join(input_datadir, 'aorta.mha')
     reader.Execute()
     return reader.Image
-
-
-@pytest.fixture(scope='function')
-def aorta_surface(input_datadir):
-    reader = surfacereader.vmtkSurfaceReader()
-    reader.InputFileName = os.path.join(input_datadir, 'aorta-surface.vtp')
-    reader.Execute()
-    return reader.Surface
 
 
 # this is a hack because pytest doesn't currently let you define functions
@@ -66,15 +68,6 @@ def image_to_sha():
 
 
 @pytest.fixture()
-def poly_to_np():
-    def make_poly_to_np(surface):
-        converter = surfacetonumpy.vmtkSurfaceToNumpy()
-        converter.Surface = surface
-        converter.Execute()
-        return converter.ArrayDict
-    return make_poly_to_np
-
-@pytest.fixture()
 def write_image():
     def make_write_image(image, filename):
         writer = imagewriter.vmtkImageWriter()
@@ -87,45 +80,92 @@ def write_image():
 
 @pytest.fixture()
 def compare_images():
-    def make_compare_images(image, reference_file):
+    def make_compare_images(image, reference_file, tolerance=0.1):
         reader = imagereader.vmtkImageReader()
         reader.InputFileName = os.path.join('/Users/rick/projects/vmtk/vmtk-test-data/imagereference', reference_file)
         reader.Execute()
 
-        comp = compare.vmtkImageCompare()
+        comp = imagecompare.vmtkImageCompare()
         comp.Image = image
         comp.ReferenceImage = reader.Image
         comp.Method = 'subtraction'
-        comp.Tolerance = 0.1
+        comp.Tolerance = tolerance
         comp.Execute()
 
         return comp.Result
     return make_compare_images
 
 
-@pytest.fixture()
-def fast_marching_source_points():
-    # this data was pulled from the aorta_image data set manually.
-    return [71, 213, 16]
+# **************************************************
+# Surface Functions
+# **************************************************
+
+
+@pytest.fixture(scope='function')
+def aorta_surface(input_datadir):
+    reader = surfacereader.vmtkSurfaceReader()
+    reader.InputFileName = os.path.join(input_datadir, 'aorta-surface.vtp')
+    reader.Execute()
+    return reader.Surface
+
+
+@pytest.fixture(scope='function')
+def aorta_surface2(input_datadir):
+    reader = surfacereader.vmtkSurfaceReader()
+    reader.InputFileName = os.path.join(input_datadir, 'aorta-surface-segment-2.vtp')
+    reader.Execute()
+    return reader.Surface
+
+@pytest.fixture(scope='function')
+def aorta_surface_open_ends(input_datadir):
+    reader = surfacereader.vmtkSurfaceReader()
+    reader.InputFileName = os.path.join(input_datadir, 'aorta-surface-open-ends.stl')
+    reader.Execute()
+    return reader.Surface
 
 
 @pytest.fixture()
-def fast_marching_target_points():
-    # this data was pulled from the aorta_image data set manually.
-    return [58, 78, 22,
-            96, 78, 21]
+def poly_to_np():
+    def make_poly_to_np(surface):
+        converter = surfacetonumpy.vmtkSurfaceToNumpy()
+        converter.Surface = surface
+        converter.Execute()
+        return converter.ArrayDict
+    return make_poly_to_np
 
 
 @pytest.fixture()
-def colliding_fronts_source_points():
-    # this data was pulled from the aorta_image data set manually.
-    return [71, 213, 16]
+def write_surface():
+    def make_write_surface(surface, filename):
+        writer = surfacewriter.vmtkSurfaceWriter()
+        writer.Surface = surface
+        writer.OutputFileName = os.path.join('/Users/rick/projects/vmtk/vmtk-test-data/surfacereference', filename)
+        writer.Execute()
+        return
+    return make_write_surface
 
 
 @pytest.fixture()
-def colliding_fronts_target_points():
-    # this data was pulled from the aorta_image data set manually.
-    return [58, 78, 22]
+def compare_surfaces():
+    def make_compare_surface(surface, reference_file, tolerance=0.001, method='distance'):
+        reader = surfacereader.vmtkSurfaceReader()
+        reader.InputFileName = os.path.join('/Users/rick/projects/vmtk/vmtk-test-data/surfacereference', reference_file)
+        reader.Execute()
+
+        comp = surfacecompare.vmtkSurfaceCompare()
+        comp.Surface = surface
+        comp.ReferenceSurface = reader.Surface
+        comp.Method = method
+        comp.Tolerance = tolerance
+        comp.Execute()
+
+        return comp.Result
+    return make_compare_surface
+
+
+# **************************************************
+# Misc Functions
+# **************************************************
 
 
 @pytest.fixture(scope='function')
