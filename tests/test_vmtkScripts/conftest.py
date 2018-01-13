@@ -116,13 +116,6 @@ def aorta_surface2(input_datadir):
     reader.Execute()
     return reader.Surface
 
-@pytest.fixture(scope='function')
-def aorta_surface_open_ends(input_datadir):
-    reader = surfacereader.vmtkSurfaceReader()
-    reader.InputFileName = os.path.join(input_datadir, 'aorta-surface-open-ends.stl')
-    reader.Execute()
-    return reader.Surface
-
 
 @pytest.fixture()
 def poly_to_np():
