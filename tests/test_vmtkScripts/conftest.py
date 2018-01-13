@@ -140,7 +140,7 @@ def write_surface():
 
 @pytest.fixture()
 def compare_surfaces():
-    def make_compare_surface(surface, reference_file, tolerance=0.001, method='distance'):
+    def make_compare_surface(surface, reference_file, tolerance=0.001, method='distance', arrayname=''):
         reader = surfacereader.vmtkSurfaceReader()
         reader.InputFileName = os.path.join('/Users/rick/projects/vmtk/vmtk-test-data/surfacereference', reference_file)
         reader.Execute()
@@ -149,6 +149,7 @@ def compare_surfaces():
         comp.Surface = surface
         comp.ReferenceSurface = reader.Surface
         comp.Method = method
+        comp.ArrayName = arrayname
         comp.Tolerance = tolerance
         comp.Execute()
 
