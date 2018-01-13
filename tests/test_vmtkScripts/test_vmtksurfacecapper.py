@@ -17,6 +17,15 @@
 import pytest
 import vmtk.vmtksurfacecapper as surfacecapper
 
+@pytest.fixture(scope='function')
+def aorta_surface_open_ends(input_datadir):
+    import vmtk.vmtksurfacereader as surfacereader
+    reader = surfacereader.vmtkSurfaceReader()
+    reader.InputFileName = os.path.join(input_datadir, 'aorta-surface-open-ends.stl')
+    reader.Execute()
+    return reader.Surface
+
+@pytest.mark.skip(reason='cannot use this non-interactively')
 @pytest.mark.parametrize('method,paramid', [
     ("simple", '0'),
     ("centerpoint", '1'),
@@ -36,6 +45,7 @@ def test_methods_with_default_params(aorta_surface_open_ends, method, paramid, c
     assert compare_surfaces(capper.Surface, name) == True
 
 
+@pytest.mark.skip(reason='cannot use this non-interactively')
 @pytest.mark.parametrize('constraint,rings,paramid', [
     (2.0, 8, '0'),
     (1.0, 12, '1'),
