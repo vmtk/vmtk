@@ -1,0 +1,53 @@
+# The language in this case has no bearing - we are going to be making use of "conda" for a
+# python distribution for the scientific python stack.
+language:
+  - cpp
+
+matrix:
+  include:
+    - os: linux
+      dist: trusty
+      sudo: required
+      env:  
+        - MATRIX_EVAL="TRPYTHON_VERSION=2.7.14"
+    - os: linux
+      dist: trusty
+      sudo: required
+      env:  
+        - MATRIX_EVAL="TRPYTHON_VERSION=3.5.1"
+    - os: linux
+      dist: trusty
+      sudo: required
+      env:  
+        - MATRIX_EVAL="TRPYTHON_VERSION=3.6.1"
+    - os: osx
+      osx_image: xcode9.2
+      compiler: clang
+      env:  
+        - MATRIX_EVAL="TRPYTHON_VERSION=2.7.14"
+    - os: osx
+      osx_image: xcode9.2
+      compiler: clang
+      env:  
+        - MATRIX_EVAL="TRPYTHON_VERSION=3.5.1"
+    - os: osx
+      osx_image: xcode9.2
+      compiler: clang
+      env:  
+        - MATRIX_EVAL="TRPYTHON_VERSION=3.6.1"
+
+env:
+  global:
+    - DESTINATION_CONDA_CHANNEL=""
+    - CONDA_INSTALL_LOCN="${HOME}/miniconda"
+
+before_install:
+  - eval "${MATRIX_EVAL}"
+
+# Matrix is fully specified (for now) by os versions
+
+install:
+  - source condabuild/travis/install.sh
+
+script:
+  - conda build --python $TRPYTHON_VERSION --no-copy-test-source-files $TRAVIS_BUILD_DIR/condabuild/

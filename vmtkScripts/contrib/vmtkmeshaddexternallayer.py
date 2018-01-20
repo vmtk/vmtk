@@ -25,7 +25,6 @@ import vtk
 from vmtk import vtkvmtk
 import sys
 from vmtk import vmtkscripts
-from vmtk import vmtkcontribscripts
 
 from vmtk import pypes
 
@@ -199,7 +198,7 @@ class vmtkMeshAddExternalLayer(pypes.pypeScript):
         if self.IncludeSurfaceCells or self.IncludeExtrudedSurfaceCells:
             wallOffset+=1
         
-        boundaryLayer = vmtkcontribscripts.vmtkBoundaryLayer2()
+        boundaryLayer = vmtkscripts.vmtkBoundaryLayer2()
         boundaryLayer.Mesh = surfaceToMesh.Mesh
         boundaryLayer.WarpVectorsArrayName = 'Normals'
         boundaryLayer.NegateWarpVectors = False
