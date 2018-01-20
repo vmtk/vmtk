@@ -1,10 +1,7 @@
 PROJECT(VMTK_TESTING)
 
-include(ExternalData)
-
-set(ExternalData_URL_TEMPLATES
-    "https://data.kitware.com:443/api/v1/file/hashsum/%(algo)/%(hash)/download"
- )
+include(${VMTK_TESTING_SOURCE_DIR}/ExternalData.cmake)
+include(${VMTK_TESTING_SOURCE_DIR}/VMTKExternalData.cmake)
 
 
 set(VMTK_TESTING_DIRECTORIES
