@@ -36,7 +36,16 @@ def input_datadir():
     '''
     returns a path to the vmtk/tests/testData directory
     '''
-    datadir = '/Users/rick/projects/vmtk/vmtk-test-data/input'
+    try:
+        datadir = '@ExternalData_BINARY_ROOT@/tests/data/input'
+        if not os.path.isdir(datadir): raise ValueError()
+    except ValueError:
+        try:
+            datadir = '@ExternalData_BINARY_ROOT@'
+            datadir = datadir.replace('/work/build/ExternalData', '/test_tmp/build/ExternalData/tests/data/input')
+            if not os.path.isdir(datadir): raise ValueError()
+        except ValueError:
+            datadir = '/Users/rick/projects/vmtk/vmtk-test-data/input'
     return datadir
 
 
@@ -72,7 +81,17 @@ def write_image():
     def make_write_image(image, filename):
         writer = imagewriter.vmtkImageWriter()
         writer.Image = image
-        writer.OutputFileName = os.path.join('/Users/rick/projects/vmtk/vmtk-test-data/imagereference', filename)
+        try:
+            datadir = '@ExternalData_BINARY_ROOT@/tests/data/imagereference'
+            if not os.path.isdir(datadir): raise ValueError()
+        except ValueError:
+            try:
+                datadir = '@ExternalData_BINARY_ROOT@'
+                datadir = datadir.replace('/work/build/ExternalData', '/test_tmp/build/ExternalData/tests/data/imagereference')
+                if not os.path.isdir(datadir): raise ValueError()
+            except ValueError:
+                datadir = '/Users/rick/projects/vmtk/vmtk-test-data/imagereference'
+        writer.OutputFileName = os.path.join(datadir, filename)
         writer.Execute()
         return
     return make_write_image
@@ -82,7 +101,17 @@ def write_image():
 def compare_images():
     def make_compare_images(image, reference_file, tolerance=0.1):
         reader = imagereader.vmtkImageReader()
-        reader.InputFileName = os.path.join('/Users/rick/projects/vmtk/vmtk-test-data/imagereference', reference_file)
+        try:
+            datadir = '@ExternalData_BINARY_ROOT@/tests/data/imagereference'
+            if not os.path.isdir(datadir): raise ValueError()
+        except ValueError:
+            try:
+                datadir = '@ExternalData_BINARY_ROOT@'
+                datadir = datadir.replace('/work/build/ExternalData', '/test_tmp/build/ExternalData/tests/data/imagereference')
+                if not os.path.isdir(datadir): raise ValueError()
+            except ValueError:
+                datadir = '/Users/rick/projects/vmtk/vmtk-test-data/imagereference'
+        reader.InputFileName = os.path.join(datadir, reference_file)
         reader.Execute()
 
         comp = imagecompare.vmtkImageCompare()
@@ -116,6 +145,13 @@ def aorta_surface2(input_datadir):
     reader.Execute()
     return reader.Surface
 
+@pytest.fixture(scope='function')
+def aorta_surface_openends(input_datadir):
+    reader = surfacereader.vmtkSurfaceReader()
+    reader.InputFileName = os.path.join(input_datadir, 'aorta-surface-open-ends.stl')
+    reader.Execute()
+    return reader.Surface
+
 
 @pytest.fixture()
 def poly_to_np():
@@ -132,7 +168,17 @@ def write_surface():
     def make_write_surface(surface, filename):
         writer = surfacewriter.vmtkSurfaceWriter()
         writer.Surface = surface
-        writer.OutputFileName = os.path.join('/Users/rick/projects/vmtk/vmtk-test-data/surfacereference', filename)
+        try:
+            datadir = '@ExternalData_BINARY_ROOT@/tests/data/surfacereference'
+            if not os.path.isdir(datadir): raise ValueError()
+        except ValueError:
+            try:
+                datadir = '@ExternalData_BINARY_ROOT@'
+                datadir = datadir.replace('/work/build/ExternalData', '/test_tmp/build/ExternalData/tests/data/surfacereference')
+                if not os.path.isdir(datadir): raise ValueError()
+            except ValueError:
+                datadir = '/Users/rick/projects/vmtk/vmtk-test-data/surfacereference'
+        writer.OutputFileName = os.path.join(datadir, filename)
         writer.Execute()
         return
     return make_write_surface
@@ -142,7 +188,17 @@ def write_surface():
 def compare_surfaces():
     def make_compare_surface(surface, reference_file, tolerance=0.001, method='distance', arrayname=''):
         reader = surfacereader.vmtkSurfaceReader()
-        reader.InputFileName = os.path.join('/Users/rick/projects/vmtk/vmtk-test-data/surfacereference', reference_file)
+        try:
+            datadir = '@ExternalData_BINARY_ROOT@/tests/data/surfacereference'
+            if not os.path.isdir(datadir): raise ValueError()
+        except ValueError:
+            try:
+                datadir = '@ExternalData_BINARY_ROOT@'
+                datadir = datadir.replace('/work/build/ExternalData', '/test_tmp/build/ExternalData/tests/data/surfacereference')
+                if not os.path.isdir(datadir): raise ValueError()
+            except ValueError:
+                datadir = '/Users/rick/projects/vmtk/vmtk-test-data/surfacereference'
+        reader.InputFileName = os.path.join(datadir, reference_file)
         reader.Execute()
 
         comp = surfacecompare.vmtkSurfaceCompare()
@@ -155,6 +211,68 @@ def compare_surfaces():
 
         return comp.Result
     return make_compare_surface
+
+
+# *************************************************
+# Centerlines
+# *************************************************
+
+@pytest.fixture(scope='function')
+def aorta_centerline(input_datadir):
+    reader = surfacereader.vmtkSurfaceReader()
+    reader.InputFileName = os.path.join(input_datadir, 'aorta-centerline.vtp')
+    reader.Execute()
+    return reader.Surface
+
+
+@pytest.fixture()
+def write_centerline():
+    def make_write_centerline(centerline, filename):
+        writer = surfacewriter.vmtkSurfaceWriter()
+        writer.Surface = centerline
+        try:
+            datadir = '@ExternalData_BINARY_ROOT@/tests/data/centerlinereference'
+            if not os.path.isdir(datadir): raise ValueError()
+        except ValueError:
+            try:
+                datadir = '@ExternalData_BINARY_ROOT@'
+                datadir = datadir.replace('/work/build/ExternalData', '/test_tmp/build/ExternalData/tests/data/centerlinereference')
+                if not os.path.isdir(datadir): raise ValueError()
+            except ValueError:
+                datadir = '/Users/rick/projects/vmtk/vmtk-test-data/centerlinereference'
+        writer.OutputFileName = os.path.join(datadir, filename)
+        writer.Execute()
+        return
+    return make_write_centerline
+
+
+@pytest.fixture()
+def compare_centerlines():
+    def make_compare_centerline(centerline, reference_file, tolerance=0.001, method='distance', arrayname=''):
+        reader = surfacereader.vmtkSurfaceReader()
+        try:
+            datadir = '@ExternalData_BINARY_ROOT@/tests/data/centerlinereference'
+            if not os.path.isdir(datadir): raise ValueError()
+        except ValueError:
+            try:
+                datadir = '@ExternalData_BINARY_ROOT@'
+                datadir = datadir.replace('/work/build/ExternalData', '/test_tmp/build/ExternalData/tests/data/centerlinereference')
+                if not os.path.isdir(datadir): raise ValueError()
+            except ValueError:
+                datadir = '/Users/rick/projects/vmtk/vmtk-test-data/centerlinereference'
+        reader.InputFileName = os.path.join(datadir, reference_file)
+        reader.Execute()
+
+        comp = surfacecompare.vmtkSurfaceCompare()
+        comp.Surface = centerline
+        comp.ReferenceSurface = reader.Surface
+        comp.Method = method
+        comp.ArrayName = arrayname
+        comp.Tolerance = tolerance
+        comp.Execute()
+
+        return comp.Result
+    return make_compare_centerline
 
 
 # **************************************************
