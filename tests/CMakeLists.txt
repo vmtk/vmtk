@@ -1,7 +1,7 @@
 PROJECT(VMTK_TESTING)
 
-include(${VMTK_TESTING_SOURCE_DIR}/ExternalData.cmake)
-include(${VMTK_TESTING_SOURCE_DIR}/VMTKExternalData.cmake)
+include(${VMTK_SOURCE_DIR}/CMake/ExternalData.cmake)
+include(${VMTK_SOURCE_DIR}/CMake/VMTKExternalData.cmake)
 
 
 set(VMTK_TESTING_DIRECTORIES
@@ -26,9 +26,9 @@ INSTALL(FILES ${VMTK_TESTING_INIT_SRC}
   DESTINATION ${VMTK_TESTING_INSTALL_LIB_DIR}
   COMPONENT PythonRuntimeLibraries)
 
-ExternalData_Add_Test(MyData
-  NAME MyTest
+ExternalData_Add_Test(AllData
+  NAME AllTests
   COMMAND python -m pytest ${VMTK_TESTING_INSTALL_LIB_DIR}
   DATA{data/,RECURSE:,REGEX:.*}
   )
-ExternalData_Add_Target(MyData)
+ExternalData_Add_Target(AllData)
