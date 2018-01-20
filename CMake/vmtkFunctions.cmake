@@ -1,6 +1,6 @@
 
 include(CMakeParseArguments)
-include(${VTK_VMTK_SOURCE_DIR}/vtkMacroKitPythonWrap.cmake)
+include(${VMTK_SOURCE_DIR}/CMake/vtkMacroKitPythonWrap.cmake)
 
 function(vmtk_build_library)
   set(options)

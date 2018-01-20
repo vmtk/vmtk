@@ -86,7 +86,7 @@ option( VMTK_USE_VTK8
   "Compile vmtk against VTK 8. OFF is VTK 7.1" ON )
 
 option( VMTK_BUILD_TESTING
-  "Build the VMTK testing libraries" ON)
+  "Build the VMTK testing libraries" OFF)
 
 IF(VMTK_BUILD_TESTING)
   add_subdirectory(tests)
@@ -276,13 +276,13 @@ IF(VMTK_SCRIPTS_ENABLED)
   INSTALL(EXPORT VMTK-Targets DESTINATION ${VMTK_BINARY_DIR})
 
   CONFIGURE_FILE(
-    ${VMTK_SOURCE_DIR}/CMakeInput/VMTKConfig.cmake.in
+    ${VMTK_SOURCE_DIR}/CMake/VMTKConfig.cmake.in
     ${VMTK_BINARY_DIR}/VMTKConfig.cmake
   @ONLY IMMEDIATE
   )
 
   CONFIGURE_FILE(
-    ${VMTK_SOURCE_DIR}/CMakeInput/VMTKUse.cmake.in
+    ${VMTK_SOURCE_DIR}/CMake/VMTKUse.cmake.in
     ${VMTK_BINARY_DIR}/VMTKUse.cmake
   @ONLY IMMEDIATE
   )

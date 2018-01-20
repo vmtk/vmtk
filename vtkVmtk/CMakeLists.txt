@@ -1,6 +1,6 @@
 PROJECT(VTK_VMTK)
 
-include(${VTK_VMTK_SOURCE_DIR}/vmtkFunctions.cmake)
+include(${VMTK_SOURCE_DIR}/CMake/vmtkFunctions.cmake)
 
 set(dirs
   Utilities
@@ -22,7 +22,7 @@ IF (VTK_VMTK_CONTRIB)
   list(APPEND dirs Contrib)
 ENDIF (VTK_VMTK_CONTRIB)
 
-INCLUDE (${VTK_VMTK_SOURCE_DIR}/CMakeOptions.cmake)
+INCLUDE (${VMTK_SOURCE_DIR}/CMake/CMakeOptions.cmake)
 
 CONFIGURE_FILE(
   ${VTK_VMTK_SOURCE_DIR}/vtkvmtkConfigure.h.in
