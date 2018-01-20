@@ -24,13 +24,13 @@ import os
 import sys 
 import glob
 import hashlib
+import shutil
 
 parser = argparse.ArgumentParser()
 parser.add_argument("idir", type=str, 
     help="the input directory for all data files to hash")
 parser.add_argument("odir", type=str, 
-    help="the output directory to store hashed file digests in the same \
-     relative directory")
+    help="the output directory to store hashed file digests")
 args = parser.parse_args()
 
 
@@ -75,17 +75,17 @@ for root, dirs, files in os.walk(args.idir):
         if inFilepath.lower().endswith('.md'):
             continue
         else:
-            # relative path of input file to place in output directory
-            relpath = inFilepath.replace(args.idir, '') + '.sha512'
-            outFilepath = os.path.join(args.odir, relpath)
+            outFilepath = os.path.join(args.odir, '.sha512')
 
         with open(inFilepath, 'rb') as f:
             data = f.read()
             inFilehash = hashlib.sha512(data).hexdigest()
 
+        outFilepath = os.path.join(outFilepath, inFilehash)
+
         if not os.path.exists(os.path.dirname(outFilepath)):
             os.makedirs(os.path.dirname(outFilepath))
 
-        with open(outFilepath, "w+") as text_file:
-            print(inFilehash, file=text_file)
-        print(f'processed file {relpath}')
+        shutil.copyfile(inFilepath, outFilepath)
+
+        print(f'processed file {inFilepath} to {outFilepath}')
