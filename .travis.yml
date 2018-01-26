@@ -1,8 +1,15 @@
+# Note: commit with the mesage [ci skip] or [skip ci] in order to skip building on travisci 
+#       and appveyor.
 # The language in this case has no bearing - we are going to be making use of "conda" for a
 # python distribution for the scientific python stack.
 language:
   - cpp
 
+# build matrix of environments to build against. 
+# note: for linux builds, sudo is required. This is not because we use any "sudo" commands
+#       instead, we use it to build a non-container image with TravisCI, which has more memory
+#       than a container image (if sudo was set to false). This is required because the build phase
+#       utilizes more memory than the container image has, causing a segfault. 
 matrix:
   include:
     - os: linux
@@ -41,10 +48,11 @@ env:
     - DESTINATION_CONDA_CHANNEL=""
     - CONDA_INSTALL_LOCN="${HOME}/miniconda"
 
+# by evaluating the environment, we are setting the TRPYTHON_VERSION variables. 
 before_install:
   - eval "${MATRIX_EVAL}"
 
-# Matrix is fully specified (for now) by os versions
+# Matrix is fully specified (for now) by os version
 
 install:
   - source condabuild/travis/install.sh

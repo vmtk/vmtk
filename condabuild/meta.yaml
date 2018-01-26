@@ -28,8 +28,7 @@ source:
 build:
   number: 8
   features:
-    - vc9   # [win and py27]
-    - vc14.1  # [win and (py35 or py36)]  
+    - vc14  # [win and (py35 or py36)]  
   skip:
     - True  # [win and py27]  
   
@@ -52,6 +51,7 @@ requirements:
     - h5py
     - setuptools              # [win]
     - menuinst                # [win]
+    - mesa                    # [linux]
 
   run:
     - python {{ python }}
@@ -60,6 +60,7 @@ requirements:
     - itk {{ itk }}
     - numpy
     - h5py
+    - mesa                    # [linux]
 
 test:
   source_files:
