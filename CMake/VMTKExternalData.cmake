@@ -31,7 +31,7 @@ file:///var/bigharddrive/%(algo)/%(hash)")
 mark_as_advanced(ExternalData_URL_TEMPLATES)
 list(APPEND ExternalData_URL_TEMPLATES
     # Data published on Girder
-    "https://data.kitware.com/api/v1/file/hashsum/%(algo)/%(hash)/download"
+    "http://data.kitware.com/api/v1/file/hashsum/%(algo)/%(hash)/download"
 )
 
 # Tell ExternalData commands to transform raw files to content links.
@@ -44,4 +44,4 @@ set(ExternalData_SERIES_PARSE "()(\\.[^./]*)$")
 set(ExternalData_SERIES_MATCH "(\\.[0-9]+)?")
 
 # Sometimes we want to download very large files.
-set(ExternalData_TIMEOUT_ABSOLUTE 900)
+set(ExternalData_TIMEOUT_ABSOLUTE 5000)

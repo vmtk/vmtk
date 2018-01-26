@@ -100,7 +100,7 @@ function main () {
     InstallMiniconda $env:PYTHON_VERSION $env:PYTHON_ARCH $env:PYTHON
     UpdateConda $env:PYTHON
     InstallCondaPackages $env:PYTHON "conda-build jinja2 anaconda-client"
-    UpdateCondaChannel $env:PYTHON "vmtk/label/dev"
+    UpdateCondaChannel $env:PYTHON "rlizzo"
 }
 
 main

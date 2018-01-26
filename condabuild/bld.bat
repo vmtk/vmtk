@@ -18,8 +18,8 @@
 :: VMTK via the Continuum Analytics Anaconda Python distribution.
 :: See https://www.continuum.io/ for distribution info
 
-mkdir wk
-cd wk
+mkdir build
+cd build
 
 :: tell cmake where Python is
 set PYTHON_LIBRARY=%PREFIX%\libs\python%PY_VER:~0,1%%PY_VER:~2,1%.lib
@@ -51,7 +51,7 @@ cmake .. -LAH -G "Ninja" ^
     -DVMTK_CONTRIB_SCRIPTS:BOOL=ON ^
     -DVMTK_USE_RENDERING:BOOL=ON ^
     -DVMTK_USE_SUPERBUILD:BOOL=OFF ^
-	-DCMAKE_CXX_STANDARD=14 ^
+	-DCMAKE_CXX_STANDARD=11 ^
     -DCMAKE_CXX_STANDARD_REQUIRED=ON ^
     -DCMAKE_CXX_EXTENSIONS=OFF 
 if errorlevel 1 exit 1
@@ -64,11 +64,12 @@ set MOVE_FROM=%LIBRARY_LIB%\python%PY_VER:~0,1%.%PY_VER:~2,1%\site-packages\vmtk
 
 move %MOVE_FROM% %PREFIX%\Lib\site-packages\vmtk\vtkvmtk.py
 if errorlevel 1 exit 1
-rmdir /s /q %LIBRARY_LIB%\python%PY_VER:~0,1%.%PY_VER:~2,1%
+
+if exist "%LIBRARY_LIB%\python%PY_VER:~0,1%.%PY_VER:~2,1%" rmdir /s /q "%LIBRARY_LIB%\python%PY_VER:~0,1%.%PY_VER:~2,1%"
 if errorlevel 1 exit 1
 
-:: Put the menu in it's correct place. 
-if not exist "%PREFIX%\Menu" mkdir "%PREFIX%\Menu"
-copy "%RECIPE_DIR%\condabuild\menu-windows.json" "%PREFIX%\Menu"
-copy "%RECIPE_DIR%\condabuild\vmtk-icon.ico" "%PREFIX%\Menu"
-if errorlevel 1 exit 1
+REM :: Put the menu in it's correct place. 
+REM if not exist "%PREFIX%\Menu" mkdir "%PREFIX%\Menu"
+REM copy "%RECIPE_DIR%\condabuild\menu-windows.json" "%PREFIX%\Menu"
+REM copy "%RECIPE_DIR%\condabuild\vmtk-icon.ico" "%PREFIX%\Menu"
+REM if errorlevel 1 exit 1

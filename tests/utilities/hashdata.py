@@ -74,6 +74,8 @@ for root, dirs, files in os.walk(args.idir):
         inFilepath = os.path.join(root, ifile) 
         if inFilepath.lower().endswith('.md'):
             continue
+        elif inFilepath.lower().endswith('.DS_Store'):
+            continue
         else:
             # relative path of input file to place in output directory
             relpath = inFilepath.replace(args.idir, '') + '.sha512'
