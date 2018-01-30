@@ -42,7 +42,7 @@ requirements:
     - future
     - vtk {{ vtk }}
     - itk {{ itk }}
-    - numpy
+    - numpy <=1.13
     - h5py
     - setuptools              # [win]
     - mesa                    # [linux]
@@ -52,7 +52,7 @@ requirements:
     - future 
     - vtk {{ vtk }}
     - itk {{ itk }}
-    - numpy
+    - numpy <=1.13
     - h5py
     - mesa                    # [linux]
 
