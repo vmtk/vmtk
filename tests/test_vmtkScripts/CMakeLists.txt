@@ -1,5 +1,6 @@
 set(TEST_VMTKSCRIPTS_SRCS
     conftest.py
+    test_vmtkcenterlines.py
     test_vmtkimagebinarize.py
     test_vmtkimagecast.py
     test_vmtkimagecompare.py
