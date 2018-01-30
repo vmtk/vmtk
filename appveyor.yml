@@ -56,8 +56,8 @@ platform:
 configuration:
   - Release
 
-  # this installs the appropriate Miniconda (Py2/Py3, 32/64 bit),
-  # as well as pip, conda-build, and the binstar CLI
+# this installs the appropriate Miniconda (Py2/Py3, 32/64 bit),
+# as well as pip, conda-build, and the binstar CLI
 # by default, all script lines are interpreted as batch
 install:
   - powershell .\\distribution\\appveyor\\install.ps1
