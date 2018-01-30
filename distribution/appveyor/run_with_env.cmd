@@ -1,3 +1,21 @@
+::  Program: VMTK
+::  Language:  Python
+::  Date:      January 30, 2018
+::  Version:   1.4
+::
+::  Copyright (c) Richard Izzo, Luca Antiga, All rights reserved.
+::  See LICENCE file for details.
+::
+::       This software is distributed WITHOUT ANY WARRANTY; without even
+::       the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+::       PURPOSE.  See the above copyright notices for more information.
+::
+::  Note: this code was contributed by
+::        Richard Izzo (Github @rlizzo)
+::        University at Buffalo
+::
+:: Adapted from original authors as displayed below
+::
 :: To build extensions for 64 bit Python 3, we need to configure environment
 :: variables to use the MSVC 2010 C++ compilers from GRMSDKX_EN_DVD.iso of:
 :: MS Windows SDK for Windows 7 and .NET Framework 4 (SDK v7.1)
