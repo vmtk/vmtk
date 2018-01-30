@@ -289,9 +289,6 @@ class vmtkDijkstraDistanceToPoints(pypes.pypeScript):
  
         self.Surface = self.ComputeDistances()
 
-        if self.Surface.GetSource():
-            self.Surface.GetSource().UnRegisterAllOutputs()
-
         if self.OwnRenderer:
             self.vmtkRenderer.Deallocate()
 
