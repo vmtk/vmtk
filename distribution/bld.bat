@@ -67,9 +67,3 @@ if errorlevel 1 exit 1
 
 if exist "%LIBRARY_LIB%\python%PY_VER:~0,1%.%PY_VER:~2,1%" rmdir /s /q "%LIBRARY_LIB%\python%PY_VER:~0,1%.%PY_VER:~2,1%"
 if errorlevel 1 exit 1
-
-REM :: Put the menu in it's correct place. 
-REM if not exist "%PREFIX%\Menu" mkdir "%PREFIX%\Menu"
-REM copy "%RECIPE_DIR%\condabuild\menu-windows.json" "%PREFIX%\Menu"
-REM copy "%RECIPE_DIR%\condabuild\vmtk-icon.ico" "%PREFIX%\Menu"
-REM if errorlevel 1 exit 1

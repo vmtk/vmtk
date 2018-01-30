@@ -45,7 +45,6 @@ matrix:
 
 env:
   global:
-    - DESTINATION_CONDA_CHANNEL=""
     - CONDA_INSTALL_LOCN="${HOME}/miniconda"
 
 # by evaluating the environment, we are setting the TRPYTHON_VERSION variables. 
@@ -55,7 +54,7 @@ before_install:
 # Matrix is fully specified (for now) by os version
 
 install:
-  - source condabuild/travis/install.sh
+  - source distribution/travis/install.sh
 
 script:
-  - conda build --python $TRPYTHON_VERSION --no-copy-test-source-files $TRAVIS_BUILD_DIR/condabuild/
+  - conda build --python $TRPYTHON_VERSION --no-copy-test-source-files $TRAVIS_BUILD_DIR/distribution/
