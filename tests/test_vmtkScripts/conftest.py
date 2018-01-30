@@ -14,6 +14,7 @@
 ##       Richard Izzo (Github @rlizzo)
 ##       University at Buffalo
 
+from __future__ import print_function
 import pytest
 import os
 import copy
@@ -45,7 +46,15 @@ def input_datadir():
             datadir = datadir.replace('/work/build/ExternalData', '/test_tmp/build/ExternalData/tests/data/input')
             if not os.path.isdir(datadir): raise ValueError()
         except ValueError:
-            datadir = '/Users/rick/projects/vmtk/vmtk-test-data/input'
+            datadir = os.path.join(
+                os.path.dirname(
+                    os.path.dirname(
+                        os.path.dirname(
+                            os.path.dirname(
+                                os.path.realpath(__file__))))),
+                'vmtk-test-data/input')
+            if not os.path.isdir(datadir): 
+                raise ValueError('the vmtk-test-data repository cannot be found at the same level as vmtk. expected it to be at', datadir)
     return datadir
 
 
@@ -90,7 +99,17 @@ def write_image():
                 datadir = datadir.replace('/work/build/ExternalData', '/test_tmp/build/ExternalData/tests/data/imagereference')
                 if not os.path.isdir(datadir): raise ValueError()
             except ValueError:
-                datadir = '/Users/rick/projects/vmtk/vmtk-test-data/imagereference'
+                # should be something like '/Users/rick/projects/vmtk/vmtk-test-data/imagereference'
+                # where script is run from '/Users/rick/projects/vmtk/vmtk/tests/test_vmtkScripts' dir
+                datadir = os.path.join(
+                    os.path.dirname(
+                        os.path.dirname(
+                            os.path.dirname(
+                                os.path.dirname(
+                                    os.path.realpath(__file__))))),
+                    'vmtk-test-data/imagereference')
+                if not os.path.isdir(datadir): 
+                    raise ValueError('the vmtk-test-data repository cannot be found at the same level as vmtk. expected it to be at', datadir)
         writer.OutputFileName = os.path.join(datadir, filename)
         writer.Execute()
         return
@@ -110,7 +129,15 @@ def compare_images():
                 datadir = datadir.replace('/work/build/ExternalData', '/test_tmp/build/ExternalData/tests/data/imagereference')
                 if not os.path.isdir(datadir): raise ValueError()
             except ValueError:
-                datadir = '/Users/rick/projects/vmtk/vmtk-test-data/imagereference'
+                datadir = os.path.join(
+                    os.path.dirname(
+                        os.path.dirname(
+                            os.path.dirname(
+                                os.path.dirname(
+                                    os.path.realpath(__file__))))),
+                    'vmtk-test-data/imagereference')
+                if not os.path.isdir(datadir): 
+                    raise ValueError('the vmtk-test-data repository cannot be found at the same level as vmtk. expected it to be at', datadir)
         reader.InputFileName = os.path.join(datadir, reference_file)
         reader.Execute()
 
@@ -177,7 +204,15 @@ def write_surface():
                 datadir = datadir.replace('/work/build/ExternalData', '/test_tmp/build/ExternalData/tests/data/surfacereference')
                 if not os.path.isdir(datadir): raise ValueError()
             except ValueError:
-                datadir = '/Users/rick/projects/vmtk/vmtk-test-data/surfacereference'
+                datadir = os.path.join(
+                    os.path.dirname(
+                        os.path.dirname(
+                            os.path.dirname(
+                                os.path.dirname(
+                                    os.path.realpath(__file__))))),
+                    'vmtk-test-data/surfacereference')
+                if not os.path.isdir(datadir): 
+                    raise ValueError('the vmtk-test-data repository cannot be found at the same level as vmtk. expected it to be at', datadir)
         writer.OutputFileName = os.path.join(datadir, filename)
         writer.Execute()
         return
@@ -197,7 +232,15 @@ def compare_surfaces():
                 datadir = datadir.replace('/work/build/ExternalData', '/test_tmp/build/ExternalData/tests/data/surfacereference')
                 if not os.path.isdir(datadir): raise ValueError()
             except ValueError:
-                datadir = '/Users/rick/projects/vmtk/vmtk-test-data/surfacereference'
+                datadir = os.path.join(
+                    os.path.dirname(
+                        os.path.dirname(
+                            os.path.dirname(
+                                os.path.dirname(
+                                    os.path.realpath(__file__))))),
+                    'vmtk-test-data/surfacereference')
+                if not os.path.isdir(datadir): 
+                    raise ValueError('the vmtk-test-data repository cannot be found at the same level as vmtk. expected it to be at', datadir)
         reader.InputFileName = os.path.join(datadir, reference_file)
         reader.Execute()
 
@@ -239,7 +282,15 @@ def write_centerline():
                 datadir = datadir.replace('/work/build/ExternalData', '/test_tmp/build/ExternalData/tests/data/centerlinereference')
                 if not os.path.isdir(datadir): raise ValueError()
             except ValueError:
-                datadir = '/Users/rick/projects/vmtk/vmtk-test-data/centerlinereference'
+                datadir = os.path.join(
+                    os.path.dirname(
+                        os.path.dirname(
+                            os.path.dirname(
+                                os.path.dirname(
+                                    os.path.realpath(__file__))))),
+                    'vmtk-test-data/centerlinereference')
+                if not os.path.isdir(datadir): 
+                    raise ValueError('the vmtk-test-data repository cannot be found at the same level as vmtk. expected it to be at', datadir)
         writer.OutputFileName = os.path.join(datadir, filename)
         writer.Execute()
         return
@@ -259,7 +310,15 @@ def compare_centerlines():
                 datadir = datadir.replace('/work/build/ExternalData', '/test_tmp/build/ExternalData/tests/data/centerlinereference')
                 if not os.path.isdir(datadir): raise ValueError()
             except ValueError:
-                datadir = '/Users/rick/projects/vmtk/vmtk-test-data/centerlinereference'
+                datadir = os.path.join(
+                    os.path.dirname(
+                        os.path.dirname(
+                            os.path.dirname(
+                                os.path.dirname(
+                                    os.path.realpath(__file__))))),
+                    'vmtk-test-data/centerlinereference')
+                if not os.path.isdir(datadir): 
+                    raise ValueError('the vmtk-test-data repository cannot be found at the same level as vmtk. expected it to be at', datadir)
         reader.InputFileName = os.path.join(datadir, reference_file)
         reader.Execute()
 
