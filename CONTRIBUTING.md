@@ -37,6 +37,7 @@ As VMTK is packaged and distributed exclusively through the anaconda package man
 
 
 #### Linux Requirements
+
 For Ubuntu users, you'll have to install the following packages prior to compiling:
 
 ```
@@ -47,9 +48,11 @@ For other distributions, please ensure that that OpenGL (version 2), Glew, and O
 
 
 #### MacOS Requirements
+
 VMTK only support MacOSX 10.9+. Please ensure that XCode (with xcode command line tools) is installed on the system (we currently clang-9 and clang++-9). 
 
 #### Windows Requirements
+
 Visual Studios 2015+ is required on the system. VMTK no longer supports python 2.7 on windows builds.Please be sure to set "Release" flag instead of the default "Debug" flag in Visual Studio. 
 
 In addition make sure that you choose the Visual Studio amd64 version during cmake configuration in order to build for an x64 system.  
@@ -67,7 +70,7 @@ Run CMake with the directory where the vmtk source tree is located as an argumen
 
 ```
 cmake ../vmtk
-````
+```
 
 Or with the GUI
 
@@ -103,3 +106,11 @@ Setting the CMake variable `VMTK_BUILD_TESTING=ON` and building the project will
 ### Running Tests
 
 We use the [pytest](https://docs.pytest.org/en/latest/) testing framework for unit testing. After building the library, run `pytest ./` from within the `Install/tests` directory. 
+
+### Contributing Tests
+
+In order to contribute tests, you will need to clone the [vmtk-test-data](https://github.com/vmtk/vmtk-test-data) repository at the same level as vmtk. Please add any test data files in the appropriate folders in the `vmtk-test-data` repository. if you create new test files within the `tests/test_FOO` directory, be sure to add that file to the accompanying `CMakeLists.txt` file as well. When your tests run locally, two steps need to be followed in order to add have our CI services be able to download your data:
+
+1) Run the `vmtk/tests/utilities/hashdata.py` script from the command line with the first argument directed to the `vmtk-test-data` path and the second directed to the `vmtk/tests/data` directory. This will generate the SHA512 hashes of the new data files you have added to `vmtk-test-data`. Please include these in your PR. 
+
+2) Create a PR to the [vmtk-test-data](https://github.com/vmtk/vmtk-test-data) repository and let us know the PR# in VMTK which this data file corresponds to. Once we merge the data, it will get uploaded to our online data storage site, which will then allow our CI servers to download and test the data files in your VMTK PR. 
