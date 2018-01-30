@@ -41,7 +41,6 @@ requirements:
     - git
     - ninja
     - setuptools             # [win] 
-    - menuinst               # [win]    
   host:
     - python {{ python }}
     - future
@@ -50,7 +49,6 @@ requirements:
     - numpy
     - h5py
     - setuptools              # [win]
-    - menuinst                # [win]
     - mesa                    # [linux]
 
   run:
