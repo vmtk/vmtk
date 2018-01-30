@@ -59,6 +59,8 @@ class vmtkDijkstraDistanceToPoints(pypes.pypeScript):
         self.ExamineText = None
 
         self.SetScriptName('vmtkdijkstradistancetopoints')
+        self.SetScriptDoc('This class computes the geodesic distance on the graph of a surface \
+                           from a set of user-selected points on the surface using the Dijkstra algorithm.')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
             ['DijkstraDistanceToPointsArrayName','distancetopointsarray','str',1,'','array storing the distances'],

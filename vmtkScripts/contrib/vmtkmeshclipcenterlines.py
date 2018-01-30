@@ -642,9 +642,6 @@ class vmtkMeshClipCenterlines(pypes.pypeScript):
         
         if self.OwnRenderer:
             self.vmtkRenderer.Deallocate()
-        
-        if self.Mesh.GetSource():
-            self.Mesh.GetSource().UnRegisterAllOutputs()
 
         #Restore the centerlines
         self.Centerlines = previousCenterlines

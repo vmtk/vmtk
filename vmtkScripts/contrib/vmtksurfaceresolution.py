@@ -57,6 +57,8 @@ class vmtkSufaceResolution(pypes.pypeScript):
         self.ExamineText = None
         
         self.SetScriptName('vmtksurfaceresolution')
+        self.SetScriptDoc('This allows the user to specify a edge-length array to be used to specify resolution for surface remeshing \
+                           The array is produced by RBF interpolation of values specified by the user by positioning spheres'
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
             ['ResolutionArrayName','resolutionarray','str',1,'','array storing the desired edge length'],
@@ -71,7 +73,7 @@ class vmtkSufaceResolution(pypes.pypeScript):
     
     def ComputeArray(self):
         rbf = vtkvmtk.vtkvmtkRBFInterpolation2()
-        rbf.SetSourceData(self.Spheres)
+        rbf.SetSource(self.Spheres)
         if self.RBFType == "thinplatespline":
             rbf.SetRBFTypeToThinPlateSpline()
         elif self.RBFType == "biharmonic":
@@ -329,9 +331,6 @@ class vmtkSufaceResolution(pypes.pypeScript):
             self.InputInfo('Please position the mouse and press space to add spheres, \'u\' to undo\nInsert at least 2 spheres.')
         
         self.Surface = self.ComputeArray()
-
-        if self.Surface.GetSource():
-            self.Surface.GetSource().UnRegisterAllOutputs()
 
         if self.OwnRenderer:
             self.vmtkRenderer.Deallocate()

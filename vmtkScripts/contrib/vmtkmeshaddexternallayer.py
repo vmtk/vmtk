@@ -251,9 +251,6 @@ class vmtkMeshAddExternalLayer(pypes.pypeScript):
 
         self.Mesh = appendFilter.GetOutput()
 
-        if self.Mesh.GetSource():
-            self.Mesh.GetSource().UnRegisterAllOutputs()
-
 
 if __name__=='__main__':
 
