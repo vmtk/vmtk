@@ -60,6 +60,7 @@ class vmtkDistanceToSpheres(pypes.pypeScript):
         self.ParametersChanged = False
         
         self.SetScriptName('vmtkdistancetospheres')
+        self.SetScriptDoc('This computes the euclidean from a set of user-selected spheres to a surface')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
             ['DistanceToSpheresArrayName','distancetospheresarray','str',1,'','array storing the distances'],

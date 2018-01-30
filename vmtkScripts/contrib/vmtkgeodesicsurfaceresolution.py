@@ -20,7 +20,7 @@
 
 ## This allows the user to specify a edge-length array to be used to specify resolution for surface remeshing
 ## The array is produced by RBF interpolation of values specified by the user by positioning spheres
-## This version use the geodesic distance along the surface instead of hte 3D euclidean distance for hte RBF
+## This version use the geodesic distance along the surface instead of the 3D euclidean distance for the RBF
 
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import vtk
@@ -59,6 +59,9 @@ class vmtkGeodesicSurfaceResolution(pypes.pypeScript):
         self.ExamineText = None
         
         self.SetScriptName('vtksurfaceresolution')
+        self.SetScriptDoc('This allows the user to specify a edge-length array to be used to specify resolution for surface remeshing \
+                           The array is produced by RBF interpolation of values specified by the user by positioning spheres. This \
+                           version use the geodesic distance along the surface instead of the 3D euclidean distance for the RBF')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
             ['ResolutionArrayName','resolutionarray','str',1,'','array storing the desired edge length'],
@@ -338,9 +341,6 @@ class vmtkGeodesicSurfaceResolution(pypes.pypeScript):
             any = (self.Spheres.GetNumberOfPoints()>1)
         
         self.Surface = self.ComputeArray()
-
-        if self.Surface.GetSource():
-            self.Surface.GetSource().UnRegisterAllOutputs()
 
         if self.OwnRenderer:
             self.vmtkRenderer.Deallocate()

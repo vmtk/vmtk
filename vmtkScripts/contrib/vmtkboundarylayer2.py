@@ -129,9 +129,6 @@ class vmtkBoundaryLayer2(pypes.pypeScript):
         self.Mesh = boundaryLayerGenerator.GetOutput()
         self.InnerSurfaceMesh = boundaryLayerGenerator.GetInnerSurface()
 
-        if self.Mesh.GetSource():
-            self.Mesh.GetSource().UnRegisterAllOutputs()
-
 
 if __name__=='__main__':
 
