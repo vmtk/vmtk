@@ -1,22 +1,18 @@
-## Program:   VMTK
-## Module:    Anaconda Distribution
+## Program: VMTK
 ## Language:  Python
-## Date:      May 29, 2017
+## Date:      January 30, 2018
+## Version:   1.4
 
-##   Copyright (c) Richard Izzo, Luca Antiga, David Steinman. All rights reserved.
+##   Copyright (c) Richard Izzo, Luca Antiga, All rights reserved.
 ##   See LICENCE file for details.
 
 ##      This software is distributed WITHOUT ANY WARRANTY; without even
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
-## Note: this script was contributed by
+## Note: this code was contributed by
 ##       Richard Izzo (Github @rlizzo)
-##       University at Buffalo; The Jacobs Institute
-
-## This file contains the packaging and distribution metadata for packaging
-## VMTK via the Continuum Analytics Anaconda Python distribution.
-## See https://www.continuum.io/ for distribution info
+##       University at Buffalo
 
 package:
   name: "vmtk"

@@ -1,4 +1,20 @@
-# Sample script to install Miniconda under Windows
+## Program: VMTK
+## Language:  Python
+## Date:      January 30, 2018
+## Version:   1.4
+
+##   Copyright (c) Richard Izzo, Luca Antiga, All rights reserved.
+##   See LICENCE file for details.
+
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+##      PURPOSE.  See the above copyright notices for more information.
+
+## Note: this code was contributed by
+##       Richard Izzo (Github @rlizzo)
+##       University at Buffalo
+
+# This code is based on the Sample script to install Miniconda under Windows
 # Authors: Olivier Grisel, Jonathan Helmus and Kyle Kastner, Robert McGibbon
 # License: CC0 1.0 Universal: http://creativecommons.org/publicdomain/zero/1.0/
 
