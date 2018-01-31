@@ -58,7 +58,7 @@ class vmtkSufaceResolution(pypes.pypeScript):
         
         self.SetScriptName('vmtksurfaceresolution')
         self.SetScriptDoc('This allows the user to specify a edge-length array to be used to specify resolution for surface remeshing \
-                           The array is produced by RBF interpolation of values specified by the user by positioning spheres'
+                           The array is produced by RBF interpolation of values specified by the user by positioning spheres')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
             ['ResolutionArrayName','resolutionarray','str',1,'','array storing the desired edge length'],
