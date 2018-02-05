@@ -1,9 +1,11 @@
 set(TEST_VMTKSCRIPTS_SRCS
     conftest.py
+    test_vmtkbranchextractor.py
     test_vmtkcenterlineattributes.py
     test_vmtkcenterlinegeometry.py
     test_vmtkcenterlineinterpolation.py
     test_vmtkcenterlinemodeller.py
+    test_vmtkcenterlineresampling.py
     test_vmtkcenterlines.py
     test_vmtkimagebinarize.py
     test_vmtkimagecast.py
