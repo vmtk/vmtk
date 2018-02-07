@@ -18,7 +18,7 @@ import pytest
 import vmtk.vmtklevelsetsegmentation as levelsetsegmentation
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope='module')
 def initial_level_sets(input_datadir):
     import vmtk.vmtkimagereader as reader
     import os
@@ -29,7 +29,7 @@ def initial_level_sets(input_datadir):
     return read.Image
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope='module')
 def feature_image(input_datadir):
     import vmtk.vmtkimagereader as reader
     import os

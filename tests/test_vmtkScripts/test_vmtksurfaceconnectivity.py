@@ -18,7 +18,7 @@ import pytest
 import vmtk.vmtksurfaceconnectivity as connectivity
 import os
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope='module')
 def aorta_surface_two_segments(input_datadir):
     import vmtk.vmtksurfacereader as surfacereader
     reader = surfacereader.vmtkSurfaceReader()
@@ -26,24 +26,16 @@ def aorta_surface_two_segments(input_datadir):
     reader.Execute()
     return reader.Surface
 
-@pytest.fixture(scope='function')
-def aorta_surface_reference(input_datadir):
-    import vmtk.vmtksurfacereader as surfacereader
-    reader = surfacereader.vmtkSurfaceReader()
-    reader.InputFileName = os.path.join(input_datadir, 'aorta-surface-connectivity-reference.stl')
-    reader.Execute()
-    return reader.Surface
 
-
-@pytest.mark.skip(reason='why is this failing? it makes no sense')
 def test_extract_largest_surface(aorta_surface_two_segments, compare_surfaces):
     name = __name__ + '_test_extract_largest_surface.vtp'
     connectiv = connectivity.vmtkSurfaceConnectivity()
     connectiv.Surface = aorta_surface_two_segments
     connectiv.Method = 'largest'
+    connectiv.CleanOutput = 1
     connectiv.Execute()
 
-    assert compare_surfaces(connectiv.Surface, name, tolerance=5) == True
+    assert compare_surfaces(connectiv.Surface, name) == True
 
 
 def test_extract_closest_to_reference_surface(aorta_surface_two_segments, aorta_surface_reference, compare_surfaces):

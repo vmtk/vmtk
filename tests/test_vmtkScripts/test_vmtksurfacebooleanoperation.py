@@ -17,41 +17,37 @@
 import pytest
 import vmtk.vmtksurfacebooleanoperation as surfacebooleanoperation
 
-@pytest.mark.skip(reason='this is currently failing')
+
 @pytest.mark.parametrize("operation,paramid", [
     ('union', '0'),
     ('intersection', '1'),
     ('difference', '2'),
 ])
-def test_operations_default_tolerance(aorta_surface, aorta_surface2,
-                                      operation, paramid,
-                                      write_surface, compare_surfaces):
+def test_operations_default_tolerance(aorta_surface2, aorta_surface_reference,
+                                      operation, paramid, compare_surfaces):
     name = __name__ + '_test_operations_default_tolerance_' + paramid + '.vtp'
     booler = surfacebooleanoperation.vmtkSurfaceBooleanOperation()
-    booler.Surface = aorta_surface
-    booler.Surface2 = aorta_surface2
+    booler.Surface = aorta_surface2
+    booler.Surface2 = aorta_surface_reference
     booler.Operation = operation
     booler.Execute()
-    write_surface(booler.Surface, name)
 
     assert compare_surfaces(booler.Surface, name, tolerance=1E-6) == True
 
-@pytest.mark.skip(reason='this is currently failing')
+
 @pytest.mark.parametrize("operation,tolerance,paramid", [
     ('union', 0.5, '0'),
     ('intersection', 0.5, '1'),
     ('difference', 0.5, '2'),
 ])
-def test_operations_varied_tolerance(aorta_surface, aorta_surface2,
-                                      operation, tolerance, paramid,
-                                      write_surface, compare_surfaces):
+def test_operations_varied_tolerance(aorta_surface2, aorta_surface_reference,
+                                      operation, tolerance, paramid, compare_surfaces):
     name = __name__ + '_test_operations_varied_tolerance_' + paramid + '.vtp'
     booler = surfacebooleanoperation.vmtkSurfaceBooleanOperation()
-    booler.Surface = aorta_surface
-    booler.Surface2 = aorta_surface2
+    booler.Surface = aorta_surface2
+    booler.Surface2 = aorta_surface_reference
     booler.Operation = operation
     booler.Tolerance = tolerance
     booler.Execute()
-    write_surface(booler.Surface, name)
 
     assert compare_surfaces(booler.Surface, name) == True

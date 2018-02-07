@@ -17,7 +17,7 @@
 import pytest
 import vmtk.vmtksurfacecapper as surfacecapper
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope='module')
 def aorta_surface_open_ends(input_datadir):
     import vmtk.vmtksurfacereader as surfacereader
     reader = surfacereader.vmtkSurfaceReader()

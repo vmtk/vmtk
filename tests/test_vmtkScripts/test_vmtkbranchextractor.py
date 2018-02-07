@@ -20,7 +20,7 @@ from vtk.numpy_interface import dataset_adapter as dsa
 import numpy as np
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope='module')
 def centerline_branches(aorta_centerline):
     extractor = branchextractor.vmtkBranchExtractor()
     extractor.Centerlines = aorta_centerline

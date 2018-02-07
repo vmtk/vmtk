@@ -26,10 +26,10 @@ def test_voi_painter(aorta_image, compare_images):
     painter.Image = aorta_image
     painter.Interactive = 0
     painter.PaintValue = 1500.0
-    painter.BoxBounds = [158.0, 250.0, 26.0, 300.0, 3.0, 30.0]
+    painter.BoxBounds = [190.0, 259.0, 110.0, 283.0, 12.0, 37.0]
     painter.Execute()
 
-    print(painter.Image)
+    print(painter.BoxBounds)
     viewer = imageviewer.vmtkImageViewer()
     viewer.Image = painter.Image
     viewer.Execute()

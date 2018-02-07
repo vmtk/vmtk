@@ -27,7 +27,7 @@ def test_size_modes_with_default_params(aorta_surface, elementsizemode, compare_
     remesher = remeshing.vmtkSurfaceRemeshing()
     remesher.Surface = aorta_surface
     remesher.ElementSizeMode = elementsizemode
-    remesher.NumberOfIterations = 3
+    remesher.NumberOfIterations = 1
     remesher.Execute()
 
     assert compare_surfaces(remesher.Surface, name, tolerance=1.0) == True
@@ -38,7 +38,7 @@ def test_change_target_area(aorta_surface, compare_surfaces):
     remesher = remeshing.vmtkSurfaceRemeshing()
     remesher.Surface = aorta_surface
     remesher.TargetArea = 0.5
-    remesher.NumberOfIterations = 3
+    remesher.NumberOfIterations = 1
     remesher.Execute()
 
     assert compare_surfaces(remesher.Surface, name, tolerance=1.0) == True
@@ -48,8 +48,8 @@ def test_change_target_area_factor(aorta_surface, compare_surfaces):
     name = __name__ + '_test_change_target_area_factor.vtp'
     remesher = remeshing.vmtkSurfaceRemeshing()
     remesher.Surface = aorta_surface
-    remesher.TargetAreaFactor = 2.0
-    remesher.NumberOfIterations = 3
+    remesher.TargetAreaFactor = 1.0
+    remesher.NumberOfIterations = 1
     remesher.Execute()
 
     assert compare_surfaces(remesher.Surface, name, tolerance=1.0) == True
@@ -60,7 +60,7 @@ def test_change_triangle_split_factor(aorta_surface, compare_surfaces):
     remesher = remeshing.vmtkSurfaceRemeshing()
     remesher.Surface = aorta_surface
     remesher.TriangleSplitFactor = 7.0
-    remesher.NumberOfIterations = 3
+    remesher.NumberOfIterations = 1
     remesher.Execute()
 
     assert compare_surfaces(remesher.Surface, name, tolerance=1.0) == True
@@ -71,7 +71,7 @@ def test_change_max_area(aorta_surface, compare_surfaces):
     remesher = remeshing.vmtkSurfaceRemeshing()
     remesher.Surface = aorta_surface
     remesher.MaxArea = 100
-    remesher.NumberOfIterations = 3
+    remesher.NumberOfIterations = 1
     remesher.Execute()
 
     assert compare_surfaces(remesher.Surface, name, tolerance=1.0) == True
@@ -82,7 +82,7 @@ def test_change_min_area(aorta_surface, compare_surfaces):
     remesher = remeshing.vmtkSurfaceRemeshing()
     remesher.Surface = aorta_surface
     remesher.MinArea = 0.3
-    remesher.NumberOfIterations = 3
+    remesher.NumberOfIterations = 1
     remesher.Execute()
 
     assert compare_surfaces(remesher.Surface, name, tolerance=1.0) == True
@@ -93,7 +93,7 @@ def test_change_number_connectivity_iterations(aorta_surface, compare_surfaces):
     remesher = remeshing.vmtkSurfaceRemeshing()
     remesher.Surface = aorta_surface
     remesher.NumberOfConnectivityOptimizationIterations = 30
-    remesher.NumberOfIterations = 3
+    remesher.NumberOfIterations = 1
     remesher.Execute()
 
     assert compare_surfaces(remesher.Surface, name, tolerance=1.0) == True
@@ -104,7 +104,7 @@ def test_change_relaxation_factor(aorta_surface, compare_surfaces):
     remesher = remeshing.vmtkSurfaceRemeshing()
     remesher.Surface = aorta_surface
     remesher.Relaxation = 0.7
-    remesher.NumberOfIterations = 3
+    remesher.NumberOfIterations = 1
     remesher.Execute()
 
     assert compare_surfaces(remesher.Surface, name, tolerance=1.0) == True
@@ -115,7 +115,7 @@ def test_change_min_area_factor(aorta_surface, compare_surfaces):
     remesher = remeshing.vmtkSurfaceRemeshing()
     remesher.Surface = aorta_surface
     remesher.MinAreaFactor = 0.7
-    remesher.NumberOfIterations = 3
+    remesher.NumberOfIterations = 1
     remesher.Execute()
 
     assert compare_surfaces(remesher.Surface, name, tolerance=1.0) == True
@@ -126,7 +126,7 @@ def test_change_aspect_ratio_threshold(aorta_surface, compare_surfaces):
     remesher = remeshing.vmtkSurfaceRemeshing()
     remesher.Surface = aorta_surface
     remesher.AspectRatioThreshold = 1.7
-    remesher.NumberOfIterations = 3
+    remesher.NumberOfIterations = 1
     remesher.Execute()
 
     assert compare_surfaces(remesher.Surface, name, tolerance=1.0) == True

@@ -198,6 +198,8 @@ class Pype(object):
                 continue
             pipedScriptObject = candidateScriptObjectList[-1]
             pipedMember = self.GetCompatibleMember(memberEntry,pipedScriptObject)
+            # Creates a memberpipe name of the following format
+            # Image = vmtkimagereader-0.Image
             memberEntry.MemberPipe = pipedScriptObject.ScriptName + '-' + str(pipedScriptObject.Id) + '.' + pipedMember.MemberName
             self.PrintLog(memberEntry.MemberName + ' = ' + memberEntry.MemberPipe,1)
 

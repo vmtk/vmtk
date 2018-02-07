@@ -1,15 +1,23 @@
 set(TEST_VMTKSCRIPTS_SRCS
     conftest.py
     test_importvmtkscripts.py
+    test_vmtkbifurcationprofiles.py
     test_vmtkbifurcationreferencesystems.py
+    test_vmtkbifurcationsections.py
+    test_vmtkbifurcationvectors.py
     test_vmtkbranchclipper.py
     test_vmtkbranchextractor.py
+    test_vmtkbranchgeometry.py
+    test_vmtkbranchmetrics.py
+    test_vmtkbranchsections.py
     test_vmtkcenterlineattributes.py
     test_vmtkcenterlinegeometry.py
     test_vmtkcenterlineinterpolation.py
     test_vmtkcenterlinemodeller.py
+    test_vmtkcenterlineoffsetattributes.py
     test_vmtkcenterlineresampling.py
     test_vmtkcenterlines.py
+    test_vmtkcenterlinesmoothing.py
     test_vmtkimagebinarize.py
     test_vmtkimagecast.py
     test_vmtkimagecompare.py
@@ -31,6 +39,7 @@ set(TEST_VMTKSCRIPTS_SRCS
     test_vmtksurfaceappend.py
     test_vmtksurfacebooleanoperation.py
     test_vmtksurfacecapper.py
+    test_vmtksurfacecelldatatopointdata.py
     test_vmtksurfaceconnectivity.py
     test_vmtksurfacedecimation.py
     test_vmtksurfacekiteremoval.py

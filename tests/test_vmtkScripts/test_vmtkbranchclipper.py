@@ -57,16 +57,13 @@ def test_clip_groupids_surface_returns_as_expected(aorta_centerline_branches, ao
     assert compare_surfaces(clipper.Surface, name) == True
 
 
-@pytest.mark.skip(reason='branch clipper with inside out enabled is not currently working. see github issue #229')
 @pytest.mark.parametrize("groupids,paramid", [
     ([0], '0'),
     ([2], '2'),
-    ([3], '3'),
-    ([0, 2], '02'),
-    ([2, 3], '23'),
+    ([3], '3')
 ])
 def test_clip_groupids_with_insideout_surface_returns_as_expected(aorta_centerline_branches, aorta_surface, 
-                                                                 groupids, paramid, compare_surfaces, write_surface):
+                                                                 groupids, paramid, compare_surfaces):
     name = __name__ + '_test_clip_groupids_' + paramid + '_with_insideout_surface_returns_as_expected.vtp'
     clipper = branchclipper.vmtkBranchClipper()
     clipper.Centerlines = aorta_centerline_branches
@@ -77,6 +74,5 @@ def test_clip_groupids_with_insideout_surface_returns_as_expected(aorta_centerli
     clipper.GroupIds = groupids
     clipper.InsideOut = 1
     clipper.Execute()
-    write_surface(clipper.Surface, name)
 
-    assert compare_surfaces(clipper.Surface, name) == True
+    assert compare_surfaces(clipper.Surface, name, method="addpointarray", arrayname="ClippingArray") == True

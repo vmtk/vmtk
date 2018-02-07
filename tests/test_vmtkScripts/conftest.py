@@ -32,7 +32,7 @@ import vmtk.vmtksurfacewriter as surfacewriter
 
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope='module')
 def input_datadir():
     '''
     returns a path to the vmtk/tests/testData directory
@@ -63,7 +63,7 @@ def input_datadir():
 # **************************************************
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope='module')
 def aorta_image(input_datadir):
     reader = imagereader.vmtkImageReader()
     reader.InputFileName = os.path.join(input_datadir, 'aorta.mha')
@@ -74,7 +74,7 @@ def aorta_image(input_datadir):
 # this is a hack because pytest doesn't currently let you define functions
 # with inputs as fixtures. This way we return a function which accepts the input
 # and returns the sha.
-@pytest.fixture()
+@pytest.fixture(scope='module')
 def image_to_sha():
     def make_image_to_sha(image):
         converter = imagetonumpy.vmtkImageToNumpy()
@@ -85,7 +85,7 @@ def image_to_sha():
     return make_image_to_sha
 
 
-@pytest.fixture()
+@pytest.fixture(scope='module')
 def write_image():
     def make_write_image(image, filename):
         writer = imagewriter.vmtkImageWriter()
@@ -116,7 +116,7 @@ def write_image():
     return make_write_image
 
 
-@pytest.fixture()
+@pytest.fixture(scope='module')
 def compare_images():
     def make_compare_images(image, reference_file, tolerance=0.1):
         reader = imagereader.vmtkImageReader()
@@ -157,7 +157,7 @@ def compare_images():
 # **************************************************
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope='module')
 def aorta_surface(input_datadir):
     reader = surfacereader.vmtkSurfaceReader()
     reader.InputFileName = os.path.join(input_datadir, 'aorta-surface.vtp')
@@ -165,23 +165,37 @@ def aorta_surface(input_datadir):
     return reader.Surface
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope='module')
 def aorta_surface2(input_datadir):
     reader = surfacereader.vmtkSurfaceReader()
-    reader.InputFileName = os.path.join(input_datadir, 'aorta-surface-segment-2.vtp')
+    reader.InputFileName = os.path.join(input_datadir, 'aorta-surface-segment-2.stl')
     reader.Execute()
     return reader.Surface
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope='module')
 def aorta_surface_openends(input_datadir):
     reader = surfacereader.vmtkSurfaceReader()
     reader.InputFileName = os.path.join(input_datadir, 'aorta-surface-open-ends.stl')
     reader.Execute()
     return reader.Surface
 
+@pytest.fixture(scope='module')
+def aorta_surface_branches(input_datadir):
+    reader = surfacereader.vmtkSurfaceReader()
+    reader.InputFileName = os.path.join(input_datadir, 'aorta-surface-branch-split.vtp')
+    reader.Execute()
+    return reader.Surface
+
+@pytest.fixture(scope='module')
+def aorta_surface_reference(input_datadir):
+    reader = surfacereader.vmtkSurfaceReader()
+    reader.InputFileName = os.path.join(input_datadir, 'aorta-surface-connectivity-reference.stl')
+    reader.Execute()
+    return reader.Surface
+
 
 @pytest.fixture()
-def poly_to_np():
+def poly_to_np(scope='module'):
     def make_poly_to_np(surface):
         converter = surfacetonumpy.vmtkSurfaceToNumpy()
         converter.Surface = surface
@@ -190,7 +204,7 @@ def poly_to_np():
     return make_poly_to_np
 
 
-@pytest.fixture()
+@pytest.fixture(scope='module')
 def write_surface():
     def make_write_surface(surface, filename):
         writer = surfacewriter.vmtkSurfaceWriter()
@@ -219,7 +233,7 @@ def write_surface():
     return make_write_surface
 
 
-@pytest.fixture()
+@pytest.fixture(scope='module')
 def compare_surfaces():
     def make_compare_surface(surface, reference_file, tolerance=0.001, method='distance', arrayname=''):
         reader = surfacereader.vmtkSurfaceReader()
@@ -260,21 +274,21 @@ def compare_surfaces():
 # Centerlines
 # *************************************************
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope='module')
 def aorta_centerline(input_datadir):
     reader = surfacereader.vmtkSurfaceReader()
     reader.InputFileName = os.path.join(input_datadir, 'aorta-centerline.vtp')
     reader.Execute()
     return reader.Surface
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope='module')
 def aorta_centerline_branches(input_datadir):
     reader = surfacereader.vmtkSurfaceReader()
     reader.InputFileName = os.path.join(input_datadir, 'aorta-centerline-branches.vtp')
     reader.Execute()
     return reader.Surface
 
-@pytest.fixture()
+@pytest.fixture(scope='module')
 def write_centerline():
     def make_write_centerline(centerline, filename):
         writer = surfacewriter.vmtkSurfaceWriter()
@@ -303,7 +317,7 @@ def write_centerline():
     return make_write_centerline
 
 
-@pytest.fixture()
+@pytest.fixture(scope='module')
 def compare_centerlines():
     def make_compare_centerline(centerline, reference_file, tolerance=0.001, method='distance', arrayname=''):
         reader = surfacereader.vmtkSurfaceReader()
@@ -343,176 +357,3 @@ def compare_centerlines():
 # **************************************************
 # Misc Functions
 # **************************************************
-
-
-@pytest.fixture(scope='function')
-def vmtk_scripts():
-    allscripts =  [
-        'vmtk.vmtkactivetubes',
-        'vmtk.vmtkbifurcationprofiles',
-        'vmtk.vmtkbifurcationreferencesystems',
-        'vmtk.vmtkbifurcationsections',
-        'vmtk.vmtkbifurcationvectors',
-        'vmtk.vmtkboundarylayer',
-        'vmtk.vmtkboundaryreferencesystems',
-        'vmtk.vmtkbranchclipper',
-        'vmtk.vmtkbranchextractor',
-        'vmtk.vmtkbranchgeometry',
-        'vmtk.vmtkbranchmapping',
-        'vmtk.vmtkbranchmetrics',
-        'vmtk.vmtkbranchpatching',
-        'vmtk.vmtkbranchsections',
-        'vmtk.vmtkcenterlineattributes',
-        'vmtk.vmtkcenterlinegeometry',
-        'vmtk.vmtkcenterlineinterpolation',
-        'vmtk.vmtkcenterlinelabeler',
-        'vmtk.vmtkcenterlinemerge',
-        'vmtk.vmtkcenterlinemodeller',
-        'vmtk.vmtkcenterlineoffsetattributes',
-        'vmtk.vmtkcenterlineresampling',
-        'vmtk.vmtkcenterlines',
-        'vmtk.vmtkcenterlinestonumpy',
-        'vmtk.vmtkcenterlinesections',
-        'vmtk.vmtkcenterlinesmoothing',
-        'vmtk.vmtkcenterlineviewer',
-        'vmtk.vmtkdelaunayvoronoi',
-        'vmtk.vmtkdistancetocenterlines',
-        'vmtk.vmtkendpointextractor',
-        'vmtk.vmtkflowextensions',
-        'vmtk.vmtkicpregistration',
-        'vmtk.vmtkimagebinarize',
-        'vmtk.vmtkimagecast',
-        'vmtk.vmtkimagecompose',
-        'vmtk.vmtkimagecurvedmpr',
-        'vmtk.vmtkimagefeaturecorrection',
-        'vmtk.vmtkimagefeatures',
-        'vmtk.vmtkimageinitialization',
-        'vmtk.vmtkimagemipviewer',
-        'vmtk.vmtkimagemorphology',
-        'vmtk.vmtkimagenormalize',
-        'vmtk.vmtkimageobjectenhancement',
-        'vmtk.vmtkimageotsuthresholds',
-        'vmtk.vmtkimagereader',
-        'vmtk.vmtkimagereslice',
-        'vmtk.vmtkimageseeder',
-        'vmtk.vmtkimageshiftscale',
-        'vmtk.vmtkimagesmoothing',
-        'vmtk.vmtkimagetonumpy',
-        'vmtk.vmtkimageviewer',
-        'vmtk.vmtkimagevesselenhancement',
-        'vmtk.vmtkimagevoipainter',
-        'vmtk.vmtkimagevoiselector',
-        'vmtk.vmtkimagewriter',
-        'vmtk.vmtklevelsetsegmentation',
-        'vmtk.vmtklineartoquadratic',
-        'vmtk.vmtklineresampling',
-        'vmtk.vmtklocalgeometry',
-        'vmtk.vmtkmarchingcubes',
-        'vmtk.vmtkmesharrayoperation',
-        'vmtk.vmtkmeshboundaryinspector',
-        'vmtk.vmtkmeshbranchclipper',
-        'vmtk.vmtkmeshclipper',
-        'vmtk.vmtkmeshconnectivity',
-        'vmtk.vmtkmeshcutter',
-        'vmtk.vmtkmeshdatareader',
-        'vmtk.vmtkmeshextractpointdata',
-        'vmtk.vmtkmeshlambda2',
-        'vmtk.vmtkmeshlinearize',
-        'vmtk.vmtkmeshgenerator',
-        'vmtk.vmtkmeshmergetimesteps',
-        'vmtk.vmtkmeshpolyballevaluation',
-        'vmtk.vmtkmeshprojection',
-        'vmtk.vmtkmeshreader',
-        'vmtk.vmtkmeshscaling',
-        'vmtk.vmtkmeshtetrahedralize',
-        'vmtk.vmtkmeshtosurface',
-        'vmtk.vmtkmeshtransform',
-        'vmtk.vmtkmeshtransformtoras',
-        'vmtk.vmtkmeshvectorfromcomponents',
-        'vmtk.vmtkmeshviewer',
-        'vmtk.vmtkmeshvolume',
-        'vmtk.vmtkmeshvorticityhelicity',
-        'vmtk.vmtkmeshwallshearrate',
-        'vmtk.vmtkmeshwriter',
-        'vmtk.vmtknetworkeditor',
-        'vmtk.vmtknetworkextraction',
-        'vmtk.vmtknetworkwriter',
-        'vmtk.vmtknumpyreader',
-        'vmtk.vmtknumpytocenterlines',
-        'vmtk.vmtknumpytoimage',
-        'vmtk.vmtknumpytosurface',
-        'vmtk.vmtknumpywriter',
-        'vmtk.vmtkparticletracer',
-        'vmtk.vmtkpathlineanimator',
-        'vmtk.vmtkpointsplitextractor',
-        'vmtk.vmtkpointtransform',
-        'vmtk.vmtkpolyballmodeller',
-        'vmtk.vmtkpotentialfit',
-        'vmtk.vmtkpythonscript',
-        'vmtk.vmtkrenderer',
-        'vmtk.vmtkrendertoimage',
-        'vmtk.vmtkrbfinterpolation',
-        'vmtk.vmtksurfaceappend',
-        'vmtk.vmtksurfacearraysmoothing',
-        'vmtk.vmtksurfacearrayoperation',
-        'vmtk.vmtksurfacebooleanoperation',
-        'vmtk.vmtksurfacecapper',
-        'vmtk.vmtksurfacecelldatatopointdata',
-        'vmtk.vmtksurfacecenterlineprojection',
-        'vmtk.vmtksurfaceclipper',
-        'vmtk.vmtksurfacecliploop',
-        'vmtk.vmtksurfaceconnectivity',
-        'vmtk.vmtksurfacecurvature',
-        'vmtk.vmtksurfacedecimation',
-        'vmtk.vmtksurfacedistance',
-        'vmtk.vmtksurfaceendclipper',
-        'vmtk.vmtksurfacekiteremoval',
-        'vmtk.vmtksurfaceloopextraction',
-        'vmtk.vmtksurfacemassproperties',
-        'vmtk.vmtksurfacemodeller',
-        'vmtk.vmtksurfacenormals',
-        'vmtk.vmtksurfacepointdatatocelldata',
-        'vmtk.vmtksurfacepolyballevaluation',
-        'vmtk.vmtksurfaceprojection',
-        'vmtk.vmtksurfacereader',
-        'vmtk.vmtksurfacereferencesystemtransform',
-        'vmtk.vmtksurfaceregiondrawing',
-        'vmtk.vmtksurfaceremeshing',
-        'vmtk.vmtksurfacescaling',
-        'vmtk.vmtksurfacesmoothing',
-        'vmtk.vmtksurfacesubdivision',
-        'vmtk.vmtksurfacetonumpy',
-        'vmtk.vmtksurfacetransform',
-        'vmtk.vmtksurfacetransforminteractive',
-        'vmtk.vmtksurfacetransformtoras',
-        'vmtk.vmtksurfacetriangle',
-        'vmtk.vmtksurfacetomesh',
-        'vmtk.vmtksurfaceviewer',
-        'vmtk.vmtksurfacewriter',
-        'vmtk.vmtksurfmesh',
-        'vmtk.vmtktetgen',
-        'vmtk.vmtktetringenerator',
-        'vmtk.vmtkboundarylayer2',
-        'vmtk.vmtkcenterlinestonumpy',
-        'vmtk.vmtkdijkstradistancetopoints',
-        'vmtk.vmtkdistancetospheres',
-        'vmtk.vmtkentityrenumber',
-        'vmtk.vmtkgeodesicsurfaceresolution',
-        'vmtk.vmtkimagetonumpy',
-        'vmtk.vmtkmeshaddexternallayer',
-        'vmtk.vmtkmeshclipcenterlines',
-        'vmtk.vmtkmeshmerge',
-        'vmtk.vmtkmeshtetrahedralize2',
-        'vmtk.vmtkmeshviewer2',
-        'vmtk.vmtkmeshwriter2',
-        'vmtk.vmtknumpyreader',
-        'vmtk.vmtknumpytocenterlines',
-        'vmtk.vmtknumpytoimage',
-        'vmtk.vmtknumpytosurface',
-        'vmtk.vmtknumpywriter',
-        'vmtk.vmtksurfaceextractinnercylinder',
-        'vmtk.vmtksurfaceresolution',
-        'vmtk.vmtksurfacetonumpy',
-        'vmtk.vmtksurfacewriter2',
-        'vmtk.vmtkthreshold' ]
-    return allscripts
