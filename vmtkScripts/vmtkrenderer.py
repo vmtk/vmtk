@@ -295,6 +295,7 @@ class vmtkRenderer(pypes.pypeScript):
             #self.Renderer.AddActor(self.TextActorStd)
 
             self.TextActor = vtk.vtkTextActor()
+            self.TextActor.SetTextScaleModeToViewport()
             self.TextActor.GetPositionCoordinate().SetCoordinateSystemToNormalizedViewport()
             self.TextActor.GetPosition2Coordinate().SetCoordinateSystemToNormalizedViewport()
             self.TextActor.SetPosition(self.Position)
@@ -305,6 +306,7 @@ class vmtkRenderer(pypes.pypeScript):
             #self.Renderer.AddActor(self.TextActorOpmode)
 
             self.TextInputActor = vtk.vtkTextActor()
+            self.TextInputActor.SetTextScaleModeToViewport()
             self.TextInputActor.GetPositionCoordinate().SetCoordinateSystemToNormalizedViewport()
             self.TextInputActor.GetPosition2Coordinate().SetCoordinateSystemToNormalizedViewport()
             self.TextInputActor.SetPosition(self.InputPosition)
