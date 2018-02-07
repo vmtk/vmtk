@@ -1,0 +1,76 @@
+## Program: VMTK
+## Language:  Python
+## Date:      January 30, 2018
+## Version:   1.4
+##
+##   Copyright (c) Richard Izzo, Luca Antiga, All rights reserved.
+##   See LICENCE file for details.
+##
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+##      PURPOSE.  See the above copyright notices for more information.
+##
+## Note: this code was contributed by
+##       Richard Izzo (Github @rlizzo)
+##       University at Buffalo
+
+# Note: commit with the mesage [ci skip] or [skip ci] in order to skip building on travisci 
+#       and appveyor.
+# The language in this case has no bearing - we are going to be making use of "conda" for a
+# python distribution for the scientific python stack.
+language:
+  - cpp
+
+# build matrix of environments to build against. 
+# note: for linux builds, sudo is required. This is not because we use any "sudo" commands
+#       instead, we use it to build a non-container image with TravisCI, which has more memory
+#       than a container image (if sudo was set to false). This is required because the build phase
+#       utilizes more memory than the container image has, causing a segfault. 
+matrix:
+  include:
+    - os: linux
+      dist: trusty
+      sudo: required
+      env:  
+        - MATRIX_EVAL="TRPYTHON_VERSION=2.7.14"
+    - os: linux
+      dist: trusty
+      sudo: required
+      env:  
+        - MATRIX_EVAL="TRPYTHON_VERSION=3.5.1"
+    - os: linux
+      dist: trusty
+      sudo: required
+      env:  
+        - MATRIX_EVAL="TRPYTHON_VERSION=3.6.1"
+    - os: osx
+      osx_image: xcode9.2
+      compiler: clang
+      env:  
+        - MATRIX_EVAL="TRPYTHON_VERSION=2.7.14"
+    - os: osx
+      osx_image: xcode9.2
+      compiler: clang
+      env:  
+        - MATRIX_EVAL="TRPYTHON_VERSION=3.5.1"
+    - os: osx
+      osx_image: xcode9.2
+      compiler: clang
+      env:  
+        - MATRIX_EVAL="TRPYTHON_VERSION=3.6.1"
+
+env:
+  global:
+    - CONDA_INSTALL_LOCN="${HOME}/miniconda"
+
+# by evaluating the environment, we are setting the TRPYTHON_VERSION variables. 
+before_install:
+  - eval "${MATRIX_EVAL}"
+
+# Matrix is fully specified (for now) by os version
+
+install:
+  - source distribution/travis/install.sh
+
+script:
+  - conda build --python $TRPYTHON_VERSION --no-copy-test-source-files $TRAVIS_BUILD_DIR/distribution/
