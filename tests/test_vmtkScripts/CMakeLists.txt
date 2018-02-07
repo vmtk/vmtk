@@ -2,12 +2,14 @@ set(TEST_VMTKSCRIPTS_SRCS
     conftest.py
     test_importvmtkscripts.py
     test_vmtkbifurcationreferencesystems.py
+    test_vmtkbifurcationvectors.py
     test_vmtkbranchclipper.py
     test_vmtkbranchextractor.py
     test_vmtkcenterlineattributes.py
     test_vmtkcenterlinegeometry.py
     test_vmtkcenterlineinterpolation.py
     test_vmtkcenterlinemodeller.py
+    test_vmtkcenterlineoffsetattributes.py
     test_vmtkcenterlineresampling.py
     test_vmtkcenterlines.py
     test_vmtkimagebinarize.py
