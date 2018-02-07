@@ -1,6 +1,7 @@
 set(TEST_VMTKSCRIPTS_SRCS
     conftest.py
     test_importvmtkscripts.py
+    test_vmtkbifurcationreferencesystems.py
     test_vmtkbranchclipper.py
     test_vmtkbranchextractor.py
     test_vmtkcenterlineattributes.py
