@@ -267,6 +267,12 @@ def aorta_centerline(input_datadir):
     reader.Execute()
     return reader.Surface
 
+@pytest.fixture(scope='function')
+def aorta_centerline_branches(input_datadir):
+    reader = surfacereader.vmtkSurfaceReader()
+    reader.InputFileName = os.path.join(input_datadir, 'aorta-centerline-branches.vtp')
+    reader.Execute()
+    return reader.Surface
 
 @pytest.fixture()
 def write_centerline():
