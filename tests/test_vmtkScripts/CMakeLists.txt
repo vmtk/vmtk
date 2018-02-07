@@ -1,5 +1,7 @@
 set(TEST_VMTKSCRIPTS_SRCS
     conftest.py
+    test_importvmtkscripts.py
+    test_vmtkbranchclipper.py
     test_vmtkbranchextractor.py
     test_vmtkcenterlineattributes.py
     test_vmtkcenterlinegeometry.py
@@ -25,7 +27,6 @@ set(TEST_VMTKSCRIPTS_SRCS
     test_vmtkimagevoiselector.py
     test_vmtklevelsetsegmentation.py
     test_vmtkmarchingcubes.py
-    test_importvmtkscripts.py
     test_vmtksurfaceappend.py
     test_vmtksurfacebooleanoperation.py
     test_vmtksurfacecapper.py
