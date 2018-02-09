@@ -50,11 +50,18 @@ class vmtkSurfaceCompare(pypes.pypeScript):
         if self.Method in ['addpointarray','projection']:
             attributeData = self.Surface.GetPointData()
             referenceAttributeData = self.ReferenceSurface.GetPointData()
-            calculator.SetAttributeModeToUsePointData()
+            if vtk.vtkVersion.GetVTKMajorVersion()>=9 or (vtk.vtkVersion.GetVTKMajorVersion()>=8 and vtk.vtkVersion.GetVTKMinorVersion()>=1):
+                calculator.SetAttributeTypeToPointData()
+            else:
+                calculator.SetAttributeModeToUsePointData()
         elif self.Method in ['addcellarray']:
             attributeData = self.Surface.GetCellData()
             referenceAttributeData = self.ReferenceSurface.GetCellData()
-            calculator.SetAttributeModeToUseCellData()
+            if vtk.vtkVersion.GetVTKMajorVersion()>=9 or (vtk.vtkVersion.GetVTKMajorVersion()>=8 and vtk.vtkVersion.GetVTKMinorVersion()>=1):
+                calculator.SetAttributeTypeToCellData()
+            else:
+                calculator.SetAttributeModeToUseCellData()
+
 
         if not attributeData.GetArray(self.ArrayName):
             self.PrintError('Error: Invalid ArrayName.')

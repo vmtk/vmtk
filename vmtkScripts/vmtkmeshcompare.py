@@ -46,11 +46,17 @@ class vmtkMeshCompare(pypes.pypeScript):
         if self.Method == 'pointarray':
             attributeData = self.Mesh.GetPointData()
             referenceAttributeData = self.ReferenceMesh.GetPointData()
-            calculator.SetAttributeModeToUsePointData()
+            if vtk.vtkVersion.GetVTKMajorVersion()>=9 or (vtk.vtkVersion.GetVTKMajorVersion()>=8 and vtk.vtkVersion.GetVTKMinorVersion()>=1):
+                calculator.SetAttributeTypeToPointData()
+            else:
+                calculator.SetAttributeModeToUsePointData()
         elif self.Method == 'cellarray':
             attributeData = self.Mesh.GetCellData()
             referenceAttributeData = self.ReferenceMesh.GetCellData()
-            calculator.SetAttributeModeToUseCellData()
+            if vtk.vtkVersion.GetVTKMajorVersion()>=9 or (vtk.vtkVersion.GetVTKMajorVersion()>=8 and vtk.vtkVersion.GetVTKMinorVersion()>=1):
+                calculator.SetAttributeTypeToCellData()
+            else:
+                calculator.SetAttributeModeToUseCellData()
  
         if not self.ArrayName:
             self.PrintError('Error: No ArrayName.') 
