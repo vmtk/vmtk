@@ -228,7 +228,10 @@ class vmtkMeshAddExternalLayer(pypes.pypeScript):
             #offset the previous cellentityids to make room for the new ones
             arrayCalculator = vtk.vtkArrayCalculator()
             arrayCalculator.SetInputData(self.Mesh)
-            arrayCalculator.SetAttributeModeToUseCellData()
+            if vtk.vtkVersion.GetVTKMajorVersion()>=9 or (vtk.vtkVersion.GetVTKMajorVersion()>=8 and vtk.vtkVersion.GetVTKMinorVersion()>=1):
+                arrayCalculator.SetAttributeTypeToCellData()
+            else:
+                arrayCalculator.SetAttributeModeToUseCellData()
             arrayCalculator.AddScalarVariable("entityid",self.CellEntityIdsArrayName,0)
             arrayCalculator.SetFunction("if( entityid > " + str(self.InletOutletCellEntityId-1) +", entityid + " + str(wallOffset) + ", entityid)")
             arrayCalculator.SetResultArrayName('CalculatorResult')

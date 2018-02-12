@@ -274,7 +274,12 @@ int vtkvmtkPolyDataCenterlines::RequestData(
 #else
   voronoiCostFunctionCalculator->SetInputData(voronoiDiagram);
 #endif
+
+#if VTK_MAJOR_VERSION >= 9  || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 1)
+  voronoiCostFunctionCalculator->SetAttributeTypeToPointData();
+#else
   voronoiCostFunctionCalculator->SetAttributeModeToUsePointData();
+#endif
   voronoiCostFunctionCalculator->AddScalarVariable("R",this->RadiusArrayName,0);
   voronoiCostFunctionCalculator->SetFunction(this->CostFunction);
   voronoiCostFunctionCalculator->SetResultArrayName(this->CostFunctionArrayName);
