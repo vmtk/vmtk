@@ -140,7 +140,7 @@ class vmtkBranchClipper(pypes.pypeScript):
         if not self.InsideOut:
             self.Surface = clipper.GetOutput()
         else:
-            self.Surface = clipper.GetClippedOutputData()
+            self.Surface = clipper.GetClippedOutput()
 
         if self.OwnRenderer:
             self.vmtkRenderer.Deallocate()
