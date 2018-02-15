@@ -29,9 +29,9 @@ class vmtkBranchGeometry(pypes.pypeScript):
         self.Centerlines = None
         self.GeometryData = None
 
-        self.RadiusArrayName = ''
-        self.GroupIdsArrayName = ''
-        self.BlankingArrayName = ''
+        self.RadiusArrayName = 'MaximumInscribedSphereRadius'
+        self.GroupIdsArrayName = 'GroupIds'
+        self.BlankingArrayName = 'Blanking'
 
         self.LengthArrayName = 'Length'
         self.CurvatureArrayName = 'Curvature'

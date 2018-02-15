@@ -33,7 +33,7 @@ class vmtkActiveTubes(pypes.pypeScript):
         self.Centerline = None
         self.Image = None
 
-        self.RadiusArrayName = ''
+        self.RadiusArrayName = 'MaximumInscribedSphereRadius'
 
         self.NumberOfIterations = 100
         self.PotentialWeight = 1.0

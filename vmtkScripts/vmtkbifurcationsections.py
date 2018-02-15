@@ -33,11 +33,11 @@ class vmtkBifurcationSections(pypes.pypeScript):
 
         self.NumberOfDistanceSpheres = 1
 
-        self.RadiusArrayName = ''
-        self.GroupIdsArrayName = ''
-        self.CenterlineIdsArrayName = ''
-        self.TractIdsArrayName = ''
-        self.BlankingArrayName = ''
+        self.RadiusArrayName = 'MaximumInscribedSphereRadius'
+        self.GroupIdsArrayName = 'GroupIds'
+        self.CenterlineIdsArrayName = 'CenterlineIds'
+        self.TractIdsArrayName = 'TractIds'
+        self.BlankingArrayName = 'Blanking'
 
         self.OutputSectionPointGroupId = None
         self.OutputSectionPointBifurcationGroupId = None

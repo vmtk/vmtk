@@ -38,7 +38,7 @@ class vmtkBranchPatching(pypes.pypeScript):
 
         self.PatchSize = [0.0, 0.0]
 
-        self.GroupIdsArrayName = ''
+        self.GroupIdsArrayName = 'GroupIds'
         self.LongitudinalMappingArrayName = ''
         self.CircularMappingArrayName = ''
 

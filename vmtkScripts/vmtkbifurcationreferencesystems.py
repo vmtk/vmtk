@@ -30,9 +30,9 @@ class vmtkBifurcationReferenceSystems(pypes.pypeScript):
         self.Centerlines = None
         self.ReferenceSystems = None
 
-        self.RadiusArrayName = ''
-        self.BlankingArrayName = ''
-        self.GroupIdsArrayName = ''
+        self.RadiusArrayName = 'MaximumInscribedSphereRadius'
+        self.BlankingArrayName = 'Blanking'
+        self.GroupIdsArrayName = 'GroupIds'
         self.ReferenceSystemsNormalArrayName = 'Normal'
         self.ReferenceSystemsUpNormalArrayName = 'UpNormal'
 
@@ -41,7 +41,7 @@ class vmtkBifurcationReferenceSystems(pypes.pypeScript):
         self.SetInputMembers([
             ['Centerlines','i','vtkPolyData',1,'','the input split centerlines','vmtksurfacereader'],
             ['RadiusArrayName','radiusarray','str',1,'','the name of the array where centerline radius values are stored'],
-              ['BlankingArrayName','blankingarray','str',1,'','the name of the array where centerline blanking information about branches is stored'],
+            ['BlankingArrayName','blankingarray','str',1,'','the name of the array where centerline blanking information about branches is stored'],
             ['GroupIdsArrayName','groupidsarray','str',1,'','the name of the array where centerline group ids are stored'],
             ['ReferenceSystemsNormalArrayName','normalarray','str',1,'','the name of the array where reference system plane normals have to be stored'],
             ['ReferenceSystemsUpNormalArrayName','upnormalarray','str',1,'','the name of the array where reference system upnormals have to be stored']

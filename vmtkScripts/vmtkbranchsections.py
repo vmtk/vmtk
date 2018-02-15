@@ -34,11 +34,11 @@ class vmtkBranchSections(pypes.pypeScript):
         self.NumberOfDistanceSpheres = 1
         self.ReverseDirection = 0
 
-        self.RadiusArrayName = ''
-        self.GroupIdsArrayName = ''
-        self.CenterlineIdsArrayName = ''
-        self.TractIdsArrayName = ''
-        self.BlankingArrayName = ''
+        self.RadiusArrayName = 'MaximumInscribedSphereRadius'
+        self.GroupIdsArrayName = 'GroupIds'
+        self.CenterlineIdsArrayName = 'CenterlineIds'
+        self.TractIdsArrayName = 'TractIds'
+        self.BlankingArrayName = 'Blanking'
 
         self.BranchSectionGroupIdsArrayName = 'BranchSectionGroupIds'
         self.BranchSectionAreaArrayName = 'BranchSectionArea'

@@ -31,11 +31,11 @@ class vmtkBifurcationProfiles(pypes.pypeScript):
         self.Centerlines = None
         self.BifurcationProfiles = None
 
-        self.RadiusArrayName = ''
-        self.GroupIdsArrayName = ''
-        self.CenterlineIdsArrayName = ''
-        self.TractIdsArrayName = ''
-        self.BlankingArrayName = ''
+        self.RadiusArrayName = 'MaximumInscribedSphereRadius'
+        self.GroupIdsArrayName = 'GroupIds'
+        self.CenterlineIdsArrayName = 'CenterlineIds'
+        self.TractIdsArrayName = 'TractIds'
+        self.BlankingArrayName = 'Blanking'
 
         self.BifurcationProfileGroupIdsArrayName = 'BifurcationProfileGroupIds'
         self.BifurcationProfileBifurcationGroupIdsArrayName = 'BifurcationProfileBifurcationGroupIds'

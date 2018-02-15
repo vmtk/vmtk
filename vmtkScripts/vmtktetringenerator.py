@@ -150,7 +150,7 @@ class vmtkTetrInGenerator(pypes.pypeScript):
         self.HistoryEntity = ''
 
         self.UseCellDefinedEntities = 1
-        self.CellEntityIdsArrayName = ''
+        self.CellEntityIdsArrayName = 'CellEntityIds'
         self.NormalizationEntityId = -1
         self.InletEntityIds = []
         self.OutletEntityId = -1

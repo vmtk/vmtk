@@ -31,13 +31,13 @@ class vmtkBifurcationVectors(pypes.pypeScript):
         self.ReferenceSystems = None
         self.BifurcationVectors = None
 
-        self.RadiusArrayName = ''
-        self.GroupIdsArrayName = ''
-        self.CenterlineIdsArrayName = ''
-        self.TractIdsArrayName = ''
-        self.BlankingArrayName = ''
-        self.ReferenceSystemsNormalArrayName = ''
-        self.ReferenceSystemsUpNormalArrayName = ''
+        self.RadiusArrayName = 'MaximumInscribedSphereRadius'
+        self.GroupIdsArrayName = 'GroupIds'
+        self.CenterlineIdsArrayName = 'CenterlineIds'
+        self.TractIdsArrayName = 'TractIds'
+        self.BlankingArrayName = 'Blanking'
+        self.ReferenceSystemsNormalArrayName = 'Normal'
+        self.ReferenceSystemsUpNormalArrayName = 'UpNormal'
 
         self.BifurcationVectorsArrayName = 'BifurcationVectors'
         self.InPlaneBifurcationVectorsArrayName = 'InPlaneBifurcationVectors'
