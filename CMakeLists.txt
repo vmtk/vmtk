@@ -182,7 +182,7 @@ else( VMTK_USE_SUPERBUILD )
 
 endif( VMTK_USE_SUPERBUILD )
 
-IF (APPLE)
+IF (UNIX)
   # use, i.e. don't skip the full RPATH for the build tree
   SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
 
@@ -202,7 +202,7 @@ IF (APPLE)
   IF("${isSystemDir}" STREQUAL "-1")
     SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
   ENDIF("${isSystemDir}" STREQUAL "-1")
-ENDIF (APPLE)
+ENDIF (UNIX)
 
 OPTION(VMTK_SCRIPTS_ENABLED "Build and install vmtkScripts and Pypes" ON)
 MARK_AS_ADVANCED(VMTK_SCRIPTS_ENABLED)
