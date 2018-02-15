@@ -10,5 +10,8 @@ The Vascular Modeling Toolkit is a collection of libraries and
 tools for 3D reconstruction, geometric analysis, mesh generation 
 and surface data analysis for image-based modeling of blood vessels.
 
-See vmtk.org for details.
+Getting Started
+===============
+
+Tutorials, development instructions, and the general information is available at https://www.vmtk.org 
 
