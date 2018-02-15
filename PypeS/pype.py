@@ -35,6 +35,25 @@ class NullOutputStream(object):
 
 
 class Pype(object):
+    '''
+    Orchestrates the interaction among PypeScripts.
+
+    It enables one to pipe one PypeScript after another, and it takes care
+    of connecting the right arguments from one script to the other. It can
+    be called from the command line by issuing pype pype-arguments or
+    automatically instantiated from a pypescript.
+
+    Attributes:
+        ScriptObjectList (list):
+        ScriptList (list):
+        AutoPipe (bool):
+        LogOn (bool):
+        ScriptName (str):
+        ExitOnError (bool)
+        InputStream (function):
+        OutputStream (function)
+        Arguments (string):
+    '''
 
     def __init__(self):
         self.ScriptObjectList = []
@@ -56,6 +75,15 @@ class Pype(object):
         self.OutputStream = NullOutputStream()
         
     def PrintLog(self,logMessage,indent=0):
+        '''Prints log messages from pypescript members to the console.
+
+        All vmtkscripts subclassing from pypes.Pype use the PrintLog method in order
+        to write their output to the console.
+
+        Args:
+            logMessage (str): the message to be logged
+            indent (int): number of spaces to intent the message. Defaults to 0.
+        '''
         if not self.LogOn:
             return
         indentUnit = '    '
@@ -65,10 +93,22 @@ class Pype(object):
         self.OutputStream.write(indentation + logMessage + '\n')
         
     def PrintError(self,errorMessage):
+        ''' Prints error messages from pypescript members to the console then raises a runtime error.
+
+        Args:
+            errorMessage (string): the error message to print to the console
+        '''
         self.OutputStream.write(errorMessage + '\n')
         raise RuntimeError(errorMessage)
 
     def SetArgumentsString(self,argumentsString):
+        ''' Splits an input string into a list containing the class name and arguments.
+
+        sets the class attribute "Arguments".
+
+        Args:
+            argumentsString (string): the input argument string
+        '''
         if '"' not in argumentsString:
             self.Arguments = argumentsString.split()
         import re
@@ -158,6 +198,8 @@ class Pype(object):
                 continue
             pipedScriptObject = candidateScriptObjectList[-1]
             pipedMember = self.GetCompatibleMember(memberEntry,pipedScriptObject)
+            # Creates a memberpipe name of the following format
+            # Image = vmtkimagereader-0.Image
             memberEntry.MemberPipe = pipedScriptObject.ScriptName + '-' + str(pipedScriptObject.Id) + '.' + pipedMember.MemberName
             self.PrintLog(memberEntry.MemberName + ' = ' + memberEntry.MemberPipe,1)
 

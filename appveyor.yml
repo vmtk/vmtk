@@ -1,0 +1,81 @@
+## Program: VMTK
+## Language:  Python
+## Date:      January 30, 2018
+## Version:   1.4
+##
+##   Copyright (c) Richard Izzo, Luca Antiga, All rights reserved.
+##   See LICENCE file for details.
+##
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+##      PURPOSE.  See the above copyright notices for more information.
+##
+##   Note: this code was contributed by
+##      Richard Izzo (Github @rlizzo)
+##      University at Buffalo
+#
+# Notes:
+#   - Indent each level of configuration with 2 spaces. Do not use tabs!
+#   - All section names are case-sensitive.
+#   - Section names should be unique on each level.
+#   - Add [skip ci] or [ci skip] to commit message title and build won’t be triggered by AppVeyor 
+#     for that commit. Or explicitly skip AppVeyor only with [skip appveyor] and still allow any
+#     other CI to build the commit (eg. Travis CI).
+
+#---------------------------------#
+#    environment configuration    #
+#---------------------------------#
+
+environment:
+  global:
+    # SDK v7.0 MSVC Express 2008's SetEnv.cmd script will fail if the
+    # /E:ON and /V:ON options are not enabled in the batch script intepreter
+    # See: http://stackoverflow.com/a/13751649/163740
+    CMD_IN_ENV: "cmd /E:ON /V:ON /C .\\distribution\\appveyor\\run_with_env.cmd"
+
+  matrix:
+    - PYTHON: "C:\\Python35_64"
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      PYTHON_VERSION: "3.5"
+      PYTHON_ARCH: "64"
+      CONDA_PY: "35"
+      APP_CONDA_PY: "3.5.1"
+
+    - PYTHON: "C:\\Python36_64"
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      PYTHON_VERSION: "3.6"
+      PYTHON_ARCH: "64"
+      CONDA_PY: "36"
+      APP_CONDA_PY: "3.6.1"
+
+# build platform, options: x86, x64, Any CPU.
+platform: 
+  - x64
+
+# Configuration of build
+configuration:
+  - Release
+
+# this installs the appropriate Miniconda (Py2/Py3, 32/64 bit),
+# as well as pip, conda-build, and the binstar CLI
+# by default, all script lines are interpreted as batch
+install:
+  - powershell .\\distribution\\appveyor\\install.ps1
+  - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
+
+
+#---------------------------------#
+#    build / test configuration   #
+#---------------------------------#
+
+# because we are handing off the rest of the build process to conda build, 
+# appveyor never realizes that we are actually performing both a build and a test
+# phase. By setting build=false and then just handing off the rest of the execution
+# to the "test_script", appveyor unknowningly builds the package all while watching for
+# the results of the tests to run. 
+build: false
+
+test_script:
+  - "%CMD_IN_ENV% conda config --add channels vmtk"
+  - "%CMD_IN_ENV% conda config --show"
+  - "%CMD_IN_ENV% conda build --python %APP_CONDA_PY% --no-copy-test-source-files distribution"

@@ -45,7 +45,8 @@ class vmtkBranchMetrics(pypes.pypeScript):
         self.AbscissaMetricArrayName = 'AbscissaMetric'
 
         self.SetScriptName('vmtkbranchmetrics')
-        self.SetScriptDoc('')
+        self.SetScriptDoc('Takes a centerline and input surface, already split into branches (with centerline attributes calculated) \
+                           and calculates the surface angular and abscissa metric.')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','','vmtksurfacereader'],
             ['Centerlines','centerlines','vtkPolyData',1,'','','vmtksurfacereader'],

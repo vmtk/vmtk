@@ -101,6 +101,30 @@ class pypeMember(object):
             return representation
 
 class pypeScript(object):
+    '''the base class for every high-level script.
+
+    It manages parsing, instantiates proper input/output methods for the
+    script and keeps the script structure consistent. Each PypeScript is at
+    the same time:
+       - a script which can be called from the command line and piped to other scripts
+       - a class which can be called from Python code (e.g. inside a tkinter GUI)
+
+    Attributes:
+        BuiltinOptionTypes (list):
+        InputStream (function):
+        OutputStream (function):
+        ScriptName (string):
+        ScriptDoc (string):
+        Arguments (list):
+        InputMembers (list):
+        OutputMembers (list):
+        Id (string):
+        Disabled (bool):
+        ExitOnError (bool):
+        LogOn (bool):
+        Progress (int):
+
+    '''
 
     lastVisitedPath = '.'
 

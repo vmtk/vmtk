@@ -85,6 +85,13 @@ option( VMTK_USE_SUPERBUILD
 option( VMTK_USE_VTK8
   "Compile vmtk against VTK 8. OFF is VTK 7.1" ON )
 
+option( VMTK_BUILD_TESTING
+  "Build the VMTK testing libraries" OFF)
+
+IF(VMTK_BUILD_TESTING)
+  subdirs(tests)
+ENDIF(VMTK_BUILD_TESTING)
+
 option( VMTK_BUNJEE_BUILD
   "Build VMTK and the projects it depends on ready for being linked from Bunjee." OFF )
 
@@ -106,12 +113,12 @@ if( VMTK_USE_SUPERBUILD )
   if( VMTK_BUNJEE_BUILD )
     set ( VTK_VMTK_WRAP_PYTHON OFF CACHE BOOL "" FORCE )
     set ( VMTK_CONTRIB_SCRIPTS OFF CACHE BOOL "" FORCE )
-    set ( VMTK_ENABLE_DISTRIBUTION OFF CACHE BOOL "" FORCE )
+    # set ( VMTK_ENABLE_DISTRIBUTION OFF CACHE BOOL "" FORCE )
     #set ( VMTK_BUILD_TETGEN OFF CACHE BOOL "" FORCE )
     set ( VMTK_SCRIPTS_ENABLED OFF CACHE BOOL "" FORCE )
     set ( BUILD_EXAMPLES OFF CACHE BOOL "" FORCE )
     set ( BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE )
-    set ( BUILD_TESTING OFF CACHE BOOL "" FORCE )
+    # set ( BUILD_TESTING OFF CACHE BOOL "" FORCE )
     set ( VTK_USE_CARBON OFF )
     set ( VTK_USE_COCOA ON )
     set ( VTK_VMTK_USE_COCOA ON )
@@ -141,7 +148,7 @@ if( VMTK_USE_SUPERBUILD )
     endif(APPLE)
     option ( VMTK_CONTRIB_SCRIPTS "Install modules from the vmtkScripts/contrib directory." ON )
     option ( VTK_VMTK_CONTRIB "Build and install classes in the vtkVmtk/Contrib directory." ON )
-    option ( VMTK_ENABLE_DISTRIBUTION "Enable distribution targets." OFF )
+    # option ( VMTK_ENABLE_DISTRIBUTION "Enable distribution targets." OFF )
     option ( VMTK_BUILD_TETGEN "Build TetGen and TetGen wrapper. Check TetGen license before you activate this." ON )
     option ( VMTK_BUILD_STREAMTRACER "Build static temporal stream tracer." ON )
     if (APPLE)
@@ -261,21 +268,21 @@ IF(VMTK_SCRIPTS_ENABLED)
 
   ENDIF (NOT WIN32)
 
-  OPTION(VMTK_ENABLE_DISTRIBUTION "Enable distribution targets." OFF)
-  IF(VMTK_ENABLE_DISTRIBUTION)
-    ADD_SUBDIRECTORY(distribution)
-  ENDIF(VMTK_ENABLE_DISTRIBUTION)
+  # OPTION(VMTK_ENABLE_DISTRIBUTION "Enable distribution targets." OFF)
+  # IF(VMTK_ENABLE_DISTRIBUTION)
+  #   ADD_SUBDIRECTORY(distribution)
+  # ENDIF(VMTK_ENABLE_DISTRIBUTION)
 
   INSTALL(EXPORT VMTK-Targets DESTINATION ${VMTK_BINARY_DIR})
 
   CONFIGURE_FILE(
-    ${VMTK_SOURCE_DIR}/CMakeInput/VMTKConfig.cmake.in
+    ${VMTK_SOURCE_DIR}/CMake/VMTKConfig.cmake.in
     ${VMTK_BINARY_DIR}/VMTKConfig.cmake
   @ONLY IMMEDIATE
   )
 
   CONFIGURE_FILE(
-    ${VMTK_SOURCE_DIR}/CMakeInput/VMTKUse.cmake.in
+    ${VMTK_SOURCE_DIR}/CMake/VMTKUse.cmake.in
     ${VMTK_BINARY_DIR}/VMTKUse.cmake
   @ONLY IMMEDIATE
   )
