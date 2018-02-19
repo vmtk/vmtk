@@ -21,6 +21,8 @@
 language:
   - cpp
 
+cache: ccache
+
 # build matrix of environments to build against. 
 # note: for linux builds, sudo is required. This is not because we use any "sudo" commands
 #       instead, we use it to build a non-container image with TravisCI, which has more memory
@@ -65,11 +67,14 @@ env:
 
 # by evaluating the environment, we are setting the TRPYTHON_VERSION variables. 
 before_install:
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update          ; fi
   - eval "${MATRIX_EVAL}"
 
 # Matrix is fully specified (for now) by os version
 
 install:
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install ccache ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export PATH="/usr/local/opt/ccache/libexec:$PATH" ; fi
   - source distribution/travis/install.sh
 
 script:
