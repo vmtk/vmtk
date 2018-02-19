@@ -34,7 +34,7 @@ class vmtkSurfaceConnectivity(pypes.pypeScript):
         self.Method = 'largest'
 
         self.GroupId = -1
-        self.GroupIdsArrayName = ''
+        self.GroupIdsArrayName = 'GroupIds'
 
         self.CleanOutput = 0
 

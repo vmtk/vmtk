@@ -31,17 +31,17 @@ class vmtkBranchMapping(pypes.pypeScript):
         self.Centerlines = None
         self.ReferenceSystems = None
 
-        self.AbscissasArrayName = ''
-        self.NormalsArrayName = ''
-        self.GroupIdsArrayName = ''
-        self.CenterlineIdsArrayName = ''
-        self.TractIdsArrayName = ''
-        self.ReferenceSystemsNormalArrayName = ''
-        self.RadiusArrayName = ''
-        self.BlankingArrayName = ''
+        self.AbscissasArrayName = 'Abscissas'
+        self.NormalsArrayName = 'ParallelTransportNormals'
+        self.GroupIdsArrayName = 'GroupIds'
+        self.CenterlineIdsArrayName = 'CenterlineIds'
+        self.TractIdsArrayName = 'TractIds'
+        self.ReferenceSystemsNormalArrayName = 'Normal'
+        self.RadiusArrayName = 'MaximumInscribedSphereRadius'
+        self.BlankingArrayName = 'Blanking'
 
-        self.AngularMetricArrayName = ''
-        self.AbscissaMetricArrayName = ''
+        self.AngularMetricArrayName = 'AngularMetric'
+        self.AbscissaMetricArrayName = 'AbscissaMetric'
         
         self.HarmonicMappingArrayName = 'HarmonicMapping'
         self.BoundaryMetricArrayName = 'BoundaryMetric'

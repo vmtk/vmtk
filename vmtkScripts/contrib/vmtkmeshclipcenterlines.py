@@ -63,7 +63,7 @@ class vmtkMeshClipCenterlines(pypes.pypeScript):
         self.Tolerance = -1.
         
         self.Centerlines = None
-        self.RadiusArrayName = ''
+        self.RadiusArrayName = 'MaximumInscribedSphereRadius'
         self.RadiusArray = None
 
         self.MeshActor = None

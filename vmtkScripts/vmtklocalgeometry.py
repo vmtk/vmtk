@@ -32,7 +32,7 @@ class vmtkLocalGeometry(pypes.pypeScript):
         self.VoronoiDiagram = None
         self.PoleIds = None
         
-        self.EdgeArrayName = ''
+        self.EdgeArrayName = 'EdgeArray'
 
         self.VoronoiGeodesicDistanceArrayName = 'VoronoiGeodesicDistance'
         

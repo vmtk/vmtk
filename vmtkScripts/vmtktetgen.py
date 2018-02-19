@@ -51,7 +51,7 @@ class vmtkTetGen(pypes.pypeScript):
         self.DoCheck = 0
         self.Verbose = 0
         self.UseSizingFunction = 0
-        self.SizingFunctionArrayName = ''
+        self.SizingFunctionArrayName = 'VolumeSizingFunction'
         
         self.CellEntityIdsArrayName = 'CellEntityIds'
         self.TetrahedronVolumeArrayName = 'TetrahedronVolume'

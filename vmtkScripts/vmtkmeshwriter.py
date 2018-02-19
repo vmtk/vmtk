@@ -38,7 +38,7 @@ class vmtkMeshWriter(pypes.pypeScript):
         self.CellEntityIdsOffset = -1
         self.WriteRegionMarkers = 0
 
-        self.CellEntityIdsArrayName = ''
+        self.CellEntityIdsArrayName = 'CellEntityIds'
 
         self.SetScriptName('vmtkmeshwriter')
         self.SetScriptDoc('write a mesh to disk')

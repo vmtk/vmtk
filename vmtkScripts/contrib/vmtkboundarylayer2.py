@@ -44,7 +44,7 @@ class vmtkBoundaryLayer2(pypes.pypeScript):
         self.Mesh = None
         self.InnerSurfaceMesh = None
         
-        self.WarpVectorsArrayName = ''
+        self.WarpVectorsArrayName = 'Normals'
         self.ThicknessArrayName = ''
 
         self.Thickness = 1.0
@@ -59,7 +59,7 @@ class vmtkBoundaryLayer2(pypes.pypeScript):
         self.IncludeSurfaceCells = 1
         self.NegateWarpVectors = 0
         
-        self.CellEntityIdsArrayName = ''
+        self.CellEntityIdsArrayName = 'CellEntityIds'
         self.OpenProfilesIdsArrayName = ''
         
         self.IncludeExtrudedOpenProfilesCells = 1

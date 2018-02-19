@@ -29,7 +29,7 @@ class vmtkEndpointExtractor(pypes.pypeScript):
         
         self.Centerlines = None
 
-        self.RadiusArrayName = ''
+        self.RadiusArrayName = 'MaximumInscribedSphereRadius'
 
         self.GroupIdsArrayName = 'GroupIds'
         self.CenterlineIdsArrayName = 'CenterlineIds'

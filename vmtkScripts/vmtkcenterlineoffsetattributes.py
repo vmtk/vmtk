@@ -35,11 +35,11 @@ class vmtkCenterlineOffsetAttributes(pypes.pypeScript):
 
         self.ReferenceGroupId = -1
 
-        self.AbscissasArrayName = ''
-        self.NormalsArrayName = ''
-        self.GroupIdsArrayName = ''
-        self.CenterlineIdsArrayName = ''
-        self.ReferenceSystemsNormalArrayName = ''
+        self.AbscissasArrayName = 'Abscissas'
+        self.NormalsArrayName = 'ParallelTransportNormals'
+        self.GroupIdsArrayName = 'GroupIds'
+        self.CenterlineIdsArrayName = 'CenterlineIds'
+        self.ReferenceSystemsNormalArrayName = 'Normal'
 
         self.ReplaceAttributes = 1
 

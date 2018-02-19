@@ -35,7 +35,7 @@ class vmtkDistanceToCenterlines(pypes.pypeScript):
         self.UseCombinedDistance = 0
         self.ProjectPointArrays = 0
         self.DistanceToCenterlinesArrayName = 'DistanceToCenterlines'
-        self.RadiusArrayName = ''
+        self.RadiusArrayName = 'MaximumInscribedSphereRadius'
         
         self.SetScriptName('vmtkdistancetocenterlines')
         self.SetInputMembers([

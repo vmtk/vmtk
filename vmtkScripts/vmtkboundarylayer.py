@@ -30,9 +30,9 @@ class vmtkBoundaryLayer(pypes.pypeScript):
         self.Mesh = None
         self.InnerSurfaceMesh = None
         
-        self.WarpVectorsArrayName = ''
+        self.WarpVectorsArrayName = 'Normals'
         self.ThicknessArrayName = ''
-        self.CellEntityIdsArrayName = ''
+        self.CellEntityIdsArrayName = 'CellEntityIds'
 
         self.Thickness = 1.0
         self.ThicknessRatio = 0.1

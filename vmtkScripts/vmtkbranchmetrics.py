@@ -33,13 +33,13 @@ class vmtkBranchMetrics(pypes.pypeScript):
         self.ComputeAbscissaMetric = 1
         self.ComputeAngularMetric = 1
 
-        self.AbscissasArrayName = ''
-        self.NormalsArrayName = ''
-        self.GroupIdsArrayName = ''
-        self.CenterlineIdsArrayName = ''
-        self.TractIdsArrayName = ''
-        self.RadiusArrayName = ''
-        self.BlankingArrayName = ''
+        self.AbscissasArrayName = 'Abscissas'
+        self.NormalsArrayName = 'ParallelTransportNormals'
+        self.GroupIdsArrayName = 'GroupIds'
+        self.CenterlineIdsArrayName = 'CenterlineIds'
+        self.TractIdsArrayName = 'TractIds'
+        self.RadiusArrayName = 'MaximumInscribedSphereRadius'
+        self.BlankingArrayName = 'Blanking'
 
         self.AngularMetricArrayName = 'AngularMetric'
         self.AbscissaMetricArrayName = 'AbscissaMetric'

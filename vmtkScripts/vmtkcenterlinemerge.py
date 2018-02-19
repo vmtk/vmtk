@@ -29,11 +29,11 @@ class vmtkCenterlineMerge(pypes.pypeScript):
         
         self.Centerlines = None
 
-        self.RadiusArrayName = ''
-        self.GroupIdsArrayName = ''
-        self.CenterlineIdsArrayName = ''
-        self.TractIdsArrayName = ''
-        self.BlankingArrayName = ''
+        self.RadiusArrayName = 'MaximumInscribedSphereRadius'
+        self.GroupIdsArrayName = 'GroupIds'
+        self.CenterlineIdsArrayName = 'CenterlineIds'
+        self.TractIdsArrayName = 'TractIds'
+        self.BlankingArrayName = 'Blanking'
 
         self.Length = 0.0
         self.MergeBlanked = 1

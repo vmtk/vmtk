@@ -30,7 +30,7 @@ class vmtkMeshBoundaryInspector(pypes.pypeScript):
         
         self.Mesh = None
 
-        self.CellEntityIdsArrayName = ''
+        self.CellEntityIdsArrayName = 'CellEntityIds'
 
         self.VolumeCellEntityId = 0
         self.WallCellEntityId = 1

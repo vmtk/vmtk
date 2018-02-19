@@ -29,7 +29,7 @@ class vmtkBranchExtractor(pypes.pypeScript):
         
         self.Centerlines = None
 
-        self.RadiusArrayName = ''
+        self.RadiusArrayName = 'MaximumInscribedSphereRadius'
 
         self.BlankingArrayName = 'Blanking'
         self.GroupIdsArrayName = 'GroupIds'

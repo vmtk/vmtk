@@ -32,7 +32,7 @@ class vmtkCenterlineLabeler(pypes.pypeScript):
         pypes.pypeScript.__init__(self)
         
         self.Centerlines = None
-        self.GroupIdsArrayName = ''
+        self.GroupIdsArrayName = 'GroupIds'
         self.LabelIdsArrayName = 'LabelIds'
 
         self.Labeling = []

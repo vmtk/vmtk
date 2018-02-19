@@ -33,13 +33,13 @@ class vmtkMeshBranchClipper(pypes.pypeScript):
         self.Mesh = None
         self.Centerlines = None
 
-        self.RadiusArrayName = ''
+        self.RadiusArrayName = 'MaximumInscribedSphereRadius'
         self.CutoffRadiusFactor = 1E16
         
         self.ClipValue = 0.0
 
-        self.BlankingArrayName = ''
-        self.GroupIdsArrayName = ''
+        self.BlankingArrayName = 'Blanking'
+        self.GroupIdsArrayName = 'GroupIds'
 
         self.GroupIds = []
         self.InsideOut = 0
