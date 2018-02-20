@@ -26,7 +26,7 @@ conda install --quiet -y conda conda-build anaconda-client
 
 # set the ordering of additional channels
 conda config --prepend channels vmtk
-conda config --add channels conda-forge
+conda config --prepend channels conda-forge
 
 # To ease debugging, list installed packages
 conda info -a
