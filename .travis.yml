@@ -78,4 +78,4 @@ install:
   - source distribution/travis/install.sh
 
 script:
-  - conda build --python $TRPYTHON_VERSION --no-copy-test-source-files $TRAVIS_BUILD_DIR/distribution/
+  - conda build --python $TRPYTHON_VERSION --no-build-id --no-copy-test-source-files $TRAVIS_BUILD_DIR/distribution/
