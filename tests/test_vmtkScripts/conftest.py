@@ -40,7 +40,9 @@ def input_datadir():
     try:
         datadir = os.path.join(
                     os.path.dirname(
-                        os.path.realpath(__file__)), 'vmtk-test-data/input')
+                        os.path.dirname(
+                            os.path.realpath(__file__))), 'vmtk-test-data/input')
+        print(datadir)
         if not os.path.isdir(datadir): raise ValueError()
     except ValueError:
         datadir = os.path.join(
@@ -90,7 +92,8 @@ def write_image():
         try:
             datadir = os.path.join(
                         os.path.dirname(
-                            os.path.realpath(__file__)), 'vmtk-test-data/imagereference')
+                            os.path.dirname(
+                                os.path.realpath(__file__))), 'vmtk-test-data/imagereference')
             if not os.path.isdir(datadir): raise ValueError()
         except ValueError:
             datadir = os.path.join(
@@ -115,7 +118,8 @@ def compare_images():
         try:
             datadir = os.path.join(
                         os.path.dirname(
-                            os.path.realpath(__file__)), 'vmtk-test-data/imagereference')
+                            os.path.dirname(
+                                os.path.realpath(__file__))), 'vmtk-test-data/imagereference')
             if not os.path.isdir(datadir): raise ValueError()
         except ValueError:
             datadir = os.path.join(
@@ -201,7 +205,8 @@ def write_surface():
         try:
             datadir = os.path.join(
                         os.path.dirname(
-                            os.path.realpath(__file__)), 'vmtk-test-data/surfacereference')
+                            os.path.dirname(
+                                os.path.realpath(__file__))), 'vmtk-test-data/surfacereference')
             if not os.path.isdir(datadir): raise ValueError()
         except ValueError:
             datadir = os.path.join(
@@ -226,7 +231,8 @@ def compare_surfaces():
         try:
             datadir = os.path.join(
                         os.path.dirname(
-                            os.path.realpath(__file__)), 'vmtk-test-data/surfacereference')
+                            os.path.dirname(
+                                os.path.realpath(__file__))), 'vmtk-test-data/surfacereference')
             if not os.path.isdir(datadir): raise ValueError()
         except ValueError:
             datadir = os.path.join(
@@ -279,7 +285,8 @@ def write_centerline():
         try:
             datadir = os.path.join(
                         os.path.dirname(
-                            os.path.realpath(__file__)), 'vmtk-test-data/centerlinereference')
+                            os.path.dirname(
+                                os.path.realpath(__file__))), 'vmtk-test-data/centerlinereference')
             if not os.path.isdir(datadir): raise ValueError()
         except ValueError:
             datadir = os.path.join(
@@ -304,7 +311,8 @@ def compare_centerlines():
         try:
             datadir = os.path.join(
                         os.path.dirname(
-                            os.path.realpath(__file__)), 'vmtk-test-data/centerlinereference')
+                            os.path.dirname(
+                                os.path.realpath(__file__))), 'vmtk-test-data/centerlinereference')
             if not os.path.isdir(datadir): raise ValueError()
         except ValueError:
             datadir = os.path.join(

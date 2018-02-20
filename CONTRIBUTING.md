@@ -10,7 +10,7 @@ helping others in return.
 
 If you want to contribute to vmtk please [fork](https://help.github.com/articles/fork-a-repo#contributing-to-a-project) the [source code](https://github.com/vmtk/vmtk)
 
-See [github collaborating guide](https://help.github.com/categories/63/articles), and feel free to reach out to us on the [mailing list](https://groups.google.com/forum/#!forum/vmtk-users) for any questions. 
+See [github collaborating guide](https://help.github.com/categories/63/articles), and feel free to reach out to us on the [mailing list](https://groups.google.com/forum/#!forum/vmtk-users) or the issue tracker for any questions. 
 
 ### Reporting bugs and issues
 
@@ -99,9 +99,9 @@ source path-to-vmtk_env.sh
 
 ### Aquiring Test Data
 
-VMTK utilizes CMake External Data directives in order to orchestrate the aquisition of large binary data files. Withing the `tests/data` directory, you will find test data files (named with their appropriate name), but with the extension `.sha512`. Viewing the files will reveal that they are simple text files with a SHA512 hash inside. 
+VMTK utilizes a git submodule in order to orchestrate the aquisition of large binary data files. If you have just simply cloned the vmtk repository, you will find the tests data director (`tests/vmtk-test-data`) empty.
 
-Setting the CMake variable `VMTK_BUILD_TESTING=ON` and building the project will use this information to download the actual binary files to the `.ExternalData` directory. It will also automatically configure the paths to this data directory referenced in the `tests` directory. 
+Setting the CMake variable `VMTK_BUILD_TESTING=ON` and building the project will use this information to download the actual binary files to this directory in the build tree. It will also automatically configure the paths to this data directory referenced in the `tests` directory. 
 
 ### Running Tests
 
@@ -109,8 +109,9 @@ We use the [pytest](https://docs.pytest.org/en/latest/) testing framework for un
 
 ### Contributing Tests
 
-In order to contribute tests, you will need to clone the [vmtk-test-data](https://github.com/vmtk/vmtk-test-data) repository at the same level as vmtk. Please add any test data files in the appropriate folders in the `vmtk-test-data` repository. if you create new test files within the `tests/test_FOO` directory, be sure to add that file to the accompanying `CMakeLists.txt` file as well. When your tests run locally, two steps need to be followed in order to add have our CI services be able to download your data:
+In order to contribute tests, can clone the [vmtk-test-data](https://github.com/vmtk/vmtk-test-data) repository at the same level as vmtk. Please add any test data files in the appropriate folders in the `vmtk-test-data` repository. if you create new test files within the `tests/test_FOO` directory, be sure to add that file to the accompanying `CMakeLists.txt` file as well. When your tests run locally, your data assets and test changes should be reflected and all tests should appear to pass. 
 
-1) Run the `vmtk/tests/utilities/hashdata.py` script from the command line with the first argument directed to the `vmtk-test-data` path and the second directed to the `vmtk/tests/data` directory. This will generate the SHA512 hashes of the new data files you have added to `vmtk-test-data`. Please include these in your PR. 
+If you are contributing tests which require new data files, create a PR to the [vmtk-test-data](https://github.com/vmtk/vmtk-test-data) repository and let us know the PR# in VMTK which the data files corresponds to. Until we merge the data, our CI suite will not have access to files, so your tests that passed locally may appear to fail when they are pushed - Don't worry! It's not you, it's our system! 
 
-2) Create a PR to the [vmtk-test-data](https://github.com/vmtk/vmtk-test-data) repository and let us know the PR# in VMTK which this data file corresponds to. Once we merge the data, it will get uploaded to our online data storage site, which will then allow our CI servers to download and test the data files in your VMTK PR. 
+## Questions? Concerns?
+If you have any questions about the contributing process, or just want to learn more about the library, feel free to reach out to us on the mailing list or the issue tracker. We'd love to chat! 
