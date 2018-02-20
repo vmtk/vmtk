@@ -41,7 +41,7 @@ class vmtkImageCurvedMPR(pypes.pypeScript):
         self.InplaneOutputSpacing = 1.0
         self.ReslicingBackgroundLevel = 0.0
 
-        self.SetScriptName('vtkvmtkimagecurvedmpr')
+        self.SetScriptName('vmtkimagecurvedmpr')
         self.SetScriptDoc('Make an MPR image from a centerline and an input image')
 
         self.SetInputMembers([
