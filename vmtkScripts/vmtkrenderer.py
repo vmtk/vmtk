@@ -52,7 +52,7 @@ class vmtkRenderer(pypes.pypeScript):
 
         self.Camera = None
 
-        self.WindowSize = [800, 600]
+        self.WindowSize = [1200, 900]
         self.WindowPosition = [50, 50]
         self.Background = [0.1, 0.1, 0.2]
         #Solarized base03
@@ -72,7 +72,7 @@ class vmtkRenderer(pypes.pypeScript):
         self.TextInputQuery = None
 
         self.CurrentTextInput = None
-        self.InputPosition = [0.25, 0.1]
+        self.InputPosition = [0.35, 0.1]
 
         self.TextActor = None
         self.Position = [0.001, 0.05]
@@ -295,7 +295,7 @@ class vmtkRenderer(pypes.pypeScript):
             #self.Renderer.AddActor(self.TextActorStd)
 
             self.TextActor = vtk.vtkTextActor()
-            self.TextActor.SetTextScaleModeToViewport()
+            self.TextActor.GetTextProperty().SetFontSize(24)
             self.TextActor.GetPositionCoordinate().SetCoordinateSystemToNormalizedViewport()
             self.TextActor.GetPosition2Coordinate().SetCoordinateSystemToNormalizedViewport()
             self.TextActor.SetPosition(self.Position)
@@ -306,10 +306,11 @@ class vmtkRenderer(pypes.pypeScript):
             #self.Renderer.AddActor(self.TextActorOpmode)
 
             self.TextInputActor = vtk.vtkTextActor()
-            self.TextInputActor.SetTextScaleModeToViewport()
+            self.TextInputActor.GetTextProperty().SetFontSize(24)
             self.TextInputActor.GetPositionCoordinate().SetCoordinateSystemToNormalizedViewport()
             self.TextInputActor.GetPosition2Coordinate().SetCoordinateSystemToNormalizedViewport()
             self.TextInputActor.SetPosition(self.InputPosition)
+            
  
         if self.UseRendererInputStream:
             self.InputStream = vmtkRendererInputStream(self)
