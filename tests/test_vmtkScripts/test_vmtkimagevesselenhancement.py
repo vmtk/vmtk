@@ -81,7 +81,8 @@ def test_sato_enhancement_with_varied_params(aorta_image, compare_images,
 
 # for whatever reason the VED filter errors out on linux. Not sure why since this works on Mac
 # and Windows. Need to look into this. 
-@pytest.mark.skipif(sys.platform.startswith('linux') == True)
+@pytest.mark.skipif(sys.platform.startswith('linux') == True, 
+reason='for whatever reason the VED filter errors out on linux. Not sure why since this works on Mac and Windows. Need to look into this.')
 @pytest.mark.parametrize("alpha,beta,gamma,c,timestep,epsilon,wstrength,\
                          sensitivity,numiterations,numdiffusioniterations,paramid", [
     (1.5, 0.5, 5.0, 1E-6, 1E-2, 1E-2, 25.0, 5.0, 1, 0, '0'),
