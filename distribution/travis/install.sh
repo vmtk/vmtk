@@ -17,7 +17,7 @@
 # Install and set up miniconda.
 if [ $TRAVIS_OS_NAME == "linux" ]; then wget http://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh; fi
 if [ $TRAVIS_OS_NAME == "osx" ]; then wget http://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh -O miniconda.sh; fi
-if [ $TRAVIS_OS_NAME == "osx" ]; then cd $HOME && git clone https://github.com/phracker/MacOSX-SDKs.git && cd $TRAVIS_BUILD_DIR; fi
+if [ $TRAVIS_OS_NAME == "osx" ]; then cd $HOME && mkdir MacOSX-SDKs && cd MacOSX-SDKs && wget https://github.com/phracker/MacOSX-SDKs/releases/download/10.13/MacOSX10.9.sdk.tar.xz && tar -xf MacOSX10.9.sdk.tar.xz && rm MacOSX10.9.sdk.tar.xz && cd $TRAVIS_BUILD_DIR; fi
 bash miniconda.sh -b -p $CONDA_INSTALL_LOCN
 export PATH=${CONDA_INSTALL_LOCN}/bin:$PATH
 conda config --set always_yes true
@@ -25,6 +25,7 @@ conda config --set always_yes true
 conda install --quiet -y conda conda-build anaconda-client
 
 # set the ordering of additional channels
+conda config --prepend channels conda-forge
 conda config --prepend channels vmtk
 
 # To ease debugging, list installed packages

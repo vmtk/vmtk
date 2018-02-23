@@ -36,6 +36,8 @@ requirements:
     - cmake 
     - git
     - ninja
+    - ccache                 # [unix]
+    - ccache-toolchain       # [unix]
     - setuptools             # [win] 
   host:
     - python {{ python }}
