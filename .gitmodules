@@ -1,0 +1,3 @@
+[submodule "tests/vmtk-test-data"]
+	path = tests/vmtk-test-data
+	url = https://github.com/vmtk/vmtk-test-data.git

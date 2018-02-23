@@ -58,7 +58,6 @@ requirements:
 
 test:
   source_files:
-    - build/ExternalData/*
     - build/tests/*
   requires:
     - pytest
