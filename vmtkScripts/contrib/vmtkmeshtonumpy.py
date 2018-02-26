@@ -61,7 +61,7 @@ class vmtkMeshToNumpy(pypes.pypeScript):
     def _ConvertFlatCellsArrayToList(self, cells, cellLocations):
         '''convert a flat array defining cells into a list of numpy arrays which each define a cell
         
-        this function is the inverse of _ConvertListToFlatCellsArray(cellPointIdsList)
+        this function is the inverse of vmtk.numpytomesh._ConvertListToFlatCellsArray(cellPointIdsList)
         
         arguments: 
             - cells: 1D array of format [npointsCell1, cell1PointId_1, .., cell1PointId_npointsCell1, 
@@ -85,43 +85,6 @@ class vmtkMeshToNumpy(pypes.pypeScript):
             cellPointIdsList.append(subArray[1:]) # get rid of npointsCell(foo), only keep cellPointIds
         
         return cellPointIdsList
-
-    def _ConvertListToFlatCellsArray(self, cellPointIdsList):
-        '''Not Currently Implemented - convert a list of numpy arrays defining each cell into a flat array defining cells. 
-        
-        This function is the inverse of _ConvertFlatCellsArrayToList(cells, cellLocations)
-        
-        arguments: 
-            - cellPointIdsList: list of numpy arrays (in same order defined in cells), where each array contains 
-                                the cellPointIds for that specific cell. Note: array lengths are not constant, 
-                                each cell can have a different number of constituent points.
-        
-        returns:
-        
-            - cells: 1D array of format [npointsCell1, cell1PointId_1, .., cell1PointId_npointsCell1, 
-                                        npointsCell2, cell2PointId_1, .., cell2PointId_npointsCell2, 
-                                        ... 
-                                        npointsCell(nCells), cell(nCells)PointId_1, .. cell(nCells)PointId_npointsCell(nCells)]
-
-            - cellLocations: flat array of size = nCells. each element in the array defines starts a new cell 
-                            (a location of npointCellFoo) in the cells array
-        '''
-        
-        cellArrayList = []
-        cellLocationsList = [np.array([0])]
-        cellIndex = 0
-        for cellPointIdArray in cellPointIdsList:
-            numPointsInArray = cellPointIdArray.size
-            cellArray = np.concatenate((np.array([numPointsInArray]), cellPointIdArray))
-            cellArrayList.append(cellArray)
-            
-            cellIndex += cellArray.size
-            cellLocationsList.append(np.array([cellIndex]))
-        
-        cellLocations = np.concatenate(cellLocationsList[:-1])
-        cells = np.concatenate(cellArrayList)
-        
-        return cells, cellLocations
 
     def Execute(self):
 
@@ -158,7 +121,7 @@ class vmtkMeshToNumpy(pypes.pypeScript):
             typeDict = vividict()
             uniqueCellTypes = np.unique(cellTypes)
             for cellType in uniqueCellTypes:
-                typeDict[cellType] = vtk.vtkCellTypes.GetClassNameFromTypeId(cellType)  
+                typeDict[vtk.vtkCellTypes.GetClassNameFromTypeId(cellType)] = cellType
             self.ArrayDict['Cells']['CellTypesAsStrings'] = typeDict
             
 
