@@ -59,7 +59,7 @@ class vmtkMeshToNumpy(pypes.pypeScript):
 
 
     def _ConvertFlatCellsArrayToList(self, cells, cellLocations):
-        '''convert a flat array defining cells into a list of numpy arrays which each define a cell
+        '''Not Implemented - convert a flat array defining cells into a list of numpy arrays which each define a cell
         
         this function is the inverse of vmtk.numpytomesh._ConvertListToFlatCellsArray(cellPointIdsList)
         
@@ -91,7 +91,6 @@ class vmtkMeshToNumpy(pypes.pypeScript):
         if self.Mesh == None:
             self.PrintError('Error: No input mesh.')
 
-
         wrappedData = dsa.WrapDataObject(self.Mesh)
 
         # (npoints, 3) array of xyz coordinates. values in Cells index to the 
@@ -102,33 +101,28 @@ class vmtkMeshToNumpy(pypes.pypeScript):
         # flat list of locations which index the beginning of a cell in the 
         # Cell array (same size as CellTypes and CellEntityIds)
         cellLocations = np.array(wrappedData.CellLocations)
+        self.ArrayDict['Cells']['CellLocations'] = cellLocations
 
         # flat array which defines the npoints/cell and indexes of rows 
         # in Points array which define each cell's XYZ locations
         cells = np.array(wrappedData.Cells)
-
-        cellPointIdsList = self._ConvertFlatCellsArrayToList(cells, cellLocations)
-        self.ArrayDict['Cells']['CellPointIDs'] = cellPointIdsList
-
+        self.ArrayDict['Cells']['CellPointIds'] = cells
 
         # flat array of shape == cellEntityIds == cellLocations which defines
         # the intiger descriptor of the VTK_CELL_TYPE for each cell in cells 
         cellTypes = np.array(wrappedData.CellTypes)
         self.ArrayDict['Cells']['CellTypes'] = cellTypes
 
-
         if self.ReturnCellTypesAsStrings == 1:
             typeDict = vividict()
             uniqueCellTypes = np.unique(cellTypes)
             for cellType in uniqueCellTypes:
-                typeDict[vtk.vtkCellTypes.GetClassNameFromTypeId(cellType)] = cellType
+                typeDict[vtk.vtkCellTypes.GetClassNameFromTypeId(cellType)] = np.array([cellType])
             self.ArrayDict['Cells']['CellTypesAsStrings'] = typeDict
             
-
         for cellDataKey in wrappedData.CellData.keys():
             cellData = wrappedData.CellData.GetArray(cellDataKey)
             self.ArrayDict['CellData'][cellDataKey] = cellData
-
 
         for pointDataKey in wrappedData.PointData.keys():
             pointData = wrappedData.PointData.GetArray(pointDataKey)

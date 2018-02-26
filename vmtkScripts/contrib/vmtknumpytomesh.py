@@ -19,6 +19,7 @@
 
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import vtk
+from vtk.numpy_interface import dataset_adapter as dsa
 import sys
 
 from vmtk import vtkvmtk
@@ -49,7 +50,7 @@ class vmtkNumpyToMesh(pypes.pypeScript):
 
 
     def _ConvertListToFlatCellsArray(self, cellPointIdsList):
-        '''convert a list of numpy arrays defining each cell into a flat array defining cells. 
+        '''Not Implemented - convert a list of numpy arrays defining each cell into a flat array defining cells. 
         
         This function is the inverse of vmtk.meshtonumpy._ConvertFlatCellsArrayToList(cells, cellLocations)
         
@@ -93,14 +94,14 @@ class vmtkNumpyToMesh(pypes.pypeScript):
 
         gridData.SetPoints(self.ArrayDict['Points'])
 
-        cells, cellLocations = self.ConvertListToFlatCellsArray(self.ArrayDict['Cells']['CellPointIds'])
-        cellTypes = self.ArrayDict['Cells']['CellTypes']
-        gridData.SetCells(cellTypes, cellLocations, cells)
+        gridData.SetCells(self.ArrayDict['Cells']['CellTypes'], 
+                          self.ArrayDict['Cells']['CellLocations'],
+                          self.ArrayDict['Cells']['CellPointIds'])
 
         if 'PointData' in self.ArrayDict.keys():
             for pointKey, pointData in self.ArrayDict['PointData'].items():
                 gridData.PointData.append(pointData, pointKey)
-                
+
         if 'CellData' in self.ArrayDict.keys():
             for cellKey, cellData in self.ArrayDict['CellData'].items():
                 gridData.CellData.append(cellData, cellKey)
