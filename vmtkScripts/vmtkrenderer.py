@@ -17,6 +17,7 @@ from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py
 import vtk
 import sys
 import os
+import math
 
 from vmtk import pypes
 from vmtk import vtkvmtk
@@ -96,6 +97,41 @@ class vmtkRenderer(pypes.pypeScript):
             ['ScreenshotMagnification','magnification','int',1,'','magnification to apply to the rendering window when taking a screenshot']])
         self.SetOutputMembers([
             ['vmtkRenderer','o','vmtkRenderer',1,'','the renderer']])
+
+    def _GetScreenFontSize(self):
+        '''Returns an integer representing font size appropriatly scaled for the users screen resolution
+
+        This function is designed to be called from the self.Initialize() method. It creates a temporary render window
+        and returns an intiger for which the text font size should be set to, given the user's current screen resolution.
+        Minimum output size is set to 8, maximum to 50, for readability purposes.  
+
+        Arguments:
+            Input:
+                - None (no positional or keyword arguments)
+
+            Output:
+                - fontSize (int): font size appropriatly scaled for the users screen
+        '''
+        tempRenderWindow = vtk.vtkRenderWindow()
+        userScreenWidth, userScreenHeight = tempRenderWindow.GetScreenSize()
+        
+        baseScreenWidth = 3360 # Number of pixels across the width of the calibration monitor 
+        baseScreenHeight = 2100 # Number of pixels across the heigh of the calibration monitor
+        baseFontSize = 24 # Font size appropriate for the calibration monitor of size baseScreenWidth x baseScreenHeight
+
+        baseFontScalePerPixelWidth = math.floor(baseScreenWidth / baseFontSize)
+
+        scaledFontSize = math.ceil(userScreenWidth / baseFontScalePerPixelWidth)
+
+        # make sure that the font size won't be set too low or high for low/high screen resolutions. 
+        if scaledFontSize < 8:
+            scaledFontSize = 8
+
+        if scaledFontSize > 50:
+            scaledFontSize = 50
+
+        return scaledFontSize
+
 
     def ResetCameraCallback(self,obj):
         self.Renderer.ResetCamera()
@@ -294,8 +330,10 @@ class vmtkRenderer(pypes.pypeScript):
             #self.TextActorStd.SetPosition(self.PositionStd)
             #self.Renderer.AddActor(self.TextActorStd)
 
+            fontSize = self._GetScreenFontSize()
+
             self.TextActor = vtk.vtkTextActor()
-            self.TextActor.GetTextProperty().SetFontSize(24)
+            self.TextActor.GetTextProperty().SetFontSize(fontSize)
             self.TextActor.GetPositionCoordinate().SetCoordinateSystemToNormalizedViewport()
             self.TextActor.GetPosition2Coordinate().SetCoordinateSystemToNormalizedViewport()
             self.TextActor.SetPosition(self.Position)
@@ -306,7 +344,7 @@ class vmtkRenderer(pypes.pypeScript):
             #self.Renderer.AddActor(self.TextActorOpmode)
 
             self.TextInputActor = vtk.vtkTextActor()
-            self.TextInputActor.GetTextProperty().SetFontSize(24)
+            self.TextInputActor.GetTextProperty().SetFontSize(fontSize)
             self.TextInputActor.GetPositionCoordinate().SetCoordinateSystemToNormalizedViewport()
             self.TextInputActor.GetPosition2Coordinate().SetCoordinateSystemToNormalizedViewport()
             self.TextInputActor.SetPosition(self.InputPosition)
