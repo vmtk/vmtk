@@ -3,10 +3,10 @@
 Program:   VMTK
 Module:    $RCSfile: vtkvmtkAnisotropicDiffusionImageFilter.cxx,v $
 Language:  C++
-Date:      $Date: 2006/04/06 16:48:25 $
-Version:   $Revision: 1.1 $
+Date:      $Date: 2018/03/05 16:48:25 $
+Version:   $Revision: 1.4 $
 
-  Copyright (c) Luca Antiga, David Steinman. All rights reserved.
+  Copyright (c) Luca Antiga. All rights reserved.
   See LICENCE file for details.
 
   Portions of this code are covered under the VTK copyright.
@@ -20,6 +20,10 @@ Version:   $Revision: 1.1 $
      This software is distributed WITHOUT ANY WARRANTY; without even 
      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
      PURPOSE.  See the above copyright notices for more information.
+  Note: this class was contributed by 
+      Kurt Sansom
+      https://github.com/kayarre
+      
 
 =========================================================================*/
 
@@ -213,25 +217,5 @@ void vtkvmtkAnisotropicDiffusionImageFilter::SimpleExecute(vtkImageData* input, 
     FilterScalarImage< 3 >(input, output, componentType );
   }
 
-  
-//   using PixelType = float;
-//   constexpr unsigned int Dimension = 3;
-//   typedef itk::Image<PixelType,Dimension> ImageType;
-// 
-//   ImageType::Pointer inImage = ImageType::New();
-// 
-//   vtkvmtkITKFilterUtilities::VTKToITKImage<ImageType>(input,inImage);
-// 
-//   typedef itk::GradientAnisotropicDiffusionImageFilter< ImageType, ImageType > AnisotropicDiffusionFilterType;
-// 
-//   AnisotropicDiffusionFilterType::Pointer anisotropicDiffusionFilter = AnisotropicDiffusionFilterType::New();
-// 
-//   anisotropicDiffusionFilter->SetInput(inImage);
-//   anisotropicDiffusionFilter->SetTimeStep(this->TimeStep);
-//   anisotropicDiffusionFilter->SetNumberOfIterations(this->NumberOfIterations);
-//   anisotropicDiffusionFilter->SetConductanceParameter(this->Conductance);
-//   anisotropicDiffusionFilter->Update();
-// 
-//   vtkvmtkITKFilterUtilities::ITKToVTKImage<ImageType>(anisotropicDiffusionFilter->GetOutput(),output);
 }
 
