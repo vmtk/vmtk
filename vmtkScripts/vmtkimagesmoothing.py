@@ -48,7 +48,7 @@ class vmtkImageSmoothing(pypes.pypeScript):
             ['Dimensionality','dimensionality','int',1,'(2,3)','the dimensionality of the Aconvolution (gauss)'],
             ['Conductance','conductance','float',1,'(0.0,)','anisotropic diffustion coefficients (anisotropic)'],
             ['NumberOfIterations','iterations','int',1,'(5,)',' number of anisotropic diffusion iterationsl (anisotropic)'],
-            ['TimeStep','timestep','float',1,'(0.0625,)','time step of anisotropic diffusion (anisotropic)']
+            ['TimeStep','timestep','float',1,'(1.0E-16,1.0e16)','time step of anisotropic diffusion (anisotropic)']
             ])
         self.SetOutputMembers([
             ['Image','o','vtkImageData',1,'','the output image','vmtkimagewriter']
