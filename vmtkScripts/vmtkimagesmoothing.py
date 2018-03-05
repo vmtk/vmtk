@@ -18,6 +18,7 @@ import vtk
 import sys
 
 from vmtk import pypes
+from vmtk import vtkvmtk
 
 
 class vmtkImageSmoothing(pypes.pypeScript):
@@ -28,26 +29,32 @@ class vmtkImageSmoothing(pypes.pypeScript):
         
         self.Image = None
 
+        self.Method = 'gauss'
         self.StandardDeviation = 1.0
         self.RadiusFactor = 5.0
         self.Dimensionality = 3
+        self.Conductance = 1.0
+        self.NumberOfIterations = 5
+        self.TimeStep = 0.0625
+        self.EnhancedImage = None
 
         self.SetScriptName('vmtkimagesmoothing')
-        self.SetScriptDoc('smooth an image with a Gaussian kernel')
+        self.SetScriptDoc('smooth an image with a Gaussian kernel or anisotropic diffusion')
         self.SetInputMembers([
             ['Image','i','vtkImageData',1,'','the input image','vmtkimagereader'],
-            ['StandardDeviation','sigma','float',1,'(0.0,)','the standard deviation of the Gaussian in real space units'],
-            ['RadiusFactor','radiusfactor','float',1,'(0.0,)','the factor specifing the width of the discrete Gaussian kernel'],
-            ['Dimensionality','dimensionality','int',1,'(2,3)','the dimensionality of the convolution']
+            ['Method','method','str',1,'["gauss","anisotropic"]'],
+            ['StandardDeviation','sigma','float',1,'(0.0,)','the standard deviation of the Gaussian in real space units (gauss)'],
+            ['RadiusFactor','radiusfactor','float',1,'(0.0,)','the factor specifing the width of the discrete Gaussian kernel (gauss)'],
+            ['Dimensionality','dimensionality','int',1,'(2,3)','the dimensionality of the Aconvolution (gauss)'],
+            ['Conductance','conductance','float',1,'(0.0,)','anisotropic diffustion coefficients (anisotropic)'],
+            ['NumberOfIterations','iterations','int',1,'(5,)',' number of anisotropic diffusion iterationsl (anisotropic)'],
+            ['TimeStep','timestep','float',1,'(0.0625,)','time step of anisotropic diffusion (anisotropic)']
             ])
         self.SetOutputMembers([
             ['Image','o','vtkImageData',1,'','the output image','vmtkimagewriter']
             ])
 
-    def Execute(self):
-
-        if self.Image == None:
-            self.PrintError('Error: No input image.')
+    def ApplyGaussianFilter(self):
 
         spacing = self.Image.GetSpacing()
         pixelStandardDeviations = [self.StandardDeviation/spacing[0],self.StandardDeviation/spacing[1],self.StandardDeviation/spacing[2]]
@@ -59,7 +66,30 @@ class vmtkImageSmoothing(pypes.pypeScript):
         smoothingFilter.SetDimensionality(self.Dimensionality)
         smoothingFilter.Update()
 
-        self.Image = smoothingFilter.GetOutput()
+        self.EnhancedImage = smoothingFilter.GetOutput()
+
+    def ApplyAnisotropicDiffusion(self):
+        grad = vtkvmtk.vtkvmtkAnisotropicDiffusionImageFilter()
+        grad.SetInputData(self.Image)
+        grad.SetNumberOfIterations(self.NumberOfIterations)
+        grad.SetTimeStep(self.TimeStep)
+        grad.SetConductance(self.Conductance)
+        grad.Update()
+        self.EnhancedImage = grad.GetOutput()
+
+    def Execute(self):
+
+        if self.Image == None:
+            self.PrintError('Error: No input image.')
+
+        if self.Method == 'gauss':
+            self.ApplyGaussianFilter()
+        elif self.Method == 'anisotropic':
+            self.ApplyAnisotropicDiffusion()
+        else:
+            self.PrintError('Error: unsupported vessel enhancement method')
+
+        self.Image = self.EnhancedImage
 
 
 if __name__=='__main__':
