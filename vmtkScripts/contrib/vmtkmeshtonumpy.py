@@ -46,6 +46,7 @@ class vmtkMeshToNumpy(pypes.pypeScript):
 
         self.Mesh = None
         self.ReturnCellTypesAsStrings = 1
+        self.StructureCellsAsList = 0
         self.ArrayDict = vividict()
 
         self.SetScriptName('vmtkMeshToNumpy')
@@ -53,13 +54,14 @@ class vmtkMeshToNumpy(pypes.pypeScript):
                           'arrays specifying Points, PointData, Cells, CellData, and CellPointIds describing connectivity')
         self.SetInputMembers([
             ['Mesh','i','vtkUnstructuredGrid',1,'','the input mesh','vmtkmeshreader'],
-            ['ReturnCellTypesAsStrings','typestrings','bool',1,'','return a mapping of the vtk cell type class names to the cell type object IDs']])
+            ['ReturnCellTypesAsStrings','typestrings','bool',1,'','return a mapping of the vtk cell type class names to the cell type object IDs'],
+            ['StructureCellsAsList','structure','bool',0,'','enable to return a list of numpy arrays where each element is an individual cell. Note: This is a computationally intensive operation which may fill memory, and which will drastically increase disk space used if data is saved. Not recommended for large data sets.']])
         self.SetOutputMembers([
             ['ArrayDict','o','dict',1,'','the output dictionary','vmtknumpywriter']])
 
 
     def _ConvertFlatCellsArrayToList(self, cells, cellLocations):
-        '''Not Implemented - convert a flat array defining cells into a list of numpy arrays which each define a cell
+        '''convert a flat array defining cells into a list of numpy arrays which each define a cell
         
         this function is the inverse of vmtk.numpytomesh._ConvertListToFlatCellsArray(cellPointIdsList)
         
@@ -98,15 +100,21 @@ class vmtkMeshToNumpy(pypes.pypeScript):
         points = np.array(wrappedData.Points)
         self.ArrayDict['Points'] = points
 
-        # flat list of locations which index the beginning of a cell in the 
-        # Cell array (same size as CellTypes and CellEntityIds)
-        cellLocations = np.array(wrappedData.CellLocations)
-        self.ArrayDict['Cells']['CellLocations'] = cellLocations
+        if self.StructureCellsAsList:
+            cellPointIdsList = self._ConvertFlatCellsArrayToList(np.array(wrappedData.Cells),
+                                                                np.array(wrappedData.CellLocations))
+            self.ArrayDict['Cells']['CellPointIds'] = cellPointIdsList
 
-        # flat array which defines the npoints/cell and indexes of rows 
-        # in Points array which define each cell's XYZ locations
-        cells = np.array(wrappedData.Cells)
-        self.ArrayDict['Cells']['CellPointIds'] = cells
+        else:
+            # flat list of locations which index the beginning of a cell in the 
+            # Cell array (same size as CellTypes and CellEntityIds)
+            cellLocations = np.array(wrappedData.CellLocations)
+            self.ArrayDict['Cells']['CellLocations'] = cellLocations
+
+            # flat array which defines the npoints/cell and indexes of rows 
+            # in Points array which define each cell's XYZ locations
+            cells = np.array(wrappedData.Cells)
+            self.ArrayDict['Cells']['CellPointIds'] = cells
 
         # flat array of shape == cellEntityIds == cellLocations which defines
         # the intiger descriptor of the VTK_CELL_TYPE for each cell in cells 

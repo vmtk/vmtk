@@ -39,18 +39,20 @@ class vmtkNumpyToMesh(pypes.pypeScript):
         pypes.pypeScript.__init__(self)
 
         self.ArrayDict = None
+        self.FlattenListOfCells = 0
 
         self.SetScriptName('vmtkNumpyToMesh')
         self.SetScriptDoc('Takes a nested python dictionary containing numpy arrays specifying Points, PointData, Cells,'
                            'CellData, and CellPointIds describing connectivity and returns a VMTK mesh (VTK Unstructured Grid) object ')
         self.SetInputMembers([
-            ['ArrayDict','i','dict',1,'','the input array dictionary','vmtknumpyreader']])
+            ['ArrayDict','i','dict',1,'','the input array dictionary','vmtknumpyreader'],
+            ['FlattenListOfCells','flatten','bool',0,'','enable to convert cells which are formated as a list of numpy arrays to the default flat structure']])
         self.SetOutputMembers([
             ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh','vmtkmeshwriter']])
 
 
     def _ConvertListToFlatCellsArray(self, cellPointIdsList):
-        '''Not Implemented - convert a list of numpy arrays defining each cell into a flat array defining cells. 
+        '''convert a list of numpy arrays defining each cell into a flat array defining cells. 
         
         This function is the inverse of vmtk.meshtonumpy._ConvertFlatCellsArrayToList(cells, cellLocations)
         
@@ -73,6 +75,7 @@ class vmtkNumpyToMesh(pypes.pypeScript):
         cellArrayList = []
         cellLocationsList = [np.array([0])]
         cellIndex = 0
+
         for cellPointIdArray in cellPointIdsList:
             numPointsInArray = cellPointIdArray.size
             cellArray = np.concatenate((np.array([numPointsInArray]), cellPointIdArray))
@@ -83,7 +86,7 @@ class vmtkNumpyToMesh(pypes.pypeScript):
         
         cellLocations = np.concatenate(cellLocationsList[:-1])
         cells = np.concatenate(cellArrayList)
-        
+
         return cells, cellLocations
 
     
@@ -94,9 +97,15 @@ class vmtkNumpyToMesh(pypes.pypeScript):
 
         gridData.SetPoints(self.ArrayDict['Points'])
 
-        gridData.SetCells(self.ArrayDict['Cells']['CellTypes'], 
-                          self.ArrayDict['Cells']['CellLocations'],
-                          self.ArrayDict['Cells']['CellPointIds'])
+        if self.FlattenListOfCells:
+            cellPointIds, cellLocations = self._ConvertListToFlatCellsArray(self.ArrayDict['Cells']['CellPointIds'])
+            gridData.SetCells(self.ArrayDict['Cells']['CellTypes'], 
+                              cellLocations, cellPointIds)
+
+        else:
+            gridData.SetCells(self.ArrayDict['Cells']['CellTypes'], 
+                            self.ArrayDict['Cells']['CellLocations'],
+                            self.ArrayDict['Cells']['CellPointIds'])
 
         if 'PointData' in self.ArrayDict.keys():
             for pointKey, pointData in self.ArrayDict['PointData'].items():
