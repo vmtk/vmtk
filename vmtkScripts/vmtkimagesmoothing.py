@@ -35,8 +35,9 @@ class vmtkImageSmoothing(pypes.pypeScript):
         self.Dimensionality = 3
         self.Conductance = 1.0
         self.NumberOfIterations = 5
-        self.TimeStep = 0.0625
+        self.TimeStep = 0.0625 # (PixelSpacing)/2^{N+1}->1.0/2^{3+1}
         self.EnhancedImage = None
+        self.AutoCalculateTimeStep = True
 
         self.SetScriptName('vmtkimagesmoothing')
         self.SetScriptDoc('smooth an image with a Gaussian kernel or anisotropic diffusion')
@@ -48,10 +49,12 @@ class vmtkImageSmoothing(pypes.pypeScript):
             ['Dimensionality','dimensionality','int',1,'(2,3)','the dimensionality of the Aconvolution (gauss)'],
             ['Conductance','conductance','float',1,'(0.0,)','anisotropic diffustion coefficients (anisotropic)'],
             ['NumberOfIterations','iterations','int',1,'(5,)',' number of anisotropic diffusion iterationsl (anisotropic)'],
-            ['TimeStep','timestep','float',1,'(1.0E-16,1.0e16)','time step of anisotropic diffusion (anisotropic)']
+            ['TimeStep','timestep','float',1,'(1.0E-16,1.0e16)','time step of anisotropic diffusion (anisotropic)'],
+            ['AutoCalculateTimeStep','autocalculatetimestep','bool',1,'','auto calculate minimum time step (anisotropic)']
             ])
         self.SetOutputMembers([
-            ['Image','o','vtkImageData',1,'','the output image','vmtkimagewriter']
+            ['Image','o','vtkImageData',1,'','the output image','vmtkimagewriter'],
+            ['TimeStep','timestep','float',1],
             ])
 
     def ApplyGaussianFilter(self):
@@ -69,6 +72,11 @@ class vmtkImageSmoothing(pypes.pypeScript):
         self.EnhancedImage = smoothingFilter.GetOutput()
 
     def ApplyAnisotropicDiffusion(self):
+        if(self.AutoCalculateTimeStep):
+            maxspacing = max(self.Image.GetSpacing())
+            #multiply by .995 to make sure its under stability threshold
+            self.TimeStep = (maxspacing)/(2.0**(self.Image.GetDataDimension()+1))*.9995
+
         grad = vtkvmtk.vtkvmtkAnisotropicDiffusionImageFilter()
         grad.SetInputData(self.Image)
         grad.SetNumberOfIterations(self.NumberOfIterations)
