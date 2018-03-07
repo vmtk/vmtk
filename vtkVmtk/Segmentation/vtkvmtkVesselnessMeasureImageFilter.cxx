@@ -44,6 +44,7 @@ vtkvmtkVesselnessMeasureImageFilter::vtkvmtkVesselnessMeasureImageFilter()
   this->Beta = 1.0;
   this->Gamma = 1.0;
   this->ScalesOutput = NULL;
+  this->BrightObject = true;
 }
 
 vtkvmtkVesselnessMeasureImageFilter::~vtkvmtkVesselnessMeasureImageFilter()
@@ -71,7 +72,7 @@ void vtkvmtkVesselnessMeasureImageFilter::SimpleExecute(vtkImageData* input, vtk
 
   VesselnessFilterType::Pointer vesselnessFilter = VesselnessFilterType::New();
   vesselnessFilter->SetScaleObjectnessMeasure(this->UseScaledVesselness);
-  vesselnessFilter->SetBrightObject(true);
+  vesselnessFilter->SetBrightObject(this->BrightObject);
   vesselnessFilter->SetObjectDimension(1);
   vesselnessFilter->SetAlpha(this->Alpha);
   vesselnessFilter->SetBeta(this->Beta);

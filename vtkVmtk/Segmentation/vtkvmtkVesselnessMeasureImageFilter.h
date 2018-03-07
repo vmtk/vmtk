@@ -83,6 +83,10 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkVesselnessMeasureImageFilter : public 
   vtkSetMacro(Gamma,double);
 
   vtkGetObjectMacro(ScalesOutput,vtkImageData);
+  
+  vtkSetMacro(BrightObject, bool);
+  vtkGetMacro(BrightObject, bool);
+  vtkBooleanMacro(BrightObject, bool);
 
 protected:
   vtkvmtkVesselnessMeasureImageFilter();
@@ -102,6 +106,7 @@ private:
   double Alpha;
   double Beta;
   double Gamma;
+  bool BrightObject;
   vtkImageData* ScalesOutput;
 };
 

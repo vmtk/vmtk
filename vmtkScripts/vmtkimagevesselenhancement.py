@@ -51,6 +51,7 @@ class vmtkImageVesselEnhancement(pypes.pypeScript):
         self.Sensitivity = 5.0
         self.NumberOfIterations = 0
         self.NumberOfDiffusionSubIterations = 0
+        self.BrightObject = True
 
         self.SetScriptName('vmtkimagevesselenhancement')
         self.SetScriptDoc('compute a feature image for use in segmentation')
@@ -62,6 +63,7 @@ class vmtkImageVesselEnhancement(pypes.pypeScript):
             ['NumberOfSigmaSteps','sigmasteps','int',1,'(0,)'],
             ['SigmaStepMethod','stepmethod','str',1,'["equispaced","logarithmic"]'],
             ['ScaledVesselness','scaled','bool',1,'','(frangi)'],
+            ['BrightObject','brightobject','bool',1,'','(frangi)'],
             ['Alpha1','alpha1','float',1,'(0.0,)','(sato)'],
             ['Alpha2','alpha2','float',1,'(0.0,)','(sato)'],
             ['Alpha','alpha','float',1,'(0.0,)','(frangi, ved, vedm)'],
@@ -90,6 +92,7 @@ class vmtkImageVesselEnhancement(pypes.pypeScript):
         vesselness.SetAlpha(self.Alpha)
         vesselness.SetBeta(self.Beta)
         vesselness.SetGamma(self.Gamma)
+        vesselness.SetBrightObject(self.BrightObject)
         if self.SigmaStepMethod == 'equispaced':
             vesselness.SetSigmaStepMethodToEquispaced()
         elif self.SigmaStepMethod == 'logarithmic':
@@ -175,6 +178,19 @@ class vmtkImageVesselEnhancement(pypes.pypeScript):
 
         if self.SigmaMax < self.SigmaMin:
             self.SigmaMax = self.SigmaMin
+
+        if( self.Image.GetScalarType() != vtk.VTK_FLOAT):
+          # filters only work on float
+          print("input type not of type float, casting to float")
+          #TODO use rescale filter for proper mapping
+          cast = vtk.vtkImageCast()
+          cast.SetInputData(self.Image)
+          cast.SetOutputScalarTypeToFloat()
+          cast.Update()
+          self.Image.DeepCopy(cast.GetOutput())
+
+        if(self.Image.GetDataDimension() != 3):
+          self.PrintError('Error: unsupported image dimension, expected {0}D image'.format(3))
 
         if self.Method == 'frangi':
             self.ApplyFrangiVesselness()
