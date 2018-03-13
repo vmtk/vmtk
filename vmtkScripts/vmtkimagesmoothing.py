@@ -33,11 +33,15 @@ class vmtkImageSmoothing(pypes.pypeScript):
         self.StandardDeviation = 1.0
         self.RadiusFactor = 5.0
         self.Dimensionality = 3
+        self.EnhancedImage = None
+
+        # This is the default value from Slicer 3 which assums pixel spacing = 1.0: (PixelSpacing)/2^{N+1}->1.0/2^{3+1} 
+        # If AutoCalculateTimeStep is enabled, this will be overwritten with the value calculated with the actual image
+        # pixel spacing and number of dimensions.
+        self.TimeStep = 0.0625 
+        self.AutoCalculateTimeStep = 1
         self.Conductance = 1.0
         self.NumberOfIterations = 5
-        self.TimeStep = 0.0625 # (PixelSpacing)/2^{N+1}->1.0/2^{3+1}
-        self.EnhancedImage = None
-        self.AutoCalculateTimeStep = True
 
         self.SetScriptName('vmtkimagesmoothing')
         self.SetScriptDoc('smooth an image with a Gaussian kernel or anisotropic diffusion')
@@ -72,10 +76,13 @@ class vmtkImageSmoothing(pypes.pypeScript):
         self.EnhancedImage = smoothingFilter.GetOutput()
 
     def ApplyAnisotropicDiffusion(self):
-        if(self.AutoCalculateTimeStep):
-            maxspacing = max(self.Image.GetSpacing())
+
+        if self.AutoCalculateTimeStep:
+            # equation to calculate the timestep is (PixelSpacing)/2^{N+1}
+            minspacing = min(self.Image.GetSpacing())
             #multiply by .995 to make sure its under stability threshold
-            self.TimeStep = (maxspacing)/(2.0**(self.Image.GetDataDimension()+1))*.9995
+            self.TimeStep = (minspacing / (2.0 ** (self.Image.GetDataDimension() + 1))) * 0.9995
+
 
         grad = vtkvmtk.vtkvmtkAnisotropicDiffusionImageFilter()
         grad.SetInputData(self.Image)
@@ -90,12 +97,23 @@ class vmtkImageSmoothing(pypes.pypeScript):
         if self.Image == None:
             self.PrintError('Error: No input image.')
 
-        if self.Method == 'gauss':
+        # need to ensure that self.Method variable is a "string"
+        # in order to ensure unicode compatibility in python 2 and 3, we check what python version is running,
+        # and assign 'str' type if Py3, and 'basestring' type if Py2
+        try:
+            basestring
+        except NameError:
+            basestring = str
+
+        if not isinstance(self.Method, basestring):
+            self.PrintError('Method Selected (', self.Method, ') is not string type')
+
+        if self.Method.lower() == 'gauss':
             self.ApplyGaussianFilter()
-        elif self.Method == 'anisotropic':
+        elif self.Method.lower() == 'anisotropic':
             self.ApplyAnisotropicDiffusion()
         else:
-            self.PrintError('Error: unsupported vessel enhancement method')
+            self.PrintError('Error: unsupported vessel enhancement method (', self.Method, ').')
 
         self.Image = self.EnhancedImage
 
