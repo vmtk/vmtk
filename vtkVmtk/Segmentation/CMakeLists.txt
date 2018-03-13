@@ -52,6 +52,7 @@ SET (VTK_VMTK_SEGMENTATION_SRCS
   vtkvmtkVesselEnhancingDiffusionImageFilter.cxx
   #vtkvmtkVesselEnhancingDiffusion3DImageFilter.cxx
   vtkvmtkVesselnessMeasureImageFilter.cxx
+  vtkvmtkAnisotropicDiffusionImageFilter.cxx
   )
 
 SET (VTK_VMTK_SEGMENTATION_ITK_HEADERS
