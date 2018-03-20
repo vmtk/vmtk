@@ -16,13 +16,13 @@
 
 package:
   name: "vmtk"
-  version: "1.4"
+  version: "1.4.0"
 
 source:
     path: ../
 
 build:
-  number: 8
+  number: 1
   features:
     - vc14  # [win and (py35 or py36)]  
   skip:
