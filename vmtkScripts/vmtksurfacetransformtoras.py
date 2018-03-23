@@ -6,7 +6,7 @@
 ## Date:      $Date: Sun Feb 21 17:02:37 CET 2010$
 ## Version:   $Revision: 1.0 $
 
-##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
+##   Copyright (c) Luca Antiga. All rights reserved.
 ##   See LICENCE file for details.
 
 ##      This software is distributed WITHOUT ANY WARRANTY; without even 
@@ -28,12 +28,14 @@ class vmtkSurfaceTransformToRAS(pypes.pypeScript):
 
         self.Surface = None
         self.XyzToRasMatrixCoefficients = None
+        self.InvertMatrix = 0
 
         self.SetScriptName('vmtksurfacetransformtoras')
         self.SetScriptDoc('transform a surface generated in XYZ image space into RAS space')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
-            ['XyzToRasMatrixCoefficients','matrix','float',16,'','coefficients of XYZToRAS transform matrix']
+            ['XyzToRasMatrixCoefficients','matrix','float',16,'','coefficients of XYZToRAS transform matrix'],
+            ['InvertMatrix','invert','bool',1,'','invert matrix before applying transformation']
             ])
         self.SetOutputMembers([
             ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter']
@@ -49,6 +51,9 @@ class vmtkSurfaceTransformToRAS(pypes.pypeScript):
 
         matrix = vtk.vtkMatrix4x4()
         matrix.DeepCopy(self.XyzToRasMatrixCoefficients)
+        
+        if self.InvertMatrix:
+            matrix.Invert()
 
         transform = vtk.vtkTransform()
         transform.SetMatrix(matrix)
