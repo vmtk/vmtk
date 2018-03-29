@@ -44,7 +44,7 @@ class vmtkImageWriter(pypes.pypeScript):
         self.SetScriptDoc('write an image to disk')
         self.SetInputMembers([
             ['Image','i','vtkImageData',1,'','the input image','vmtkimagereader'],
-            ['Format','f','str',1,'["vtkxml","vtk","meta","tiff","png","pointdata"]','file format'],
+            ['Format','f','str',1,'["vtkxml","vtk","meta","tiff","png","pointdata", "vtsxml"]','file format'],
             ['GuessFormat','guessformat','bool',1,'','guess file format from extension'],
             ['UseITKIO','useitk','bool',1,'','use ITKIO mechanism'],
             ['ApplyTransform','transform','bool',1,'','apply transform on writing - ITKIO only'],
@@ -64,6 +64,34 @@ class vmtkImageWriter(pypes.pypeScript):
         self.PrintLog('Writing VTK image file.')
         writer = vtk.vtkStructuredPointsWriter()
         writer.SetInputData(self.Image)
+        writer.SetFileName(self.OutputFileName)
+        writer.Write()
+
+    def WriteVTSXMLVolumeFile(self):
+        if (self.OutputFileName == ''):
+            self.PrintError('Error: no OutputFileName.')
+        self.PrintLog('Writing VTS XML grid file.')
+        if self.ApplyTransform == 0:
+            origin = self.Image.GetOrigin()
+            spacing = self.Image.GetSpacing()
+            matrix = vtk.vtkMatrix4x4()
+            matrix.DeepCopy((1/spacing[0], 0, 0, - origin[0]/spacing[0], 
+                         0, 1/spacing[1], 0, - origin[1]/spacing[1],
+                         0, 0, 1/spacing[2], - origin[2]/spacing[2],
+                         0, 0, 0, 1)) #LPI convention with correct origin and spacing 
+        else:
+            if self.RasToIjkMatrixCoefficients == None:
+                self.PrintError('Error: no RasToIjkMatrixCoefficients.')
+            matrix = vtk.vtkMatrix4x4()
+            matrix.DeepCopy(self.RasToIjkMatrixCoefficients)
+        trans = vtk.vtkTransform()
+        trans.SetMatrix(matrix)
+        trans_filt = vtk.vtkTransformFilter()
+        trans_filt.SetTransform(trans)
+        trans_filt.SetInputData(self.Image)
+        trans_filt.Update()
+        writer = vtk.vtkXMLStructuredGridWriter()
+        writer.SetInputConnection(trans_filt.GetOutputPort())
         writer.SetFileName(self.OutputFileName)
         writer.Write()
 
@@ -214,7 +242,8 @@ class vmtkImageWriter(pypes.pypeScript):
                             'mha':'meta',
                             'tif':'tiff',
                             'png':'png',
-                            'dat':'pointdata'}
+                            'dat':'pointdata',
+                            'vts':'vtsxml' }
 
         if self.OutputFileName == 'BROWSER':
             import tkinter.filedialog
@@ -255,7 +284,7 @@ class vmtkImageWriter(pypes.pypeScript):
             cast.Update()
             self.Image = cast.GetOutput()
 
-        if self.UseITKIO and self.Format not in ['vtkxml','vtk','tiff','png','dat']:
+        if self.UseITKIO and self.Format not in ['vtkxml','vtk','tiff','png','dat', 'vtsxml']:
             self.WriteITKIO()
         else:	
             if (self.Format == 'vtkxml'):
@@ -270,6 +299,8 @@ class vmtkImageWriter(pypes.pypeScript):
                 self.WriteTIFFImageFile()
             elif (self.Format == 'pointdata'):
                 self.WritePointDataImageFile()
+            elif (self.Format == 'vtsxml'):
+                self.WriteVTSXMLVolumeFile()
             else:
                 self.PrintError('Error: unsupported format '+ self.Format + '.')
 
