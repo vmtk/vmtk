@@ -43,6 +43,7 @@ class vmtkFlowExtensions(pypes.pypeScript):
         self.ExtensionMode = "centerlinedirection"
         self.InterpolationMode = "thinplatespline"
         self.Interactive = 1
+        self.Exclude = 0
         self.Sigma = 1.0
 
         self.vmtkRenderer = None
@@ -64,6 +65,7 @@ class vmtkFlowExtensions(pypes.pypeScript):
             ['TransitionRatio','transitionratio','float',1,'(0.0,)'],
             ['TargetNumberOfBoundaryPoints','boundarypoints','int',1,'(0,)'],
             ['Interactive','interactive','bool',1],
+            ['Exclude','exclude','bool',1,'', 'create extensions for all boundaries except those selected'],
             ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer'],
             ['CenterlineNormalEstimationDistanceRatio','normalestimationratio','float',1,'(0.0,)']
             ])
@@ -137,15 +139,23 @@ class vmtkFlowExtensions(pypes.pypeScript):
             
             ok = False
             while not ok:
-                labelString = self.InputText("Please input boundary ids: ",self.LabelValidator)
+                if(self.Exclude):
+                    labelString = self.InputText("Please input boundary ids to exclude: ",self.LabelValidator)
+                else:
+                    labelString = self.InputText("Please input boundary ids: ",self.LabelValidator)
                 labels = [int(label) for label in labelString.split()]
                 ok = True
                 for label in labels:
                     if label not in list(range(numberOfBoundaries)):
                         ok = False
 
-            for label in labels:
-                boundaryIds.InsertNextId(label)
+            if(self.Exclude):
+                for label in list(range(numberOfBoundaries)):
+                    if label not in labels:
+                        boundaryIds.InsertNextId(label)
+            else:
+                for label in labels:
+                    boundaryIds.InsertNextId(label)
 
         flowExtensionsFilter = vtkvmtk.vtkvmtkPolyDataFlowExtensionsFilter()
         flowExtensionsFilter.SetInputData(self.Surface)
