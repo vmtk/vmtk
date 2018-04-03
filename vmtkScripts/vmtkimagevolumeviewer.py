@@ -142,15 +142,17 @@ class vmtkImageVolumeViewer(pypes.pypeScript):
         volumeMapper.SetInputData(self.Image)
         volumeMapper.SetBlendModeToComposite()
         
-
-        pressetElementTree = ET.parse(os.path.join(os.path.dirname(__file__), 'vmtkimagevolumeviewerpresets.xml'))
-        presetRoot = pressetElementTree.getroot()
+        # parse the xml file which is loaded in the same path as the vmtkimagevolumeviewer.py file at runtime
+        presetElementTree = ET.parse(os.path.join(os.path.dirname(__file__), 'vmtkimagevolumeviewerpresets.xml'))
+        presetRoot = presetElementTree.getroot()
         volProperties = presetRoot.findall('VolumeProperty[@name="' + self.VolumeVisualizationMethod + '"]')
         volPropertiesDict = volProperties[0].attrib
 
+        # need to convert the space seperated string displaying values into a list of floats
         colorList = [float(i) for i in volPropertiesDict['colorTransfer'].split()]
         gradientOpacityList = [float(i) for i in volPropertiesDict['gradientOpacity'].split()]
         opacityList = [float(i) for i in volPropertiesDict['scalarOpacity'].split()]
+        # remove the first element from these lists since they just indicate the number of elements in the list
         colorList.pop(0)
         gradientOpacityList.pop(0)
         opacityList.pop(0)
@@ -163,7 +165,6 @@ class vmtkImageVolumeViewer(pypes.pypeScript):
                 range_func = xrange
             for i in range_func(0, len(l), n):
                 yield l[i:i + n]
-
 
         colorMapList = chunks(colorList, 4)
         colorTransferFunction = self.BuildVTKColorTransferFunction(colorMapList)
