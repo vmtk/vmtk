@@ -21,6 +21,8 @@ from vmtk import vtkvmtk
 from vmtk import vmtkrenderer
 from vmtk import vmtkimageviewer
 from vmtk import pypes
+import xml.etree.ElementTree as ET
+import os
 
 class vmtkImageVolumeViewer(pypes.pypeScript):
 
@@ -35,21 +37,8 @@ class vmtkImageVolumeViewer(pypes.pypeScript):
         self.Display = 1
         self.ArrayName = ''
 
-        self.OpacityTransferFunctionPoints = None
-        self.ColorTransferFunctionRGBPoints = None
-        self.GradientOpacityTransferFunctionPoints = None
-
-        self.EnableImagePlaneWidgets = 0
-        self.Picker = None
-        self.PlaneWidgetX = None
-        self.PlaneWidgetY = None
-        self.PlaneWidgetZ = None
-
+        self.VolumeVisualizationMethod = 'CT-Coronary-Arteries-2'
         self.VolumeRenderingMethod = 'default'
-        self.Margins = 0
-        self.TextureInterpolation = 1
-        self.ContinuousCursor = 1
-        self.WindowLevel = [0.0, 0.0]
 
         self.SetScriptName('vmtkimagevolumeviewer')
         self.SetScriptDoc('display a 3D image as a volume, optionally overlaying image planes')
@@ -58,47 +47,20 @@ class vmtkImageVolumeViewer(pypes.pypeScript):
             ['ArrayName','array','str',1,'','name of the array to display'],
             ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer'],
             ['Display','display','bool',1,'','toggle rendering'],
-            ['OpacityTransferFunctionPoints','opacitypoints','list','','[(imageScalarMinValue, 0.0), (imageScalarMaxValue * 0.9, 1.0)]','sets image opacity. requires a list of tupples each of size 2 corresponding to image scalar value and desired opacity value at that point'],
-            ['ColorTransferFunctionRGBPoints','colorrgbpoints','list','','[(imageScalarMinValue, 0.5, 0.0, 0.0), (imageScalarMaxValue, 0.7, 0.5, 0.5)]','sets image opacity. requires a list of tupples each of size 2 corresponding to image scalar value and desired opacity value at that point'],
-            ['GradientOpacityTransferFunctionPoints','gradientopacitypoints','list','','[(imageScalarMinValue, 0.0), (imageScalarMaxValue, 1.0)]','sets image gradient opacity. requires a list of tupples each of size 2 corresponding to image scalar value and desired gradient opacity value at that point'],
-            ['VolumeRenderingMethod','rendermethod','str',1,'["default",gpu","ospray","raycast"]','toggle rendering method. By default will auto detect hardware capabilities and select best render method. If desired, can set to RayCast, OSPRay, or GPU rendering. Note, may crash if GPU method is set and no compatible GPU is available on the system. Suggested to leave at default value.'],
-            ['EnableImagePlaneWidgets','enableimageplanes','bool',1,'','show the volume with image planes overlayed on the image'],
-            ['Margins','margins','bool',1,'','toggle margins for tilting image planes. (only if EnableImagePlaneWidgets == True)'],
-            ['WindowLevel','windowlevel','float',2,'','the window/level for displaying the image. (only if EnableImagePlaneWidgets == True)'],
-            ['TextureInterpolation','textureinterpolation','bool',1,'','toggle interpolation of graylevels on image planes. (only if EnableImagePlaneWidgets == True)'],
-            ['ContinuousCursor','continuouscursor','bool',1,'','toggle use of physical continuous coordinates for the cursor. (only if EnableImagePlaneWidgets == True)']
+            ['VolumeVisualizationMethod','visualizationmethod','str',1,'["CT-AAA","CT-AAA2","CT-Bone","CT-Bones",\
+                                                                         "CT-Cardiac","CT-Cardiac2","CT-Cardiac3","CT-Chest-Contrast-Enhanced",\
+                                                                         "CT-Chest-Vessels","CT-Coronary-Arteries","CT-Coronary-Arteries-2",\
+                                                                         "CT-Coronary-Arteries-3","CT-Cropped-Volume-Bone","CT-Fat","CT-Liver-Vasculature",\
+                                                                         "CT-Lung","CT-MIP","CT-Muscle","CT-Pulmonary-Arteries","CT-Soft-Tissue","MR-Angio",\
+                                                                         "MR-Default","MR-MIP","MR-T2-Brain","DTI-FA-Brain"]','sets the color map, opacity, and lighting applied to visualize the rendered volume'],
+            ['VolumeRenderingMethod','rendermethod','str',1,'["default",gpu","ospray","raycast"]','toggle rendering method. By default will auto detect hardware capabilities and select best render method. If desired, can set to RayCast, OSPRay, or GPU rendering. Note, may crash if GPU method is set and no compatible GPU is available on the system. Suggested to leave at default value.']
             ])
         self.SetOutputMembers([
-            ['Image','o','vtkImageData',1,'','the output image','vmtkimagewriter'],
-            ['Volume','o','vtkVolume',1,'','the output volume with'],
-            ['PlaneWidgetX','xplane','vtkImagePlaneWidget',1,'','the X image plane widget (only if EnableImagePlaneWidgets == True)'],
-            ['PlaneWidgetY','yplane','vtkImagePlaneWidget',1,'','the Y image plane widget (only if EnableImagePlaneWidgets == True)'],
-            ['PlaneWidgetZ','zplane','vtkImagePlaneWidget',1,'','the Z image plane widget (only if EnableImagePlaneWidgets == True)']
+            ['Image','o','vtkImageData',1,'','the output image','vmtkimagewriter']
             ])
 
     def CharCallback(self, obj):
         return
-
-    def BuildImagePlanes(self):
-        '''Call vmtkImageViewer with the same render window to show the image plane widget overlays.
-
-        Requires that self.vmtkRenderer is instantiated
-        '''
-
-        imageViewer = vmtkimageviewer.vmtkImageViewer()
-        imageViewer.Image = self.Image
-        imageViewer.vmtkRenderer = self.vmtkRenderer
-        imageViewer.Display = 0
-        imageViewer.WindowLevel = self.WindowLevel
-        imageViewer.ArrayName = self.ArrayName
-        imageViewer.TextureInterpolation = self.TextureInterpolation
-        imageViewer.ContinuousCursor = self.ContinuousCursor
-        imageViewer.Margins = self.Margins
-        imageViewer.Execute()
-
-        self.PlaneWidgetX = imageViewer.PlaneWidgetX
-        self.PlaneWidgetY = imageViewer.PlaneWidgetY
-        self.PlaneWidgetZ = imageViewer.PlaneWidgetZ
 
     def BuildVTKPiecewiseFunction(self, pointsList):
         '''Assign values to a newly created vtkPiecewiseFunction
@@ -155,9 +117,6 @@ class vmtkImageVolumeViewer(pypes.pypeScript):
 
         if (self.ArrayName != ''):
             self.Image.GetPointData().SetActiveScalars(self.ArrayName)
-        
-        if self.EnableImagePlaneWidgets == True:
-            self.BuildImagePlanes()
 
         # ensure python 2-3 compatibility for checking string type (difference with unicode str handeling)
         PY3 = sys.version_info[0] == 3
@@ -182,39 +141,50 @@ class vmtkImageVolumeViewer(pypes.pypeScript):
             self.PrintError('Specified Rendering Method: ' + self.VolumeRenderingMethod + ' not supported. Please choose from ["default", "gpu", "ospray", "raycast"]')
         volumeMapper.SetInputData(self.Image)
         volumeMapper.SetBlendModeToComposite()
-
-
-        imageScalarRange = self.Image.GetScalarRange() # tupple of (min, max) scalar values in image volume
-        # need to ensure float type as expected by vtkPiecewiseFunction 
-        imageScalarMinValue = float(imageScalarRange[0])
-        imageScalarMaxValue = float(imageScalarRange[1])
         
-        # build transfer functions
-        if self.OpacityTransferFunctionPoints is not None:
-            opacityTransferFunction = self.BuildVTKPiecewiseFunction(self.ColorTransferFunctionRGBPoints)
-        else:
-            opacityTransferFunction = self.BuildVTKPiecewiseFunction([(imageScalarMinValue, 0.0), 
-                                                                      (imageScalarMaxValue * 0.9, 1.0)])
 
-        if self.GradientOpacityTransferFunctionPoints is not None:
-            gradientOpacityTransferFunction = self.BuildVTKPiecewiseFunction(self.ColorTransferFunctionRGBPoints)
-        else:
-            gradientOpacityTransferFunction = self.BuildVTKPiecewiseFunction([(imageScalarMinValue, 0.0), 
-                                                                              (imageScalarMaxValue, 1.0)])
+        pressetElementTree = ET.parse(os.path.join(os.path.dirname(__file__), 'vmtkimagevolumeviewerpresets.xml'))
+        presetRoot = pressetElementTree.getroot()
+        volProperties = presetRoot.findall('VolumeProperty[@name="' + self.VolumeVisualizationMethod + '"]')
+        volPropertiesDict = volProperties[0].attrib
 
-        if self.ColorTransferFunctionRGBPoints is not None:
-            colorTransferFunction = self.BuildVTKColorTransferFunction(self.ColorTransferFunctionRGBPoints)
-        else:
-            colorTransferFunction = self.BuildVTKColorTransferFunction([(imageScalarMinValue, 0.5, 0.0, 0.0),
-                                                                        (imageScalarMaxValue, 0.9, 0.5, 0.3)])
+        colorList = [float(i) for i in volPropertiesDict['colorTransfer'].split()]
+        gradientOpacityList = [float(i) for i in volPropertiesDict['gradientOpacity'].split()]
+        opacityList = [float(i) for i in volPropertiesDict['scalarOpacity'].split()]
+        colorList.pop(0)
+        gradientOpacityList.pop(0)
+        opacityList.pop(0)
+
+        def chunks(l, n):
+            """Yield successive n-sized chunks from l."""
+            if PY3:
+                range_func = range
+            else:
+                range_func = xrange
+            for i in range_func(0, len(l), n):
+                yield l[i:i + n]
+
+
+        colorMapList = chunks(colorList, 4)
+        colorTransferFunction = self.BuildVTKColorTransferFunction(colorMapList)
         
+        gradientOpacityMapList = chunks(gradientOpacityList, 2)
+        gradientOpacityTransferFunction = self.BuildVTKPiecewiseFunction(gradientOpacityMapList)
+
+        opacityMapList = chunks(opacityList, 2)
+        opacityTransferFunction = self.BuildVTKPiecewiseFunction(opacityMapList)
+
         # set transfer function properties 
         volumeProperty = vtk.vtkVolumeProperty()
         volumeProperty.SetScalarOpacity(opacityTransferFunction)
         volumeProperty.SetGradientOpacity(gradientOpacityTransferFunction)
         volumeProperty.SetColor(colorTransferFunction)
-        volumeProperty.SetInterpolationTypeToLinear()
-        volumeProperty.ShadeOn()
+        volumeProperty.SetInterpolationType(int(volPropertiesDict['interpolation']))
+        volumeProperty.SetShade(int(volPropertiesDict['shade']))
+        volumeProperty.SetSpecularPower(float(volPropertiesDict['specularPower']))
+        volumeProperty.SetSpecular(float(volPropertiesDict['specular']))
+        volumeProperty.SetDiffuse(float(volPropertiesDict['diffuse']))
+        volumeProperty.SetAmbient(float(volPropertiesDict['ambient']))
 
         # apply transfer function properties to the volume
         self.Volume = vtk.vtkVolume()
