@@ -78,7 +78,6 @@ class vmtkImageVolumeViewer(pypes.pypeScript):
         piecewiseFunction = vtk.vtkPiecewiseFunction()
 
         for xValue, yValue in pointsList:
-            # xValue, yValue = xyTuple[0], xyTuple[1]
             piecewiseFunction.AddPoint(xValue, yValue)
 
         return piecewiseFunction
@@ -100,7 +99,6 @@ class vmtkImageVolumeViewer(pypes.pypeScript):
         colorTransferFunction = vtk.vtkColorTransferFunction()
 
         for xValue, RVal, GVal, BVal in pointsList:
-            # xValue, yValue = xyTuple[0], xyTuple[1]
             colorTransferFunction.AddRGBPoint(xValue, RVal, GVal, BVal)
 
         return colorTransferFunction
