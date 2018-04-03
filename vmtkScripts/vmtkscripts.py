@@ -55,6 +55,7 @@ __all__ = [
     'vmtk.vmtkimagevesselenhancement',
     'vmtk.vmtkimagevoipainter',
     'vmtk.vmtkimagevoiselector',
+    'vmtk.vmtkimagevolumeviewer',
     'vmtk.vmtkimagewriter',
     'vmtk.vmtklevelsetsegmentation',
     'vmtk.vmtklineartoquadratic',

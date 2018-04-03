@@ -58,6 +58,7 @@ SET(SCRIPTS_SRCS
   vmtkimageviewer.py
   vmtkimagevoipainter.py
   vmtkimagevoiselector.py
+  vmtkimagevolumeviewer.py
   vmtkimagewriter.py
   vmtklevelsetsegmentation.py
   vmtklineartoquadratic.py
