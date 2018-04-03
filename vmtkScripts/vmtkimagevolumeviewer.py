@@ -29,10 +29,15 @@ class vmtkImageVolumeViewer(pypes.pypeScript):
         pypes.pypeScript.__init__(self)
 
         self.Image = None
+        self.Volume = None
         self.vmtkRenderer = None
         self.OwnRenderer = 0
         self.Display = 1
         self.ArrayName = ''
+
+        self.OpacityTransferFunctionPoints = None
+        self.ColorTransferFunctionRGBPoints = None
+        self.GradientOpacityTransferFunctionPoints = None
 
         self.EnableImagePlaneWidgets = 0
         self.Picker = None
@@ -40,10 +45,10 @@ class vmtkImageVolumeViewer(pypes.pypeScript):
         self.PlaneWidgetY = None
         self.PlaneWidgetZ = None
 
-        self.EnableGPURendering = 1
+        self.VolumeRenderingMethod = 'default'
         self.Margins = 0
         self.TextureInterpolation = 1
-        self.ContinuousCursor = 0
+        self.ContinuousCursor = 1
         self.WindowLevel = [0.0, 0.0]
 
         self.SetScriptName('vmtkimagevolumeviewer')
@@ -52,19 +57,23 @@ class vmtkImageVolumeViewer(pypes.pypeScript):
             ['Image','i','vtkImageData',1,'','the input image','vmtkimagereader'],
             ['ArrayName','array','str',1,'','name of the array to display'],
             ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer'],
-            ['WindowLevel','windowlevel','float',2,'','the window/level for displaying the image'],
             ['Display','display','bool',1,'','toggle rendering'],
-            ['Margins','margins','bool',1,'','toggle margins for tilting image planes'],
-            ['EnableGPURendering','enablegpu','bool',1,'','toggle gpu vs cpu rendering method, if enabled and no gpu is installed will default to cpu rendering'],
-            ['EnableImagePlaneWidgets','enableimageplanes','bool',0,'','show the volume with image planes overlayed on the image'],
-            ['TextureInterpolation','textureinterpolation','bool',1,'','toggle interpolation of graylevels on image planes'],
-            ['ContinuousCursor','continuouscursor','bool',1,'','toggle use of physical continuous coordinates for the cursor']
+            ['OpacityTransferFunctionPoints','opacitypoints','list','','[(imageScalarMinValue, 0.0), (imageScalarMaxValue * 0.9, 1.0)]','sets image opacity. requires a list of tupples each of size 2 corresponding to image scalar value and desired opacity value at that point'],
+            ['ColorTransferFunctionRGBPoints','colorrgbpoints','list','','[(imageScalarMinValue, 0.5, 0.0, 0.0), (imageScalarMaxValue, 0.7, 0.5, 0.5)]','sets image opacity. requires a list of tupples each of size 2 corresponding to image scalar value and desired opacity value at that point'],
+            ['GradientOpacityTransferFunctionPoints','gradientopacitypoints','list','','[(imageScalarMinValue, 0.0), (imageScalarMaxValue, 1.0)]','sets image gradient opacity. requires a list of tupples each of size 2 corresponding to image scalar value and desired gradient opacity value at that point'],
+            ['VolumeRenderingMethod','rendermethod','str',1,'["default",gpu","ospray","raycast"]','toggle rendering method. By default will auto detect hardware capabilities and select best render method. If desired, can set to RayCast, OSPRay, or GPU rendering. Note, may crash if GPU method is set and no compatible GPU is available on the system. Suggested to leave at default value.'],
+            ['EnableImagePlaneWidgets','enableimageplanes','bool',1,'','show the volume with image planes overlayed on the image'],
+            ['Margins','margins','bool',1,'','toggle margins for tilting image planes. (only if EnableImagePlaneWidgets == True)'],
+            ['WindowLevel','windowlevel','float',2,'','the window/level for displaying the image. (only if EnableImagePlaneWidgets == True)'],
+            ['TextureInterpolation','textureinterpolation','bool',1,'','toggle interpolation of graylevels on image planes. (only if EnableImagePlaneWidgets == True)'],
+            ['ContinuousCursor','continuouscursor','bool',1,'','toggle use of physical continuous coordinates for the cursor. (only if EnableImagePlaneWidgets == True)']
             ])
         self.SetOutputMembers([
             ['Image','o','vtkImageData',1,'','the output image','vmtkimagewriter'],
-            ['PlaneWidgetX','xplane','vtkImagePlaneWidget',1,'','the X image plane widget'],
-            ['PlaneWidgetY','yplane','vtkImagePlaneWidget',1,'','the Y image plane widget'],
-            ['PlaneWidgetZ','zplane','vtkImagePlaneWidget',1,'','the Z image plane widget']
+            ['Volume','o','vtkVolume',1,'','the output volume with'],
+            ['PlaneWidgetX','xplane','vtkImagePlaneWidget',1,'','the X image plane widget (only if EnableImagePlaneWidgets == True)'],
+            ['PlaneWidgetY','yplane','vtkImagePlaneWidget',1,'','the Y image plane widget (only if EnableImagePlaneWidgets == True)'],
+            ['PlaneWidgetZ','zplane','vtkImagePlaneWidget',1,'','the Z image plane widget (only if EnableImagePlaneWidgets == True)']
             ])
 
     def CharCallback(self, obj):
@@ -78,12 +87,62 @@ class vmtkImageVolumeViewer(pypes.pypeScript):
 
         imageViewer = vmtkimageviewer.vmtkImageViewer()
         imageViewer.Image = self.Image
-        imageViewer.Render = self.vmtkRenderer
-        imageViewer.Display = 1
+        imageViewer.vmtkRenderer = self.vmtkRenderer
+        imageViewer.Display = 0
+        imageViewer.WindowLevel = self.WindowLevel
+        imageViewer.ArrayName = self.ArrayName
+        imageViewer.TextureInterpolation = self.TextureInterpolation
+        imageViewer.ContinuousCursor = self.ContinuousCursor
+        imageViewer.Margins = self.Margins
         imageViewer.Execute()
 
-        return
+        self.PlaneWidgetX = imageViewer.PlaneWidgetX
+        self.PlaneWidgetY = imageViewer.PlaneWidgetY
+        self.PlaneWidgetZ = imageViewer.PlaneWidgetZ
 
+    def BuildVTKPiecewiseFunction(self, pointsList):
+        '''Assign values to a newly created vtkPiecewiseFunction
+
+        Arguments:
+            Inputs:
+                pointsList (list of tuples): a list of tuples, each of size=2. The first value
+                    specifies the xValue of the point to add (aka image scalar value). The second
+                    value specifies the yValue of the point to add (aka, value at that image scalar)
+
+            Outputs:
+                piecewiseFunction (vtkPiecewiseFunction object): containing points at tupples in the points list
+        '''
+
+        piecewiseFunction = vtk.vtkPiecewiseFunction()
+
+        for xValue, yValue in pointsList:
+            # xValue, yValue = xyTuple[0], xyTuple[1]
+            piecewiseFunction.AddPoint(xValue, yValue)
+
+        return piecewiseFunction
+
+
+    def BuildVTKColorTransferFunction(self, pointsList):
+        '''Assign values to a newly created vtkColorTransferFunction
+
+        Arguments:
+            Inputs:
+                pointsList (list of tuples): a list of tuples, each of size=4. The first value
+                    specifies the xValue of the point to add (aka image scalar value). The second,
+                    third, and fourth values specify the RGB value to assign at that point
+
+            Outputs:
+                colorTransferFunction (vtkColorTransferFunction object): containing RGB points at tupples in the points list
+        '''
+
+        colorTransferFunction = vtk.vtkColorTransferFunction()
+
+        for xValue, RVal, GVal, BVal in pointsList:
+            # xValue, yValue = xyTuple[0], xyTuple[1]
+            colorTransferFunction.AddRGBPoint(xValue, RVal, GVal, BVal)
+
+        return colorTransferFunction
+        
 
     def BuildView(self):
 
@@ -98,39 +157,69 @@ class vmtkImageVolumeViewer(pypes.pypeScript):
             self.Image.GetPointData().SetActiveScalars(self.ArrayName)
         
         if self.EnableImagePlaneWidgets == True:
-            #TODO: Figure this out
-            pass
+            self.BuildImagePlanes()
 
-        tfun = vtk.vtkPiecewiseFunction()
-        tfun.AddPoint(70.0, 0.0)
-        tfun.AddPoint(59.0, 0)
-        tfun.AddPoint(60.0, 0)
-        tfun.AddPoint(119.0, 0)
-        tfun.AddPoint(120, .2)
-        tfun.AddPoint(130, .3)
-        tfun.AddPoint(200, .3)
-        tfun.AddPoint(255.0, 1.0)
-
-        ctfun = vtk.vtkColorTransferFunction()
-        ctfun.AddRGBPoint(0.0, 0.5, 0.0, 0.0)
-        ctfun.AddRGBPoint(60.0, 1.0, 0.5, 0.5)
-        ctfun.AddRGBPoint(120.0, 0.9, 0.2, 0.3)
-        ctfun.AddRGBPoint(200.0, 0.81, 0.27, 0.1)
-        ctfun.AddRGBPoint(255.0, 0.5, 0.5, 0.5)
-
-        volumeMapper = vtk.vtkGPUVolumeRayCastMapper()
+        # ensure python 2-3 compatibility for checking string type (difference with unicode str handeling)
+        PY3 = sys.version_info[0] == 3
+        if PY3:
+            string_types = str,
+        else:
+            string_types = basestring,
+        if not isinstance(self.VolumeRenderingMethod, string_types):
+            self.PrintError('Specified Rendering Method is not of required "string" type')
+            
+        # create volume mapper and apply requested volume rendering method
+        volumeMapper = vtk.vtkSmartVolumeMapper()
+        if self.VolumeRenderingMethod.lower() == 'default':
+            volumeMapper.SetRequestedRenderModeToDefault()
+        elif self.VolumeRenderingMethod.lower() == 'gpu':
+            volumeMapper.SetRequestedRenderModeToGPU()
+        elif self.VolumeRenderingMethod.lower() == 'ospray':
+            volumeMapper.SetRequestedRenderModeToOSPRay()
+        elif self.VolumeRenderingMethod.lower() == 'raycast':
+            volumeMapper.SetRequestedRenderModeToRayCast()
+        else:
+            self.PrintError('Specified Rendering Method: ' + self.VolumeRenderingMethod + ' not supported. Please choose from ["default", "gpu", "ospray", "raycast"]')
         volumeMapper.SetInputData(self.Image)
         volumeMapper.SetBlendModeToComposite()
 
+
+        imageScalarRange = self.Image.GetScalarRange() # tupple of (min, max) scalar values in image volume
+        # need to ensure float type as expected by vtkPiecewiseFunction 
+        imageScalarMinValue = float(imageScalarRange[0])
+        imageScalarMaxValue = float(imageScalarRange[1])
+        
+        # build transfer functions
+        if self.OpacityTransferFunctionPoints is not None:
+            opacityTransferFunction = self.BuildVTKPiecewiseFunction(self.ColorTransferFunctionRGBPoints)
+        else:
+            opacityTransferFunction = self.BuildVTKPiecewiseFunction([(imageScalarMinValue, 0.0), 
+                                                                      (imageScalarMaxValue * 0.9, 1.0)])
+
+        if self.GradientOpacityTransferFunctionPoints is not None:
+            gradientOpacityTransferFunction = self.BuildVTKPiecewiseFunction(self.ColorTransferFunctionRGBPoints)
+        else:
+            gradientOpacityTransferFunction = self.BuildVTKPiecewiseFunction([(imageScalarMinValue, 0.0), 
+                                                                              (imageScalarMaxValue, 1.0)])
+
+        if self.ColorTransferFunctionRGBPoints is not None:
+            colorTransferFunction = self.BuildVTKColorTransferFunction(self.ColorTransferFunctionRGBPoints)
+        else:
+            colorTransferFunction = self.BuildVTKColorTransferFunction([(imageScalarMinValue, 0.5, 0.0, 0.0),
+                                                                        (imageScalarMaxValue, 0.9, 0.5, 0.3)])
+        
+        # set transfer function properties 
         volumeProperty = vtk.vtkVolumeProperty()
-        volumeProperty.SetColor(ctfun)
-        volumeProperty.SetScalarOpacity(tfun)
+        volumeProperty.SetScalarOpacity(opacityTransferFunction)
+        volumeProperty.SetGradientOpacity(gradientOpacityTransferFunction)
+        volumeProperty.SetColor(colorTransferFunction)
         volumeProperty.SetInterpolationTypeToLinear()
         volumeProperty.ShadeOn()
 
-        newvol = vtk.vtkVolume()
-        newvol.SetMapper(volumeMapper)
-        newvol.SetProperty(volumeProperty)
+        # apply transfer function properties to the volume
+        self.Volume = vtk.vtkVolume()
+        self.Volume.SetMapper(volumeMapper)
+        self.Volume.SetProperty(volumeProperty)
 
         outline = vtk.vtkOutlineFilter()
         outline.SetInputData(self.Image)
@@ -139,65 +228,22 @@ class vmtkImageVolumeViewer(pypes.pypeScript):
         outlineActor = vtk.vtkActor()
         outlineActor.SetMapper(outlineMapper)
 
-        # Create the RenderWindow, Renderer and both Actors
-        # ren = vtk.vtkRenderer()
-        # renWin = vtk.vtkRenderWindow()
-        # renWin.AddRenderer(ren)
-        # iren = vtk.vtkRenderWindowInteractor()
-        # iren.SetRenderWindow(renWin)
-
         # The SetInteractor method is how 3D widgets are associated with the
         # render window interactor. Internally, SetInteractor sets up a bunch
         # of callbacks using the Command/Observer mechanism (AddObserver()).
         boxWidget = vtk.vtkBoxWidget()
-        boxWidget.SetInteractor(iren)
+        boxWidget.SetInteractor(self.vmtkRenderer.RenderWindowInteractor)
         boxWidget.SetPlaceFactor(1.0)
-
-        # Add the actors to the renderer, set the background and size
-        self.vmtkRenderer.AddActor(outlineActor)
-        self.vmtkRenderer.AddVolume(newvol)
-
-        # When interaction starts, the requested frame rate is increased.
-        # def StartInteraction(obj, event):
-        #     global renWin
-        #     renWin.SetDesiredUpdateRate(10)
-
-        # When interaction ends, the requested frame rate is decreased to
-        # normal levels. This causes a full resolution render to occur.
-        # def EndInteraction(obj, event):
-        #     global renWin
-        #     renWin.SetDesiredUpdateRate(0.001)
-
-        # The implicit function vtkPlanes is used in conjunction with the
-        # volume ray cast mapper to limit which portion of the volume is
-        # volume rendered.
-        planes = vtk.vtkPlanes()
-        def ClipVolumeRender(obj, event):
-            global planes, volumeMapper
-            obj.GetPlanes(planes)
-            volumeMapper.SetClippingPlanes(planes)
-
 
         # Place the interactor initially. The output of the reader is used to
         # place the box widget.
         boxWidget.SetInputData(self.Image)
         boxWidget.PlaceWidget()
         boxWidget.InsideOutOn()
-        boxWidget.AddObserver("StartInteractionEvent", StartInteraction)
-        boxWidget.AddObserver("InteractionEvent", ClipVolumeRender)
-        boxWidget.AddObserver("EndInteractionEvent", EndInteraction)
 
-        outlineProperty = boxWidget.GetOutlineProperty()
-        outlineProperty.SetRepresentationToWireframe()
-        outlineProperty.SetAmbient(1.0)
-        outlineProperty.SetAmbientColor(1, 1, 1)
-        outlineProperty.SetLineWidth(3)
-
-        selectedOutlineProperty = boxWidget.GetSelectedOutlineProperty()
-        selectedOutlineProperty.SetRepresentationToWireframe()
-        selectedOutlineProperty.SetAmbient(1.0)
-        selectedOutlineProperty.SetAmbientColor(1, 0, 0)
-        selectedOutlineProperty.SetLineWidth(3)
+        # Add the actors to the renderer, set the background and size
+        self.vmtkRenderer.Renderer.AddActor(outlineActor)
+        self.vmtkRenderer.Renderer.AddVolume(self.Volume)
 
         if (self.Display == 1):
             self.vmtkRenderer.Render()
