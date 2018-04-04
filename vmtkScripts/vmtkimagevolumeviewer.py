@@ -41,7 +41,7 @@ class vmtkImageVolumeViewer(pypes.pypeScript):
         self.VolumeRenderingMethod = 'default'
 
         self.SetScriptName('vmtkimagevolumeviewer')
-        self.SetScriptDoc('display a 3D image as a volume, optionally overlaying image planes')
+        self.SetScriptDoc('display a 3D image within a volume renderer')
         self.SetInputMembers([
             ['Image','i','vtkImageData',1,'','the input image','vmtkimagereader'],
             ['ArrayName','array','str',1,'','name of the array to display'],
@@ -56,11 +56,22 @@ class vmtkImageVolumeViewer(pypes.pypeScript):
             ['VolumeRenderingMethod','rendermethod','str',1,'["default",gpu","ospray","raycast"]','toggle rendering method. By default will auto detect hardware capabilities and select best render method. If desired, can set to RayCast, OSPRay, or GPU rendering. Note, may crash if GPU method is set and no compatible GPU is available on the system. Suggested to leave at default value.']
             ])
         self.SetOutputMembers([
-            ['Image','o','vtkImageData',1,'','the output image','vmtkimagewriter']
+            ['Image','o','vtkImageData',1,'','the output image','vmtkimagewriter'],
+            ['ColorTransferFunctionProperty','colorproperty','vtkColorTransferFunction',1,'',''],
+            ['GradientOpacityTransferFunctionProperty','gradientopacityproperty','vtkPiecewiseFunction',1,'',''],
+            ['OpacityTransferFunctionProperty','opacityproperty','vtkPiecewiseFunction',1,'',''],
+            ['InterpolationTypeProperty','interpolationproperty','int',1,'',''],
+            ['ShadeProperty','shadeproperty','int',1,'',''],
+            ['SpecularPowerProperty','specularpowerproperty','float',1,'',''],
+            ['SpecularProperty','specularproperty','float',1,'',''],
+            ['DiffuseProperty','diffuseproperty','float',1,'',''],
+            ['AmbientProperty','ambientproperty','float',1,'','']
             ])
+
 
     def CharCallback(self, obj):
         return
+
 
     def BuildVTKPiecewiseFunction(self, pointsList):
         '''Assign values to a newly created vtkPiecewiseFunction
@@ -76,10 +87,8 @@ class vmtkImageVolumeViewer(pypes.pypeScript):
         '''
 
         piecewiseFunction = vtk.vtkPiecewiseFunction()
-
         for xValue, yValue in pointsList:
             piecewiseFunction.AddPoint(xValue, yValue)
-
         return piecewiseFunction
 
 
@@ -95,16 +104,16 @@ class vmtkImageVolumeViewer(pypes.pypeScript):
             Outputs:
                 colorTransferFunction (vtkColorTransferFunction object): containing RGB points at tupples in the points list
         '''
-
         colorTransferFunction = vtk.vtkColorTransferFunction()
-
         for xValue, RVal, GVal, BVal in pointsList:
             colorTransferFunction.AddRGBPoint(xValue, RVal, GVal, BVal)
-
         return colorTransferFunction
         
 
     def BuildView(self):
+
+        # ensure python 2-3 compatibility for checking string type (difference with unicode str handeling)
+        PY3 = sys.version_info[0] == 3
 
         if not self.vmtkRenderer:
             self.vmtkRenderer = vmtkrenderer.vmtkRenderer()
@@ -116,8 +125,6 @@ class vmtkImageVolumeViewer(pypes.pypeScript):
         if (self.ArrayName != ''):
             self.Image.GetPointData().SetActiveScalars(self.ArrayName)
 
-        # ensure python 2-3 compatibility for checking string type (difference with unicode str handeling)
-        PY3 = sys.version_info[0] == 3
         if PY3:
             string_types = str,
         else:
@@ -143,18 +150,9 @@ class vmtkImageVolumeViewer(pypes.pypeScript):
         # parse the xml file which is loaded in the same path as the vmtkimagevolumeviewer.py file at runtime
         presetElementTree = ET.parse(os.path.join(os.path.dirname(__file__), 'vmtkimagevolumeviewerpresets.xml'))
         presetRoot = presetElementTree.getroot()
-        volProperties = presetRoot.findall('VolumeProperty[@name="' + self.VolumeVisualizationMethod + '"]')
+        volProperties = presetRoot.findall('VolumeProperty[@name="' + self.VolumeVisualizationMethod + '"]') # should return a list with only one element
         volPropertiesDict = volProperties[0].attrib
-
-        # need to convert the space seperated string displaying values into a list of floats
-        colorList = [float(i) for i in volPropertiesDict['colorTransfer'].split()]
-        gradientOpacityList = [float(i) for i in volPropertiesDict['gradientOpacity'].split()]
-        opacityList = [float(i) for i in volPropertiesDict['scalarOpacity'].split()]
-        # remove the first element from these lists since they just indicate the number of elements in the list
-        colorList.pop(0)
-        gradientOpacityList.pop(0)
-        opacityList.pop(0)
-
+        
         def chunks(l, n):
             """Yield successive n-sized chunks from l."""
             if PY3:
@@ -164,32 +162,48 @@ class vmtkImageVolumeViewer(pypes.pypeScript):
             for i in range_func(0, len(l), n):
                 yield l[i:i + n]
 
+        # need to convert the space seperated string displaying values into a list of floats
+        colorList = [float(i) for i in volPropertiesDict['colorTransfer'].split()]
+        gradientOpacityList = [float(i) for i in volPropertiesDict['gradientOpacity'].split()]
+        opacityList = [float(i) for i in volPropertiesDict['scalarOpacity'].split()]
+
+        # create an array of arrays with each list split into subarrays of desired size
         colorMapList = chunks(colorList, 4)
-        colorTransferFunction = self.BuildVTKColorTransferFunction(colorMapList)
-        
         gradientOpacityMapList = chunks(gradientOpacityList, 2)
-        gradientOpacityTransferFunction = self.BuildVTKPiecewiseFunction(gradientOpacityMapList)
-
         opacityMapList = chunks(opacityList, 2)
-        opacityTransferFunction = self.BuildVTKPiecewiseFunction(opacityMapList)
 
-        # set transfer function properties 
+        # create vtk objects from the mapped lists (now arrays of arrays)
+        self.ColorTransferFunctionProperty = self.BuildVTKColorTransferFunction(colorMapList)
+        self.GradientOpacityTransferFunctionProperty = self.BuildVTKPiecewiseFunction(gradientOpacityMapList)
+        self.OpacityTransferFunctionProperty = self.BuildVTKPiecewiseFunction(opacityMapList)
+
+        # assign other properties from the element tree to variables with the appropriate type
+        self.InterpolationTypeProperty = int(volPropertiesDict['interpolation'])
+        self.ShadeProperty = int(volPropertiesDict['shade'])
+        self.SpecularPowerProperty = float(volPropertiesDict['specularPower'])
+        self.SpecularProperty = float(volPropertiesDict['specular'])
+        self.DiffuseProperty = float(volPropertiesDict['diffuse'])
+        self.AmbientProperty = float(volPropertiesDict['ambient'])
+
+        # set transfer function and lighting properties of the vtk volume object
         volumeProperty = vtk.vtkVolumeProperty()
-        volumeProperty.SetScalarOpacity(opacityTransferFunction)
-        volumeProperty.SetGradientOpacity(gradientOpacityTransferFunction)
-        volumeProperty.SetColor(colorTransferFunction)
-        volumeProperty.SetInterpolationType(int(volPropertiesDict['interpolation']))
-        volumeProperty.SetShade(int(volPropertiesDict['shade']))
-        volumeProperty.SetSpecularPower(float(volPropertiesDict['specularPower']))
-        volumeProperty.SetSpecular(float(volPropertiesDict['specular']))
-        volumeProperty.SetDiffuse(float(volPropertiesDict['diffuse']))
-        volumeProperty.SetAmbient(float(volPropertiesDict['ambient']))
+        volumeProperty.SetScalarOpacity(self.OpacityTransferFunctionProperty)
+        volumeProperty.SetGradientOpacity(self.GradientOpacityTransferFunctionProperty)
+        volumeProperty.SetColor(self.ColorTransferFunctionProperty)
+        volumeProperty.SetInterpolationType(self.InterpolationTypeProperty)
+        volumeProperty.SetShade(self.ShadeProperty)
+        volumeProperty.SetSpecularPower(self.SpecularPowerProperty)
+        volumeProperty.SetSpecular(self.SpecularProperty)
+        volumeProperty.SetDiffuse(self.DiffuseProperty)
+        volumeProperty.SetAmbient(self.AmbientProperty)
 
-        # apply transfer function properties to the volume
+        # create the volume from the mapper (defining image data and render mode) with the defined properties
+        # this is the last pipeline step applied. self.Volume just needs to now be added to the Renderer
         self.Volume = vtk.vtkVolume()
         self.Volume.SetMapper(volumeMapper)
         self.Volume.SetProperty(volumeProperty)
 
+        # This next section is responsible for creating the box outline around the volume's data extent
         outline = vtk.vtkOutlineFilter()
         outline.SetInputData(self.Image)
         outlineMapper = vtk.vtkPolyDataMapper()
@@ -210,7 +224,7 @@ class vmtkImageVolumeViewer(pypes.pypeScript):
         boxWidget.PlaceWidget()
         boxWidget.InsideOutOn()
 
-        # Add the actors to the renderer, set the background and size
+        # Add the actors to the renderer
         self.vmtkRenderer.Renderer.AddActor(outlineActor)
         self.vmtkRenderer.Renderer.AddVolume(self.Volume)
 
