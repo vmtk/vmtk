@@ -179,7 +179,7 @@ StretchedMapping array is added to the surface.
 
 ## Pypes
 
-Take a look into the [Basic PypeS](http://www.vmtk.org/tutorials/PypesBasic.html) tutorial to learn how to effectively pipe vmtk scripts together, the [Use PypeS Programmatically](http://www.vmtk.org/tutorials/PypesProgrammatically.html) tutorial to learn how to interactively work with PypeS objects and into the Advanced PypeS](http://www.vmtk.org//tutorials/PypesAdvanced.html) tutorial to learn how to write your own PypeS modules.
+Take a look into the [Basic PypeS](http://www.vmtk.org/tutorials/PypesBasic.html) tutorial to learn how to effectively pipe vmtk scripts together, the [Use PypeS Programmatically](http://www.vmtk.org/tutorials/PypesProgrammatically.html) tutorial to learn how to interactively work with PypeS objects and into the [Advanced PypeS](http://www.vmtk.org//tutorials/PypesAdvanced.html) tutorial to learn how to write your own PypeS modules.
 
 ```
 vmtkmarchingcubes --help
