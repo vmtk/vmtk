@@ -4,12 +4,6 @@ SET(VMTKSCRIPT_RESOURCES_SRCS
   vmtkimagevolumeviewerpresets.xml
   )
 
-if(WIN32)
-  install(FILES ${VMTKSCRIPT_RESOURCES_SRCS}
-    DESTINATION Lib/site-packages/vmtk/share
-    COMPONENT PythonRuntimeLibraries)
-else(WIN32)
-  install(FILES ${VMTKSCRIPT_RESOURCES_SRCS}
-    DESTINATION lib/${VMTK_PYTHON_VERSION}/site-packages/vmtk/share
-    COMPONENT PythonRuntimeLibraries)
-endif(WIN32)
+install(FILES ${VMTKSCRIPT_RESOURCES_SRCS}
+  DESTINATION ${VMTK_SCRIPTS_INSTALL_LIB_DIR}/share
+  COMPONENT PythonRuntimeLibraries)
