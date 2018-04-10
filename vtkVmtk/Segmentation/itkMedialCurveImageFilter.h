@@ -48,9 +48,9 @@ namespace itk
 /// 1. manual instantation
 template< class TInputImage,
 	  class TAverageOutwardFluxPixelType = float,
-	  class TOutputPixelType = unsigned char>>
+	  class TOutputPixelType = unsigned char>
 class ITK_EXPORT MedialCurveImageFilter:
-	public ImageToImageFilter<TInputImage, ::itk::Image<TOutputPixelType,::itk::GetImageDimension<TInputImage>::ImageDimension> >
+	public ImageToImageFilter<TInputImage, ::itk::Image<TOutputPixelType,TInputImage::ImageDimension> >
 {
 	public:
 
@@ -211,4 +211,3 @@ class ITK_EXPORT MedialCurveImageFilter:
 }//end itk namespace
 
 #endif // _itkMedialCurveImageFilter_h
-

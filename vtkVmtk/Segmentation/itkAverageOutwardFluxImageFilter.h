@@ -46,9 +46,9 @@ namespace itk
 /// 1. manual instantation
 template< class TInputImage,
 	  class TOutputPixelType = float,
-	  class TInputVectorPixelType = ::itk::CovariantVector<TOutputPixelType,::itk::GetImageDimension<TInputImage>::ImageDimension> > 
+	  class TInputVectorPixelType = ::itk::CovariantVector<TOutputPixelType,TInputImage::ImageDimension> > 
 class ITK_EXPORT AverageOutwardFluxImageFilter:
-	public ImageToImageFilter<TInputImage, ::itk::Image<TOutputPixelType,::itk::GetImageDimension<TInputImage>::ImageDimension> >
+	public ImageToImageFilter<TInputImage, ::itk::Image<TOutputPixelType,TInputImage::ImageDimension> >
 {
 	public:
 
@@ -79,20 +79,20 @@ class ITK_EXPORT AverageOutwardFluxImageFilter:
 		typedef itk::ConstNeighborhoodIterator< TInputVectorImage > InputVectorConstNeighborhoodIteratorType;
 		typedef itk::ImageRegionIterator< TOutputImage > OutputIteratorType;
 
-#ifdef ITK_USE_CONCEPT_CHECKING
-		/** Begin concept checking */
-		itkConceptMacro(SameDimensionCheck,
-			(Concept::SameDimension<InputImageDimension, OutputImageDimension>));
-		itkConceptMacro(InputVectorIsReallyAVectorCheck,
-			(Concept::HasValueType<TInputVectorPixelType>));
-		itkConceptMacro(InputVectorIsFloatingPointCheck,
-			(Concept::IsFloatingPoint<TInputVectorPixelType::ValueType>));
-		//itkConceptMacro(InputVectorIsSameDimensionInputImageCheck,
-		//	(Concept::SameDimension<TInputVectorPixelType::SizeType,InputImageDimension>));
-		itkConceptMacro(OutputIsFloatingPointCheck,
-			(Concept::IsFloatingPoint<TOutputPixelType>));
-		/** End concept checking */
-#endif
+// #ifdef ITK_USE_CONCEPT_CHECKING
+// 		/** Begin concept checking */
+// 		itkConceptMacro(SameDimensionCheck,
+// 			(Concept::SameDimension<InputImageDimension, OutputImageDimension>));
+// 		itkConceptMacro(InputVectorIsReallyAVectorCheck,
+// 			(Concept::HasValueType<TInputVectorPixelType>));
+// 		itkConceptMacro(InputVectorIsFloatingPointCheck,
+// 			(Concept::IsFloatingPoint<TInputVectorPixelType::ValueType>));
+// 		//itkConceptMacro(InputVectorIsSameDimensionInputImageCheck,
+// 		//	(Concept::SameDimension<TInputVectorPixelType::SizeType,InputImageDimension>));
+// 		itkConceptMacro(OutputIsFloatingPointCheck,
+// 			(Concept::IsFloatingPoint<TOutputPixelType>));
+// 		/** End concept checking */
+// #endif
 
 		//-----------------------------------------------------
 		// Methods
