@@ -35,8 +35,7 @@ class vmtkSurfaceTransformToRAS(pypes.pypeScript):
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
             ['XyzToRasMatrixCoefficients','matrix','float',16,'','coefficients of XYZToRAS transform matrix'],
-            ['InvertMatrix','invert','bool',1,'',
-             'invert XyzToRasMatrixCoefficients matrix, additional transforms to surface in RAS space requires the inverse transform reverting the surface back to an axis aligned frame']
+            ['InvertMatrix','invert','bool',1,'','invert XyzToRasMatrixCoefficients matrix, additional transforms to surface in RAS space requires the inverse transform reverting the surface back to an axis aligned frame']
             ])
         self.SetOutputMembers([
             ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter']
