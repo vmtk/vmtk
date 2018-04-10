@@ -330,7 +330,7 @@ class vmtkRenderer(pypes.pypeScript):
             #self.TextActorStd.SetPosition(self.PositionStd)
             #self.Renderer.AddActor(self.TextActorStd)
 
-            fontSize = self._GetScreenFontSize()
+            fontSize = int(self._GetScreenFontSize())
 
             self.TextActor = vtk.vtkTextActor()
             self.TextActor.GetTextProperty().SetFontSize(fontSize)

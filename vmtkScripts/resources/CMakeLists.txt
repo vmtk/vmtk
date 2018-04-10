@@ -6,7 +6,7 @@ SET(VMTKSCRIPT_RESOURCES_SRCS
 
 if(WIN32)
   install(FILES ${VMTKSCRIPT_RESOURCES_SRCS}
-    DESTINATION lib/site-packages/vmtk/share
+    DESTINATION Lib/site-packages/vmtk/share
     COMPONENT PythonRuntimeLibraries)
 else(WIN32)
   install(FILES ${VMTKSCRIPT_RESOURCES_SRCS}
