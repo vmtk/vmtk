@@ -53,6 +53,7 @@ set(TEST_VMTKSCRIPTS_SRCS
     test_vmtksurfacescaling.py
     test_vmtksurfacesmoothing.py
     test_vmtksurfacesubdivision.py
+    test_vmtksurfacetransformtoras.py
     )
 
 IF(NOT TEST_VMTKSCRIPTS_INSTALL_LIB_DIR)
