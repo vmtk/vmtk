@@ -74,7 +74,7 @@ def test_volume_viewer_preset_values(aorta_image, preset, expected_results_dict)
     gradientOpacityTransferFunctionColorAtSamplePointSmall = view.GradientOpacityTransferFunction.GetValue(gradientOpacityTransferFunctionSamplePointSmall)
     gradientOpacityTransferFunctionColorAtSamplePointLarge = view.GradientOpacityTransferFunction.GetValue(gradientOpacityTransferFunctionSamplePointLarge)
 
-    resultsDict = copy.deepcopy(expected_results_dict['preset'])
+    resultsDict = copy.deepcopy(expected_results_dict[preset])
     
     assert interpolationType == resultsDict["InterpolationType"]
     assert shade == resultsDict["Shade"]
@@ -87,8 +87,8 @@ def test_volume_viewer_preset_values(aorta_image, preset, expected_results_dict)
     assert colorTransferFunctionRangeWidth == resultsDict["ColorTransferFunctionRangeWidth"]
     assert colorTransferFunctionSamplePointSmall == resultsDict["ColorTransferFunctionSamplePointSmall"]
     assert colorTransferFunctionSamplePointLarge == resultsDict["ColorTransferFunctionSamplePointLarge"]
-    assert colorTransferFunctionColorAtSamplePointSmall == resultsDict["ColorTransferFunctionColorAtSamplePointSmall"]
-    assert colorTransferFunctionColorAtSamplePointLarge == resultsDict["ColorTransferFunctionColorAtSamplePointLarge"]
+    assert colorTransferFunctionColorAtSamplePointSmall == tuple(resultsDict["ColorTransferFunctionColorAtSamplePointSmall"])
+    assert colorTransferFunctionColorAtSamplePointLarge == tuple(resultsDict["ColorTransferFunctionColorAtSamplePointLarge"])
     assert opacityTransferFunctionPointMin == resultsDict["OpacityTransferFunctionPointMin"]
     assert opacityTransferFunctionPointMax == resultsDict["OpacityTransferFunctionPointMax"]
     assert opacityTransferFunctionRangeWidth == resultsDict["OpacityTransferFunctionRangeWidth"]
@@ -103,5 +103,3 @@ def test_volume_viewer_preset_values(aorta_image, preset, expected_results_dict)
     assert gradientOpacityTransferFunctionSamplePointLarge == resultsDict["GradientOpacityTransferFunctionSamplePointLarge"]
     assert gradientOpacityTransferFunctionColorAtSamplePointSmall == resultsDict["GradientOpacityTransferFunctionColorAtSamplePointSmall"]
     assert gradientOpacityTransferFunctionColorAtSamplePointLarge == resultsDict["GradientOpacityTransferFunctionColorAtSamplePointLarge"]
-
-    

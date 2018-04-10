@@ -34,6 +34,7 @@ set(TEST_VMTKSCRIPTS_SRCS
     test_vmtkimagevesselenhancement.py
     test_vmtkimagevoipainter.py
     test_vmtkimagevoiselector.py
+    test_vmtkimagevolumeviewer.py
     test_vmtklevelsetsegmentation.py
     test_vmtkmarchingcubes.py
     # test_vmtkmeshtonumpy.py
