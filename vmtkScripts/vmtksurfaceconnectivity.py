@@ -58,7 +58,7 @@ class vmtkSurfaceConnectivity(pypes.pypeScript):
         if self.Surface == None:
             self.PrintError('Error: No input surface.')
 
-        if (self.GroupId != -1) & (self.GroupIdsArrayName!=''):
+        if (self.GroupId != -1) and (self.GroupIdsArrayName!=''):
             self.Surface.GetPointData().SetActiveScalars(self.GroupIdsArrayName)
 
         barycenter = [0.0,0.0,0.0]
@@ -90,7 +90,7 @@ class vmtkSurfaceConnectivity(pypes.pypeScript):
 
         if self.GroupId != -1:
             connectivityFilter.ScalarConnectivityOn()
-            scalarRange = [self.GroupId,self .GroupId]
+            scalarRange = [self.GroupId,self.GroupId]
             connectivityFilter.SetScalarRange(scalarRange)
         connectivityFilter.Update()
 
