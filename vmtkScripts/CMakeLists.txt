@@ -58,6 +58,7 @@ SET(SCRIPTS_SRCS
   vmtkimageviewer.py
   vmtkimagevoipainter.py
   vmtkimagevoiselector.py
+  vmtkimagevolumeviewer.py
   vmtkimagewriter.py
   vmtklevelsetsegmentation.py
   vmtklineartoquadratic.py
@@ -153,6 +154,8 @@ OPTION(VMTK_CONTRIB_SCRIPTS "Install modules from the vmtkScripts/contrib direct
 IF (VMTK_CONTRIB_SCRIPTS)
   SUBDIRS(contrib)
 ENDIF (VMTK_CONTRIB_SCRIPTS)
+
+subdirs(resources)
 
 IF(NOT VMTK_SCRIPTS_INSTALL_BIN_DIR)
   SET(VMTK_SCRIPTS_INSTALL_BIN_DIR bin)
