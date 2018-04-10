@@ -37,8 +37,19 @@ class vmtkImageVolumeViewer(pypes.pypeScript):
         self.Display = 1
         self.ArrayName = ''
 
-        self.VolumeVisualizationMethod = 'CT-Coronary-Arteries-2'
+        self.Preset = 'CT-Coronary-Arteries-2'
         self.VolumeRenderingMethod = 'default'
+        self.BoxOutline = 0
+
+        self.ColorTransferFunction = None
+        self.GradientOpacityTransferFunction = None
+        self.OpacityTransferFunction = None
+        self.InterpolationType = None
+        self.Shade = None
+        self.SpecularPower = None
+        self.Specular = None
+        self.Diffuse = None
+        self.Ambient = None
 
         self.SetScriptName('vmtkimagevolumeviewer')
         self.SetScriptDoc('display a 3D image within a volume renderer')
@@ -47,30 +58,27 @@ class vmtkImageVolumeViewer(pypes.pypeScript):
             ['ArrayName','array','str',1,'','name of the array to display'],
             ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer'],
             ['Display','display','bool',1,'','toggle rendering'],
-            ['VolumeVisualizationMethod','visualizationmethod','str',1,'["CT-AAA","CT-AAA2","CT-Bone","CT-Bones",\
-                                                                         "CT-Cardiac","CT-Cardiac2","CT-Cardiac3","CT-Chest-Contrast-Enhanced",\
-                                                                         "CT-Chest-Vessels","CT-Coronary-Arteries","CT-Coronary-Arteries-2",\
-                                                                         "CT-Coronary-Arteries-3","CT-Cropped-Volume-Bone","CT-Fat","CT-Liver-Vasculature",\
-                                                                         "CT-Lung","CT-MIP","CT-Muscle","CT-Pulmonary-Arteries","CT-Soft-Tissue","MR-Angio",\
-                                                                         "MR-Default","MR-MIP","MR-T2-Brain","DTI-FA-Brain"]','sets the color map, opacity, and lighting applied to visualize the rendered volume'],
-            ['VolumeRenderingMethod','rendermethod','str',1,'["default",gpu","ospray","raycast"]','toggle rendering method. By default will auto detect hardware capabilities and select best render method. If desired, can set to RayCast, OSPRay, or GPU rendering. Note, may crash if GPU method is set and no compatible GPU is available on the system. Suggested to leave at default value.']
+            ['Preset','preset','str',1,'["CT-AAA","CT-AAA2","CT-Bone","CT-Bones",\
+                                        "CT-Cardiac","CT-Cardiac2","CT-Cardiac3","CT-Chest-Contrast-Enhanced",\
+                                        "CT-Chest-Vessels","CT-Coronary-Arteries","CT-Coronary-Arteries-2",\
+                                        "CT-Coronary-Arteries-3","CT-Cropped-Volume-Bone","CT-Fat","CT-Liver-Vasculature",\
+                                        "CT-Lung","CT-MIP","CT-Muscle","CT-Pulmonary-Arteries","CT-Soft-Tissue","MR-Angio",\
+                                        "MR-Default","MR-MIP","MR-T2-Brain","DTI-FA-Brain"]','sets the color map, opacity, and lighting applied to visualize the rendered volume'],
+            ['VolumeRenderingMethod','rendermethod','str',1,'["default","gpu","ospray","raycast"]','toggle rendering method. By default will auto detect hardware capabilities and select best render method. If desired, can set to RayCast, OSPRay, or GPU rendering. Note, may crash if GPU method is set and no compatible GPU is available on the system. Suggested to leave at default value.'],
+            ['BoxOutline','box','bool',1,'','display a box-shaped outline around the edges of the volume data']
             ])
         self.SetOutputMembers([
             ['Image','o','vtkImageData',1,'','the output image','vmtkimagewriter'],
-            ['ColorTransferFunctionProperty','colorproperty','vtkColorTransferFunction',1,'',''],
-            ['GradientOpacityTransferFunctionProperty','gradientopacityproperty','vtkPiecewiseFunction',1,'',''],
-            ['OpacityTransferFunctionProperty','opacityproperty','vtkPiecewiseFunction',1,'',''],
-            ['InterpolationTypeProperty','interpolationproperty','int',1,'',''],
-            ['ShadeProperty','shadeproperty','int',1,'',''],
-            ['SpecularPowerProperty','specularpowerproperty','float',1,'',''],
-            ['SpecularProperty','specularproperty','float',1,'',''],
-            ['DiffuseProperty','diffuseproperty','float',1,'',''],
-            ['AmbientProperty','ambientproperty','float',1,'','']
+            ['ColorTransferFunction','colorfunction','vtkColorTransferFunction',1,'',''],
+            ['GradientOpacityTransferFunction','gradientopacityfunction','vtkPiecewiseFunction',1,'',''],
+            ['OpacityTransferFunction','opacityfunction','vtkPiecewiseFunction',1,'',''],
+            ['InterpolationType','interpolation','int',1,'',''],
+            ['Shade','shade','int',1,'',''],
+            ['SpecularPower','specularpower','float',1,'',''],
+            ['Specular','specular','float',1,'',''],
+            ['Diffuse','diffuse','float',1,'',''],
+            ['Ambient','ambient','float',1,'','']
             ])
-
-
-    def CharCallback(self, obj):
-        return
 
 
     def BuildVTKPiecewiseFunction(self, pointsList):
@@ -148,9 +156,9 @@ class vmtkImageVolumeViewer(pypes.pypeScript):
         volumeMapper.SetBlendModeToComposite()
         
         # parse the xml file which is loaded in the same path as the vmtkimagevolumeviewer.py file at runtime
-        presetElementTree = ET.parse(os.path.join(os.path.dirname(__file__), 'vmtkimagevolumeviewerpresets.xml'))
+        presetElementTree = ET.parse(os.path.join(os.path.dirname(__file__), 'share', 'vmtkimagevolumeviewerpresets.xml'))
         presetRoot = presetElementTree.getroot()
-        volProperties = presetRoot.findall('VolumeProperty[@name="' + self.VolumeVisualizationMethod + '"]') # should return a list with only one element
+        volProperties = presetRoot.findall('VolumeProperty[@name="' + self.Preset + '"]') # should return a list with only one element
         volPropertiesDict = volProperties[0].attrib
         
         def chunks(l, n):
@@ -173,29 +181,29 @@ class vmtkImageVolumeViewer(pypes.pypeScript):
         opacityMapList = chunks(opacityList, 2)
 
         # create vtk objects from the mapped lists (now arrays of arrays)
-        self.ColorTransferFunctionProperty = self.BuildVTKColorTransferFunction(colorMapList)
-        self.GradientOpacityTransferFunctionProperty = self.BuildVTKPiecewiseFunction(gradientOpacityMapList)
-        self.OpacityTransferFunctionProperty = self.BuildVTKPiecewiseFunction(opacityMapList)
+        self.ColorTransferFunction = self.BuildVTKColorTransferFunction(colorMapList)
+        self.GradientOpacityTransferFunction = self.BuildVTKPiecewiseFunction(gradientOpacityMapList)
+        self.OpacityTransferFunction = self.BuildVTKPiecewiseFunction(opacityMapList)
 
         # assign other properties from the element tree to variables with the appropriate type
-        self.InterpolationTypeProperty = int(volPropertiesDict['interpolation'])
-        self.ShadeProperty = int(volPropertiesDict['shade'])
-        self.SpecularPowerProperty = float(volPropertiesDict['specularPower'])
-        self.SpecularProperty = float(volPropertiesDict['specular'])
-        self.DiffuseProperty = float(volPropertiesDict['diffuse'])
-        self.AmbientProperty = float(volPropertiesDict['ambient'])
+        self.InterpolationType = int(volPropertiesDict['interpolation'])
+        self.Shade = int(volPropertiesDict['shade'])
+        self.SpecularPower = float(volPropertiesDict['specularPower'])
+        self.Specular = float(volPropertiesDict['specular'])
+        self.Diffuse = float(volPropertiesDict['diffuse'])
+        self.Ambient = float(volPropertiesDict['ambient'])
 
         # set transfer function and lighting properties of the vtk volume object
         volumeProperty = vtk.vtkVolumeProperty()
-        volumeProperty.SetScalarOpacity(self.OpacityTransferFunctionProperty)
-        volumeProperty.SetGradientOpacity(self.GradientOpacityTransferFunctionProperty)
-        volumeProperty.SetColor(self.ColorTransferFunctionProperty)
-        volumeProperty.SetInterpolationType(self.InterpolationTypeProperty)
-        volumeProperty.SetShade(self.ShadeProperty)
-        volumeProperty.SetSpecularPower(self.SpecularPowerProperty)
-        volumeProperty.SetSpecular(self.SpecularProperty)
-        volumeProperty.SetDiffuse(self.DiffuseProperty)
-        volumeProperty.SetAmbient(self.AmbientProperty)
+        volumeProperty.SetScalarOpacity(self.OpacityTransferFunction)
+        volumeProperty.SetGradientOpacity(self.GradientOpacityTransferFunction)
+        volumeProperty.SetColor(self.ColorTransferFunction)
+        volumeProperty.SetInterpolationType(self.InterpolationType)
+        volumeProperty.SetShade(self.Shade)
+        volumeProperty.SetSpecularPower(self.SpecularPower)
+        volumeProperty.SetSpecular(self.Specular)
+        volumeProperty.SetDiffuse(self.Diffuse)
+        volumeProperty.SetAmbient(self.Ambient)
 
         # create the volume from the mapper (defining image data and render mode) with the defined properties
         # this is the last pipeline step applied. self.Volume just needs to now be added to the Renderer
@@ -203,30 +211,33 @@ class vmtkImageVolumeViewer(pypes.pypeScript):
         self.Volume.SetMapper(volumeMapper)
         self.Volume.SetProperty(volumeProperty)
 
-        # This next section is responsible for creating the box outline around the volume's data extent
-        outline = vtk.vtkOutlineFilter()
-        outline.SetInputData(self.Image)
-        outlineMapper = vtk.vtkPolyDataMapper()
-        outlineMapper.SetInputConnection(outline.GetOutputPort())
-        outlineActor = vtk.vtkActor()
-        outlineActor.SetMapper(outlineMapper)
-
-        # The SetInteractor method is how 3D widgets are associated with the
-        # render window interactor. Internally, SetInteractor sets up a bunch
-        # of callbacks using the Command/Observer mechanism (AddObserver()).
-        boxWidget = vtk.vtkBoxWidget()
-        boxWidget.SetInteractor(self.vmtkRenderer.RenderWindowInteractor)
-        boxWidget.SetPlaceFactor(1.0)
-
-        # Place the interactor initially. The output of the reader is used to
-        # place the box widget.
-        boxWidget.SetInputData(self.Image)
-        boxWidget.PlaceWidget()
-        boxWidget.InsideOutOn()
-
-        # Add the actors to the renderer
-        self.vmtkRenderer.Renderer.AddActor(outlineActor)
+        # add the actors to the renderer
         self.vmtkRenderer.Renderer.AddVolume(self.Volume)
+
+        # This next section is responsible for creating the box outline around the volume's data extent.
+        if self.BoxOutline:
+            outline = vtk.vtkOutlineFilter()
+            outline.SetInputData(self.Image)
+            outlineMapper = vtk.vtkPolyDataMapper()
+            outlineMapper.SetInputConnection(outline.GetOutputPort())
+            outlineActor = vtk.vtkActor()
+            outlineActor.SetMapper(outlineMapper)
+
+            # The SetInteractor method is how 3D widgets are associated with the
+            # render window interactor. Internally, SetInteractor sets up a bunch
+            # of callbacks using the Command/Observer mechanism (AddObserver()).
+            boxWidget = vtk.vtkBoxWidget()
+            boxWidget.SetInteractor(self.vmtkRenderer.RenderWindowInteractor)
+            boxWidget.SetPlaceFactor(1.0)
+
+            # Place the interactor initially. The output of the reader is used to
+            # place the box widget.
+            boxWidget.SetInputData(self.Image)
+            boxWidget.PlaceWidget()
+            boxWidget.InsideOutOn()
+
+            # Add the actors to the renderer
+            self.vmtkRenderer.Renderer.AddActor(outlineActor)
 
         if (self.Display == 1):
             self.vmtkRenderer.Render()
