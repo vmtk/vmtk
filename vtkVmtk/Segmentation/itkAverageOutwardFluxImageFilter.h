@@ -30,7 +30,7 @@
 #include "itkImageRegionIterator.h"
 
 #include "itkImageToImageFilter.h"
-#include "vector"
+#include <vector>
 
 using namespace std;
 

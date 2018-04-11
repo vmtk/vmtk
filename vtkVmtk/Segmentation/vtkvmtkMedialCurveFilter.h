@@ -50,23 +50,20 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkMedialCurveFilter : public vtkSimpleIm
   vtkSetMacro(Threshold,double);
 
 protected:
-
-  vtkvmtkMedialCurveFilter();
+  vtkvmtkMedialCurveFilter() {
+    	this->Sigma = 0.5;
+	    this->Threshold = 0.0;
+  };
   ~vtkvmtkMedialCurveFilter() {};
 
-  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output) VTK_OVERRIDE;
+  template< class TImage >
+  void SimpleExecute(vtkImageData* input, vtkImageData* output);
 
 private:
-  template< class TImage >
-  int FilterImage( vtkImageData*, vtkImageData*, typename TImage::Pointer );
-  
-  template< int VDimension >
-  int FilterScalarImage( vtkImageData* , vtkImageData* , int );
-  
   vtkvmtkMedialCurveFilter(const vtkvmtkMedialCurveFilter&);  // Not implemented.
   void operator=(const vtkvmtkMedialCurveFilter&);  // Not implemented.
 
-  int Sigma;
+  double Sigma;
   double Threshold;
   
 };

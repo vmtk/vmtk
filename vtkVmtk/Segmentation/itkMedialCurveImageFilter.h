@@ -23,8 +23,8 @@
 #include "time.h"
 
 //STL
-#include "functional"
-#include "queue"
+#include <functional>
+#include <queue>
 
 #include "itkImage.h"
 #include "itkNeighborhoodIterator.h"
