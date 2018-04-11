@@ -11,28 +11,59 @@
 
 =========================================================================*/
 
-//ITK
+#include "vtkvmtkMedialCurveFilter.h"
+#include "vtkImageData.h"
+#include "vtkObjectFactory.h"
+#include "vtkPolyDataAlgorithm.h"
+#include "vtkPolyData.h"
+
+#include "vtkvmtkITKFilterUtilities.h"
+
 #include "itkRecursiveGaussianImageFilter.h"
 #include "itkGradientImageFilter.h"
 #include "itkAverageOutwardFluxImageFilter.h"
 #include "itkMedialCurveImageFilter.h"
 
-#include "vtkvmtkMedialCurveFilter.h"
-#include "vtkObjectFactory.h"
-#include "vtkType.h"
 
-#include "vtkImageData.h"
-#include "vtkvmtkITKFilterUtilities.h"
+vtkStandardNewMacro(vtkvmtkMedialCurveFilter);
+
+
+vtkvmtkMedialCurveFilter::vtkvmtkMedialCurveFilter() 
+{
+	this->InputImage = NULL;
+	this->OutputImage = NULL;
+	this->Sigma = 0.5;
+	this->Threshold = 0.0;
+}
+
+
+vtkvmtkMedialCurveFilter::~vtkvmtkMedialCurveFilter()
+{
+	if (this->InputImage)
+		{
+		this->InputImage->Delete();
+		this->InputImage = NULL;
+		}
+
+	if (this->OutputImage)
+		{
+		this->OutputImage->Delete();
+		this->OutputImage = NULL;
+		}
+}
+
+vtkCxxSetObjectMacro(vtkvmtkMedialCurveFilter,InputImage,vtkImageData);
+vtkCxxSetObjectMacro(vtkvmtkMedialCurveFilter,OutputImage,vtkImageData);
 
 template< class TImage >
-void vtkvmtkMedialCurveFilter::SimpleExecute(vtkImageData* input, vtkImageData* output)
+void vtkvmtkMedialCurveFilter::ExecuteCalculation()
 {
 	typename TImage::Pointer inImage;
 	using ImageType = TImage;
 	using PixelType = float;
 	using ImageType = itk::Image< PixelType, 3 >;
 
-	vtkvmtkITKFilterUtilities::VTKToITKImage< ImageType >(input, inImage);
+	vtkvmtkITKFilterUtilities::VTKToITKImage< ImageType >(this->InputImage, inImage);
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// 1.	Compute the associated average outward flux
@@ -40,7 +71,6 @@ void vtkvmtkMedialCurveFilter::SimpleExecute(vtkImageData* input, vtkImageData* 
 
 	// To have a good quality gradient of the distance map, perform a light smooth over it. Define  
 	// convolution kernels in each direction and use them recursively. 
-	// typedef itk::RecursiveGaussianImageFilter< ImageType, ImageType > RecursiveGaussianFilterType;
 	using RecursiveGaussianFilterType = itk::RecursiveGaussianImageFilter< ImageType, ImageType >;
 	RecursiveGaussianFilterType::Pointer gaussianFilterX = RecursiveGaussianFilterType::New();
 	RecursiveGaussianFilterType::Pointer gaussianFilterY = RecursiveGaussianFilterType::New();
@@ -88,5 +118,10 @@ void vtkvmtkMedialCurveFilter::SimpleExecute(vtkImageData* input, vtkImageData* 
 	medialFilter->SetThreshold( this->Threshold );
 	medialFilter->Update();
 
-	vtkvmtkITKFilterUtilities::ITKToVTKImage< TImage >(medialFilter->GetOutput(), output);
+	vtkvmtkITKFilterUtilities::ITKToVTKImage< TImage >(medialFilter->GetOutput(), this->OutputImage);
+}
+
+void vtkvmtkMedialCurveFilter::PrintSelf(ostream& os, vtkIndent indent)
+{
+  this->Superclass::PrintSelf(os,indent);
 }

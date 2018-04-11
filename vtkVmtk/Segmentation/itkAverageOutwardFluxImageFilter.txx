@@ -20,6 +20,19 @@
 
 =========================================================================*/
 
+#ifndef _itkAverageOutwardFluxImageFilter_h
+#define _itkAverageOutwardFluxImageFilter_h
+
+#include "itkAverageOutwardFluxImageFilter.h"
+#include "time.h"
+
+#include "itkImage.h"
+#include "itkNeighborhoodIterator.h"
+#include "itkImageRegionIterator.h"
+
+#include "itkImageToImageFilter.h"
+#include <vector>
+
 namespace itk 
 {
 //--------------------------------------------------
@@ -121,3 +134,4 @@ void AverageOutwardFluxImageFilter<TInputImage, TOutputPixelType, TInputVectorPi
 	os << indent << "Average Outward Flux." << std::endl;
 }
 }//end namespace itk
+#endif

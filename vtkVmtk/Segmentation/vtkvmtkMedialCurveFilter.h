@@ -34,38 +34,45 @@ Version:   $Revision: 1.4 $
 #ifndef __vtkvmtkMedialCurveFilter_h
 #define __vtkvmtkMedialCurveFilter_h
 
-#include "vtkSimpleImageToImageFilter.h"
+#include "vtkPolyDataAlgorithm.h"
 #include "vtkvmtkWin32Header.h"
 
-class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkMedialCurveFilter : public vtkSimpleImageToImageFilter
+class vtkImageData;
+
+class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkMedialCurveFilter : public vtkPolyDataAlgorithm
 {
- public:
-  static vtkvmtkMedialCurveFilter *New();
-  vtkTypeMacro(vtkvmtkMedialCurveFilter, vtkSimpleImageToImageFilter);
+  public:
+    vtkTypeMacro(vtkvmtkMedialCurveFilter, vtkPolyDataAlgorithm);
+    void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE; 
 
-  vtkGetMacro(Sigma,double);
-  vtkSetMacro(Sigma,double);
+    static vtkvmtkMedialCurveFilter *New();
 
-  vtkGetMacro(Threshold,double);
-  vtkSetMacro(Threshold,double);
+    virtual void SetInputImage(vtkImageData *);
+    vtkGetObjectMacro(InputImage, vtkImageData);
 
-protected:
-  vtkvmtkMedialCurveFilter() {
-    	this->Sigma = 0.5;
-	    this->Threshold = 0.0;
-  };
-  ~vtkvmtkMedialCurveFilter() {};
-
-  template< class TImage >
-  void SimpleExecute(vtkImageData* input, vtkImageData* output);
-
-private:
-  vtkvmtkMedialCurveFilter(const vtkvmtkMedialCurveFilter&);  // Not implemented.
-  void operator=(const vtkvmtkMedialCurveFilter&);  // Not implemented.
-
-  double Sigma;
-  double Threshold;
+    virtual void SetOutputImage(vtkImageData *);
+    vtkGetObjectMacro(OutputImage, vtkImageData);
   
-};
+    vtkGetMacro(Sigma,double);
+    vtkSetMacro(Sigma,double);
 
+    vtkGetMacro(Threshold,double);
+    vtkSetMacro(Threshold,double);
+
+  protected:
+    vtkvmtkMedialCurveFilter();
+    ~vtkvmtkMedialCurveFilter();
+
+    template< class TImage >
+    void ExecuteCalculation();
+
+    vtkImageData *InputImage;
+    vtkImageData *OutputImage;
+    double Sigma;
+    double Threshold;
+
+  private:
+    vtkvmtkMedialCurveFilter(const vtkvmtkMedialCurveFilter&);  // Not implemented.
+    void operator=(const vtkvmtkMedialCurveFilter&);  // Not implemented.
+};
 #endif
