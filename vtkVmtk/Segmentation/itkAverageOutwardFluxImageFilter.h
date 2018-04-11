@@ -45,8 +45,8 @@ namespace itk
 /// TODO:
 /// 1. manual instantation
 template< class TInputImage,
-	  class TOutputPixelType = float,
-	  class TInputVectorPixelType = ::itk::CovariantVector<TOutputPixelType,TInputImage::ImageDimension> > 
+	      class TOutputPixelType = float,
+	      class TInputVectorPixelType = ::itk::CovariantVector<TOutputPixelType,TInputImage::ImageDimension> > 
 class ITK_EXPORT AverageOutwardFluxImageFilter:
 	public ImageToImageFilter<TInputImage, ::itk::Image<TOutputPixelType,TInputImage::ImageDimension> >
 {
@@ -134,9 +134,13 @@ class ITK_EXPORT AverageOutwardFluxImageFilter:
 
 		AverageOutwardFluxImageFilter( const AverageOutwardFluxImageFilter& );  //purposely not implemented
 		void operator = ( const AverageOutwardFluxImageFilter& );  //purposely not implemented
+
 };
-
-#include "itkAverageOutwardFluxImageFilter.txx"
-
+  
 } // end namespace itk
-#endif // _itkAverageOutwardFluxImageFilter_h
+
+#ifndef ITK_MANUAL_INSTANTIATION
+#include "itkAverageOutwardFluxImageFilter.txx"
+#endif
+
+#endif

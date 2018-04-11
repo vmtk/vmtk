@@ -19,9 +19,11 @@
 
 =========================================================================*/
 
+namespace itk
+{
 //--------------------------------------------------
 template< class TInputImage, class TAverageOutwardFluxPixelType, class TOutputPixelType>
-MedialCurveImageFilter<TInputImage, TAverageOutwardFluxPixelType, TOutputPixelType>::MedialCurveImageFilter()
+itk::MedialCurveImageFilter<TInputImage, TAverageOutwardFluxPixelType, TOutputPixelType>::MedialCurveImageFilter()
 //--------------------------------------------------
 {
 }
@@ -669,4 +671,4 @@ void MedialCurveImageFilter<TInputImage, TAverageOutwardFluxPixelType, TOutputPi
   os << indent << "Medial Curve." << std::endl;
   os << indent << "Threshold         : " << m_Threshold << std::endl;
 }
-
+}//end namespace itk

@@ -20,6 +20,8 @@
 
 =========================================================================*/
 
+namespace itk 
+{
 //--------------------------------------------------
 template< class TInputImage, class TOutputPixelType, class TInputVectorPixelType>
 AverageOutwardFluxImageFilter<TInputImage, TOutputPixelType, TInputVectorPixelType>::AverageOutwardFluxImageFilter()
@@ -118,4 +120,4 @@ void AverageOutwardFluxImageFilter<TInputImage, TOutputPixelType, TInputVectorPi
 	Superclass::PrintSelf(os,indent);
 	os << indent << "Average Outward Flux." << std::endl;
 }
-
+}//end namespace itk
