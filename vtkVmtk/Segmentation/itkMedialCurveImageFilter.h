@@ -182,9 +182,9 @@ class ITK_EXPORT MedialCurveImageFilter:
 		void DistanceToObject();
 
 		/** Compute the medial curve. */
-		void GenerateData();  
+		void GenerateData() ITK_OVERRIDE;  
 
-		void PrintSelf(std::ostream& os, Indent indent) const;
+		void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 
 
 		//-----------------------------------------------------
@@ -205,9 +205,11 @@ class ITK_EXPORT MedialCurveImageFilter:
 		MedialCurveImageFilter( const MedialCurveImageFilter& );  //purposely not implemented
 		void operator = ( const MedialCurveImageFilter& );  //purposely not implemented
 };
+  
+} // end namespace itk
 
+#ifndef ITK_MANUAL_INSTANTIATION
 #include "itkMedialCurveImageFilter.txx"
+#endif
 
-}//end itk namespace
-
-#endif // _itkMedialCurveImageFilter_h
+#endif
