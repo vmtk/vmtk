@@ -20,18 +20,18 @@
 #ifndef _itkMedialCurveImageFilter_h
 #define _itkMedialCurveImageFilter_h
 
-#include "time.h"
+#include <time.h>
 
 //STL
 #include <functional>
 #include <queue>
 
-#include "itkImage.h"
-#include "itkNeighborhoodIterator.h"
-#include "itkImageRegionIterator.h"
-#include "itkConstantBoundaryCondition.h"
+#include <itkImage.h>
+#include <itkNeighborhoodIterator.h>
+#include <itkImageRegionIterator.h>
+#include <itkConstantBoundaryCondition.h>
 
-#include "itkImageToImageFilter.h"
+#include <itkImageToImageFilter.h>
 
 namespace itk
 {
@@ -182,9 +182,9 @@ class ITK_EXPORT MedialCurveImageFilter:
 		void DistanceToObject();
 
 		/** Compute the medial curve. */
-		void GenerateData() ITK_OVERRIDE;  
+		void GenerateData();  
 
-		void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
+		void PrintSelf(std::ostream& os, Indent indent) const;
 
 
 		//-----------------------------------------------------
@@ -205,11 +205,10 @@ class ITK_EXPORT MedialCurveImageFilter:
 		MedialCurveImageFilter( const MedialCurveImageFilter& );  //purposely not implemented
 		void operator = ( const MedialCurveImageFilter& );  //purposely not implemented
 };
-  
-} // end namespace itk
 
-#ifndef ITK_MANUAL_INSTANTIATION
 #include "itkMedialCurveImageFilter.txx"
-#endif
 
-#endif
+}//end itk namespace
+
+#endif // _itkMedialCurveImageFilter_h
+

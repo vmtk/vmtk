@@ -38,6 +38,7 @@ Version:   $Revision: 1.4 $
 #include "vtkvmtkWin32Header.h"
 
 class vtkImageData;
+class vtkPolyData;
 
 class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkMedialCurveFilter : public vtkPolyDataAlgorithm
 {
@@ -47,8 +48,8 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkMedialCurveFilter : public vtkPolyData
 
     static vtkvmtkMedialCurveFilter *New();
 
-    virtual void SetInputImage(vtkImageData *);
-    vtkGetObjectMacro(InputImage, vtkImageData);
+    virtual void SetInputSurface(vtkPolyData *);
+    vtkGetObjectMacro(InputSurface, vtkPolyData);
 
     virtual void SetOutputImage(vtkImageData *);
     vtkGetObjectMacro(OutputImage, vtkImageData);
@@ -59,17 +60,28 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkMedialCurveFilter : public vtkPolyData
     vtkGetMacro(Threshold,double);
     vtkSetMacro(Threshold,double);
 
+    vtkGetMacro(PolyDataToImageDataSpacingX,double);
+    vtkSetMacro(PolyDataToImageDataSpacingX,double);
+  
+    vtkGetMacro(PolyDataToImageDataSpacingY,double)
+    vtkSetMacro(PolyDataToImageDataSpacingY,double)
+
+    vtkGetMacro(PolyDataToImageDataSpacingZ,double)
+    vtkSetMacro(PolyDataToImageDataSpacingZ,double)
+
   protected:
     vtkvmtkMedialCurveFilter();
     ~vtkvmtkMedialCurveFilter();
 
-    template< class TImage >
-    void ExecuteCalculation();
-
-    vtkImageData *InputImage;
+    vtkPolyData *InputSurface;
     vtkImageData *OutputImage;
+    vtkImageData *BinaryImage;
+    vtkImageData *DistanceImage;
     double Sigma;
     double Threshold;
+    double PolyDataToImageDataSpacingX;
+    double PolyDataToImageDataSpacingY;
+    double PolyDataToImageDataSpacingZ;
 
   private:
     vtkvmtkMedialCurveFilter(const vtkvmtkMedialCurveFilter&);  // Not implemented.

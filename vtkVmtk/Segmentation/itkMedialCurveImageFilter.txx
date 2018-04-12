@@ -19,28 +19,9 @@
 
 =========================================================================*/
 
-#ifndef _itkMedialCurveImageFilter_h
-#define _itkMedialCurveImageFilter_h
-
-#include "itkMedialCurveImageFilter.h"
-#include "time.h"
-
-//STL
-#include <functional>
-#include <queue>
-
-#include "itkImage.h"
-#include "itkNeighborhoodIterator.h"
-#include "itkImageRegionIterator.h"
-#include "itkConstantBoundaryCondition.h"
-
-#include "itkImageToImageFilter.h"
-
-namespace itk
-{
 //--------------------------------------------------
 template< class TInputImage, class TAverageOutwardFluxPixelType, class TOutputPixelType>
-itk::MedialCurveImageFilter<TInputImage, TAverageOutwardFluxPixelType, TOutputPixelType>::MedialCurveImageFilter()
+MedialCurveImageFilter<TInputImage, TAverageOutwardFluxPixelType, TOutputPixelType>::MedialCurveImageFilter()
 //--------------------------------------------------
 {
 }
@@ -688,5 +669,4 @@ void MedialCurveImageFilter<TInputImage, TAverageOutwardFluxPixelType, TOutputPi
   os << indent << "Medial Curve." << std::endl;
   os << indent << "Threshold         : " << m_Threshold << std::endl;
 }
-}//end namespace itk
-#endif
+
