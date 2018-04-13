@@ -1,48 +1,48 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.3)
+cmake_minimum_required(VERSION 3.3)
 
-PROJECT(VMTK)
+project(VMTK)
 
 # vmtk versions number
-SET(VMTK_VERSION_MAJOR 1)
-SET(VMTK_VERSION_MINOR 4)
-SET(VMTK_VERSION_PATCH 0)
-SET(VMTK_VERSION
+set(VMTK_VERSION_MAJOR 1)
+set(VMTK_VERSION_MINOR 4)
+set(VMTK_VERSION_PATCH 0)
+set(VMTK_VERSION
     "${VMTK_VERSION_MAJOR}.${VMTK_VERSION_MINOR}.${VMTK_VERSION_PATCH}")
 
 # Append the library version information to the library target properties.
-OPTION(VMTK_WITH_LIBRARY_VERSION "Build with library version information" OFF)
-IF(VMTK_WITH_LIBRARY_VERSION)
+option(VMTK_WITH_LIBRARY_VERSION "Build with library version information" OFF)
+if(VMTK_WITH_LIBRARY_VERSION)
   # This setting of SOVERSION assumes that any API change
   # will increment either the minor or major version number of vmtk.
-  SET(VMTK_LIBRARY_PROPERTIES
+  set(VMTK_LIBRARY_PROPERTIES
       VERSION "${VMTK_VERSION}"
       SOVERSION "${VMTK_VERSION_MAJOR}.${VMTK_VERSION_MINOR}"
      )
-ENDIF(VMTK_WITH_LIBRARY_VERSION)
+endif(VMTK_WITH_LIBRARY_VERSION)
 
-FIND_PACKAGE( PythonInterp )
-IF (NOT VMTK_PYTHON_VERSION)
-  SET(VMTK_PYTHON_VERSION "python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}" CACHE STRING "" FORCE)
-ENDIF (NOT VMTK_PYTHON_VERSION)
-MARK_AS_ADVANCED(VMTK_PYTHON_VERSION)
+find_package( PythonInterp )
+if (NOT VMTK_PYTHON_VERSION)
+  set(VMTK_PYTHON_VERSION "python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}" CACHE STRING "" FORCE)
+endif (NOT VMTK_PYTHON_VERSION)
+mark_as_advanced(VMTK_PYTHON_VERSION)
 
-IF (APPLE AND VMTK_BREW_PYTHON)
-  IF(VMTK_BREW_PYTHON)
-    OPTION(VMTK_BREW_PYTHON "Link against Homebrew Python" ON)
-    SET(PYTHON_SHEBANG ${PYTHON_EXECUTABLE})
-  ELSE(VMTK_BREW_PYTHON)
-    SET(PYTHON_SHEBANG "/usr/bin/env python")
-  ENDIF(VMTK_BREW_PYTHON)
-  #IF(VMTK_BREW_PYTHON)
+if (APPLE AND VMTK_BREW_PYTHON)
+  if(VMTK_BREW_PYTHON)
+    option(VMTK_BREW_PYTHON "Link against Homebrew Python" ON)
+    set(PYTHON_SHEBANG ${PYTHON_EXECUTABLE})
+  else(VMTK_BREW_PYTHON)
+    set(PYTHON_SHEBANG "/usr/bin/env python")
+  endif(VMTK_BREW_PYTHON)
+  #if(VMTK_BREW_PYTHON)
   #  EXECUTE_PROCESS(
   #    COMMAND /usr/local/bin/python -c "from distutils import sysconfig; print sysconfig.get_python_inc()"
   #    OUTPUT_VARIABLE PYTHON_INCLUDE_DIR
   #    OUTPUT_STRIP_TRAILING_WHITESPACE)
-  #  SET(PYTHON_LIBRARY ${PYTHON_INCLUDE_DIR}../../lib/lib${VMTK_PYTHON_VERSION}.dylib)
-  #ENDIF(VMTK_BREW_PYTHON)
-ELSEIF (UNIX)
-  SET(PYTHON_SHEBANG "/usr/bin/env python")
-ENDIF ()
+  #  set(PYTHON_LIBRARY ${PYTHON_INCLUDE_DIR}../../lib/lib${VMTK_PYTHON_VERSION}.dylib)
+  #endif(VMTK_BREW_PYTHON)
+elseif (UNIX)
+  set(PYTHON_SHEBANG "/usr/bin/env python")
+endif ()
 
 option( VMTK_USE_X
   "Compile vmtk with X11." OFF )
@@ -53,7 +53,7 @@ else ( VMTK_USE_X )
 endif( VMTK_USE_X )
 
 #-----------------------------------------------------------------------------
-# ITK Setup
+# ITK setup
 option( USE_SYSTEM_ITK
   "Exclude ITK from SuperBuild and use an existing build instead." OFF )
 if( USE_SYSTEM_ITK )
@@ -61,10 +61,10 @@ if( USE_SYSTEM_ITK )
   include( ${ITK_USE_FILE} )
 endif( USE_SYSTEM_ITK )
 
-SET(VMTK_RENDERING_BACKEND "OpenGL2" CACHE STRING "Graphic backend for VTK")
+set(VMTK_RENDERING_BACKEND "OpenGL2" CACHE STRING "Graphic backend for VTK")
 
 #-----------------------------------------------------------------------------
-# VTK Setup
+# VTK setup
 option( USE_SYSTEM_VTK
   "Exclude VTK from SuperBuild and use an existing build instead." OFF )
 if( USE_SYSTEM_VTK )
@@ -88,9 +88,9 @@ option( VMTK_USE_VTK8
 option( VMTK_BUILD_TESTING
   "Build the VMTK testing libraries" OFF)
 
-IF(VMTK_BUILD_TESTING)
+if(VMTK_BUILD_TESTING)
   subdirs(tests)
-ENDIF(VMTK_BUILD_TESTING)
+endif(VMTK_BUILD_TESTING)
 
 option( VMTK_BUNJEE_BUILD
   "Build VMTK and the projects it depends on ready for being linked from Bunjee." OFF )
@@ -159,8 +159,8 @@ if( VMTK_USE_SUPERBUILD )
     option ( BUILD_SHARED_LIBS "Build shared libraries." ON )
     option ( VMTK_USE_RENDERING "Build VMTK rendering classes." ON )
     #option ( VTK_USE_HYBRID "Build VTK Hybrid classes." ON )
-    OPTION(VMTK_SCRIPTS_ENABLED "Build and install vmtkScripts and Pypes" ON)
-    OPTION(VMTK_MINIMAL_INSTALL "Do not install individual scripts, only vmtk.py" OFF)
+    option(VMTK_SCRIPTS_ENABLED "Build and install vmtkScripts and Pypes" ON)
+    option(VMTK_MINIMAL_INSTALL "Do not install individual scripts, only vmtk.py" OFF)
   endif (VMTK_BUNJEE_BUILD)
 
   include( "${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild.cmake" )
@@ -182,109 +182,109 @@ else( VMTK_USE_SUPERBUILD )
 
 endif( VMTK_USE_SUPERBUILD )
 
-OPTION(VMTK_SCRIPTS_ENABLED "Build and install vmtkScripts and Pypes" ON)
-MARK_AS_ADVANCED(VMTK_SCRIPTS_ENABLED)
+option(VMTK_SCRIPTS_ENABLED "Build and install vmtkScripts and Pypes" ON)
+mark_as_advanced(VMTK_SCRIPTS_ENABLED)
 
-IF(VMTK_SCRIPTS_ENABLED)
-  SUBDIRS(
+if(VMTK_SCRIPTS_ENABLED)
+  subdirs(
     PypeS
     vtkVmtk
     vmtkScripts
     )
-ELSE(VMTK_SCRIPTS_ENABLED)
-  SUBDIRS(
+else(VMTK_SCRIPTS_ENABLED)
+  subdirs(
     vtkVmtk
     )
-ENDIF(VMTK_SCRIPTS_ENABLED)
+endif(VMTK_SCRIPTS_ENABLED)
 
-OPTION(VMTK_MINIMAL_INSTALL "Do not install individual scripts, only vmtk.py" OFF)
+option(VMTK_MINIMAL_INSTALL "Do not install individual scripts, only vmtk.py" OFF)
 
-SET(LIBRARY_OUTPUT_PATH ${VMTK_BINARY_DIR}/bin CACHE PATH
+set(LIBRARY_OUTPUT_PATH ${VMTK_BINARY_DIR}/bin CACHE PATH
     "Single output directory for building all libraries.")
-SET(EXECUTABLE_OUTPUT_PATH ${VMTK_BINARY_DIR}/bin CACHE PATH
+set(EXECUTABLE_OUTPUT_PATH ${VMTK_BINARY_DIR}/bin CACHE PATH
     "Single output directory for building all executables.")
-MARK_AS_ADVANCED(LIBRARY_OUTPUT_PATH EXECUTABLE_OUTPUT_PATH)
+mark_as_advanced(LIBRARY_OUTPUT_PATH EXECUTABLE_OUTPUT_PATH)
 
-SET(VMTK_SRCS
+set(VMTK_SRCS
    vmtk.py
    )
 
-SET(VMTK_MODULE_SRCS
+set(VMTK_MODULE_SRCS
    __init__.py.in
    )
 
-IF(NOT VMTK_INSTALL_BIN_DIR)
-  SET(VMTK_INSTALL_BIN_DIR bin)
-ENDIF(NOT VMTK_INSTALL_BIN_DIR)
+if(NOT VMTK_INSTALL_BIN_DIR)
+  set(VMTK_INSTALL_BIN_DIR bin)
+endif(NOT VMTK_INSTALL_BIN_DIR)
 
-IF(NOT VMTK_INSTALL_LIB_DIR)
-  SET(VMTK_INSTALL_LIB_DIR lib)
-ENDIF(NOT VMTK_INSTALL_LIB_DIR)
+if(NOT VMTK_INSTALL_LIB_DIR)
+  set(VMTK_INSTALL_LIB_DIR lib)
+endif(NOT VMTK_INSTALL_LIB_DIR)
 
-IF(NOT VMTK_MODULE_INSTALL_LIB_DIR)
-  SET(VMTK_MODULE_INSTALL_LIB_DIR ${VMTK_INSTALL_LIB_DIR}/${VMTK_PYTHON_VERSION}/site-packages/vmtk)
-ENDIF(NOT VMTK_MODULE_INSTALL_LIB_DIR)
+if(NOT VMTK_MODULE_INSTALL_LIB_DIR)
+  set(VMTK_MODULE_INSTALL_LIB_DIR ${VMTK_INSTALL_LIB_DIR}/${VMTK_PYTHON_VERSION}/site-packages/vmtk)
+endif(NOT VMTK_MODULE_INSTALL_LIB_DIR)
 
-IF(VMTK_SCRIPTS_ENABLED)
+if(VMTK_SCRIPTS_ENABLED)
 
-  FOREACH (SCRIPT_FILE ${VMTK_SRCS})
-    CONFIGURE_FILE(${VMTK_SOURCE_DIR}/${SCRIPT_FILE} ${VMTK_BINARY_DIR}/${SCRIPT_FILE} COPYONLY)
-  ENDFOREACH (SCRIPT_FILE)
+  foreach (SCRIPT_FILE ${VMTK_SRCS})
+    configure_file(${VMTK_SOURCE_DIR}/${SCRIPT_FILE} ${VMTK_BINARY_DIR}/${SCRIPT_FILE} COPYONLY)
+  endforeach (SCRIPT_FILE)
 
-  CONFIGURE_FILE(${VMTK_SOURCE_DIR}/__init__.py.in ${VMTK_BINARY_DIR}/__init__.py COPYONLY)
+  configure_file(${VMTK_SOURCE_DIR}/__init__.py.in ${VMTK_BINARY_DIR}/__init__.py COPYONLY)
 
-  INSTALL(FILES __init__.py.in
+  install(FILES __init__.py.in
     DESTINATION ${VMTK_MODULE_INSTALL_LIB_DIR}
     COMPONENT PythonRuntimeLibraries
     RENAME __init__.py)
 
-  IF (NOT WIN32)
+  if (NOT WIN32)
 
-    SET (STRIPPED_SCRIPTS_SRCS )
+    set (STRIPPED_SCRIPTS_SRCS )
 
-    FOREACH (SCRIPT_FILE ${VMTK_SRCS})
-      CONFIGURE_FILE(${VMTK_SOURCE_DIR}/${SCRIPT_FILE} ${VMTK_BINARY_DIR}/${SCRIPT_FILE} COPYONLY)
-      STRING(REGEX REPLACE ".py" "" STRIPPED_SCRIPT_FILE ${SCRIPT_FILE})
-      CONFIGURE_FILE(${VMTK_SOURCE_DIR}/${SCRIPT_FILE} ${VMTK_BINARY_DIR}/${STRIPPED_SCRIPT_FILE})
-      SET (STRIPPED_SCRIPTS_SRCS ${STRIPPED_SCRIPTS_SRCS} ${VMTK_BINARY_DIR}/${STRIPPED_SCRIPT_FILE})
-    ENDFOREACH (SCRIPT_FILE)
+    foreach (SCRIPT_FILE ${VMTK_SRCS})
+      configure_file(${VMTK_SOURCE_DIR}/${SCRIPT_FILE} ${VMTK_BINARY_DIR}/${SCRIPT_FILE} COPYONLY)
+      string(REGEX REPLACE ".py" "" STRIPPED_SCRIPT_FILE ${SCRIPT_FILE})
+      configure_file(${VMTK_SOURCE_DIR}/${SCRIPT_FILE} ${VMTK_BINARY_DIR}/${STRIPPED_SCRIPT_FILE})
+      set (STRIPPED_SCRIPTS_SRCS ${STRIPPED_SCRIPTS_SRCS} ${VMTK_BINARY_DIR}/${STRIPPED_SCRIPT_FILE})
+    endforeach (SCRIPT_FILE)
 
-    INSTALL(PROGRAMS ${STRIPPED_SCRIPTS_SRCS}
+    install(PROGRAMS ${STRIPPED_SCRIPTS_SRCS}
       DESTINATION ${VMTK_INSTALL_BIN_DIR}
       COMPONENT RuntimeExecutables)
 
-  ELSE (NOT WIN32)
+  else (NOT WIN32)
 
-    FOREACH (SCRIPT_FILE ${VMTK_SRCS})
-      CONFIGURE_FILE(${VMTK_SOURCE_DIR}/${SCRIPT_FILE} ${VMTK_BINARY_DIR}/${SCRIPT_FILE} COPYONLY)
-      STRING(REGEX REPLACE ".py" "-exe.py" STRIPPED_SCRIPT_FILE ${SCRIPT_FILE})
-      CONFIGURE_FILE(${VMTK_SOURCE_DIR}/${SCRIPT_FILE} ${VMTK_BINARY_DIR}/${STRIPPED_SCRIPT_FILE} COPYONLY)
-      SET (STRIPPED_SCRIPTS_SRCS ${STRIPPED_SCRIPTS_SRCS} ${VMTK_BINARY_DIR}/${STRIPPED_SCRIPT_FILE})
-    ENDFOREACH (SCRIPT_FILE)
+    foreach (SCRIPT_FILE ${VMTK_SRCS})
+      configure_file(${VMTK_SOURCE_DIR}/${SCRIPT_FILE} ${VMTK_BINARY_DIR}/${SCRIPT_FILE} COPYONLY)
+      string(REGEX REPLACE ".py" "-exe.py" STRIPPED_SCRIPT_FILE ${SCRIPT_FILE})
+      configure_file(${VMTK_SOURCE_DIR}/${SCRIPT_FILE} ${VMTK_BINARY_DIR}/${STRIPPED_SCRIPT_FILE} COPYONLY)
+      set (STRIPPED_SCRIPTS_SRCS ${STRIPPED_SCRIPTS_SRCS} ${VMTK_BINARY_DIR}/${STRIPPED_SCRIPT_FILE})
+    endforeach (SCRIPT_FILE)
 
-    INSTALL(PROGRAMS ${STRIPPED_SCRIPTS_SRCS}
+    install(PROGRAMS ${STRIPPED_SCRIPTS_SRCS}
       DESTINATION ${VMTK_INSTALL_BIN_DIR}
       COMPONENT RuntimeExecutables)
 
-  ENDIF (NOT WIN32)
+  endif (NOT WIN32)
 
-  # OPTION(VMTK_ENABLE_DISTRIBUTION "Enable distribution targets." OFF)
-  # IF(VMTK_ENABLE_DISTRIBUTION)
+  # option(VMTK_ENABLE_DISTRIBUTION "Enable distribution targets." OFF)
+  # if(VMTK_ENABLE_DISTRIBUTION)
   #   ADD_SUBDIRECTORY(distribution)
-  # ENDIF(VMTK_ENABLE_DISTRIBUTION)
+  # endif(VMTK_ENABLE_DISTRIBUTION)
 
-  INSTALL(EXPORT VMTK-Targets DESTINATION ${VMTK_BINARY_DIR})
+  install(EXPORT VMTK-Targets DESTINATION ${VMTK_BINARY_DIR})
 
-  CONFIGURE_FILE(
+  configure_file(
     ${VMTK_SOURCE_DIR}/CMake/VMTKConfig.cmake.in
     ${VMTK_BINARY_DIR}/VMTKConfig.cmake
   @ONLY IMMEDIATE
   )
 
-  CONFIGURE_FILE(
+  configure_file(
     ${VMTK_SOURCE_DIR}/CMake/VMTKUse.cmake.in
     ${VMTK_BINARY_DIR}/VMTKUse.cmake
   @ONLY IMMEDIATE
   )
 
-ENDIF(VMTK_SCRIPTS_ENABLED)
+endif(VMTK_SCRIPTS_ENABLED)

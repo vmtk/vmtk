@@ -14,7 +14,7 @@ find_package( VTK ${VTK_VERSION_MAJOR}.${VTK_VERSION_MINOR} COMPONENTS ${VTK_VMT
 include( ${VTK_USE_FILE} )
 list( APPEND VTK_VMTK_RENDERING_TARGET_LINK_LIBRARIES ${VTK_LIBRARIES} )
 
-SET (VTK_VMTK_RENDERING_SRCS
+set (VTK_VMTK_RENDERING_SRCS
   vtkvmtkImagePlaneWidget.cxx
   vtkvmtkInteractorStyleTrackballCamera.cxx
   )

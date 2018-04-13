@@ -17,16 +17,16 @@ list( APPEND vtkvmtkITK_TARGET_LINK_LIBRARIES ${VTK_LIBRARIES} )
 # Sources
 
 # include a test for endianness (used to be done by default)
-INCLUDE (${CMAKE_ROOT}/Modules/TestBigEndian.cmake)
+include (${CMAKE_ROOT}/Modules/TestBigEndian.cmake)
 TEST_BIG_ENDIAN(CMAKE_WORDS_BIGENDIAN)
 
-SET(vtkvmtkITK_SRCS
+set(vtkvmtkITK_SRCS
     vtkvmtkITKArchetypeImageSeriesReader.cxx
     vtkvmtkITKArchetypeImageSeriesScalarReader.cxx
     vtkvmtkITKImageWriter.cxx
 )
 
-SET(VTK_VMTK_ITK_EXTRA_INCLUDES
+set(VTK_VMTK_ITK_EXTRA_INCLUDES
   vtkvmtkITK.h
   vtkvmtkITKUtility.h
 )

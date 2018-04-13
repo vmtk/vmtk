@@ -1,35 +1,35 @@
 #
 # Build the documentation
 #
-INCLUDE (${CMAKE_ROOT}/Modules/Documentation.cmake OPTIONAL)
+include (${CMAKE_ROOT}/Modules/Documentation.cmake OPTIONAL)
                                                                                                                
-IF (BUILD_DOCUMENTATION)
+if (BUILD_DOCUMENTATION)
                                                                                                                
   #
   # Configure the script and the doxyfile, then add target
   #
-  CONFIGURE_FILE(
+  configure_file(
     ${VTK_VMTK_SOURCE_DIR}/Utilities/Doxygen/doxyfile.in
     ${VTK_VMTK_BINARY_DIR}/Utilities/Doxygen/doxyfile)
                                                                                                                
-  CONFIGURE_FILE(
+  configure_file(
     ${VTK_VMTK_SOURCE_DIR}/Utilities/Doxygen/doc_makeall.sh.in
     ${VTK_VMTK_BINARY_DIR}/Utilities/Doxygen/doc_makeall.sh)
 
-  ADD_CUSTOM_TARGET(DoxygenDoc
+  add_custom_target(DoxygenDoc
     ${BASH}
     ${VTK_VMTK_BINARY_DIR}/Utilities/Doxygen/doc_makeall.sh)
                                                                                                                
-  INCLUDE (${VTK_VMTK_SOURCE_DIR}/Utilities/Doxygen/LocalUserOptions.cmake OPTIONAL)
+  include (${VTK_VMTK_SOURCE_DIR}/Utilities/Doxygen/LocalUserOptions.cmake OPTIONAL)
   
-  INSTALL_FILES(${VTK_VMTK_INSTALL_LIB_DIR}/doxygen "\\.css$")
-  INSTALL_FILES(${VTK_VMTK_INSTALL_LIB_DIR}/doxygen "\\.gif$")
-  INSTALL_FILES(${VTK_VMTK_INSTALL_LIB_DIR}/doxygen "\\.html$")
-  INSTALL_FILES(${VTK_VMTK_INSTALL_LIB_DIR}/doxygen "\\.png$")
-  #INSTALL_FILES(${VTK_VMTK_INSTALL_LIB_DIR}/doxygen "\\.pl$")
-  #INSTALL_FILES(${VTK_VMTK_INSTALL_LIB_DIR}/doxygen "\\.stop$")
-  #INSTALL_FILES(${VTK_VMTK_INSTALL_LIB_DIR}/doxygen .txt )
-  #INSTALL_FILES(${VTK_VMTK_INSTALL_LIB_DIR}/doxygen .txt authors doc_readme)
+  install_files(${VTK_VMTK_INSTALL_LIB_DIR}/doxygen "\\.css$")
+  install_files(${VTK_VMTK_INSTALL_LIB_DIR}/doxygen "\\.gif$")
+  install_files(${VTK_VMTK_INSTALL_LIB_DIR}/doxygen "\\.html$")
+  install_files(${VTK_VMTK_INSTALL_LIB_DIR}/doxygen "\\.png$")
+  #install_files(${VTK_VMTK_INSTALL_LIB_DIR}/doxygen "\\.pl$")
+  #install_files(${VTK_VMTK_INSTALL_LIB_DIR}/doxygen "\\.stop$")
+  #install_files(${VTK_VMTK_INSTALL_LIB_DIR}/doxygen .txt )
+  #install_files(${VTK_VMTK_INSTALL_LIB_DIR}/doxygen .txt authors doc_readme)
 
-ENDIF (BUILD_DOCUMENTATION)
+endif (BUILD_DOCUMENTATION)
                                                                                                                

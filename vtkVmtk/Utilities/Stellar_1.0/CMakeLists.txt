@@ -1,25 +1,25 @@
-PROJECT (STELLAR)
+project (STELLAR)
 
-SET (STARBASE_SRCS
+set (STARBASE_SRCS
     src/Starbase.c
 )
 
 
-SET (STELLAR_SRCS
+set (STELLAR_SRCS
     src/Stellar.c
 )
 
-INCLUDE_DIRECTORIES(${STELLAR_SOURCE_DIR}/src)
+include_directories(${STELLAR_SOURCE_DIR}/src)
 
-#ADD_DEFINITIONS(-DSTARLIBRARY)
-ADD_DEFINITIONS(-DNOMAIN)
+#add_definitions(-DSTARLIBRARY)
+add_definitions(-DNOMAIN)
 
-ADD_LIBRARY(starbase STATIC ${STARBASE_SRCS})
-ADD_EXECUTABLE(Stellar ${STELLAR_SRCS})
-TARGET_LINK_LIBRARIES(Stellar starbase m)
+add_library(starbase STATIC ${STARBASE_SRCS})
+add_executable(Stellar ${STELLAR_SRCS})
+target_link_libraries(Stellar starbase m)
 
-IF(NOT WIN32)
-  SET_TARGET_PROPERTIES(starbase PROPERTIES COMPILE_FLAGS -fPIC)
-  SET_TARGET_PROPERTIES(Stellar PROPERTIES COMPILE_FLAGS -fPIC)
-ENDIF(NOT WIN32)
+if(NOT WIN32)
+  set_target_properties(starbase PROPERTIES COMPILE_FLAGS -fPIC)
+  set_target_properties(Stellar PROPERTIES COMPILE_FLAGS -fPIC)
+endif(NOT WIN32)
 

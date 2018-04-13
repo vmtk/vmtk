@@ -21,7 +21,7 @@ list( APPEND VTK_VMTK_SEGMENTATION_TARGET_LINK_LIBRARIES ${VTK_LIBRARIES} )
 #    )
 #endif(VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
 
-SET (VTK_VMTK_SEGMENTATION_SRCS
+set (VTK_VMTK_SEGMENTATION_SRCS
   vtkvmtkActiveTubeFilter.cxx
   vtkvmtkBoundedReciprocalImageFilter.cxx
   vtkvmtkCardinalSpline.cxx
@@ -55,7 +55,7 @@ SET (VTK_VMTK_SEGMENTATION_SRCS
   vtkvmtkAnisotropicDiffusionImageFilter.cxx
   )
 
-SET (VTK_VMTK_SEGMENTATION_ITK_HEADERS
+set (VTK_VMTK_SEGMENTATION_ITK_HEADERS
   vtkvmtkITKFilterUtilities.h
   itkFWHMFeatureImageFilter.h
   itkFWHMFeatureImageFilter.txx

@@ -1,7 +1,7 @@
 # Tell the user project where to find headers and libraries
-SET (VMTK_CPP_SOURCE_DIRS "@VMTK_SOURCE_DIR@/vtkVmtk")
+set(VMTK_CPP_SOURCE_DIRS "@VMTK_SOURCE_DIR@/vtkVmtk")
 
-SET(VMTK_INCLUDE_DIRS
+set(VMTK_INCLUDE_DIRS
   ${VMTK_CPP_SOURCE_DIRS}
   ${VMTK_CPP_SOURCE_DIRS}/Common
   ${VMTK_CPP_SOURCE_DIRS}/ComputationalGeometry
@@ -14,16 +14,16 @@ SET(VMTK_INCLUDE_DIRS
   "@VMTK_BINARY_DIR@/vtkVmtk"
 )
 
-SET(VMTK_BUILD_SETTINGS_FILE
+set(VMTK_BUILD_SETTINGS_FILE
   "@VMTK_BINARY_DIR@/VMTKBuildSettings.cmake"
 )
 
-INCLUDE(
+include(
   "@VMTK_BINARY_DIR@/VMTK-Targets.cmake"
 )
 
-SET(VMTK_LIBRARY_DIRS "@VMTK_BINARY_DIR@/bin")
+set(VMTK_LIBRARY_DIRS "@VMTK_BINARY_DIR@/bin")
 
-SET(VMTK_USE_FILE
+set(VMTK_USE_FILE
   "@VMTK_BINARY_DIR@/VMTKUse.cmake"
 )

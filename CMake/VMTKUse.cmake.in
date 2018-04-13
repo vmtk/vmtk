@@ -1,9 +1,9 @@
-INCLUDE(CMakeImportBuildSettings)
+include(CMakeImportBuildSettings)
 
-CMAKE_IMPORT_BUILD_SETTINGS("${VMTK_BUILD_SETTINGS_FILE}")
+cmake_import_build_settings("${VMTK_BUILD_SETTINGS_FILE}")
 
-INCLUDE_DIRECTORIES(${VMTK_INCLUDE_DIRS})
+include_directories(${VMTK_INCLUDE_DIRS})
 
-LINK_DIRECTORIES(${VMTK_LIBRARY_DIRS})
+link_directories(${VMTK_LIBRARY_DIRS})
 
-LINK_LIBRARIES(vtkvmtkCommon vtkvmtkComputationalGeometry vtkvmtkContrib vtkvmtkDifferentialGeometry vtkvmtkIO vtkvmtkITK vtkvmtkMisc vtkvmtkSegmentation nl tet)
+link_libraries(vtkvmtkCommon vtkvmtkComputationalGeometry vtkvmtkContrib vtkvmtkDifferentialGeometry vtkvmtkIO vtkvmtkITK vtkvmtkMisc vtkvmtkSegmentation nl tet)
