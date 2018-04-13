@@ -16,7 +16,7 @@ include( ${VTK_USE_FILE} )
 list( APPEND VTK_VMTK_IO_TARGET_LINK_LIBRARIES ${VTK_LIBRARIES} )
 
 
-SET (VTK_VMTK_IO_SRCS
+set (VTK_VMTK_IO_SRCS
   vtkvmtkDolfinWriter.cxx
   vtkvmtkFDNEUTReader.cxx
   vtkvmtkFDNEUTWriter.cxx

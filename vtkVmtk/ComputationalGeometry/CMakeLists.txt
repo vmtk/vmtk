@@ -66,7 +66,7 @@ SET (VTK_VMTK_COMPUTATIONALGEOMETRY_SRCS
   vtkvmtkVoronoiDiagram3D.cxx
   )
 
-SET_SOURCE_FILES_PROPERTIES (
+set_source_files_properties (
   vtkvmtkCenterlineSplittingAndGroupingFilter.cxx
   vtkvmtkPolyDataCenterlineMetricFilter.cxx
   ABSTRACT

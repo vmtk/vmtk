@@ -1,4 +1,4 @@
-PROJECT(VTK_VMTK)
+project(VTK_VMTK)
 
 include(${VMTK_SOURCE_DIR}/CMake/vmtkFunctions.cmake)
 
@@ -12,19 +12,19 @@ set(dirs
   Segmentation
   )
 
-IF (VMTK_USE_RENDERING)
+if (VMTK_USE_RENDERING)
   list(APPEND dirs Rendering)
-ENDIF (VMTK_USE_RENDERING)
+endif (VMTK_USE_RENDERING)
 
-OPTION(VTK_VMTK_CONTRIB "Build and install classes in the vtkVmtk/Contrib directory." OFF)
+option(VTK_VMTK_CONTRIB "Build and install classes in the vtkVmtk/Contrib directory." OFF)
 
-IF (VTK_VMTK_CONTRIB)
+if (VTK_VMTK_CONTRIB)
   list(APPEND dirs Contrib)
-ENDIF (VTK_VMTK_CONTRIB)
+endif (VTK_VMTK_CONTRIB)
 
-INCLUDE (${VMTK_SOURCE_DIR}/CMake/CMakeOptions.cmake)
+include (${VMTK_SOURCE_DIR}/CMake/CMakeOptions.cmake)
 
-CONFIGURE_FILE(
+configure_file(
   ${VTK_VMTK_SOURCE_DIR}/vtkvmtkConfigure.h.in
   ${VTK_VMTK_BINARY_DIR}/vtkvmtkConfigure.h
   )                                                                                                  
@@ -34,62 +34,62 @@ if(APPLE)
   set(CMAKE_EXE_LINKER_FLAGS "-Wl,-dylib_file,/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib")
 endif(APPLE)
 
-OPTION(VTK_VMTK_BUILD_TETGEN "Build TetGen and TetGen wrapper. Check TetGen license before you activate this." ON)
+option(VTK_VMTK_BUILD_TETGEN "Build TetGen and TetGen wrapper. Check TetGen license before you activate this." ON)
 
-OPTION(VTK_VMTK_BUILD_STREAMTRACER "Build static temporal stream tracer." ON)
+option(VTK_VMTK_BUILD_STREAMTRACER "Build static temporal stream tracer." ON)
 
-IF (VTK_USE_COCOA)
-  OPTION(VTK_VMTK_USE_COCOA "Build the Cocoa vmtk classes." ON)
-ENDIF (VTK_USE_COCOA)
+if (VTK_USE_COCOA)
+  option(VTK_VMTK_USE_COCOA "Build the Cocoa vmtk classes." ON)
+endif (VTK_USE_COCOA)
 
-IF(NOT VTK_VMTK_INSTALL_BIN_DIR)
-  SET(VTK_VMTK_INSTALL_BIN_DIR bin)
-ENDIF(NOT VTK_VMTK_INSTALL_BIN_DIR)
+if(NOT VTK_VMTK_INSTALL_BIN_DIR)
+  set(VTK_VMTK_INSTALL_BIN_DIR bin)
+endif(NOT VTK_VMTK_INSTALL_BIN_DIR)
 
-IF(NOT VTK_VMTK_INSTALL_INCLUDE_DIR)
-  SET(VTK_VMTK_INSTALL_INCLUDE_DIR include/vmtk)
-ENDIF(NOT VTK_VMTK_INSTALL_INCLUDE_DIR)
+if(NOT VTK_VMTK_INSTALL_INCLUDE_DIR)
+  set(VTK_VMTK_INSTALL_INCLUDE_DIR include/vmtk)
+endif(NOT VTK_VMTK_INSTALL_INCLUDE_DIR)
 
-IF(NOT VTK_VMTK_INSTALL_LIB_DIR)
-  SET(VTK_VMTK_INSTALL_LIB_DIR lib)
-ENDIF(NOT VTK_VMTK_INSTALL_LIB_DIR)
+if(NOT VTK_VMTK_INSTALL_LIB_DIR)
+  set(VTK_VMTK_INSTALL_LIB_DIR lib)
+endif(NOT VTK_VMTK_INSTALL_LIB_DIR)
 
-IF(NOT VTK_VMTK_MODULE_INSTALL_LIB_DIR)
-  SET(VTK_VMTK_MODULE_INSTALL_LIB_DIR lib/${VMTK_PYTHON_VERSION}/site-packages/vmtk)
-ENDIF(NOT VTK_VMTK_MODULE_INSTALL_LIB_DIR)
+if(NOT VTK_VMTK_MODULE_INSTALL_LIB_DIR)
+  set(VTK_VMTK_MODULE_INSTALL_LIB_DIR lib/${VMTK_PYTHON_VERSION}/site-packages/vmtk)
+endif(NOT VTK_VMTK_MODULE_INSTALL_LIB_DIR)
 
-INCLUDE_DIRECTORIES (${VTK_VMTK_SOURCE_DIR})
-INCLUDE_DIRECTORIES (${VTK_VMTK_SOURCE_DIR}/Common)
-INCLUDE_DIRECTORIES (${VTK_VMTK_SOURCE_DIR}/ComputationalGeometry)
-INCLUDE_DIRECTORIES (${VTK_VMTK_SOURCE_DIR}/DifferentialGeometry)
-INCLUDE_DIRECTORIES (${VTK_VMTK_SOURCE_DIR}/IO)
-INCLUDE_DIRECTORIES (${VTK_VMTK_SOURCE_DIR}/Misc)
-IF (VMTK_USE_RENDERING)
-  INCLUDE_DIRECTORIES (${VTK_VMTK_SOURCE_DIR}/Rendering)
-ENDIF (VMTK_USE_RENDERING)
-INCLUDE_DIRECTORIES (${VTK_VMTK_SOURCE_DIR}/Segmentation)
-IF (VTK_VMTK_CONTRIB)
-  INCLUDE_DIRECTORIES (${VTK_VMTK_SOURCE_DIR}/Contrib)
-ENDIF (VTK_VMTK_CONTRIB)
-INCLUDE_DIRECTORIES (${VTK_VMTK_SOURCE_DIR}/Utilities/vtkvmtkITK)
-INCLUDE_DIRECTORIES (${VTK_VMTK_BINARY_DIR})
+include_directories (${VTK_VMTK_SOURCE_DIR})
+include_directories (${VTK_VMTK_SOURCE_DIR}/Common)
+include_directories (${VTK_VMTK_SOURCE_DIR}/ComputationalGeometry)
+include_directories (${VTK_VMTK_SOURCE_DIR}/DifferentialGeometry)
+include_directories (${VTK_VMTK_SOURCE_DIR}/IO)
+include_directories (${VTK_VMTK_SOURCE_DIR}/Misc)
+if (VMTK_USE_RENDERING)
+  include_directories (${VTK_VMTK_SOURCE_DIR}/Rendering)
+endif (VMTK_USE_RENDERING)
+include_directories (${VTK_VMTK_SOURCE_DIR}/Segmentation)
+if (VTK_VMTK_CONTRIB)
+  include_directories (${VTK_VMTK_SOURCE_DIR}/Contrib)
+endif (VTK_VMTK_CONTRIB)
+include_directories (${VTK_VMTK_SOURCE_DIR}/Utilities/vtkvmtkITK)
+include_directories (${VTK_VMTK_BINARY_DIR})
 
-SET(VTK_DOXYGEN_HOME ${VTK_VMTK_SOURCE_DIR}/Utilities/Doxygen)
+set(VTK_DOXYGEN_HOME ${VTK_VMTK_SOURCE_DIR}/Utilities/Doxygen)
 
-FILE(GLOB files "${VTK_VMTK_BINARY_DIR}/vtkvmtkConfigure*.h")
-INSTALL(FILES ${files}
+file(GLOB files "${VTK_VMTK_BINARY_DIR}/vtkvmtkConfigure*.h")
+install(FILES ${files}
   DESTINATION ${VTK_VMTK_INSTALL_INCLUDE_DIR}
   COMPONENT Development)
 
-IF (VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
-  INCLUDE_DIRECTORIES (${VTK_PYTHON_INCLUDE_DIR})
-  CONFIGURE_FILE(${VTK_VMTK_SOURCE_DIR}/vtkvmtk.py ${VTK_VMTK_BINARY_DIR}/vtkvmtk.py COPYONLY)
-  INSTALL(FILES ${VTK_VMTK_BINARY_DIR}/vtkvmtk.py
+if (VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
+  include_directories (${VTK_PYTHON_INCLUDE_DIR})
+  configure_file(${VTK_VMTK_SOURCE_DIR}/vtkvmtk.py ${VTK_VMTK_BINARY_DIR}/vtkvmtk.py COPYONLY)
+  install(FILES ${VTK_VMTK_BINARY_DIR}/vtkvmtk.py
     DESTINATION ${VTK_VMTK_MODULE_INSTALL_LIB_DIR}
     COMPONENT PythonRuntimeLibraries)
-ENDIF (VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
+endif (VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
 
-SET(TETGEN_SOURCE_DIR "${VTK_VMTK_SOURCE_DIR}/Utilities/tetgen1.4.3")
+set(TETGEN_SOURCE_DIR "${VTK_VMTK_SOURCE_DIR}/Utilities/tetgen1.4.3")
 
 foreach(dir ${dirs})
   add_subdirectory(${dir})

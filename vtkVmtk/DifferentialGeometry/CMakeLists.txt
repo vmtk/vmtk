@@ -14,7 +14,7 @@ find_package( VTK ${VTK_VERSION_MAJOR}.${VTK_VERSION_MINOR} COMPONENTS ${VTK_VMT
 include( ${VTK_USE_FILE} )
 list( APPEND VTK_VMTK_DIFFERENTIALGEOMETRY_TARGET_LINK_LIBRARIES ${VTK_LIBRARIES} )
 
-SET (VTK_VMTK_DIFFERENTIALGEOMETRY_SRCS
+set (VTK_VMTK_DIFFERENTIALGEOMETRY_SRCS
   vtkvmtkBoundaryConditions.cxx
   vtkvmtkDataSetItem.cxx
   vtkvmtkDataSetItems.cxx
@@ -68,7 +68,7 @@ SET (VTK_VMTK_DIFFERENTIALGEOMETRY_SRCS
   vtkvmtkUnstructuredGridNeighborhood.cxx
   )
 
-SET_SOURCE_FILES_PROPERTIES (
+set_source_files_properties (
   vtkvmtkBoundaryConditions.cxx
   vtkvmtkDataSetItem.cxx
   vtkvmtkDataSetItems.cxx
@@ -82,7 +82,7 @@ SET_SOURCE_FILES_PROPERTIES (
   ABSTRACT
 )
 
-INCLUDE_DIRECTORIES(${VTK_VMTK_SOURCE_DIR}/Utilities/OpenNL)
+include_directories(${VTK_VMTK_SOURCE_DIR}/Utilities/OpenNL)
 
 vmtk_build_library(
   NAME DifferentialGeometry

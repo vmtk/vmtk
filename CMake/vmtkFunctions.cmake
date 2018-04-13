@@ -1,4 +1,3 @@
-
 include(CMakeParseArguments)
 include(${VMTK_SOURCE_DIR}/CMake/vtkMacroKitPythonWrap.cmake)
 
@@ -9,6 +8,7 @@ function(vmtk_build_library)
   cmake_parse_arguments(VMTK_LIB "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
   set(expected_defined_vars NAME SRCS)
+  
   foreach(var ${expected_defined_vars})
     if(NOT DEFINED VMTK_LIB_${var})
       message(FATAL_ERROR "error: ${var} parameter is mandatory !")
@@ -19,23 +19,27 @@ function(vmtk_build_library)
     include_directories(${VMTK_LIB_INCLUDE_DIRECTORIES})
   endif()
 
-  SET(lib_name ${VMTK_LIB_NAME})
+  set(lib_name ${VMTK_LIB_NAME})
+
   if(NOT VMTK_LIB_NAME MATCHES "^vtkvmtk")
-    SET(lib_name vtkvmtk${VMTK_LIB_NAME})
+    set(lib_name vtkvmtk${VMTK_LIB_NAME})
   endif()
 
-  ADD_LIBRARY(${lib_name} ${VMTK_LIB_SRCS})
-  IF(VMTK_LIBRARY_PROPERTIES)
+  add_library(${lib_name} ${VMTK_LIB_SRCS})
+
+  if(VMTK_LIBRARY_PROPERTIES)
     set_target_properties(${lib_name} PROPERTIES ${VMTK_LIBRARY_PROPERTIES})
-  ENDIF(VMTK_LIBRARY_PROPERTIES)
+  endif(VMTK_LIBRARY_PROPERTIES)
+
   set_target_properties(${lib_name} PROPERTIES LINKER_LANGUAGE CXX)
-  IF(NOT WIN32)
+
+  if(NOT WIN32)
     set_target_properties(${lib_name} PROPERTIES COMPILE_FLAGS -fPIC)
-  ENDIF(NOT WIN32)
+  endif(NOT WIN32)
+
   if(VMTK_LIB_TARGET_LINK_LIBRARIES)
     target_link_libraries(${lib_name} ${VMTK_LIB_TARGET_LINK_LIBRARIES})
   endif()
-
 
   install(TARGETS ${lib_name}
     EXPORT VMTK-Targets
@@ -52,7 +56,7 @@ function(vmtk_build_library)
     DESTINATION ${VTK_VMTK_INSTALL_INCLUDE_DIR}
     COMPONENT Development)
 
-  IF (VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
+  if (VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
 
     set(vmtk_wrapped_libs )
     foreach(lib IN LISTS VMTK_LIB_TARGET_LINK_LIBRARIES)
@@ -73,6 +77,6 @@ function(vmtk_build_library)
       KIT_INSTALL_LIB_DIR ${VTK_VMTK_INSTALL_LIB_DIR}
       KIT_MODULE_INSTALL_LIB_DIR ${VTK_VMTK_WRAPPED_MODULE_INSTALL_LIB_DIR}
       )
-  ENDIF (VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
+  endif (VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
 
 endfunction()
