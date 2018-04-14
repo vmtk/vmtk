@@ -56,13 +56,6 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkMedialCurveFilter : public vtkPolyData
     virtual void SetOutputImage(vtkImageData *);
     vtkGetObjectMacro(OutputImage, vtkImageData);
 
-    virtual void SetBinaryImage(vtkImageData *);
-    vtkGetObjectMacro(BinaryImage, vtkImageData);
-
-    virtual void SetDistanceImage(vtkImageData *);
-    vtkGetObjectMacro(DistanceImage, vtkImageData);
-
-  
     vtkGetMacro(Sigma,double);
     vtkSetMacro(Sigma,double);
 
@@ -83,10 +76,6 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkMedialCurveFilter : public vtkPolyData
     ~vtkvmtkMedialCurveFilter();
 
     virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
-
-    void PolyDataToBinaryImageData();
-    void BinaryImageToSignedDistanceMapImage();
-    void CalculateCenterline();
 
     vtkPolyData *InputSurface;
     vtkImageData *OutputImage;
