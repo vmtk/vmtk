@@ -181,6 +181,7 @@ ExternalProject_Add( ${proj}
   DOWNLOAD_COMMAND ""
   SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}"
   BINARY_DIR VMTK-Build
+  BUILD_ALWAYS 1 # always run this step. do not generate stamp file 
   CMAKE_GENERATOR ${gen}
   USES_TERMINAL_CONFIGURE 1
   USES_TERMINAL_BUILD 1
