@@ -31,10 +31,13 @@ Modification Authors:
 #include "vtkObjectFactory.h"
 #include "vtkPolyDataAlgorithm.h"
 #include "vtkPolyData.h"
+#include "vtkPointData.h"
 #include "vtkVersion.h"
 #include "vtkSmartPointer.h"
 #include "vtkPolyDataToImageStencil.h"
 #include "vtkImageStencil.h"
+#include "vtkInformation.h"
+#include "vtkInformationVector.h"
 
 #include "vtkvmtkITKFilterUtilities.h"
 
@@ -86,9 +89,6 @@ vtkvmtkMedialCurveFilter::~vtkvmtkMedialCurveFilter()
 		this->OutputImage = NULL;
 	}
 }
-
-vtkCxxSetObjectMacro(vtkvmtkMedialCurveFilter, InputImage, vtkImageData);
-vtkCxxSetObjectMacro(vtkvmtkMedialCurveFilter, OutputImage, vtkImageData);
 
 void vtkvmtkMedialCurveFilter::PolyDataToBinaryImageData()
 {
@@ -142,7 +142,7 @@ void vtkvmtkMedialCurveFilter::PolyDataToBinaryImageData()
 	imgstenc->SetBackgroundValue(outval);
 	imgstenc->Update();
 
-	this->BinaryImage = imagestenc->GetOutput();
+	this->BinaryImage = imgstenc->GetOutput();
 }
 
 void vtkvmtkMedialCurveFilter::BinaryImageToSignedDistanceMapImage()
@@ -159,7 +159,7 @@ void vtkvmtkMedialCurveFilter::BinaryImageToSignedDistanceMapImage()
 	approximateSignedDistanceMapImageFilter->SetInsideValue(255);
 	approximateSignedDistanceMapImageFilter->SetOutsideValue(0);
 
-	this->DistanceImage = approximateSignedDistanceMapImageFilter->GetOutput();
+	vtkvmtkITKFilterUtilities::ITKToVTKImage<float, 3>(approximateSignedDistanceMapImageFilter->GetOutput(), this->DistanceImage);
 }
 
 void vtkvmtkMedialCurveFilter::CalculateCenterline()
@@ -167,7 +167,8 @@ void vtkvmtkMedialCurveFilter::CalculateCenterline()
 	typedef float PixelType;
 	typedef itk::Image<PixelType, 3> ImageType;
 
-	ImageType::Pointer distance = this->DistanceImage
+	ImageType::Pointer distance = ImageType::New();
+	vtkvmtkITKFilterUtilities::VTKToITKImage<float, 3>(this->DistanceImage, distance);
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// 1.	Compute the associated average outward flux
@@ -222,16 +223,15 @@ void vtkvmtkMedialCurveFilter::CalculateCenterline()
 	medialFilter->SetThreshold(this->Threshold);
 	medialFilter->Update();
 
-	typedef itk::Image<MedialCurveFilter::TOutputImage> OutputType;
-	OutputType::Pointer outputImage;
-	vtkvmtkITKFilterUtilities::ITKToVTKImage<MedialCurveFilter::TOutputImage>(medialFilter->GetOutput(), outputImage);
-	this->OutputImage = outputImage
+	vtkvmtkITKFilterUtilities::ITKToVTKImage<MedialCurveFilter::TOutputImage>(medialFilter->GetOutput(), this->OutputImage);
 }
 
-int vtkvmtkPolyDataPotentialFit::RequestData(vtkInformation *vtkNotUsed(request),
-											 vtkInformationVector **inputVector,
-											 vtkInformationVector *outputVector)
+int vtkvmtkMedialCurveFilter::RequestData(vtkInformation *vtkNotUsed(request),
+										  vtkInformationVector **inputVector,
+										  vtkInformationVector *outputVector)
 {
+	vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
+  	vtkInformation *outInfo = outputVector->GetInformationObject(0);
 	vtkPolyData *input = vtkPolyData::SafeDownCast(inInfo->Get(vtkDataObject::DATA_OBJECT()));
 	vtkImageData *output = vtkImageData::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
@@ -240,6 +240,8 @@ int vtkvmtkPolyDataPotentialFit::RequestData(vtkInformation *vtkNotUsed(request)
 	this->CalculateCenterline();
 
 	output = this->OutputImage;
+
+	return 1;
 }
 
 void vtkvmtkMedialCurveFilter::PrintSelf(ostream &os, vtkIndent indent)

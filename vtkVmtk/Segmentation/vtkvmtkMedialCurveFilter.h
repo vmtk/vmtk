@@ -39,6 +39,7 @@ Version:   $Revision: 1.4 $
 
 class vtkImageData;
 class vtkPolyData;
+class itkImage;
 
 class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkMedialCurveFilter : public vtkPolyDataAlgorithm
 {
@@ -72,6 +73,12 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkMedialCurveFilter : public vtkPolyData
   protected:
     vtkvmtkMedialCurveFilter();
     ~vtkvmtkMedialCurveFilter();
+
+    virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
+
+    void PolyDataToBinaryImageData();
+    void BinaryImageToSignedDistanceMapImage();
+    void CalculateCenterline();
 
     vtkPolyData *InputSurface;
     vtkImageData *OutputImage;
