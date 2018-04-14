@@ -35,6 +35,7 @@ Version:   $Revision: 1.4 $
 #define __vtkvmtkMedialCurveFilter_h
 
 #include "vtkPolyDataAlgorithm.h"
+#include "vtkImageAlgorithm.h"
 #include "vtkvmtkWin32Header.h"
 
 class vtkImageData;
@@ -54,6 +55,13 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkMedialCurveFilter : public vtkPolyData
 
     virtual void SetOutputImage(vtkImageData *);
     vtkGetObjectMacro(OutputImage, vtkImageData);
+
+    virtual void SetBinaryImage(vtkImageData *);
+    vtkGetObjectMacro(BinaryImage, vtkImageData);
+
+    virtual void SetDistanceImage(vtkImageData *);
+    vtkGetObjectMacro(DistanceImage, vtkImageData);
+
   
     vtkGetMacro(Sigma,double);
     vtkSetMacro(Sigma,double);

@@ -90,6 +90,11 @@ vtkvmtkMedialCurveFilter::~vtkvmtkMedialCurveFilter()
 	}
 }
 
+vtkCxxSetObjectMacro(vtkvmtkMedialCurveFilter,InputSurface,vtkPolyData);
+vtkCxxSetObjectMacro(vtkvmtkMedialCurveFilter,OutputImage,vtkImageData);
+vtkCxxSetObjectMacro(vtkvmtkMedialCurveFilter,DistanceImage,vtkImageData);
+vtkCxxSetObjectMacro(vtkvmtkMedialCurveFilter,BinaryImage,vtkImageData);
+
 void vtkvmtkMedialCurveFilter::PolyDataToBinaryImageData()
 {
 	vtkSmartPointer<vtkImageData> whiteImage = vtkSmartPointer<vtkImageData>::New();
@@ -159,8 +164,8 @@ void vtkvmtkMedialCurveFilter::BinaryImageToSignedDistanceMapImage()
 	approximateSignedDistanceMapImageFilter->SetInsideValue(255);
 	approximateSignedDistanceMapImageFilter->SetOutsideValue(0);
 
-	vtkvmtkITKFilterUtilities::ITKToVTKImage<float, 3>(approximateSignedDistanceMapImageFilter->GetOutput(), this->DistanceImage);
-}
+	vtkvmtkITKFilterUtilities::ITKToVTKImage<itk::Image<float, 3>>(approximateSignedDistanceMapImageFilter->GetOutput(), this->DistanceImage);
+}	
 
 void vtkvmtkMedialCurveFilter::CalculateCenterline()
 {
@@ -168,7 +173,7 @@ void vtkvmtkMedialCurveFilter::CalculateCenterline()
 	typedef itk::Image<PixelType, 3> ImageType;
 
 	ImageType::Pointer distance = ImageType::New();
-	vtkvmtkITKFilterUtilities::VTKToITKImage<float, 3>(this->DistanceImage, distance);
+	vtkvmtkITKFilterUtilities::VTKToITKImage<ImageType>(this->DistanceImage, distance);
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// 1.	Compute the associated average outward flux
@@ -176,7 +181,7 @@ void vtkvmtkMedialCurveFilter::CalculateCenterline()
 	// To have a good quality gradient of the distance map, perform a light smooth over it. Define
 	// convolution kernels in each direction and use them recursively.
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	typedef itk::RecursiveGaussianImageFilter<ImageType, ImageType>RecursiveGaussianFilterType;
+	typedef itk::RecursiveGaussianImageFilter<ImageType, ImageType> RecursiveGaussianFilterType;
 	RecursiveGaussianFilterType::Pointer gaussianFilterX = RecursiveGaussianFilterType::New();
 	RecursiveGaussianFilterType::Pointer gaussianFilterY = RecursiveGaussianFilterType::New();
 	RecursiveGaussianFilterType::Pointer gaussianFilterZ = RecursiveGaussianFilterType::New();
