@@ -34,27 +34,20 @@ Version:   $Revision: 1.4 $
 #ifndef __vtkvmtkMedialCurveFilter_h
 #define __vtkvmtkMedialCurveFilter_h
 
-#include "vtkPolyDataAlgorithm.h"
-#include "vtkImageAlgorithm.h"
+#include "vtkSimpleImageToImageFilter.h"
+#include "vtkImageData.h"
 #include "vtkvmtkWin32Header.h"
 
 class vtkImageData;
-class vtkPolyData;
 class itkImage;
 
-class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkMedialCurveFilter : public vtkPolyDataAlgorithm
+class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkMedialCurveFilter : public vtkSimpleImageToImageFilter
 {
   public:
-    vtkTypeMacro(vtkvmtkMedialCurveFilter, vtkPolyDataAlgorithm);
-    void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE; 
 
     static vtkvmtkMedialCurveFilter *New();
-
-    virtual void SetInputSurface(vtkPolyData *);
-    vtkGetObjectMacro(InputSurface, vtkPolyData);
-
-    virtual void SetOutputImage(vtkImageData *);
-    vtkGetObjectMacro(OutputImage, vtkImageData);
+    vtkTypeMacro(vtkvmtkMedialCurveFilter, vtkSimpleImageToImageFilter);
+    // void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE; 
 
     vtkGetMacro(Sigma,double);
     vtkSetMacro(Sigma,double);
@@ -62,30 +55,14 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkMedialCurveFilter : public vtkPolyData
     vtkGetMacro(Threshold,double);
     vtkSetMacro(Threshold,double);
 
-    vtkGetMacro(PolyDataToImageDataSpacingX,double);
-    vtkSetMacro(PolyDataToImageDataSpacingX,double);
-  
-    vtkGetMacro(PolyDataToImageDataSpacingY,double)
-    vtkSetMacro(PolyDataToImageDataSpacingY,double)
-
-    vtkGetMacro(PolyDataToImageDataSpacingZ,double)
-    vtkSetMacro(PolyDataToImageDataSpacingZ,double)
-
   protected:
     vtkvmtkMedialCurveFilter();
     ~vtkvmtkMedialCurveFilter();
 
-    virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
+    virtual void SimpleExecute(vtkImageData* input, vtkImageData* output) VTK_OVERRIDE;
 
-    vtkPolyData *InputSurface;
-    vtkImageData *OutputImage;
-    vtkImageData *BinaryImage;
-    vtkImageData *DistanceImage;
     double Sigma;
     double Threshold;
-    double PolyDataToImageDataSpacingX;
-    double PolyDataToImageDataSpacingY;
-    double PolyDataToImageDataSpacingZ;
 
   private:
     vtkvmtkMedialCurveFilter(const vtkvmtkMedialCurveFilter&);  // Not implemented.

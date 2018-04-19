@@ -6,7 +6,6 @@ vtkCommonCore
 vtkFiltersCore
 vtkImagingGeneral
 vtkIOImage
-vtkImagingStencil
 )
 if (VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
 list(APPEND VTK_VMTK_SEGMENTATION_COMPONENTS

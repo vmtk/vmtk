@@ -62,7 +62,7 @@ __all__ = [
     'vmtk.vmtklineresampling',
     'vmtk.vmtklocalgeometry',
     'vmtk.vmtkmarchingcubes',
-    'vmtkmedialcurvecenterline',
+    'vmtk.vmtkmedialcurvecenterline',
     'vmtk.vmtkmesharrayoperation',
     'vmtk.vmtkmeshboundaryinspector',
     'vmtk.vmtkmeshbranchclipper',

@@ -17,6 +17,7 @@ from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py
 import vtk
 from vtk.numpy_interface import dataset_adapter as dsa
 import numpy as np
+import math
 import sys
 
 from vmtk import vtkvmtk
@@ -31,7 +32,6 @@ class vmtkMedialCurveCenterline(pypes.pypeScript):
         
         self.Surface = None
         self.BinaryImage = None
-        self.DistanceImage = None
 
         self.Sigma = 0.5
         self.Threshold = 0.0
@@ -48,8 +48,7 @@ class vmtkMedialCurveCenterline(pypes.pypeScript):
             ['PolyDataToImageDataSpacing','spacing','list',1,'[0.5, 0.5, 0.5]','the sample spacing for the polydata to image data conversion']
             ])
         self.SetOutputMembers([
-            ['BinaryImage','o','vtkImageData',1,'','the surface image','vmtkimagewriter'],
-            ['DistanceImage','o','vtkImageData',1,'','the euclidian distance trasform of the binary image','vmtkimagewriter'],
+            ['BinaryImage','o2','vtkImageData',1,'','the binary surface image','vmtkimagewriter'],
             ['OutputImage','o','vtkImageData',1,'','the output centerline image','vmtkimagewriter']
             ])
 
@@ -93,7 +92,7 @@ class vmtkMedialCurveCenterline(pypes.pypeScript):
         whiteImage.GetPointData().SetScalars(pointDataArray)
 
         polyDataToImageDataFilter = vtk.vtkPolyDataToImageStencil()
-        polyDataToImageDataFilter.SetInputData(surf)
+        polyDataToImageDataFilter.SetInputData(self.Surface)
         polyDataToImageDataFilter.SetOutputSpacing(self.PolyDataToImageDataSpacing[0], 
                                                    self.PolyDataToImageDataSpacing[1], 
                                                    self.PolyDataToImageDataSpacing[2])

@@ -27,17 +27,10 @@ Modification Authors:
 =========================================================================*/
 
 #include "vtkvmtkMedialCurveFilter.h"
+#include "vtkSimpleImageToImageFilter.h"
 #include "vtkImageData.h"
 #include "vtkObjectFactory.h"
-#include "vtkPolyDataAlgorithm.h"
-#include "vtkPolyData.h"
-#include "vtkPointData.h"
-#include "vtkVersion.h"
 #include "vtkSmartPointer.h"
-#include "vtkPolyDataToImageStencil.h"
-#include "vtkImageStencil.h"
-#include "vtkInformation.h"
-#include "vtkInformationVector.h"
 
 #include "vtkvmtkITKFilterUtilities.h"
 
@@ -47,134 +40,34 @@ Modification Authors:
 #include "itkAverageOutwardFluxImageFilter.h"
 #include "itkMedialCurveImageFilter.h"
 #include "itkApproximateSignedDistanceMapImageFilter.h"
-#include <iostream>
 
 vtkStandardNewMacro(vtkvmtkMedialCurveFilter);
 
 vtkvmtkMedialCurveFilter::vtkvmtkMedialCurveFilter()
 {
-	this->InputSurface = NULL;
-	this->BinaryImage = NULL;
-	this->DistanceImage = NULL;
-	this->OutputImage = NULL;
 	this->Sigma = 0.5;
 	this->Threshold = 0.0;
-	this->PolyDataToImageDataSpacingX = 0.2;
-	this->PolyDataToImageDataSpacingY = 0.2;
-	this->PolyDataToImageDataSpacingZ = 0.2;
 }
 
-vtkvmtkMedialCurveFilter::~vtkvmtkMedialCurveFilter()
+vtkvmtkMedialCurveFilter::~vtkvmtkMedialCurveFilter() {}
+
+
+void vtkvmtkMedialCurveFilter::SimpleExecute(vtkImageData* input, vtkImageData* output)
 {
-	if (this->InputSurface)
-	{
-		this->InputSurface->Delete();
-		this->InputSurface = NULL;
-	}
-
-	if (this->BinaryImage)
-	{
-		this->BinaryImage->Delete();
-		this->BinaryImage = NULL;
-	}
-
-	if (this->DistanceImage)
-	{
-		this->DistanceImage->Delete();
-		this->DistanceImage = NULL;
-	}
-
-	if (this->OutputImage)
-	{
-		this->OutputImage->Delete();
-		this->OutputImage = NULL;
-	}
-}
-
-vtkCxxSetObjectMacro(vtkvmtkMedialCurveFilter,InputSurface,vtkPolyData);
-vtkCxxSetObjectMacro(vtkvmtkMedialCurveFilter,OutputImage,vtkImageData);
-
-int vtkvmtkMedialCurveFilter::RequestData(vtkInformation *vtkNotUsed(request),
-										  vtkInformationVector **inputVector,
-										  vtkInformationVector *outputVector)
-{
-	vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
-  	vtkInformation *outInfo = outputVector->GetInformationObject(0);
-
-	vtkPolyData *input = vtkPolyData::SafeDownCast(inInfo->Get(vtkDataObject::DATA_OBJECT()));
-	vtkImageData *output = vtkImageData::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
-
-
-	vtkSmartPointer<vtkImageData> whiteImage = vtkSmartPointer<vtkImageData>::New();
-	double bounds[6];
-	this->InputSurface->GetBounds(bounds);
-	double spacing[3]; // desired volume spacing
-	spacing[0] = this->PolyDataToImageDataSpacingX;
-	spacing[1] = this->PolyDataToImageDataSpacingY;
-	spacing[2] = this->PolyDataToImageDataSpacingZ;
-	whiteImage->SetSpacing(spacing);
-
-	// compute dimensions
-	int dim[3];
-	for (int i = 0; i < 3; i++)
-	{
-		dim[i] = static_cast<int>(ceil((bounds[i * 2 + 1] - bounds[i * 2]) / spacing[i]));
-	}
-	whiteImage->SetDimensions(dim);
-	whiteImage->SetExtent(0, dim[0] - 1, 0, dim[1] - 1, 0, dim[2] - 1);
-
-	double origin[3];
-	origin[0] = bounds[0] + spacing[0] / 2;
-	origin[1] = bounds[2] + spacing[1] / 2;
-	origin[2] = bounds[4] + spacing[2] / 2;
-
-	whiteImage->SetOrigin(origin);
-	whiteImage->AllocateScalars(VTK_UNSIGNED_CHAR, 1);
-	// fill the image with foreground voxels:
-	unsigned char inval = 255;
-	unsigned char outval = 0;
-	vtkIdType count = whiteImage->GetNumberOfPoints();
-	for (vtkIdType i = 0; i < count; ++i)
-	{
-		whiteImage->GetPointData()->GetScalars()->SetTuple1(i, inval);
-	}
-
-	// polygonal data --> image stencil:
-	vtkSmartPointer<vtkPolyDataToImageStencil> pol2stenc = vtkSmartPointer<vtkPolyDataToImageStencil>::New();
-	pol2stenc->SetInputData(this->InputSurface);
-	pol2stenc->SetOutputOrigin(origin);
-	pol2stenc->SetOutputSpacing(spacing);
-	pol2stenc->SetOutputWholeExtent(whiteImage->GetExtent());
-	pol2stenc->Update();
-
-	// cut the corresponding white image and set the background:
-	vtkSmartPointer<vtkImageStencil> imgstenc = vtkSmartPointer<vtkImageStencil>::New();
-	imgstenc->SetInputData(whiteImage);
-	imgstenc->SetStencilConnection(pol2stenc->GetOutputPort());
-	imgstenc->ReverseStencilOff();
-	imgstenc->SetBackgroundValue(outval);
-	imgstenc->Update();
-
-	this->BinaryImage = imgstenc->GetOutput();
-
-
-
 	typedef itk::Image<unsigned char, 3> UnsignedCharImageType;
 	typedef itk::Image<float, 3> FloatImageType;
+	typedef float PixelType;
+	typedef itk::Image<PixelType, 3> ImageType;
 
-	UnsignedCharImageType::Pointer image = UnsignedCharImageType::New();
-	vtkvmtkITKFilterUtilities::VTKToITKImage<UnsignedCharImageType>(this->BinaryImage, image);
+    UnsignedCharImageType::Pointer inImage = UnsignedCharImageType::New();
+
+    vtkvmtkITKFilterUtilities::VTKToITKImage<UnsignedCharImageType>(input,inImage); 
 
 	typedef itk::ApproximateSignedDistanceMapImageFilter<UnsignedCharImageType, FloatImageType> ApproximateSignedDistanceMapImageFilterType;
 	ApproximateSignedDistanceMapImageFilterType::Pointer approximateSignedDistanceMapImageFilter = ApproximateSignedDistanceMapImageFilterType::New();
-	approximateSignedDistanceMapImageFilter->SetInput(image);
+	approximateSignedDistanceMapImageFilter->SetInput(inImage);
 	approximateSignedDistanceMapImageFilter->SetInsideValue(255);
 	approximateSignedDistanceMapImageFilter->SetOutsideValue(0);
-
-
-
-	typedef float PixelType;
-	typedef itk::Image<PixelType, 3> ImageType;
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// 1.	Compute the associated average outward flux
@@ -229,15 +122,5 @@ int vtkvmtkMedialCurveFilter::RequestData(vtkInformation *vtkNotUsed(request),
 	medialFilter->SetThreshold(this->Threshold);
 	medialFilter->Update();
 
-	vtkImageData *outImage = vtkImageData::New();
-	vtkvmtkITKFilterUtilities::ITKToVTKImage<MedialCurveFilter::TOutputImage>(medialFilter->GetOutput(), outImage);
-	this->OutputImage = outImage;
-	output = outImage;
-
-	return 1;
-}
-
-void vtkvmtkMedialCurveFilter::PrintSelf(ostream &os, vtkIndent indent)
-{
-	this->Superclass::PrintSelf(os, indent);
+	vtkvmtkITKFilterUtilities::ITKToVTKImage<UnsignedCharImageType>(medialFilter->GetOutput(),output);
 }
