@@ -123,9 +123,9 @@ class ITK_EXPORT AverageOutwardFluxImageFilter:
 		}
 		
 		/// \brief Compute the gradient.
-		void GenerateData();
+		void GenerateData() ITK_OVERRIDE;
 
-		void PrintSelf(std::ostream& os, Indent indent) const;
+		void PrintSelf(std::ostream& os, Indent indent) const ITK_OVERRIDE;
 
 	protected:
 		
