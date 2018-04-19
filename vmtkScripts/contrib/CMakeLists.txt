@@ -25,6 +25,7 @@ set(CONTRIB_SCRIPTS_SRCS
     vmtksurfacewriter2.py
     vmtksurfaceextractannularwalls.py
     vmtksurfaceextractinnercylinder.py
+    vmtksurfacecliploop2.py
     vmtkthreshold.py
     vmtkmeshmerge.py
     vmtkentityrenumber.py
