@@ -135,6 +135,7 @@ set(SCRIPTS_SRCS
   vmtksurfacescaling.py
   vmtksurfacesmoothing.py
   vmtksurfacesubdivision.py
+  vmtksurfacetobinaryimage.py
   vmtksurfacetransform.py
   vmtksurfacetransforminteractive.py
   vmtksurfacetransformtoras.py

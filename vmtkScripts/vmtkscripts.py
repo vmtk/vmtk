@@ -139,6 +139,7 @@ __all__ = [
     'vmtk.vmtksurfacescaling',
     'vmtk.vmtksurfacesmoothing',
     'vmtk.vmtksurfacesubdivision',
+    'vmtk.vmtksurfacetobinaryimage',
     'vmtk.vmtksurfacetonumpy',
     'vmtk.vmtksurfacetransform',
     'vmtk.vmtksurfacetransforminteractive',

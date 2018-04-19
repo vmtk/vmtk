@@ -1,5 +1,6 @@
 /*=========================================================================
 
+Original Method Developed By:
   Module    : EvoLib
   File      : $RCSfile: itkAverageOutwardFluxImageFilter.cpp,v $
   Copyright : (C)opyright (University of Zaragoza) 2005++
@@ -17,6 +18,19 @@
               Revision 1.2  2007/02/19 10:01:15  xmellado
               Release v1.0
 
+Modifications Made To Support Integration Into:
+	The Vascular Modeling Toolkit (VMTK)
+	www.vmtk.org
+
+Modification Authors:
+	Richard Izzo
+		University at Buffalo
+		Github: rlizzo
+		Date: April 12, 2018
+	Luca Antiga
+		Orobix Srl.
+		Github: lantiga
+		Date: April 12, 2018
 
 =========================================================================*/
 
