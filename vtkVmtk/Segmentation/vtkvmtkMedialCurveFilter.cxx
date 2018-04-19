@@ -229,7 +229,7 @@ int vtkvmtkMedialCurveFilter::RequestData(vtkInformation *vtkNotUsed(request),
 	medialFilter->SetThreshold(this->Threshold);
 	medialFilter->Update();
 
-	vtkSmartPointer<vtkImageData> outImage = vtkSmartPointer<vtkImageData>::New();
+	vtkImageData *outImage = vtkImageData::New();
 	vtkvmtkITKFilterUtilities::ITKToVTKImage<MedialCurveFilter::TOutputImage>(medialFilter->GetOutput(), outImage);
 	this->OutputImage = outImage;
 	output = outImage;
