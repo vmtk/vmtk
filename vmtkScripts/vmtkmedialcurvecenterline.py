@@ -32,12 +32,11 @@ class vmtkMedialCurveCenterline(pypes.pypeScript):
         
         self.Surface = None
         self.BinaryImage = None
+        self.SkeletonImage = None
 
         self.Sigma = 0.5
         self.Threshold = 0.0
-        self.PolyDataToImageDataSpacing = [0.5, 0.5, 0.5]
-
-        self.OutputImage = None
+        self.PolyDataToImageDataSpacing = [0.3, 0.3, 0.3]
 
         self.SetScriptName('vmtkmedialcurvecenterline')
         self.SetScriptDoc('Automatically extract a centerline from a surface using a medial curve flow algorithm.')
@@ -49,18 +48,23 @@ class vmtkMedialCurveCenterline(pypes.pypeScript):
             ])
         self.SetOutputMembers([
             ['BinaryImage','o2','vtkImageData',1,'','the binary surface image','vmtkimagewriter'],
-            ['OutputImage','o','vtkImageData',1,'','the output centerline image','vmtkimagewriter']
+            ['SkeletonImage','o','vtkImageData',1,'','the output centerline image','vmtkimagewriter']
             ])
 
     def Execute(self):
         if self.Surface == None:
             self.PrintError('Error: No Input Surface.')
 
+        # Step 1: Convert the input surface into an image mask of unsigned char type and spacing = PolyDataToImageDataSpacing
+        #         Where voxels lying inside the surface are set to 255 and voxels outside the image are set to value 0. 
+
+        # since we are creating a new image container from nothing, calculate the origin, extent, and dimensions for the
+        # vtkImageDataObject from the surface parameters.
         bounds = self.Surface.GetBounds()
-        dim = []
+        dim = []   # list of size: 3, type: int
         for i in range(3):
             dim.append(math.ceil((bounds[i * 2 + 1] - bounds[i * 2]) / self.PolyDataToImageDataSpacing[i]))
-            
+
         origin = [bounds[0] + self.PolyDataToImageDataSpacing[0] / 2,
                   bounds[2] + self.PolyDataToImageDataSpacing[1] / 2,
                   bounds[4] + self.PolyDataToImageDataSpacing[2] / 2]
@@ -82,32 +86,47 @@ class vmtkMedialCurveCenterline(pypes.pypeScript):
 
         inval = 255
         outval = 0
-
+        # initially set all values of the image to a value 255
         npFillImagePoints = np.zeros(whiteImage.GetNumberOfPoints(), dtype=np.uint8)
         npFillImagePoints[:] = 255
-
+        # it is much faster to use the vtk data set adaptor functions to fill the point data tupples that it is to
+        # loop over each index and set values individually. 
         pointDataArray = dsa.numpyTovtkDataArray(npFillImagePoints, name='ImageScalars', array_type=vtk.VTK_UNSIGNED_CHAR)
-
         whiteImage.GetPointData().SetActiveScalars('ImageScalars')
         whiteImage.GetPointData().SetScalars(pointDataArray)
 
-        polyDataToImageDataFilter = vtk.vtkPolyDataToImageStencil()
-        polyDataToImageDataFilter.SetInputData(self.Surface)
-        polyDataToImageDataFilter.SetOutputSpacing(self.PolyDataToImageDataSpacing[0], 
-                                                   self.PolyDataToImageDataSpacing[1], 
-                                                   self.PolyDataToImageDataSpacing[2])
-        polyDataToImageDataFilter.SetOutputOrigin(origin[0], origin[1], origin[2])
-        polyDataToImageDataFilter.Update()
+        # The vtkPolyDataToImageStencil class will convert polydata into an image stencil, masking an image. 
+        # The polydata can either be a closed surface mesh or a series of polyline contours (one contour per slice).
+        polyDataToImageStencilFilter = vtk.vtkPolyDataToImageStencil()
+        polyDataToImageStencilFilter.SetInputData(self.Surface)
+        polyDataToImageStencilFilter.SetOutputSpacing(self.PolyDataToImageDataSpacing[0], 
+                                                      self.PolyDataToImageDataSpacing[1], 
+                                                      self.PolyDataToImageDataSpacing[2])
+        polyDataToImageStencilFilter.SetOutputOrigin(origin[0], origin[1], origin[2])
+        polyDataToImageStencilFilter.Update()
 
+        # vtkImageStencil combines to images together by using a "cookie-cutter" operation. 
         imageStencil = vtk.vtkImageStencil()
         imageStencil.SetInputData(whiteImage)
-        imageStencil.SetStencilConnection(polyDataToImageDataFilter.GetOutputPort())
+        imageStencil.SetStencilConnection(polyDataToImageStencilFilter.GetOutputPort())
         imageStencil.ReverseStencilOff()
         imageStencil.SetBackgroundValue(outval)
         imageStencil.Update()
 
         self.BinaryImage = imageStencil.GetOutput()
 
+        # Step 2: Feed into the vtkvmtkMedialCurveFilter
+        #         This takes the binary image and computes the average outward flux of the image. This is then
+        #         used to compute the skeleton image. It returns a binary image where values of 1 are skeleton points
+        #         and values of 0 are outside the skeleton. The execution speed of this algorithm is fairly sensetive to
+        #         the extent of the input image.
+        medialCurveFilter = vtkvmtk.vtkvmtkMedialCurveFilter()
+        medialCurveFilter.SetInputData(self.BinaryImage)
+        medialCurveFilter.SetThreshold(self.Threshold)
+        medialCurveFilter.SetSigma(self.Sigma)
+        medialCurveFilter.Update()
+
+        self.SkeletonImage = medialCurveFilter.GetOutput()
 
 
 if __name__=='__main__':
