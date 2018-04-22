@@ -66,7 +66,6 @@ class Pype(object):
         self.OutputStream = sys.stdout
         self.Arguments = None
 
-
     def GetUsageString(self):
         usageString = 'Usage: pype --nolog --noauto --query firstScriptName -scriptOptionName scriptOptionValue --pipe secondScriptName -scriptOptionName scriptOptionValue -scriptOptionName @firstScriptName.scriptOptionName -id 2 --pipe thirdScriptName -scriptOptionName @secondScriptName-2.scriptOptionName'
         return usageString
@@ -127,8 +126,13 @@ class Pype(object):
         self.Arguments = arguments
 
     def ParseArguments(self):
+        ''' requires self.Arguments to be set. 
+        this is set and called in the pypeserver.py file. 
+        '''
         self.ScriptList = []
+        # args is set to ['/Users/rick/projects/vmtk/vmtk-build/Install/bin/vmtkimagereader', '-ifile', './aorta.mha', '--pipe', 'vmtkimageviewer', '-display', '0', '--pipe', 'vmtkimageotsuthresholds']
         arguments = self.Arguments[:]
+        # this was not called
         if os.path.basename(arguments[0]).strip() in ['pyperun']:
             arguments.remove(arguments[0])
             pypeArguments = []
@@ -153,6 +157,7 @@ class Pype(object):
                 return
             for arg in pypeArguments:
                 arguments.remove(arg)
+        # this was not called
         if 'FILE' in arguments:
             text = ''
             self.OutputStream.write('\nThe current pype contains filename placeholders identified by the string FILE.')
@@ -167,13 +172,34 @@ class Pype(object):
             elif text =='c':
                 while 'FILE' in arguments:
                     arguments[arguments.index('FILE')] = 'BROWSER'
+        # arguments is still ['/Users/rick/projects/vmtk/vmtk-build/Install/bin/vmtkimagereader', '-ifile', './aorta.mha', '--pipe', 'vmtkimageviewer', '-display', '0', '--pipe', 'vmtkimageotsuthresholds']
         while '--pipe' in arguments:
+            # arguments.index('--pipe') = 3 now
+            # scriptSlice = ['/Users/rick/projects/vmtk/vmtk-build/Install/bin/vmtkimagereader', '-ifile', './aorta.mha']
             scriptSlice = arguments[:arguments.index('--pipe')]
+            # create a new sublist in self.Scriptlist. 
+            # at first run self.ScriptList = []
+            # for scriptslice 0 -> /Users/rick/projects/vmtk/vmtk-build/Install/bin/vmtkimagereader
+            #     os.path.split(scriptSlice[0])[1] = vmtkimagereader
+            #       do it again and os.path.splitext(os.path.split(scriptSlice[0])[1])[0] = vmtkimagereader
+            #     scriptSlice[1:] = ['-ifile', './aorta.mha']
+            # this then sets self.ScriptList = [['vmtkimagereader', ['-ifile', './aorta.mha']]]
+            # ****
+            # second time around scriptSlice = ['vmtkimageviewer', '-display', '0']
+            #      first part = ['vmtkimageviewer]
+            #      second part = ['-display', '0']
+            #         self.Scriptlist now set to = [['vmtkimagereader', ['-ifile', './aorta.mha']], ['vmtkimageviewer', ['-display', '0']]]
             self.ScriptList.append([os.path.splitext(os.path.split(scriptSlice[0])[1])[0],scriptSlice[1:]])
+            # reset arguments to now be equal to ['vmtkimageviewer', '-display', '0', '--pipe', 'vmtkimageotsuthresholds']
+            # ***
+            # reset arguments = ['vmtkimageotsuthresholds']
+            #     loop will stop executing
             arguments = arguments[arguments.index('--pipe')+1:]
+        # scriptSlice now is ['vmtkimageotsuthresholds']
         scriptSlice = arguments[:]
         if not arguments:
             return
+        # self.ScriptList now = [['vmtkimagereader', ['-ifile', './aorta.mha']], ['vmtkimageviewer', ['-display', '0']], ['vmtkimageotsuthresholds', []]]
         self.ScriptList.append([os.path.splitext(os.path.split(scriptSlice[0])[1])[0],scriptSlice[1:]])
            
     def GetCompatibleMember(self,member,script):
@@ -184,16 +210,19 @@ class Pype(object):
         return compatibleOutputMembers[0]
     
     def AutoPipeScriptObject(self,scriptObject):
+        # scriptObject.ScriptName = vmtkimagereader
         self.PrintLog('Automatic piping ' + scriptObject.ScriptName)
         for memberEntry in scriptObject.InputMembers:
+            # if memberEntry.AutoPipe = 0 then enter
             if not memberEntry.AutoPipe:
                 continue
             if memberEntry.MemberType == 'id':
                 continue
             if memberEntry.MemberType == 'handle':
                 continue
-           
+            # self.ScriptObjectList = [] now
             candidateScriptObjectList = [candidateScriptObject for candidateScriptObject in self.ScriptObjectList if self.GetCompatibleMember(memberEntry,candidateScriptObject)]
+            # candidateScriptObjectList = [] now
             if not candidateScriptObjectList:
                 continue
             pipedScriptObject = candidateScriptObjectList[-1]
@@ -216,7 +245,8 @@ class Pype(object):
             memberType  = memberEntry.MemberType
             if memberEntry.ExplicitPipe == 'None':
                 memberEntry.MemberPipe = None
-                exec ('scriptObject.'+memberEntry.MemberName+'= None')
+                # exec ('scriptObject.'+memberEntry.MemberName+'= None')
+                setattr(scriptObject, memberEntry.MemberName, None)
                 continue
             if memberEntry.ExplicitPipe:
                 pipedArgument = memberEntry.ExplicitPipe
@@ -263,8 +293,8 @@ class Pype(object):
                 pipedMember = candidatePipedMembers[0]
                
                 memberEntry.MemberPipe = pipedScriptObject.ScriptName + '-' + str(pipedScriptObject.Id) + '.' + pipedMember.MemberName
-                self.PrintLog(memberName+' = '+memberEntry.MemberPipe,1)
-               
+                self.PrintLog(memberName+' = '+memberEntry.MemberPipe,1) 
+
     def PipeScriptObject(self,scriptObject):
         for memberEntry in [member for member in scriptObject.InputMembers if member.MemberPipe and not member.MemberValue]:
             pipedScriptName = memberEntry.MemberPipe.split('.')[0].split('-')[0]
@@ -275,16 +305,27 @@ class Pype(object):
                 previousScriptObjects = previousScriptObjects[:previousScriptObjects.index(scriptObject)]
             candidatePipedScriptObjects = [candidateScriptObject for candidateScriptObject in previousScriptObjects if (candidateScriptObject.ScriptName == pipedScriptName) and (candidateScriptObject.Id == pipedScriptId)]
             pipedScriptObject = candidatePipedScriptObjects[-1]
-            exec ('scriptObject.'+memberEntry.MemberName+'='+'pipedScriptObject.'+pipedMemberName)
-               
+            # exec ('scriptObject.'+memberEntry.MemberName+'='+'pipedScriptObject.'+pipedMemberName)
+            pipedScriptObjectMemberObject = getattr(pipedScriptObject, pipedMemberName)
+            setattr(scriptObject, memberEntry.MemberName, pipedScriptObjectMemberObject)
+
     def Execute(self):
+        ''' this is called after ParseArguments()
+
+        self.ScriptList is set to [['vmtkimagereader', ['-ifile', './aorta.mha']], ['vmtkimageviewer', ['-display', '0']], ['vmtkimageotsuthresholds', []]]
+
+        self.Arguments is set to ['/Users/rick/projects/vmtk/vmtk-build/Install/bin/vmtkimagereader', '-ifile', './aorta.mha', '--pipe', 'vmtkimageviewer', '-display', '0', '--pipe', 'vmtkimageotsuthresholds']
+        '''
         try:
             from vmtk import pypes
         except ImportError:
             return None
         self.ScriptObjectList = []
+        # self.ScriptList is now [['vmtkimagereader', ['-ifile', './aorta.mha']], ['vmtkimageviewer', ['-display', '0']], ['vmtkimageotsuthresholds', []]] 
         for scriptNameAndArguments in self.ScriptList:
+            # scriptNameAndArguments is now ['vmtkimagereader', ['-ifile', './aorta.mha']]
             self.PrintLog('')
+            # script name is 'vmtkimagereader'
             scriptName = scriptNameAndArguments[0]
             try:
                 module = importlib.import_module('vmtk.'+scriptName)
@@ -293,13 +334,17 @@ class Pype(object):
                 #   1) is a class defined within the script
                 #   2) the class is a subclass of pypes.pypescript
                 scriptObjectClasses = [x for x in dir(module) if isclass(getattr(module, x)) and issubclass(getattr(module, x), pypes.pypeScript)]
+                # scriptObjectClasses = ['vmtkImageReader']
                 scriptObjectClassName = scriptObjectClasses[0]
             except ImportError as e:
                 self.PrintError(str(e))
                 break
             scriptObject = getattr(module, scriptObjectClassName)
             scriptObject = scriptObject()
+            # scriptObject is the vmtkImageReader class instantiated as such. 
+            # scriptArguments is ['-ifile', './aorta.mha']
             scriptArguments = scriptNameAndArguments[1]
+            # set scriptObject.Arguments
             scriptObject.Arguments = scriptArguments
             scriptObject.LogOn = self.LogOn
             if self.InputStream:
@@ -307,10 +352,14 @@ class Pype(object):
             if self.OutputStream:
                 scriptObject.OutputStream = self.OutputStream
             scriptObject.ExitOnError = self.ExitOnError
+            # this is 1
             if self.AutoPipe:
+                # call into autopipescriptobject above 
                 self.AutoPipeScriptObject(scriptObject)
             self.PrintLog('Parsing options ' + scriptObject.ScriptName)
+            # call into pypescript.ParseArguments()
             execute = scriptObject.ParseArguments()
+            # execute is 1
             if not execute:
                 return
             if scriptObject.Disabled:

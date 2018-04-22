@@ -37,7 +37,7 @@ class pypeMember(object):
         self.ExplicitPipe = ''
         self.AutoPipe = 1
         self.Pushed = 0
-   
+  
     def IsInRange(self,value):
         if not self.MemberRange:
             return
@@ -100,6 +100,7 @@ class pypeMember(object):
                 representation += '<= ' + str(values[1])
             return representation
 
+
 class pypeScript(object):
     '''the base class for every high-level script.
 
@@ -130,7 +131,7 @@ class pypeScript(object):
 
     def __init__(self):
 
-        self.BuiltinOptionTypes = ['int','str','float']
+        self.BuiltinOptionTypes = ['int','str','float'] # do not change?
 
         self.InputStream = sys.stdin
         self.OutputStream = sys.stdout
@@ -160,7 +161,7 @@ class pypeScript(object):
         self.LogOn = 1
 
         self.Progress = 0
-                              
+
     def PrintLog(self,logMessage,indent=0):
         if not self.LogOn:
             return
@@ -176,7 +177,7 @@ class pypeScript(object):
           self.Exit()
         else:
           raise RuntimeError(errorMessage)
-    
+
     def Exit(self):
         sys.exit()
 
@@ -201,7 +202,7 @@ class pypeScript(object):
             self.InputStream.prompt(prompt,info=True)
         except:
             pass
- 
+
     def InputText(self,prompt='',validator=None):
         self.OutputText(prompt)
         try:
@@ -229,8 +230,7 @@ class pypeScript(object):
             memberType = memberEntry.MemberType       
             memberPipe = memberEntry.MemberPipe
             memberValue = self.__getattribute__(memberName)
-##            if memberPipe:
-##                self.__getattribute__("PrintLog")(memberName+' = '+memberPipe,1)
+
             if memberName == 'Self':
                 pass
             elif (memberType in self.BuiltinOptionTypes + ["bool"]) or (memberType == 'list'):
@@ -239,7 +239,7 @@ class pypeScript(object):
                 self.__getattribute__("PrintLog")(memberName+' = '+memberType,1)
             else:
                 self.__getattribute__("PrintLog")(memberName+' = '+str(memberValue),1)
-                           
+
     def PrintInputMembers(self):
         self.PrintLog("Input " + self.ScriptName + " members:")
         self.PrintMembers(self.InputMembers)
@@ -263,8 +263,7 @@ class pypeScript(object):
             self.InputMembers.append(member)
             if member.MemberIO:
                 filenameMember = pypeMember(self.GetIOInputFileNameMember(member.MemberName),self.GetIOFileNameOption(member.OptionName),'str',1,'','filename for the default ' + member.MemberName + ' reader')
-##                filenameMember.AutoPipe = 0
-                exec('self.'+filenameMember.MemberName+' = \'\'')
+                setattr(self, str(filenameMember.MemberName), '')
                 self.InputMembers.append(filenameMember)
 
     def SetOutputMembers(self,membersToAppend):
@@ -273,8 +272,7 @@ class pypeScript(object):
             self.OutputMembers.append(member)
             if member.MemberIO:
                 filenameMember = pypeMember(self.GetIOOutputFileNameMember(member.MemberName),self.GetIOFileNameOption(member.OptionName),'str',1,'','filename for the default ' + member.MemberName + ' writer')
-##                filenameMember.AutoPipe = 0
-                exec('self.'+filenameMember.MemberName+' = \'\'')
+                setattr(self, str(filenameMember.MemberName), '')
                 self.InputMembers.append(filenameMember)
 
     def SetScriptName(self,scriptName):
@@ -345,9 +343,6 @@ class pypeScript(object):
 
     def GetHTMLUsageString(self):
         usageString = ''
-        #usageString += '---' + '\n'
-        #usageString += 'layout: default' + '\n'
-        #usageString += '---' + '\n'
         usageString += '<h1>'
         usageString += self.ScriptName
         usageString += '</h1>'
@@ -384,94 +379,10 @@ class pypeScript(object):
                     if not memberDoc:
                         memberDoc = ''
                     memberUsageString += '<td>' + memberDoc + '</td>'
-                    #memberUsageString += ' | '
                 memberUsageString += '\n'
                 usageString += '<tr>' + memberUsageString + '</tr>' + '\n'
             usageString += '</table>\n'
         usageString += '\n'
-        return usageString
-
-    def GetDokuWikiUsageString(self):
-        usageString = ''
-        usageString = '======'
-        usageString += self.ScriptName
-        usageString += '======'
-        usageString += '\n'
-        if self.ScriptDoc != '':
-            usageString += '=====Description=====' + '\n'
-            usageString += self.ScriptDoc + '\n'
-        for memberList in [self.InputMembers, self.OutputMembers]:
-            if memberList == self.InputMembers :
-                 usageString += '=====Input arguments=====' + '\n'
-            elif memberList == self.OutputMembers :
-                 usageString += '=====Output arguments=====' + '\n'
-            usageString += '^ Argument ^ Variable ^ Type ^ Length ^ Range ^ Default ^ Description ^\n'
-            for memberEntry in memberList:
-                memberUsageString = ''
-                memberName  = memberEntry.MemberName
-                option = memberEntry.OptionName
-                memberType = memberEntry.MemberType
-                memberLength = memberEntry.MemberLength
-                memberRange = memberEntry.MemberRange
-                memberDoc = memberEntry.MemberDoc
-                if option!='':
-                    default = 0
-                    if memberLength == 0:
-                        memberUsageString += '| ' + option + ' | ' + memberName + ' | | | | | '
-                    elif memberType in self.BuiltinOptionTypes + ["bool"]:
-                        default = self.__getattribute__(memberName)
-                        memberUsageString += '| ' + option + ' | ' + memberName + ' | ' + memberType + ' | ' + str(memberLength) + ' | ' + str(memberRange) + ' | ' + str(default) + ' | '
-                    else:
-                        memberUsageString += '| ' + option + ' | ' + memberName + ' | ' + memberType + ' | ' + str(memberLength) + ' | | | '
-                    if memberDoc != '':
-                        memberUsageString += memberDoc
-                    memberUsageString += ' | '
-                memberUsageString += '\n'
-                usageString += memberUsageString
-        usageString += '\n'
-        return usageString
-
-    def GetPmWikiUsageString(self):
-        usageString = 'version=pmwiki-2.2.0-beta65 ordered=1 urlencoded=1\n'
-        usageString += 'name=VmtkScripts.' + self.ScriptName.capitalize() + '\n'
-        usageString += 'text='
-        usageString += '!' + self.ScriptName
-        usageString += '%0a'
-        if self.ScriptDoc != '':
-            usageString += '!!Description' + '%0a'
-            usageString += self.ScriptDoc + '%0a'
-            usageString += '%0a'
-        for memberList in [self.InputMembers, self.OutputMembers]:
-            if memberList == self.InputMembers :
-                 usageString += '!!Input arguments' + '%0a'
-            elif memberList == self.OutputMembers :
-                 usageString += '!!Output arguments' + '%0a'
-            usageString += '||border=1 cellpadding=3 cellspacing=0' + '%0a'
-            usageString += '||!Argument ||!Variable ||!Type ||!Length ||!Range ||!Default ||!Description ||%0a'
-            for memberEntry in memberList:
-                memberUsageString = ''
-                memberName  = memberEntry.MemberName
-                option = memberEntry.OptionName
-                memberType = memberEntry.MemberType
-                memberLength = memberEntry.MemberLength
-                memberRange = memberEntry.MemberRange
-                memberDoc = memberEntry.MemberDoc
-                if option!='':
-                    default = 0
-                    if memberLength == 0:
-                        memberUsageString += '||' + option + ' ||' + memberName + ' || || || || ||'
-                    elif memberType in self.BuiltinOptionTypes + ["bool"]:
-                        default = self.__getattribute__(memberName)
-                        memberUsageString += '||' + option + ' ||' + memberName + ' ||' + memberType + ' ||' + str(memberLength) + ' ||' + str(memberRange) + ' ||' + str(default) + ' ||'
-                    else:
-                        memberUsageString += '||' + option + ' ||' + memberName + ' ||' + memberType + ' ||' + str(memberLength) + ' || || ||'
-                    if memberDoc != '':
-                        memberUsageString += memberDoc
-                    memberUsageString += ' ||'
-                memberUsageString += '%0a'
-                usageString += memberUsageString
-            usageString += '%0a'
-        usageString += '%0a'
         return usageString
 
     def ParseArguments(self):
@@ -491,21 +402,13 @@ class pypeScript(object):
                 self.OutputText(self.GetHTMLUsageString())
                 self.PrintLog('')
                 return 0
-            if arg == '--dokuwiki':
-                self.PrintLog('')
-                self.OutputText(self.GetDokuWikiUsageString())
-                self.PrintLog('')
-                return 0
-            if arg == '--pmwiki':
-                self.PrintLog('')
-                self.OutputText(self.GetPmWikiUsageString())
-                self.PrintLog('')
-                return 0
             if (arg[0] == '-') & (len(arg)==1):
                 self.PrintError(self.GetUsageString() + '\n' + self.ScriptName + ' error: unknown option ' + arg + '\n')
                 return 0
+            # the correct case for an option
             if (arg[0] == '-'):
                 if (arg[1] in string.ascii_letters):
+                    # hopefully will return a list of pypescript.pypeMember objects
                     matchingMembers = [member for member in self.InputMembers if member.OptionName in [arg.lstrip('-'), arg.lstrip('-').rstrip('@')]]
                     if not matchingMembers:
                         self.PrintError(self.GetUsageString() + '\n' + self.ScriptName + ' error: unknown option ' + arg + '\n')
@@ -525,6 +428,7 @@ class pypeScript(object):
             activated = 0
             explicitPipe = 0
 
+            # will contiain list of options ie ['-ifile']
             specifiedOptions = [arg for arg in self.Arguments if (arg[0] == '-') and (arg[1] in string.ascii_letters + '-')]
             
             pushedOption = option + '@'
@@ -533,44 +437,62 @@ class pypeScript(object):
                 specifiedOptions[specifiedOptions.index(pushedOption)] = option
                 self.Arguments[self.Arguments.index(pushedOption)] = option
             
+            # when option = '-ifile' and '-ifile' in specifiedOptions.
             if option in specifiedOptions:
                 if memberLength == 0:
                     activated = 1
                 optionValues = []
+                #optionIndex = 0
                 optionIndex = self.Arguments.index(option)
                 if option != specifiedOptions[-1]:
                     nextOptionIndex = self.Arguments.index(specifiedOptions[specifiedOptions.index(option)+1])
                     optionValues = self.Arguments[optionIndex+1:nextOptionIndex]
                 else:
+                    # optionValues = ['./aorta.mha']
                     optionValues = self.Arguments[optionIndex+1:]
                 for value in optionValues:
+                    # value = './aorta.mha
                     if value[0] == '@':
                         memberEntry.ExplicitPipe = value[1:]
                         if value[1:] == '':
                             memberEntry.ExplicitPipe = 'None'
                     else: 
+                        # self.BuiltinOptionTypes = ['int', 'str', 'float']
+                        # memberType = 'str
+                        # this bit is to convert non string types to numerics
                         if memberType in self.BuiltinOptionTypes:
-                            exec('castValue = '+memberType+'(\''+value+'\')', globals())
+                            if memberType.lower() == 'str':
+                                castValue = str(value)
+                            elif memberType.lower() == 'int':
+                                castValue = int(value)
+                            elif memberType.lower() == 'float':
+                                castValue = float(value)
+                            else:
+                                self.PrintError('member type '+ memberType + ' not in pypescript BuiltinOptionType casting definitions')
                             memberValues.append(castValue)
                         elif memberType is 'bool':
-                            exec('castValue = int(\''+value+'\')', globals())
+                            castValue = int(value)
                             memberValues.append(castValue)
                         else:
                             memberValues.append(value)
             else:
                 continue
 
+            # memberValues now ['./aorta.mha']
             if memberLength != -1:
                 if (len(memberValues) != memberLength) and not memberEntry.ExplicitPipe:
                     self.PrintError(self.GetUsageString() + '\n' + 'Error for option '+option+': '+str(len(memberValues))+' entries given, '+str(memberLength)+' expected.' + '\n')
                     return 0
 
             if len(memberValues) > 0:
+                # memberLength = 1
                 if (memberLength==0):
                     if (activated == 1):
                         setattr(self,memberName,1)
                         memberEntry.MemberValue = 1
                 elif (memberLength==1):
+                    # memberName = InputFileName
+                    # memberValues = ['./aorta.mha']
                     setattr(self,memberName,memberValues[0])
                     memberEntry.MemberValue = memberValues[0]
                 else:
@@ -582,11 +504,13 @@ class pypeScript(object):
                     self.PrintError(self.GetUsageString() + '\n' + 'Error for option '+option+': should be either 0 or 1' + '\n')
                     return 0
 
+            # memberRange == ''
             if memberRange != '':
                 if [value for value in memberValues if not memberEntry.IsInRange(value)]:
                     self.PrintError(self.GetUsageString() + '\n' + 'Error for option '+option+': should be ' + memberEntry.GetRangeRepresentation() + '\n')
                     return 0
 
+            # memberType = 'str'
             if (memberType != ''):
                 if (memberLength==0):
                     if activated:
@@ -628,7 +552,7 @@ class pypeScript(object):
                     reader.InputStream = self.InputStream
                     reader.OutputStream = self.OutputStream
                     reader.Execute()
-                    exec('self.' + member.MemberName + ' = reader.Output')
+                    setattr(self, str(member.MemberName), reader.Output)
 
     def IOWrite(self):
         try:
@@ -674,6 +598,7 @@ class pypeScript(object):
 
     def Deallocate(self):
         pass
+
 
 class pypeMain(object):
 

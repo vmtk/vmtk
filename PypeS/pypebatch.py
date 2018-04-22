@@ -69,7 +69,6 @@ class pypeBatch(object):
             pattern = arg[1:-1]
             actualArgument = self.Directory + '/'
             if (pattern != ''):
-##                exec('actualArgument += fileName.' + pattern)
                 actualArgument += fileName.__getattribute__(pattern)
             else:
                 actualArgument += fileName
