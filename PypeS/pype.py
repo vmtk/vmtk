@@ -22,6 +22,18 @@ from inspect import isclass
 
 pype = 'Pype'
 
+def all_indices(value, qlist):
+    '''convenience method to a list of all indexes where an element is within a collection'''
+    indices = []
+    idx = -1
+    while True:
+        try:
+            idx = qlist.index(value, idx+1)
+            indices.append(idx)
+        except ValueError:
+            break
+    return indices
+
 class NullOutputStream(object):
 
     def __init__(self):
@@ -157,7 +169,7 @@ class Pype(object):
                 return
             for arg in pypeArguments:
                 arguments.remove(arg)
-        # this was not called
+
         if 'FILE' in arguments:
             text = ''
             self.OutputStream.write('\nThe current pype contains filename placeholders identified by the string FILE.')
@@ -172,57 +184,42 @@ class Pype(object):
             elif text =='c':
                 while 'FILE' in arguments:
                     arguments[arguments.index('FILE')] = 'BROWSER'
-        # arguments is still ['/Users/rick/projects/vmtk/vmtk-build/Install/bin/vmtkimagereader', '-ifile', './aorta.mha', '--pipe', 'vmtkimageviewer', '-display', '0', '--pipe', 'vmtkimageotsuthresholds']
-        while '--pipe' in arguments:
-            # arguments.index('--pipe') = 3 now
-            # scriptSlice = ['/Users/rick/projects/vmtk/vmtk-build/Install/bin/vmtkimagereader', '-ifile', './aorta.mha']
-            scriptSlice = arguments[:arguments.index('--pipe')]
-            # create a new sublist in self.Scriptlist. 
-            # at first run self.ScriptList = []
-            # for scriptslice 0 -> /Users/rick/projects/vmtk/vmtk-build/Install/bin/vmtkimagereader
-            #     os.path.split(scriptSlice[0])[1] = vmtkimagereader
-            #       do it again and os.path.splitext(os.path.split(scriptSlice[0])[1])[0] = vmtkimagereader
-            #     scriptSlice[1:] = ['-ifile', './aorta.mha']
-            # this then sets self.ScriptList = [['vmtkimagereader', ['-ifile', './aorta.mha']]]
-            # ****
-            # second time around scriptSlice = ['vmtkimageviewer', '-display', '0']
-            #      first part = ['vmtkimageviewer]
-            #      second part = ['-display', '0']
-            #         self.Scriptlist now set to = [['vmtkimagereader', ['-ifile', './aorta.mha']], ['vmtkimageviewer', ['-display', '0']]]
-            self.ScriptList.append([os.path.splitext(os.path.split(scriptSlice[0])[1])[0],scriptSlice[1:]])
-            # reset arguments to now be equal to ['vmtkimageviewer', '-display', '0', '--pipe', 'vmtkimageotsuthresholds']
-            # ***
-            # reset arguments = ['vmtkimageotsuthresholds']
-            #     loop will stop executing
-            arguments = arguments[arguments.index('--pipe')+1:]
-        # scriptSlice now is ['vmtkimageotsuthresholds']
-        scriptSlice = arguments[:]
-        if not arguments:
-            return
-        # self.ScriptList now = [['vmtkimagereader', ['-ifile', './aorta.mha']], ['vmtkimageviewer', ['-display', '0']], ['vmtkimageotsuthresholds', []]]
-        self.ScriptList.append([os.path.splitext(os.path.split(scriptSlice[0])[1])[0],scriptSlice[1:]])
-           
+
+        # get location where '--pipe' is in arguments list
+        pipeIndices = all_indices('--pipe', arguments)
+        # script names are at index 0 and 1 after the pipe argument
+        nodeNameIndices = [0] + [int(x + 1) for x in pipeIndices]
+        for scriptNumber, nodeIndex in enumerate(nodeNameIndices):
+            scriptName = os.path.split(arguments[nodeIndex])[1]
+            try:
+                scriptArgs = arguments[nodeIndex+1:pipeIndices[scriptNumber]]
+            except IndexError:
+                scriptArgs = arguments[nodeIndex+1:]
+            self.ScriptList.append([scriptName, scriptArgs])
+
+
     def GetCompatibleMember(self,member,script):
+        '''return a list of pypeMember objects which match 
+        '''
         pushedInputMembers = [scriptMember for scriptMember in script.InputMembers if scriptMember.Pushed]
-        compatibleOutputMembers = [scriptMember for scriptMember in pushedInputMembers + script.OutputMembers if scriptMember.AutoPipe and (scriptMember.MemberName == member.MemberName) and (scriptMember.MemberType == member.MemberType)]
+        compatibleOutputMembers = []
+        for scriptMember in pushedInputMembers + script.OutputMembers:
+            if scriptMember.AutoPipe and (scriptMember.MemberName == member.MemberName) and (scriptMember.MemberType == member.MemberType):
+                compatibleOutputMembers.append(scriptMember)
         if not compatibleOutputMembers:
             return None
         return compatibleOutputMembers[0]
     
     def AutoPipeScriptObject(self,scriptObject):
-        # scriptObject.ScriptName = vmtkimagereader
         self.PrintLog('Automatic piping ' + scriptObject.ScriptName)
         for memberEntry in scriptObject.InputMembers:
-            # if memberEntry.AutoPipe = 0 then enter
             if not memberEntry.AutoPipe:
                 continue
             if memberEntry.MemberType == 'id':
                 continue
             if memberEntry.MemberType == 'handle':
                 continue
-            # self.ScriptObjectList = [] now
             candidateScriptObjectList = [candidateScriptObject for candidateScriptObject in self.ScriptObjectList if self.GetCompatibleMember(memberEntry,candidateScriptObject)]
-            # candidateScriptObjectList = [] now
             if not candidateScriptObjectList:
                 continue
             pipedScriptObject = candidateScriptObjectList[-1]
@@ -232,6 +229,7 @@ class Pype(object):
             memberEntry.MemberPipe = pipedScriptObject.ScriptName + '-' + str(pipedScriptObject.Id) + '.' + pipedMember.MemberName
             self.PrintLog(memberEntry.MemberName + ' = ' + memberEntry.MemberPipe,1)
 
+    #TODO: This is not needed. it is only used by pypetestrunner
     def GetScriptObject(self,scriptName,scriptId):
         for scriptObject in self.ScriptObjectList:
             if (scriptObject.ScriptName == scriptName) & (scriptObject.Id == scriptId):
@@ -245,7 +243,6 @@ class Pype(object):
             memberType  = memberEntry.MemberType
             if memberEntry.ExplicitPipe == 'None':
                 memberEntry.MemberPipe = None
-                # exec ('scriptObject.'+memberEntry.MemberName+'= None')
                 setattr(scriptObject, memberEntry.MemberName, None)
                 continue
             if memberEntry.ExplicitPipe:
@@ -325,7 +322,6 @@ class Pype(object):
         for scriptNameAndArguments in self.ScriptList:
             # scriptNameAndArguments is now ['vmtkimagereader', ['-ifile', './aorta.mha']]
             self.PrintLog('')
-            # script name is 'vmtkimagereader'
             scriptName = scriptNameAndArguments[0]
             try:
                 module = importlib.import_module('vmtk.'+scriptName)
@@ -334,17 +330,13 @@ class Pype(object):
                 #   1) is a class defined within the script
                 #   2) the class is a subclass of pypes.pypescript
                 scriptObjectClasses = [x for x in dir(module) if isclass(getattr(module, x)) and issubclass(getattr(module, x), pypes.pypeScript)]
-                # scriptObjectClasses = ['vmtkImageReader']
                 scriptObjectClassName = scriptObjectClasses[0]
             except ImportError as e:
                 self.PrintError(str(e))
                 break
             scriptObject = getattr(module, scriptObjectClassName)
             scriptObject = scriptObject()
-            # scriptObject is the vmtkImageReader class instantiated as such. 
-            # scriptArguments is ['-ifile', './aorta.mha']
             scriptArguments = scriptNameAndArguments[1]
-            # set scriptObject.Arguments
             scriptObject.Arguments = scriptArguments
             scriptObject.LogOn = self.LogOn
             if self.InputStream:
@@ -352,14 +344,10 @@ class Pype(object):
             if self.OutputStream:
                 scriptObject.OutputStream = self.OutputStream
             scriptObject.ExitOnError = self.ExitOnError
-            # this is 1
             if self.AutoPipe:
-                # call into autopipescriptobject above 
                 self.AutoPipeScriptObject(scriptObject)
             self.PrintLog('Parsing options ' + scriptObject.ScriptName)
-            # call into pypescript.ParseArguments()
             execute = scriptObject.ParseArguments()
-            # execute is 1
             if not execute:
                 return
             if scriptObject.Disabled:

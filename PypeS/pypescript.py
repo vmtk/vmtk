@@ -568,7 +568,20 @@ class pypeScript(object):
         usageString += '\n'
         return usageString
 
-    def ParseArguments(self):
+
+    def _ParseArgumentsFlags(self):
+        '''execute special case argument flag behavior 
+        
+        check if --help --doc --html flags exist in the arguments list. if they do then execute the
+        special behavior indicated by those flags.
+
+        Also check to ensure that the options specified by -foo options exist with an apropriate member
+        with matching format to what is expected. 
+
+        returns:
+            bool: true if execution occured without any special cases. false if something happened
+        '''
+
         for arg in self.Arguments:
             if arg == '--help':
                 self.PrintLog('')
@@ -588,17 +601,66 @@ class pypeScript(object):
             if (arg[0] == '-') & (len(arg)==1):
                 self.PrintError(self.GetUsageString() + '\n' + self.ScriptName + ' error: unknown option ' + arg + '\n')
                 return 0
-            # the correct case for an option
             if (arg[0] == '-'):
                 if (arg[1] in string.ascii_letters):
-                    # hopefully will return a list of pypescript.pypeMember objects
                     matchingMembers = [member for member in self.InputMembers if member.OptionName in [arg.lstrip('-'), arg.lstrip('-').rstrip('@')]]
                     if not matchingMembers:
                         self.PrintError(self.GetUsageString() + '\n' + self.ScriptName + ' error: unknown option ' + arg + '\n')
                         return 0
+        return 1
+
+    def _CheckMemberValuesLength(self, memberValues, memberLength, memberEntry, option):
+        '''ensure that member values have the expected length
+        '''
+        if memberLength != -1:
+            if (len(memberValues) != memberLength) and not memberEntry.ExplicitPipe:
+                self.PrintError(self.GetUsageString() + '\n' + 'Error for option '+option+': '+str(len(memberValues))+' entries given, '+str(memberLength)+' expected.' + '\n')
+                return 0
+        return 1
+
+    def _CheckMemberValuesBlool(self, memberValues, option, memberType):
+        '''ensure that bool types have the correct value'''
+        if memberType is 'bool':
+            if [value for value in memberValues if value not in [0,1]]:
+                self.PrintError(self.GetUsageString() + '\n' + 'Error for option '+option+': should be either 0 or 1' + '\n')
+                return 0
+        return 1
+
+
+    def _CheckMemberValuesInRange(self, memberValues, memberEntry, option, memberRange):
+        '''ensure numeric values have the correct range'''
+        if memberRange != '':
+            if [value for value in memberValues if not memberEntry.IsInRange(value)]:
+                self.PrintError(self.GetUsageString() + '\n' + 'Error for option '+option+': should be ' + memberEntry.GetRangeRepresentation() + '\n')
+                return 0
+        return 1
+
+    def _PrintMemberTypeInformation(self, memberType, memberLength, activated, memberName, memberValues, memberEntry):
+        '''print useful type information about the member object'''
+        if (memberType != ''):
+            if (memberLength==0):
+                if activated:
+                    self.PrintLog(memberName + ' = ' + 'on',1)
+                else:
+                    self.PrintLog(memberName + ' = ' + 'off',1)
+            else:
+                if (memberLength==-1):
+                    memberLength = len(memberValues)
+                if memberEntry.ExplicitPipe:
+                    self.PrintLog(memberName+ ' = @' + memberEntry.ExplicitPipe,1)
+                else:
+                    self.PrintLog(memberName+ ' = ' + str(self.__getattribute__(memberName)),1)
+
+    def ParseArguments(self):
+        '''
+        self.Arguments: list of optionnames and args.
+            ie: self.Arguments = ['-ifile', './aorta.mha', '-flip', '1', '0', '1']
+        '''
+        flagBehavior = self._ParseArgumentsFlags()
+        if flagBehavior == False:
+            return 0
 
         for memberEntry in self.InputMembers:
-
             if not memberEntry.OptionName:
                 continue
 
@@ -611,7 +673,7 @@ class pypeScript(object):
             activated = 0
             explicitPipe = 0
 
-            # will contiain list of options ie ['-ifile']
+            # will contiain list of options ie ['-ifile, '-flip']
             specifiedOptions = [arg for arg in self.Arguments if (arg[0] == '-') and (arg[1] in string.ascii_letters + '-')]
             
             pushedOption = option + '@'
@@ -625,24 +687,18 @@ class pypeScript(object):
                 if memberLength == 0:
                     activated = 1
                 optionValues = []
-                #optionIndex = 0
                 optionIndex = self.Arguments.index(option)
                 if option != specifiedOptions[-1]:
                     nextOptionIndex = self.Arguments.index(specifiedOptions[specifiedOptions.index(option)+1])
                     optionValues = self.Arguments[optionIndex+1:nextOptionIndex]
                 else:
-                    # optionValues = ['./aorta.mha']
                     optionValues = self.Arguments[optionIndex+1:]
                 for value in optionValues:
-                    # value = './aorta.mha
                     if value[0] == '@':
                         memberEntry.ExplicitPipe = value[1:]
                         if value[1:] == '':
                             memberEntry.ExplicitPipe = 'None'
                     else: 
-                        # self.BuiltinOptionTypes = ['int', 'str', 'float']
-                        # memberType = 'str
-                        # this bit is to convert non string types to numerics
                         if memberType in self.BuiltinOptionTypes:
                             if memberType.lower() == 'str':
                                 castValue = str(value)
@@ -661,52 +717,31 @@ class pypeScript(object):
             else:
                 continue
 
-            # memberValues now ['./aorta.mha']
-            if memberLength != -1:
-                if (len(memberValues) != memberLength) and not memberEntry.ExplicitPipe:
-                    self.PrintError(self.GetUsageString() + '\n' + 'Error for option '+option+': '+str(len(memberValues))+' entries given, '+str(memberLength)+' expected.' + '\n')
-                    return 0
+            memberValueLengthCheck = self._CheckMemberValuesLength(memberValues, memberLength, memberEntry, option)
+            if memberValueLengthCheck == False:
+                return 0
 
             if len(memberValues) > 0:
-                # memberLength = 1
                 if (memberLength==0):
                     if (activated == 1):
-                        setattr(self,memberName,1)
+                        setattr(self, memberName, 1)
                         memberEntry.MemberValue = 1
                 elif (memberLength==1):
-                    # memberName = InputFileName
-                    # memberValues = ['./aorta.mha']
-                    setattr(self,memberName,memberValues[0])
+                    setattr(self, memberName, memberValues[0])
                     memberEntry.MemberValue = memberValues[0]
                 else:
                     setattr(self,memberName,memberValues)
                     memberEntry.MemberValue = memberValues
 
-            if memberType is 'bool':
-                if [value for value in memberValues if value not in [0,1]]:
-                    self.PrintError(self.GetUsageString() + '\n' + 'Error for option '+option+': should be either 0 or 1' + '\n')
-                    return 0
-
-            # memberRange == ''
-            if memberRange != '':
-                if [value for value in memberValues if not memberEntry.IsInRange(value)]:
-                    self.PrintError(self.GetUsageString() + '\n' + 'Error for option '+option+': should be ' + memberEntry.GetRangeRepresentation() + '\n')
-                    return 0
-
-            # memberType = 'str'
-            if (memberType != ''):
-                if (memberLength==0):
-                    if activated:
-                        self.PrintLog(memberName + ' = ' + 'on',1)
-                    else:
-                        self.PrintLog(memberName + ' = ' + 'off',1)
-                else:
-                    if (memberLength==-1):
-                        memberLength = len(memberValues)
-                    if memberEntry.ExplicitPipe:
-                        self.PrintLog(memberName+ ' = @' + memberEntry.ExplicitPipe,1)
-                    else:
-                        self.PrintLog(memberName+ ' = ' + str(self.__getattribute__(memberName)),1)
+            memberValuesBoolCheck = self._CheckMemberValuesBlool(memberValues, option, memberType)
+            if memberValuesBoolCheck == False:
+                return 0
+            memberValuesRangeCheck = self._CheckMemberValuesInRange(memberValues, memberEntry, option, memberRange)
+            if memberValuesRangeCheck == False:
+                return 0
+            
+            self. _PrintMemberTypeInformation(memberType, memberLength, activated, memberName, memberValues, memberEntry)
+        
         return 1
 
     def IORead(self):
