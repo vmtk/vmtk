@@ -19,10 +19,16 @@ import string
 import os.path
 import importlib
 from inspect import isclass
+import pdb
 
 class pypeMember(object):
 
     def __init__(self,memberName,optionName,memberType,memberLength,memberRange='',memberDoc='',memberIO=''):
+        '''pype member object created from specification in pypeScript.SetInputMembers of SetOutputMembers
+        
+        note: default arguments of memberRange, memberDoc, and memberIO are = '' (aka. an empty string.)
+        when treated as a "truthiness" value, empty strings return false (aka. eval(not '') >> True )
+        '''
 
         self.MemberName = memberName
         self.OptionName = optionName
@@ -39,51 +45,97 @@ class pypeMember(object):
         self.Pushed = 0
   
     def IsInRange(self,value):
+        '''validates weather the option value is valid for the script member specified range
+
+        arguments:
+            value (str, int, float): the parameter value which was set
+
+        returns:
+            boolean: true if valid, false if not. 
+        '''
         if not self.MemberRange:
             return
+        # checks for case where specific option is selected from a list of potentials. 
         if self.MemberRange[0] == '[' and self.MemberRange[-1] == ']':
             parsedMemberRange = [eval(entry) for entry in self.MemberRange[1:-1].split(',')]
             if value in parsedMemberRange:
                 return True
+        # checks for case where option is a numeric type which needs to be in a particular range
         if self.MemberRange[0] == '(' and self.MemberRange[-1] == ')':
             parsedMemberRange = [entry for entry in self.MemberRange[1:-1].split(',')]
             if len(parsedMemberRange) < 2:
-                return False
-            inRange = True
-            if parsedMemberRange[0] and value < eval(parsedMemberRange[0]):
-                inRange = False
-            if parsedMemberRange[1] and value > eval(parsedMemberRange[1]):
+                return False    
+            inRange = True  
+            # if less than the lower value, return false
+            if parsedMemberRange[0] and value < float(parsedMemberRange[0]):
+                inRange = False 
+            # if greater than the upper value, return false
+            if parsedMemberRange[1] and value > float(parsedMemberRange[1]):
                 inRange = False
             return inRange
         return False
 
     def GetRangeEnumeration(self):
+        '''Returns the valid range specified in scipt input members if valid range is part of a list
+
+        this function is only called from the GetRangeRepresentation method when the
+        script --help text is generated. 
+        '''
         if not self.MemberRange:
             return []
+
         if self.MemberRange[0] == '[' and self.MemberRange[-1] == ']':
             parsedMemberRange = [eval(entry) for entry in self.MemberRange[1:-1].split(',')]
             return parsedMemberRange
-        return []
+        else:
+            return []
  
     def GetRangeValues(self):
+        '''returns the valid range specified in the scipt input members if valid range in a numeric limit.
+
+        this function is only called from the GetRangeRepresentation method when the
+        script --help text is generated. If possible, this should return a list of 
+        size = 2. the first element is the lower limit. The second element is the 
+        upper limit (or None if no upper limit). 
+        '''
         if not self.MemberRange:
             return []
+
         if self.MemberRange[0] == '(' and self.MemberRange[-1] == ')':
             parsedMemberRange = []
             for entry in self.MemberRange[1:-1].split(','):
                 if entry != '':
-                    entry = eval(entry)
+                    entry = float(entry)
                 else:
                     entry = None
                 parsedMemberRange.append(entry)
-            if len(parsedMemberRange) == 2:
-                parsedMemberRange.append(None)
-            if len(parsedMemberRange) != 3:
+            if len(parsedMemberRange) != 2:
+                # this essentially is a vaildity check for the input. 
+                # if the entry is misformated, then just return an empty list
                 return []
             return parsedMemberRange
-        return []
+        else:
+            return []
 
     def GetRangeRepresentation(self):
+        '''returns the valid range specified in the script input members
+
+        This function is only called when trying to print the '--help' text
+        of a script. 
+        
+        In this context 'range enumeration' refers to a parameter which
+        needs to match some value in a list. This is typically a string (ex: for
+        vmtkimagemorphology, the Operation parameter contains a range enumeration
+        of ['"dilate"', '"erode"', '"open"', '"close"'])
+
+        Conversly, 'range value' refers to an integer or float value which much be
+        contained within some bounding range (ex: for vmtkimagemorphology, the 
+        BallRadius parameter must be >= 0.0)
+
+        returns:
+            str: text containing the correct formating for either a range enumeration
+                or range value. 
+        '''
         if not self.MemberRange:
             return []
         enumeration = self.GetRangeEnumeration()
@@ -163,6 +215,12 @@ class pypeScript(object):
         self.Progress = 0
 
     def PrintLog(self,logMessage,indent=0):
+        '''send logs to the selected output stream
+
+        arguments:
+            logMessage (str): text, or printable object, to send to output stream
+            indent (int): indent level for the output text
+        '''
         if not self.LogOn:
             return
         indentUnit = '    '
@@ -172,6 +230,11 @@ class pypeScript(object):
         self.OutputStream.write(indentation + logMessage + '\n')
 
     def PrintError(self,errorMessage):
+        '''raise runtime error and print log message to selected output stream. 
+
+        arguments:
+            errorMessage (str): text, or printable object, to send to input stream.
+        '''
         self.OutputStream.write(errorMessage + '\n')
         if self.ExitOnError:
           self.Exit()
@@ -179,12 +242,22 @@ class pypeScript(object):
           raise RuntimeError(errorMessage)
 
     def Exit(self):
+        '''gracefully exit python and clean up held memory'''
         sys.exit()
 
     def OutputText(self,text):
+        '''print message to output stream'''
         self.OutputStream.write(text)
 
     def OutputProgress(self,progress,percentStep):
+        '''print progress of script operations which support progress polling
+
+        arguments:
+            progress (float): a value between 0 and 1 indicating
+                the percentage complete to print. 
+            percentStep (int): a value between 1 and 99 specifying the interval
+                between successive progress reports. 
+        '''
         if int(100 * progress)/percentStep == int(100 * self.Progress)/percentStep:
             return
         self.Progress = progress
@@ -194,9 +267,17 @@ class pypeScript(object):
         self.InputInfo('Progress: '+str(int(100 * self.Progress))+'%')
  
     def EndProgress(self):
+        '''method called when finished reporting algorithm progress to output stream.'''
         self.OutputStream.write('\n')
  
     def InputInfo(self,prompt=''):
+        '''print an informational message to the input stream. 
+        
+        This is typically used to alerts a user to a required action.
+        
+        arguments:
+            prompt (str): message to print to the selected input stream.
+        '''
         self.OutputText(prompt)
         try:
             self.InputStream.prompt(prompt,info=True)
@@ -204,6 +285,17 @@ class pypeScript(object):
             pass
 
     def InputText(self,prompt='',validator=None):
+        '''prompts a user to input something on the keyboard and returns the input.
+        
+        arguments:
+            prompt (str): the text to show to the user.
+            validator (obj:`bool`, optional): defaults to None. A method attached to
+                the script object instance which accepts a string and returns true 
+                or false if the input is valid or not
+
+        returns:
+            str: the user input casted to a string type. 
+        '''
         self.OutputText(prompt)
         try:
             self.InputStream.prompt(prompt)
@@ -224,11 +316,19 @@ class pypeScript(object):
                     text = text.rstrip('\n')
         return text
 
-    def PrintMembers(self,members):
+    def _PrintMembers(self,members):
+        '''given a list of pypemember objects, print the name and value to the output stream
+        
+        this method is called by PrintInputMembers and PrintOutputMember methods. 
+
+        arguments:
+            members (list:'obj'): a list containing instances of pypeMember objects which have 
+                already been instantiated
+        '''
         for memberEntry in members:
             memberName  = memberEntry.MemberName
             memberType = memberEntry.MemberType       
-            memberPipe = memberEntry.MemberPipe
+            # memberPipe = memberEntry.MemberPipe # rli: not needed, but don't want to delete just yet. 
             memberValue = self.__getattribute__(memberName)
 
             if memberName == 'Self':
@@ -241,14 +341,25 @@ class pypeScript(object):
                 self.__getattribute__("PrintLog")(memberName+' = '+str(memberValue),1)
 
     def PrintInputMembers(self):
+        '''prints script object input member names and values to output stream'''
         self.PrintLog("Input " + self.ScriptName + " members:")
-        self.PrintMembers(self.InputMembers)
+        self._PrintMembers(self.InputMembers)
 
     def PrintOutputMembers(self):
+        '''prints script object output member names and values to output stream'''
         self.PrintLog("Output " + self.ScriptName + " members:")
-        self.PrintMembers(self.OutputMembers)
+        self._PrintMembers(self.OutputMembers)
 
-    def ConvertToPypeMembers(self,members):
+    def _ConvertToPypeMembers(self,members):
+        '''creates a pypeMember instance for each member in the members input list
+        
+        arguments:
+            members (obj:`list`:obj:`list`): a list of lists containing pype member
+                specification. 
+
+        returns:
+            list of pypeMember objects.
+        '''
         pypeMembers = []
         for member in members:
             if type(member) == pypeMember:
@@ -258,33 +369,99 @@ class pypeScript(object):
         return pypeMembers
 
     def SetInputMembers(self,membersToAppend):
-        pypeMembersToAppend = self.ConvertToPypeMembers(membersToAppend)
+        '''creates a pypemember object instance for each input member specification
+
+        Each pypemember object instance is sotred as an element in the self.InputMembers list.
+
+        arguments:
+            membersToAppend (obj:'list':obj:'list'): a list of lists. Each list represents
+                and describes an Input Member and will have in general 6 elements with a 
+                last 7th optional one. This first element is the name of the variable we 
+                are gonna use as a member. The second element This is the command line text 
+                that we use to refer to this member. The third element is the variable type 
+                of the element. The fourth element is This is how many elements our member will
+                have. There are cases where we consider as a member an array or a list of elements.
+                In case we don’t want to limit the number of elements for a memeber we write -1.
+                The fourth is This is the validity check of our member. In case the type is a string,
+                one can specify a list of valid strings (['stringA','stringB']), if it’s a number, 
+                one can specify the valid range ( (0.0,) or (1.0,100.0) ). The fifth is a short
+                description of this particular member. This text will be shown when the –help 
+                option is invoked. The optional seventh argument denotes the script that should be
+                used to read (for InputMembers) the associated data. This will automatically lead 
+                to the creation of an additional option at the command line with the same option 
+                name suffixed by ‘file’ (in this case, -ifile).
+        
+        example: 
+            membersToAppend = [['Image','i','vtkImageData',1,'','the input image','vmtkimagereader'],
+                               ['Levels','levels','float',-1,'','graylevels to generate the isosurface at']]
+        '''
+        pypeMembersToAppend = self._ConvertToPypeMembers(membersToAppend)
         for member in pypeMembersToAppend:
-            self.InputMembers.append(member)
+            self.InputMembers.append(member) # self.InputMembers is initially instantiated as a list
             if member.MemberIO:
-                filenameMember = pypeMember(self.GetIOInputFileNameMember(member.MemberName),self.GetIOFileNameOption(member.OptionName),'str',1,'','filename for the default ' + member.MemberName + ' reader')
+                filenameMember = pypeMember(self.GetIOInputFileNameMember(member.MemberName),
+                                            self.GetIOFileNameOption(member.OptionName),
+                                            'str', 1, '',
+                                            'filename for the default ' + member.MemberName + ' reader')
                 setattr(self, str(filenameMember.MemberName), '')
                 self.InputMembers.append(filenameMember)
 
     def SetOutputMembers(self,membersToAppend):
-        pypeMembersToAppend = self.ConvertToPypeMembers(membersToAppend)
+        '''creates a pypemember object instance for each output member specification
+
+        Each pypemember object instance is sotred as an element in the self.OutputMembers list.
+
+        arguments:
+            membersToAppend (obj:'list':obj:'list'): a list of lists. Each list represents
+                and describes an Output Member and will have in general 6 elements with a 
+                last 7th optional one. This first element is the name of the variable we 
+                are gonna use as a member. The second element This is the command line text 
+                that we use to refer to this member. The third element is the variable type 
+                of the element. The fourth element is This is how many elements our member will
+                have. There are cases where we consider as a member an array or a list of elements.
+                In case we don’t want to limit the number of elements for a memeber we write -1.
+                The fourth is This is the validity check of our member. In case the type is a string,
+                one can specify a list of valid strings (['stringA','stringB']), if it’s a number, 
+                one can specify the valid range ( (0.0,) or (1.0,100.0) ). The fifth is a short
+                description of this particular member. This text will be shown when the –help 
+                option is invoked. The optional seventh argument denotes the script that should be
+                used to write (for OutputMembers) the associated data. This will automatically 
+                lead to the creation of an additional option at the command line with the same 
+                option name suffixed by ‘file’ (in this case, -ofile).
+        
+        example: 
+            membersToAppend = [['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter']]
+        '''
+        pypeMembersToAppend = self._ConvertToPypeMembers(membersToAppend)
         for member in pypeMembersToAppend:
-            self.OutputMembers.append(member)
-            if member.MemberIO:
-                filenameMember = pypeMember(self.GetIOOutputFileNameMember(member.MemberName),self.GetIOFileNameOption(member.OptionName),'str',1,'','filename for the default ' + member.MemberName + ' writer')
+            self.OutputMembers.append(member) # self.OutputMembers is initially instantiated as a list
+            if member.MemberIO: 
+                filenameMember = pypeMember(self.GetIOOutputFileNameMember(member.MemberName),
+                                            self.GetIOFileNameOption(member.OptionName),
+                                            'str', 1, '',
+                                            'filename for the default ' + member.MemberName + ' writer')
                 setattr(self, str(filenameMember.MemberName), '')
                 self.InputMembers.append(filenameMember)
 
     def SetScriptName(self,scriptName):
+        '''sets the script object ScriptName attribute'''
         self.ScriptName = scriptName
 
     def SetScriptDoc(self,scriptDoc):
+        '''sets the script object ScriptDoc attribute'''
         self.ScriptDoc = scriptDoc
 
     def GetScriptDocString(self):
+        '''returns the scriptobject ScriptDoc attribute value'''
         return self.ScriptDoc
 
     def GetUsageString(self):
+        '''get a plain text string describing useful information about the current script object
+        
+        returns a formated string which contains the current ScriptName, ScriptDoc, and
+        Input/Output member fields (name, option, type, length, range, doc, default, and
+        helptext)
+        '''
         usageString = ''
         scriptUsageString = os.path.splitext(self.ScriptName)[0]
         if self.ScriptDoc:
@@ -342,6 +519,12 @@ class pypeScript(object):
         return usageString
 
     def GetHTMLUsageString(self):
+        '''get a html formatted tagged string describing useful information about the current script object
+        
+        returns a formated string which contains the current ScriptName, ScriptDoc, and
+        Input/Output member fields (name, option, type, length, range, doc, default, and
+        helptext)
+        '''
         usageString = ''
         usageString += '<h1>'
         usageString += self.ScriptName
