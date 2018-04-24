@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 ## Program:   PypeS
 ## Module:    $RCSfile: pype.py,v $

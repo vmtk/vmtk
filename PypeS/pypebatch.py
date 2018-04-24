@@ -1,4 +1,5 @@
 #!${PYTHON_SHEBANG}
+# -*- coding: utf-8 -*-
 
 ## Program:   PypeS
 ## Module:    $RCSfile: pypebatch.py,v $
