@@ -125,12 +125,12 @@ class vmtkPointListSeedSelector(vmtkSeedSelector):
         pointLocator.SetDataSet(self._Surface)
         pointLocator.BuildLocator()
 
-        for i in range(len(self.SourcePoints)/3):
+        for i in range(len(self.SourcePoints)//3):
             point = [self.SourcePoints[3*i+0],self.SourcePoints[3*i+1],self.SourcePoints[3*i+2]]
             id = pointLocator.FindClosestPoint(point)
             self._SourceSeedIds.InsertNextId(id)
 
-        for i in range(len(self.TargetPoints)/3):
+        for i in range(len(self.TargetPoints)//3):
             point = [self.TargetPoints[3*i+0],self.TargetPoints[3*i+1],self.TargetPoints[3*i+2]]
             id = pointLocator.FindClosestPoint(point)
             self._TargetSeedIds.InsertNextId(id)
