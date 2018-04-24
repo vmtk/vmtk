@@ -301,105 +301,108 @@ class Pype(object):
         '''manually connect input memberss and  outputMembers of scriptObjects
         
         manual connection is specified by using the @ symbol, followed by the name of
-        the script we want to pipe from, dot the piped option. 
+        the script we want to pipe from, dot the piped option. This module determines which
+        of the three types of explicit piping methods was used:
+            1) option only (@.o): shorthand for specifying previous scriptname with option "o"
+            2) scriptname and option only (@foo.o): specify scriptname "foo" with option "o"
+            3) scriptname, id, and option (@foo-1.o): specify which scriptname to use if multiple are
+               included in the same pipe, with option "o"
+
+        Followed by the appropriate check for which scriptobjects are candidates for the given name and option.
+        Nothing is returned, instead the scriptObject memberEntry.MemberPipe is set with the appropriate
+        specifier for it's data soruce. 
         
         arguments:
             scriptObject (obj): the scriptObject which needs to have it's input members set. 
 
+        TODO: Refactor into seperate methods
         '''
         self.PrintLog('Explicit piping ' + scriptObject.ScriptName)
         for memberEntry in scriptObject.InputMembers:
             memberName  = memberEntry.MemberName
-            option = memberEntry.OptionName
-            memberType  = memberEntry.MemberType
-
             if memberEntry.ExplicitPipe == 'None':
                 memberEntry.MemberPipe = None
                 setattr(scriptObject, memberEntry.MemberName, None)
                 continue
-
             if not memberEntry.ExplicitPipe:
                 continue
 
             pipedArgument = memberEntry.ExplicitPipe
             splitPipedArgument = pipedArgument.split('.')
-
-            if (len(splitPipedArgument)<2):
-                self.PrintError('Error: invalid option piping: '+pipedArgument)
-
-            upstreamPipedModuleName = splitPipedArgument[0]
-            if not upstreamPipedModuleName:
-                upstreamPipedModuleName = self.ScriptObjectList[-1].ScriptName
-
-            upstreamPipedOption = ''
-            if (len(splitPipedArgument) == 2):
-                upstreamPipedOption = splitPipedArgument[1]
-            else:
-                self.PrintError('Error: invalid option piping: '+pipedArgument)
-
-            if not upstreamPipedOption:
+            if len(splitPipedArgument) != 2:
                 self.PrintError('Error: invalid option piping: '+pipedArgument)
 
             upstreamPipedId = ''
-            splitUpstreamPipedModuleName = upstreamPipedModuleName.split('-')
-            if (len(splitUpstreamPipedModuleName) > 1):
-                upstreamPipedModuleName = splitUpstreamPipedModuleName[-2]
-                upstreamPipedId = splitUpstreamPipedModuleName[-1]
+            upstreamPipedOption = splitPipedArgument[1]
+            # handle when scriptname is omited and only option is passed (ie. @.o)
+            if pipedArgument.startswith('.'):
+                upstreamPipedModuleName = self.ScriptObjectList[-1].ScriptName
+            # handle when a scriptname, option, and id is passed (ie. @vmtkimageviewer-1.o)
+            elif ('-' in pipedArgument) and ('.' in pipedArgument):
+                upstreamPipedModuleName, upstreamPipedId = splitPipedArgument[0].split('-')
+            # handle when only a scriptname and option is passes (ie. @vmtkimageviewer.o)
+            else:
+                upstreamPipedModuleName = splitPipedArgument[0]
 
             candidateScriptObjectList = []
+            for candidateScriptObject in self.ScriptObjectList:
+                if candidateScriptObject.ScriptName == upstreamPipedModuleName:
+                    candidateScriptObjectList.append(candidateScriptObject)
+            
+            if upstreamPipedId:
+                tempCandidateScriptObjectList = []
+                for candidateScriptObject in candidateScriptObjectList:
+                    if upstreamPipedId == candidateScriptObject.Id:
+                        tempCandidateScriptObjectList.append(candidateScriptObject)
+                candidateScriptObjectList = tempCandidateScriptObjectList
 
-            if upstreamPipedModuleName:
-                for candidateScriptObject in self.ScriptObjectList:
-                    if candidateScriptObject.ScriptName == upstreamPipedModuleName:
-                        candidateScriptObjectList.append(candidateScriptObject)
-
-                if upstreamPipedId:
-                    newCandidateScriptObjectList = []
-                    for candidateScriptObject in candidateScriptObjectList:
-                        if upstreamPipedId == candidateScriptObject.Id:
-                            newCandidateScriptObjectList.append(candidateScriptObject)
-                    candidateScriptObjectList = newCandidateScriptObjectList
-
-            # if upstreamPipedModuleName:
-            #     candidateScriptObjectList = [candidateScriptObject for candidateScriptObject in self.ScriptObjectList if candidateScriptObject.ScriptName == upstreamPipedModuleName]
-            #     if upstreamPipedId:
-            #         candidateScriptObjectList = [candidateScriptObject for candidateScriptObject in candidateScriptObjectList if upstreamPipedId == candidateScriptObject.Id]
-                    
             if not candidateScriptObjectList:
                 self.PrintError('Error: invalid option piping: '+pipedArgument)
                 continue
-                
-            pipedScriptObject = candidateScriptObjectList[-1]
             
             candidatePipedMembers = []
+            pipedScriptObject = candidateScriptObjectList[-1]
             for member in pipedScriptObject.OutputMembers + pipedScriptObject.InputMembers:
                 if upstreamPipedOption == member.OptionName:
                     candidatePipedMembers.append(member)
-            
-            # candidatePipedMembers = [member for member in pipedScriptObject.OutputMembers + pipedScriptObject.InputMembers if upstreamPipedOption == member.OptionName]
 
             if not candidatePipedMembers:
                 self.PrintError('Error: invalid option piping: '+pipedArgument)
                 continue
 
             pipedMember = candidatePipedMembers[0]
-            
             memberEntry.MemberPipe = pipedScriptObject.ScriptName + '-' + str(pipedScriptObject.Id) + '.' + pipedMember.MemberName
             self.PrintLog(memberName+' = '+memberEntry.MemberPipe,1) 
 
     def PipeScriptObject(self,scriptObject):
-        for memberEntry in [member for member in scriptObject.InputMembers if member.MemberPipe and not member.MemberValue]:
+        '''perform the actual data transfer from one script object into the input member of another.
+
+        arguments:
+            scriptObject (obj): an instance of scriptObject which has had it's memberEnty.MemberPipe
+                attributes set through automatic and explicit pyping
+        '''
+        scriptMemberList = []
+        for member in scriptObject.InputMembers:
+            if (member.MemberPipe) and (not member.MemberValue):
+                scriptMemberList.append(member)
+
+        for memberEntry in scriptMemberList:
             pipedScriptName = memberEntry.MemberPipe.split('.')[0].split('-')[0]
             pipedScriptId = memberEntry.MemberPipe.split('.')[0].split('-')[1]
             pipedMemberName = memberEntry.MemberPipe.split('.')[1]
+            
             previousScriptObjects = self.ScriptObjectList[:]
             if scriptObject in previousScriptObjects:
                 previousScriptObjects = previousScriptObjects[:previousScriptObjects.index(scriptObject)]
-            candidatePipedScriptObjects = [candidateScriptObject for candidateScriptObject in previousScriptObjects if (candidateScriptObject.ScriptName == pipedScriptName) and (candidateScriptObject.Id == pipedScriptId)]
+            
+            candidatePipedScriptObjects = []
+            for candidateScriptObject in previousScriptObjects:
+                if (candidateScriptObject.ScriptName == pipedScriptName) and (candidateScriptObject.Id == pipedScriptId):
+                    candidatePipedScriptObjects.append(candidateScriptObject)
+
             pipedScriptObject = candidatePipedScriptObjects[-1]
-            # exec ('scriptObject.'+memberEntry.MemberName+'='+'pipedScriptObject.'+pipedMemberName)
-            pipedScriptObjectMemberObject = getattr(pipedScriptObject, pipedMemberName)
-            setattr(scriptObject, memberEntry.MemberName, pipedScriptObjectMemberObject)
+            pipedScriptObjectMemberName = getattr(pipedScriptObject, pipedMemberName)
+            setattr(scriptObject, memberEntry.MemberName, pipedScriptObjectMemberName)
 
     def Execute(self):
         ''' this is called after ParseArguments()
