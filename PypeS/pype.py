@@ -235,20 +235,38 @@ class Pype(object):
                 scriptArgs = arguments[scriptNameIndex+1:]
             self.ScriptList.append([scriptName, scriptArgs])
 
+    def GetCompatibleMember(self,memberEntry,script):
+        '''given a memberEntry object, find compatible input members for a script object.
 
-    def GetCompatibleMember(self,member,script):
-        '''return a list of pypeMember objects which match 
+        arguments:
+            memberEntry (obj): a memberEntry object
+            script (obj): a script object
+
+        returns:
+            (obj): a script member compatible with memberEntry, or None if not compatible
         '''
         pushedInputMembers = [scriptMember for scriptMember in script.InputMembers if scriptMember.Pushed]
         compatibleOutputMembers = []
         for scriptMember in pushedInputMembers + script.OutputMembers:
-            if scriptMember.AutoPipe and (scriptMember.MemberName == member.MemberName) and (scriptMember.MemberType == member.MemberType):
+            if scriptMember.AutoPipe and (scriptMember.MemberName == memberEntry.MemberName) and (scriptMember.MemberType == memberEntry.MemberType):
                 compatibleOutputMembers.append(scriptMember)
         if not compatibleOutputMembers:
             return None
         return compatibleOutputMembers[0]
     
     def AutoPipeScriptObject(self,scriptObject):
+        '''automatically connect inputs members of a scriptObject with outputMembers which have come before.
+        
+        When a script completes execution, the next script to execute is sent here. This attempts to automatically
+        connect compatible output members of prior script objects with the input members of this (the next) script
+        object. If a compatible member is found, this script object's compatible input memberEntry.MemberPipe attribute
+        is set. Note: Automatic piping is overriden by explicit member piping. 
+
+        example: 
+            for -> vmtkimagereader -ifile foo --pipe vmtkimageviewer
+                the vmtkimageviewer memberEntry.MemberPipe for memberEntry MemberName == Image 
+                is set to: vmtkimagereader-0.Image
+        '''
         self.PrintLog('Automatic piping ' + scriptObject.ScriptName)
         for memberEntry in scriptObject.InputMembers:
             if not memberEntry.AutoPipe:
@@ -261,74 +279,113 @@ class Pype(object):
             if not candidateScriptObjectList:
                 continue
             pipedScriptObject = candidateScriptObjectList[-1]
-            pipedMember = self.GetCompatibleMember(memberEntry,pipedScriptObject)
-            # Creates a memberpipe name of the following format
-            # Image = vmtkimagereader-0.Image
+            pipedMember = self.GetCompatibleMember(memberEntry, pipedScriptObject)
             memberEntry.MemberPipe = pipedScriptObject.ScriptName + '-' + str(pipedScriptObject.Id) + '.' + pipedMember.MemberName
             self.PrintLog(memberEntry.MemberName + ' = ' + memberEntry.MemberPipe,1)
 
     def GetScriptObject(self,scriptName,scriptId):
+        '''return an instance of a script object which has executed in the pype
+        
+        arguments:
+            scriptName (str): name of the script to get
+            scriptId (str): id of the object with scriptName to get
+
+        returns:
+            (obj): the instance of the scriptObject in the pype
+        '''
         for scriptObject in self.ScriptObjectList:
             if (scriptObject.ScriptName == scriptName) & (scriptObject.Id == scriptId):
                 return scriptObject
 
     def ExplicitPipeScriptObject(self,scriptObject):
-        '''handle setting inputs from prior scrip objects manually via the @ method'''
+        '''manually connect input memberss and  outputMembers of scriptObjects
+        
+        manual connection is specified by using the @ symbol, followed by the name of
+        the script we want to pipe from, dot the piped option. 
+        
+        arguments:
+            scriptObject (obj): the scriptObject which needs to have it's input members set. 
+
+        '''
         self.PrintLog('Explicit piping ' + scriptObject.ScriptName)
         for memberEntry in scriptObject.InputMembers:
             memberName  = memberEntry.MemberName
             option = memberEntry.OptionName
             memberType  = memberEntry.MemberType
+
             if memberEntry.ExplicitPipe == 'None':
                 memberEntry.MemberPipe = None
                 setattr(scriptObject, memberEntry.MemberName, None)
                 continue
-            if memberEntry.ExplicitPipe:
-                pipedArgument = memberEntry.ExplicitPipe
-                splitPipedArgument = pipedArgument.split('.')
-                if (len(splitPipedArgument)<2):
-                    self.PrintError('Error: invalid option piping: '+pipedArgument)
-                upstreamPipedModuleName = splitPipedArgument[0]
-                if not upstreamPipedModuleName:
-                    upstreamPipedModuleName = self.ScriptObjectList[-1].ScriptName
-                upstreamPipedOption = ''
-                if (len(splitPipedArgument) == 2):
-                    upstreamPipedOption = splitPipedArgument[1]
-                else:
-                    self.PrintError('Error: invalid option piping: '+pipedArgument)
 
-                upstreamPipedId = ''
-                splitUpstreamPipedModuleName = upstreamPipedModuleName.split('-')
-                if  (len(splitUpstreamPipedModuleName) > 1):
-                    upstreamPipedModuleName = splitUpstreamPipedModuleName[-2]
-                    upstreamPipedId = splitUpstreamPipedModuleName[-1]
+            if not memberEntry.ExplicitPipe:
+                continue
+
+            pipedArgument = memberEntry.ExplicitPipe
+            splitPipedArgument = pipedArgument.split('.')
+
+            if (len(splitPipedArgument)<2):
+                self.PrintError('Error: invalid option piping: '+pipedArgument)
+
+            upstreamPipedModuleName = splitPipedArgument[0]
+            if not upstreamPipedModuleName:
+                upstreamPipedModuleName = self.ScriptObjectList[-1].ScriptName
+
+            upstreamPipedOption = ''
+            if (len(splitPipedArgument) == 2):
+                upstreamPipedOption = splitPipedArgument[1]
+            else:
+                self.PrintError('Error: invalid option piping: '+pipedArgument)
+
+            if not upstreamPipedOption:
+                self.PrintError('Error: invalid option piping: '+pipedArgument)
+
+            upstreamPipedId = ''
+            splitUpstreamPipedModuleName = upstreamPipedModuleName.split('-')
+            if (len(splitUpstreamPipedModuleName) > 1):
+                upstreamPipedModuleName = splitUpstreamPipedModuleName[-2]
+                upstreamPipedId = splitUpstreamPipedModuleName[-1]
+
+            candidateScriptObjectList = []
+
+            if upstreamPipedModuleName:
+                for candidateScriptObject in self.ScriptObjectList:
+                    if candidateScriptObject.ScriptName == upstreamPipedModuleName:
+                        candidateScriptObjectList.append(candidateScriptObject)
+
+                if upstreamPipedId:
+                    newCandidateScriptObjectList = []
+                    for candidateScriptObject in candidateScriptObjectList:
+                        if upstreamPipedId == candidateScriptObject.Id:
+                            newCandidateScriptObjectList.append(candidateScriptObject)
+                    candidateScriptObjectList = newCandidateScriptObjectList
+
+            # if upstreamPipedModuleName:
+            #     candidateScriptObjectList = [candidateScriptObject for candidateScriptObject in self.ScriptObjectList if candidateScriptObject.ScriptName == upstreamPipedModuleName]
+            #     if upstreamPipedId:
+            #         candidateScriptObjectList = [candidateScriptObject for candidateScriptObject in candidateScriptObjectList if upstreamPipedId == candidateScriptObject.Id]
                     
-                if not upstreamPipedOption:
-                    self.PrintError('Error: invalid option piping: '+pipedArgument)
+            if not candidateScriptObjectList:
+                self.PrintError('Error: invalid option piping: '+pipedArgument)
+                continue
+                
+            pipedScriptObject = candidateScriptObjectList[-1]
+            
+            candidatePipedMembers = []
+            for member in pipedScriptObject.OutputMembers + pipedScriptObject.InputMembers:
+                if upstreamPipedOption == member.OptionName:
+                    candidatePipedMembers.append(member)
+            
+            # candidatePipedMembers = [member for member in pipedScriptObject.OutputMembers + pipedScriptObject.InputMembers if upstreamPipedOption == member.OptionName]
 
-                candidateScriptObjectList = []
+            if not candidatePipedMembers:
+                self.PrintError('Error: invalid option piping: '+pipedArgument)
+                continue
 
-                if upstreamPipedModuleName:
-                    candidateScriptObjectList = [candidateScriptObject for candidateScriptObject in self.ScriptObjectList if candidateScriptObject.ScriptName == upstreamPipedModuleName]
-                    if upstreamPipedId:
-                        candidateScriptObjectList = [candidateScriptObject for candidateScriptObject in candidateScriptObjectList if upstreamPipedId == candidateScriptObject.Id]
-                     
-                if not candidateScriptObjectList:
-                    self.PrintError('Error: invalid option piping: '+pipedArgument)
-                    continue
-                    
-                pipedScriptObject = candidateScriptObjectList[-1]
-                 
-                candidatePipedMembers = [member for member in pipedScriptObject.OutputMembers + pipedScriptObject.InputMembers if upstreamPipedOption == member.OptionName]
-
-                if not candidatePipedMembers:
-                    self.PrintError('Error: invalid option piping: '+pipedArgument)
-                    continue
-
-                pipedMember = candidatePipedMembers[0]
-               
-                memberEntry.MemberPipe = pipedScriptObject.ScriptName + '-' + str(pipedScriptObject.Id) + '.' + pipedMember.MemberName
-                self.PrintLog(memberName+' = '+memberEntry.MemberPipe,1) 
+            pipedMember = candidatePipedMembers[0]
+            
+            memberEntry.MemberPipe = pipedScriptObject.ScriptName + '-' + str(pipedScriptObject.Id) + '.' + pipedMember.MemberName
+            self.PrintLog(memberName+' = '+memberEntry.MemberPipe,1) 
 
     def PipeScriptObject(self,scriptObject):
         for memberEntry in [member for member in scriptObject.InputMembers if member.MemberPipe and not member.MemberValue]:
