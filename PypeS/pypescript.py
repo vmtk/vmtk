@@ -653,9 +653,13 @@ class pypeScript(object):
                     self.PrintLog(memberName+ ' = ' + str(self.__getattribute__(memberName)),1)
 
     def ParseArguments(self):
-        '''
-        self.Arguments: list of option names and args.
-            ie: self.Arguments = ['-ifile', './aorta.mha', '-flip', '1', '0', '1']
+        '''Set script object values from specified arguments
+
+        TODO:
+            finish refactor
+            finish docstring
+            self.Arguments: list of option names and args.
+                ie: self.Arguments = ['-ifile', './aorta.mha', '-flip', '1', '0', '1']
         '''
         flagBehavior = self._ParseArgumentsFlags()
         if flagBehavior == False:
@@ -673,7 +677,6 @@ class pypeScript(object):
             memberValues = []
             activated = 0
 
-            # will contain list of options ie ['-ifile, '-flip']
             specifiedOptions = []
             for arg in self.Arguments:
                  if (arg[0] == '-') and (arg[1] in string.ascii_letters + '-'):
@@ -685,45 +688,42 @@ class pypeScript(object):
                 specifiedOptions[specifiedOptions.index(pushedOption)] = option
                 self.Arguments[self.Arguments.index(pushedOption)] = option
 
-            # when option = '-ifile' and '-ifile' in specifiedOptions.
-            if option in specifiedOptions:
-                if memberLength == 0:
-                    activated = 1
-                optionIndex = self.Arguments.index(option)
-                if option != specifiedOptions[-1]:
-                    nextOptionIndex = self.Arguments.index(specifiedOptions[specifiedOptions.index(option)+1])
-                    optionValues = self.Arguments[optionIndex+1:nextOptionIndex]
-                else:
-                    optionValues = self.Arguments[optionIndex+1:]
-                for value in optionValues:
-                    if value[0] == '@':
-                        memberEntry.ExplicitPipe = value[1:]
-                        if value[1:] == '':
-                            memberEntry.ExplicitPipe = 'None'
-                    else:
-                        if memberType.lower() in self.BuiltinOptionTypes:
-                            if memberType.lower() == 'str':
-                                castValue = str(value)
-                            elif (memberType.lower() == 'int') or (memberType.lower() == 'bool'):
-                                castValue = int(value)
-                            elif memberType.lower() == 'float':
-                                castValue = float(value)
-                            memberValues.append(castValue)
-                        else:
-                            memberValues.append(value)
-            else:
+            if option not in specifiedOptions:
                 continue
+
+            optionIndex = self.Arguments.index(option)
+            if option != specifiedOptions[-1]:
+                nextOptionIndex = self.Arguments.index(specifiedOptions[specifiedOptions.index(option)+1])
+                optionValues = self.Arguments[optionIndex+1:nextOptionIndex]
+            else:
+                optionValues = self.Arguments[optionIndex+1:]
+            for value in optionValues:
+                if value[0] == '@':
+                    memberEntry.ExplicitPipe = value[1:]
+                    if value[1:] == '':
+                        memberEntry.ExplicitPipe = 'None'
+                else:
+                    if memberType.lower() in self.BuiltinOptionTypes:
+                        if memberType.lower() == 'str':
+                            castValue = str(value)
+                        elif (memberType.lower() == 'int') or (memberType.lower() == 'bool'):
+                            castValue = int(value)
+                        elif memberType.lower() == 'float':
+                            castValue = float(value)
+                        memberValues.append(castValue)
+                    else:
+                        memberValues.append(value)
 
             memberValueLengthCheck = self._CheckMemberValuesLength(memberValues, memberLength, memberEntry, option)
             if memberValueLengthCheck == False:
                 return 0
 
             if len(memberValues) > 0:
-                if (memberLength==0):
-                    if (activated == 1):
-                        setattr(self, memberName, 1)
-                        memberEntry.MemberValue = 1
-                elif (memberLength==1):
+                if memberLength == 0:
+                    activated = 1
+                    setattr(self, memberName, 1)
+                    memberEntry.MemberValue = 1
+                elif memberLength == 1:
                     setattr(self, memberName, memberValues[0])
                     memberEntry.MemberValue = memberValues[0]
                 else:

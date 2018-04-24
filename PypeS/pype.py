@@ -78,7 +78,10 @@ class Pype(object):
         self.Arguments = None
 
     def GetUsageString(self):
-        usageString = 'Usage: pype --nolog --noauto --query firstScriptName -scriptOptionName scriptOptionValue --pipe secondScriptName -scriptOptionName scriptOptionValue -scriptOptionName @firstScriptName.scriptOptionName -id 2 --pipe thirdScriptName -scriptOptionName @secondScriptName-2.scriptOptionName'
+        usageString = 'Usage: pype --nolog --noauto --query firstScriptName -scriptOptionName \
+            scriptOptionValue --pipe secondScriptName -scriptOptionName scriptOptionValue -scriptOptionName \
+            @firstScriptName.scriptOptionName -id 2 --pipe thirdScriptName -scriptOptionName \
+            @secondScriptName-2.scriptOptionName'
         return usageString
 
     def SetOutputStreamToNull(self):
@@ -223,7 +226,6 @@ class Pype(object):
         argumentsWithFlagsParsed = self._ParseArgumentsFlags(self.Arguments[:])
         arguments = self._ParseArgumentsFileBrowser(argumentsWithFlagsParsed)
 
-        # get all index locations where '--pipe' is in arguments list
         pipeIndices = all_indices('--pipe', arguments)
         scriptNameIndices = [0] + [int(x + 1) for x in pipeIndices] # there is always a script name at index 0
         for scriptNumber, scriptNameIndex in enumerate(scriptNameIndices):
