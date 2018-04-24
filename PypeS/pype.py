@@ -86,7 +86,7 @@ class Pype(object):
         self.OutputStream = NullOutputStream()
         
     def PrintLog(self,logMessage,indent=0):
-        '''Prints log messages from pypescript members to the console.
+        '''Prints log messages from pype controller members to the console.
 
         All vmtkscripts subclassing from pypes.Pype use the PrintLog method in order
         to write their output to the console.
@@ -104,7 +104,7 @@ class Pype(object):
         self.OutputStream.write(indentation + logMessage + '\n')
         
     def PrintError(self,errorMessage):
-        ''' Prints error messages from pypescript members to the console then raises a runtime error.
+        ''' Prints error messages from pype controller to the console then raises a runtime error.
 
         Args:
             errorMessage (string): the error message to print to the console
@@ -137,14 +137,18 @@ class Pype(object):
                 self.PrintError('Error: non-matching quote found')
         self.Arguments = arguments
 
-    def ParseArguments(self):
-        ''' requires self.Arguments to be set. 
-        this is set and called in the pypeserver.py file. 
+
+    def _ParseArgumentsFlags(self, arguments):
+        '''execute special case argument flag behavior 
+        
+        check if --help --noauto --nolog --query flags exist in the arguments list. if they do then execute the
+        special behavior indicated by those flags. 
+
+        arguments:
+            arguments: (obj:`list`): the initial arguments aquired from sys.argv with each logical unit as a string element. 
+        returns:
+            obj:`list`: a modified copy of the input arguments with any of the special case flag elements removed
         '''
-        self.ScriptList = []
-        # args is set to ['/Users/rick/projects/vmtk/vmtk-build/Install/bin/vmtkimagereader', '-ifile', './aorta.mha', '--pipe', 'vmtkimageviewer', '-display', '0', '--pipe', 'vmtkimageotsuthresholds']
-        arguments = self.Arguments[:]
-        # this was not called
         if os.path.basename(arguments[0]).strip() in ['pyperun']:
             arguments.remove(arguments[0])
             pypeArguments = []
@@ -169,7 +173,18 @@ class Pype(object):
                 return
             for arg in pypeArguments:
                 arguments.remove(arg)
+        return arguments
 
+
+    def _ParseArgumentsFileBrowser(self, arguments):
+        '''open a file browser to specify input file if one of the elements in the arguments list == "FILE"
+
+        arguments:
+            arguments (obj:`list`): the initial arguments aquired from sys.argv with each logical unit as a string element. 
+
+        returns:
+            obj:`list`: a modified copy of the input arguments with elements == FILE replaced with a poth on the computer
+        '''
         if 'FILE' in arguments:
             text = ''
             self.OutputStream.write('\nThe current pype contains filename placeholders identified by the string FILE.')
@@ -184,17 +199,40 @@ class Pype(object):
             elif text =='c':
                 while 'FILE' in arguments:
                     arguments[arguments.index('FILE')] = 'BROWSER'
+        return arguments
 
-        # get location where '--pipe' is in arguments list
-        pipeIndices = all_indices('--pipe', arguments)
-        # script names are at index 0 and 1 after the pipe argument
-        nodeNameIndices = [0] + [int(x + 1) for x in pipeIndices]
-        for scriptNumber, nodeIndex in enumerate(nodeNameIndices):
-            scriptName = os.path.split(arguments[nodeIndex])[1]
+
+    def ParseArguments(self):
+        '''split a flat list of scripts and arguments defining the pype into a nested strcture linking arguments to each script.
+
+        Given a flast pipe command, the input list is split at each "--pipe" element. For each slice (before the first, 
+        between each, and after the last "--pipe" index) a new list is created. The first element contains the name of the
+        script to execute. The second element contains another list with all the following arguments placed inside it. Each of 
+        these "slice" lists are then appended to the class ScriptList attribute. 
+
+        This method sets the object ScriptList attribute as it's side effect rather than returning a value.
+
+        example: 
+            self.Arguments = ['/Users/rick/projects/vmtk/vmtk-build/Install/bin/vmtkimagereader', '-ifile', './aorta.mha', '-flip', 
+                              '0', '1', '0', '--pipe', 'vmtkimageviewer', '-display', '0', '--pipe', 'vmtkimageotsuthresholds']
+            will be converted to ->
+            self.ScriptList = [['vmtkimagereader', ['-ifile', './aorta.mha', '-flip', '0', '1', '0']], 
+                               ['vmtkimageviewer', ['-display', '0']], 
+                               ['vmtkimageotsuthresholds', []]]
+        '''
+        self.ScriptList = []
+        argumentsWithFlagsParsed = self._ParseArgumentsFlags(self.Arguments[:])
+        arguments = self._ParseArgumentsFileBrowser(argumentsWithFlagsParsed)
+        
+        # get all index locations where '--pipe' is in arguments list
+        pipeIndices = all_indices('--pipe', arguments) 
+        scriptNameIndices = [0] + [int(x + 1) for x in pipeIndices] # there is always a script name at index 0
+        for scriptNumber, scriptNameIndex in enumerate(scriptNameIndices):
+            scriptName = os.path.split(arguments[scriptNameIndex])[1]
             try:
-                scriptArgs = arguments[nodeIndex+1:pipeIndices[scriptNumber]]
+                scriptArgs = arguments[scriptNameIndex+1:pipeIndices[scriptNumber]]
             except IndexError:
-                scriptArgs = arguments[nodeIndex+1:]
+                scriptArgs = arguments[scriptNameIndex+1:]
             self.ScriptList.append([scriptName, scriptArgs])
 
 
@@ -229,13 +267,13 @@ class Pype(object):
             memberEntry.MemberPipe = pipedScriptObject.ScriptName + '-' + str(pipedScriptObject.Id) + '.' + pipedMember.MemberName
             self.PrintLog(memberEntry.MemberName + ' = ' + memberEntry.MemberPipe,1)
 
-    #TODO: This is not needed. it is only used by pypetestrunner
     def GetScriptObject(self,scriptName,scriptId):
         for scriptObject in self.ScriptObjectList:
             if (scriptObject.ScriptName == scriptName) & (scriptObject.Id == scriptId):
                 return scriptObject
 
     def ExplicitPipeScriptObject(self,scriptObject):
+        '''handle setting inputs from prior scrip objects manually via the @ method'''
         self.PrintLog('Explicit piping ' + scriptObject.ScriptName)
         for memberEntry in scriptObject.InputMembers:
             memberName  = memberEntry.MemberName
