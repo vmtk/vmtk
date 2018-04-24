@@ -7,7 +7,7 @@
 ## Version:   $Revision: 1.18 $
 
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-##   See LICENCE file for details.
+##   See LICENSE file for details.
 
 ##      This software is distributed WITHOUT ANY WARRANTY; without even 
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
@@ -23,7 +23,16 @@ from inspect import isclass
 pype = 'Pype'
 
 def all_indices(value, qlist):
-    '''convenience method to a list of all indexes where an element is within a collection'''
+    '''convenience method to a list of all indexes where an element is within a collection
+    
+    arguments:
+        value (str, int, float): the item to find within the collection
+        qlist (list, tuple): the collection of elements which you want to find the the indexes
+            of value in. 
+
+    returns:
+        indices (list:`int`): a list containing the index of every location where qlist == value.
+    '''
     indices = []
     idx = -1
     while True:
@@ -54,17 +63,6 @@ class Pype(object):
     of connecting the right arguments from one script to the other. It can
     be called from the command line by issuing pype pype-arguments or
     automatically instantiated from a pypescript.
-
-    Attributes:
-        ScriptObjectList (list):
-        ScriptList (list):
-        AutoPipe (bool):
-        LogOn (bool):
-        ScriptName (str):
-        ExitOnError (bool)
-        InputStream (function):
-        OutputStream (function)
-        Arguments (string):
     '''
 
     def __init__(self):
@@ -145,7 +143,7 @@ class Pype(object):
         special behavior indicated by those flags. 
 
         arguments:
-            arguments: (obj:`list`): the initial arguments aquired from sys.argv with each logical unit as a string element. 
+            arguments: (obj:`list`): the initial arguments acquired from sys.argv with each logical unit as a string element. 
         returns:
             obj:`list`: a modified copy of the input arguments with any of the special case flag elements removed
         '''
@@ -180,16 +178,16 @@ class Pype(object):
         '''open a file browser to specify input file if one of the elements in the arguments list == "FILE"
 
         arguments:
-            arguments (obj:`list`): the initial arguments aquired from sys.argv with each logical unit as a string element. 
+            arguments (obj:`list`): the initial arguments acquired from sys.argv with each logical unit as a string element. 
 
         returns:
-            obj:`list`: a modified copy of the input arguments with elements == FILE replaced with a poth on the computer
+            obj:`list`: a modified copy of the input arguments with elements == FILE replaced with a path on the computer
         '''
         if 'FILE' in arguments:
             text = ''
             self.OutputStream.write('\nThe current pype contains filename placeholders identified by the string FILE.')
-            self.OutputStream.write('\nEvery occcurence of FILE is meant to be replaced with an actual file path.\n')
-            self.OutputStream.write('\nPress \'c\' to continue and be automathically prompted for the required filenames.')
+            self.OutputStream.write('\nEvery occurrence of FILE is meant to be replaced with an actual file path.\n')
+            self.OutputStream.write('\nPress \'c\' to continue and be automatically prompted for the required filenames.')
             self.OutputStream.write('\nPress \'e\' to exit. You can still edit your pype manually and run it back.\n\n')
             while text not in ['c','e']:
                 self.OutputStream.write('> ')
@@ -203,9 +201,9 @@ class Pype(object):
 
 
     def ParseArguments(self):
-        '''split a flat list of scripts and arguments defining the pype into a nested strcture linking arguments to each script.
+        '''split a flat list of scripts and arguments defining the pype into a nested structure linking arguments to each script.
 
-        Given a flast pipe command, the input list is split at each "--pipe" element. For each slice (before the first, 
+        Given a flat pipe command, the input list is split at each "--pipe" element. For each slice (before the first, 
         between each, and after the last "--pipe" index) a new list is created. The first element contains the name of the
         script to execute. The second element contains another list with all the following arguments placed inside it. Each of 
         these "slice" lists are then appended to the class ScriptList attribute. 
@@ -260,7 +258,7 @@ class Pype(object):
         When a script completes execution, the next script to execute is sent here. This attempts to automatically
         connect compatible output members of prior script objects with the input members of this (the next) script
         object. If a compatible member is found, this script object's compatible input memberEntry.MemberPipe attribute
-        is set. Note: Automatic piping is overriden by explicit member piping. 
+        is set. Note: Automatic piping is override by explicit member piping. 
 
         example: 
             for -> vmtkimagereader -ifile foo --pipe vmtkimageviewer
@@ -298,7 +296,7 @@ class Pype(object):
                 return scriptObject
 
     def ExplicitPipeScriptObject(self,scriptObject):
-        '''manually connect input memberss and  outputMembers of scriptObjects
+        '''manually connect input members and  outputMembers of scriptObjects
         
         manual connection is specified by using the @ symbol, followed by the name of
         the script we want to pipe from, dot the piped option. This module determines which
@@ -310,12 +308,12 @@ class Pype(object):
 
         Followed by the appropriate check for which scriptobjects are candidates for the given name and option.
         Nothing is returned, instead the scriptObject memberEntry.MemberPipe is set with the appropriate
-        specifier for it's data soruce. 
+        specifier for it's data source. 
         
         arguments:
             scriptObject (obj): the scriptObject which needs to have it's input members set. 
 
-        TODO: Refactor into seperate methods
+        TODO: Refactor into separate methods
         '''
         self.PrintLog('Explicit piping ' + scriptObject.ScriptName)
         for memberEntry in scriptObject.InputMembers:
@@ -334,7 +332,7 @@ class Pype(object):
 
             upstreamPipedId = ''
             upstreamPipedOption = splitPipedArgument[1]
-            # handle when scriptname is omited and only option is passed (ie. @.o)
+            # handle when scriptname is omitted and only option is passed (ie. @.o)
             if pipedArgument.startswith('.'):
                 upstreamPipedModuleName = self.ScriptObjectList[-1].ScriptName
             # handle when a scriptname, option, and id is passed (ie. @vmtkimageviewer-1.o)
@@ -378,7 +376,7 @@ class Pype(object):
         '''perform the actual data transfer from one script object into the input member of another.
 
         arguments:
-            scriptObject (obj): an instance of scriptObject which has had it's memberEnty.MemberPipe
+            scriptObject (obj): an instance of scriptObject which has had it's memberEntry.MemberPipe
                 attributes set through automatic and explicit pyping
         '''
         scriptMemberList = []
@@ -405,11 +403,13 @@ class Pype(object):
             setattr(scriptObject, memberEntry.MemberName, pipedScriptObjectMemberName)
 
     def Execute(self):
-        ''' this is called after ParseArguments()
+        '''main method to run the pype.
 
-        self.ScriptList is set to [['vmtkimagereader', ['-ifile', './aorta.mha']], ['vmtkimageviewer', ['-display', '0']], ['vmtkimageotsuthresholds', []]]
-
-        self.Arguments is set to ['/Users/rick/projects/vmtk/vmtk-build/Install/bin/vmtkimagereader', '-ifile', './aorta.mha', '--pipe', 'vmtkimageviewer', '-display', '0', '--pipe', 'vmtkimageotsuthresholds']
+        This method handles execution of the pype which is composed by the ParseArguments() method.
+        For every script specification (name and arguments) defined within the ScriptList attribute
+        this imports the main script object, sets logging and execution behavior of the pypescript base
+        class, computes the compatible input output members, transfers data between script objects, and
+        finally transfers control to the script object so it can perform it's intended operation. 
         '''
         try:
             from vmtk import pypes

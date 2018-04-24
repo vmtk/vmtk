@@ -7,7 +7,7 @@
 ## Version:   $Revision: 1.18 $
 
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-##   See LICENCE file for details.
+##   See LICENSE file for details.
 
 ##      This software is distributed WITHOUT ANY WARRANTY; without even 
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
@@ -36,9 +36,9 @@ class pypeMember(object):
             MemberLength (int): Home many values the parameter will store (in case of a list), or -1 if
                 no limit on length is specified
             MemberRange (str, optional): a string which either specifies a list of values that must be selected
-                [identfied by brackets], or a string which specifies the upper and lower bounds of the member
-                (identified by parenthases).
-            MemberDoc (str, optional): a short summary of the parameter to print as helptext
+                [identified by brackets], or a string which specifies the upper and lower bounds of the member
+                (identified by parentheses).
+            MemberDoc (str, optional): a short summary of the parameter to print as help text
             MemberIO (str, optional): the name of the script which should be used as the default reader/writer.
         '''
 
@@ -62,7 +62,7 @@ class pypeMember(object):
         This method first checks for case where specific option is selected from a list of potentials. 
         This is denoted by [brackets] surrounding the member range argument. Then it checks for case 
         where option is a numeric type which needs to be in a particular range. This is denoted by
-        (parenthases) surrounding the member range argument. Note that the numeric range can specify 
+        (parentheses) surrounding the member range argument. Note that the numeric range can specify 
         both an upper & lower bound, or just one bound. The truthiness will be returned correctly 
         in either case. 
 
@@ -94,11 +94,11 @@ class pypeMember(object):
 
 
     def GetRangeEnumeration(self):
-        '''Returns the valid range specified in scipt input members if valid range is part of a list
+        '''Returns the valid range specified in script input members if valid range is part of a list
 
         returns:
             obj:'list': returns empty list if MemberRange is numeric value type. Otherwise return list 
-                of strings containg valid members if MemberRange is enumeration Type
+                of strings containing valid members if MemberRange is enumeration Type
         '''
         if not self.MemberRange:
             return []
@@ -110,10 +110,10 @@ class pypeMember(object):
             return []
  
     def GetRangeValues(self):
-        '''returns the valid range specified in the scipt input members if valid range in a numeric value.
+        '''returns the valid range specified in the script input members if valid range in a numeric value.
 
         returns:
-            obj:`list`: returns empty list if MemberRange is enumeration type. Oterwise returns list of
+            obj:`list`: returns empty list if MemberRange is enumeration type. Otherwise returns list of
                 size 2 where index 0 is the lower range bound and index 1 is upper range bound. If only
                 one bound is specified, the element will be None.
         '''
@@ -128,8 +128,8 @@ class pypeMember(object):
                 else:
                     parsedMemberRange.append(None)
             if len(parsedMemberRange) != 2:
-                # this essentially is a vaildity check for the input. 
-                # if the entry is misformated, then just return an empty list
+                # this essentially is a validity check for the input. 
+                # if the entry is mis-formatted, then just return an empty list
                 return []
             return parsedMemberRange
         else:
@@ -146,12 +146,12 @@ class pypeMember(object):
         vmtkimagemorphology, the Operation parameter contains a range enumeration
         of ['"dilate"', '"erode"', '"open"', '"close"'])
 
-        Conversly, 'range value' refers to an integer or float value which much be
+        Conversely, 'range value' refers to an integer or float value which much be
         contained within some bounding range (ex: for vmtkimagemorphology, the 
         BallRadius parameter must be >= 0.0)
 
         returns:
-            str: text containing the correct formating for either a range enumeration
+            str: text containing the correct formatting for either a range enumeration
                 or range value. 
         '''
         if not self.MemberRange:
@@ -372,7 +372,7 @@ class pypeScript(object):
     def SetInputMembers(self,membersToAppend):
         '''creates a pypemember object instance for each input member specification
 
-        Each pypemember object instance is sotred as an element in the self.InputMembers list.
+        Each pypemember object instance is stored as an element in the self.InputMembers list.
 
         arguments:
             membersToAppend (obj:'list':obj:'list'): a list of lists. Each list represents
@@ -382,7 +382,7 @@ class pypeScript(object):
                 that we use to refer to this member. The third element is the variable type 
                 of the element. The fourth element is This is how many elements our member will
                 have. There are cases where we consider as a member an array or a list of elements.
-                In case we don’t want to limit the number of elements for a memeber we write -1.
+                In case we don’t want to limit the number of elements for a member we write -1.
                 The fifth is the validity check of our member. In case the type is a string,
                 one can specify a list of valid strings (['stringA','stringB']), if it’s a number, 
                 one can specify the valid range ( (0.0,) or (1.0,100.0) ). The sixth is a short
@@ -410,7 +410,7 @@ class pypeScript(object):
     def SetOutputMembers(self,membersToAppend):
         '''creates a pypemember object instance for each output member specification
 
-        Each pypemember object instance is sotred as an element in the self.OutputMembers list.
+        Each pypemember object instance is stored as an element in the self.OutputMembers list.
 
         arguments:
             membersToAppend (obj:'list':obj:'list'): a list of lists. Each list represents
@@ -420,7 +420,7 @@ class pypeScript(object):
                 that we use to refer to this member. The third element is the variable type 
                 of the element. The fourth element is This is how many elements our member will
                 have. There are cases where we consider as a member an array or a list of elements.
-                In case we don’t want to limit the number of elements for a memeber we write -1.
+                In case we don’t want to limit the number of elements for a member we write -1.
                 The fourth is This is the validity check of our member. In case the type is a string,
                 one can specify a list of valid strings (['stringA','stringB']), if it’s a number, 
                 one can specify the valid range ( (0.0,) or (1.0,100.0) ). The fifth is a short
@@ -460,8 +460,8 @@ class pypeScript(object):
         '''get a plain text string describing useful information about the current script object
         
         returns:
-            a formated string which contains the current ScriptName, ScriptDoc, and Input/Output member
-                fields (name, option, type, length, range, doc, default, and helptext)
+            a formatted string which contains the current ScriptName, ScriptDoc, and Input/Output member
+                fields (name, option, type, length, range, doc, default, and help text)
         '''
         usageString = ''
         scriptUsageString = os.path.splitext(self.ScriptName)[0]
@@ -523,8 +523,8 @@ class pypeScript(object):
         '''get a html formatted tagged string describing useful information about the current script object
         
         returns:
-            A formated string which contains the current ScriptName, ScriptDoc, and Input/Output member fields 
-                (name, option, type, length, range, doc, default, and helptext)
+            A formatted string which contains the current ScriptName, ScriptDoc, and Input/Output member fields 
+                (name, option, type, length, range, doc, default, and help text)
         '''
         usageString = ''
         usageString += '<h1>'
@@ -576,11 +576,11 @@ class pypeScript(object):
         check if --help --doc --html flags exist in the arguments list. if they do then execute the
         special behavior indicated by those flags.
 
-        Also check to ensure that the options specified by -foo options exist with an apropriate member
+        Also check to ensure that the options specified by -foo options exist with an appropriate member
         with matching format to what is expected. 
 
         returns:
-            bool: true if execution occured without any special cases. false if something happened
+            bool: true if execution occurred without any special cases. false if something happened
         '''
 
         for arg in self.Arguments:
@@ -654,7 +654,7 @@ class pypeScript(object):
 
     def ParseArguments(self):
         '''
-        self.Arguments: list of optionnames and args.
+        self.Arguments: list of option names and args.
             ie: self.Arguments = ['-ifile', './aorta.mha', '-flip', '1', '0', '1']
         '''
         flagBehavior = self._ParseArgumentsFlags()
@@ -673,7 +673,7 @@ class pypeScript(object):
             memberValues = []
             activated = 0
 
-            # will contiain list of options ie ['-ifile, '-flip']
+            # will contain list of options ie ['-ifile, '-flip']
             specifiedOptions = [arg for arg in self.Arguments if (arg[0] == '-') and (arg[1] in string.ascii_letters + '-')]
             
             pushedOption = option + '@'
