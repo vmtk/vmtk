@@ -27,6 +27,7 @@ __all__ = [
     'vmtk.vmtkcenterlinestonumpy',
     'vmtk.vmtkcenterlinesections',
     'vmtk.vmtkcenterlinesmoothing',
+    'vmtk.vmtkcenterlinesnetwork',
     'vmtk.vmtkcenterlineviewer',
     'vmtk.vmtkdelaunayvoronoi',
     'vmtk.vmtkdistancetocenterlines',
