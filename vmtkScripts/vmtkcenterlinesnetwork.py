@@ -21,7 +21,39 @@ from vmtk import vtkvmtk
 from vmtk import pypes
 from vmtk import vmtkscripts
 from joblib import Parallel, delayed
+import random
+import numpy as np
 
+def _compute_centerlines(surfaceAddress, delaunayAddress, cell, points):
+    '''a method to compute centerlines which can be called in parallel
+    
+    Arguments:
+        surfaceAddress (obj:`vtkPolyData`): the input memory address of the surface to calculate centerlines of
+        delaunayAddress (obj:`vtkUnstructuredGrid`): the memory address of a previously computed delaunay 
+            triangulation of the surface
+        cell (np.array): the cellID connectivity list
+        points (np.array): the x,y,z coordinates of points identified in the cell argument
+    '''
+    cellStartIdx = cell[0]
+    cellEndIdx = cell[-1]
+    cellStartPoint = points[cellStartIdx].tolist()
+    cellEndPoint = points[cellEndIdx].tolist()
+    
+    surface = vtk.vtkPolyData(surfaceAddress)
+    delaunay = vtk.vtkUnstructuredGrid(delaunayAddress)
+    
+    cl = vmtkscripts.vmtkCenterlines()
+    cl.Surface = surface
+    cl.DelaunayTessellation = delaunay
+    cl.SeedSelectorName = 'pointlist'
+    cl.SourcePoints = cellStartPoint
+    cl.TargetPoints = cellEndPoint
+    cl.Execute()
+    
+    clConvert = vmtkscripts.vmtkCenterlinesToNumpy()
+    clConvert.Centerlines = cl.Centerlines
+    clConvert.Execute()
+    return clConvert.ArrayDict
 
 class vmtkCenterlinesNetwork(pypes.pypeScript):
 
@@ -49,12 +81,7 @@ class vmtkCenterlinesNetwork(pypes.pypeScript):
         self.SetScriptDoc('compute centerlines from a branching tubular surface automatically.')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
-            ['AppendEndPoints','endpoints','bool',1,'','toggle append open profile barycenters to centerlines'],
-            ['DelaunayTolerance','delaunaytolerance','float',1,'','tolerance for evaluating coincident points during Delaunay tessellation, evaluated as a fraction of the bounding box'],
             ['RadiusArrayName','radiusarray','str',1,'','name of the array where radius values of maximal inscribed spheres have to be stored'],
-            ['AppendEndPoints','endpoints','bool',1,'','toggle append open profile barycenters to centerlines'],
-            ['DelaunayTessellation','delaunaytessellation','vtkUnstructuredGrid',1,'','optional input Delaunay tessellation'],
-            ['CostFunction','costfunction','str',1,'','specify cost function to be minimized during centerline computation'],
             ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer']])
         self.SetOutputMembers([
             ['Centerlines','o','vtkPolyData',1,'','the output centerlines','vmtksurfacewriter'],
@@ -67,38 +94,6 @@ class vmtkCenterlinesNetwork(pypes.pypeScript):
             ['VoronoiDiagram','voronoidiagram','vtkPolyData',1,'','','vmtksurfacewriter']])
 
     def Execute(self):
-
-        def _compute_centerlines(surfaceAddress, delaunayAddress, cell, points):
-            '''a method to compute centerlines which can be called in parallel
-            
-            Arguments:
-                surfaceAddress (obj:`vtkPolyData`): the input memory address of the surface to calculate centerlines of
-                delaunayAddress (obj:`vtkUnstructuredGrid`): the memory address of a previously computed delaunay 
-                    triangulation of the surface
-                cell (np.array): the cellID connectivity list
-                points (np.array): the x,y,z coordinates of points identified in the cell argument
-            '''
-            cellStartIdx = cell[0]
-            cellEndIdx = cell[-1]
-            cellStartPoint = points[cellStartIdx].tolist()
-            cellEndPoint = points[cellEndIdx].tolist()
-            
-            surface = vtk.vtkPolyData(surfaceAddress)
-            delaunay = vtk.vtkUnstructuredGrid(delaunayAddress)
-            
-            cl = vmtkscripts.vmtkCenterlines()
-            cl.Surface = surface
-            cl.DelaunayTessellation = delaunay
-            cl.SeedSelectorName = 'pointlist'
-            cl.SourcePoints = cellStartPoint
-            cl.TargetPoints = cellEndPoint
-            cl.Execute()
-            
-            clConvert = vmtkscripts.vmtkCenterlinesToNumpy()
-            clConvert.Centerlines = cl.Centerlines
-            clConvert.Execute()
-            return clConvert.ArrayDict
-
         if self.Surface == None:
             self.PrintError('Error: No input surface.')
 
@@ -182,8 +177,8 @@ class vmtkCenterlinesNetwork(pypes.pypeScript):
         # However, the process does not work for return arguments, since the original process will not have access to
         # the memory space of the fork. To return results we use the vmtkCenterlinesToNumpy converter.
         networkSurfaceMemoryAddress = networkSurface.__this__
-        delaunayMemoryAddress = self.DelaunayTessellation.__this__
-        outlist = Parallel(n_jobs=-1, backend='multiprocessing', verbose=0)(
+        delaunayMemoryAddress = tessalation.DelaunayTessellation.__this__
+        outlist = Parallel(n_jobs=-1, backend='multiprocessing', verbose=20)(
             delayed(_compute_centerlines)(networkSurfaceMemoryAddress,
                                           delaunayMemoryAddress,
                                           cell,
