@@ -48,10 +48,12 @@ def _compute_centerlines(surfaceAddress, delaunayAddress, cell, points):
     cl.SeedSelectorName = 'pointlist'
     cl.SourcePoints = cellStartPoint
     cl.TargetPoints = cellEndPoint
+    cl.LogOn = 0
     cl.Execute()
     
     clConvert = vmtkscripts.vmtkCenterlinesToNumpy()
     clConvert.Centerlines = cl.Centerlines
+    clConvert.LogOn = 0
     clConvert.Execute()
     return clConvert.ArrayDict
 
@@ -188,6 +190,7 @@ class vmtkCenterlinesNetwork(pypes.pypeScript):
         for item in outlist:
             npConvert = vmtkscripts.vmtkNumpyToCenterlines()
             npConvert.ArrayDict = item
+            npConvert.LogOn = 0
             npConvert.Execute()
             out.append(npConvert.Centerlines)
 
