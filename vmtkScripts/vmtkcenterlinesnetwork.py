@@ -19,7 +19,7 @@ import sys
 
 from vmtk import vtkvmtk
 from vmtk import pypes
-from vmtk import vmtkcenterlines, vmtkcenterlinestonumpy, vmtknetworkextraction, vmtkdelaunayvoronoi, vmtknumpytocenterlines
+from vmtk import vmtkcenterlines, vmtkcenterlinestonumpy, vmtknetworkextraction, vmtkdelaunayvoronoi, vmtknumpytocenterlines, vmtksurfacecapper
 from joblib import Parallel, delayed
 import random
 import numpy as np
@@ -111,7 +111,7 @@ class vmtkCenterlinesNetwork(pypes.pypeScript):
         # if numEdges is not 0, then there are holes which need to be capped
         numEdges = ofedges.GetNumberOfPoints()
         if numEdges != 0:
-            tempcapper = vmtkscripts.vmtkSurfaceCapper()
+            tempcapper = vmtksurfacecapper.vmtkSurfaceCapper()
             tempcapper.Surface = self.Surface
             tempcapper.Interactive = 0
             tempcapper.Execute()
@@ -135,7 +135,7 @@ class vmtkCenterlinesNetwork(pypes.pypeScript):
         net.Execute()
         network = net.Network
 
-        convert = vmtkscripts.vmtkCenterlinesToNumpy()
+        convert = vmtkcenterlinestonumpy.vmtkCenterlinesToNumpy()
         convert.Centerlines = network
         convert.Execute()
         ad = convert.ArrayDict
