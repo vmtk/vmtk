@@ -605,6 +605,7 @@ class pypeScript(object):
                     if not matchingMembers:
                         self.PrintError(self.GetUsageString() + '\n' + self.ScriptName + ' error: unknown option ' + arg + '\n')
                         return False
+        return True
 
     def _CheckMemberValuesLength(self, memberValues, memberLength, memberEntry, option):
         '''ensure that member values have the expected length
@@ -651,7 +652,7 @@ class pypeScript(object):
                 ie: self.Arguments = ['-ifile', './aorta.mha', '-flip', '1', '0', '1']
         '''
         ParseArgumentStopper = self._ParseArgumentsFlags()
-        if ParseArgumentStopper:
+        if not ParseArgumentStopper:
             return False
         for memberEntry in self.InputMembers:
             memberName  = memberEntry.MemberName
@@ -717,7 +718,7 @@ class pypeScript(object):
             self._CheckMemberValuesBool(memberValues, option, memberType)
             self._CheckMemberValuesInRange(memberValues, memberEntry, option, memberRange)
             self._PrintMemberTypeInformation(memberType, memberLength, activated, memberName, memberValues, memberEntry)
-            return True
+        return True
 
     def IORead(self):
         '''read a file from disk if the members default reader script is specified'''
