@@ -78,10 +78,10 @@ class Pype(object):
         self.Arguments = None
 
     def GetUsageString(self):
-        usageString = 'Usage: pype --nolog --noauto --query firstScriptName -scriptOptionName \
-            scriptOptionValue --pipe secondScriptName -scriptOptionName scriptOptionValue -scriptOptionName \
-            @firstScriptName.scriptOptionName -id 2 --pipe thirdScriptName -scriptOptionName \
-            @secondScriptName-2.scriptOptionName'
+        usageString = 'Usage: pype --nolog --noauto --query firstScriptName -scriptOptionName '\
+                      'scriptOptionValue --pipe secondScriptName -scriptOptionName scriptOptionValue '\
+                      '-scriptOptionName @firstScriptName.scriptOptionName -id 2 --pipe thirdScriptName '\
+                      '-scriptOptionName @secondScriptName-2.scriptOptionName'
         return usageString
 
     def SetOutputStreamToNull(self):
@@ -166,7 +166,7 @@ class Pype(object):
                 self.AutoPipe = 0
             if '--nolog' in pypeArguments:
                 self.LogOn = 0
-            if '--query' in pypeArguments:
+            if '--query' in pypeArguments: #TODO: What on earth does this do?
                 queryScripts = arguments[arguments.index('--query')+1:]
                 for queryScript in queryScripts:
                     exec('from vmtk import '+queryScript)
@@ -270,11 +270,7 @@ class Pype(object):
         '''
         self.PrintLog('Automatic piping ' + scriptObject.ScriptName)
         for memberEntry in scriptObject.InputMembers:
-            if not memberEntry.AutoPipe:
-                continue
-            if memberEntry.MemberType == 'id':
-                continue
-            if memberEntry.MemberType == 'handle':
+            if (not memberEntry.AutoPipe) or (memberEntry.MemberType == 'id') or (memberEntry.MemberType == 'handle'):
                 continue
             candidateScriptObjectList = [candidateScriptObject for candidateScriptObject in self.ScriptObjectList if self.GetCompatibleMember(memberEntry,candidateScriptObject)]
             if not candidateScriptObjectList:
@@ -332,48 +328,41 @@ class Pype(object):
             splitPipedArgument = pipedArgument.split('.')
             if len(splitPipedArgument) != 2:
                 self.PrintError('Error: invalid option piping: '+pipedArgument)
-
-            upstreamPipedId = ''
-            upstreamPipedOption = splitPipedArgument[1]
-            # handle when scriptname is omitted and only option is passed (ie. @.o)
+            
+            # check for 3 option cases described in docstring. upstreamPipedOption is common for every case
+            # upstreamPipedId only overwritten in case 2
+            upstreamPipedId = '' 
+            upstreamPipedOption = splitPipedArgument[1] 
             if pipedArgument.startswith('.'):
                 upstreamPipedModuleName = self.ScriptObjectList[-1].ScriptName
-            # handle when a scriptname, option, and id is passed (ie. @vmtkimageviewer-1.o)
             elif ('-' in pipedArgument) and ('.' in pipedArgument):
                 upstreamPipedModuleName, upstreamPipedId = splitPipedArgument[0].split('-')
-            # handle when only a scriptname and option is passes (ie. @vmtkimageviewer.o)
             else:
                 upstreamPipedModuleName = splitPipedArgument[0]
 
             candidateScriptObjectList = []
             for candidateScriptObject in self.ScriptObjectList:
                 if candidateScriptObject.ScriptName == upstreamPipedModuleName:
-                    candidateScriptObjectList.append(candidateScriptObject)
-
-            if upstreamPipedId:
-                tempCandidateScriptObjectList = []
-                for candidateScriptObject in candidateScriptObjectList:
-                    if upstreamPipedId == candidateScriptObject.Id:
-                        tempCandidateScriptObjectList.append(candidateScriptObject)
-                candidateScriptObjectList = tempCandidateScriptObjectList
-
-            if not candidateScriptObjectList:
+                    if not upstreamPipedId:
+                        candidateScriptObjectList.append(candidateScriptObject)
+                    # if there is an upstream piped id, then candidateScriptObjectList should
+                    # only contain one element (as long as a valid id was selected)
+                    elif upstreamPipedId == candidateScriptObject.Id:
+                        candidateScriptObjectList.append(candidateScriptObject)
+            try:
+                pipedScriptObject = candidateScriptObjectList[-1]
+            except IndexError:
                 self.PrintError('Error: invalid option piping: '+pipedArgument)
-                continue
 
-            candidatePipedMembers = []
-            pipedScriptObject = candidateScriptObjectList[-1]
             for member in pipedScriptObject.OutputMembers + pipedScriptObject.InputMembers:
                 if upstreamPipedOption == member.OptionName:
-                    candidatePipedMembers.append(member)
-
-            if not candidatePipedMembers:
+                    pipedMember = member
+                    break
+            try:
+                memberEntry.MemberPipe = pipedScriptObject.ScriptName + '-' + str(pipedScriptObject.Id) + '.' + pipedMember.MemberName
+                self.PrintLog(memberName+' = '+memberEntry.MemberPipe,1)
+            except NameError:
                 self.PrintError('Error: invalid option piping: '+pipedArgument)
-                continue
-
-            pipedMember = candidatePipedMembers[0]
-            memberEntry.MemberPipe = pipedScriptObject.ScriptName + '-' + str(pipedScriptObject.Id) + '.' + pipedMember.MemberName
-            self.PrintLog(memberName+' = '+memberEntry.MemberPipe,1)
 
     def PipeScriptObject(self,scriptObject):
         '''perform the actual data transfer from one script object into the input member of another.
@@ -418,10 +407,9 @@ class Pype(object):
             from vmtk import pypes
         except ImportError:
             return None
+        
         self.ScriptObjectList = []
-        # self.ScriptList is now [['vmtkimagereader', ['-ifile', './aorta.mha']], ['vmtkimageviewer', ['-display', '0']], ['vmtkimageotsuthresholds', []]]
         for scriptNameAndArguments in self.ScriptList:
-            # scriptNameAndArguments is now ['vmtkimagereader', ['-ifile', './aorta.mha']]
             self.PrintLog('')
             scriptName = scriptNameAndArguments[0]
             try:
@@ -434,7 +422,7 @@ class Pype(object):
                 scriptObjectClassName = scriptObjectClasses[0]
             except ImportError as e:
                 self.PrintError(str(e))
-                break
+
             scriptObject = getattr(module, scriptObjectClassName)
             scriptObject = scriptObject()
             scriptArguments = scriptNameAndArguments[1]
@@ -445,22 +433,24 @@ class Pype(object):
             if self.OutputStream:
                 scriptObject.OutputStream = self.OutputStream
             scriptObject.ExitOnError = self.ExitOnError
+
             if self.AutoPipe:
                 self.AutoPipeScriptObject(scriptObject)
             self.PrintLog('Parsing options ' + scriptObject.ScriptName)
-            execute = scriptObject.ParseArguments()
-            if not execute:
-                return
+            scriptObject.ParseArguments()
             if scriptObject.Disabled:
                 self.PrintLog('\n' + scriptObject.ScriptName + ' is disabled. Bypassing it.')
                 continue
+
             self.ExplicitPipeScriptObject(scriptObject)
             self.PipeScriptObject(scriptObject)
             scriptObject.PrintInputMembers()
             scriptObject.IORead()
+
             self.PrintLog('Executing ' + scriptObject.ScriptName + ' ...')
             scriptObject.Execute()
             self.PrintLog('Done executing ' + scriptObject.ScriptName + '.')
+            
             scriptObject.IOWrite()
             scriptObject.PrintOutputMembers()
             self.ScriptObjectList.append(scriptObject)
@@ -483,9 +473,3 @@ if __name__=='__main__':
     main = pypes.pypeMain()
     main.Arguments = sys.argv
     main.Execute()
-
-#    pipe = Pype()
-#    pipe.Arguments = sys.argv
-#    pipe.ParseArguments()
-#    pipe.Execute()
-
