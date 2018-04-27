@@ -78,7 +78,7 @@ class Pype(object):
         self.Arguments = None
 
     def GetUsageString(self):
-        usageString = 'Usage: pype --nolog --noauto --query firstScriptName -scriptOptionName '\
+        usageString = 'Usage: pype --nolog --noauto firstScriptName -scriptOptionName '\
                       'scriptOptionValue --pipe secondScriptName -scriptOptionName scriptOptionValue '\
                       '-scriptOptionName @firstScriptName.scriptOptionName -id 2 --pipe thirdScriptName '\
                       '-scriptOptionName @secondScriptName-2.scriptOptionName'
@@ -161,18 +161,10 @@ class Pype(object):
                     break
             if '--help' in pypeArguments:
                 self.PrintLog(self.GetUsageString())
-                return
             if '--noauto' in pypeArguments:
                 self.AutoPipe = 0
             if '--nolog' in pypeArguments:
                 self.LogOn = 0
-            if '--query' in pypeArguments: #TODO: What on earth does this do?
-                queryScripts = arguments[arguments.index('--query')+1:]
-                for queryScript in queryScripts:
-                    exec('from vmtk import '+queryScript)
-                    exec('allScripts = '+queryScript+'.__all__')
-                    self.PrintLog('\n'.join(allScripts))
-                return
             for arg in pypeArguments:
                 arguments.remove(arg)
         return arguments
@@ -437,7 +429,9 @@ class Pype(object):
             if self.AutoPipe:
                 self.AutoPipeScriptObject(scriptObject)
             self.PrintLog('Parsing options ' + scriptObject.ScriptName)
-            scriptObject.ParseArguments()
+            execute = scriptObject.ParseArguments()
+            if not execute:
+                return None
             if scriptObject.Disabled:
                 self.PrintLog('\n' + scriptObject.ScriptName + ' is disabled. Bypassing it.')
                 continue

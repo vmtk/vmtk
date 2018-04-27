@@ -152,4 +152,4 @@ __all__ = [
     ]
 
 for item in __all__:
-    exec('from '+item+' import *')
+    globals().update(importlib.import_module(item).__dict__) 

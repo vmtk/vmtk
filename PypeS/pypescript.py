@@ -585,21 +585,26 @@ class pypeScript(object):
                 self.PrintLog('')
                 self.OutputText(self.GetUsageString())
                 self.PrintLog('')
+                return False
             if arg == '--doc':
                 self.PrintLog('')
                 self.OutputText(self.GetScriptDocString())
                 self.PrintLog('')
+                return False
             if arg == '--html':
                 self.PrintLog('')
                 self.OutputText(self.GetHTMLUsageString())
                 self.PrintLog('')
+                return False
             if (arg[0] == '-') & (len(arg)==1):
                 self.PrintError(self.GetUsageString() + '\n' + self.ScriptName + ' error: unknown option ' + arg + '\n')
+                return False
             if (arg[0] == '-'):
                 if (arg[1] in string.ascii_letters):
                     matchingMembers = [member for member in self.InputMembers if member.OptionName in [arg.lstrip('-'), arg.lstrip('-').rstrip('@')]]
                     if not matchingMembers:
                         self.PrintError(self.GetUsageString() + '\n' + self.ScriptName + ' error: unknown option ' + arg + '\n')
+                        return False
 
     def _CheckMemberValuesLength(self, memberValues, memberLength, memberEntry, option):
         '''ensure that member values have the expected length
@@ -645,7 +650,9 @@ class pypeScript(object):
             self.Arguments: list of option names and args.
                 ie: self.Arguments = ['-ifile', './aorta.mha', '-flip', '1', '0', '1']
         '''
-        self._ParseArgumentsFlags()
+        ParseArgumentStopper = self._ParseArgumentsFlags()
+        if ParseArgumentStopper:
+            return False
         for memberEntry in self.InputMembers:
             memberName  = memberEntry.MemberName
             option = '-' + memberEntry.OptionName
@@ -710,6 +717,7 @@ class pypeScript(object):
             self._CheckMemberValuesBool(memberValues, option, memberType)
             self._CheckMemberValuesInRange(memberValues, memberEntry, option, memberRange)
             self._PrintMemberTypeInformation(memberType, memberLength, activated, memberName, memberValues, memberEntry)
+            return True
 
     def IORead(self):
         '''read a file from disk if the members default reader script is specified'''
