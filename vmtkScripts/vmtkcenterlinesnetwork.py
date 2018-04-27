@@ -19,7 +19,7 @@ import sys
 
 from vmtk import vtkvmtk
 from vmtk import pypes
-from vmtk import vmtkscripts
+from vmtk import vmtkcenterlines, vmtkcenterlinestonumpy, vmtknetworkextraction, vmtkdelaunayvoronoi, vmtknumpytocenterlines
 from joblib import Parallel, delayed
 import random
 import numpy as np
@@ -42,7 +42,7 @@ def _compute_centerlines(surfaceAddress, delaunayAddress, cell, points):
     surface = vtk.vtkPolyData(surfaceAddress)
     delaunay = vtk.vtkUnstructuredGrid(delaunayAddress)
     
-    cl = vmtkscripts.vmtkCenterlines()
+    cl = vmtkcenterlines.vmtkCenterlines()
     cl.Surface = surface
     cl.DelaunayTessellation = delaunay
     cl.SeedSelectorName = 'pointlist'
@@ -51,7 +51,7 @@ def _compute_centerlines(surfaceAddress, delaunayAddress, cell, points):
     cl.LogOn = 0
     cl.Execute()
     
-    clConvert = vmtkscripts.vmtkCenterlinesToNumpy()
+    clConvert = vmtkcenterlinestonumpy.vmtkCenterlinesToNumpy()
     clConvert.Centerlines = cl.Centerlines
     clConvert.LogOn = 0
     clConvert.Execute()
@@ -129,7 +129,7 @@ class vmtkCenterlinesNetwork(pypes.pypeScript):
         networkSurface.RemoveDeletedCells()
 
         # extract the network of approximated centerlines
-        net = vmtkscripts.vmtkNetworkExtraction()
+        net = vmtknetworkextraction.vmtkNetworkExtraction()
         net.Surface = networkSurface
         net.AdvancementRatio = 1.001
         net.Execute()
@@ -165,7 +165,7 @@ class vmtkCenterlinesNetwork(pypes.pypeScript):
         newRadius = ad['PointData']['Radius'][pointIdxToKeep]
 
         # precompute the delaunay tessellation for the whole surface. 
-        tessalation = vmtkscripts.vmtkDelaunayVoronoi()
+        tessalation = vmtkdelaunayvoronoi.vmtkDelaunayVoronoi()
         tessalation.Surface = networkSurface
         tessalation.Execute()
         self.DelaunayTessellation = tessalation.DelaunayTessellation
@@ -188,7 +188,7 @@ class vmtkCenterlinesNetwork(pypes.pypeScript):
 
         out = []
         for item in outlist:
-            npConvert = vmtkscripts.vmtkNumpyToCenterlines()
+            npConvert = vmtknumpytocenterlines.vmtkNumpyToCenterlines()
             npConvert.ArrayDict = item
             npConvert.LogOn = 0
             npConvert.Execute()
