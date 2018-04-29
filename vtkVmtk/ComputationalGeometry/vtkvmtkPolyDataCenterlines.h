@@ -56,8 +56,10 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataCenterlines : public
   vtkSetObjectMacro(DelaunayTessellation,vtkUnstructuredGrid);
   vtkGetObjectMacro(DelaunayTessellation,vtkUnstructuredGrid);
 
+  vtkSetObjectMacro(VoronoiDiagram,vtkPolyData);
   vtkGetObjectMacro(VoronoiDiagram,vtkPolyData);
 
+  vtkSetObjectMacro(PoleIds,vtkIdList);
   vtkGetObjectMacro(PoleIds,vtkIdList);
 
   vtkSetStringMacro(RadiusArrayName);
@@ -101,6 +103,10 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataCenterlines : public
   vtkGetMacro(GenerateDelaunayTessellation,int);
   vtkBooleanMacro(GenerateDelaunayTessellation,int);
 
+  vtkSetMacro(GenerateVoronoiDiagram,int);
+  vtkGetMacro(GenerateVoronoiDiagram,int);
+  vtkBooleanMacro(GenerateVoronoiDiagram, int);
+
   vtkSetMacro(DelaunayTolerance,double);
   vtkGetMacro(DelaunayTolerance,double);
 
@@ -141,6 +147,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataCenterlines : public
 
   double ResamplingStepLength;
 
+  int GenerateVoronoiDiagram;
   int GenerateDelaunayTessellation;
   double DelaunayTolerance;
 

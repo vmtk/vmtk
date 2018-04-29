@@ -493,7 +493,9 @@ class vmtkCenterlines(pypes.pypeScript):
             ['UseTetGen','usetetgen','bool',1,'','toggle use TetGen to compute Delaunay tessellation'],
             ['TetGenDetectInter','tetgendetectinter','bool',1,'','TetGen option'],
             ['CostFunction','costfunction','str',1,'','specify cost function to be minimized during centerline computation'],
-            ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer']])
+            ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer'],
+            ['PoleIds','poleids','vtkIdList',1],
+            ['VoronoiDiagram','voronoidiagram','vtkPolyData',1,'','','vmtksurfacewriter']])
         self.SetOutputMembers([
             ['Centerlines','o','vtkPolyData',1,'','the output centerlines','vmtksurfacewriter'],
             ['RadiusArrayName','radiusarray','str',1,'','name of the array where radius values of maximal inscribed spheres are stored'],
@@ -623,10 +625,19 @@ class vmtkCenterlines(pypes.pypeScript):
         centerlineFilter.SetFlipNormals(self.FlipNormals)
         centerlineFilter.SetAppendEndPointsToCenterlines(self.AppendEndPoints)
         centerlineFilter.SetSimplifyVoronoi(self.SimplifyVoronoi)
-        if self.DelaunayTessellation != None:
+        if self.DelaunayTessellation is not None:
             centerlineFilter.GenerateDelaunayTessellationOff()
             centerlineFilter.SetDelaunayTessellation(self.DelaunayTessellation)
             centerlineFilter.SetDelaunayTolerance(self.DelaunayTolerance)
+        if (self.VoronoiDiagram is not None) and (self.PoleIds is not None):
+            centerlineFilter.GenerateVoronoiDiagramOff()
+            centerlineFilter.SetVoronoiDiagram(self.VoronoiDiagram)
+            centerlineFilter.SetPoleIds(self.PoleIds)
+            centerlineFilter.SetSimplifyVoronoi(0)
+            if self.SimplifyVoronoi == True:
+                centerlineFilter.SetSimplifyVoronoi(0)
+                self.PrintLog('Note: requested behavior (SimplifyVoronoi = True) over-ridden.',1)
+                self.PrintLog('Cannot simplify Voronoi Diagram when precomputed input is specified.',1)
         if self.UseTetGen==1:
             self.PrintLog('Running TetGen.')
             from vmtk import vmtkscripts

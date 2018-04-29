@@ -24,7 +24,7 @@ from joblib import Parallel, delayed
 import random
 import numpy as np
 
-def _compute_centerlines(surfaceAddress, delaunayAddress, cell, points):
+def _compute_centerlines(surfaceAddress, delaunayAddress, voronoiAddress, poleIdsAddress, cell, points):
     '''a method to compute centerlines which can be called in parallel
     
     Arguments:
@@ -41,10 +41,14 @@ def _compute_centerlines(surfaceAddress, delaunayAddress, cell, points):
     
     surface = vtk.vtkPolyData(surfaceAddress)
     delaunay = vtk.vtkUnstructuredGrid(delaunayAddress)
+    voronoi = vtk.vtkPolyData(voronoiAddress)
+    poleIds = vtk.vtkIdList(poleIdsAddress)
     
     cl = vmtkcenterlines.vmtkCenterlines()
     cl.Surface = surface
     cl.DelaunayTessellation = delaunay
+    cl.VoronoiDiagram = voronoi
+    cl.PoleIds = poleIds
     cl.SeedSelectorName = 'pointlist'
     cl.SourcePoints = cellStartPoint
     cl.TargetPoints = cellEndPoint
@@ -75,6 +79,7 @@ class vmtkCenterlinesNetwork(pypes.pypeScript):
 
         self.DelaunayTessellation = None
         self.VoronoiDiagram = None
+        self.PoleIds = None
 
         self.vmtkRenderer = None
         self.OwnRenderer = 0
@@ -93,7 +98,8 @@ class vmtkCenterlinesNetwork(pypes.pypeScript):
             ['EdgePCoordArrayName','edgepcoordarray','str',1],
             ['CostFunctionArrayName','costfunctionarray','str',1],
             ['DelaunayTessellation','delaunaytessellation','vtkUnstructuredGrid',1,'','','vmtkmeshwriter'],
-            ['VoronoiDiagram','voronoidiagram','vtkPolyData',1,'','','vmtksurfacewriter']])
+            ['VoronoiDiagram','voronoidiagram','vtkPolyData',1,'','','vmtksurfacewriter'],
+            ['PoleIds','poleids','vtkIdList',1]])
 
     def Execute(self):
         if self.Surface == None:
@@ -170,6 +176,7 @@ class vmtkCenterlinesNetwork(pypes.pypeScript):
         tessalation.Execute()
         self.DelaunayTessellation = tessalation.DelaunayTessellation
         self.VoronoiDiagram = tessalation.VoronoiDiagram
+        self.PoleIds = tessalation.PoleIds
 
         # vtk objects cannot be serialized in python. Instead of converting the inputs to numpy arrays and having
         # to reconstruct the vtk object each time the loop executes (a slow process), we can just pass in the
@@ -180,9 +187,14 @@ class vmtkCenterlinesNetwork(pypes.pypeScript):
         # the memory space of the fork. To return results we use the vmtkCenterlinesToNumpy converter.
         networkSurfaceMemoryAddress = networkSurface.__this__
         delaunayMemoryAddress = tessalation.DelaunayTessellation.__this__
+        voronoiMemoryAddress = tessalation.VoronoiDiagram.__this__
+        poleIdsMemoryAddress = tessalation.PoleIds.__this__
+
         outlist = Parallel(n_jobs=-1, backend='multiprocessing', verbose=20)(
             delayed(_compute_centerlines)(networkSurfaceMemoryAddress,
                                           delaunayMemoryAddress,
+                                          voronoiMemoryAddress,
+                                          poleIdsMemoryAddress,
                                           cell,
                                           newPoints) for cell in keepCellConnectivityList)
 
