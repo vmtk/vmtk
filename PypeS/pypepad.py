@@ -1,4 +1,5 @@
 #!${PYTHON_SHEBANG}
+# -*- coding: utf-8 -*-
 
 ## Program:   Pype Pad
 ## Module:    $RCSfile: pypepad.py,v $

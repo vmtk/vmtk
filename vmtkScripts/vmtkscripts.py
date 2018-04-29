@@ -1,4 +1,5 @@
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
+import importlib
 
 __all__ = [
     'vmtk.vmtkactivetubes',
@@ -152,4 +153,4 @@ __all__ = [
     ]
 
 for item in __all__:
-    exec('from '+item+' import *')
+    globals().update(importlib.import_module(item).__dict__) 
