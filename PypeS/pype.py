@@ -21,6 +21,7 @@ import importlib
 from inspect import isclass
 import re
 import inspect
+from types import SimpleNamespace
 
 pype = 'Pype'
 
@@ -480,8 +481,33 @@ def decorator_func(original_function):
 
 @decorator_func
 def VmtkRun(arguments, **kwargs):
-    return PypeRun(arguments, **kwargs)
+    pypeRunInstance = PypeRun(arguments, **kwargs)
+    return VmtkGet(pypeRunInstance)
 
+def VmtkGet(vmtkRunInstance):
+    scriptDict = {}
+    for scriptObject in vmtkRunInstance.ScriptObjectList:
+        scriptObjectName = scriptObject.ScriptName
+        scriptObjectId = scriptObject.Id
+        scriptDict[scriptObjectName] = {}
+        scriptDict[scriptObjectName]['InputMembers'] = {}
+        scriptDict[scriptObjectName]['OutputMembers'] = {}
+        for inputMember in scriptObject.InputMembers:
+            inputMemberName = inputMember.MemberName
+            if inputMemberName == 'Self':
+                continue
+            inputMemberValue = getattr(scriptObject, inputMemberName)
+            scriptDict[scriptObjectName]['InputMembers'][inputMemberName] = inputMemberValue
+        for outputMember in scriptObject.OutputMembers:
+            outputMemberName = outputMember.MemberName
+            if outputMemberName == 'Self':
+                continue
+            outputMemberValue = getattr(scriptObject, outputMemberName)
+            scriptDict[scriptObjectName]['OutputMembers'][outputMemberName] = outputMemberValue
+        scriptDict[scriptObjectName]['InputMembers'] = SimpleNamespace(**scriptDict[scriptObjectName]['InputMembers'])
+        scriptDict[scriptObjectName]['OutputMembers'] = SimpleNamespace(**scriptDict[scriptObjectName]['OutputMembers'])
+        scriptDict[scriptObjectName] = SimpleNamespace(**scriptDict[scriptObjectName])
+    return SimpleNamespace(**scriptDict)
 
 def PypeRun(arguments, **kwargs):
     pipe = Pype()
