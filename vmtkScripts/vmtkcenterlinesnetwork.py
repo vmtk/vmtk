@@ -24,7 +24,7 @@ from joblib import Parallel, delayed
 import random
 import numpy as np
 
-def _compute_centerlines(surfaceAddress, delaunayAddress, voronoiAddress, poleIdsAddress, cell, points):
+def _compute_centerlines_network(surfaceAddress, delaunayAddress, voronoiAddress, poleIdsAddress, cell, points):
     '''a method to compute centerlines which can be called in parallel
     
     Arguments:
@@ -52,6 +52,9 @@ def _compute_centerlines(surfaceAddress, delaunayAddress, voronoiAddress, poleId
     cl.VoronoiDiagram = voronoi
     cl.PoleIds = poleIds
     cl.SeedSelectorName = 'pointlist'
+    # since we only set one target seed at a time, setting StopFastMarchingOnReachingTarget
+    # greatly speeds up algorithm execution time.
+    cl.StopFastMarchingOnReachingTarget = 1
     cl.SourcePoints = cellStartPoint
     cl.TargetPoints = cellEndPoint
     cl.LogOn = 0
@@ -145,6 +148,7 @@ class vmtkCenterlinesNetwork(pypes.pypeScript):
 
         convert = vmtkcenterlinestonumpy.vmtkCenterlinesToNumpy()
         convert.Centerlines = network
+        convert.LogOn = False
         convert.Execute()
         ad = convert.ArrayDict
         cellDataTopology = ad['CellData']['Topology']
@@ -192,14 +196,24 @@ class vmtkCenterlinesNetwork(pypes.pypeScript):
         voronoiMemoryAddress = tessalation.VoronoiDiagram.__this__
         poleIdsMemoryAddress = tessalation.PoleIds.__this__
 
-        outlist = Parallel(n_jobs=-1, backend='multiprocessing', verbose=20)(
-            delayed(_compute_centerlines)(networkSurfaceMemoryAddress,
+        # When using Joblib Under Windows, it is important to protect the main loop of code to avoid recursive spawning
+        # of subprocesses. Since we cannot guarantee no code will run outside of “if __name__ == ‘__main__’” blocks 
+        # (only imports and definitions), we make Joblib execute each loop iteration serially on windows. 
+        # On unix-like os's (linux, Mac) we execute each loop iteration independently on as many cores as the system has. 
+        if (sys.platform == 'win32') or (sys.platform == 'win64') or (sys.platform == 'cygwin'):
+            self.PrintLog('Centerlines extraction on windows computer will execute serially.')
+            self.PrintLog('To speed up execution, please run vmtk on unix-like operating system')
+            numParallelJobs = 1
+        else:
+            numParallelJobs = -1
+
+        outlist = Parallel(n_jobs=numParallelJobs, backend='multiprocessing', verbose=20)(
+            delayed(_compute_centerlines_network)(networkSurfaceMemoryAddress,
                                           delaunayMemoryAddress,
                                           voronoiMemoryAddress,
                                           poleIdsMemoryAddress,
                                           cell,
                                           newPoints) for cell in keepCellConnectivityList)
-
         out = []
         for item in outlist:
             npConvert = vmtknumpytocenterlines.vmtkNumpyToCenterlines()
@@ -208,7 +222,7 @@ class vmtkCenterlinesNetwork(pypes.pypeScript):
             npConvert.Execute()
             out.append(npConvert.Centerlines)
 
-        # append each segment's polydata into a single polydata object
+        # Append each segment's polydata into a single polydata object
         new = vtk.vtkAppendPolyData()
         for data in out:  
             new.AddInputData(data)

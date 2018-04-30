@@ -469,6 +469,7 @@ class vmtkCenterlines(pypes.pypeScript):
 
         self.vmtkRenderer = None
         self.OwnRenderer = 0
+        self.StopFastMarchingOnReachingTarget = 0
 
         self.SetScriptName('vmtkcenterlines')
         self.SetScriptDoc('compute centerlines from a branching tubular surface (see papers for details); seed points can be interactively selected on the surface, or specified as the barycenters of the open boundaries of the surface; if vmtk is compiled with support for TetGen, TetGen can be employed to compute the Delaunay tessellation of the input points')
@@ -495,7 +496,8 @@ class vmtkCenterlines(pypes.pypeScript):
             ['CostFunction','costfunction','str',1,'','specify cost function to be minimized during centerline computation'],
             ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer'],
             ['PoleIds','poleids','vtkIdList',1],
-            ['VoronoiDiagram','voronoidiagram','vtkPolyData',1,'','','vmtksurfacewriter']])
+            ['VoronoiDiagram','voronoidiagram','vtkPolyData',1,'','','vmtksurfacewriter'],
+            ['StopFastMarchingOnReachingTarget','stopontarget','bool',1,'','terminate fast marching front propagation when the front reaches the target seed point. This can greatly speed up execution, but it only works when one target seed id is set.']])
         self.SetOutputMembers([
             ['Centerlines','o','vtkPolyData',1,'','the output centerlines','vmtksurfacewriter'],
             ['RadiusArrayName','radiusarray','str',1,'','name of the array where radius values of maximal inscribed spheres are stored'],
@@ -625,6 +627,11 @@ class vmtkCenterlines(pypes.pypeScript):
         centerlineFilter.SetFlipNormals(self.FlipNormals)
         centerlineFilter.SetAppendEndPointsToCenterlines(self.AppendEndPoints)
         centerlineFilter.SetSimplifyVoronoi(self.SimplifyVoronoi)
+        if self.StopFastMarchingOnReachingTarget == True:
+            if outletSeedIds.GetNumberOfIds() != 1:
+                self.PrintError('Parameter Conflict: cannot enable "StopFastMarchingOnReachingTarget" when there is more then one target seed set.')
+            else:
+                centerlineFilter.SetStopFastMarchingOnReachingTarget(self.StopFastMarchingOnReachingTarget)
         if self.DelaunayTessellation is not None:
             centerlineFilter.GenerateDelaunayTessellationOff()
             centerlineFilter.SetDelaunayTessellation(self.DelaunayTessellation)
@@ -633,7 +640,6 @@ class vmtkCenterlines(pypes.pypeScript):
             centerlineFilter.GenerateVoronoiDiagramOff()
             centerlineFilter.SetVoronoiDiagram(self.VoronoiDiagram)
             centerlineFilter.SetPoleIds(self.PoleIds)
-            centerlineFilter.SetStopFastMarchingOnReachingTarget(1)
             if self.SimplifyVoronoi == True:
                 centerlineFilter.SetSimplifyVoronoi(0)
                 self.PrintLog('Note: requested behavior (SimplifyVoronoi = True) over-ridden.',1)

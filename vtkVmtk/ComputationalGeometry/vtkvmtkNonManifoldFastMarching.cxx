@@ -621,6 +621,8 @@ void vtkvmtkNonManifoldFastMarching::Propagate(vtkPolyData* input)
 
     currentTravelTime = this->TScalars->GetValue(trialId);
     
+    // This will stop execution once the front has propogated from the source point to the
+    // Stop point (in the case where StopSeedId is set. Default is NULL)
     if (this->StopSeedId)
     {
       if (trialId == this->StopSeedId->GetId(0))
