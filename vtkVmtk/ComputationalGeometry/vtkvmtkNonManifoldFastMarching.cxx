@@ -620,10 +620,17 @@ void vtkvmtkNonManifoldFastMarching::Propagate(vtkPolyData* input)
     this->UpdateNeighborhood(input,trialId);
 
     currentTravelTime = this->TScalars->GetValue(trialId);
-
-    if ((this->StopNumberOfPoints)||(this->StopTravelTime)||(this->StopSeedId))
+    
+    if (this->StopSeedId)
+    {
+      if (trialId == this->StopSeedId->GetId(0))
       {
-      if ((this->NumberOfAcceptedPoints >= this->StopNumberOfPoints)||(currentTravelTime - this->StopTravelTime > VTK_VMTK_DOUBLE_TOL)||(trialId == this->StopSeedId->GetId(0)))
+        break;
+      }
+    }
+    if ((this->StopNumberOfPoints)||(this->StopTravelTime))
+      {
+      if ((this->NumberOfAcceptedPoints >= this->StopNumberOfPoints)||(currentTravelTime - this->StopTravelTime > VTK_VMTK_DOUBLE_TOL))
         {
         break;
         }
