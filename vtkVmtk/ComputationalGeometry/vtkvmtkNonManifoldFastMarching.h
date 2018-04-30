@@ -93,6 +93,9 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkNonManifoldFastMarching : pu
   vtkSetObjectMacro(Seeds,vtkIdList);
   vtkGetObjectMacro(Seeds,vtkIdList);
 
+  vtkSetObjectMacro(StopSeedId,vtkIdList);
+  vtkGetObjectMacro(StopSeedId,vtkIdList);
+
   // Description:
   // Set/Get poly data were boundary conditions are specified.
   vtkSetObjectMacro(BoundaryPolyData,vtkPolyData);
@@ -157,6 +160,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkNonManifoldFastMarching : pu
   vtkvmtkMinHeap* ConsideredMinHeap;
 
   vtkIdList* Seeds;
+  vtkIdList* StopSeedId;
   vtkPolyData* BoundaryPolyData;
 
   double Regularization;

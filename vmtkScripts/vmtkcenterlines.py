@@ -633,7 +633,7 @@ class vmtkCenterlines(pypes.pypeScript):
             centerlineFilter.GenerateVoronoiDiagramOff()
             centerlineFilter.SetVoronoiDiagram(self.VoronoiDiagram)
             centerlineFilter.SetPoleIds(self.PoleIds)
-            centerlineFilter.SetSimplifyVoronoi(0)
+            centerlineFilter.SetStopFastMarchingOnReachingTarget(1)
             if self.SimplifyVoronoi == True:
                 centerlineFilter.SetSimplifyVoronoi(0)
                 self.PrintLog('Note: requested behavior (SimplifyVoronoi = True) over-ridden.',1)

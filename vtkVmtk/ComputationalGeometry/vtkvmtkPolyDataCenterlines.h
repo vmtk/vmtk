@@ -105,7 +105,11 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataCenterlines : public
 
   vtkSetMacro(GenerateVoronoiDiagram,int);
   vtkGetMacro(GenerateVoronoiDiagram,int);
-  vtkBooleanMacro(GenerateVoronoiDiagram, int);
+  vtkBooleanMacro(GenerateVoronoiDiagram,int);
+
+  vtkSetMacro(StopFastMarchingOnReachingTarget,int);
+  vtkGetMacro(StopFastMarchingOnReachingTarget,int);
+  vtkBooleanMacro(StopFastMarchingOnReachingTarget,int);
 
   vtkSetMacro(DelaunayTolerance,double);
   vtkGetMacro(DelaunayTolerance,double);
@@ -148,6 +152,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataCenterlines : public
   double ResamplingStepLength;
 
   int GenerateVoronoiDiagram;
+  int StopFastMarchingOnReachingTarget;
   int GenerateDelaunayTessellation;
   double DelaunayTolerance;
 

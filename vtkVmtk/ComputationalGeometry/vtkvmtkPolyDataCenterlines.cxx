@@ -81,11 +81,9 @@ vtkvmtkPolyDataCenterlines::vtkvmtkPolyDataCenterlines()
   this->DelaunayTolerance = 1E-3;
 
   this->GenerateVoronoiDiagram = 1;
-
+  this->StopFastMarchingOnReachingTarget = 0;
   this->VoronoiDiagram = NULL;
   this->PoleIds = NULL;
-  // this->VoronoiDiagram = vtkPolyData::New();
-  // this->PoleIds = vtkIdList::New();
 }
 
 vtkvmtkPolyDataCenterlines::~vtkvmtkPolyDataCenterlines()
@@ -354,6 +352,10 @@ int vtkvmtkPolyDataCenterlines::RequestData(
   #endif
   voronoiFastMarching->SetCostFunctionArrayName(this->CostFunctionArrayName);
   voronoiFastMarching->SetSolutionArrayName(this->EikonalSolutionArrayName);
+  if (this->StopFastMarchingOnReachingTarget == 1)
+  {
+  voronoiFastMarching->SetStopSeedId(voronoiTargetSeedIds);
+  }
   voronoiFastMarching->SeedsBoundaryConditionsOn();
   voronoiFastMarching->SetSeeds(voronoiSourceSeedIds);
   voronoiFastMarching->Update();

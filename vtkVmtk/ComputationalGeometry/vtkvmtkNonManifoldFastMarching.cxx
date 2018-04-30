@@ -63,6 +63,7 @@ vtkvmtkNonManifoldFastMarching::vtkvmtkNonManifoldFastMarching()
 
   this->AllowLineUpdate = 1;
   this->UpdateFromConsidered = 1;
+  this->StopSeedId = NULL;
 }
 
 vtkvmtkNonManifoldFastMarching::~vtkvmtkNonManifoldFastMarching()
@@ -91,6 +92,11 @@ vtkvmtkNonManifoldFastMarching::~vtkvmtkNonManifoldFastMarching()
     this->CostFunctionArrayName = NULL;
     }
 
+  if (this->StopSeedId)
+    {
+    this->StopSeedId->Delete();
+    this->StopSeedId = NULL;
+    }
   this->TScalars->Delete();
   this->StatusScalars->Delete();
   this->ConsideredMinHeap->Delete();
@@ -615,9 +621,9 @@ void vtkvmtkNonManifoldFastMarching::Propagate(vtkPolyData* input)
 
     currentTravelTime = this->TScalars->GetValue(trialId);
 
-    if ((this->StopNumberOfPoints)||(this->StopTravelTime))
+    if ((this->StopNumberOfPoints)||(this->StopTravelTime)||(this->StopSeedId))
       {
-      if ((this->NumberOfAcceptedPoints >= this->StopNumberOfPoints)||(currentTravelTime - this->StopTravelTime > VTK_VMTK_DOUBLE_TOL))
+      if ((this->NumberOfAcceptedPoints >= this->StopNumberOfPoints)||(currentTravelTime - this->StopTravelTime > VTK_VMTK_DOUBLE_TOL)||(trialId == this->StopSeedId->GetId(0)))
         {
         break;
         }
