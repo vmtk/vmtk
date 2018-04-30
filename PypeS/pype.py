@@ -467,7 +467,8 @@ class Pype(object):
             scriptObject.Deallocate()
 
 
-def decorator_func(original_function):
+def locals_to_kwargs(original_function):
+    '''decorator to transform locals dictionary and variables in curly brackets to kwargs'''
     def wrapper_func(*args, **kwargs):
         startInd = all_indices('{', args[0])
         endInd = all_indices('}', args[0])
@@ -475,11 +476,19 @@ def decorator_func(original_function):
         keywordDict = {}
         for start, end in zipInd:
             varName = args[0][start+1:end]
-            keywordDict[varName] = kwargs[varName]
+            # if passing in a pyperun object (ex: foo.vmtkimagereader.OutputMembers.Image)
+            if '.' in varName:
+                kwargObject = kwargs[varName.split('.')[0]]
+                for varNamePath in varName.split('.')[1:]:
+                    kwargObject = getattr(kwargObject, varNamePath)
+                keywordDict[varName] = kwargObject
+            # if passing in normal variables
+            else:
+                keywordDict[varName] = kwargs[varName]
         return original_function(*args, **keywordDict)
     return wrapper_func
 
-@decorator_func
+@locals_to_kwargs
 def VmtkRun(arguments, **kwargs):
     pypeRunInstance = PypeRun(arguments, **kwargs)
     return VmtkGet(pypeRunInstance)
