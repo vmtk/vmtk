@@ -207,7 +207,11 @@ class vmtkCenterlinesNetwork(pypes.pypeScript):
         else:
             numParallelJobs = -1
 
-        outlist = Parallel(n_jobs=numParallelJobs, backend='multiprocessing', verbose=20)(
+        self.PrintLog('Computing Centerlines ...')
+        # note about the verbose function: while Joblib can print a progress bar output (set verbose = 20),
+        # it does not implement a callback function as of version 0.11, so we cannot report progress to the user
+        # if we are redirecting standard out with the self.PrintLog method. 
+        outlist = Parallel(n_jobs=numParallelJobs, backend='multiprocessing', verbose=0)(
             delayed(_compute_centerlines_network)(networkSurfaceMemoryAddress,
                                           delaunayMemoryAddress,
                                           voronoiMemoryAddress,
