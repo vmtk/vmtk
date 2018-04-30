@@ -28,9 +28,11 @@ def _compute_centerlines(surfaceAddress, delaunayAddress, voronoiAddress, poleId
     '''a method to compute centerlines which can be called in parallel
     
     Arguments:
-        surfaceAddress (obj:`vtkPolyData`): the input memory address of the surface to calculate centerlines of
-        delaunayAddress (obj:`vtkUnstructuredGrid`): the memory address of a previously computed delaunay 
-            triangulation of the surface
+        surfaceAddress (str): the input memory address of the surface to calculate centerlines of
+        delaunayAddress (str): the memory address of a previously computed delaunay triangulation of the 
+            surface vtkUnstructuredGrid 
+        voronoiAddress (str): the memory address of the previously computed voronoi diagram vtkPolyData
+        poleIdsAddress (str): the memory address of the previously computed poleIds vtkIdList
         cell (np.array): the cellID connectivity list
         points (np.array): the x,y,z coordinates of points identified in the cell argument
     '''
