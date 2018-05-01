@@ -29,11 +29,13 @@ vmtk is cross-platform and will compile and work on Linux, Mac OSX and Windows. 
 
 In order to successfully compile and use vmtk, the following software has to be installed in your system:
 - [Git](www.git-scm.org) (>= 1.6)
-- [Python](www.python.org) (2.7, 3.5+)
+- [Python](www.python.org) (3.5+)
 - [CMake](www.cmake.org) (>=3.3)
 - A C++ 11 compliant C++ compiler (see below for platform specific details)
 
 As VMTK is packaged and distributed exclusively through the anaconda package manager, we highly recomend that [Anaconda Python](www.anaconda.org) is installed on your system. 
+
+Note: After the release of VMTK 1.4.0, VMTK no longer supports python 2.7. 
 
 
 #### Linux Requirements

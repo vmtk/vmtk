@@ -21,7 +21,9 @@ import importlib
 from inspect import isclass
 import re
 import inspect
+from pprint import pprint as pp
 from types import SimpleNamespace
+from functools import wraps
 
 pype = 'Pype'
 
@@ -467,37 +469,53 @@ class Pype(object):
             scriptObject.Deallocate()
 
 
+
 def locals_to_kwargs(original_function):
-    '''decorator to transform locals dictionary and variables in curly brackets to kwargs'''
-    def wrapper_func(*args, **kwargs):
-        startInd = all_indices('{', args[0])
-        endInd = all_indices('}', args[0])
-        zipInd = zip(startInd, endInd)
+    '''decorator to capture f-string variables of calling scope as kwargs for the PypeRun operation
+    
+    This is designed to enable the execution of traditional pype commands within a jupyter notebook.
+    It identifies the characters enclosed within {curly braces}, and searches the local variables of
+    the calling scope for their values. These values are then inserted into a dictionary with the same
+    key name, and passed as kwargs to the decorated function. 
+
+    This is used in order to simplify the user experience. Instead of having to explicitly pass python 
+    objects into the pype, they can just name them within the pype specification string. 
+    '''
+    @wraps(original_function)
+    def wrapper_func(arguments, **kwargs):
+        '''create the kwarg dictionary of the input argument string mapped to locals of the calling frame'''
+        frame = inspect.currentframe()
+        callingLocals = frame.f_back.f_locals
+        startIndices = all_indices('{', arguments)
+        endIndices = all_indices('}', arguments)
+        zippedIndices = zip(startIndices, endIndices)
+        
         keywordDict = {}
-        for start, end in zipInd:
-            varName = args[0][start+1:end]
+        for startIdx, endIdx in zippedIndices:
+            variableName = arguments[startIdx+1:endIdx]
             # if passing in a pyperun object (ex: foo.vmtkimagereader.OutputMembers.Image)
-            if '.' in varName:
-                kwargObject = kwargs[varName.split('.')[0]]
-                for varNamePath in varName.split('.')[1:]:
+            if '.' in variableName:
+                kwargObject = callingLocals[variableName.split('.')[0]]
+                for varNamePath in variableName.split('.')[1:]:
                     kwargObject = getattr(kwargObject, varNamePath)
-                keywordDict[varName] = kwargObject
-            # if passing in normal variables
+                keywordDict[variableName] = kwargObject
+            # if passing in normal variable name (ex: filename)
             else:
-                keywordDict[varName] = kwargs[varName]
-        return original_function(*args, **keywordDict)
+                keywordDict[variableName] = callingLocals[variableName]
+        
+        return original_function(arguments, **keywordDict)
     return wrapper_func
 
-@locals_to_kwargs
-def VmtkRun(arguments, **kwargs):
-    pypeRunInstance = PypeRun(arguments, **kwargs)
-    return VmtkGet(pypeRunInstance)
 
-def VmtkGet(vmtkRunInstance):
+def _vmtk_get(vmtkRunInstance):
+    '''extract all script objects/members from a pype instance into a nested python namespace
+    
+    For every script object within the pype instance, create a namespace. Assign input and output
+    members of each script object to the namespace object. This is returned to the user. 
+    '''
     scriptDict = {}
     for scriptObject in vmtkRunInstance.ScriptObjectList:
         scriptObjectName = scriptObject.ScriptName
-        scriptObjectId = scriptObject.Id
         scriptDict[scriptObjectName] = {}
         scriptDict[scriptObjectName]['InputMembers'] = {}
         scriptDict[scriptObjectName]['OutputMembers'] = {}
@@ -517,6 +535,34 @@ def VmtkGet(vmtkRunInstance):
         scriptDict[scriptObjectName]['OutputMembers'] = SimpleNamespace(**scriptDict[scriptObjectName]['OutputMembers'])
         scriptDict[scriptObjectName] = SimpleNamespace(**scriptDict[scriptObjectName])
     return SimpleNamespace(**scriptDict)
+
+
+@locals_to_kwargs
+def run(arguments, **kwargs):
+    '''run a pype script within an interactive python session (Jupyter Notebook)
+    
+    The function is designed to be called with a similar syntax to a typical pype script.
+    vtkData, variables, and other parameters can be passed within the pype script by enclosing
+    them with {curly braces}. If these variables are defined prior to calling this function, they
+    will be transparently placed into the correct location in the pype. 
+
+    This returns an object which has attributes named for each member in the input script. Input and
+    Output members can be accessed as nested attributes
+
+    Example:
+    >> filename = '~/foo.stl'
+    >> level = 700.0
+    >>
+    >> bar = pypes.run('vmtkimagereader -ifile {filename} --pipe vmtkmarchingcubes -l {level} --pipe vmtksurfaceviewer -i @.o')
+    >> surface = bar.vmtkmarchingcubes.OutputMembers.Surface
+    >>
+    >> bat = pypes.run('vmtkcenterlines -i {surface} --pipe vmtkcenterlineviewer')
+    >> centerlines = bat.vmtkcenterlines.OutputMembers.Centerlines
+    >> voronoiDiagram = bat.vmtkCenterlines.OutputMembesr.VoronoiDiagram
+    '''
+    pypeRunInstance = PypeRun(arguments, **kwargs)
+    return _vmtk_get(pypeRunInstance)
+
 
 def PypeRun(arguments, **kwargs):
     pipe = Pype()
