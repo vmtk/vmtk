@@ -11,6 +11,7 @@ set(PYPES_SRCS
   )
 
 set(PYPES_BASE_SRCS
+  __init__.py
   pype.py
   pypescript.py
   pypes.py
@@ -25,7 +26,7 @@ if(NOT PYPES_INSTALL_BIN_DIR)
 endif(NOT PYPES_INSTALL_BIN_DIR)
 
 if(NOT PYPES_MODULE_INSTALL_LIB_DIR)
-  set(PYPES_MODULE_INSTALL_LIB_DIR lib/${VMTK_PYTHON_VERSION}/site-packages/vmtk)
+  set(PYPES_MODULE_INSTALL_LIB_DIR lib/${VMTK_PYTHON_VERSION}/site-packages/vmtk/pypes)
 endif(NOT PYPES_MODULE_INSTALL_LIB_DIR)
 
 foreach(SCRIPT_FILE ${PYPES_SRCS})
