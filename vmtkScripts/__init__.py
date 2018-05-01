@@ -21,7 +21,6 @@ from .vmtkcenterlinemodeller import *
 from .vmtkcenterlineoffsetattributes import *
 from .vmtkcenterlineresampling import *
 from .vmtkcenterlines import *
-from .vmtkcenterlinestonumpy import *
 from .vmtkcenterlinesections import *
 from .vmtkcenterlinesmoothing import *
 from .vmtkcenterlineviewer import *
@@ -47,7 +46,6 @@ from .vmtkimagereslice import *
 from .vmtkimageseeder import *
 from .vmtkimageshiftscale import *
 from .vmtkimagesmoothing import *
-from .vmtkimagetonumpy import *
 from .vmtkimageviewer import *
 from .vmtkimagevesselenhancement import *
 from .vmtkimagevoipainter import *
@@ -76,7 +74,6 @@ from .vmtkmeshprojection import *
 from .vmtkmeshreader import *
 from .vmtkmeshscaling import *
 from .vmtkmeshtetrahedralize import *
-from .vmtkmeshtonumpy import *
 from .vmtkmeshtosurface import *
 from .vmtkmeshtransform import *
 from .vmtkmeshtransformtoras import *
@@ -89,12 +86,6 @@ from .vmtkmeshwriter import *
 from .vmtknetworkeditor import *
 from .vmtknetworkextraction import *
 from .vmtknetworkwriter import *
-from .vmtknumpyreader import *
-from .vmtknumpytocenterlines import *
-from .vmtknumpytoimage import *
-from .vmtknumpytomesh import *
-from .vmtknumpytosurface import *
-from .vmtknumpywriter import *
 from .vmtkparticletracer import *
 from .vmtkpathlineanimator import *
 from .vmtkpointsplitextractor import *
@@ -135,7 +126,6 @@ from .vmtksurfaceremeshing import *
 from .vmtksurfacescaling import *
 from .vmtksurfacesmoothing import *
 from .vmtksurfacesubdivision import *
-from .vmtksurfacetonumpy import *
 from .vmtksurfacetransform import *
 from .vmtksurfacetransforminteractive import *
 from .vmtksurfacetransformtoras import *
@@ -147,28 +137,6 @@ from .vmtksurfmesh import *
 from .vmtktetgen import *
 from .vmtktetringenerator import *
 
-from .vmtkboundarylayer2 import *
-from .vmtkcenterlinestonumpy import *
-from .vmtkdijkstradistancetopoints import *
-from .vmtkdistancetospheres import *
-from .vmtkentityrenumber import *
-from .vmtkgeodesicsurfaceresolution import *
-from .vmtkimagetonumpy import *
-from .vmtkmeshaddexternallayer import *
-from .vmtkmeshclipcenterlines import *
-from .vmtkmeshmerge import *
-from .vmtkmeshtetrahedralize2 import *
-from .vmtkmeshtonumpy import *
-from .vmtkmeshviewer2 import *
-from .vmtkmeshwriter2 import *
-from .vmtknumpyreader import *
-from .vmtknumpytocenterlines import *
-from .vmtknumpytoimage import *
-from .vmtknumpytomesh import *
-from .vmtknumpytosurface import *
-from .vmtknumpywriter import *
-from .vmtksurfaceextractinnercylinder import *
-from .vmtksurfaceresolution import *
-from .vmtksurfacetonumpy import *
-from .vmtksurfacewriter2 import *
-from .vmtkthreshold import *
+import os
+if os.path.isdir(os.path.join(os.path.dirname(__file__), 'contrib')):
+    from .contrib import *

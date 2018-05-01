@@ -23,7 +23,7 @@ from vtk.numpy_interface import dataset_adapter as dsa
 import sys
 
 from vmtk import vtkvmtk
-from vmtk import vmtkrenderer
+from .. import vmtkrenderer
 from vmtk import pypes
 
 try:

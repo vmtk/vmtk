@@ -24,7 +24,7 @@ from vtk.numpy_interface import dataset_adapter as dsa
 import sys
 
 from vmtk import vtkvmtk
-from vmtk import vmtkrenderer
+from .. import vmtkrenderer
 from vmtk import pypes
 
 try:
@@ -68,7 +68,7 @@ class vmtkSurfaceToNumpy(pypes.pypeScript):
 
             self.PrintLog('converting any cell data to point data')
             try:
-                from vmtk import vmtksurfacecelldatatopointdata
+                from .. import vmtksurfacecelldatatopointdata
             except ImportError:
                 raise ImportError('unable to import vmtksurfacecelldatatopointdata module')
             surfaceCellToPoint = vmtksurfacecelldatatopointdata.vmtkSurfaceCellDataToPointData()

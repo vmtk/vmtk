@@ -14,7 +14,6 @@ set(PYPES_BASE_SRCS
   __init__.py
   pype.py
   pypescript.py
-  pypes.py
   )
 
 foreach (SCRIPT_FILE ${PYPES_BASE_SRCS})

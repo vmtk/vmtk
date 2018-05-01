@@ -17,7 +17,8 @@
 from __future__ import absolute_import, unicode_literals #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import sys
 
-from vmtk import pypeserver
+from . import pypeserver
+from vmtk import vmtkscripts
 
 from multiprocessing import Process, Manager
 import importlib
@@ -280,7 +281,7 @@ class PypeTkPad(object):
             scriptindex = self.text_input.search('vmtk',self.wordIndex[0],backwards=1)
             moduleName  = self.text_input.get( scriptindex,scriptindex+' wordend' )
             try:
-                module = importlib.import_module('vmtk.'+moduleName)
+                module = importlib.import_module('vmtk.vmtkscripts.'+moduleName)
                 # Find the principle class to instantiate the requested action defined inside the requested writerModule script.
                 # Returns a single member list (containing the principle class name) which satisfies the following criteria:
                 #   1) is a class defined within the script
@@ -422,7 +423,7 @@ class PypeTkPad(object):
         from tkinter import Menu
         menu = Menu(parentmenu,bd=1,activeborderwidth=0)
         try:
-            module = importlib.import_module('vmtk.'+modulename)
+            module = importlib.import_module('vmtk.vmtkscripts.'+modulename)
         except ImportError:
             return None
         scriptnames = [scriptname for scriptname in getattr(module, '__all__')]

@@ -20,8 +20,8 @@ import sys
 
 from vmtk import pypes
 
-from vmtk import vmtkrenderer
-from vmtk import vmtkcenterlineviewer
+from . import vmtkrenderer
+from . import vmtkcenterlineviewer
 
 
 class vmtkMeshBranchClipper(pypes.pypeScript):

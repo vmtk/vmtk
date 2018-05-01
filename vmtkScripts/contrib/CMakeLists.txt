@@ -1,6 +1,7 @@
 project(VMTK_CONTRIB_SCRIPTS)
 
 set(CONTRIB_SCRIPTS_SRCS
+    __init__.py
     vmtkboundarylayer2.py
     vmtkcenterlinestonumpy.py
     vmtkdijkstradistancetopoints.py
@@ -28,24 +29,20 @@ set(CONTRIB_SCRIPTS_SRCS
     vmtkmeshmerge.py
     vmtkentityrenumber.py
   )
-  
-set(CONTRIB_MODULE_SRCS
-  vmtkcontribscripts.py
-  )
 
 if(NOT VMTK_CONTRIB_SCRIPTS_INSTALL_BIN_DIR)
   set(VMTK_CONTRIB_SCRIPTS_INSTALL_BIN_DIR bin)
 endif(NOT VMTK_CONTRIB_SCRIPTS_INSTALL_BIN_DIR)
 
 if(NOT VMTK_CONTRIB_SCRIPTS_INSTALL_LIB_DIR)
-  set(VMTK_CONTRIB_SCRIPTS_INSTALL_LIB_DIR lib/${VMTK_PYTHON_VERSION}/site-packages/vmtk/vmtkscripts)
+  set(VMTK_CONTRIB_SCRIPTS_INSTALL_LIB_DIR lib/${VMTK_PYTHON_VERSION}/site-packages/vmtk/vmtkscripts/contrib)
 endif(NOT VMTK_CONTRIB_SCRIPTS_INSTALL_LIB_DIR)
 
 foreach (SCRIPT_FILE  ${CONTRIB_SCRIPTS_SRCS})
   configure_file(${VMTK_CONTRIB_SCRIPTS_SOURCE_DIR}/${SCRIPT_FILE} ${VMTK_CONTRIB_SCRIPTS_BINARY_DIR}/${SCRIPT_FILE} COPYONLY)
 endforeach (SCRIPT_FILE)
 
-install(FILES ${CONTRIB_SCRIPTS_SRCS} ${CONTRIB_MODULE_SRCS}
+install(FILES ${CONTRIB_SCRIPTS_SRCS}
   DESTINATION ${VMTK_CONTRIB_SCRIPTS_INSTALL_LIB_DIR}
   COMPONENT PythonRuntimeLibraries)
 

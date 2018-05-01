@@ -23,7 +23,7 @@ import vtk
 import sys
 
 from vmtk import pypes
-from vmtk import vmtkmeshvectorfromcomponents
+from . import vmtkmeshvectorfromcomponents
 
 
 class vmtkMeshExtractPointData(pypes.pypeScript):

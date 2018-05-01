@@ -18,7 +18,7 @@ from __future__ import print_function, absolute_import # NEED TO STAY AS TOP IMP
 import sys
 from multiprocessing import Process, Manager
 try:
-    from vmtk import pypeserver
+    from vmtk.pypes import pypeserver
     from vmtk import pypes
 except:
     print("Unexpected error:", sys.exc_info()[0])

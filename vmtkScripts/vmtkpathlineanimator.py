@@ -23,8 +23,8 @@ import sys
 import os
 
 from vmtk import vtkvmtk
-from vmtk import vmtkrenderer
-from vmtk import vmtksurfaceviewer
+from . import vmtkrenderer
+from . import vmtksurfaceviewer
 from vmtk import pypes
 
 
