@@ -209,10 +209,6 @@ set(VMTK_SRCS
    vmtk.py
    )
 
-set(VMTK_MODULE_SRCS
-   __init__.py
-   )
-
 if(NOT VMTK_INSTALL_BIN_DIR)
   set(VMTK_INSTALL_BIN_DIR bin)
 endif(NOT VMTK_INSTALL_BIN_DIR)
@@ -231,9 +227,7 @@ if(VMTK_SCRIPTS_ENABLED)
     configure_file(${VMTK_SOURCE_DIR}/${SCRIPT_FILE} ${VMTK_BINARY_DIR}/${SCRIPT_FILE} COPYONLY)
   endforeach (SCRIPT_FILE)
 
-  # configure_file(${VMTK_SOURCE_DIR}/__init__.py.in ${VMTK_BINARY_DIR}/__init__.py COPYONLY)
-
-  install(FILES __init__.py
+  install(FILES __init__.py interactivepype.py
     DESTINATION ${VMTK_MODULE_INSTALL_LIB_DIR}
     COMPONENT PythonRuntimeLibraries
     )

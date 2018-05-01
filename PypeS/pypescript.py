@@ -650,11 +650,9 @@ class pypeScript(object):
     def ParseArguments(self):
         '''Set script object values from specified arguments
 
-        TODO:
-            finish refactor
-            finish docstring
-            self.Arguments: list of option names and args.
-                ie: self.Arguments = ['-ifile', './aorta.mha', '-flip', '1', '0', '1']
+        This method serves two main purposes 1) checking specified arguments for special
+        (flag) behavior and their range validity 2) assigning script object member values
+        based on specified options or pushed values. 
         '''
         ParseArgumentStopper = self._ParseArgumentsFlags()
         if not ParseArgumentStopper:
@@ -676,12 +674,14 @@ class pypeScript(object):
                     continue
                 if (arg[0] == '-') and (arg[1] in string.ascii_letters + '-'):
                     specifiedOptions.append(arg)
+            
             if pushedOption in specifiedOptions:
                 # replace pushed option input text to regular option name that compatible input members can be found.
                 # example: ['-id', '-radiusfactor@'] -> ['-id', '-radiusfactor']
                 memberEntry.Pushed = 1
                 specifiedOptions[specifiedOptions.index(pushedOption)] = option
                 self.Arguments[self.Arguments.index(pushedOption)] = option
+            
             if option not in specifiedOptions:
                 continue
 
