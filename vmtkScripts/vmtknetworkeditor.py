@@ -20,12 +20,12 @@ import vtk
 import sys
 
 from vmtk import vtkvmtk
-from vmtk import vmtkrenderer
-from vmtk import vmtkimageviewer
-from vmtk import vmtkimagefeatures
+from . import vmtkrenderer
+from . import vmtkimageviewer
+from . import vmtkimagefeatures
 from vmtk import pypes
 
-from vmtk import vmtkactivetubes
+from . import vmtkactivetubes
 
 
 class vmtkNetworkEditor(pypes.pypeScript):

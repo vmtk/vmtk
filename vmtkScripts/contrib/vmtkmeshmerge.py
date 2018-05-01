@@ -6,8 +6,8 @@ import math
 import numpy
 import vtk
 from vmtk import pypes
-from vmtk import vmtkscripts
 from vmtk import vtkvmtk
+from vmtk import vmtkscripts
 
 
 class vmtkMeshMerge(pypes.pypeScript):

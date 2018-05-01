@@ -15,7 +15,7 @@
 ##       University at Buffalo
 
 import pytest
-import vmtk.vmtkcenterlineattributes as centerlineattributes
+import vmtk.vmtkscripts.vmtkcenterlineattributes as centerlineattributes
 
 def test_abscissas(aorta_centerline, compare_centerlines):
     name = __name__ + '_test_abscissas.vtp'

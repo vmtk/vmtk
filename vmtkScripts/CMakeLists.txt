@@ -146,10 +146,6 @@ set(SCRIPTS_SRCS
   vmtktetringenerator.py
   )
 
-set(MODULE_SRCS
-  vmtkscripts.py
-  )
-
 option(VMTK_CONTRIB_SCRIPTS "Install modules from the vmtkScripts/contrib directory." OFF)
 
 if (VMTK_CONTRIB_SCRIPTS)
@@ -163,14 +159,14 @@ if(NOT VMTK_SCRIPTS_INSTALL_BIN_DIR)
 endif(NOT VMTK_SCRIPTS_INSTALL_BIN_DIR)
 
 if(NOT VMTK_SCRIPTS_INSTALL_LIB_DIR)
-  set(VMTK_SCRIPTS_INSTALL_LIB_DIR lib/${VMTK_PYTHON_VERSION}/site-packages/vmtk)
+  set(VMTK_SCRIPTS_INSTALL_LIB_DIR lib/${VMTK_PYTHON_VERSION}/site-packages/vmtk/vmtkscripts)
 endif(NOT VMTK_SCRIPTS_INSTALL_LIB_DIR)
 
 foreach (SCRIPT_FILE  ${SCRIPTS_SRCS})
   configure_file(${VMTK_SCRIPTS_SOURCE_DIR}/${SCRIPT_FILE} ${VMTK_SCRIPTS_BINARY_DIR}/${SCRIPT_FILE} COPYONLY)
 endforeach (SCRIPT_FILE)
 
-install(FILES ${SCRIPTS_SRCS} ${MODULE_SRCS}
+install(FILES ${SCRIPTS_SRCS}
   DESTINATION ${VMTK_SCRIPTS_INSTALL_LIB_DIR}
   COMPONENT PythonRuntimeLibraries)
 

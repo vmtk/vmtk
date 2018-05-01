@@ -405,7 +405,7 @@ class Pype(object):
             self.PrintLog('')
             scriptName = scriptNameAndArguments[0]
             try:
-                module = importlib.import_module('vmtk.'+scriptName)
+                module = importlib.import_module('vmtk.vmtkscripts.'+scriptName)
                 # Find the principle class to instantiate the requested action defined inside the requested writerModule script.
                 # Returns a single member list (containing the principle class name) which satisfies the following criteria:
                 #   1) is a class defined within the script

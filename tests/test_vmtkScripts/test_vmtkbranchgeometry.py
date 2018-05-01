@@ -15,7 +15,7 @@
 ##       University at Buffalo
 
 import pytest
-import vmtk.vmtkbranchgeometry as branchgeometry
+import vmtk.vmtkscripts.vmtkbranchgeometry as branchgeometry
 from vtk.numpy_interface import dataset_adapter as dsa 
 import numpy as np
 

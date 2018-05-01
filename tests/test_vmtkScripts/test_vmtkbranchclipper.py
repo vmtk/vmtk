@@ -15,7 +15,7 @@
 ##       University at Buffalo
 
 import pytest
-import vmtk.vmtkbranchclipper as branchclipper
+import vmtk.vmtkscripts.vmtkbranchclipper as branchclipper
 from vtk.numpy_interface import dataset_adapter as dsa 
 import numpy as np
 

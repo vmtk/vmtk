@@ -16,8 +16,8 @@
 
 import pytest
 import os
-import vmtk.vmtkbranchmetrics as branchmetrics
-import vmtk.vmtksurfacereader as surfacereader
+import vmtk.vmtkscripts.vmtkbranchmetrics as branchmetrics
+import vmtk.vmtkscripts.vmtksurfacereader as surfacereader
 from vtk.numpy_interface import dataset_adapter as dsa 
 import numpy as np
 

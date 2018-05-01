@@ -5,7 +5,6 @@ import sys
 import math
 import vtk
 from vmtk import pypes
-from vmtk import vmtkscripts
 
 
 class vmtkThreshold(pypes.pypeScript):

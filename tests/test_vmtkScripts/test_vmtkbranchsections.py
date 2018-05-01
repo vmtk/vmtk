@@ -15,7 +15,7 @@
 ##       University at Buffalo
 
 import pytest
-import vmtk.vmtkbranchsections as branchsections
+import vmtk.vmtkscripts.vmtkbranchsections as branchsections
 from vtk.numpy_interface import dataset_adapter as dsa 
 import numpy as np
 

@@ -16,7 +16,7 @@
 
 import pytest
 import os
-import vmtk.vmtkimagereader as imagereader
+import vmtk.vmtkscripts.vmtkimagereader as imagereader
 
 def test_read_mha_image(input_datadir, compare_images):
     name = __name__ + '_test_read_mha_image.mha'

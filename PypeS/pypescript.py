@@ -731,7 +731,7 @@ class pypeScript(object):
                 filename = eval('self.' + self.GetIOInputFileNameMember(member.MemberName))
                 if filename:
                     try:
-                        readerModule = importlib.import_module('vmtk.'+member.MemberIO)
+                        readerModule = importlib.import_module('vmtk.vmtkscripts.'+member.MemberIO)
                         # Find the principle class to instantiate the requested action defined inside the requested writerModule script.
                         # Returns a single member list (containing the principle class name) which satisfies the following criteria:
                         #   1) is a class defined within the script
@@ -762,7 +762,7 @@ class pypeScript(object):
                 if filename:
                     # Create code object representing local import of requested IO script
                     try:
-                        writerModule = importlib.import_module('vmtk.'+member.MemberIO)
+                        writerModule = importlib.import_module('vmtk.vmtkscripts.'+member.MemberIO)
                         # Find the principle class to instantiate the requested action defined inside the requested writerModule script.
                         # Returns a single member list (containing the principle class name) which satisfies the following criteria:
                         #   1) is a class defined within the script
