@@ -24,10 +24,13 @@ from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py
 import vtk
 from vmtk import vtkvmtk
 import sys
-from vmtk import vmtkscripts
-
 from vmtk import pypes
-
+# handle cyclic imports for python 2 failures. On ImportError, import the vmtkscripts
+# package by pulling it directly out of the python module import cache. 
+try:
+    from vmtk import vmtkscripts
+except ImportError:
+    vmtkscripts = sys.modules['vmtk.vmtkscripts']
 
 class vmtkMeshAddExternalLayer(pypes.pypeScript):
 
