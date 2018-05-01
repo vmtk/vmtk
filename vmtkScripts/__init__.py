@@ -137,7 +137,199 @@ from .vmtksurfmesh import *
 from .vmtktetgen import *
 from .vmtktetringenerator import *
 
-import os
-if os.path.isdir(os.path.join(os.path.dirname(__file__), 'contrib')):
-    from .contrib import *
+__all__ = [
+    'vmtkactivetubes',
+    'vmtkbifurcationprofiles',
+    'vmtkbifurcationreferencesystems',
+    'vmtkbifurcationsections',
+    'vmtkbifurcationvectors',
+    'vmtkboundarylayer',
+    'vmtkboundaryreferencesystems',
+    'vmtkbranchclipper',
+    'vmtkbranchextractor',
+    'vmtkbranchgeometry',
+    'vmtkbranchmapping',
+    'vmtkbranchmetrics',
+    'vmtkbranchpatching',
+    'vmtkbranchsections',
+    'vmtkcenterlineattributes',
+    'vmtkcenterlinegeometry',
+    'vmtkcenterlineinterpolation',
+    'vmtkcenterlinelabeler',
+    'vmtkcenterlinemerge',
+    'vmtkcenterlinemodeller',
+    'vmtkcenterlineoffsetattributes',
+    'vmtkcenterlineresampling',
+    'vmtkcenterlines',
+    'vmtkcenterlinesections',
+    'vmtkcenterlinesmoothing',
+    'vmtkcenterlineviewer',
+    'vmtkdelaunayvoronoi',
+    'vmtkdistancetocenterlines',
+    'vmtkendpointextractor',
+    'vmtkflowextensions',
+    'vmtkicpregistration',
+    'vmtkimagebinarize',
+    'vmtkimagecast',
+    'vmtkimagecompose',
+    'vmtkimagecurvedmpr',
+    'vmtkimagefeaturecorrection',
+    'vmtkimagefeatures',
+    'vmtkimageinitialization',
+    'vmtkimagemipviewer',
+    'vmtkimagemorphology',
+    'vmtkimagenormalize',
+    'vmtkimageobjectenhancement',
+    'vmtkimageotsuthresholds',
+    'vmtkimagereader',
+    'vmtkimagereslice',
+    'vmtkimageseeder',
+    'vmtkimageshiftscale',
+    'vmtkimagesmoothing',
+    'vmtkimageviewer',
+    'vmtkimagevesselenhancement',
+    'vmtkimagevoipainter',
+    'vmtkimagevoiselector',
+    'vmtkimagevolumeviewer',
+    'vmtkimagewriter',
+    'vmtklevelsetsegmentation',
+    'vmtklineartoquadratic',
+    'vmtklineresampling',
+    'vmtklocalgeometry',
+    'vmtkmarchingcubes',
+    'vmtkmesharrayoperation',
+    'vmtkmeshboundaryinspector',
+    'vmtkmeshbranchclipper',
+    'vmtkmeshclipper',
+    'vmtkmeshconnectivity',
+    'vmtkmeshcutter',
+    'vmtkmeshdatareader',
+    'vmtkmeshextractpointdata',
+    'vmtkmeshlambda2',
+    'vmtkmeshlinearize',
+    'vmtkmeshgenerator',
+    'vmtkmeshmergetimesteps',
+    'vmtkmeshpolyballevaluation',
+    'vmtkmeshprojection',
+    'vmtkmeshreader',
+    'vmtkmeshscaling',
+    'vmtkmeshtetrahedralize',
+    'vmtkmeshtosurface',
+    'vmtkmeshtransform',
+    'vmtkmeshtransformtoras',
+    'vmtkmeshvectorfromcomponents',
+    'vmtkmeshviewer',
+    'vmtkmeshvolume',
+    'vmtkmeshvorticityhelicity',
+    'vmtkmeshwallshearrate',
+    'vmtkmeshwriter',
+    'vmtknetworkeditor',
+    'vmtknetworkextraction',
+    'vmtknetworkwriter',
+    'vmtkparticletracer',
+    'vmtkpathlineanimator',
+    'vmtkpointsplitextractor',
+    'vmtkpointtransform',
+    'vmtkpolyballmodeller',
+    'vmtkpotentialfit',
+    'vmtkpythonscript',
+    'vmtkrenderer',
+    'vmtkrendertoimage',
+    'vmtkrbfinterpolation',
+    'vmtksurfaceappend',
+    'vmtksurfacearraysmoothing',
+    'vmtksurfacearrayoperation',
+    'vmtksurfacebooleanoperation',
+    'vmtksurfacecapper',
+    'vmtksurfacecelldatatopointdata',
+    'vmtksurfacecenterlineprojection',
+    'vmtksurfaceclipper',
+    'vmtksurfacecliploop',
+    'vmtksurfaceconnectivity',
+    'vmtksurfaceconnectivityselector',
+    'vmtksurfacecurvature',
+    'vmtksurfacedecimation',
+    'vmtksurfacedistance',
+    'vmtksurfaceendclipper',
+    'vmtksurfacekiteremoval',
+    'vmtksurfaceloopextraction',
+    'vmtksurfacemassproperties',
+    'vmtksurfacemodeller',
+    'vmtksurfacenormals',
+    'vmtksurfacepointdatatocelldata',
+    'vmtksurfacepolyballevaluation',
+    'vmtksurfaceprojection',
+    'vmtksurfacereader',
+    'vmtksurfacereferencesystemtransform',
+    'vmtksurfaceregiondrawing',
+    'vmtksurfaceremeshing',
+    'vmtksurfacescaling',
+    'vmtksurfacesmoothing',
+    'vmtksurfacesubdivision',
+    'vmtksurfacetransform',
+    'vmtksurfacetransforminteractive',
+    'vmtksurfacetransformtoras',
+    'vmtksurfacetriangle',
+    'vmtksurfacetomesh',
+    'vmtksurfaceviewer',
+    'vmtksurfacewriter',
+    'vmtksurfmesh',
+    'vmtktetgen',
+    'vmtktetringenerator'
+]
 
+import os
+if os.path.isfile(os.path.join(os.path.dirname(__file__), 'vmtkcenterlinestonumpy.py')):
+    from .vmtkboundarylayer2 import *
+    from .vmtkcenterlinestonumpy import *
+    from .vmtkdijkstradistancetopoints import *
+    from .vmtkdistancetospheres import *
+    from .vmtkentityrenumber import *
+    from .vmtkgeodesicsurfaceresolution import *
+    from .vmtkimagetonumpy import *
+    from .vmtkmeshaddexternallayer import *
+    from .vmtkmeshclipcenterlines import *
+    from .vmtkmeshmerge import *
+    from .vmtkmeshtetrahedralize2 import *
+    from .vmtkmeshtonumpy import *
+    from .vmtkmeshviewer2 import *
+    from .vmtkmeshwriter2 import *
+    from .vmtknumpyreader import *
+    from .vmtknumpytocenterlines import *
+    from .vmtknumpytoimage import *
+    from .vmtknumpytomesh import *
+    from .vmtknumpytosurface import *
+    from .vmtknumpywriter import *
+    from .vmtksurfaceextractinnercylinder import *
+    from .vmtksurfaceresolution import *
+    from .vmtksurfacetonumpy import *
+    from .vmtksurfacewriter2 import *
+    from .vmtkthreshold import *
+
+    __all__ = __all__ + [    
+        'vmtkboundarylayer2',
+        'vmtkcenterlinestonumpy',
+        'vmtkdijkstradistancetopoints',
+        'vmtkdistancetospheres',
+        'vmtkentityrenumber',
+        'vmtkgeodesicsurfaceresolution',
+        'vmtkimagetonumpy',
+        'vmtkmeshaddexternallayer',
+        'vmtkmeshclipcenterlines',
+        'vmtkmeshmerge',
+        'vmtkmeshtetrahedralize2',
+        'vmtkmeshtonumpy',
+        'vmtkmeshviewer2',
+        'vmtkmeshwriter2',
+        'vmtknumpyreader',
+        'vmtknumpytocenterlines',
+        'vmtknumpytoimage',
+        'vmtknumpytomesh',
+        'vmtknumpytosurface',
+        'vmtknumpywriter',
+        'vmtksurfaceextractinnercylinder',
+        'vmtksurfaceresolution',
+        'vmtksurfacetonumpy',
+        'vmtksurfacewriter2',
+        'vmtkthreshold'
+    ]

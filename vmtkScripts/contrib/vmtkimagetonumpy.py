@@ -25,7 +25,7 @@ from vtk.util import numpy_support
 import sys
 
 from vmtk import vtkvmtk
-from .. import vmtkrenderer
+from . import vmtkrenderer
 from vmtk import pypes
 
 try:

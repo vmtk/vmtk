@@ -25,14 +25,8 @@ import vtk
 import sys
 
 from vmtk import vtkvmtk
-from .. import vmtkrenderer
-# handle cyclic imports for python 2 failures. On ImportError, import the vmtkscripts
-# package by pulling it directly out of the python module import cache. 
-try:
-    from vmtk import vmtkscripts
-except ImportError:
-    vmtkscripts = sys.modules['vmtk.vmtkscripts']
-
+from . import vmtkrenderer
+from vmtk import vmtkscripts
 from vmtk import pypes
 
 

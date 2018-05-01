@@ -4,7 +4,7 @@ set PYTHON_ROOT_DIR=${PYTHON_ROOT_DIR_NATIVE}
 
 set VMTKDIR=${VMTK_INSTALL_DIR_NATIVE}
 set PATH=%PYTHON_ROOT_DIR%;%VMTK_DIR%bin;%VMTK_DIR%lib\InsightToolkit;%VMTK_DIR%lib\Python;%PATH%
-set PYTHONPATH=%VMTK_DIR%lib\site-packages;%VMTK_DIR%lib\vtk-%VTK_VERSION%;%VMTK_DIR%lib\vmtk;%PYTHONPATH%
+set PYTHONPATH=%VMTK_DIR%lib\site-packages;%VMTK_DIR%lib\vtk-%VTK_VERSION%;%VMTK_DIR%lib\vmtk;%VMTK_DIR%lib\vmtk\pypes;%VMTK_DIR%lib\vmtk\vmtkscripts;%PYTHONPATH%
 python vmtk-exe.py
 
 rem start "IDLE" ${PYTHON_ROOT_DIR}Lib\idlelib\idle.bat

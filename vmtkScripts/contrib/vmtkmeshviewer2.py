@@ -26,7 +26,7 @@ from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py
 import vtk
 import sys
 
-from .. import vmtkrenderer
+from . import vmtkrenderer
 from vmtk import pypes
 
 

@@ -25,7 +25,6 @@ import vtk
 import sys
 
 from vmtk import pypes
-
 from vmtk import vtkvmtk
 
 

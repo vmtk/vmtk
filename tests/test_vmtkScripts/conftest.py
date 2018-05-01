@@ -21,12 +21,12 @@ import copy
 from hashlib import sha1
 
 import vmtk.vmtkscripts.vmtkimagereader as imagereader
-import vmtk.vmtkscripts.contrib.vmtkimagetonumpy as imagetonumpy
+import vmtk.vmtkscripts.vmtkimagetonumpy as imagetonumpy
 import vmtk.vmtkscripts.vmtkimagewriter as imagewriter
 import vmtk.vmtkscripts.vmtkimagecompare as imagecompare
 
 import vmtk.vmtkscripts.vmtksurfacereader as surfacereader
-import vmtk.vmtkscripts.contrib.vmtksurfacetonumpy as surfacetonumpy
+import vmtk.vmtkscripts.vmtksurfacetonumpy as surfacetonumpy
 import vmtk.vmtkscripts.vmtksurfacecompare as surfacecompare
 import vmtk.vmtkscripts.vmtksurfacewriter as surfacewriter
 

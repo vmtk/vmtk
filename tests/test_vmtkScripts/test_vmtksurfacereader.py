@@ -17,7 +17,7 @@
 import pytest
 import os
 from hashlib import sha1
-import vmtk.vmtkscripts.contrib.vmtksurfacetonumpy as wrap
+import vmtk.vmtkscripts.vmtksurfacetonumpy as wrap
 import vmtk.vmtkscripts.vmtksurfacereader as r
 
 

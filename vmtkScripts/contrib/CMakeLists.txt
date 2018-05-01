@@ -1,7 +1,6 @@
 project(VMTK_CONTRIB_SCRIPTS)
 
 set(CONTRIB_SCRIPTS_SRCS
-    __init__.py
     vmtkboundarylayer2.py
     vmtkcenterlinestonumpy.py
     vmtkdijkstradistancetopoints.py
@@ -35,7 +34,7 @@ if(NOT VMTK_CONTRIB_SCRIPTS_INSTALL_BIN_DIR)
 endif(NOT VMTK_CONTRIB_SCRIPTS_INSTALL_BIN_DIR)
 
 if(NOT VMTK_CONTRIB_SCRIPTS_INSTALL_LIB_DIR)
-  set(VMTK_CONTRIB_SCRIPTS_INSTALL_LIB_DIR lib/${VMTK_PYTHON_VERSION}/site-packages/vmtk/vmtkscripts/contrib)
+  set(VMTK_CONTRIB_SCRIPTS_INSTALL_LIB_DIR lib/${VMTK_PYTHON_VERSION}/site-packages/vmtk/vmtkscripts)
 endif(NOT VMTK_CONTRIB_SCRIPTS_INSTALL_LIB_DIR)
 
 foreach (SCRIPT_FILE  ${CONTRIB_SCRIPTS_SRCS})

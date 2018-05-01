@@ -17,7 +17,7 @@
 import pytest
 import os
 from hashlib import sha1
-import vmtk.vmtkscripts.contrib.vmtkimagetonumpy as wrap
+import vmtk.vmtkscripts.vmtkimagetonumpy as wrap
 import vmtk.vmtkscripts.vmtkimagecast as cast
 
 
