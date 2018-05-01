@@ -15,11 +15,11 @@
 ##       University at Buffalo
 
 import pytest
-import vmtk.vmtksurfacecapper as surfacecapper
+import vmtk.vmtkscripts.vmtksurfacecapper as surfacecapper
 
 @pytest.fixture(scope='module')
 def aorta_surface_open_ends(input_datadir):
-    import vmtk.vmtksurfacereader as surfacereader
+    import vmtk.vmtkscripts.vmtksurfacereader as surfacereader
     reader = surfacereader.vmtkSurfaceReader()
     reader.InputFileName = os.path.join(input_datadir, 'aorta-surface-open-ends.stl')
     reader.Execute()

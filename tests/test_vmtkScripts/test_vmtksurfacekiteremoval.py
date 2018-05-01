@@ -15,7 +15,7 @@
 ##       University at Buffalo
 
 import pytest
-import vmtk.vmtksurfacekiteremoval as kiteremoval
+import vmtk.vmtkscripts.vmtksurfacekiteremoval as kiteremoval
 
 
 def test_default_params(aorta_surface, compare_surfaces):

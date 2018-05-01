@@ -15,7 +15,7 @@
 ##       University at Buffalo
 
 import pytest
-import vmtk.vmtksurfacemassproperties as massproperties
+import vmtk.vmtkscripts.vmtksurfacemassproperties as massproperties
 
 
 def test_surface_mass_properties(aorta_surface):

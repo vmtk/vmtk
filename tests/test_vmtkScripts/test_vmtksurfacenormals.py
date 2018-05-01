@@ -15,7 +15,7 @@
 ##       University at Buffalo
 
 import pytest
-import vmtk.vmtksurfacenormals as normals
+import vmtk.vmtkscripts.vmtksurfacenormals as normals
 
 def test_default_params(aorta_surface, compare_surfaces):
     name = __name__ + '_test_default_params.vtp'

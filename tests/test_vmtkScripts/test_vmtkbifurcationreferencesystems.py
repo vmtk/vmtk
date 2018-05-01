@@ -15,7 +15,7 @@
 ##       University at Buffalo
 
 import pytest
-import vmtk.vmtkbifurcationreferencesystems as bifurcationreferencesystems
+import vmtk.vmtkscripts.vmtkbifurcationreferencesystems as bifurcationreferencesystems
 from vtk.numpy_interface import dataset_adapter as dsa 
 import numpy as np
 

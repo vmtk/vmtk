@@ -15,7 +15,7 @@
 ##       University at Buffalo
 
 import pytest
-import vmtk.vmtkimagemorphology as morph
+import vmtk.vmtkscripts.vmtkimagemorphology as morph
 
 def test_dilate_grayscale_image(aorta_image, compare_images):
     name = __name__ + '_test_dilate_grayscale_image.mha'

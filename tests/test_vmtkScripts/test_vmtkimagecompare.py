@@ -17,10 +17,10 @@
 import pytest
 import os
 from hashlib import sha1
-import vmtk.vmtkimagetonumpy as wrap
-import vmtk.vmtknumpytoimage as wrap2
-import vmtk.vmtkimagecompare as comp
-import vmtk.vmtkimagereader as r
+import vmtk.vmtkscripts.contrib.vmtkimagetonumpy as wrap
+import vmtk.vmtkscripts.contrib.vmtknumpytoimage as wrap2
+import vmtk.vmtkscripts.vmtkimagecompare as comp
+import vmtk.vmtkscripts.vmtkimagereader as r
 
 
 def test_compare_same_image(aorta_image):

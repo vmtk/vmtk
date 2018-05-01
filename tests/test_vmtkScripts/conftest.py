@@ -14,25 +14,25 @@
 ##       Richard Izzo (Github @rlizzo)
 ##       University at Buffalo
 
-from __future__ import print_function
+from __future__ import print_function, absolute_import
 import pytest
 import os
 import copy
 from hashlib import sha1
 
-import vmtk.vmtkimagereader as imagereader
-import vmtk.vmtkimagetonumpy as imagetonumpy
-import vmtk.vmtkimagewriter as imagewriter
-import vmtk.vmtkimagecompare as imagecompare
+import vmtk.vmtkscripts.vmtkimagereader as imagereader
+import vmtk.vmtkscripts.contrib.vmtkimagetonumpy as imagetonumpy
+import vmtk.vmtkscripts.vmtkimagewriter as imagewriter
+import vmtk.vmtkscripts.vmtkimagecompare as imagecompare
 
-import vmtk.vmtksurfacereader as surfacereader
-import vmtk.vmtksurfacetonumpy as surfacetonumpy
-import vmtk.vmtksurfacecompare as surfacecompare
-import vmtk.vmtksurfacewriter as surfacewriter
+import vmtk.vmtkscripts.vmtksurfacereader as surfacereader
+import vmtk.vmtkscripts.contrib.vmtksurfacetonumpy as surfacetonumpy
+import vmtk.vmtkscripts.vmtksurfacecompare as surfacecompare
+import vmtk.vmtkscripts.vmtksurfacewriter as surfacewriter
 
-import vmtk.vmtkmeshreader as meshreader
-import vmtk.vmtkmeshwriter as meshwriter
-import vmtk.vmtkmeshcompare as meshcompare
+import vmtk.vmtkscripts.vmtkmeshreader as meshreader
+import vmtk.vmtkscripts.vmtkmeshwriter as meshwriter
+import vmtk.vmtkscripts.vmtkmeshcompare as meshcompare
 
 
 

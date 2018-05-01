@@ -15,8 +15,8 @@
 ##       University at Buffalo
 
 import pytest
-import vmtk.vmtkimagevoipainter as voipainter
-import vmtk.vmtkimageviewer as imageviewer
+import vmtk.vmtkscripts.vmtkimagevoipainter as voipainter
+import vmtk.vmtkscripts.vmtkimageviewer as imageviewer
 
 #TODO: Figure out why this fails.
 @pytest.mark.skip(reason='this currently does not work. getting error "BoxExtent exceeds input WholeExtent"')

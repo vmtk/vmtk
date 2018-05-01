@@ -15,7 +15,7 @@
 ##       University at Buffalo
 
 import pytest
-import vmtk.vmtkimagevoiselector as voiselector
+import vmtk.vmtkscripts.vmtkimagevoiselector as voiselector
 
 #TODO: Why does this fail, but the sha method passes?
 @pytest.mark.skip(reason='This assertion fails for an unknown reason')

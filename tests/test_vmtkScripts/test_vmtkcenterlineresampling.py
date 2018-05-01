@@ -15,7 +15,7 @@
 ##       University at Buffalo
 
 import pytest
-import vmtk.vmtkcenterlineresampling as centerlineresampling
+import vmtk.vmtkscripts.vmtkcenterlineresampling as centerlineresampling
 
 def test_default_params(aorta_centerline, compare_centerlines):
     name = __name__ + '_test_default_params.vtp'
