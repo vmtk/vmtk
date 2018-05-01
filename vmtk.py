@@ -70,7 +70,7 @@ if __name__ == '__main__':
 
         if ui == 'pad':
             try:
-                from vmtk import pypepad
+                from vmtk.pypes import pypepad
             except ImportError:
                 print("error")
                 ui = 'console'

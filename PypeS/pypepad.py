@@ -17,7 +17,7 @@
 from __future__ import absolute_import, unicode_literals #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import sys
 
-from . import pypeserver
+from vmtk.pypes import pypeserver
 from vmtk import vmtkscripts
 
 from multiprocessing import Process, Manager
@@ -300,7 +300,7 @@ class PypeTkPad(object):
             list = [scriptname for scriptname in vmtkscripts.__all__ if scriptname.count(word)]
             for index, item in enumerate(list):
                 # check if scriptname contains starting prefix 'vmtk.' and remove it before returning list to the user.
-                if 'vmtk.' == item[0:5]:
+                if 'vmtk.vmtkscripts.' == item[0:18]:
                     splitList = item.split('.')
                     list[index] = splitList[1]
                 else:
@@ -429,7 +429,7 @@ class PypeTkPad(object):
         scriptnames = [scriptname for scriptname in getattr(module, '__all__')]
         for index, scriptname in enumerate(scriptnames):
             # check if scriptname contains starting prefix 'vmtk.' and remove it before returning list to the user.
-            if 'vmtk.' == scriptname[0:5]:
+            if 'vmtk.vmtkscripts.' == scriptname[0:18]:
                 splitList = scriptname.split('.')
                 scriptnames[index] = splitList[1]
             else:
