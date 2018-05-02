@@ -500,7 +500,7 @@ void MedialCurveImageFilter<TInputImage, TAverageOutwardFluxPixelType, TOutputPi
 		InputConstIteratorType dit(this->distance, this->distance->GetRequestedRegion());
 		OutputIteratorType skit(this->skeleton, this->skeleton->GetRequestedRegion());
 
-		for ( dit.GoToBegin(), skit.GoToBegin(); !dit.IsAtEnd(), !skit.IsAtEnd(); ++dit, ++skit )
+		for ( dit.GoToBegin(), skit.GoToBegin(); !skit.IsAtEnd(); ++dit, ++skit )
 		{
 			if ( dit.Get() <= 0.0 )
 				skit.Set( 1 );
