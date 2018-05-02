@@ -64,7 +64,7 @@ class vmtkSurfaceToBinaryImage(pypes.pypeScript):
         bounds = self.Surface.GetBounds()
         dim = []   # list of size: 3, type: int
         for i in range(3):
-            dim.append(math.ceil((bounds[i * 2 + 1] - bounds[i * 2]) / self.PolyDataToImageDataSpacing[i]))
+            dim.append(int(math.ceil((bounds[i * 2 + 1] - bounds[i * 2]) / self.PolyDataToImageDataSpacing[i])))
 
         origin = [bounds[0] + self.PolyDataToImageDataSpacing[0] / 2,
                   bounds[2] + self.PolyDataToImageDataSpacing[1] / 2,
