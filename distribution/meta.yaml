@@ -25,8 +25,6 @@ build:
   number: 1
   features:
     - vc14  # [win and (py35 or py36)]  
-  skip:
-    - True  # [win and py27]  
   
 requirements:
   build:

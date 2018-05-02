@@ -581,6 +581,9 @@ class pypeScript(object):
         with matching format to what is expected.
         '''
         for arg in self.Arguments:
+            # pass this loop if we are passing in a python object and not a string
+            if not isinstance(arg, str):
+                continue
             if arg == '--help':
                 self.PrintLog('')
                 self.OutputText(self.GetUsageString())
@@ -639,21 +642,22 @@ class pypeScript(object):
                     memberLength = len(memberValues)
                 if memberEntry.ExplicitPipe:
                     self.PrintLog(memberName+ ' = @' + memberEntry.ExplicitPipe,1)
-                else:
+                elif memberType in self.BuiltinOptionTypes:
                     self.PrintLog(memberName+ ' = ' + str(self.__getattribute__(memberName)),1)
+                else:
+                    self.PrintLog(memberName+ ' = ' + str(memberType),1)
 
     def ParseArguments(self):
         '''Set script object values from specified arguments
 
-        TODO:
-            finish refactor
-            finish docstring
-            self.Arguments: list of option names and args.
-                ie: self.Arguments = ['-ifile', './aorta.mha', '-flip', '1', '0', '1']
+        This method serves two main purposes 1) checking specified arguments for special
+        (flag) behavior and their range validity 2) assigning script object member values
+        based on specified options or pushed values. 
         '''
         ParseArgumentStopper = self._ParseArgumentsFlags()
         if not ParseArgumentStopper:
             return False
+
         for memberEntry in self.InputMembers:
             memberName  = memberEntry.MemberName
             option = '-' + memberEntry.OptionName
@@ -666,14 +670,18 @@ class pypeScript(object):
             
             specifiedOptions = []
             for arg in self.Arguments:
-                 if (arg[0] == '-') and (arg[1] in string.ascii_letters + '-'):
-                     specifiedOptions.append(arg)
+                if not isinstance(arg, str):
+                    continue
+                if (arg[0] == '-') and (arg[1] in string.ascii_letters + '-'):
+                    specifiedOptions.append(arg)
+            
             if pushedOption in specifiedOptions:
                 # replace pushed option input text to regular option name that compatible input members can be found.
                 # example: ['-id', '-radiusfactor@'] -> ['-id', '-radiusfactor']
                 memberEntry.Pushed = 1
                 specifiedOptions[specifiedOptions.index(pushedOption)] = option
                 self.Arguments[self.Arguments.index(pushedOption)] = option
+            
             if option not in specifiedOptions:
                 continue
 
@@ -685,20 +693,28 @@ class pypeScript(object):
                 optionValues = self.Arguments[optionIndex+1:]
 
             for value in optionValues:
-                if value.startswith('@'):
-                    memberEntry.ExplicitPipe = value[1:]
-                    if value[1:] == '':
-                        memberEntry.ExplicitPipe = 'None'
-                    continue
-                if memberType.lower() in self.BuiltinOptionTypes:
-                    if memberType.lower() == 'str':
-                        castValue = str(value)
-                    elif (memberType.lower() == 'int') or (memberType.lower() == 'bool'):
-                        castValue = int(value)
-                    elif memberType.lower() == 'float':
-                        castValue = float(value)
-                    memberValues.append(castValue)
-                else: #TODO: Does this ever run? 
+                # string input is normal text pyping
+                if isinstance(value, str) == True:
+                    if value.startswith('@'):
+                        memberEntry.ExplicitPipe = value[1:]
+                        if value[1:] == '':
+                            memberEntry.ExplicitPipe = 'None'
+                        continue
+                    if memberType.lower() in self.BuiltinOptionTypes:
+                        if memberType.lower() == 'str':
+                            castValue = str(value)
+                        elif (memberType.lower() == 'int') or (memberType.lower() == 'bool'):
+                            castValue = int(value)
+                        elif memberType.lower() == 'float':
+                            castValue = float(value)
+                        memberValues.append(castValue)
+                    else: #TODO: Does this ever run? 
+                        memberValues.append(value)
+                # if we are passing in a list, we just replace memberValues instead of appending to it
+                elif isinstance(value, list) == True:
+                    memberValues = value
+                # case for when we are passing vtkDataObjects in. 
+                else:
                     memberValues.append(value)
 
             self._CheckMemberValuesLength(memberValues, memberLength, memberEntry, option)

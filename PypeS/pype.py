@@ -19,7 +19,8 @@ import sys
 import os
 import importlib
 from inspect import isclass
-
+import re
+import inspect
 
 pype = 'Pype'
 
@@ -114,7 +115,7 @@ class Pype(object):
         self.OutputStream.write(errorMessage + '\n')
         raise RuntimeError(errorMessage)
 
-    def SetArgumentsString(self,argumentsString):
+    def SetArgumentsString(self,argumentsString,**kwargs):
         ''' Splits an input string into a list containing the class name and arguments.
 
         sets the class attribute "Arguments".
@@ -123,20 +124,32 @@ class Pype(object):
             argumentsString (string): the input argument string
         '''
         if '"' not in argumentsString:
-            self.Arguments = argumentsString.split()
-        import re
-        quoteRe = re.compile('(\".*?\")')
-        splitArguments = quoteRe.split(argumentsString)
-        arguments = []
-        for splitArgument in splitArguments:
-            arg = splitArgument
-            if splitArgument.startswith('"') and splitArgument.endswith('"'):
-                arg = splitArgument[1:-1]
-                arguments.append(arg)
-            else:
-                arguments.extend(arg.strip().split())
-            if '"' in arg:
-                self.PrintError('Error: non-matching quote found')
+            arguments = argumentsString.split()
+
+        else:
+            quoteRe = re.compile('(\".*?\")')
+            splitArguments = quoteRe.split(argumentsString)
+            arguments = []
+            for splitArgument in splitArguments:
+                arg = splitArgument
+                if splitArgument.startswith('"') and splitArgument.endswith('"'):
+                    arg = splitArgument[1:-1]
+                    arguments.append(arg)
+                else:
+                    arguments.extend(arg.strip().split())
+                if '"' in arg:
+                    self.PrintError('Error: non-matching quote found')
+
+        itemToReplace = []
+        for index, item in enumerate(arguments):
+            if item.startswith('{') and item.endswith('}'):
+                itemName = item[1:-1]
+                itemValue = kwargs[itemName]
+                itemToReplace.append({'index': index,
+                                    'value': itemValue})
+        for replace in itemToReplace:
+            arguments[replace['index']] = replace['value']
+
         self.Arguments = arguments
 
 
@@ -452,11 +465,11 @@ class Pype(object):
         for scriptObject in self.ScriptObjectList:
             scriptObject.Deallocate()
 
-def PypeRun(arguments):
 
+def PypeRun(arguments, **kwargs):
     pipe = Pype()
     pipe.ExitOnError = 0
-    pipe.SetArgumentsString(arguments)
+    pipe.SetArgumentsString(arguments, **kwargs)
     pipe.ParseArguments()
     pipe.Execute()
     return pipe
