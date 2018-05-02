@@ -1,5 +1,5 @@
 from .vmtkscripts import *
 from .pypes import *
-from .interactivepype import *
+from .vmtkinteractive import *
 
-__all__ = [interactivepype.__all__]
+__all__ = [vmtkinteractive.__all__]

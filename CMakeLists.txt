@@ -227,7 +227,7 @@ if(VMTK_SCRIPTS_ENABLED)
     configure_file(${VMTK_SOURCE_DIR}/${SCRIPT_FILE} ${VMTK_BINARY_DIR}/${SCRIPT_FILE} COPYONLY)
   endforeach (SCRIPT_FILE)
 
-  install(FILES __init__.py interactivepype.py
+  install(FILES __init__.py vmtkinteractive.py
     DESTINATION ${VMTK_MODULE_INSTALL_LIB_DIR}
     COMPONENT PythonRuntimeLibraries
     )

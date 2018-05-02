@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-## Program:   vmtkjupyter
-## Module:    $RCSfile: vmtkjupyter.py,v $
+## Program:   vmtk
+## Module:    $RCSfile: vmtkinteractive.py,v $
 ## Language:  Python
 ## Date:      $Date: 2018/04/02 10:45:42 $
 ## Version:   $Revision: 1.4 $
@@ -13,6 +13,14 @@
 ##      This software is distributed WITHOUT ANY WARRANTY; without even
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
+
+'''
+This module allows for the use of vmtkscripts in an interactive python environment
+(ie. Jupyter Notebook). When importing vmtk, only the 'run' method symbol will be exported.
+Other functions within this module provide for parsing of input arguments, access to the
+local variables of the calling scope, and connection of the vmtk.run method to the
+broader pypes library. 
+'''
 
 import sys
 import os
@@ -106,10 +114,10 @@ def run(arguments, **kwargs):
     >> filename = '~/foo.stl'
     >> level = 700.0
     >>
-    >> bar = pypes.run('vmtkimagereader -ifile {filename} --pipe vmtkmarchingcubes -l {level} --pipe vmtksurfaceviewer -i @.o')
+    >> bar = vmtk.run('vmtkimagereader -ifile {filename} --pipe vmtkmarchingcubes -l {level} --pipe vmtksurfaceviewer -i @.o')
     >> surface = bar.vmtkmarchingcubes.OutputMembers.Surface
     >>
-    >> bat = pypes.run('vmtkcenterlines -i {surface} --pipe vmtkcenterlineviewer')
+    >> bat = vmtk.run('vmtkcenterlines -i {surface} --pipe vmtkcenterlineviewer')
     >> centerlines = bat.vmtkcenterlines.OutputMembers.Centerlines
     >> voronoiDiagram = bat.vmtkCenterlines.OutputMembesr.VoronoiDiagram
     '''
