@@ -24,22 +24,22 @@ import vmtk.vmtksurfacetobinaryimage as surfacetobinaryimage
     (1, 255, '3'),
 ])
 def test_set_inside_outside_values(aorta_surface, compare_images,
-                                   insidevalue, outsidevalue, paramid, write_image):
-    name = __name__ + '_test_set_inside_outside_values_' + paramid + '.vtp'
-    surfacetobinaryimage.Surface = aorta_surface
-    surfacetobinaryimage.InsideValue = insidevalue
-    surfacetobinaryimage.OutsideValue = outsidevalue
-    surfacetobinaryimage.Execute()
-    write_image(surfacetobinaryimage.Image, name)
+                                   insidevalue, outsidevalue, paramid):
+    name = __name__ + '_test_set_inside_outside_values_' + paramid + '.vti'
+    surfToImage = surfacetobinaryimage.vmtkSurfaceToBinaryImage()
+    surfToImage.Surface = aorta_surface
+    surfToImage.InsideValue = insidevalue
+    surfToImage.OutsideValue = outsidevalue
+    surfToImage.Execute()
     
-    assert compare_images(surfacetobinaryimage.Image, name) == True
+    assert compare_images(surfToImage.Image, name) == True
 
 
-def test_change_spacing(aorta_surface, compare_images, write_image):
-    name = __name__ + '_test_change_spacing.vtp'
-    surfacetobinaryimage.Surface = aorta_surface
-    surfacetobinaryimage.PolyDataToImageDataSpacing = [0.4, 0.4, 0.4]
-    surfacetobinaryimage.Execute()
-    write_image(surfacetobinaryimage.Image, name)
+def test_change_spacing(aorta_surface, compare_images):
+    name = __name__ + '_test_change_spacing.vti'
+    surfToImage = surfacetobinaryimage.vmtkSurfaceToBinaryImage()
+    surfToImage.Surface = aorta_surface
+    surfToImage.PolyDataToImageDataSpacing = [0.4, 0.4, 0.4]
+    surfToImage.Execute()
     
-    assert compare_images(surfacetobinaryimage.Image, name) == True
+    assert compare_images(surfToImage.Image, name) == True
