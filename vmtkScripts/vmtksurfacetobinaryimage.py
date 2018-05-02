@@ -53,6 +53,9 @@ class vmtkSurfaceToBinaryImage(pypes.pypeScript):
         if self.Surface == None:
             self.PrintError('Error: No Input Surface.')
 
+        if self.InsideValue > 255:
+            self.PrintError('Error: Cannot assign InsideValue of image to value greater than 255')
+
         # Step 1: Convert the input surface into an image mask of unsigned char type and spacing = PolyDataToImageDataSpacing
         #         Where voxels lying inside the surface are set to 255 and voxels outside the image are set to value 0. 
 
@@ -82,7 +85,7 @@ class vmtkSurfaceToBinaryImage(pypes.pypeScript):
         whiteImage.SetOrigin(origin[0], origin[1], origin[2])
         whiteImage.AllocateScalars(vtk.VTK_UNSIGNED_CHAR, 1)
 
-        # initially set all values of the image to a value 255
+        # initially set all values of the image to a value self.InsideValue
         npFillImagePoints = np.zeros(whiteImage.GetNumberOfPoints(), dtype=np.uint8)
         npFillImagePoints[:] = self.InsideValue
         # it is much faster to use the vtk data set adaptor functions to fill the point data tupples that it is to

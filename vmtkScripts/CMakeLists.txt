@@ -65,7 +65,7 @@ set(SCRIPTS_SRCS
   vmtklineresampling.py
   vmtklocalgeometry.py
   vmtkmarchingcubes.py
-  vmtkmedialcurvecenterline.py
+  vmtkcenterlineimage.py
   vmtkmesharrayoperation.py
   vmtkmeshboundaryinspector.py
   vmtkmeshbranchclipper.py
