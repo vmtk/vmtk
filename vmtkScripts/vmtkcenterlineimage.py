@@ -46,7 +46,7 @@ class vmtkCenterlineImage(pypes.pypeScript):
         self.PolyDataToImageDataSpacing = [0.3, 0.3, 0.3]
 
         self.SetScriptName('vmtkcenterlineimage')
-        self.SetScriptDoc('Automatically extract a binary skeleton centerline image from a surface using a flux-driven medial curve extraction algorithm.')
+        self.SetScriptDoc('Automatically extract a binary skeleton centerline image from a surface using a flux-driven medial curve extraction algorithm. Note: results will be slightly different on different operating systems.')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
             ['Sigma','sigma','float',1,'(0.0,)','the kernal width of the gaussian used for image smoothing'],
