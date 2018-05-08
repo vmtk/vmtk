@@ -14,6 +14,7 @@ from .vmtkbranchpatching import *
 from .vmtkbranchsections import *
 from .vmtkcenterlineattributes import *
 from .vmtkcenterlinegeometry import *
+from .vmtkcenterlineimage import *
 from .vmtkcenterlineinterpolation import *
 from .vmtkcenterlinelabeler import *
 from .vmtkcenterlinemerge import *
@@ -126,6 +127,7 @@ from .vmtksurfaceremeshing import *
 from .vmtksurfacescaling import *
 from .vmtksurfacesmoothing import *
 from .vmtksurfacesubdivision import *
+from .vmtksurfacetobinaryimage import *
 from .vmtksurfacetransform import *
 from .vmtksurfacetransforminteractive import *
 from .vmtksurfacetransformtoras import *
@@ -154,6 +156,7 @@ __all__ = [
     'vmtkbranchsections',
     'vmtkcenterlineattributes',
     'vmtkcenterlinegeometry',
+    'vmtkcenterlineimage',
     'vmtkcenterlineinterpolation',
     'vmtkcenterlinelabeler',
     'vmtkcenterlinemerge',
@@ -266,6 +269,7 @@ __all__ = [
     'vmtksurfacescaling',
     'vmtksurfacesmoothing',
     'vmtksurfacesubdivision',
+    'vmtksurfacetobinaryimage',
     'vmtksurfacetransform',
     'vmtksurfacetransforminteractive',
     'vmtksurfacetransformtoras',

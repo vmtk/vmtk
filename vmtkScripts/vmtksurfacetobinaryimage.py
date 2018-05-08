@@ -21,7 +21,6 @@ import math
 import sys
 
 from vmtk import vtkvmtk
-from vmtk import vmtkrenderer
 from vmtk import pypes
 
 class vmtkSurfaceToBinaryImage(pypes.pypeScript):

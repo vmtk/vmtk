@@ -28,8 +28,7 @@ import math
 import sys
 
 from vmtk import vtkvmtk
-from vmtk import vmtkrenderer
-from vmtk import vmtksurfacetobinaryimage, vmtksurfacecapper
+from . import vmtksurfacetobinaryimage, vmtksurfacecapper
 from vmtk import pypes
 
 class vmtkCenterlineImage(pypes.pypeScript):

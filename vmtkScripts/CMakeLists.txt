@@ -21,6 +21,7 @@ set(SCRIPTS_SRCS
   vmtkbranchsections.py
   vmtkcenterlineattributes.py
   vmtkcenterlinegeometry.py
+  vmtkcenterlineimage.py
   vmtkcenterlineinterpolation.py
   vmtkcenterlinelabeler.py
   vmtkcenterlinemeshsections.py
@@ -65,7 +66,6 @@ set(SCRIPTS_SRCS
   vmtklineresampling.py
   vmtklocalgeometry.py
   vmtkmarchingcubes.py
-  vmtkcenterlineimage.py
   vmtkmesharrayoperation.py
   vmtkmeshboundaryinspector.py
   vmtkmeshbranchclipper.py
