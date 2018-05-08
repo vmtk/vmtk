@@ -20,7 +20,6 @@ import string
 import os.path
 import importlib
 from inspect import isclass
-import pdb
 
 class pypeMember(object):
 
@@ -331,7 +330,6 @@ class pypeScript(object):
             members (list:'obj'): a list containing instances of pypeMember objects which have
                 already been instantiated
         '''
-        pdb.set_trace()
         for memberEntry in members:
             memberName  = memberEntry.MemberName
             memberType = memberEntry.MemberType
