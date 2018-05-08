@@ -20,6 +20,7 @@ import string
 import os.path
 import importlib
 from inspect import isclass
+import pdb
 
 class pypeMember(object):
 
@@ -304,7 +305,6 @@ class pypeScript(object):
         self.OutputText(prompt)
         try:
             self.InputStream.prompt(prompt)
-    
         except:
             pass
         text = self.InputStream.readline()
@@ -331,9 +331,13 @@ class pypeScript(object):
             members (list:'obj'): a list containing instances of pypeMember objects which have
                 already been instantiated
         '''
+        pdb.set_trace()
         for memberEntry in members:
             memberName  = memberEntry.MemberName
             memberType = memberEntry.MemberType
+            # this next block is a bit odd. we are are dealing with member objects, not script objects in the loop.
+            # For each entry (ex: id, image, surface, format...) of the script objects members, we get the script's member
+            # entry value by querying the scripts "self,  "memberName" attribute
             memberValue = self.__getattribute__(memberName)
 
             if memberName == 'Self':
@@ -712,7 +716,7 @@ class pypeScript(object):
                     else: #TODO: Does this ever run? 
                         memberValues.append(value)
                 # if we are passing in a list, we just replace memberValues instead of appending to it
-                elif (isinstance(value, list) == True) or (isinstance(value, tuple) == True):
+                elif isinstance(value, list) == True:
                     memberValues = value
                 # case for when we are passing vtkDataObjects in. 
                 else:

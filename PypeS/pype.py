@@ -87,9 +87,7 @@ class Pype(object):
         if not self.LogOn:
             return
         indentUnit = '    '
-        indentation = ''
-        for i in range(indent):
-            indentation = indentation + indentUnit
+        indentation = indent * ('' + indentUnit)
         self.OutputStream.write(indentation + logMessage + '\n')
 
     def PrintError(self,errorMessage):
@@ -355,7 +353,7 @@ class Pype(object):
             try:
                 pipedScriptObject = candidateScriptObjectList[-1]
             except IndexError:
-                self.PrintError('Error: invalid option piping: '+pipedArgument)
+                self.PrintError('Error: invalid option piping: ' + pipedArgument)
 
             for member in pipedScriptObject.OutputMembers + pipedScriptObject.InputMembers:
                 if upstreamPipedOption == member.OptionName:
