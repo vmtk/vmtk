@@ -304,6 +304,7 @@ class pypeScript(object):
         self.OutputText(prompt)
         try:
             self.InputStream.prompt(prompt)
+    
         except:
             pass
         text = self.InputStream.readline()
@@ -684,7 +685,7 @@ class pypeScript(object):
             
             if option not in specifiedOptions:
                 continue
-
+                
             optionIndex = self.Arguments.index(option)
             if option != specifiedOptions[-1]:
                 nextOptionIndex = self.Arguments.index(specifiedOptions[specifiedOptions.index(option)+1])
@@ -697,7 +698,7 @@ class pypeScript(object):
                 if isinstance(value, str) == True:
                     if value.startswith('@'):
                         memberEntry.ExplicitPipe = value[1:]
-                        if value[1:] == '':
+                        if value[1:] == '': 
                             memberEntry.ExplicitPipe = 'None'
                         continue
                     if memberType.lower() in self.BuiltinOptionTypes:
@@ -711,7 +712,7 @@ class pypeScript(object):
                     else: #TODO: Does this ever run? 
                         memberValues.append(value)
                 # if we are passing in a list, we just replace memberValues instead of appending to it
-                elif isinstance(value, list) == True:
+                elif (isinstance(value, list) == True) or (isinstance(value, tuple) == True):
                     memberValues = value
                 # case for when we are passing vtkDataObjects in. 
                 else:
