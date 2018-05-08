@@ -21,6 +21,7 @@ set(SCRIPTS_SRCS
   vmtkbranchsections.py
   vmtkcenterlineattributes.py
   vmtkcenterlinegeometry.py
+  vmtkcenterlineimage.py
   vmtkcenterlineinterpolation.py
   vmtkcenterlinelabeler.py
   vmtkcenterlinemeshsections.py
@@ -134,6 +135,7 @@ set(SCRIPTS_SRCS
   vmtksurfacescaling.py
   vmtksurfacesmoothing.py
   vmtksurfacesubdivision.py
+  vmtksurfacetobinaryimage.py
   vmtksurfacetransform.py
   vmtksurfacetransforminteractive.py
   vmtksurfacetransformtoras.py
