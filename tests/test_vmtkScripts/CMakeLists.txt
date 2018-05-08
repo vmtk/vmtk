@@ -12,6 +12,7 @@ set(TEST_VMTKSCRIPTS_SRCS
     test_vmtkbranchsections.py
     test_vmtkcenterlineattributes.py
     test_vmtkcenterlinegeometry.py
+    test_vmtkcenterlineimage.py
     test_vmtkcenterlineinterpolation.py
     test_vmtkcenterlinemodeller.py
     test_vmtkcenterlineoffsetattributes.py
@@ -53,6 +54,7 @@ set(TEST_VMTKSCRIPTS_SRCS
     test_vmtksurfacescaling.py
     test_vmtksurfacesmoothing.py
     test_vmtksurfacesubdivision.py
+    test_vmtksurfacetobinaryimage.py
     test_vmtksurfacetransformtoras.py
     )
 
