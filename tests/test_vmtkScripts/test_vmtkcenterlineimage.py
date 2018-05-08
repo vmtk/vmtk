@@ -20,14 +20,15 @@ import sys
 
 @pytest.fixture(scope='module')
 def per_system_compare_image_name():
-    name = __name__ + '_test_default_parameters_
+    name = __name__ + '_test_default_parameters_'
     if sys.platform in ['win32', 'win64', 'cygwin']:
         name = name + 'windows.vti'
     elif sys.platform == 'darwin':
         name = name + 'mac.vti'
+    else:
+        name = name + 'linux.vti'
     return name
 
-@pytest.mark.skipif(sys.platform.startswith('linux') == True)
 def test_default_parameters(aorta_surface, compare_images, per_system_compare_image_name):
     centImage = centerlineimage.vmtkCenterlineImage()
     centImage.Surface = aorta_surface
