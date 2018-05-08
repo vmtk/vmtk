@@ -45,17 +45,6 @@ def all_indices(value, qlist):
             break
     return indices
 
-class NullOutputStream(object):
-
-    def __init__(self):
-        pass
-
-    def write(self,text):
-        pass
-
-    def flush(self):
-        pass
-
 
 class Pype(object):
     '''
@@ -85,9 +74,6 @@ class Pype(object):
                       '-scriptOptionName @secondScriptName-2.scriptOptionName'
         return usageString
 
-    def SetOutputStreamToNull(self):
-        self.OutputStream = NullOutputStream()
-
     def PrintLog(self,logMessage,indent=0):
         '''Prints log messages from pype controller members to the console.
 
@@ -101,9 +87,7 @@ class Pype(object):
         if not self.LogOn:
             return
         indentUnit = '    '
-        indentation = ''
-        for i in range(indent):
-            indentation = indentation + indentUnit
+        indentation = indent * ('' + indentUnit)
         self.OutputStream.write(indentation + logMessage + '\n')
 
     def PrintError(self,errorMessage):
@@ -118,10 +102,22 @@ class Pype(object):
     def SetArgumentsString(self,argumentsString,**kwargs):
         ''' Splits an input string into a list containing the class name and arguments.
 
-        sets the class attribute "Arguments".
+        sets the class attribute "Arguments" by splitting the input string along spaces (or where
+        appropriate if there are quotes for windows paths) into individual elements in a list.
+        If the argument is enclosed in {curly braces}, a key-value pair with the same name and 
+        desired value should have been feed in from the calling scope in the kwargs dict. 
+
+        If the argument exists with curly braces, we don't need to check if it exists in the kwargs dict
+        (at this point). By the time the kwargs reach this function (through vmtkinteractive), we have
+        already done the checks to make sure that the variable contained within is a valid key-value pair. 
 
         Args:
             argumentsString (string): the input argument string
+            **kwargs (`obj`:dict): stores the values or object instances associated with the key names
+                which were called from the local instance.  
+
+        ex: `vmtkimageviewer -ifile foo -flip {flipvar}' (where flipvar = [0, 1, 0])
+            -> ["vmtkimageviewer", "-ifile", "foo", "-flip", [0, 1, 0]]
         '''
         if '"' not in argumentsString:
             arguments = argumentsString.split()
@@ -357,7 +353,7 @@ class Pype(object):
             try:
                 pipedScriptObject = candidateScriptObjectList[-1]
             except IndexError:
-                self.PrintError('Error: invalid option piping: '+pipedArgument)
+                self.PrintError('Error: invalid option piping: ' + pipedArgument)
 
             for member in pipedScriptObject.OutputMembers + pipedScriptObject.InputMembers:
                 if upstreamPipedOption == member.OptionName:

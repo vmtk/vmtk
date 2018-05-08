@@ -41,6 +41,10 @@ def locals_to_kwargs(original_function):
 
     This is used in order to simplify the user experience. Instead of having to explicitly pass python 
     objects into the pype, they can just name them within the pype specification string. 
+
+    This decorator also handles checking for valid class objects and variables identified by the names
+    in {curly braces}. It will raise an error if a python object with the specified name is not alive
+    in the calling scope. 
     '''
     @wraps(original_function)
     def wrapper_func(arguments, **kwargs):
@@ -53,17 +57,26 @@ def locals_to_kwargs(original_function):
         
         keywordDict = {}
         for startIdx, endIdx in zippedIndices:
-            variableName = arguments[startIdx+1:endIdx]
+            variableName = arguments[startIdx+1:endIdx] 
             # if passing in a pyperun object (ex: foo.vmtkimagereader.OutputMembers.Image)
             if '.' in variableName:
-                kwargObject = callingLocals[variableName.split('.')[0]]
-                for varNamePath in variableName.split('.')[1:]:
-                    kwargObject = getattr(kwargObject, varNamePath)
+                objectAttributeList = variableName.split('.')
+                kwargObject = callingLocals[objectAttributeList[0]]
+                # iterate through list of nested attribute names to get the desired value associated with the object attribute
+                for idx, varNamePath in enumerate(objectAttributeList[1:]):
+                    try:
+                        kwargObject = getattr(kwargObject, varNamePath)
+                    except AttributeError as error:
+                        print("specified python Object: ", '.'.join(objectAttributeList[:idx+1]), " contains no attribute: ", varNamePath)
+                        raise error
                 keywordDict[variableName] = kwargObject
-            # if passing in normal variable name (ex: filename)
+            # if passing in normal variable name (eg: not a nested class hierarchy)
             else:
-                keywordDict[variableName] = callingLocals[variableName]
-        
+                try:
+                    keywordDict[variableName] = callingLocals[variableName]
+                except KeyError as error:
+                    print("specified variable name: ", variableName, " not an 'alive' python object in the calling scope.")
+                    raise error
         return original_function(arguments, **keywordDict)
     return wrapper_func
 

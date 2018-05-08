@@ -333,6 +333,9 @@ class pypeScript(object):
         for memberEntry in members:
             memberName  = memberEntry.MemberName
             memberType = memberEntry.MemberType
+            # this next block is a bit odd. we are are dealing with member objects, not script objects in the loop.
+            # For each entry (ex: id, image, surface, format...) of the script objects members, we get the script's member
+            # entry value by querying the scripts "self,  "memberName" attribute
             memberValue = self.__getattribute__(memberName)
 
             if memberName == 'Self':
@@ -684,7 +687,7 @@ class pypeScript(object):
             
             if option not in specifiedOptions:
                 continue
-
+                
             optionIndex = self.Arguments.index(option)
             if option != specifiedOptions[-1]:
                 nextOptionIndex = self.Arguments.index(specifiedOptions[specifiedOptions.index(option)+1])
@@ -697,7 +700,7 @@ class pypeScript(object):
                 if isinstance(value, str) == True:
                     if value.startswith('@'):
                         memberEntry.ExplicitPipe = value[1:]
-                        if value[1:] == '':
+                        if value[1:] == '': 
                             memberEntry.ExplicitPipe = 'None'
                         continue
                     if memberType.lower() in self.BuiltinOptionTypes:

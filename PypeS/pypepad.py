@@ -19,6 +19,7 @@ import sys
 
 from vmtk.pypes import pypeserver
 from vmtk import vmtkscripts
+from vmtk import pypes
 
 from multiprocessing import Process, Manager
 import importlib
@@ -268,14 +269,9 @@ class PypeTkPad(object):
             pass
 
     def GetSuggestionsList(self,word):
-        list = []
-        try:
-            from vmtk import vmtkscripts
-            from vmtk import pypes
-        except ImportError:
-            return None
+        suggestionList = []
         if word.startswith('--'):
-            list = ['--pipe','--help']
+            suggestionList = ['--pipe','--help']
         elif word.startswith('-'):
             optionlist = []
             scriptindex = self.text_input.search('vmtk',self.wordIndex[0],backwards=1)
@@ -293,19 +289,19 @@ class PypeTkPad(object):
                 members = scriptObject.InputMembers + scriptObject.OutputMembers
                 for member in members:
                     optionlist.append('-'+member.OptionName)
-                list = [option for option in optionlist if option.count(word)]
+                suggestionList = [option for option in optionlist if option.count(word)]
             except:
-                return list
+                return suggestionList
         else:
-            list = [scriptname for scriptname in vmtkscripts.__all__ if scriptname.count(word)]
-            for index, item in enumerate(list):
+            suggestionList = [scriptname for scriptname in vmtkscripts.__all__ if scriptname.count(word)]
+            for index, item in enumerate(suggestionList):
                 # check if scriptname contains starting prefix 'vmtk.' and remove it before returning list to the user.
                 if 'vmtk.vmtkscripts.' == item[0:18]:
                     splitList = item.split('.')
-                    list[index] = splitList[1]
+                    suggestionList[index] = splitList[1]
                 else:
                     continue
-        return list
+        return suggestionList
 
     def FillSuggestionsList(self,word):
         from tkinter import END
@@ -419,32 +415,23 @@ class PypeTkPad(object):
         self.text_output.insert(END,text)
         self.text_output["state"] = DISABLED
 
-    def BuildScriptMenu(self,parentmenu,modulename):
+    def BuildScriptMenu(self,parentmenu,modulename,splitIdentifiers):
         from tkinter import Menu
         menu = Menu(parentmenu,bd=1,activeborderwidth=0)
         try:
-            module = importlib.import_module('vmtk.vmtkscripts.'+modulename)
+            module = importlib.import_module(modulename)
         except ImportError:
             return None
         scriptnames = [scriptname for scriptname in getattr(module, '__all__')]
-        for index, scriptname in enumerate(scriptnames):
-            # check if scriptname contains starting prefix 'vmtk.' and remove it before returning list to the user.
-            if 'vmtk.vmtkscripts.' == scriptname[0:18]:
-                splitList = scriptname.split('.')
-                scriptnames[index] = splitList[1]
-            else:
-                continue
-        menulength = 20
-        for i in range(len(scriptnames)//menulength+1):
-            subscriptnames = scriptnames[i*menulength:(i+1)*menulength]
-            if not subscriptnames:
-                break 
+        for menuBranch in splitIdentifiers:
+            identifier = 'vmtk' + menuBranch
+            submenuScripts = [scriptname for scriptname in scriptnames if scriptname.startswith(identifier)]
             submenu = Menu(menu,bd=1,activeborderwidth=0)
-            menu.add_cascade(label=subscriptnames[0]+"...",menu=submenu)
-            for scriptname in subscriptnames:
+            menu.add_cascade(label=menuBranch+"...",menu=submenu)
+            for scriptname in submenuScripts:
                 callback = CallbackShim(self.InsertScriptName,scriptname)
                 submenu.add_command(label=scriptname,command=callback)
-        return menu 
+        return menu
 
     def BuildMainFrame(self): 
         from tkinter import Menu, IntVar, StringVar, Toplevel, Listbox, Frame, PanedWindow, Text, Scrollbar, Entry
@@ -455,7 +442,7 @@ class PypeTkPad(object):
   
         filemenu = Menu(menu,tearoff=0,bd=1,activeborderwidth=0)
         menu.add_cascade(label="File", underline=0,  menu=filemenu)
-        filemenu.add_command(label="New", accelerator='Ctrl+N',command=self.NewCommand)
+        filemenu.add_command(label="New", accelerator='Ctrl+N', command=self.NewCommand)
         filemenu.add_command(label="Open...",accelerator='Ctrl+O', command=self.OpenCommand)
         filemenu.add_command(label="Save as...",accelerator='Ctrl+S', command=self.SaveCommand)
         filemenu.add_separator()
@@ -467,16 +454,14 @@ class PypeTkPad(object):
         self.output_to_file = StringVar()
         self.output_to_file.set('n')
  
-        scriptmenu = Menu(menu,tearoff=0,bd=1,activeborderwidth=0)
-        modulenames = ['vmtkscripts']
+        modulenames = ['vmtk.vmtkscripts']
+        splitIdentifiers = ['branch', 'centerline', 'image', 'surface', 'mesh']
         for modulename in modulenames:
-            scriptsubmenu = self.BuildScriptMenu(menu,modulename)
-            if scriptsubmenu:
-                scriptmenu.add_cascade(label=modulename,menu=scriptsubmenu)
+            scriptsubmenu = self.BuildScriptMenu(menu,modulename,splitIdentifiers)
  
         editmenu = Menu(menu,tearoff=0,bd=1,activeborderwidth=0)
         menu.add_cascade(label="Edit",underline=0,  menu=editmenu)
-        editmenu.add_cascade(label="Insert script",menu=scriptmenu)
+        editmenu.add_cascade(label="Insert script",menu=scriptsubmenu)
         editmenu.add_command(label="Insert file name", accelerator='Ctrl+F',command=self.InsertFileName)
         editmenu.add_separator()
         editmenu.add_command(label="Clear input", command=self.ClearInputCommand)
@@ -492,7 +477,7 @@ class PypeTkPad(object):
 
         runmenu = Menu(menu,tearoff=0,bd=1,activeborderwidth=0)
         menu.add_cascade(label="Run", underline=0, menu=runmenu)
-        runmenu.add_command(label="Run all", command=self.RunAllCommand)
+        runmenu.add_command(label="Run all", accelerator='Ctrl+R', command=self.RunAllCommand)
         runmenu.add_command(label="Run current line", command=self.RunLineCommand)
         runmenu.add_command(label="Run selection", command=self.RunSelectionCommand)
        
@@ -506,6 +491,7 @@ class PypeTkPad(object):
         self.master.bind("<Control-KeyPress-o>", self.OpenHandler)
         self.master.bind("<Control-KeyPress-s>", self.SaveHandler)
         self.master.bind("<Control-KeyPress-f>", self.InsertFileNameHandler)
+        self.master.bind("<Control-KeyPress-r>", self.RunAllHandler)
         self.master.bind("<KeyPress-F1>", self.ShowHelpHandler)
         self.master.bind("<KeyPress>", self.KeyPressHandler)
         
@@ -572,7 +558,7 @@ class PypeTkPad(object):
 
         self.popupmenu = Menu(self.text_input, tearoff=1, bd=0)
         self.popupmenu.add_command(label="Context help", command=self.ShowHelpCommand)
-        self.popupmenu.add_cascade(label="Insert script",menu=scriptmenu)
+        self.popupmenu.add_cascade(label="Insert script",menu=scriptsubmenu)
         self.popupmenu.add_command(label="Insert file name...", command=self.InsertFileName)
         self.popupmenu.add_separator()
         self.popupmenu.add_command(label="Run all", command=self.RunAllCommand)
