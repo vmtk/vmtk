@@ -12,6 +12,7 @@ tags:
   - CFD Meshing
   - hemodynamics
   - mesh generation
+  - centerline
 authors:
   - name: Richard Izzo
     orcid: 0000-0002-0811-6513
@@ -78,14 +79,11 @@ merging everything in a single model.
 ``vmtklevelsetsegmentation -ifile foo.dcm --pipe vmtkmarchingcubes -i @.o
 --pipe vmtksurfacewriter -ofile foo.vtp``
 
-\begin{figure}[h!]\centering
-  {\includegraphics[width=.3\textwidth]{levelset-seed-placement.png}}
-  {\includegraphics[width=.3\textwidth]{levelset-isosurface-from-seeds.png}}
-  {\includegraphics[width=.3\textwidth]{levelset-isosurface-evolution.png}}
-  \caption{The process of placing seeds on an image (left), initializing an
-  isosurface from the seeds using the colliding fronts methods (center), and
-  finally evolving the isosurface through the level set equations (right).}
-\end{figure}
+![levelset segmentation](levelset.png)
+
+The process of placing seeds on an image (left), initializing an isosurface
+from the seeds using the colliding fronts methods (center), and finally
+evolving the isosurface through the level set equations (right).
 
 ## Generating Centerlines from a Surface
 
@@ -95,54 +93,43 @@ path, which is equivalent to finding the shortest paths in the radius metric.
 
 ``vmtkcenterlines -ifile foo.vtp -ofile foo_centerlines.vtp``
 
-\begin{figure}[h!]\centering
-  {\includegraphics[width=.3\textwidth]{centerlines1.png}}
-  {\includegraphics[width=.3\textwidth]{centerlines2.png}}
-  {\includegraphics[width=.3\textwidth]{centerlines3.png}}
-  \caption{The input surface representation (left), a visualization of the
-  internal subset of the voronoi diagram where each sheet represents a maximum
-  inscribed sphere radius centered at some point in the surface (center), the
-  centerline extracted from the voronoi diagram rendered as in it's position
-  within the input surface (right).} 
-\end{figure}
+![centerline generation](centerlines.png)
+
+The input surface representation (left), a visualization of the internal subset
+of the voronoi diagram where each sheet represents a maximum inscribed sphere
+radius centered at some point in the surface (center), the centerline extracted
+from the voronoi diagram rendered as in it's position within the input surface
+(right).
 
 ## Splitting a Surface from it's Centerlines
 
 Surface properties can be analyzed, and the surface can be split by analyzing
 the surface-centerline tube containment relationships.
 
-`` vmtksurfacereader -ifile foo.vtp --pipe vmtkcenterlines --pipe
+``vmtksurfacereader -ifile foo.vtp --pipe vmtkcenterlines --pipe
 vmtkbranchextractor --pipe vmtkbranchclipper -groupids 0 -insideout 1 -ofile
 foo_sp.vtp``
 
-\begin{figure}[h!]\centering
-  {\includegraphics[width=.45\textwidth]{splitting1.png}}
-  {\includegraphics[width=.45\textwidth]{splitting2.png}}
-  \caption{Illustration of the centerline-surface tube containment
-  relationships (left), visualization of the surface being split into
-  independent groups based on the surfaces membership in a centerline
-  tract/group (right).}
-\end{figure}
+![centerline splitting](splitting.png)
+
+Illustration of the centerline-surface tube containment relationships (left),
+visualization of the surface being split into independent groups based on the
+surfaces membership in a centerline tract/group (right).
 
 ## Generating a Volumetric Mesh from a Surface
 
 Tetrahedral, mixed tetrahedral, and boundary layer meshes can be generated from
 a surface and it's centerlines. 
 
-Generating a radius-adaptive element mesh with a boundary layer
 ``vmtksurfacereader -ifile foo.vtp --pipe vmtkcenterlines --pipe
 vmtkdistancetocenterlines -useradius 1 --pipe vmtkmeshgenerator
 -elementsizemode edgelengtharray -edgelengtharray DistanceToCenterlines
 -edgelengthfactor 0.3 -boundarylayer 1 -ofile foo.vtu``
 
-\begin{figure}[h!]\centering
-  {\includegraphics[width=.2\textwidth]{mesh1.png}}
-  {\includegraphics[width=.2\textwidth]{mesh2.png}}
-  {\includegraphics[width=.45\textwidth]{mesh3.png}}
-  \caption{The input surface representation (left), a visualization of the
-  internal mesh (center), a visualization of a boundary layer internal mesh
-  (right).}
-\end{figure}
+![ mesh generation](mesh.png)
+
+The input surface representation (left), a visualization of the internal mesh
+(center), a visualization of a boundary layer internal mesh (right).
 
 ## composable Scripting With PypeS
 
@@ -152,10 +139,9 @@ scripts to interact with each other, making ``VMTK`` modular and flexible.
 Pypes can be used from the command line, a python interpreter, or from the
 custom ``PypePad`` user interface
 
-\begin{figure}[h!]\centering
-  {\includegraphics[width=.8\textwidth]{pypepad.png}}
-  \caption{The VMTK PypePad user interface.}
-\end{figure}
+![pypepad](pypepad.png)
+
+The VMTK PypePad user interface.
 
 # Acknowledgements & Funding
 
