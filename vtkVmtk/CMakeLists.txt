@@ -1,6 +1,7 @@
 project(VTK_VMTK)
 
 include(${VMTK_SOURCE_DIR}/CMake/vmtkFunctions.cmake)
+include (${VMTK_SOURCE_DIR}/CMake/CMakeOptions.cmake)
 
 set(dirs
   Utilities
@@ -21,8 +22,6 @@ option(VTK_VMTK_CONTRIB "Build and install classes in the vtkVmtk/Contrib direct
 if (VTK_VMTK_CONTRIB)
   list(APPEND dirs Contrib)
 endif (VTK_VMTK_CONTRIB)
-
-include (${VMTK_SOURCE_DIR}/CMake/CMakeOptions.cmake)
 
 configure_file(
   ${VTK_VMTK_SOURCE_DIR}/vtkvmtkConfigure.h.in
