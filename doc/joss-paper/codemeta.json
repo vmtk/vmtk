@@ -3,11 +3,25 @@
   "@type": "Code",
   "author": [
     {
-      "@id": "",
+      "@id": "https://orcid.org/0000-0002-8367-227X",
       "@type": "Person",
       "email": "luca.antiga@orobix.com",
       "name": "Luca Antiga",
       "affiliation": "Orobix Srl."
+    },
+    {
+      "@id": "",
+      "@type": "Person",
+      "email": "simone.manini@orobix.com",
+      "name": "Simone Manini",
+      "affiliation": "Orobix Srl."
+    },
+    {
+      "@id": "https://orcid.org/0000-0002-7963-1168",
+      "@type": "Person",
+      "email": "steinman@mie.utoronto.ca",
+      "name": "David Steinman",
+      "affiliation": "University of Toronto"
     },
     {
       "@id": "https://orcid.org/0000-0002-0811-6513",

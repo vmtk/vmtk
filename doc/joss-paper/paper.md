@@ -17,16 +17,24 @@ authors:
   - name: Richard Izzo
     orcid: 0000-0002-0811-6513
     affiliation: "1, 2"
-  - name: Luca Antiga
-    # orcid: 0000-0000-0000-0000 NEED THIS
+  - name: David Steinman
+    orcid: 0000-0002-7963-1168
     affiliation: 3
+  - name: Simone Manini
+    orcid: 
+    affiliation: 4
+  - name: Luca Antiga
+    orcid: 0000-0002-8367-227X
+    affiliation: 4
 affiliations:
  - name: Biomedical Engineering, University at Buffalo
    index: 1
  - name: Fellow, Prentice Family Foundation
    index: 2
- - name: Orobix Srl. 
+ - name: Professor, Mechanical Engineering, University of Toronto
    index: 3
+ - name: Orobix Srl. 
+   index: 4
 date: 23 April 2018
 bibliography: paper.bib
 ---
