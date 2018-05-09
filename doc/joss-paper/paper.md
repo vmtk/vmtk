@@ -131,7 +131,7 @@ vmtkdistancetocenterlines -useradius 1 --pipe vmtkmeshgenerator
 The input surface representation (left), a visualization of the internal mesh
 (center), a visualization of a boundary layer internal mesh (right).
 
-## composable Scripting With PypeS
+## Composable Scripting With PypeS
 
 ``PypeS`` is the glue among vmtk scripts. It allows new scripts to be written
 easily and have a common interface, but, most of all, it allows single vmtk
@@ -149,6 +149,6 @@ The Vascular Modeling Toolkit is a community project which is open-source and
 free of charge. We would especially like to recognize significant
 infrastructure contributions from the team at Kitware Inc. (www.kitware.com).
 In addition we would like to acknowledge Orobix Srl. (www.orobix.com) for
-partially fundinging continued development efforts of ``VMTK``.
+partially funding continued development efforts of ``VMTK``.
 
 # References

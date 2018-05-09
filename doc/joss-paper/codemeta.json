@@ -23,7 +23,7 @@
   "dateModified": "2018-04-23",
   "dateCreated": "2018-04-23",
   "description": "The Vascular Modeling Toolkit is a collection of libraries and tools for 3D reconstruction, geometric analysis, mesh generation and surface data analysis for image-based modeling of blood vessels.",
-  "keywords": "vascular modeling, image processing, medical imaging, image segmentation, computational geometry, surface extraction, CFD meshing, hemodynamics, mesh generation, python, c++",
+  "keywords": "vascular modeling, image processing, medical imaging, image segmentation, computational geometry, surface extraction, CFD meshing, hemodynamics, mesh generation, python, c++, centerline",
   "license": "BSD",
   "title": "The Vascular Modeling Toolkit",
   "version": "v1.4.0"
