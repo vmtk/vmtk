@@ -60,16 +60,16 @@ gradient based level set algorithm which is initialized from user defined
 seeds. Surface editing, mesh generation, and geometric characterization is
 largely automated, relying heavily on the centerline definitions calculated
 from segmented structures.  User interaction is facilitated by a unique system
-of unix-inspired ``Pypes``.  This interface allows for the composable creation
+of unix-inspired ``pypes``.  This interface allows for the composable creation
 and execution of entire analyses from simple terminal commands, providing a
 flexible framework for high-level coding, both from the user’s and from the
 developer’s point of view.
 
 ``VMTK`` is a mature package with an active development team and user
-community.  It can be used via it's standalone interface, included as a Python
+community.  It can be used via its standalone interface, included as a Python
 or C++ library, or as an extension to the medical image processing platform 3D
-Slicer.  It has received 41 citations in scientific publications since its
-first release in 2004. The library relies upon two major open source frameworks
+Slicer [@Kikinis2014].  It has received over 400 citations in scientific publications since its
+first release in 2004 [@RN83]. The library relies upon two major open source frameworks
 for building highly performant and well validated image analysis algorithms and
 visualizations: the Visualization Toolkit (``VTK``) and the Insight
 Segmentation and Registration Toolkit (``ITK``).  Thorough tutorials and
@@ -106,10 +106,10 @@ path, which is equivalent to finding the shortest paths in the radius metric.
 The input surface representation (left), a visualization of the internal subset
 of the voronoi diagram where each sheet represents a maximum inscribed sphere
 radius centered at some point in the surface (center), the centerline extracted
-from the voronoi diagram rendered as in it's position within the input surface
+from the voronoi diagram rendered as in its position within the input surface
 (right).
 
-## Splitting a Surface from it's Centerlines
+## Splitting a Surface from its Centerlines
 
 Surface properties can be analyzed, and the surface can be split by analyzing
 the surface-centerline tube containment relationships.
@@ -127,7 +127,7 @@ surfaces membership in a centerline tract/group (right).
 ## Generating a Volumetric Mesh from a Surface
 
 Tetrahedral, mixed tetrahedral, and boundary layer meshes can be generated from
-a surface and it's centerlines. 
+a surface and its centerlines. 
 
 ``vmtksurfacereader -ifile foo.vtp --pipe vmtkcenterlines --pipe
 vmtkdistancetocenterlines -useradius 1 --pipe vmtkmeshgenerator
@@ -141,7 +141,7 @@ The input surface representation (left), a visualization of the internal mesh
 
 ## Composable Scripting With PypeS
 
-``PypeS`` is the glue among vmtk scripts. It allows new scripts to be written
+``Pypes`` is the glue among vmtk scripts. It allows new scripts to be written
 easily and have a common interface, but, most of all, it allows single vmtk
 scripts to interact with each other, making ``VMTK`` modular and flexible.
 Pypes can be used from the command line, a python interpreter, or from the
