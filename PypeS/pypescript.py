@@ -8,7 +8,7 @@
 ## Version:   $Revision: 1.18 $
 
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-##   See LICENSE file for details.
+##   See LICENCE file for details.
 
 ##      This software is distributed WITHOUT ANY WARRANTY; without even
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
@@ -20,6 +20,7 @@ import string
 import os.path
 import importlib
 from inspect import isclass
+import textwrap
 
 class pypeMember(object):
 
@@ -55,7 +56,6 @@ class pypeMember(object):
         self.ExplicitPipe = ''
         self.AutoPipe = 1
         self.Pushed = 0
-
 
     def _GetRangeEnumeration(self):
         '''Returns the valid range specified in script input members if valid range is part of a list
@@ -179,9 +179,6 @@ class pypeScript(object):
     the same time:
        - a script which can be called from the command line and piped to other scripts
        - a class which can be called from Python code (e.g. inside a tkinter GUI)
-
-    Methods:
-        Print
     '''
 
     lastVisitedPath = '.'
@@ -404,9 +401,9 @@ class pypeScript(object):
             pypeMemberObject = self._ConvertToPypeMembers(pypeMemberObject)
             self.InputMembers.append(pypeMemberObject)
             if pypeMemberObject.MemberIO:
-                filenameMember = pypeMember(self.GetIOInputFileNameMember(pypeMemberObject.MemberName),
-                                            self.GetIOFileNameOption(pypeMemberObject.OptionName),
-                                            'str', 1, '',
+                commandLineOption = pypeMemberObject.OptionName + 'file'
+                argumentName = pypeMemberObject.MemberName + 'InputFileName'
+                filenameMember = pypeMember(argumentName, commandLineOption, 'str', 1, '',
                                             'filename for the default ' + pypeMemberObject.MemberName + ' reader')
                 setattr(self, str(filenameMember.MemberName), '')
                 self.InputMembers.append(filenameMember)
@@ -441,9 +438,9 @@ class pypeScript(object):
             pypeMemberObject = self._ConvertToPypeMembers(pypeMemberObject)
             self.OutputMembers.append(pypeMemberObject)
             if pypeMemberObject.MemberIO:
-                filenameMember = pypeMember(self.GetIOOutputFileNameMember(pypeMemberObject.MemberName),
-                                            self.GetIOFileNameOption(pypeMemberObject.OptionName),
-                                            'str', 1, '',
+                commandLineOption = pypeMemberObject.OptionName + 'file'
+                argumentName = pypeMemberObject.MemberName + 'OutputFileName'
+                filenameMember = pypeMember(argumentName, commandLineOption, 'str', 1, '',
                                             'filename for the default ' + pypeMemberObject.MemberName + ' writer')
                 setattr(self, str(filenameMember.MemberName), '')
                 self.InputMembers.append(filenameMember)
@@ -456,10 +453,6 @@ class pypeScript(object):
         '''sets the script object ScriptDoc attribute'''
         self.ScriptDoc = scriptDoc
 
-    def GetScriptDocString(self):
-        '''returns the scriptobject ScriptDoc attribute value'''
-        return self.ScriptDoc
-
     def GetUsageString(self):
         '''get a plain text string describing useful information about the current script object
 
@@ -471,55 +464,40 @@ class pypeScript(object):
         scriptUsageString = os.path.splitext(self.ScriptName)[0]
         if self.ScriptDoc:
             scriptUsageString += ' : ' + self.ScriptDoc
-        useTextWrap = 1
-        try:
-            import textwrap
-        except ImportError:
-            useTextWrap = 0
-        else:
-            textwrapper = textwrap.TextWrapper()
-            textwrapper.initial_indent = ''
-            textwrapper.subsequent_indent = ' '
-        if useTextWrap:
-            usageString += textwrapper.fill(scriptUsageString)
-        else:
-            usageString += scriptUsageString
+        textwrapper = textwrap.TextWrapper()
+        textwrapper.initial_indent = ''
+        textwrapper.subsequent_indent = ' '
+        usageString += textwrapper.fill(scriptUsageString)
         for memberList in [self.InputMembers, self.OutputMembers]:
-            if memberList == self.InputMembers :
+            if memberList == self.InputMembers:
                  usageString += '\n' + '  ' + 'Input arguments:'
-            elif memberList == self.OutputMembers :
+            elif memberList == self.OutputMembers:
                  usageString += '\n' + '  ' + 'Output arguments:'
             for memberEntry in memberList:
                 memberUsageString = ''
                 indentation = '   '
-                if useTextWrap:
-                    textwrapper.initial_indent = indentation
-                    textwrapper.subsequent_indent = indentation + '  '
+                textwrapper.initial_indent = indentation
+                textwrapper.subsequent_indent = indentation + '  '    
                 memberName  = memberEntry.MemberName
                 option = memberEntry.OptionName
                 memberType = memberEntry.MemberType
                 memberLength = memberEntry.MemberLength
                 memberRange = memberEntry.MemberRange
                 memberDoc = memberEntry.MemberDoc
-                if option!='':
-                    default = 0
-                    if memberLength == 0:
-                        memberUsageString += '-' + option + ' ' + memberName
-                    elif memberType in self.BuiltinOptionTypes:
-                        default = self.__getattribute__(memberName)
-                        memberUsageString += '-' + option + ' ' + memberName + ' (' + memberType + ',' + str(memberLength) + ')'
-                        if memberRange:
-                            memberUsageString += " " + memberEntry.GetRangeRepresentation()
-                        if default != '':
-                            memberUsageString += '; default=' + str(default)
-                    else:
-                        memberUsageString += '-' + option + ' ' + memberName + ' (' + memberType + ',' + str(memberLength) + ')'
-                    if memberDoc != '':
-                        memberUsageString += ': ' + memberDoc
-                if useTextWrap:
+                if option == '':
                     usageString += '\n' + textwrapper.fill(memberUsageString)
+                    continue
+                if memberLength == 0:
+                    memberUsageString += '-' + option + ' ' + memberName
                 else:
-                    usageString += '\n' + memberUsageString
+                    memberUsageString += '-' + option + ' ' + memberName + ' (' + memberType + ',' + str(memberLength) + ')'
+                    if (memberRange) and (memberType in self.BuiltinOptionTypes):
+                        memberUsageString += " " + memberEntry.GetRangeRepresentation()
+                    if (getattr(self, memberName) != '') and (memberType in self.BuiltinOptionTypes):
+                        memberUsageString += '; default=' + str(getattr(self, memberName))
+                if memberDoc != '':
+                    memberUsageString += ': ' + memberDoc
+                usageString += '\n' + textwrapper.fill(memberUsageString)
         usageString += '\n'
         return usageString
 
@@ -594,7 +572,7 @@ class pypeScript(object):
                 return False
             if arg == '--doc':
                 self.PrintLog('')
-                self.OutputText(self.GetScriptDocString())
+                self.OutputText(self.ScriptDoc)
                 self.PrintLog('')
                 return False
             if arg == '--html':
@@ -602,7 +580,7 @@ class pypeScript(object):
                 self.OutputText(self.GetHTMLUsageString())
                 self.PrintLog('')
                 return False
-            if (arg[0] == '-') & (len(arg)==1):
+            if (arg[0] == '-') and (len(arg)==1):
                 self.PrintError(self.GetUsageString() + '\n' + self.ScriptName + ' error: unknown option ' + arg + '\n')
                 return False
             if (arg[0] == '-'):
@@ -747,7 +725,8 @@ class pypeScript(object):
             return None
         for member in self.InputMembers:
             if member.MemberIO:
-                filename = eval('self.' + self.GetIOInputFileNameMember(member.MemberName))
+                ioInputFileNameMember = member.MemberName + 'InputFileName'
+                filename = getattr(self, ioInputFileNameMember)
                 if filename:
                     try:
                         readerModule = importlib.import_module('vmtk.vmtkscripts.'+member.MemberIO)
@@ -776,8 +755,9 @@ class pypeScript(object):
             return None
         for member in self.OutputMembers:
             if member.MemberIO:
-                filename = eval('self.' + self.GetIOOutputFileNameMember(member.MemberName))
-                writerInput = eval('self.' + member.MemberName)
+                ioOutputFileNameMember = member.MemberName + 'OutputFileName'
+                filename = getattr(self, ioOutputFileNameMember)
+                writerInput = getattr(self, member.MemberName)
                 if filename:
                     # Create code object representing local import of requested IO script
                     try:
@@ -798,15 +778,6 @@ class pypeScript(object):
                     writer.InputStream = self.InputStream
                     writer.OutputStream = self.OutputStream
                     writer.Execute()
-
-    def GetIOInputFileNameMember(self,memberName):
-        return memberName + 'InputFileName'
-
-    def GetIOOutputFileNameMember(self,memberName):
-        return memberName + 'OutputFileName'
-
-    def GetIOFileNameOption(self,optionName):
-        return optionName + 'file'
 
     def Execute(self):
         pass

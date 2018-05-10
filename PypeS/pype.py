@@ -8,7 +8,7 @@
 ## Version:   $Revision: 1.18 $
 
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-##   See LICENSE file for details.
+##   See LICENCE file for details.
 
 ##      This software is distributed WITHOUT ANY WARRANTY; without even
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
@@ -142,12 +142,11 @@ class Pype(object):
                 itemName = item[1:-1]
                 itemValue = kwargs[itemName]
                 itemToReplace.append({'index': index,
-                                    'value': itemValue})
+                                      'value': itemValue})
         for replace in itemToReplace:
             arguments[replace['index']] = replace['value']
 
         self.Arguments = arguments
-
 
     def _ParseArgumentsFlags(self, arguments):
         '''execute special case argument flag behavior
@@ -178,7 +177,6 @@ class Pype(object):
                 arguments.remove(arg)
         return arguments
 
-
     def _ParseArgumentsFileBrowser(self, arguments):
         '''open a file browser to specify input file if one of the elements in the arguments list == "FILE"
 
@@ -203,7 +201,6 @@ class Pype(object):
                 while 'FILE' in arguments:
                     arguments[arguments.index('FILE')] = 'BROWSER'
         return arguments
-
 
     def ParseArguments(self):
         '''split a flat list of scripts and arguments defining the pype into a nested structure linking arguments to each script.
