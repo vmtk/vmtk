@@ -21,7 +21,7 @@ authors:
     orcid: 0000-0002-7963-1168
     affiliation: 3
   - name: Simone Manini
-    orcid: 
+    orcid: 0000-0003-4350-659X
     affiliation: 4
   - name: Luca Antiga
     orcid: 0000-0002-8367-227X
@@ -68,12 +68,13 @@ developer’s point of view.
 ``VMTK`` is a mature package with an active development team and user
 community.  It can be used via its standalone interface, included as a Python
 or C++ library, or as an extension to the medical image processing platform 3D
-Slicer [@Kikinis2014].  It has received over 400 citations in scientific publications since its
-first release in 2004 [@RN83]. The library relies upon two major open source frameworks
-for building highly performant and well validated image analysis algorithms and
-visualizations: the Visualization Toolkit (``VTK``) and the Insight
-Segmentation and Registration Toolkit (``ITK``).  Thorough tutorials and
-documentation are available on the project webpage: www.vmtk.org.
+Slicer [@Kikinis2014].  It has received over 400 citations in scientific
+publications since its first release in 2004 [@RN83]. The library relies upon
+two major open source frameworks for building highly performant and well
+validated image analysis algorithms and visualizations: the Visualization
+Toolkit (``VTK``) and the Insight Segmentation and Registration Toolkit
+(``ITK``).  Thorough tutorials and documentation are available on the project
+webpage: www.vmtk.org.
 
 # VMTK In Action
 
@@ -139,7 +140,7 @@ vmtkdistancetocenterlines -useradius 1 --pipe vmtkmeshgenerator
 The input surface representation (left), a visualization of the internal mesh
 (center), a visualization of a boundary layer internal mesh (right).
 
-## Composable Scripting With PypeS
+## Composable Scripting With Pypes
 
 ``Pypes`` is the glue among vmtk scripts. It allows new scripts to be written
 easily and have a common interface, but, most of all, it allows single vmtk
@@ -158,5 +159,12 @@ free of charge. We would especially like to recognize significant
 infrastructure contributions from the team at Kitware Inc. (www.kitware.com).
 In addition we would like to acknowledge Orobix Srl. (www.orobix.com) for
 partially funding continued development efforts of ``VMTK``.
+
+In addition, we would like to that the following persons for their
+contributions to the VMTK source code (Full Name followed by Github Username in
+quotations): Andras Lassoan (lassoan), Jean-Christophe Fillion-Robin (jcfr),
+Elena Faggiano (ElenaFagg), Kurt Sansom (kayarre), David Ladd (dladd), Steve
+Pieper (pieper), Daniel Haehn (haehn), Denis Shamonin (dpshamonin), & Sara
+Zanchi (SaraZanchi).
 
 # References
