@@ -94,7 +94,6 @@ class vmtkCenterlinesNetwork(pypes.pypeScript):
         self.SetScriptDoc('compute centerlines from a branching tubular surface automatically.')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
-            ['RadiusArrayName','radiusarray','str',1,'','name of the array where radius values of maximal inscribed spheres have to be stored'],
             ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer']])
         self.SetOutputMembers([
             ['Centerlines','o','vtkPolyData',1,'','the output centerlines','vmtksurfacewriter'],
@@ -102,6 +101,7 @@ class vmtkCenterlinesNetwork(pypes.pypeScript):
             ['EikonalSolutionArrayName','eikonalsolutionarray','str',1],
             ['EdgeArrayName','edgearray','str',1],
             ['EdgePCoordArrayName','edgepcoordarray','str',1],
+            ['CostFunction','costfunction','str',1,'','cost function minimized during centerline computation'],
             ['CostFunctionArrayName','costfunctionarray','str',1],
             ['DelaunayTessellation','delaunaytessellation','vtkUnstructuredGrid',1,'','','vmtkmeshwriter'],
             ['VoronoiDiagram','voronoidiagram','vtkPolyData',1,'','','vmtksurfacewriter'],
@@ -228,12 +228,23 @@ class vmtkCenterlinesNetwork(pypes.pypeScript):
             out.append(npConvert.Centerlines)
 
         # Append each segment's polydata into a single polydata object
-        new = vtk.vtkAppendPolyData()
-        for data in out:  
-            new.AddInputData(data)
-        new.Update()
+        centerlineAppender = vtk.vtkAppendPolyData()
+        for data in out:
+            centerlineAppender.AddInputData(data)
+        centerlineAppender.Update()
 
-        self.Centerlines = new.GetOutput()
+        # clean and strip the output centerlines so that redundant points are merged and tracts are combined
+        centerlineCleaner = vtk.vtkCleanPolyData()
+        centerlineCleaner.SetInputData(centerlineAppender.GetOutput())
+        centerlineCleaner.Update()
+
+        centerlineStripper = vtk.vtkStripper()
+        centerlineStripper.SetInputData(centerlineCleaner.GetOutput())
+        centerlineStripper.JoinContiguousSegmentsOn()
+        centerlineStripper.JoinContiguousSegmentsOn()
+        centerlineStripper.Update()
+
+        self.Centerlines = centerlineStripper.GetOutput()
 
 
 if __name__=='__main__':
