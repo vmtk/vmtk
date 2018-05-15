@@ -241,7 +241,6 @@ class vmtkCenterlinesNetwork(pypes.pypeScript):
         centerlineStripper = vtk.vtkStripper()
         centerlineStripper.SetInputData(centerlineCleaner.GetOutput())
         centerlineStripper.JoinContiguousSegmentsOn()
-        centerlineStripper.JoinContiguousSegmentsOn()
         centerlineStripper.Update()
 
         self.Centerlines = centerlineStripper.GetOutput()
