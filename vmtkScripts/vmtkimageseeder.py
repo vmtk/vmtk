@@ -33,6 +33,7 @@ class vmtkImageSeeder(pypes.pypeScript):
         self.OwnRenderer = 0
         self.Display = 1
         self.ArrayName = ''
+        self.SeedRGBColor = [1.0, 0.0, 0.0] # red by default
 
         self.Picker = None
         self.PlaneWidgetX = None
@@ -54,6 +55,7 @@ class vmtkImageSeeder(pypes.pypeScript):
             ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer'],
             ['Display','display','bool',1,'','toggle rendering'],
             ['KeepSeeds','keepseeds','bool',1,'','toggle avoid removal of seeds from renderer'],
+            ['SeedRGBColor','seedcolor','float',3,'(0.0,1.0)','RGB Values to set the color of the seed to. red by default'],
             ['TextureInterpolation','textureinterpolation','bool',1,'','toggle interpolation of graylevels on image planes']
             ])
         self.SetOutputMembers([
@@ -146,7 +148,9 @@ class vmtkImageSeeder(pypes.pypeScript):
         glyphMapper.SetInputConnection(glyphs.GetOutputPort())
         self.SeedActor = vtk.vtkActor()
         self.SeedActor.SetMapper(glyphMapper)
-        self.SeedActor.GetProperty().SetColor(1.0,0.0,0.0)
+        self.SeedActor.GetProperty().SetColor(self.SeedRGBColor[0],
+                                              self.SeedRGBColor[1],
+                                              self.SeedRGBColor[2])
         self.vmtkRenderer.Renderer.AddActor(self.SeedActor)
 
         self.WidgetsOn()
