@@ -18,6 +18,7 @@ import sys
 import math
 import string
 import vtk
+from random import random
 
 from vmtk import vtkvmtk
 
@@ -50,6 +51,7 @@ class vmtkImageInitialization(pypes.pypeScript):
         self.TargetPoints = []
 
         self.NegateImage = 0
+        self.NumSeedsSelected = 0
 
         self.IsoSurfaceValue = 0.0
 
@@ -61,7 +63,7 @@ class vmtkImageInitialization(pypes.pypeScript):
             ['Image','i','vtkImageData',1,'','','vmtkimagereader'],
             ['NegateImage','negate','bool',1,'','negate image values before initializing'],
             ['Interactive','interactive','bool',1,'',''],
-            ['Method','method','str',1,'["isosurface","threshold","collidingfronts","fastmarching","seeds"]',''],
+            ['Method','method','str',1,'["isosurface","threshold","collidingfronts","fastmarching","seeds","multiplecollidingfronts"]',''],
             ['SourcePoints','sourcepoints','int',-1,'','list of source point IJK coordinates'],
             ['TargetPoints','targetpoints','int',-1,'','list of target point IJK coordinates'],
             ['UpperThreshold','upperthreshold','float',1,'','the value of the upper threshold to use for threshold, collidingfronts and fastmarching'],
@@ -74,6 +76,13 @@ class vmtkImageInitialization(pypes.pypeScript):
             ['InitialLevelSets','olevelsets','vtkImageData',1,'','','vmtkimagewriter'],
             ['Surface','osurface','vtkPolyData',1,'','','vmtksurfacewriter']
             ])
+
+    def _SeedPickCallback(self, caller, event):
+        '''change seed rgb color when two seeds have been selected'''
+        self.NumSeedsSelected = self.ImageSeeder.Seeds.GetNumberOfPoints()
+        if self.NumSeedsSelected % 2 == 0:
+            self.ImageSeeder.SeedRGBColor = [random(), random(), random()]
+            self.ImageSeeder.BuildView()
 
     def SeedInput(self,queryString,numberOfSeeds):
         invalid = 1
@@ -345,6 +354,104 @@ class vmtkImageInitialization(pypes.pypeScript):
 
         self.IsoSurfaceValue = 0.0 
 
+    def MultipleCollidingFrontsInitialize(self):
+
+        self.PrintLog('Multiple colliding fronts initialization.')
+        if self.Interactive:
+            queryString = "Please input lower threshold (\'n\' for none): "
+            self.LowerThreshold = self.ThresholdInput(queryString)
+            queryString = "Please input upper threshold (\'n\' for none): "
+            self.UpperThreshold = self.ThresholdInput(queryString)
+
+        scalarRange = self.Image.GetScalarRange()
+        thresholdedImage = self.Image
+
+        if (self.LowerThreshold is not None) | (self.UpperThreshold is not None):
+            threshold = vtk.vtkImageThreshold()
+            threshold.SetInputData(self.Image)
+            if (self.LowerThreshold is not None) & (self.UpperThreshold is not None):
+                threshold.ThresholdBetween(self.LowerThreshold,self.UpperThreshold)
+            elif (self.LowerThreshold is not None):
+                threshold.ThresholdByUpper(self.LowerThreshold)
+            elif (self.UpperThreshold is not None):
+                threshold.ThresholdByLower(self.UpperThreshold)
+            threshold.ReplaceInOff()
+            threshold.ReplaceOutOn()
+            threshold.SetOutValue(scalarRange[0] - scalarRange[1])
+            threshold.Update()
+
+            scalarRange = threshold.GetOutput().GetScalarRange()
+            thresholdedImage = threshold.GetOutput()
+
+        scale = 1.0
+        if scalarRange[1]-scalarRange[0] > 0.0:
+            scale = 1.0 / (scalarRange[1]-scalarRange[0])
+
+        shiftScale = vtk.vtkImageShiftScale()
+        shiftScale.SetInputData(thresholdedImage)
+        shiftScale.SetShift(-scalarRange[0])
+        shiftScale.SetScale(scale)
+        shiftScale.SetOutputScalarTypeToFloat()
+        shiftScale.Update()
+        speedImage = shiftScale.GetOutput()
+
+        seedIdsList = []
+        if self.Interactive:
+            seeds = None
+            while not seeds:
+                self.ImageSeeder.Seeds.AddObserver('ModifiedEvent', self._SeedPickCallback)
+                queryString = 'Please place an even number of seeds'
+                seeds = self.SeedInput(queryString,0)
+            for pointIds in range(self.NumSeedsSelected//2):
+                seedIds1 = vtk.vtkIdList()
+                seedIds2 = vtk.vtkIdList()
+                seedIds1.InsertNextId(self.Image.FindPoint(seeds.GetPoint(pointIds*2)))
+                seedIds2.InsertNextId(self.Image.FindPoint(seeds.GetPoint((pointIds*2)+1)))
+                seedIdsList.append([seedIds1, seedIds2])
+        else:
+            self.PrintError('Non Interactive use not permitted when using Multiple Colliding '\
+                            'Fronts Initialization method.')
+
+        lsList = []
+        for seedIds1, seedIds2 in seedIdsList:
+            collidingFronts = vtkvmtk.vtkvmtkCollidingFrontsImageFilter()
+            collidingFronts.SetInputData(speedImage)
+            collidingFronts.SetSeeds1(seedIds1)
+            collidingFronts.SetSeeds2(seedIds2)              
+            collidingFronts.ApplyConnectivityOn()
+            collidingFronts.StopOnTargetsOn()
+            collidingFronts.Update()
+
+            subtract = vtk.vtkImageMathematics()
+            subtract.SetInputConnection(collidingFronts.GetOutputPort())
+            subtract.SetOperationToAddConstant()
+            subtract.SetConstantC(-10.0 * collidingFronts.GetNegativeEpsilon())
+            subtract.Update()
+
+            singleLevelSets = vtk.vtkImageData()
+            singleLevelSets.DeepCopy(subtract.GetOutput())
+            lsList.append(singleLevelSets)
+
+        for counter, levelSet in enumerate(lsList):
+            if counter == 0:
+                combined = vtk.vtkImageData()
+                combined.DeepCopy(levelSet)
+                continue
+            else:
+                combine = vtk.vtkImageMathematics()
+                combine.SetOperationToAdd()
+                combine.SetInput1Data(combined)
+                combine.SetInput2Data(levelSet)
+                combine.Update()
+                combined = vtk.vtkImageData()
+                combined.DeepCopy(combine.GetOutput())
+                
+
+        self.InitialLevelSets = vtk.vtkImageData()
+        self.InitialLevelSets.DeepCopy(combined)
+
+        self.IsoSurfaceValue = 0.0 
+
     def SeedInitialize(self):
 
         self.PrintLog('Seed initialization.')
@@ -400,7 +507,7 @@ class vmtkImageInitialization(pypes.pypeScript):
         self.SurfaceViewer.BuildView()
 
     def InitializationTypeValidator(self,text):
-        if text in ['0','1','2','3','4']:
+        if text in ['0','1','2','3','4','5']:
             return 1
         return 0
 
@@ -470,15 +577,22 @@ class vmtkImageInitialization(pypes.pypeScript):
   
             initializationMethods = {
                                 '0': self.CollidingFrontsInitialize,
-                                '1': self.FastMarchingInitialize,
-                                '2': self.ThresholdInitialize,
-                                '3': self.IsosurfaceInitialize,
-                                '4': self.SeedInitialize
+                                '1': self.MultipleCollidingFrontsInitialize,
+                                '2': self.FastMarchingInitialize,
+                                '3': self.ThresholdInitialize,
+                                '4': self.IsosurfaceInitialize,
+                                '5': self.SeedInitialize,
                                 }
   
             endInitialization = False
             while not endInitialization:
-                queryString = 'Please choose initialization type: \n 0: colliding fronts;\n 1: fast marching;\n 2: threshold;\n 3: isosurface;\n 4: seed\n '
+                queryString = 'Please choose initialization type: \n'\
+                              '0: colliding fronts;\n'\
+                              '1: multiple colliding fronts;\n'\
+                              '2: fast marching;\n'\
+                              '3: threshold;\n'\
+                              '4: isosurface;\n'\
+                              '5: seed;\n'
                 initializationType = self.InputText(queryString,self.InitializationTypeValidator)
                 initializationMethods[initializationType]()
                 self.DisplayLevelSetSurface(self.InitialLevelSets)
@@ -500,6 +614,8 @@ class vmtkImageInitialization(pypes.pypeScript):
         else:
             if self.Method == "collidingfronts":
                 self.CollidingFrontsInitialize()
+            elif self.Method == "multiplecollidingfronts":
+                self.MultipleCollidingFrontsInitialize()
             elif self.Method == "fastmarching":
                 self.FastMarchingInitialize()
             elif self.Method == "threshold":
