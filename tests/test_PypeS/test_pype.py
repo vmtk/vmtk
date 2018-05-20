@@ -22,12 +22,6 @@ def test_init():
     pipe = pypes.Pype()
     assert pipe.ScriptName == 'pype'
 
-@pytest.mark.skip(reason = 'not valid in refactored changes')
-def test_get_usage_string():
-    pipe = pypes.Pype()
-    assert pipe.GetUsageString() ==  'Usage: pype --nolog --noauto --query firstScriptName -scriptOptionName scriptOptionValue --pipe secondScriptName -scriptOptionName scriptOptionValue -scriptOptionName @firstScriptName.scriptOptionName -id 2 --pipe thirdScriptName -scriptOptionName @secondScriptName-2.scriptOptionName'
-
-
 def test_set_argument_string_two_args():
     pipe = pypes.Pype()
     arg_string = 'vmtkimagereader --help'
@@ -42,11 +36,12 @@ def test_set_argument_string_five_args():
     assert pipe.Arguments == ['vmtkimagereader', '--help', '0123', 'vmtkimageviewer', 'fixit']
 
 
-@pytest.mark.xfail(raises=RuntimeError)
 def test_fail_set_argument_string_nonmatching_quote():
-    pipe = pypes.Pype()
-    arg_string = 'vmtkimagereader --help"'
-    pipe.SetArgumentsString(arg_string)
+    with pytest.raises(SystemExit) as pytest_wrapped_e:
+        pipe = pypes.Pype()
+        arg_string = 'vmtkimagereader --help"'
+        pipe.SetArgumentsString(arg_string)
+    assert pytest_wrapped_e.type == SystemExit
 
 
 def test_parse_arguments_one_function():

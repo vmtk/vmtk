@@ -25,7 +25,8 @@ broader pypes library.
 import sys
 import os
 import inspect
-from .pypes.pype import all_indices, PypeRun
+from .pypes.pype import PypeRun
+from .pypes.pypesutils import all_indices
 from types import SimpleNamespace
 from functools import wraps
 
@@ -57,25 +58,36 @@ def locals_to_kwargs(original_function):
         
         keywordDict = {}
         for startIdx, endIdx in zippedIndices:
+            # select the name which lies between the curly braces in the arguments string
             variableName = arguments[startIdx+1:endIdx] 
             # if passing in a pyperun object (ex: foo.vmtkimagereader.OutputMembers.Image)
             if '.' in variableName:
+                # split the variableName string into a list defining the hierarchy of
+                # attributes to access.
+                # ex: foo.vmtkimagereader.OutputMembers.Image ->
+                #   ['foo', 'vmtkimagereader', 'OutputMembers', 'Image']
                 objectAttributeList = variableName.split('.')
                 kwargObject = callingLocals[objectAttributeList[0]]
-                # iterate through list of nested attribute names to get the desired value associated with the object attribute
+                # iterate through list of nested attribute names to get the desired 
+                # value associated with the object attribute
                 for idx, varNamePath in enumerate(objectAttributeList[1:]):
                     try:
+                        # replace the current instance of kwargObject with an instance which is
+                        # one attribute further along in the chain. 
                         kwargObject = getattr(kwargObject, varNamePath)
                     except AttributeError as error:
-                        print("specified python Object: ", '.'.join(objectAttributeList[:idx+1]), " contains no attribute: ", varNamePath)
+                        print("specified python Object: ", '.'.join(objectAttributeList[:idx+1]),
+                              " contains no attribute: ", varNamePath)
                         raise error
                 keywordDict[variableName] = kwargObject
-            # if passing in normal variable name (eg: not a nested class hierarchy)
+            # if passing in normal variable name (not a nested class hierarchy)
+            # (ex: variableName -> flip = [0, 1, 0])
             else:
                 try:
                     keywordDict[variableName] = callingLocals[variableName]
                 except KeyError as error:
-                    print("specified variable name: ", variableName, " not an 'alive' python object in the calling scope.")
+                    print("specified variable name: ", variableName,
+                          " not an 'alive' python object in the calling scope.")
                     raise error
         return original_function(arguments, **keywordDict)
     return wrapper_func
@@ -87,27 +99,38 @@ def _vmtk_get(vmtkRunInstance):
     For every script object within the pype instance, create a namespace. Assign input and output
     members of each script object to the namespace object. This is returned to the user. 
     '''
+    # top level dictionary holds a name referring to each vmtkscript instance which was run
+    # ex: a pype of vmtk.run('vmtkimagereader -ifile foo --pipe vmtkimageviewer')
+    #     will have a top level scriptDict with keys: 'vmtkimagereader' and 'vmtkimageviewer'
     scriptDict = {}
     for scriptObject in vmtkRunInstance.ScriptObjectList:
-        scriptObjectName = scriptObject.ScriptName
-        scriptDict[scriptObjectName] = {}
-        scriptDict[scriptObjectName]['InputMembers'] = {}
-        scriptDict[scriptObjectName]['OutputMembers'] = {}
+        scriptName = scriptObject.ScriptName
+        # create a nested dictionary structure under each top level vmtkscript with keys 'InputMember'
+        # and 'OutputMembers'. Do NOT change these names. If the output of one vmtk.run instance is
+        # sent into the input of another, the locals_to_kwargs decorator needs to be able to access
+        # the pypeScript InputMember and OutputMembers class attribute. 
+        scriptDict[scriptName] = {}
+        scriptDict[scriptName]['InputMembers'] = {}
+        scriptDict[scriptName]['OutputMembers'] = {}
+        # assign key/value pari asthird level nested dictionary for each script input and output member.
         for inputMember in scriptObject.InputMembers:
             inputMemberName = inputMember.MemberName
             if inputMemberName == 'Self':
                 continue
             inputMemberValue = getattr(scriptObject, inputMemberName)
-            scriptDict[scriptObjectName]['InputMembers'][inputMemberName] = inputMemberValue
+            scriptDict[scriptName]['InputMembers'][inputMemberName] = inputMemberValue
         for outputMember in scriptObject.OutputMembers:
             outputMemberName = outputMember.MemberName
             if outputMemberName == 'Self':
                 continue
             outputMemberValue = getattr(scriptObject, outputMemberName)
-            scriptDict[scriptObjectName]['OutputMembers'][outputMemberName] = outputMemberValue
-        scriptDict[scriptObjectName]['InputMembers'] = SimpleNamespace(**scriptDict[scriptObjectName]['InputMembers'])
-        scriptDict[scriptObjectName]['OutputMembers'] = SimpleNamespace(**scriptDict[scriptObjectName]['OutputMembers'])
-        scriptDict[scriptObjectName] = SimpleNamespace(**scriptDict[scriptObjectName])
+            scriptDict[scriptName]['OutputMembers'][outputMemberName] = outputMemberValue
+        # we mutate the scriptDict in place, creating a nested structure of simple namespace classes
+        # by unpacking the scriptDict from the bottom up.
+        scriptDict[scriptName]['InputMembers'] = SimpleNamespace(**scriptDict[scriptName]['InputMembers'])
+        scriptDict[scriptName]['OutputMembers'] = SimpleNamespace(**scriptDict[scriptName]['OutputMembers'])
+        scriptDict[scriptName] = SimpleNamespace(**scriptDict[scriptName])
+    # one more level of unpacking is needed for every top level vmtkscript in the scriptDict
     return SimpleNamespace(**scriptDict)
 
 

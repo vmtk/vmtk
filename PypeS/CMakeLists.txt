@@ -4,14 +4,13 @@ set(PYPES_SRCS
   pypebatch.py
   pypepad.py
   pypeserver.py
-  pypetest.py
-  pypetestrunner.py
   pypewrapper.py
   pyperun.py
   )
 
 set(PYPES_BASE_SRCS
   __init__.py
+  pypesutils.py
   pype.py
   pypescript.py
   )

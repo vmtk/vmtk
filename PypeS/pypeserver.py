@@ -43,7 +43,7 @@ def RunPypeProcess(arguments, inputStream=None, outputStream=None, logOn=True):
     else:
         pipe.Arguments = arguments
     try:
-        pipe.ParseArguments()
+        pipe.ParseArguments() # call to pype.Pype class ParseArguments method. not pypeScript method.
         pipe.Execute()
     except BaseException as e:
         print(traceback.format_exc())
