@@ -288,20 +288,6 @@ class Pype(object):
             memberEntry.MemberPipe = pipedScriptObject.ScriptName + '-' + str(pipedScriptObject.Id) + '.' + pipedMember.MemberName
             self.PrintLog(memberEntry.MemberName + ' = ' + memberEntry.MemberPipe,1)
 
-    def GetScriptObject(self,scriptName,scriptId):
-        '''return an instance of a script object which has executed in the pype
-
-        arguments:
-            scriptName (str): name of the script to get
-            scriptId (str): id of the object with scriptName to get
-
-        returns:
-            (obj): the instance of the scriptObject in the pype
-        '''
-        for scriptObject in self.ScriptObjectList:
-            if (scriptObject.ScriptName == scriptName) and (scriptObject.Id == scriptId):
-                return scriptObject
-
     def ExplicitPipeScriptObject(self,scriptObject):
         '''manually connect input members and  outputMembers of scriptObjects
 
