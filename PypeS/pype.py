@@ -21,30 +21,9 @@ import importlib
 from inspect import isclass
 import re
 import inspect
+from .pypesutils import all_indices
 
 pype = 'Pype'
-
-def all_indices(value, qlist):
-    '''convenience method to a list of all indexes where an element is within a collection
-
-    arguments:
-        value (str, int, float): the item to find within the collection
-        qlist (list, tuple): the collection of elements which you want to find the the indexes
-            of value in.
-
-    returns:
-        indices (list:`int`): a list containing the index of every location where qlist == value.
-    '''
-    indices = []
-    idx = -1
-    while True:
-        try:
-            idx = qlist.index(value, idx+1)
-            indices.append(idx)
-        except ValueError:
-            break
-    return indices
-
 
 class Pype(object):
     '''
@@ -66,13 +45,6 @@ class Pype(object):
         self.InputStream = sys.stdin
         self.OutputStream = sys.stdout
         self.Arguments = None
-
-    def GetUsageString(self):
-        usageString = 'Usage: pype --nolog --noauto firstScriptName -scriptOptionName '\
-                      'scriptOptionValue --pipe secondScriptName -scriptOptionName scriptOptionValue '\
-                      '-scriptOptionName @firstScriptName.scriptOptionName -id 2 --pipe thirdScriptName '\
-                      '-scriptOptionName @secondScriptName-2.scriptOptionName'
-        return usageString
 
     def PrintLog(self,logMessage,indent=0):
         '''Prints log messages from pype controller members to the console.
@@ -151,11 +123,14 @@ class Pype(object):
 
         self.Arguments = arguments
 
-    def _ParseArgumentsFlags(self, arguments):
-        '''execute special case argument flag behavior
+    def _ParsePyperunControlingArgumentFlags(self, arguments):
+        '''execute special case argument flag behavior if the pyperun executable is being prepended to a pype
 
-        check if --help --noauto --nolog --query flags exist in the arguments list. if they do then execute the
-        special behavior indicated by those flags.
+        This was originally used to make parsing more robust. To control the pype behavior or to access global
+        pype functionality like --nolog, the pyperun executable is prepended to a pype.
+
+        checks if --noauto --nolog flags exist in the arguments list. if they do then execute the
+        special behavior indicated by those flags. The --help flag prints the pyperun usage string. 
 
         arguments:
             arguments: (obj:`list`): the initial arguments acquired from sys.argv with each logical unit as a string element.
@@ -171,7 +146,10 @@ class Pype(object):
                 else:
                     break
             if '--help' in pypeArguments:
-                self.PrintLog(self.GetUsageString())
+                self.PrintLog('Usage: pype --nolog --noauto firstScriptName -scriptOptionName '\
+                              'scriptOptionValue --pipe secondScriptName -scriptOptionName scriptOptionValue '\
+                              '-scriptOptionName @firstScriptName.scriptOptionName -id 2 --pipe thirdScriptName '\
+                              '-scriptOptionName @secondScriptName-2.scriptOptionName')
             if '--noauto' in pypeArguments:
                 self.AutoPipe = 0
             if '--nolog' in pypeArguments:
@@ -224,8 +202,8 @@ class Pype(object):
                                ['vmtkimageotsuthresholds', []]]
         '''
         self.ScriptList = []
-        argumentsWithFlagsParsed = self._ParseArgumentsFlags(self.Arguments[:])
-        arguments = self._ParseArgumentsFileBrowser(argumentsWithFlagsParsed)
+        pyperunParsedArguments = self._ParsePyperunControlingArgumentFlags(self.Arguments[:])
+        arguments = self._ParseArgumentsFileBrowser(pyperunParsedArguments)
 
         pipeIndices = all_indices('--pipe', arguments)
         scriptNameIndices = [0] + [int(x + 1) for x in pipeIndices] # there is always a script name at index 0
@@ -265,7 +243,7 @@ class Pype(object):
 
         When a script completes execution, the next script to execute is sent here. This attempts to automatically
         connect compatible output members of prior script objects with the input members of this (the next) script
-        object. If a compatible member is found, this script object's compatible input memberEntry.MemberPipe attribute
+        object. If a compatible member is found, this script object's input memberEntry.MemberPipe attribute
         is set. Note: Automatic piping is override by explicit member piping.
 
         example:
@@ -278,6 +256,9 @@ class Pype(object):
             if ((not memberEntry.AutoPipe) or
                 (memberEntry.MemberType == 'id') or
                 (memberEntry.MemberType == 'handle')): continue # these member types we never want to match
+            # if a compatible member is found between InputMember entries and the prior script objects output
+            # members, the compatible member is assigned to the pipedScriptObject name. We use the None value
+            # to check wheather a compatible memver was found or not.
             pipedScriptObject = None
             for candidateScript in self.ScriptObjectList:
                 if self._CompatibleMember(memberEntry,candidateScript):
@@ -285,6 +266,9 @@ class Pype(object):
                     pipedMember = self._CompatibleMember(memberEntry, candidateScript)
             if not pipedScriptObject: 
                 continue
+            # MemberPipe attribute syntax ex: 'vmtkimagereader-0.Image' or 'vmtklevelsetsegmentation-0.LevelSets'
+            # this is critical attribute which specifies which script object member (script name, id, and member name)
+            # should actually be transfered to the input member of the currently executing script. 
             memberEntry.MemberPipe = pipedScriptObject.ScriptName + '-' + str(pipedScriptObject.Id) + '.' + pipedMember.MemberName
             self.PrintLog(memberEntry.MemberName + ' = ' + memberEntry.MemberPipe,1)
 
@@ -312,7 +296,6 @@ class Pype(object):
         for memberEntry in scriptObject.InputMembers:
             memberName  = memberEntry.MemberName
             if memberEntry.ExplicitPipe == 'None':
-                print(f'***here {memberName}')
                 memberEntry.MemberPipe = None
                 setattr(scriptObject, memberEntry.MemberName, None)
                 continue

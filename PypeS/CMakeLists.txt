@@ -10,6 +10,7 @@ set(PYPES_SRCS
 
 set(PYPES_BASE_SRCS
   __init__.py
+  pypesutils.py
   pype.py
   pypescript.py
   )

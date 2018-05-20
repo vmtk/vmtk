@@ -25,7 +25,8 @@ broader pypes library.
 import sys
 import os
 import inspect
-from .pypes.pype import all_indices, PypeRun
+from .pypes.pype import PypeRun
+from .pypes.pypesutils import all_indices
 from types import SimpleNamespace
 from functools import wraps
 
