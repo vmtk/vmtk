@@ -1,7 +1,6 @@
 project(VMTK_SCRIPTS)
 
 set(SCRIPTS_SRCS
-  __init__.py
   vmtkmeshcompare.py
   vmtkimagecompare.py
   vmtksurfacecompare.py
@@ -164,11 +163,11 @@ if(NOT VMTK_SCRIPTS_INSTALL_LIB_DIR)
   set(VMTK_SCRIPTS_INSTALL_LIB_DIR lib/${VMTK_PYTHON_VERSION}/site-packages/vmtk/vmtkscripts)
 endif(NOT VMTK_SCRIPTS_INSTALL_LIB_DIR)
 
-foreach (SCRIPT_FILE  ${SCRIPTS_SRCS})
+foreach (SCRIPT_FILE ${SCRIPTS_SRCS})
   configure_file(${VMTK_SCRIPTS_SOURCE_DIR}/${SCRIPT_FILE} ${VMTK_SCRIPTS_BINARY_DIR}/${SCRIPT_FILE} COPYONLY)
 endforeach (SCRIPT_FILE)
 
-install(FILES ${SCRIPTS_SRCS}
+install(FILES __init__.py ${SCRIPTS_SRCS}
   DESTINATION ${VMTK_SCRIPTS_INSTALL_LIB_DIR}
   COMPONENT PythonRuntimeLibraries)
 
