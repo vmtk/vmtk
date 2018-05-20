@@ -96,8 +96,11 @@ class Pype(object):
         Args:
             errorMessage (string): the error message to print to the console
         '''
-        self.OutputStream.write(errorMessage + '\n')
-        raise RuntimeError(errorMessage)
+        if self.ExitOnError:
+            self.OutputStream.write(errorMessage + '\n')
+            sys.exit()
+        else:
+            raise RuntimeError(errorMessage)
 
     def SetArgumentsString(self,argumentsString,**kwargs):
         ''' Splits an input string into a list containing the class name and arguments.
@@ -234,8 +237,12 @@ class Pype(object):
                 scriptArgs = arguments[scriptNameIndex+1:]
             self.ScriptList.append([scriptName, scriptArgs])
 
-    def GetCompatibleMember(self,memberEntry,script):
-        '''given a memberEntry object, find compatible input members for a script object.
+    def _CompatibleMember(self,memberEntry,script):
+        '''given a memberEntry object, and script object, find compatible input members for a script object.
+
+        we search the output members of the script object (along with any explicitly pushed input members) 
+        for  member entries which match the name and type of the input memberEntry object. When a comatible
+        script member is found, we return it; otherwise return None. 
 
         arguments:
             memberEntry (obj): a memberEntry object
@@ -245,13 +252,13 @@ class Pype(object):
             (obj): a script member compatible with memberEntry, or None if not compatible
         '''
         pushedInputMembers = [scriptMember for scriptMember in script.InputMembers if scriptMember.Pushed]
-        compatibleOutputMembers = []
         for scriptMember in pushedInputMembers + script.OutputMembers:
-            if scriptMember.AutoPipe and (scriptMember.MemberName == memberEntry.MemberName) and (scriptMember.MemberType == memberEntry.MemberType):
-                compatibleOutputMembers.append(scriptMember)
-        if not compatibleOutputMembers:
-            return None
-        return compatibleOutputMembers[0]
+            if not scriptMember.AutoPipe: continue # only true when --no-auto flag is provided
+            if ((scriptMember.MemberName == memberEntry.MemberName) and 
+                (scriptMember.MemberType == memberEntry.MemberType)):
+                # only if scriptMember name/types both match memberEntry names/types
+                return scriptMember
+        return None
 
     def AutoPipeScriptObject(self,scriptObject):
         '''automatically connect inputs members of a scriptObject with outputMembers which have come before.
@@ -268,13 +275,16 @@ class Pype(object):
         '''
         self.PrintLog('Automatic piping ' + scriptObject.ScriptName)
         for memberEntry in scriptObject.InputMembers:
-            if (not memberEntry.AutoPipe) or (memberEntry.MemberType == 'id') or (memberEntry.MemberType == 'handle'):
+            if ((not memberEntry.AutoPipe) or
+                (memberEntry.MemberType == 'id') or
+                (memberEntry.MemberType == 'handle')): continue # these member types we never want to match
+            pipedScriptObject = None
+            for candidateScript in self.ScriptObjectList:
+                if self._CompatibleMember(memberEntry,candidateScript):
+                    pipedScriptObject = candidateScript
+                    pipedMember = self._CompatibleMember(memberEntry, candidateScript)
+            if not pipedScriptObject: 
                 continue
-            candidateScriptObjectList = [candidateScriptObject for candidateScriptObject in self.ScriptObjectList if self.GetCompatibleMember(memberEntry,candidateScriptObject)]
-            if not candidateScriptObjectList:
-                continue
-            pipedScriptObject = candidateScriptObjectList[-1]
-            pipedMember = self.GetCompatibleMember(memberEntry, pipedScriptObject)
             memberEntry.MemberPipe = pipedScriptObject.ScriptName + '-' + str(pipedScriptObject.Id) + '.' + pipedMember.MemberName
             self.PrintLog(memberEntry.MemberName + ' = ' + memberEntry.MemberPipe,1)
 
@@ -289,7 +299,7 @@ class Pype(object):
             (obj): the instance of the scriptObject in the pype
         '''
         for scriptObject in self.ScriptObjectList:
-            if (scriptObject.ScriptName == scriptName) & (scriptObject.Id == scriptId):
+            if (scriptObject.ScriptName == scriptName) and (scriptObject.Id == scriptId):
                 return scriptObject
 
     def ExplicitPipeScriptObject(self,scriptObject):
@@ -316,6 +326,7 @@ class Pype(object):
         for memberEntry in scriptObject.InputMembers:
             memberName  = memberEntry.MemberName
             if memberEntry.ExplicitPipe == 'None':
+                print(f'***here {memberName}')
                 memberEntry.MemberPipe = None
                 setattr(scriptObject, memberEntry.MemberName, None)
                 continue
@@ -435,9 +446,9 @@ class Pype(object):
             if self.AutoPipe:
                 self.AutoPipeScriptObject(scriptObject)
             self.PrintLog('Parsing options ' + scriptObject.ScriptName)
-            execute = scriptObject.ParseArguments()
-            if not execute:
-                return None
+            proceedToExecute = scriptObject.ParseArguments() # calls to scriptObject subclass of pypes.pypeScript ParseArguments method 
+            if proceedToExecute == False:
+                return
             if scriptObject.Disabled:
                 self.PrintLog('\n' + scriptObject.ScriptName + ' is disabled. Bypassing it.')
                 continue

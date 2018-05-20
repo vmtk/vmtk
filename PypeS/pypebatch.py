@@ -19,6 +19,9 @@ from __future__ import print_function, absolute_import # NEED TO STAY AS TOP IMP
 import sys
 import os
 import os.path
+from vmtk import pypes
+import importlib
+from inspect import isclass
 
 class pypeBatch(object):
 
@@ -79,18 +82,23 @@ class pypeBatch(object):
     def Execute(self):
         self.PrintLog('')
         moduleName = self.ScriptName
-        exec('from vmtk import '+ moduleName)
-        scriptObjectClassName = ''
-        exec ('scriptObjectClassName =  '+moduleName+'.'+moduleName)
-        moduleScriptObjectClassName = moduleName+'.'+scriptObjectClassName
-        scriptObject = 0
+        self.PrintLog('module name: '+ moduleName)
+        try:
+            module = importlib.import_module('vmtk.vmtkscripts.'+moduleName)
+            # Find the principle class to instantiate the requested action defined inside the requested writerModule script.
+            # Returns a single member list (containing the principle class name) which satisfies the following criteria:
+            #   1) is a class defined within the script
+            #   2) the class is a subclass of pypes.pypescript
+            scriptObjectClasses = [x for x in dir(module) if isclass(getattr(module, x)) and issubclass(getattr(module, x), pypes.pypeScript)]
+            scriptObjectClassName = scriptObjectClasses[0]
+        except ImportError as e:
+            self.PrintError(str(e))
         
         fileNames = os.listdir(self.Directory)
 
         for fileName in fileNames:
-
-            self.PrintLog('Creating ' + scriptObjectClassName + ' instance.')
-            exec ('scriptObject = '+moduleScriptObjectClassName+'()')
+            scriptObject = getattr(module, scriptObjectClassName)
+            scriptObject = scriptObject()
             completeFileName = os.path.normpath(self.Directory + '/' + fileName)
             self.PrintLog('Replacing FileNames in ' + scriptObject.ScriptName + ' arguments')
             actualScriptArguments = self.ReplaceFileNamesInScriptArguments(fileName)

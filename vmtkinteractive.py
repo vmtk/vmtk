@@ -67,7 +67,8 @@ def locals_to_kwargs(original_function):
                     try:
                         kwargObject = getattr(kwargObject, varNamePath)
                     except AttributeError as error:
-                        print("specified python Object: ", '.'.join(objectAttributeList[:idx+1]), " contains no attribute: ", varNamePath)
+                        print("specified python Object: ", '.'.join(objectAttributeList[:idx+1]),
+                              " contains no attribute: ", varNamePath)
                         raise error
                 keywordDict[variableName] = kwargObject
             # if passing in normal variable name (eg: not a nested class hierarchy)

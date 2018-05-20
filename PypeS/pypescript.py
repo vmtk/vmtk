@@ -233,19 +233,17 @@ class pypeScript(object):
 
     def PrintError(self,errorMessage):
         '''raise runtime error and print log message to selected output stream.
+        
+        use sys.exit to gracefully exit python and clean up held memory
 
         arguments:
             errorMessage (str): text, or printable object, to send to input stream.
         '''
-        self.OutputStream.write(errorMessage + '\n')
         if self.ExitOnError:
-          self.Exit()
+            self.OutputStream.write(errorMessage + '\n')
+            sys.exit()
         else:
-          raise RuntimeError(errorMessage)
-
-    def Exit(self):
-        '''gracefully exit python and clean up held memory'''
-        sys.exit()
+            raise RuntimeError(errorMessage)
 
     def OutputText(self,text):
         '''print message to output stream'''
@@ -330,19 +328,18 @@ class pypeScript(object):
         for memberEntry in members:
             memberName  = memberEntry.MemberName
             memberType = memberEntry.MemberType
+            if memberName == 'Self':
+                continue
             # this next block is a bit odd. we are are dealing with member objects, not script objects in the loop.
             # For each entry (ex: id, image, surface, format...) of the script objects members, we get the script's member
             # entry value by querying the scripts "self,  "memberName" attribute
-            memberValue = self.__getattribute__(memberName)
-
-            if memberName == 'Self':
-                pass
-            elif (memberType in self.BuiltinOptionTypes) or (memberType == 'list'):
-                self.__getattribute__("PrintLog")(memberName+' = '+str(memberValue),1)
+            memberValue = getattr(self, memberName)
+            if (memberType in self.BuiltinOptionTypes) or (memberType == 'list'):
+                self.PrintLog(memberName+' = '+str(memberValue), 1)
             elif memberValue:
-                self.__getattribute__("PrintLog")(memberName+' = '+memberType,1)
+                self.PrintLog(memberName+' = '+memberType, 1)
             else:
-                self.__getattribute__("PrintLog")(memberName+' = '+str(memberValue),1)
+                self.PrintLog(memberName+' = '+str(memberValue), 1)
 
     def PrintInputMembers(self):
         '''prints script object input member names and values to output stream'''
@@ -581,13 +578,18 @@ class pypeScript(object):
                 self.PrintLog('')
                 return False
             if (arg[0] == '-') and (len(arg)==1):
-                self.PrintError(self.GetUsageString() + '\n' + self.ScriptName + ' error: unknown option ' + arg + '\n')
+                self.PrintError(self.GetUsageString() + '\n' + self.ScriptName + 
+                                ' error: unknown option ' + arg + '\n')
                 return False
             if (arg[0] == '-'):
                 if (arg[1] in string.ascii_letters):
-                    matchingMembers = [member for member in self.InputMembers if member.OptionName in [arg.lstrip('-'), arg.lstrip('-').rstrip('@')]]
+                    matchingMembers = []
+                    for member in self.InputMembers:
+                        if member.OptionName in [arg.lstrip('-'), arg.lstrip('-').rstrip('@')]:
+                            matchingMembers.append(member)
                     if not matchingMembers:
-                        self.PrintError(self.GetUsageString() + '\n' + self.ScriptName + ' error: unknown option ' + arg + '\n')
+                        self.PrintError(self.GetUsageString() + '\n' + self.ScriptName + 
+                                        ' error: unknown option ' + arg + '\n')
                         return False
         return True
 
@@ -596,21 +598,26 @@ class pypeScript(object):
         '''
         if memberLength != -1:
             if (len(memberValues) != memberLength) and not memberEntry.ExplicitPipe:
-                self.PrintError(self.GetUsageString() + '\n' + 'Error for option '+option+': '+str(len(memberValues))+' entries given, '+str(memberLength)+' expected.' + '\n')
+                self.PrintError(self.GetUsageString() + '\n' + 'Error for option ' +
+                                option + ': ' + str(len(memberValues)) + ' entries given, ' +
+                                str(memberLength)+' expected.' + '\n')
 
     def _CheckMemberValuesBool(self, memberValues, option, memberType):
         '''ensure that bool types have the correct value'''
         if memberType is 'bool':
             if [value for value in memberValues if value not in [0,1]]:
-                self.PrintError(self.GetUsageString() + '\n' + 'Error for option '+option+': should be either 0 or 1' + '\n')
+                self.PrintError(self.GetUsageString() + '\n' + 'Error for option ' +
+                                option + ': should be either 0 or 1' + '\n')
 
     def _CheckMemberValuesInRange(self, memberValues, memberEntry, option, memberRange):
         '''ensure numeric values have the correct range'''
         if memberRange != '':
             if [value for value in memberValues if not memberEntry.IsInRange(value)]:
-                self.PrintError(self.GetUsageString() + '\n' + 'Error for option '+option+': should be ' + memberEntry.GetRangeRepresentation() + '\n')
+                self.PrintError(self.GetUsageString() + '\n' + 'Error for option ' + option +
+                                ': should be ' + memberEntry.GetRangeRepresentation() + '\n')
 
-    def _PrintMemberTypeInformation(self, memberType, memberLength, activated, memberName, memberValues, memberEntry):
+    def _PrintMemberTypeInformation(self, memberType, memberLength, activated,
+                                    memberName, memberValues, memberEntry):
         '''print useful type information about the member object'''
         if (memberType != ''):
             if (memberLength==0):
@@ -634,9 +641,15 @@ class pypeScript(object):
         This method serves two main purposes 1) checking specified arguments for special
         (flag) behavior and their range validity 2) assigning script object member values
         based on specified options or pushed values. 
+
+        returns:
+            bool: flag indicating wether parsing actually occurred. If True, script object
+                members and attributes have been set. If False, a special option was passed
+                into pype as an argument (ie. --help, --doc, --html), or the option names
+                specified are note valid. 
         '''
         ParseArgumentStopper = self._ParseArgumentsFlags()
-        if not ParseArgumentStopper:
+        if ParseArgumentStopper == False:
             return False
 
         for memberEntry in self.InputMembers:
@@ -784,7 +797,6 @@ class pypeScript(object):
 
     def Deallocate(self):
         pass
-
 
 class pypeMain(object):
 
