@@ -7,7 +7,7 @@ Date:      $Date: 2018/04/09 16:48:25 $
 Version:   $Revision: 1.4 $
 
   Copyright (c) Richard Izzo, Luca Antiga. All rights reserved.
-  See LICENCE file for details.
+  See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
