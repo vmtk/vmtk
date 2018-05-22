@@ -83,12 +83,14 @@ branch, letting level sets by attracted to gradient peaks with the sole
 advection term turned on, repeating the operation for all the branches and
 merging everything in a single model.
 
-``vmtklevelsetsegmentation -ifile foo.dcm --pipe vmtkmarchingcubes -i @.o
---pipe vmtksurfacewriter -ofile foo.vtp``
+```
+vmtklevelsetsegmentation -ifile foo.dcm --pipe vmtkmarchingcubes -i @.o
+--pipe vmtksurfacewriter -ofile foo.vtp
+```
 
 ![levelset segmentation](levelset.png)\
 
-**Figure 1:** The process of placing seeds on an image (left). Initializing an isosurface from the seeds using the colliding fronts methods (center). Eolving the isosurface through the level set equations (right).
+**Figure 1:** The process of placing seeds on an image (left). Initializing an isosurface from the seeds using the colliding fronts methods (center). Evolving the isosurface through the level set equations (right).
 
 ## Generating Centerlines from a Surface
 
@@ -96,7 +98,9 @@ Centerlines are determined as the paths defined on Voronoi diagram sheets that
 minimize the integral of the radius of maximal inscribed spheres along the
 path, which is equivalent to finding the shortest paths in the radius metric.
 
-``vmtkcenterlines -ifile foo.vtp -ofile foo_centerlines.vtp``
+```
+vmtkcenterlines -ifile foo.vtp -ofile foo_centerlines.vtp
+```
 
 ![Centerline Generation](centerlines.png)\
 
@@ -107,9 +111,11 @@ path, which is equivalent to finding the shortest paths in the radius metric.
 Surface properties can be analyzed, and the surface can be split by analyzing
 the surface-centerline tube containment relationships.
 
-``vmtksurfacereader -ifile foo.vtp --pipe vmtkcenterlines --pipe
-vmtkbranchextractor --pipe vmtkbranchclipper -groupids 0 -insideout 1 -ofile
-foo_sp.vtp``
+```
+vmtksurfacereader -ifile foo.vtp --pipe vmtkcenterlines --pipe
+vmtkbranchextractor --pipe vmtkbranchclipper -groupids 0 -insideout 1
+-ofile foo_sp.vtp
+```
 
 ![centerline splitting](splitting.png)\
 
@@ -120,10 +126,12 @@ foo_sp.vtp``
 Tetrahedral, mixed tetrahedral, and boundary layer meshes can be generated from
 a surface and its centerlines.
 
-``vmtksurfacereader -ifile foo.vtp --pipe vmtkcenterlines --pipe
+```
+vmtksurfacereader -ifile foo.vtp --pipe vmtkcenterlines --pipe
 vmtkdistancetocenterlines -useradius 1 --pipe vmtkmeshgenerator
 -elementsizemode edgelengtharray -edgelengtharray DistanceToCenterlines
--edgelengthfactor 0.3 -boundarylayer 1 -ofile foo.vtu``
+-edgelengthfactor 0.3 -boundarylayer 1 -ofile foo.vtu
+```
 
 ![mesh generation](mesh.png)\
 
@@ -139,7 +147,7 @@ custom ``PypePad`` user interface.
 
 ![pypepad](pypepad.png)\
 
-**Figure 5:** Pypepad user interface. vmtkimagereader specifies it's input file name with the -ifile flag, and the image is stored in memory as an output member of the script. vmtkmarchingcubes is initialized with this image as an input member, and the target isosurface level is set to 700 with the -l flag; the surface is generated and stored as an output member of the script. vmtksurfaceviewer is initialized with this surface as an input member, and the script displays the surface as an interactive rendering to the user in a new window.
+**Figure 5:** Pypepad user interface. `vmtkimagereader` specifies it's input file name with the `-ifile` flag, and the image is stored in memory as an output member of the script. `vmtkmarchingcubes` is initialized with this image as an input member, and the target isosurface level is set to 700 with the `-l` flag; the surface is generated and stored as an output member of the script. `vmtksurfaceviewer` is initialized with this surface as an input member, and the script displays it as an interactive rendering in a new window.
 
 # Acknowledgements & Funding
 
@@ -149,9 +157,9 @@ infrastructure contributions from the team at Kitware Inc. (www.kitware.com).
 In addition we would like to acknowledge Orobix Srl. (www.orobix.com) for
 partially funding continued development efforts of ``VMTK``.
 
-In addition, we would like to that the following persons for their
+Finally, we would like to that the following persons for their
 contributions to the VMTK source code (Full Name followed by Github Username in
-quotations): Andras Lassoan (lassoan), Jean-Christophe Fillion-Robin (jcfr),
+parentheses): Andras Lassoan (lassoan), Jean-Christophe Fillion-Robin (jcfr),
 Elena Faggiano (ElenaFagg), Kurt Sansom (kayarre), David Ladd (dladd), Steve
 Pieper (pieper), Daniel Haehn (haehn), Denis Shamonin (dpshamonin), & Sara
 Zanchi (SaraZanchi).
