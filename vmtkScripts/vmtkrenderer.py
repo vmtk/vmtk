@@ -121,7 +121,7 @@ class vmtkRenderer(pypes.pypeScript):
 
         baseFontScalePerPixelWidth = math.floor(baseScreenWidth / baseFontSize)
 
-        scaledFontSize = math.ceil(userScreenWidth / baseFontScalePerPixelWidth)
+        scaledFontSize = int(math.ceil(userScreenWidth / baseFontScalePerPixelWidth))
 
         # make sure that the font size won't be set too low or high for low/high screen resolutions. 
         if scaledFontSize < 8:
