@@ -45,7 +45,7 @@ class vmtkActiveTubes(pypes.pypeScript):
         self.NegativeNormWarnings = False
 
         self.SetScriptName('vmtkactivetubes')
-        self.SetScriptDoc('')
+        self.SetScriptDoc('experimental method for generating centerlines from an image.')
         self.SetInputMembers([
             ['Centerline','i','vtkPolyData',1,'','','vmtksurfacereader'], 
             ['Image','image','vtkImageData',1,'','','vmtkimagereader'],

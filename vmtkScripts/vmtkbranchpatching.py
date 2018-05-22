@@ -47,6 +47,7 @@ class vmtkBranchPatching(pypes.pypeScript):
         self.PatchAreaArrayName = 'PatchArea'
 
         self.SetScriptName('vmtkbranchpatching')
+        self.SetScriptDoc('cut a set of contiguous rectangular regions on a surface that follow iso-contours in the StretchedMapping and AngularMetric arrays')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','','vmtksurfacereader'],
             ['PatchSize','patchsize','float',2,'(0.0,)'],

@@ -52,6 +52,7 @@ class vmtkBranchClipper(pypes.pypeScript):
         self.Interactive = 0
 
         self.SetScriptName('vmtkbranchclipper')
+        self.SetScriptDoc('divide a surface in relation to its split and grouped centerlines')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','','vmtksurfacereader'],
             ['Centerlines','centerlines','vtkPolyData',1,'','','vmtksurfacereader'],

@@ -42,7 +42,7 @@ class vmtkSurfaceLoopExtraction(pypes.pypeScript):
         self.Loop = None
 
         self.SetScriptName('vmtksurfaceloopextraction')
-        self.SetScriptDoc('')
+        self.SetScriptDoc('interactively define loops on a surface')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
             ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer'],

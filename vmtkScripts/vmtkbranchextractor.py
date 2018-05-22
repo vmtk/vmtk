@@ -37,6 +37,7 @@ class vmtkBranchExtractor(pypes.pypeScript):
         self.TractIdsArrayName = 'TractIds'
 
         self.SetScriptName('vmtkbranchextractor')
+        self.SetScriptDoc('split and group centerlines along branches')
         self.SetInputMembers([
             ['Centerlines','i','vtkPolyData',1,'','','vmtksurfacereader'],
             ['RadiusArrayName','radiusarray','str',1],

@@ -52,6 +52,7 @@ class vmtkMeshBranchClipper(pypes.pypeScript):
         self.Interactive = 0
 
         self.SetScriptName('vmtkmeshbranchclipper')
+        self.SetScriptDoc('interactivly clip a mesh based on proximity to a split and grouped centerline')
         self.SetInputMembers([
             ['Mesh','i','vtkUnstructuredGrid',1,'','','vmtkmeshreader'],
             ['Centerlines','centerlines','vtkPolyData',1,'','','vmtksurfacereader'],
