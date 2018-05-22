@@ -40,6 +40,7 @@ class vmtkEndpointExtractor(pypes.pypeScript):
         self.NumberOfGapSpheres = 1
 
         self.SetScriptName('vmtkendpointextractor')
+        self.SetScriptDoc('find the endpoints of a split and grouped centerline')
         self.SetInputMembers([
             ['Centerlines','i','vtkPolyData',1,'','','vmtksurfacereader'],
             ['GroupIdsArrayName','groupidsarray','str',1],

@@ -57,6 +57,7 @@ class vmtkImageInitialization(pypes.pypeScript):
         self.SurfaceViewer = None
 
         self.SetScriptName('vmtkimageinitialization')
+        self.SetScriptDoc('interactivly create an initial levelset which has not been evolved to image gradients')
         self.SetInputMembers([
             ['Image','i','vtkImageData',1,'','','vmtkimagereader'],
             ['NegateImage','negate','bool',1,'','negate image values before initializing'],

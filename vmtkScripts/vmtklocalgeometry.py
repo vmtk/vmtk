@@ -59,6 +59,7 @@ class vmtkLocalGeometry(pypes.pypeScript):
         self.PCoordsArrayName = 'PCoordsArray'
         
         self.SetScriptName('vmtklocalgeometry')
+        self.SetScriptDoc('compute local geometric properties of a surface')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','','vmtksurfacereader'],
             ['Centerlines','centerlines','vtkPolyData',1,'','','vmtksurfacereader'],

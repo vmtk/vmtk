@@ -48,7 +48,7 @@ class vmtkBranchMapping(pypes.pypeScript):
         self.StretchedMappingArrayName = 'StretchedMapping'
 
         self.SetScriptName('vmtkbranchmapping')
-        self.SetScriptDoc('')
+        self.SetScriptDoc('constructs a harmonic function over each vascular segment; maps and stretches the longitudinal metric to correctly account for the presence of insertion regions at bifurcations; the additional StretchedMapping array is added to the surface')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','','vmtksurfacereader'],
             ['Centerlines','centerlines','vtkPolyData',1,'','','vmtksurfacereader'],

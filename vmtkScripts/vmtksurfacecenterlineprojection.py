@@ -33,6 +33,7 @@ class vmtkSurfaceCenterlineProjection(pypes.pypeScript):
         self.RadiusArrayName = 'MaximumInscribedSphereRadius'
         
         self.SetScriptName('vmtksurfacecenterlineprojection')
+        self.SetScriptDoc('project centerline data onto surface points')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','','vmtksurfacereader'],
             ['Centerlines','centerlines','vtkPolyData',1,'','','vmtksurfacereader'],

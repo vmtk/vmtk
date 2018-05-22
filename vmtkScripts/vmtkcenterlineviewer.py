@@ -39,7 +39,7 @@ class vmtkCenterlineViewer(pypes.pypeScript):
         self.OwnRenderer = 0
 
         self.SetScriptName('vmtkcenterlineviewer')
-        self.SetScriptDoc('')
+        self.SetScriptDoc('display a 3D centerline')
         self.SetInputMembers([
             ['Centerlines','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
             ['PointDataArrayName','pointarray','str',1,''],

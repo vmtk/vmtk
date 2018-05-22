@@ -41,7 +41,7 @@ class vmtkCenterlineLabeler(pypes.pypeScript):
         self.OwnRenderer = 0
 
         self.SetScriptName('vmtkcenterlinelabeler')
-        self.SetScriptDoc('')
+        self.SetScriptDoc('interactively change the group ids of a split centerline')
         self.SetInputMembers([
             ['Centerlines','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
             ['GroupIdsArrayName','groupidsarray','str',1,''],

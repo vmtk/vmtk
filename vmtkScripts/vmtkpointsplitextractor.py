@@ -41,6 +41,7 @@ class vmtkPointSplitExtractor(pypes.pypeScript):
         self.Tolerance = 1E-4
 
         self.SetScriptName('vmtkpointsplitextractor')
+        self.SetScriptDoc('split a centerline at specific xyz coordinates')
         self.SetInputMembers([
             ['Centerlines','i','vtkPolyData',1,'','','vmtksurfacereader'],
             ['GroupIdsArrayName','groupidsarray','str',1],

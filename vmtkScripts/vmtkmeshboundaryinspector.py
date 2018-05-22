@@ -41,7 +41,7 @@ class vmtkMeshBoundaryInspector(pypes.pypeScript):
         self.ReferenceSystems = None
 
         self.SetScriptName('vmtkmeshboundaryinspector')
-        self.SetScriptDoc('')
+        self.SetScriptDoc('display a 3D render of the mesh with individual boundary groups colored and labeled')
         self.SetInputMembers([
             ['Mesh','i','vtkUnstructuredGrid',1,'','the input mesh','vmtkmeshreader'],
             ['CellEntityIdsArrayName','entityidsarray','str',1,''],
