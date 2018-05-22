@@ -16,25 +16,23 @@ tags:
 authors:
   - name: Richard Izzo
     orcid: 0000-0002-0811-6513
-    affiliation: "1, 2"
+    affiliation: 1
   - name: David Steinman
     orcid: 0000-0002-7963-1168
-    affiliation: 3
+    affiliation: 2
   - name: Simone Manini
     orcid: 0000-0003-4350-659X
-    affiliation: 4
+    affiliation: 3
   - name: Luca Antiga
     orcid: 0000-0002-8367-227X
-    affiliation: 4
+    affiliation: 3
 affiliations:
- - name: Biomedical Engineering, University at Buffalo
+ - name: University at Buffalo
    index: 1
- - name: Fellow, Prentice Family Foundation
+ - name: University of Toronto
    index: 2
- - name: Professor, Mechanical Engineering, University of Toronto
-   index: 3
  - name: Orobix Srl. 
-   index: 4
+   index: 3
 date: 23 April 2018
 bibliography: paper.bib
 ---
@@ -53,9 +51,9 @@ to understand both disease characteristics across a population, and the
 efficacy of potential treatments [@RN550, @RN83].
 
 ``The Vascular Modeling Toolkit (VMTK)`` is a collection of python-wrapped C++
-methods which enable the efficient segmentation, geometric characterization,
+classes which enable the efficient segmentation, geometric characterization,
 network analysis, hemodynamic modeling, and visualization of vascular
-structures from medical images.  Image segmentation is performed via a 3D
+structures from medical images.  Image segmentation can be performed via a 3D
 gradient based level set algorithm which is initialized from user defined
 seeds. Surface editing, mesh generation, and geometric characterization is
 largely automated, relying heavily on the centerline definitions calculated
@@ -88,11 +86,9 @@ merging everything in a single model.
 ``vmtklevelsetsegmentation -ifile foo.dcm --pipe vmtkmarchingcubes -i @.o
 --pipe vmtksurfacewriter -ofile foo.vtp``
 
-![levelset segmentation](levelset.png)
+![levelset segmentation](levelset.png)\
 
-The process of placing seeds on an image (left), initializing an isosurface
-from the seeds using the colliding fronts methods (center), and finally
-evolving the isosurface through the level set equations (right).
+**Figure 1:** The process of placing seeds on an image (left). Initializing an isosurface from the seeds using the colliding fronts methods (center). Eolving the isosurface through the level set equations (right).
 
 ## Generating Centerlines from a Surface
 
@@ -102,13 +98,9 @@ path, which is equivalent to finding the shortest paths in the radius metric.
 
 ``vmtkcenterlines -ifile foo.vtp -ofile foo_centerlines.vtp``
 
-![centerline generation](centerlines.png)
+![Centerline Generation](centerlines.png)\
 
-The input surface representation (left), a visualization of the internal subset
-of the voronoi diagram where each sheet represents a maximum inscribed sphere
-radius centered at some point in the surface (center), the centerline extracted
-from the voronoi diagram rendered as in its position within the input surface
-(right).
+**Figure 2:** The input surface representation (left). Visualization of the internal subset of the voronoi diagram where each sheet represents a maximum inscribed sphere radius centered at some point in the surface (center). The centerline extracted from the voronoi diagram rendered as in its position within the input surface (right).
 
 ## Splitting a Surface from its Centerlines
 
@@ -119,26 +111,23 @@ the surface-centerline tube containment relationships.
 vmtkbranchextractor --pipe vmtkbranchclipper -groupids 0 -insideout 1 -ofile
 foo_sp.vtp``
 
-![centerline splitting](splitting.png)
+![centerline splitting](splitting.png)\
 
-Illustration of the centerline-surface tube containment relationships (left),
-visualization of the surface being split into independent groups based on the
-surfaces membership in a centerline tract/group (right).
+**Figure 3:** Illustration of the centerline-surface tube containment relationships (left). Visualization of the surface being split into independent groups based on the surfaces membership in a centerline tract/group (right).
 
 ## Generating a Volumetric Mesh from a Surface
 
 Tetrahedral, mixed tetrahedral, and boundary layer meshes can be generated from
-a surface and its centerlines. 
+a surface and its centerlines.
 
 ``vmtksurfacereader -ifile foo.vtp --pipe vmtkcenterlines --pipe
 vmtkdistancetocenterlines -useradius 1 --pipe vmtkmeshgenerator
 -elementsizemode edgelengtharray -edgelengtharray DistanceToCenterlines
 -edgelengthfactor 0.3 -boundarylayer 1 -ofile foo.vtu``
 
-![ mesh generation](mesh.png)
+![mesh generation](mesh.png)\
 
-The input surface representation (left), a visualization of the internal mesh
-(center), a visualization of a boundary layer internal mesh (right).
+**Figure 4:** The input surface representation (left). Visualization of the internal mesh (center). boundary layer generated within the internal mesh (right).
 
 ## Composable Scripting With Pypes
 
@@ -146,11 +135,11 @@ The input surface representation (left), a visualization of the internal mesh
 easily and have a common interface, but, most of all, it allows single vmtk
 scripts to interact with each other, making ``VMTK`` modular and flexible.
 Pypes can be used from the command line, a python interpreter, or from the
-custom ``PypePad`` user interface
+custom ``PypePad`` user interface.
 
-![pypepad](pypepad.png)
+![pypepad](pypepad.png)\
 
-The VMTK PypePad user interface.
+**Figure 5:** Pypepad user interface. vmtkimagereader specifies it's input file name with the -ifile flag, and the image is stored in memory as an output member of the script. vmtkmarchingcubes is initialized with this image as an input member, and the target isosurface level is set to 700 with the -l flag; the surface is generated and stored as an output member of the script. vmtksurfaceviewer is initialized with this surface as an input member, and the script displays the surface as an interactive rendering to the user in a new window.
 
 # Acknowledgements & Funding
 
