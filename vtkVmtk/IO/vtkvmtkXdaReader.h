@@ -19,7 +19,7 @@ Version:   $Revision: 1.3 $
                                                                                                                                     
 =========================================================================*/
 
-// .NAME vtkvmtkXdaReader - 
+// .NAME vtkvmtkXdaReader - reads libmesh Xda files
 // .SECTION Description
 // vtkvmtkXdaReader reads libmesh Xda files
 

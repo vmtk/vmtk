@@ -23,9 +23,9 @@ Version:   $Revision: 1.3 $
 
 =========================================================================*/
 
-// .NAME vtkvmtkGradientMagnitudeImageFilter - Wrapper class around itk::GradientMagnitudeImageFilterImageFilter
+// .NAME vtkvmtkSigmoidImageFilter - Wrapper class around itk::SigmoidImageFilter
 // .SECTION Description
-// vtkvmtkGradientMagnitudeImageFilter
+// vtkvmtkSigmoidImageFilter
 
 
 #ifndef __vtkvmtkSigmoidImageFilter_h

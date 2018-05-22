@@ -2,6 +2,10 @@
 // Hugo Gratama van Andel
 // Academic Medical Centre - University of Amsterdam
 // Dept. Biomedical Engineering  & Physics
+// .NAME vtkvmtkCurvedMPRImageFilter - creates a multiplanar reconstruction of an image along a centerline path.
+// .SECTION Description
+// ...
+
 
 #ifndef __vtkvmtkCurvedMPRImageFilter_h
 #define __vtkvmtkCurvedMPRImageFilter_h
@@ -30,7 +34,7 @@ public:
 
   void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
 
-    // Description: 
+  // Description: 
   // Set/Get the centerline along which the MPR should be made
   vtkSetObjectMacro(Centerline,vtkPolyData);
   vtkGetObjectMacro(Centerline,vtkPolyData);

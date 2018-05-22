@@ -18,10 +18,9 @@ Version:   $Revision: 1.5 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkPolyDataSizingFunction - Add caps to boundaries.
+  // .NAME vtkvmtkPolyDataSizingFunction - constructs a sizing function for volume meshing on the basis of input surface
   // .SECTION Description
-  // This class constructs a sizing function for volume meshing on the basis 
-  // on the input surface.
+  // ...
 
 #ifndef __vtkvmtkPolyDataSizingFunction_h
 #define __vtkvmtkPolyDataSizingFunction_h

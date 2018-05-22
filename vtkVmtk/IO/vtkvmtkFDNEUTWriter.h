@@ -19,7 +19,7 @@ Version:   $Revision: 1.3 $
                                                                                                                                     
 =========================================================================*/
 
-// .NAME vtkvmtkFDNEUTWriter - 
+// .NAME vtkvmtkFDNEUTWriter - writes FDNEUT Fidap files
 // .SECTION Description
 // vtkvmtkFDNEUTWriter writes FDNEUT Fidap files
 

@@ -19,7 +19,7 @@ Version:   $Revision: 1.2 $
                                                                                                                                     
 =========================================================================*/
 
-// .NAME vtkvmtkPNGWriter - 
+// .NAME vtkvmtkPNGWriter - writes .png files
 // .SECTION Description
 
 // .SECTION See Also

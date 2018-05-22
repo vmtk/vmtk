@@ -26,7 +26,7 @@ Version:   $Revision: 1.4 $
 
 =========================================================================*/
 
-// .NAME vtkvmtkAnisotropicDiffusionImageFilter.h - Wrapper class around itk::vtkvmtkAnisotropicDiffusionImageFilter
+// .NAME vtkvmtkAnisotropicDiffusionImageFilter.h - Wrapper class around itk::GradientAnisotropicDiffusionImageFilter
 // .SECTION Description
 // vtkvmtkAnisotropicDiffusionImageFilter.h
 

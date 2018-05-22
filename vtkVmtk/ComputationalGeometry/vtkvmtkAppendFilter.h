@@ -18,7 +18,7 @@ Version:   $Revision: 1.4 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkAppendFilter - ...
+  // .NAME vtkvmtkAppendFilter - merges points, point data, and cell data
   // .SECTION Description
   // .
 

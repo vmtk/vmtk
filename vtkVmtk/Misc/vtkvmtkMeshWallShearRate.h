@@ -18,7 +18,7 @@ Version:   $Revision: 1.1 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkMeshWallShearRate - ...
+  // .NAME vtkvmtkMeshWallShearRate - calculates wall shear rate from velocity components in a mesh
   // .SECTION Description
   // .
 

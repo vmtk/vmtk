@@ -19,9 +19,17 @@ Version:   $Revision: 1.2 $
                                                                                                                                     
 =========================================================================*/
 
-// .NAME vtkvmtkDolfinWriter - 
+// .NAME vtkvmtkDolfinWriter - write mesh data in Dolfin file formats.
 // .SECTION Description
-// vtkvmtkDolfinWriter writes Dolfin files - www.fenics.org
+// vtkvmtkDolfinWriter writes Dolfin files - www.fenics.org.
+// Compatible file formats include:
+//     * Binary (.bin)
+//     * RAW    (.raw)
+//     * SVG    (.svg)
+//     * XD3    (.xd3)
+//     * XML    (.xml)
+//     * XYZ    (.xyz)
+//     * VTK    (.pvd)
 
 // .SECTION See Also
 

@@ -18,9 +18,9 @@ Version:   $Revision: 1.2 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkPolyDataKiteRemovalFilter - Add caps to boundaries.
+  // .NAME vtkvmtkPolyDataKiteRemovalFilter - removes small protrusions (kites) from a surface based on a SizeFactor parameter
   // .SECTION Description
-  // This class closes the boundaries of a surface with a cap.
+  // ...
 
 #ifndef __vtkvmtkPolyDataKiteRemovalFilter_h
 #define __vtkvmtkPolyDataKiteRemovalFilter_h

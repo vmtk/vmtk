@@ -18,9 +18,9 @@ Version:   $Revision: 1.5 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkPolyDataNetworkExtraction - Add caps to boundaries.
+  // .NAME vtkvmtkPolyDataNetworkExtraction - create an approximated network graph (preliminary to centerline) from an input surface with atleast one hole in it. 
   // .SECTION Description
-  // This class closes the boundaries of a surface with a cap.
+  // ...
 
 #ifndef __vtkvmtkPolyDataNetworkExtraction_h
 #define __vtkvmtkPolyDataNetworkExtraction_h

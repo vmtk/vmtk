@@ -23,9 +23,9 @@ Version:   $Revision: 1.2 $
 
 =========================================================================*/
 
-// .NAME vtkvmtkCardinalSpline - Wrapper class around itk::VesselnessMeasureImageFilter
+// .NAME vtkvmtkCardinalSpline
 // .SECTION Description
-// vtkvmtkCardinalSpline
+// ...
 
 
 #ifndef __vtkvmtkCardinalSpline_h

@@ -18,7 +18,7 @@ Version:   $Revision: 1.3 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkRBFInterpolation - 
+  // .NAME vtkvmtkRBFInterpolation - interpolate a radial basis function on a surface 
   // .SECTION Description
   // ..
 

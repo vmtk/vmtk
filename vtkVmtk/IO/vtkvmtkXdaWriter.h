@@ -19,7 +19,7 @@ Version:   $Revision: 1.2 $
                                                                                                                                     
 =========================================================================*/
 
-// .NAME vtkvmtkXdaWriter - 
+// .NAME vtkvmtkXdaWriter - writes libmesh Xda files
 // .SECTION Description
 // vtkvmtkXdaWriter writes libmesh Xda files
 
