@@ -18,9 +18,9 @@ Version:   $Revision: 1.7 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkTetGenWrapper - Converts linear elements to quadratic.
-  // .SECTION Description
-  // ...
+// .NAME vtkvmtkTetGenWrapper - Converts linear elements to quadratic.
+// .SECTION Description
+// ...
 
 #ifndef __vtkvmtkTetGenWrapper_h
 #define __vtkvmtkTetGenWrapper_h

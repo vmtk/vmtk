@@ -18,9 +18,16 @@ Version:   $Revision: 1.3 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkCenterlineGeometry - ...
-  // .SECTION Description
-  // ...
+// .NAME vtkvmtkCenterlineGeometry - Compute length, curvature, torsion, tortuosity, and frenet reference system of a centerline
+// .SECTION Description
+//  Computes properties for the following arrays:
+//     - lengthArray
+//     - curvatureArray
+//     - torsionArray
+//     - tortuosityArray
+//     - frenetTangentArray
+//     - frenetNormalArray
+//     - frenetBinormalArray
 
 #ifndef __vtkvmtkCenterlineGeometry_h
 #define __vtkvmtkCenterlineGeometry_h

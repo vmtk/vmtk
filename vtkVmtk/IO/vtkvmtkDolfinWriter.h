@@ -18,7 +18,6 @@ Version:   $Revision: 1.2 $
      PURPOSE.  See the above copyright notices for more information.
                                                                                                                                     
 =========================================================================*/
-
 // .NAME vtkvmtkDolfinWriter - write mesh data in Dolfin file formats.
 // .SECTION Description
 // vtkvmtkDolfinWriter writes Dolfin files - www.fenics.org.
@@ -30,7 +29,6 @@ Version:   $Revision: 1.2 $
 //     * XML    (.xml)
 //     * XYZ    (.xyz)
 //     * VTK    (.pvd)
-
 // .SECTION See Also
 
 #ifndef __vtkvmtkDolfinWriter_h

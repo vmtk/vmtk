@@ -18,10 +18,9 @@ Version:   $Revision: 1.1 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-
-// .NAME vtkvmtkIterativeClosestPointTransform - Implementation of the ICP algorithm with FarThreshold variant.
+// .NAME vtkvmtkIterativeClosestPointTransform - Implementation of the ICP algorithm with FarThreshold variant
 // .SECTION Description
-// 
+// ..
 
 #ifndef __vtkvmtkIterativeClosestPointTransform_h
 #define __vtkvmtkIterativeClosestPointTransform_h

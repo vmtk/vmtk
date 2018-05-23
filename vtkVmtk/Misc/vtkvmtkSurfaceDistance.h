@@ -18,9 +18,9 @@ Version:   $Revision: 1.4 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkSurfaceDistance - calculate the euclidian distance of one surface from another
-  // .SECTION Description
-  // .
+// .NAME vtkvmtkSurfaceDistance - calculate the euclidian distance of one surface from another
+// .SECTION Description
+// .
 
 #ifndef __vtkvmtkSurfaceDistance_h
 #define __vtkvmtkSurfaceDistance_h

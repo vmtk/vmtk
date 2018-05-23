@@ -18,9 +18,9 @@ Version:   $Revision: 1.1 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkMeshVorticity - calculates vorticity from velocity gradients in a mesh
-  // .SECTION Description
-  // .
+// .NAME vtkvmtkMeshVorticity - calculates vorticity from velocity gradients in a mesh
+// .SECTION Description
+// .
 
 #ifndef __vtkvmtkMeshVorticity_h
 #define __vtkvmtkMeshVorticity_h

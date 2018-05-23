@@ -18,9 +18,9 @@ Version:   $Revision: 1.4 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkSurfaceProjection - ...
-  // .SECTION Description
-  // .
+// .NAME vtkvmtkSurfaceProjection - ...
+// .SECTION Description
+// .
 
 #ifndef __vtkvmtkSurfaceProjection_h
 #define __vtkvmtkSurfaceProjection_h

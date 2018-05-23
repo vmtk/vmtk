@@ -18,9 +18,9 @@ Version:   $Revision: 1.5 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkPolyDataSizingFunction - constructs a sizing function for volume meshing on the basis of input surface
-  // .SECTION Description
-  // ...
+// .NAME vtkvmtkPolyDataSizingFunction - constructs a sizing function for volume meshing on the basis of input surface
+// .SECTION Description
+// ...
 
 #ifndef __vtkvmtkPolyDataSizingFunction_h
 #define __vtkvmtkPolyDataSizingFunction_h

@@ -18,9 +18,9 @@ Version:   $Revision: 1.1 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkInteractorStyleTrackballCamera - use the trackball camera style for 3d user ineteraction
-  // .SECTION Description
-  // ...
+// .NAME vtkvmtkInteractorStyleTrackballCamera - use the trackball camera style for 3d user ineteraction
+// .SECTION Description
+// ...
 
 #ifndef __vtkvmtkInteractorStyleTrackballCamera_h
 #define __vtkvmtkInteractorStyleTrackballCamera_h

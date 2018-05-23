@@ -18,9 +18,9 @@ Version:   $Revision: 1.4 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkCapPolyData - Add caps to boundaries.
-  // .SECTION Description
-  // This class closes the boundaries of a surface with a cap. Each cap is made of triangles sharing the boundary baricenter. Boundary baricenters are added to the dataset. It is possible to retrieve the ids of the added points with GetCapCenterIds. Boundary baricenters can be displaced along boundary normals through the Displacement parameter. Since this class is used as a preprocessing step for Delaunay tessellation, displacement is meant to avoid the occurence of degenerate tetrahedra on the caps.
+// .NAME vtkvmtkCapPolyData - Add caps to boundaries
+// .SECTION Description
+// This class closes the boundaries of a surface with a cap. Each cap is made of triangles sharing the boundary baricenter. Boundary baricenters are added to the dataset. It is possible to retrieve the ids of the added points with GetCapCenterIds. Boundary baricenters can be displaced along boundary normals through the Displacement parameter. Since this class is used as a preprocessing step for Delaunay tessellation, displacement is meant to avoid the occurence of degenerate tetrahedra on the caps.
 
 #ifndef __vtkvmtkCapPolyData_h
 #define __vtkvmtkCapPolyData_h

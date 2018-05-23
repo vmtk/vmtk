@@ -22,7 +22,6 @@
 	Kalkulo AS
 	Simula Research Laboratory
 =========================================================================*/
-
 // .NAME vtkvmtkDolfinWriter2 - 
 // .SECTION Description
 // Slightly modified version of vtkvmtkDolfinWriter

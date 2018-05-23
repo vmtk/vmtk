@@ -18,9 +18,9 @@ Version:   $Revision: 1.5 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkCenterlineAttributesFilter - ...
-  // .SECTION Description
-  // ...
+// .NAME vtkvmtkCenterlineAttributesFilter - Computes the abscissa and parallel transport normal of an input centerline.
+// .SECTION Description
+// ...
 
 #ifndef __vtkvmtkCenterlineAttributesFilter_h
 #define __vtkvmtkCenterlineAttributesFilter_h

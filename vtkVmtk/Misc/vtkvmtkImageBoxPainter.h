@@ -18,9 +18,9 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkImageBoxPainter - 
+// .NAME vtkvmtkImageBoxPainter - ..
 // .SECTION Description
-//
+// ..
 
 #ifndef __vtkvmtkImageBoxPainter_h
 #define __vtkvmtkImageBoxPainter_h

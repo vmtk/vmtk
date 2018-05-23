@@ -18,11 +18,10 @@ Version:   $Revision: 1.2 $
      PURPOSE.  See the above copyright notices for more information.
                                                                                                                                     
 =========================================================================*/
-
 // .NAME vtkvmtkTetGenWriter - writes TetGen .msh files.
 // .SECTION Description
 // vtkvmtkTetGenWriter writes TetGen .msh files. Many thanks to M. Xenos, Y. Alemu and D. Bluestein, BioFluids Laboratory, Stony Brook University, Stony Brook, NY, for the inputs on the file format.
-
+//
 // .SECTION See Also
 
 #ifndef __vtkvmtkTetGenWriter_h

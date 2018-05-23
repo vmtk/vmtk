@@ -18,10 +18,9 @@ Version:   $Revision: 1.4 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-
 // .NAME vtkvmtkPolyBallModeller - sample poly ball onto structured points 
 // .SECTION Description
-// ..
+// ...
 
 #ifndef __vtkvmtkPolyBallModeller_h
 #define __vtkvmtkPolyBallModeller_h

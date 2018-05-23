@@ -18,9 +18,17 @@ Version:   $Revision: 1.1 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkCenterlineBifurcationVectors - ...
-  // .SECTION Description
-  // ...
+// .NAME vtkvmtkCenterlineBifurcationVectors - Compute bifurcation vectors, bifurcation vector components, and bifurcation vector angles of a centerline
+// .SECTION Description
+//  Stores results for the following data arrays:
+//    - groupBifurcationVectorsGroupIds
+//    - groupBifurcationVectorsOrientation
+//    - groupBifurcationVectors
+//    - groupBifurcationVectorsPoints
+//    - groupInPlaneBifurcationVectors
+//    - groupOutOfPlaneBifurcationVectors
+//    - groupInPlaneBifurcationVectorAngles
+//    - groupOutOfPlaneBifurcationVectorAngles
 
 #ifndef __vtkvmtkCenterlineBifurcationVectors_h
 #define __vtkvmtkCenterlineBifurcationVectors_h

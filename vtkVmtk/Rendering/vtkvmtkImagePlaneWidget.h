@@ -18,9 +18,9 @@ Version:   $Revision: 1.1 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkImagePlaneWidget - generates an interactive widget used to browse through image data
-  // .SECTION Description
-  // ...
+// .NAME vtkvmtkImagePlaneWidget - generates an interactive widget used to browse through image data
+// .SECTION Description
+// ...
 
 #ifndef __vtkvmtkImagePlaneWidget_h
 #define __vtkvmtkImagePlaneWidget_h

@@ -22,9 +22,9 @@
 	Kalkulo AS
 	Simula Research Laboratory
 =========================================================================*/
-  // .NAME vtkvmtkCellDimensionFilter - ...
-  // .SECTION Description
-  // Threshold all cells of a given dimension, output to an unstructured grid
+// .NAME vtkvmtkCellDimensionFilter - Threshold all cells of a given dimension, output to an unstructured grid
+// .SECTION Description
+// ...
 
 #ifndef __vtkvmtkCellDimensionFilter_h
 #define __vtkvmtkCellDimensionFilter_h

@@ -25,7 +25,6 @@ Version:   $Revision: 1.4 $
       https://github.com/rlizzo
 
 =========================================================================*/
-
 // .NAME vtkvmtkMedialCurveFilter - flux driven automatic centerline extraction from a surface
 // .SECTION Description
 // Please see http://www.insight-journal.org/browse/publication/165 for source implementation. 

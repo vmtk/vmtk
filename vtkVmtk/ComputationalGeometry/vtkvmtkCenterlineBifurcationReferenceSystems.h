@@ -18,9 +18,9 @@ Version:   $Revision: 1.5 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkCenterlineBifurcationReferenceSystems - ...
-  // .SECTION Description
-  // ...
+// .NAME vtkvmtkCenterlineBifurcationReferenceSystems - Compute the groupids, blanking, normals, and upnormals properties of a centerline
+// .SECTION Description
+// ...
 
 #ifndef __vtkvmtkCenterlineBifurcationReferenceSystems_h
 #define __vtkvmtkCenterlineBifurcationReferenceSystems_h

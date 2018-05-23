@@ -18,9 +18,9 @@ Version:   $Revision: 1.5 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkStreamlineToParticlesFilter - Cluster streamlines based on Mahalanobis distance metric and K-Means clustering.
-  // .SECTION Description
-  // This class clusters streamlines.
+// .NAME vtkvmtkStreamlineToParticlesFilter - Cluster streamlines based on Mahalanobis distance metric and K-Means clustering.
+// .SECTION Description
+// This class clusters streamlines.
 
 #ifndef __vtkvmtkStreamlineToParticlesFilter_h
 #define __vtkvmtkStreamlineToParticlesFilter_h

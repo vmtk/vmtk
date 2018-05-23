@@ -22,11 +22,11 @@
 	Kalkulo AS
 	Simula Research Laboratory
 =========================================================================*/
-  // .NAME vtkvmtkPolyBallLine2 - 
-  // .SECTION Description
-  // This is another version of a polyball line
-  // Here the ditance to the line is first computed and then the radius at the closest point is substracted
-  // This way each line segment only influences its voronoi cell
+// .NAME vtkvmtkPolyBallLine2 - Second version of polyline where distance to the line is first computed and then the radius at the closest point is substracted
+// .SECTION Description
+// This is another version of a polyball line
+// Here the ditance to the line is first computed and then the radius at the closest point is substracted
+// This way each line segment only influences its voronoi cell
 
 #ifndef __vtkvmtkPolyBallLine2_h
 #define __vtkvmtkPolyBallLine2_h

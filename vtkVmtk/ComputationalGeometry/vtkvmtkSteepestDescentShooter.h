@@ -18,9 +18,9 @@ Version:   $Revision: 1.4 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkSteepestDescentShooter - Shoot Voronoi vertices onto centerlines.
-  // .SECTION Description
-  // ...
+// .NAME vtkvmtkSteepestDescentShooter - Shoot Voronoi vertices onto centerlines.
+// .SECTION Description
+// ...
 
 
 #ifndef __vtkvmtkSteepestDescentShooter_h

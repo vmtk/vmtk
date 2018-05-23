@@ -25,9 +25,7 @@ Version:   $Revision: 1.3 $
 
 // .NAME vtkvmtkActiveTubeFilter - ...
 // .SECTION Description
-// .
-
-//   Developed with support from the EC FP7/2007-2013: ARCH, Project n. 224390
+// Developed with support from the EC FP7/2007-2013: ARCH, Project n. 224390
 
 #ifndef __vtkvmtkActiveTubeFilter_h
 #define __vtkvmtkActiveTubeFilter_h

@@ -84,6 +84,8 @@ double vtkvmtkPolyBall::EvaluateFunction(double x[3])
     {
     this->Input->GetPoint(i,px);
     pr = polyballRadiusArray->GetComponent(i,0);
+    // When is px initialized to a value???
+    // ((x[0] - px[0])^2 + (x[1] - px[1])^2 + (x[2] - px[2])^2) - pr^2
     sphereFunctionValue = ((x[0] - px[0]) * (x[0] - px[0]) + (x[1] - px[1]) * (x[1] - px[1]) + (x[2] - px[2]) * (x[2] - px[2])) - pr*pr;
     if (sphereFunctionValue - minSphereFunctionValue < VTK_VMTK_DOUBLE_TOL)
       {

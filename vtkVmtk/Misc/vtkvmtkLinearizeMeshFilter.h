@@ -18,9 +18,9 @@ Version:   $Revision: 1.4 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkLinearizeMeshFilter - Converts linear elements to quadratic.
-  // .SECTION Description
-  // ...
+// .NAME vtkvmtkLinearizeMeshFilter - Converts linear elements to quadratic.
+// .SECTION Description
+// ...
 
 #ifndef __vtkvmtkLinearizeMeshFilter_h
 #define __vtkvmtkLinearizeMeshFilter_h

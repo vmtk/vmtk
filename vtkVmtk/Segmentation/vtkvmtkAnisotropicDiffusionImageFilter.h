@@ -25,7 +25,6 @@ Version:   $Revision: 1.4 $
       https://github.com/kayarre
 
 =========================================================================*/
-
 // .NAME vtkvmtkAnisotropicDiffusionImageFilter.h - Wrapper class around itk::GradientAnisotropicDiffusionImageFilter
 // .SECTION Description
 // vtkvmtkAnisotropicDiffusionImageFilter.h
