@@ -18,7 +18,7 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkDataSetItem - ..
+// .NAME vtkvmtkDataSetItem - create an item instance with a data set and particular point id.
 // .SECTION Description
 // ..
 

@@ -18,7 +18,7 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkPolyDataUmbrellaStencil - ..
+// .NAME vtkvmtkPolyDataUmbrellaStencil - Weight the neighborhood connections of a surface mesh with a laplacian.
 // .SECTION Description
 // ..
 

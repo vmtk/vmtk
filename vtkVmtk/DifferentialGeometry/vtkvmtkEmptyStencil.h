@@ -18,7 +18,7 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkEmptyStencil - ..
+// .NAME vtkvmtkEmptyStencil - create a stencil but do not apply a weighting to the neighborhoods of the data set.
 // .SECTION Description
 // ..
 

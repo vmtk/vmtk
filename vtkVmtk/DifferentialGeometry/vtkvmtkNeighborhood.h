@@ -18,7 +18,7 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkNeighborhood - ..
+// .NAME vtkvmtkNeighborhood - Query the neighborhood surrounding the set point id in an data set item.
 // .SECTION Description
 // ..
 

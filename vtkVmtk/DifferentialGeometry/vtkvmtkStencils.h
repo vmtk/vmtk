@@ -18,7 +18,7 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkStencils - ..
+// .NAME vtkvmtkStencils - Create an empty, umbrella, area weighted umbrella, finite-element LP, or finite-volume finite-element stencil for a particular data set.
 // .SECTION Description
 // ..
 

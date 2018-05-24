@@ -16,7 +16,7 @@ GENERATE_RTF         = NO
 
 PDF_HYPERLINKS       = YES
 
-HAVE_DOT             = @HAVE_DOT_YESNO@
+HAVE_DOT             = YES
 DOT_PATH             = "@DOT_PATH@"
 DOT_IMAGE_FORMAT     = svg
 DOT_GRAPH_MAX_NODES  = 75
@@ -64,9 +64,12 @@ DISTRIBUTE_GROUP_DOC = YES
 TAB_SIZE             = 3
 CLANG_ASSISTED_PARSING = YES
 
-FILE_PATTERNS        = *.h *.md
 RECURSIVE            = YES
+FILE_PATTERNS        = *.h
+EXCLUDE              = 
+EXCLUDE_PATTERNS     = *Win32Header* vtkvmtkT*
 
+HTML_ALIGN_MEMBERS   = YES
 ALPHABETICAL_INDEX   = YES
 COLS_IN_ALPHA_INDEX  = 3
 IGNORE_PREFIX        = vtkvmtk
@@ -76,10 +79,6 @@ MACRO_EXPANSION      = YES
 SEARCH_INCLUDES      = YES
 INCLUDE_PATH         = 
 EXPAND_ONLY_PREDEF   = YES
-EXPAND_AS_DEFINED = vtkDataArray \
-                    vtkAllEventsMacro \
-                    vtkEventDeclarationMacro \
-                    _vtk_add_event
 PREDEFINED  = "vtkSetMacro(name,type)= \
                  virtual void Set##name (type);" \
               "vtkGetMacro(name,type)= \

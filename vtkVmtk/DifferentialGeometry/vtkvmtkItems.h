@@ -18,7 +18,7 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkItems - ..
+// .NAME vtkvmtkItems - Control allocation and memory footprint of item instances. 
 // .SECTION Description
 // ..
 
