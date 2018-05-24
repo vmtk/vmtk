@@ -18,7 +18,7 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkItem - ..
+// .NAME vtkvmtkItem - Base class for all neighborhood realated classes in vtkvmtk
 // .SECTION Description
 // ..
 
