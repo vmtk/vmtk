@@ -21,17 +21,17 @@ Version:   $Revision: 1.1 $
 // .NAME vtkvmtkPolyDataBifurcationSections - Extract a set of vessel (cross) sections n-spheres away (upstream and downstream) from a bifurctation. 
 // .SECTION Description
 // The set of vessel sections contain the profile as well as the the following information about the section:
-//     - Bifurcation Section Group Ids
-//     - Bifurcation Section Bifurcation Group Ids
-//     - Bifurcation Section Orientation
-//     - Bifurcation Section Distance Spheres
-//     - Bifurcation Section Point
-//     - Bifurcation Section Normal
-//     - Bifurcation Section Area
-//     - Bifurcation Section Min Size
-//     - Bifurcation Section Max Size
-//     - Bifurcation Section Shape
-//     - Bifurcation Section Closed
+// - Bifurcation Section Group Ids
+// - Bifurcation Section Bifurcation Group Ids
+// - Bifurcation Section Orientation
+// - Bifurcation Section Distance Spheres
+// - Bifurcation Section Point
+// - Bifurcation Section Normal
+// - Bifurcation Section Area
+// - Bifurcation Section Min Size
+// - Bifurcation Section Max Size
+// - Bifurcation Section Shape
+// - Bifurcation Section Closed
 
 #ifndef __vtkvmtkPolyDataBifurcationSections_h
 #define __vtkvmtkPolyDataBifurcationSections_h

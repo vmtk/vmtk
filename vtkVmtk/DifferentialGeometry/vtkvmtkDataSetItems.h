@@ -18,7 +18,7 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkDataSetItems - Create a collection of datat set items, one for every point within the data set.
+// .NAME vtkvmtkDataSetItems - Create a collection of data set items, one for every point within the data set.
 // .SECTION Description
 // ..
 

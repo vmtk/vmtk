@@ -20,18 +20,18 @@ Version:   $Revision: 1.1 $
 =========================================================================*/
 // .NAME vtkvmtkPolyDataBranchSections - Extract a vessel (cross) section n-spheres distance from from the start point of a branch. 
 // .SECTION Description
-// The set of vessel sections contain the profile as well as the the following information about the section:
-//     - Branch Section Group Ids
-//     - Branch Section Bifurcation Group Ids
-//     - Branch Section Orientation
-//     - Branch Section Distance Spheres
-//     - Branch Section Point
-//     - Branch Section Normal
-//     - Branch Section Area
-//     - Branch Section Min Size
-//     - Branch Section Max Size
-//     - Branch Section Shape
-//     - Branch Section Closed
+//  The set of vessel sections contain the profile as well as the the following information about the section:
+//  - Branch Section Group Ids
+//  - Branch Section Bifurcation Group Ids
+//  - Branch Section Orientation
+//  - Branch Section Distance Spheres
+//  - Branch Section Point
+//  - Branch Section Normal
+//  - Branch Section Area
+//  - Branch Section Min Size
+//  - Branch Section Max Size
+//  - Branch Section Shape
+//  - Branch Section Closed
 
 #ifndef __vtkvmtkPolyDataBranchSections_h
 #define __vtkvmtkPolyDataBranchSections_h

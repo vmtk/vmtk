@@ -18,7 +18,7 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkItem - Base class for the construction of neighborhoods and stencis from a set of points. 
+// .NAME vtkvmtkItem - Base class for the construction of neighborhoods and stencil from a set of points. 
 // .SECTION Description
 // ..
 

@@ -20,7 +20,7 @@ Version:   $Revision: 1.4 $
 =========================================================================*/
 // .NAME vtkvmtkSteepestDescentShooter - experimental method attempting movement across voronoi vertices; implement with caution. 
 // .SECTION Description
-// for each voronoi vertext, create lines that go from that point to the centerline by running an ekonoi equation from every point in the centerline outwards over the spikes of the voronoi diagram. then backproject similar to a steepest decent algorithm from the voronoi back to the centerline. 
+// For each voronoi vertex, create lines that go from that point to the centerline by running an Eikonal equation from every point in the centerline outwards over the spikes of the voronoi diagram. then back-project similar to a steepest decent algorithm from the Voronoi back to the centerline. 
 
 
 #ifndef __vtkvmtkSteepestDescentShooter_h

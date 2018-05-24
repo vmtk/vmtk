@@ -18,7 +18,7 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkNeighborhoods - Create an empty, polydata, polydata manifold, polydata manifold extended, or undstructured grid neighborhood from a a matching vtk object.
+// .NAME vtkvmtkNeighborhoods - Create an empty, polydata, polydata manifold, polydata manifold extended, or unstructured grid neighborhood from a a matching vtk object.
 // .SECTION Description
 // ..
 
