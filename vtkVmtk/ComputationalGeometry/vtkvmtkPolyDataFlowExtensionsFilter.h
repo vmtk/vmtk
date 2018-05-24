@@ -18,9 +18,11 @@ Version:   $Revision: 1.6 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkPolyDataFlowExtensionsFilter - .
+  // .NAME vtkvmtkPolyDataFlowExtensionsFilter - remove the end caps of a surface at flow inlets/outlets and append a cylinder with matching radius that follows the centerline path.  
   // .SECTION Description
-  // ...
+  //  Various options are eplained below:
+  //    - ExtensionMode: methodfor computing the normal for extension, can be "centerlinedirection" or "boundarynormal"
+  //    - InterpolationMode: method for computing interpolation from the model section to a circular section, can be "linear" or "thinplatespline
 
 #ifndef __vtkvmtkPolyDataFlowExtensionsFilter_h
 #define __vtkvmtkPolyDataFlowExtensionsFilter_h

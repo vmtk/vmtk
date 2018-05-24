@@ -18,9 +18,11 @@ Version:   $Revision: 1.3 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkCenterlineSphereDistance - ...
+// .NAME vtkvmtkCenterlineSphereDistance - Collection of functions which compute point ids which are n-spheres away from a reference point.
 // .SECTION Description
-// ...
+// Allows us to find points which are n-touching spheres upstream or downstream from a reference point. In this description, "touching sphere" refers to the the points on the centerline (one upstream, one downstream) which lie closest to ("touch") the surface of a sphere whose barycenter is located at the reference points location. In practice, this means that we use the centerline's MaximumInscribedSphereRadius point data as the "sphere" radius/surface. 
+//
+// This metric is used because it is a well behaved way to normalize the comparison of distance as vessel radius scales. 
 
 #ifndef __vtkvmtkCenterlineSphereDistance_h
 #define __vtkvmtkCenterlineSphereDistance_h

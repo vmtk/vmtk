@@ -18,9 +18,9 @@ Version:   $Revision: 1.1 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkUnstructuredGridCenterlineSections - ...
-  // .SECTION Description
-  // ...
+// .NAME vtkvmtkUnstructuredGridCenterlineSections - obtain sections of an unstructured grid mesh with lie along a centerline path.
+// .SECTION Description
+// Obtain mesh sections (along a centerline) which pass through a dense unstructured grid mesh. This is useful because you can use this data to visualize velocity vectors (or other solutions) along many mesh sections intersecting the centerline.
 
 #ifndef __vtkvmtkUnstructuredGridCenterlineSections_h
 #define __vtkvmtkUnstructuredGridCenterlineSections_h

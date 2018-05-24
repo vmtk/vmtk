@@ -25,8 +25,7 @@ Version:   $Revision: 1.0 $
 =========================================================================*/
 // .NAME vtkvmtkConcaveAnnularCapPolyData - Add annular caps between the boundaries of a walled surface.
 // .SECTION Description
-// This class closes the boundaries between the surfaces of a walled surface with caps. The
-// surfaces are required to be dense for the algorithm to produce legal caps.
+// This class closes the boundaries between the surfaces of a walled surface with caps. The surfaces are required to be dense for the algorithm to produce legal caps.
 
 #ifndef __vtkvmtkConcaveAnnularCapPolyData_h
 #define __vtkvmtkConcaveAnnularCapPolyData_h

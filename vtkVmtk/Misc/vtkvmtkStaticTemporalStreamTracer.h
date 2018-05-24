@@ -32,10 +32,7 @@ Language:  C++
 
 // .NAME vtkvmtkStaticTemporalStreamTracer - Streamline generator
 // .SECTION Description
-// vtkvmtkStaticTemporalStreamTracer is a filter that integrates a vector field to generate
-// streamlines. The integration is performed using a specified integrator,
-// by default Runge-Kutta2.
-//
+// vtkvmtkStaticTemporalStreamTracer is a filter that integrates a vector field to generate streamlines. The integration is performed using a specified integrator, by default Runge-Kutta2.
 
 #ifndef __vtkvmtkStaticTemporalStreamTracer_h
 #define __vtkvmtkStaticTemporalStreamTracer_h

@@ -29,9 +29,7 @@ Language:  C++
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkStaticTemporalInterpolatedVelocityField - A concrete class for obtaining
-//  the interpolated velocity values at a point.
-//
+// .NAME vtkvmtkStaticTemporalInterpolatedVelocityField - A concrete class for obtaining the interpolated velocity values at a point.
 
 
 #ifndef __vtkvmtkStaticTemporalInterpolatedVelocityField_h

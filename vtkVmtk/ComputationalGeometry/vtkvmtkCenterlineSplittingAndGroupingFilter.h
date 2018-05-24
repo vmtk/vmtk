@@ -18,9 +18,9 @@ Version:   $Revision: 1.7 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkCenterlineSplittingAndGroupingFilter - ...
-  // .SECTION Description
-  // ...
+// .NAME vtkvmtkCenterlineSplittingAndGroupingFilter - Multipurpose filter used to bundle and blank split tracts in all "branch extractor" like methods.
+// .SECTION Description
+// In order to extract branches of a bifurcation, centerlines are split into multiple tracts. This filter is responsible for groups tracts together into logical bundles (aka "branches"), and descibing which tract is blanked at an n-furcation and which are not. 
 
 #ifndef __vtkvmtkCenterlineSplittingAndGroupingFilter_h
 #define __vtkvmtkCenterlineSplittingAndGroupingFilter_h

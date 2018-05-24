@@ -24,12 +24,7 @@
 =========================================================================*/
 // .NAME vtkvmtkBoundaryLayerGenerator2 - Extended version of vtkvmtkBoundaryLayerGenerator 
 // .SECTION Description
-// This version allows finer control on the surfaces to be included.
-// If the original surface has open profiles, a surface can be extracted from them as well.
-// The points on the open profiles may be specified with an array (OpenProfilesIdsArrayName).
-// A value of -1 in this array specifies a point on the interior of the surface.
-// Cell entity ids can also be output for the volume and surface elements.
-// Surface elements are numbered in increasing numbers, using the openProfilesIds if specified.
+// This version allows finer control on the surfaces to be included. If the original surface has open profiles, a surface can be extracted from them as well. The points on the open profiles may be specified with an array (OpenProfilesIdsArrayName). A value of -1 in this array specifies a point on the interior of the surface. Cell entity ids can also be output for the volume and surface elements. Surface elements are numbered in increasing numbers, using the openProfilesIds if specified.
 
 #ifndef __vtkvmtkBoundaryLayerGenerator2_h
 #define __vtkvmtkBoundaryLayerGenerator2_h

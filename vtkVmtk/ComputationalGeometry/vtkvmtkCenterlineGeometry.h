@@ -18,16 +18,14 @@ Version:   $Revision: 1.3 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkCenterlineGeometry - Compute length, curvature, torsion, tortuosity, and frenet reference system of a centerline
+// .NAME vtkvmtkCenterlineGeometry - Compute length, curvature, torsion, tortuosity, and frenet frames for individual centerlines. 
 // .SECTION Description
-//  Computes properties for the following arrays:
-//     - lengthArray
-//     - curvatureArray
-//     - torsionArray
-//     - tortuosityArray
-//     - frenetTangentArray
-//     - frenetNormalArray
-//     - frenetBinormalArray
+// The length, curvature, torsion, and tortuosity metrics are scalar quantities which are identical for each point / tract that makes up a cell.  They are cell data which are attached to the centerline (which should only consist of one cell, as it has not been split or grouped). 
+//
+// The frenet reference frame is composed of three orthogonal vectors (tangent, normal, and binormal) unique to their parameterization along the centerline. Three vectors are stored as point data for each point making up the centerline. 
+//
+// A laplacian smoothing filter can be applied to the line if the computation appears to be unstable (as we are using second derivatives and such here). 
+
 
 #ifndef __vtkvmtkCenterlineGeometry_h
 #define __vtkvmtkCenterlineGeometry_h

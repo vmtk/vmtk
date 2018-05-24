@@ -82,10 +82,13 @@ double vtkvmtkPolyBall::EvaluateFunction(double x[3])
   minSphereFunctionValue = VTK_VMTK_LARGE_DOUBLE;
   for (i=0; i<this->Input->GetNumberOfPoints(); i++)
     {
+    // this next line actually copies the xyz location of point i into px[3].
+    // luca reports that odd bug happened when only retrieving pointers.
     this->Input->GetPoint(i,px);
     pr = polyballRadiusArray->GetComponent(i,0);
-    // When is px initialized to a value???
-    // ((x[0] - px[0])^2 + (x[1] - px[1])^2 + (x[2] - px[2])^2) - pr^2
+    // x, y, z -> location of query point in R3
+    // px, py, pz => location of point with sphere radius == pr
+    // f = ((x - px)^2 + (y - py)^2 + (z - pz)^2) - pr^2
     sphereFunctionValue = ((x[0] - px[0]) * (x[0] - px[0]) + (x[1] - px[1]) * (x[1] - px[1]) + (x[2] - px[2]) * (x[2] - px[2])) - pr*pr;
     if (sphereFunctionValue - minSphereFunctionValue < VTK_VMTK_DOUBLE_TOL)
       {

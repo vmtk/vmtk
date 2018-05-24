@@ -18,9 +18,11 @@ Version:   $Revision: 1.5 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkCenterlineAttributesFilter - Computes the abscissa and parallel transport normal of an input centerline.
-// .SECTION Description
-// ...
+// .NAME vtkvmtkCenterlineAttributesFilter - Computes the abscissa and parallel transport normal along a centerline.
+// .SECTION Description 
+// Abscissas are easy to define: they measure the distances along a line. This class generates abscissas relative to the starting point of the centerline and can be offset to a different location at a later time.
+// 
+// Parallel Transport Normals are used to help construct an osculating reference system along a centerline. We generate a pair of arbitrary normal and binornal orthogonal vectors are generated for the first point along the centerline.  The reference system created by the orthogonal normal, binormal, and tangent vectors is propogated down the centerline by rotating it (in the osculating plane) by an amount equal to the change in orientation of the line tangent between neighboring pairs of points. 
 
 #ifndef __vtkvmtkCenterlineAttributesFilter_h
 #define __vtkvmtkCenterlineAttributesFilter_h

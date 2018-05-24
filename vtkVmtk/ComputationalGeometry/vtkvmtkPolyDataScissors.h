@@ -18,9 +18,9 @@ Version:   $Revision: 1.4 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkPolyDataScissors - 
-  // .SECTION Description
-  // ...
+// .NAME vtkvmtkPolyDataScissors - not implemented, try to cut a surface along a line. 
+// .SECTION Description
+// ...
 
 #ifndef __vtkvmtkPolyDataScissors_h
 #define __vtkvmtkPolyDataScissors_h

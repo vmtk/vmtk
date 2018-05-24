@@ -18,9 +18,9 @@ Version:   $Revision: 1.4 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkMergeCenterlines - Merge centerlines.
-  // .SECTION Description
-  // ...
+// .NAME vtkvmtkMergeCenterlines - Combine multiple centerlines which lie within the same branch of a split and grouped centerline.
+// .SECTION Description
+// If multiple centerlines exist within the same branch, each centerlines point locations are averaged (euclidian interpolation) to result in a branch with only one centerline.
 
 #ifndef __vtkvmtkMergeCenterlines_h
 #define __vtkvmtkMergeCenterlines_h

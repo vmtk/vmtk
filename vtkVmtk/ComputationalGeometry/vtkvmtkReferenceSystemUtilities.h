@@ -18,9 +18,9 @@ Version:   $Revision: 1.2 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkReferenceSystemUtilities - ...
-  // .SECTION Description
-  // .
+// .NAME vtkvmtkReferenceSystemUtilities - Utility function to get the reference system point id of a group. 
+// .SECTION Description
+// ...
 
 #ifndef __vtkvmtkReferenceSystemUtilities_h
 #define __vtkvmtkReferenceSystemUtilities_h

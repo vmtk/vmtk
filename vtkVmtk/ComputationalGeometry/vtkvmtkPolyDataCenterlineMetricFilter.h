@@ -18,9 +18,9 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkPolyDataCenterlineMetricFilter - ..
+// .NAME vtkvmtkPolyDataCenterlineMetricFilter - Base class for evaluating metrics over a centerline onto a surface. 
 // .SECTION Description
-// ..
+// Pure virtual functions.
 
 #ifndef __vtkvmtkPolyDataCenterlineMetricFilter_h
 #define __vtkvmtkPolyDataCenterlineMetricFilter_h

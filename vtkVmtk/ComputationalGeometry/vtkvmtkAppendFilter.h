@@ -20,10 +20,9 @@ Version:   $Revision: 1.4 $
 =========================================================================*/
 // .NAME vtkvmtkAppendFilter - merges points, point data, and cell data.
 // .SECTION Description
-// ...
+// The RequestData method implementation is heavily based on the same method in vtkAppendFilter.
 
-// The RequestData method implementation is heavily based on the same method in vtkAppendFilter,
-// which is covered by the following copyright notice.
+  // vtkAppendFilter is covered by the following copyright notice.
 /*=========================================================================
 
   Program:   Visualization Toolkit

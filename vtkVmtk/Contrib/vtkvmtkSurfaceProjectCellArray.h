@@ -24,10 +24,7 @@
 =========================================================================*/
 // .NAME vtkvmtkSurfaceProjectCellArray - Projects a cell array from a reference surface
 // .SECTION Description
-// For each cell, the cell value chosen is the one of the cell on the reference surface which has the
-// smallest minimum distance to the cell vertices.
-// If the distance of any vertices in the cell to the reference surface is higher than
-// DistanceTolerance, the cell array values are set to DefaultValue for each component. 
+// For each cell, the cell value chosen is the one of the cell on the reference surface which has the smallest minimum distance to the cell vertices. If the distance of any vertices in the cell to the reference surface is higher than DistanceTolerance, the cell array values are set to DefaultValue for each component. 
 
 #ifndef __vtkvmtkSurfaceProjectCellArray_h
 #define __vtkvmtkSurfaceProjectCellArray_h

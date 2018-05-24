@@ -18,9 +18,9 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkPolyDataCenterlineProjection - ..
+// .NAME vtkvmtkPolyDataCenterlineProjection - Project all point data from a centerline onto a surface.
 // .SECTION Description
-// ..
+// ...
 
 #ifndef __vtkvmtkPolyDataCenterlineProjection_h
 #define __vtkvmtkPolyDataCenterlineProjection_h

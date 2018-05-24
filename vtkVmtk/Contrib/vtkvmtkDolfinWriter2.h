@@ -22,13 +22,9 @@
 	Kalkulo AS
 	Simula Research Laboratory
 =========================================================================*/
-// .NAME vtkvmtkDolfinWriter2 - 
+// .NAME vtkvmtkDolfinWriter2 - lightly modified version of vtkvmtkDolfinWriter Modifications include bug fixes, and a new region indicators array.
 // .SECTION Description
-// Slightly modified version of vtkvmtkDolfinWriter
-// Modifications include bug fixes, and a new region indicators
-// array which corresponds to the different cell entity Ids
-// of the tetrahedra.
-
+// Slightly modified version of vtkvmtkDolfinWriter Modifications include bug fixes, and a new region indicators array which corresponds to the different cell entity Ids of the tetrahedra.
 // .SECTION See Also
 
 #ifndef __vtkvmtkDolfinWriter2_h
