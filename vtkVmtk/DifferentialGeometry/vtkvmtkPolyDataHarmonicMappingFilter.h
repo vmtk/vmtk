@@ -18,7 +18,7 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkPolyDataHarmonicMappingFilter - ..
+// .NAME vtkvmtkPolyDataHarmonicMappingFilter - Construct a harmonic function over each vascular surface segment used during mapping order to stretch the longitudinal metric to correctly account for the presence of insertion regions at bifurcations.
 // .SECTION Description
 // ..
 

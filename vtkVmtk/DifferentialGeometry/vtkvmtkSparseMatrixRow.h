@@ -18,7 +18,7 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkSparseMatrixRow - ..
+// .NAME vtkvmtkSparseMatrixRow - Class to handle operating on rows of a sparse matrix. 
 // .SECTION Description
 // ..
 

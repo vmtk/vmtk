@@ -18,7 +18,7 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkUnstructuredGridFELaplaceAssembler - ..
+// .NAME vtkvmtkUnstructuredGridFELaplaceAssembler - Construct a laplacian based finite element calculation on a mesh.
 // .SECTION Description
 // ..
 

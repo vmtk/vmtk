@@ -18,7 +18,7 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkPolyDataFELaplaceAssembler - construct a laplacian based finite element calculation.
+// .NAME vtkvmtkPolyDataFELaplaceAssembler - construct a laplacian based finite element calculation on a surface.
 // .SECTION Description
 // ..
 

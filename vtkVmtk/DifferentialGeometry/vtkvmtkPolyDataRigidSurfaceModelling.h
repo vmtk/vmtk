@@ -18,7 +18,7 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkPolyDataRigidSurfaceModelling - ..
+// .NAME vtkvmtkPolyDataRigidSurfaceModelling - Not implemented; no utility developed yet.
 // .SECTION Description
 // ..
 

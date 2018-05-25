@@ -18,7 +18,7 @@ Version:   $Revision: 1.4 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkSurfMeshWrapper - ..
+// .NAME vtkvmtkSurfMeshWrapper - wrapper around surfmesh surface mesh generator by Gordan Stuhne; May not be working. 
 // .SECTION Description
 // ...
 

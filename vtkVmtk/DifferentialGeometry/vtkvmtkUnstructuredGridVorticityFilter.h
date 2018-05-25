@@ -18,7 +18,7 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkUnstructuredGridVorticityFilter - ..
+// .NAME vtkvmtkUnstructuredGridVorticityFilter - Calculates vorticity from velocity in a mesh.
 // .SECTION Description
 // ..
 

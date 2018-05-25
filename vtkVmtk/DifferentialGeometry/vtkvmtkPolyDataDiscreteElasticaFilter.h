@@ -18,9 +18,8 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkPolyDataDiscreteElasticaFilter - ..
+// .NAME vtkvmtkPolyDataDiscreteElasticaFilter - Not implemented; smooth a surface with via an elastic forces method.
 // .SECTION Description
-// ..
 
 #ifndef __vtkvmtkPolyDataDiscreteElasticaFilter_h
 #define __vtkvmtkPolyDataDiscreteElasticaFilter_h

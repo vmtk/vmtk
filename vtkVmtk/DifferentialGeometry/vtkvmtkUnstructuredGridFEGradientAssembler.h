@@ -18,7 +18,7 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkUnstructuredGridFEGradientAssembler - ..
+// .NAME vtkvmtkUnstructuredGridFEGradientAssembler - Construct a gradient based finite element calculation on a mesh.
 // .SECTION Description
 // ..
 

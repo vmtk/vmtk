@@ -22,10 +22,9 @@ Version:   $Revision: 1.3 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-
-  // .NAME vtkvmtkPolyDataPotentialFit - ...
-  // .SECTION Description
-  // .
+// .NAME vtkvmtkPolyDataPotentialFit - Create an explicitly deformable model which evolves a surface to gradient magnitudes of an input image.
+// .SECTION Description
+// ..
 
 #ifndef __vtkvmtkPolyDataPotentialFit_h
 #define __vtkvmtkPolyDataPotentialFit_h

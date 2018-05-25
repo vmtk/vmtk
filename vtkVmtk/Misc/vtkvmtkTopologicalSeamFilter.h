@@ -18,7 +18,7 @@ Version:   $Revision: 1.1 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkTopologicalSeamFilter - ...
+  // .NAME vtkvmtkTopologicalSeamFilter - Create a feature edge on a surface from a point and implicit plane function.
   // .SECTION Description
   // .
 

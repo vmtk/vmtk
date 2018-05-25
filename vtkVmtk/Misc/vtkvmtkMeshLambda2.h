@@ -18,7 +18,7 @@ Version:   $Revision: 1.1 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkMeshLambda2 - ...
+  // .NAME vtkvmtkMeshLambda2 - Compute the Lambda2 surface for a given flow field which allow for the visualization of fluid vortex cores. 
   // .SECTION Description
   // .
 

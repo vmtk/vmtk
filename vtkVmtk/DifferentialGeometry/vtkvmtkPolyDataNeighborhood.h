@@ -18,7 +18,7 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkPolyDataNeighborhood - ..
+// .NAME vtkvmtkPolyDataNeighborhood - Create a neighborhood for points on a surface.
 // .SECTION Description
 // ..
 

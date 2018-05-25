@@ -18,7 +18,7 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkUnstructuredGridFEVorticityAssembler - ..
+// .NAME vtkvmtkUnstructuredGridFEVorticityAssembler - Construct a vorticity based finite element calculation on a mesh.
 // .SECTION Description
 // ..
 
