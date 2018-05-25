@@ -22,7 +22,6 @@ Version:   $Revision: 1.3 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-
 // .NAME vtkvmtkSigmoidImageFilter - Wrapper class around itk::SigmoidImageFilter
 // .SECTION Description
 // vtkvmtkSigmoidImageFilter

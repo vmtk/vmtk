@@ -18,9 +18,9 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkMath - ..
+// .NAME vtkvmtkMath - Static utility mathematical functions included to avoid repeating ourselves. 
 // .SECTION Description
-// ..
+// All arguments expect doubles.
 
 #ifndef __vtkvmtkMath_h
 #define __vtkvmtkMath_h

@@ -18,7 +18,7 @@ Version:   $Revision: 1.1 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkMeshProjection - ...
+  // .NAME vtkvmtkMeshProjection - Project point data from a reference mesh onto a query mesh.
   // .SECTION Description
   // .
 

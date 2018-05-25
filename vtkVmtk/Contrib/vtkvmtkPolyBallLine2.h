@@ -24,9 +24,7 @@
 =========================================================================*/
 // .NAME vtkvmtkPolyBallLine2 - Second version of polyline where distance to the line is first computed and then the radius at the closest point is subtracted.
 // .SECTION Description
-// This is another version of a polyball line
-// Here the distance to the line is first computed and then the radius at the closest point is subtracted
-// This way each line segment only influences its voronoi cell
+// This is another version of a polyball line. Here the distance to the line is first computed and then the radius at the closest point is subtracted. This way each line segment only influences its voronoi cell.
 
 #ifndef __vtkvmtkPolyBallLine2_h
 #define __vtkvmtkPolyBallLine2_h

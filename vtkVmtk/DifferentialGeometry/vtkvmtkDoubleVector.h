@@ -18,7 +18,7 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkDoubleVector - ..
+// .NAME vtkvmtkDoubleVector - Base class for vectors utilized in finite-element and other PDE evaluations.
 // .SECTION Description
 // ..
 

@@ -23,9 +23,9 @@ Version:   $Revision: 1.3 $
 
 =========================================================================*/
 
-  // .NAME vtkvmtkConstrainedLaplacianPolyDataFilter - ...
-  // .SECTION Description
-  // .
+// .NAME vtkvmtkConstrainedLaplacianPolyDataFilter - smooth a surface mesh by constraining the motion of selected point ids. 
+// .SECTION Description
+// vtkvmtkConstrainedLaplacianPolyDataFilter
 
 #ifndef __vtkvmtkConstrainedLaplacianPolyDataFilter_h
 #define __vtkvmtkConstrainedLaplacianPolyDataFilter_h

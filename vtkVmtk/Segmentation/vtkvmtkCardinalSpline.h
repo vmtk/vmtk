@@ -23,9 +23,9 @@ Version:   $Revision: 1.2 $
 
 =========================================================================*/
 
-// .NAME vtkvmtkCardinalSpline
+// .NAME vtkvmtkCardinalSpline - ..
 // .SECTION Description
-// ...
+// ..
 
 
 #ifndef __vtkvmtkCardinalSpline_h

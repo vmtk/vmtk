@@ -18,7 +18,7 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkPolyDataCylinderHarmonicMappingFilter - ..
+// .NAME vtkvmtkPolyDataCylinderHarmonicMappingFilter - 
 // .SECTION Description
 // ..
 

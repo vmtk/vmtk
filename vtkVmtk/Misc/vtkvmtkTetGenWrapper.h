@@ -18,7 +18,7 @@ Version:   $Revision: 1.7 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkTetGenWrapper - Converts linear elements to quadratic.
+// .NAME vtkvmtkTetGenWrapper - Wrapped tetgen volumetric meshing utility.
 // .SECTION Description
 // ...
 

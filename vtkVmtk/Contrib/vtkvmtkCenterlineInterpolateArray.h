@@ -22,9 +22,9 @@
 	Kalkulo AS
 	Simula Research Laboratory
 =========================================================================*/
-// .NAME vtkvmtkInterpolateCenterlineArray - Interpolate a point-based array from a set of values provideds
+// .NAME vtkvmtkInterpolateCenterlineArray - Interpolate a point-based array from a set of provided values.
 // .SECTION Description
-// ...
+// ..
 
 #ifndef __vtkvmtkCenterlineInterpolateArray_h
 #define __vtkvmtkCenterlineInterpolateArray_h

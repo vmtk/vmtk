@@ -18,7 +18,7 @@ Version:   $Revision: 1.4 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkSurfaceProjection - ...
+// .NAME vtkvmtkSurfaceProjection - project point data from a reference surface onto an input surface.
 // .SECTION Description
 // .
 

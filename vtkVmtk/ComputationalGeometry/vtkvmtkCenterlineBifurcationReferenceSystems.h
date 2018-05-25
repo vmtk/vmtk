@@ -18,8 +18,7 @@ Version:   $Revision: 1.5 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkCenterlineBifurcationReferenceSystems - Generates a normal and
-// upnormal reference system for each bifurcation point of a split centerline. 
+// .NAME vtkvmtkCenterlineBifurcationReferenceSystems - Generates a normal and upnormal reference system for each bifurcation point of a split centerline. 
 // .SECTION Description
 // The "normal" vector is the normal to the bifurcation plane (which is the best fit plane in relation to bifurcation reference points). The upnormal vector is normal to the "normal" vector pointing downstream from the parent artery. 
 
