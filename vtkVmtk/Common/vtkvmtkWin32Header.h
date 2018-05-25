@@ -14,8 +14,7 @@
 =========================================================================*/
 // .NAME vtkWin32Header - manage Windows system differences
 // .SECTION Description
-// The vtkWin32Header captures some system differences between Unix and
-// Windows operating systems. 
+// The vtkWin32Header captures some system differences between Unix and Windows operating systems. 
 
 #ifndef __vtkvmtkWIN32Header_h
 #define __vtkvmtkWIN32Header_h

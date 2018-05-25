@@ -18,21 +18,18 @@ Version:   $Revision: 1.5 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkNonManifoldFastMarching - Implementation of the Fast Marching Method on polygonal non-manifolds.
-  // .SECTION Description
-  // This class is used to solve the Eikonal equation \f[|\nabla T(\mathbf{x})| = F(\mathbf{x})\f] on non-manifolds made of convex polygons, using the Fast Marching Method, by J.A. Sethian (see below). The solution to the Eikonal equation represents the arrival times of a wave propagating on a domain with speed \f$F^{-1}(\mathbf{x})\f$ from given seed points (or regions). If F(x)=1, T(x) represents the geodesic distance field to the seed points (Note: F(x) can be equivalently interpreted as a cost function). The Fast Marching Method takes O(N logN). For more insight see J.A. Sethian, Level Set Methods and Fast Marching Methods, Cambridge University Press, 2nd Edition, 1999.
-  //
-  // The implementation given in this class is an extension of the Fast Marching Method for triangulated 2-manifolds proposed by Kimmel et al. (R. Kimmel and J.A. Sethian. Computing geodesic paths on manifolds. PNAS, 95(15): 8431-8435, Jul 1998.) to non-manifolds made of convex polygons, such as the Voronoi diagram.
-  //
-  // The propagation starts from a set of seeds. By default the seed points are given a propagation time of 0.0, but activating InitializeFromScalars and providing the point data array of name InitializationArrayName, it is possible to assign nonzero initialization times (this is useful when the zero propagation time point lies inside a cell).
-  // For the specification of F(x), the user must either provide a point data array of name CostFunctionArrayName, or activate UnitSpeed, which sets F(x)=1 everywhere, thus yielding a geodesic distance field.
-  // The propagation stops when all the points in the domain path-connected to the seeds have been visited. Alternatively it is possible to limit the propagation by setting StopTravelTime or StopNumberOfPoints.
-  // The solution is stored in a point data array of name SolutionArrayName (name provided by the user, "EikonalSolution" by default).
-  //
-  // The Regularization value adds a constant term to F(x), which acts as a regularization term for the minimal cost paths (see L.D. Cohen and R. Kimmel. Global minimum of active contour models: a minimal path approach. IJCV, 24(1): 57-78, Aug 1997).
-  //
-  // .SECTION See Also
-  // vtkVoronoiDiagram3D vtkMinHeap
+// .NAME vtkvmtkNonManifoldFastMarching - Implementation of the Fast Marching Method on polygonal non-manifolds.
+// .SECTION Description
+// This class is used to solve the Eikonal equation \f[|\nabla T(\mathbf{x})| = F(\mathbf{x})\f] on non-manifolds made of convex polygons, using the Fast Marching Method, by J.A. Sethian (see below). The solution to the Eikonal equation represents the arrival times of a wave propagating on a domain with speed \f$F^{-1}(\mathbf{x})\f$ from given seed points (or regions). If F(x)=1, T(x) represents the geodesic distance field to the seed points (Note: F(x) can be equivalently interpreted as a cost function). The Fast Marching Method takes O(N logN). For more insight see J.A. Sethian, Level Set Methods and Fast Marching Methods, Cambridge University Press, 2nd Edition, 1999.
+//
+// The implementation given in this class is an extension of the Fast Marching Method for triangulated 2-manifolds proposed by Kimmel et al. (R. Kimmel and J.A. Sethian. Computing geodesic paths on manifolds. PNAS, 95(15): 8431-8435, Jul 1998.) to non-manifolds made of convex polygons, such as the Voronoi diagram.
+//
+// The propagation starts from a set of seeds. By default the seed points are given a propagation time of 0.0, but activating InitializeFromScalars and providing the point data array of name InitializationArrayName, it is possible to assign nonzero initialization times (this is useful when the zero propagation time point lies inside a cell). For the specification of F(x), the user must either provide a point data array of name CostFunctionArrayName, or activate UnitSpeed, which sets F(x)=1 everywhere, thus yielding a geodesic distance field. The propagation stops when all the points in the domain path-connected to the seeds have been visited. Alternatively it is possible to limit the propagation by setting StopTravelTime or StopNumberOfPoints. The solution is stored in a point data array of name SolutionArrayName (name provided by the user, "EikonalSolution" by default).
+//
+// The Regularization value adds a constant term to F(x), which acts as a regularization term for the minimal cost paths (see L.D. Cohen and R. Kimmel. Global minimum of active contour models: a minimal path approach. IJCV, 24(1): 57-78, Aug 1997).
+//
+// .SECTION See Also
+// vtkVoronoiDiagram3D vtkMinHeap
 
 #ifndef __vtkvmtkNonManifoldFastMarching_h
 #define __vtkvmtkNonManifoldFastMarching_h

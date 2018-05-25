@@ -18,9 +18,9 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkPolyDataReferenceSystemBoundaryMetricFilter - ..
+// .NAME vtkvmtkPolyDataReferenceSystemBoundaryMetricFilter - Assists in mapping and patching workflow by computing boundary metrics in the boundary reference system frame.
 // .SECTION Description
-// ..
+// ...
 
 #ifndef __vtkvmtkPolyDataReferenceSystemBoundaryMetricFilter_h
 #define __vtkvmtkPolyDataReferenceSystemBoundaryMetricFilter_h

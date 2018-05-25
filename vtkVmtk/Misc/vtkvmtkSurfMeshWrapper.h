@@ -18,9 +18,9 @@ Version:   $Revision: 1.4 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkSurfMeshWrapper - Converts linear elements to quadratic.
-  // .SECTION Description
-  // ...
+// .NAME vtkvmtkSurfMeshWrapper - ..
+// .SECTION Description
+// ...
 
 #ifndef __vtkvmtkSurfMeshWrapper_h
 #define __vtkvmtkSurfMeshWrapper_h

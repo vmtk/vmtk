@@ -18,7 +18,7 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkPolyDataFEGradientAssembler - ..
+// .NAME vtkvmtkPolyDataFEGradientAssembler - Construct a gradient based finite element calculation.
 // .SECTION Description
 // ..
 

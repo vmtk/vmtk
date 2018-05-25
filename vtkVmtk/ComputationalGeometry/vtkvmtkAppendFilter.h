@@ -18,12 +18,10 @@ Version:   $Revision: 1.4 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkAppendFilter - ...
-  // .SECTION Description
-  // .
-
-// The RequestData method implementation is heavily based on the same method in vtkAppendFilter,
-// which is covered by the following copyright notice.
+// .NAME vtkvmtkAppendFilter - merges points, point data, and cell data.
+// .SECTION Description
+// The RequestData method implementation is heavily based on the same method in vtkAppendFilter.
+// vtkAppendFilter is covered by the following (VTK) copyright notice.
 /*=========================================================================
 
   Program:   Visualization Toolkit

@@ -18,9 +18,9 @@ Version:   $Revision: 1.4 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkPolyDataToUnstructuredGridFilter - ...
-  // .SECTION Description
-  // ...
+// .NAME vtkvmtkPolyDataToUnstructuredGridFilter - create a mesh type object from a surface type object
+// .SECTION Description
+// ...
 
 #ifndef __vtkvmtkPolyDataToUnstructuredGridFilter_h
 #define __vtkvmtkPolyDataToUnstructuredGridFilter_h

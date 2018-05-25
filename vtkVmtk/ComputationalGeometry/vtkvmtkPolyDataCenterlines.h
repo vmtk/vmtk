@@ -18,9 +18,9 @@ Version:   $Revision: 1.6 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkPolyDataCenterlines - Compute centerlines from surface.
-  // .SECTION Description
-  // ...
+// .NAME vtkvmtkPolyDataCenterlines - Compute centerlines from surface.
+// .SECTION Description
+// ...
 
 #ifndef __vtkvmtkPolyDataCenterlines_h
 #define __vtkvmtkPolyDataCenterlines_h

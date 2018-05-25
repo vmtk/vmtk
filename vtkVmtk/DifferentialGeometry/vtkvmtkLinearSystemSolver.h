@@ -18,7 +18,7 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkLinearSystemSolver - ..
+// .NAME vtkvmtkLinearSystemSolver - Base class for linear system of equation solver implementations.
 // .SECTION Description
 // ..
 

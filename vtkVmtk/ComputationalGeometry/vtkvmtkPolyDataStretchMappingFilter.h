@@ -18,9 +18,9 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkPolyDataStretchMappingFilter - ..
+// .NAME vtkvmtkPolyDataStretchMappingFilter - Constructs a harmonic function over each vascular segment which is used to map and stretch the longitudinal metric so as to correctly account for insertion regions present at bifurcations.
 // .SECTION Description
-// ..
+// ...
 
 #ifndef __vtkvmtkPolyDataStretchMappingFilter_h
 #define __vtkvmtkPolyDataStretchMappingFilter_h

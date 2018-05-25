@@ -18,9 +18,9 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkFEAssembler - ..
+// .NAME vtkvmtkFEAssembler - Base class on which to build to build specific finite element routines.
 // .SECTION Description
-// ..
+// Supports common operations needed during setup of a finite element solver run. 
 
 #ifndef __vtkvmtkFEAssembler_h
 #define __vtkvmtkFEAssembler_h

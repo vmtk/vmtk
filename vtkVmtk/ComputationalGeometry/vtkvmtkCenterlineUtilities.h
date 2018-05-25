@@ -18,9 +18,9 @@ Version:   $Revision: 1.5 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkCenterlineUtilities - ...
-  // .SECTION Description
-  // .
+// .NAME vtkvmtkCenterlineUtilities - Collection of functions which are used when working with split and grouped centerlines.
+// .SECTION Description
+// ...
 
 #ifndef __vtkvmtkCenterlineUtilities_h
 #define __vtkvmtkCenterlineUtilities_h

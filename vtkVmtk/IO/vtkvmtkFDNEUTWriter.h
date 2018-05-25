@@ -18,11 +18,10 @@ Version:   $Revision: 1.3 $
      PURPOSE.  See the above copyright notices for more information.
                                                                                                                                     
 =========================================================================*/
-
-// .NAME vtkvmtkFDNEUTWriter - 
+// .NAME vtkvmtkFDNEUTWriter - writes FDNEUT Fidap files
 // .SECTION Description
 // vtkvmtkFDNEUTWriter writes FDNEUT Fidap files
-
+//
 // .SECTION See Also
 // vtkvmtkFDNEUTWriter
 

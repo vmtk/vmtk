@@ -18,9 +18,9 @@ Version:   $Revision: 1.4 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkPolyDataLineEmbedder - 
-  // .SECTION Description
-  // ...
+// .NAME vtkvmtkPolyDataLineEmbedder - not implemented. Takes a number of lines and embed them in a mesh.
+// .SECTION Description
+// The idea was to use this to try to partition triangles, but it became to messy (luca reports).
 
 #ifndef __vtkvmtkPolyDataLineEmbedder_h
 #define __vtkvmtkPolyDataLineEmbedder_h

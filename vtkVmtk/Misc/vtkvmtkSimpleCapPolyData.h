@@ -18,9 +18,9 @@ Version:   $Revision: 1.5 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkSimpleCapPolyData - Add caps to boundaries.
-  // .SECTION Description
-  // This class closes the boundaries of a surface with a cap.
+// .NAME vtkvmtkSimpleCapPolyData - Add caps to boundaries.
+// .SECTION Description
+// This class closes the boundaries of a surface with a cap.
 
 #ifndef __vtkvmtkSimpleCapPolyData_h
 #define __vtkvmtkSimpleCapPolyData_h

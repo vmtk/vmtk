@@ -18,9 +18,9 @@ Version:   $Revision: 1.4 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkLinearToQuadraticMeshFilter - Converts linear elements to quadratic.
-  // .SECTION Description
-  // ...
+// .NAME vtkvmtkLinearToQuadraticMeshFilter - Converts linear elements to quadratic.
+// .SECTION Description
+// ...
 
 #ifndef __vtkvmtkLinearToQuadraticMeshFilter_h
 #define __vtkvmtkLinearToQuadraticMeshFilter_h

@@ -18,7 +18,7 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkPolyDataLaplaceBeltramiStencil - ..
+// .NAME vtkvmtkPolyDataLaplaceBeltramiStencil - Apply LB weighting to the neighborhood connections of a surface.
 // .SECTION Description
 // ..
 

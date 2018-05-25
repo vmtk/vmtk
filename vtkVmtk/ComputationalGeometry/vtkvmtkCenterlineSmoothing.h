@@ -18,9 +18,9 @@ Version:   $Revision: 1.1 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkCenterlineSmoothing - ...
-  // .SECTION Description
-  // ...
+// .NAME vtkvmtkCenterlineSmoothing - iteratively smooth a centerline with a laplacian kernel 
+// .SECTION Description
+// ...
 
 #ifndef __vtkvmtkCenterlineSmoothing_h
 #define __vtkvmtkCenterlineSmoothing_h

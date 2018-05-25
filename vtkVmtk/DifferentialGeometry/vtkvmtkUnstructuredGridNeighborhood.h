@@ -18,7 +18,7 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkUnstructuredGridNeighborhood - ..
+// .NAME vtkvmtkUnstructuredGridNeighborhood - Apply a neighborhood to the vertices on of a unstructured grid data set. 
 // .SECTION Description
 // ..
 

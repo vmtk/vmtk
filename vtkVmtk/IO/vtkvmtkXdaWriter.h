@@ -18,11 +18,10 @@ Version:   $Revision: 1.2 $
      PURPOSE.  See the above copyright notices for more information.
                                                                                                                                     
 =========================================================================*/
-
-// .NAME vtkvmtkXdaWriter - 
+// .NAME vtkvmtkXdaWriter - writes libmesh Xda files
 // .SECTION Description
 // vtkvmtkXdaWriter writes libmesh Xda files
-
+//
 // .SECTION See Also
 
 #ifndef __vtkvmtkXdaWriter_h
