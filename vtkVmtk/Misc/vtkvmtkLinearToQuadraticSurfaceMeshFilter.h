@@ -18,7 +18,7 @@ Version:   $Revision: 1.4 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkLinearToQuadraticSurfaceMeshFilter - Converts linear elements to quadratic.
+// .NAME vtkvmtkLinearToQuadraticSurfaceMeshFilter - Converts linear surface elements to quadratic surface elements via either linear subdivision of laplacian (butterfly) subdivision.
 // .SECTION Description
 // ...
 

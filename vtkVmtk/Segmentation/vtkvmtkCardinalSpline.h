@@ -23,7 +23,7 @@ Version:   $Revision: 1.2 $
 
 =========================================================================*/
 
-// .NAME vtkvmtkCardinalSpline - ..
+// .NAME vtkvmtkCardinalSpline - Implementation of vtkCardinalSpline containing methods to calculate the spline derivative, second derivatives, at derivative values.
 // .SECTION Description
 // ..
 

@@ -18,7 +18,7 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkPolyDataClampedSmoothingFilter - ..
+// .NAME vtkvmtkPolyDataClampedSmoothingFilter - Apply a laplacian or curvature based smoothing filter to a surface with particular points fixed in place.
 // .SECTION Description
 // ..
 

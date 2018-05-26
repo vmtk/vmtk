@@ -18,7 +18,7 @@ Version:   $Revision: 1.1 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkUnstructuredGridTetraFilter - ...
+  // .NAME vtkvmtkUnstructuredGridTetraFilter - Convert the elements of a mesh to linear tetrahedra.
   // .SECTION Description
   // .
 

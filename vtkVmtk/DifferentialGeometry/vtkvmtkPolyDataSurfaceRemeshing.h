@@ -18,7 +18,7 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkPolyDataSurfaceRemeshing - ..
+// .NAME vtkvmtkPolyDataSurfaceRemeshing - remesh a surface using quality triangles.
 // .SECTION Description
 // ..
 

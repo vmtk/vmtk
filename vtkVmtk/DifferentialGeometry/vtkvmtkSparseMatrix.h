@@ -18,7 +18,7 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkSparseMatrix - ..
+// .NAME vtkvmtkSparseMatrix - Class for constructing sparse matrices from a dataset and performing basic mathematical operations on it. 
 // .SECTION Description
 // ..
 

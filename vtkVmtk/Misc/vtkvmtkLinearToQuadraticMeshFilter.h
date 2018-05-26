@@ -18,7 +18,7 @@ Version:   $Revision: 1.4 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkLinearToQuadraticMeshFilter - Converts linear elements to quadratic.
+// .NAME vtkvmtkLinearToQuadraticMeshFilter - Converts linear mesh elements to quadratic mesh elements (optionally) by executing by projecting mid side nodes onto the surface and relaxing projection if Jacobian is negative, otherwise does not project nodes.
 // .SECTION Description
 // ...
 

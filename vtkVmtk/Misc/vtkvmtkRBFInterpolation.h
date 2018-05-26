@@ -18,7 +18,7 @@ Version:   $Revision: 1.3 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkRBFInterpolation - interpolate a radial basis function on a surface 
+// .NAME vtkvmtkRBFInterpolation - Implicit function which when given a set of disjoined points and a radial basis shape type will evaluate it self at its zero level set. 
 // .SECTION Description
 // ..
 

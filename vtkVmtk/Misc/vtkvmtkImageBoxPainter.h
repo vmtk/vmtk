@@ -18,7 +18,7 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkImageBoxPainter - ..
+// .NAME vtkvmtkImageBoxPainter - Create a box shaped sub-volume within a 3D image and paint (assign a value to) every sub-volume element with the same value.
 // .SECTION Description
 // ..
 

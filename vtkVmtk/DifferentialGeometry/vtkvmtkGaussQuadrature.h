@@ -18,7 +18,7 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkGaussQuadrature - ..
+// .NAME vtkvmtkGaussQuadrature - Finite element quadrature rule; Approximation of the definite integral of a function, as a weighted sum of function values at specified points.
 // .SECTION Description
 // ..
 
