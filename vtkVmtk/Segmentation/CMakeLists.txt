@@ -34,7 +34,6 @@ set (VTK_VMTK_SEGMENTATION_SRCS
   vtkvmtkGradientMagnitudeRecursiveGaussian2DImageFilter.cxx
   vtkvmtkGrayscaleMorphologyImageFilter.cxx
   vtkvmtkLaplacianSegmentationLevelSetImageFilter.cxx
-  vtkvmtkMedialCurveFilter.cxx
   vtkvmtkNormalizeImageFilter.cxx
   vtkvmtkObjectnessMeasureImageFilter.cxx
   vtkvmtkOtsuMultipleThresholdsImageFilter.cxx
@@ -63,10 +62,6 @@ set (VTK_VMTK_SEGMENTATION_ITK_HEADERS
   itkUpwindGradientMagnitudeImageFilter.txx
   itkVesselEnhancingDiffusion3DImageFilter.h
   itkVesselEnhancingDiffusion3DImageFilter.txx
-  itkAverageOutwardFluxImageFilter.h
-  itkAverageOutwardFluxImageFilter.txx
-  itkMedialCurveImageFilter.h
-  itkMedialCurveImageFilter.txx
 )
 
 vmtk_build_library(
