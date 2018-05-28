@@ -7,7 +7,7 @@ Date:      $Date: 2006/04/06 16:47:47 $
 Version:   $Revision: 1.3 $
                                                                                                                                     
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-  See LICENCE file for details.
+  See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
@@ -18,11 +18,10 @@ Version:   $Revision: 1.3 $
      PURPOSE.  See the above copyright notices for more information.
                                                                                                                                     
 =========================================================================*/
-
-// .NAME vtkvmtkXdaReader - 
+// .NAME vtkvmtkXdaReader - reads libmesh Xda files
 // .SECTION Description
 // vtkvmtkXdaReader reads libmesh Xda files
-
+//
 // .SECTION See Also
 
 #ifndef __vtkvmtkXdaReader_h

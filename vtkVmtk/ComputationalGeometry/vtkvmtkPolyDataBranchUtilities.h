@@ -7,7 +7,7 @@ Date:      $Date: 2006/04/06 16:46:43 $
 Version:   $Revision: 1.3 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-  See LICENCE file for details.
+  See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
@@ -18,9 +18,10 @@ Version:   $Revision: 1.3 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkPolyDataBranchUtilities - ...
-  // .SECTION Description
-  // .
+// .NAME vtkvmtkPolyDataBranchUtilities - Utility functions to ease working with branches and surfaces. 
+// .SECTION Description
+// - ExtractGroup: Extract a single surface branch group from a surface which has already been grouped. 
+// - GetGroupIdsList: get the group ids which are contained within a grouped surface as a vtkIdList.
 
 #ifndef __vtkvmtkPolyDataBranchUtilities_h
 #define __vtkvmtkPolyDataBranchUtilities_h

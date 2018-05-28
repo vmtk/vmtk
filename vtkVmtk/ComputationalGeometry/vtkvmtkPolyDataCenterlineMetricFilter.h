@@ -7,7 +7,7 @@
   Version:   $Revision: 1.8 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-  See LICENCE file for details.
+  See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
@@ -18,9 +18,9 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkPolyDataCenterlineMetricFilter - ..
+// .NAME vtkvmtkPolyDataCenterlineMetricFilter - Base class for evaluating metrics over a centerline onto a surface. 
 // .SECTION Description
-// ..
+// Pure virtual functions.
 
 #ifndef __vtkvmtkPolyDataCenterlineMetricFilter_h
 #define __vtkvmtkPolyDataCenterlineMetricFilter_h

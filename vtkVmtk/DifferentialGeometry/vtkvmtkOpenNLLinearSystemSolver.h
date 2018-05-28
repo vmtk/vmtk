@@ -7,7 +7,7 @@
   Version:   $Revision: 1.3 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-  See LICENCE file for details.
+  See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
@@ -18,9 +18,12 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkOpenNLLinearSystemSolver - ..
+// .NAME vtkvmtkOpenNLLinearSystemSolver - Solve a linear system of equations using open NL.
 // .SECTION Description
-// ..
+// There are a number of different solver types that can be used:
+//    - VTK_VMTK_OPENNL_SOLVER_BICGSTAB = Biconjugate gradient stabilized method
+//    - VTK_VMTK_OPENNL_SOLVER_GMRES = Generalized minimal residual method
+//    - VTK_VMTK_OPENNL_SOLVER_CG = Iterative conjugate gradient solver
 
 #ifndef __vtkvmtkOpenNLLinearSystemSolver_h
 #define __vtkvmtkOpenNLLinearSystemSolver_h

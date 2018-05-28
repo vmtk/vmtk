@@ -7,7 +7,7 @@ Date:      $Date: 2006/10/17 15:16:16 $
 Version:   $Revision: 1.1 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-  See LICENCE file for details.
+  See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
@@ -18,9 +18,14 @@ Version:   $Revision: 1.1 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkPolyDataCenterlineSections - ...
-  // .SECTION Description
-  // ...
+// .NAME vtkvmtkPolyDataCenterlineSections - Extract a set of vessel sections from a surface along a centerline.
+// .SECTION Description
+//  The set of vessel sections contain the profile as well as the the following information about the section:
+//  - Centerline Section Area
+//  - Centerline Section Min Size
+//  - Centerline Section Max Size
+//  - Centerline Section Shape
+//  - Centerline Section Closed
 
 #ifndef __vtkvmtkPolyDataCenterlineSections_h
 #define __vtkvmtkPolyDataCenterlineSections_h

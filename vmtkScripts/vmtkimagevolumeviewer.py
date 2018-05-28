@@ -7,7 +7,7 @@
 ## Version:   $Revision: 0.1 $
 
 ##   Copyright (c) Richard Izzo, Luca Antiga. All rights reserved.
-##   See LICENCE file for details.
+##   See LICENSE file for details.
 
 ##      This software is distributed WITHOUT ANY WARRANTY; without even 
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
@@ -38,6 +38,7 @@ class vmtkImageVolumeViewer(pypes.pypeScript):
         self.ArrayName = ''
 
         self.Preset = 'CT-Coronary-Arteries-2'
+        self.VolumeProperty = None
         self.VolumeRenderingMethod = 'default'
         self.BoxOutline = 0
 
@@ -116,6 +117,124 @@ class vmtkImageVolumeViewer(pypes.pypeScript):
         for xValue, RVal, GVal, BVal in pointsList:
             colorTransferFunction.AddRGBPoint(xValue, RVal, GVal, BVal)
         return colorTransferFunction
+
+    
+    def SetPresetVolumeProperty(self):
+        '''Create the transfer functions and set volume properties in a vtkVolumeProperty object'''
+
+        # parse the xml file which is loaded in the same path as the vmtkimagevolumeviewer.py file at runtime
+        presetElementTree = ET.parse(os.path.join(os.path.dirname(__file__), 'share', 'vmtkimagevolumeviewerpresets.xml'))
+        presetRoot = presetElementTree.getroot()
+        volProperties = presetRoot.findall('VolumeProperty[@name="' + self.Preset + '"]') # should return a list with only one element
+        volPropertiesDict = volProperties[0].attrib
+        
+        def _chunks(l, n):
+            """Yield successive n-sized chunks from l."""
+            PY3 = sys.version_info[0] == 3
+            if PY3:
+                range_func = range
+            else:
+                range_func = xrange
+            for i in range_func(0, len(l), n):
+                yield l[i:i + n]
+
+        # need to convert the space seperated string displaying values into a list of floats
+        colorList = [float(i) for i in volPropertiesDict['colorTransfer'].split()]
+        gradientOpacityList = [float(i) for i in volPropertiesDict['gradientOpacity'].split()]
+        opacityList = [float(i) for i in volPropertiesDict['scalarOpacity'].split()]
+
+        # create an array of arrays with each list split into subarrays of desired size
+        colorMapList = _chunks(colorList, 4)
+        gradientOpacityMapList = _chunks(gradientOpacityList, 2)
+        opacityMapList = _chunks(opacityList, 2)
+
+        # create vtk objects from the mapped lists (now arrays of arrays)
+        self.ColorTransferFunction = self.BuildVTKColorTransferFunction(colorMapList)
+        self.GradientOpacityTransferFunction = self.BuildVTKPiecewiseFunction(gradientOpacityMapList)
+        self.OpacityTransferFunction = self.BuildVTKPiecewiseFunction(opacityMapList)
+
+        # assign other properties from the element tree to variables with the appropriate type
+        self.InterpolationType = int(volPropertiesDict['interpolation'])
+        self.Shade = int(volPropertiesDict['shade'])
+        self.SpecularPower = float(volPropertiesDict['specularPower'])
+        self.Specular = float(volPropertiesDict['specular'])
+        self.Diffuse = float(volPropertiesDict['diffuse'])
+        self.Ambient = float(volPropertiesDict['ambient'])
+
+        # set transfer function and lighting properties of the vtk volume object
+        volumeProperty = vtk.vtkVolumeProperty()
+        volumeProperty.SetScalarOpacity(self.OpacityTransferFunction)
+        volumeProperty.SetGradientOpacity(self.GradientOpacityTransferFunction)
+        volumeProperty.SetColor(self.ColorTransferFunction)
+        volumeProperty.SetInterpolationType(self.InterpolationType)
+        volumeProperty.SetShade(self.Shade)
+        volumeProperty.SetSpecularPower(self.SpecularPower)
+        volumeProperty.SetSpecular(self.Specular)
+        volumeProperty.SetDiffuse(self.Diffuse)
+        volumeProperty.SetAmbient(self.Ambient)
+
+        self.VolumeProperty = volumeProperty
+
+    def PresetCallback(self, obj):
+        '''Set render window to render the next volume property when callback key is pressed'''
+
+        if not self.VolumeProperty:
+            return
+
+        if self.Preset == "CT-AAA":
+            self.Preset = "CT-AAA2"
+        elif self.Preset == "CT-AAA2":
+            self.Preset = "CT-Bone"
+        elif self.Preset == "CT-Bone":
+            self.Preset = "CT-Bones"
+        elif self.Preset == "CT-Bones":
+            self.Preset = "CT-Cardiac"
+        elif self.Preset == "CT-Cardiac":
+            self.Preset = "CT-Cardiac2"
+        elif self.Preset == "CT-Cardiac2":
+            self.Preset = "CT-Cardiac3"
+        elif self.Preset == "CT-Cardiac3":
+            self.Preset = "CT-Chest-Contrast-Enhanced"
+        elif self.Preset == "CT-Chest-Contrast-Enhanced":
+            self.Preset = "CT-Chest-Vessels"
+        elif self.Preset == "CT-Chest-Vessels":
+            self.Preset = "CT-Coronary-Arteries"
+        elif self.Preset == "CT-Coronary-Arteries":
+            self.Preset = "CT-Coronary-Arteries-2"
+        elif self.Preset == "CT-Coronary-Arteries-2":
+            self.Preset = "CT-Coronary-Arteries-3"
+        elif self.Preset == "CT-Coronary-Arteries-3":
+            self.Preset = "CT-Cropped-Volume-Bone"
+        elif self.Preset == "CT-Cropped-Volume-Bone":
+            self.Preset = "CT-Fat"
+        elif self.Preset == "CT-Fat":
+            self.Preset = "CT-Liver-Vasculature"
+        elif self.Preset == "CT-Liver-Vasculature":
+            self.Preset = "CT-Lung"
+        elif self.Preset == "CT-Lung":
+            self.Preset = "CT-MIP"
+        elif self.Preset == "CT-MIP":
+            self.Preset = "CT-Muscle"
+        elif self.Preset == "CT-Muscle":
+            self.Preset = "CT-Pulmonary-Arteries"
+        elif self.Preset == "CT-Pulmonary-Arteries":
+            self.Preset = "CT-Soft-Tissue"
+        elif self.Preset == "CT-Soft-Tissue":
+            self.Preset = "MR-Angio"
+        elif self.Preset == "MR-Angio":
+            self.Preset = "MR-Default"
+        elif self.Preset == "MR-Default":
+            self.Preset = "MR-MIP"
+        elif self.Preset == "MR-MIP":
+            self.Preset = "MR-T2-Brain"
+        elif self.Preset == "MR-T2-Brain":
+            self.Preset = "CT-AAA"
+
+        self.PrintLog("switched Preset to: " + self.Preset, 1)
+
+        self.SetPresetVolumeProperty()
+        self.Volume.SetProperty(self.VolumeProperty)
+        self.vmtkRenderer.RenderWindow.Render()
         
 
     def BuildView(self):
@@ -155,61 +274,13 @@ class vmtkImageVolumeViewer(pypes.pypeScript):
         volumeMapper.SetInputData(self.Image)
         volumeMapper.SetBlendModeToComposite()
         
-        # parse the xml file which is loaded in the same path as the vmtkimagevolumeviewer.py file at runtime
-        presetElementTree = ET.parse(os.path.join(os.path.dirname(__file__), 'share', 'vmtkimagevolumeviewerpresets.xml'))
-        presetRoot = presetElementTree.getroot()
-        volProperties = presetRoot.findall('VolumeProperty[@name="' + self.Preset + '"]') # should return a list with only one element
-        volPropertiesDict = volProperties[0].attrib
         
-        def chunks(l, n):
-            """Yield successive n-sized chunks from l."""
-            if PY3:
-                range_func = range
-            else:
-                range_func = xrange
-            for i in range_func(0, len(l), n):
-                yield l[i:i + n]
-
-        # need to convert the space seperated string displaying values into a list of floats
-        colorList = [float(i) for i in volPropertiesDict['colorTransfer'].split()]
-        gradientOpacityList = [float(i) for i in volPropertiesDict['gradientOpacity'].split()]
-        opacityList = [float(i) for i in volPropertiesDict['scalarOpacity'].split()]
-
-        # create an array of arrays with each list split into subarrays of desired size
-        colorMapList = chunks(colorList, 4)
-        gradientOpacityMapList = chunks(gradientOpacityList, 2)
-        opacityMapList = chunks(opacityList, 2)
-
-        # create vtk objects from the mapped lists (now arrays of arrays)
-        self.ColorTransferFunction = self.BuildVTKColorTransferFunction(colorMapList)
-        self.GradientOpacityTransferFunction = self.BuildVTKPiecewiseFunction(gradientOpacityMapList)
-        self.OpacityTransferFunction = self.BuildVTKPiecewiseFunction(opacityMapList)
-
-        # assign other properties from the element tree to variables with the appropriate type
-        self.InterpolationType = int(volPropertiesDict['interpolation'])
-        self.Shade = int(volPropertiesDict['shade'])
-        self.SpecularPower = float(volPropertiesDict['specularPower'])
-        self.Specular = float(volPropertiesDict['specular'])
-        self.Diffuse = float(volPropertiesDict['diffuse'])
-        self.Ambient = float(volPropertiesDict['ambient'])
-
-        # set transfer function and lighting properties of the vtk volume object
-        volumeProperty = vtk.vtkVolumeProperty()
-        volumeProperty.SetScalarOpacity(self.OpacityTransferFunction)
-        volumeProperty.SetGradientOpacity(self.GradientOpacityTransferFunction)
-        volumeProperty.SetColor(self.ColorTransferFunction)
-        volumeProperty.SetInterpolationType(self.InterpolationType)
-        volumeProperty.SetShade(self.Shade)
-        volumeProperty.SetSpecularPower(self.SpecularPower)
-        volumeProperty.SetSpecular(self.Specular)
-        volumeProperty.SetDiffuse(self.Diffuse)
-        volumeProperty.SetAmbient(self.Ambient)
-
         # create the volume from the mapper (defining image data and render mode) with the defined properties
         # this is the last pipeline step applied. self.Volume just needs to now be added to the Renderer
+        self.SetPresetVolumeProperty()
         self.Volume = vtk.vtkVolume()
         self.Volume.SetMapper(volumeMapper)
-        self.Volume.SetProperty(volumeProperty)
+        self.Volume.SetProperty(self.VolumeProperty)
 
         # add the actors to the renderer
         self.vmtkRenderer.Renderer.AddVolume(self.Volume)
@@ -238,6 +309,9 @@ class vmtkImageVolumeViewer(pypes.pypeScript):
 
             # Add the actors to the renderer
             self.vmtkRenderer.Renderer.AddActor(outlineActor)
+
+        # add preset callback
+        self.vmtkRenderer.AddKeyBinding('w','Change volume render property.',self.PresetCallback)
 
         if (self.Display == 1):
             self.vmtkRenderer.Render()

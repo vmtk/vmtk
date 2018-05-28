@@ -7,7 +7,7 @@ Date:      $Date: 2006/04/06 16:46:43 $
 Version:   $Revision: 1.4 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-  See LICENCE file for details.
+  See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
@@ -18,9 +18,11 @@ Version:   $Revision: 1.4 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkPolyBallLine - 
-  // .SECTION Description
-  // ..
+// .NAME vtkvmtkPolyBallLine - Instance of vtkImplicitFunction which evaluates the minimum sphere function for an envelope created by an interpolation of sphere radii along a centerline line.
+// .SECTION Description
+//  See detailed description of implicit function in the documentation for vtkvmtkPolyBall class. 
+//
+//  Similar to vtkvmtkPolyBall, the core function of this class is to evaluate the minimum sphere function from on input centerline with associated sphere radii and a query point location. Unlike vtkvmtkPolyBall, this class constructs a continuous tubular envelope whose shape is defined by the linear linear interpolation of the circular boundary profiles (with radius equal to the associated sphere radii) between every consecutive point on the line. As the boundary profiles are constructed from the centerline sphere radii, the tubular envelope generated is guaranteed to lie completely within the surface volume. When evaluated, this is essentially equivalent to evaluating a polyball function for an infinity large collection of spheres along an input dataset. 
 
 #ifndef __vtkvmtkPolyBallLine_h
 #define __vtkvmtkPolyBallLine_h

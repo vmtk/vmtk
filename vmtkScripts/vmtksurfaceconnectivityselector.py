@@ -7,7 +7,7 @@
 ## Version:   $Revision: 0.1 $
 
 ##   Copyright (c) Richard Izzo, Luca Antiga. All rights reserved.
-##   See LICENCE file for details.
+##   See LICENSE file for details.
 
 ##      This software is distributed WITHOUT ANY WARRANTY; without even 
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 

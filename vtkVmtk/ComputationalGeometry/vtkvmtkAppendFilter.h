@@ -7,7 +7,7 @@ Date:      $Date: 2006/04/06 16:47:48 $
 Version:   $Revision: 1.4 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-  See LICENCE file for details.
+  See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
@@ -18,12 +18,10 @@ Version:   $Revision: 1.4 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkAppendFilter - ...
-  // .SECTION Description
-  // .
-
-// The RequestData method implementation is heavily based on the same method in vtkAppendFilter,
-// which is covered by the following copyright notice.
+// .NAME vtkvmtkAppendFilter - merges points, point data, and cell data.
+// .SECTION Description
+// The RequestData method implementation is heavily based on the same method in vtkAppendFilter.
+// vtkAppendFilter is covered by the following (VTK) copyright notice.
 /*=========================================================================
 
   Program:   Visualization Toolkit

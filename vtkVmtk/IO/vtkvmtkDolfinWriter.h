@@ -7,7 +7,7 @@ Date:      $Date: 2006/04/06 16:47:47 $
 Version:   $Revision: 1.2 $
                                                                                                                                     
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-  See LICENCE file for details.
+  See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
@@ -18,11 +18,17 @@ Version:   $Revision: 1.2 $
      PURPOSE.  See the above copyright notices for more information.
                                                                                                                                     
 =========================================================================*/
-
-// .NAME vtkvmtkDolfinWriter - 
+// .NAME vtkvmtkDolfinWriter - write mesh data in Dolfin file formats.
 // .SECTION Description
-// vtkvmtkDolfinWriter writes Dolfin files - www.fenics.org
-
+// vtkvmtkDolfinWriter writes Dolfin files - www.fenics.org.
+// Compatible file formats include:
+//     * Binary (.bin)
+//     * RAW    (.raw)
+//     * SVG    (.svg)
+//     * XD3    (.xd3)
+//     * XML    (.xml)
+//     * XYZ    (.xyz)
+//     * VTK    (.pvd)
 // .SECTION See Also
 
 #ifndef __vtkvmtkDolfinWriter_h

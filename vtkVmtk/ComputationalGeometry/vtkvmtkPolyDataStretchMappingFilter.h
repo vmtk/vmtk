@@ -7,7 +7,7 @@
   Version:   $Revision: 1.6 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-  See LICENCE file for details.
+  See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
@@ -18,9 +18,9 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkPolyDataStretchMappingFilter - ..
+// .NAME vtkvmtkPolyDataStretchMappingFilter - Constructs a harmonic function over each vascular segment which is used to map and stretch the longitudinal metric so as to correctly account for insertion regions present at bifurcations.
 // .SECTION Description
-// ..
+// ...
 
 #ifndef __vtkvmtkPolyDataStretchMappingFilter_h
 #define __vtkvmtkPolyDataStretchMappingFilter_h

@@ -7,7 +7,7 @@ Date:      $Date: 2006/04/06 16:46:43 $
 Version:   $Revision: 1.5 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-  See LICENCE file for details.
+  See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
@@ -18,9 +18,9 @@ Version:   $Revision: 1.5 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkCenterlineSplitExtractor - ...
-  // .SECTION Description
-  // ...
+// .NAME vtkvmtkCenterlineSplitExtractor - Split a centerline into three tracts with the middle (blanked) tract being initialized between any two points on the centerline or being an arbitrary length starting at a particular point.  
+// .SECTION Description
+// This is useful if you want to split a surface at an arbitrary location along a centerline in later processing. 
 
 #ifndef __vtkvmtkCenterlineSplitExtractor_h
 #define __vtkvmtkCenterlineSplitExtractor_h

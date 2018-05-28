@@ -7,7 +7,7 @@ Date:      $Date: 2006/04/06 16:46:43 $
 Version:   $Revision: 1.4 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-  See LICENCE file for details.
+  See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
@@ -18,9 +18,9 @@ Version:   $Revision: 1.4 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkPolyDataLineEmbedder - 
-  // .SECTION Description
-  // ...
+// .NAME vtkvmtkPolyDataLineEmbedder - not implemented. Takes a number of lines and embed them in a mesh.
+// .SECTION Description
+// The idea was to use this to try to partition triangles, but it became to messy (luca reports).
 
 #ifndef __vtkvmtkPolyDataLineEmbedder_h
 #define __vtkvmtkPolyDataLineEmbedder_h

@@ -7,7 +7,7 @@
   Version:   $Revision: 1.7 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-  See LICENCE file for details.
+  See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
@@ -18,9 +18,9 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkPolyDataReferenceSystemBoundaryMetricFilter - ..
+// .NAME vtkvmtkPolyDataReferenceSystemBoundaryMetricFilter - Assists in mapping and patching workflow by computing boundary metrics in the boundary reference system frame.
 // .SECTION Description
-// ..
+// ...
 
 #ifndef __vtkvmtkPolyDataReferenceSystemBoundaryMetricFilter_h
 #define __vtkvmtkPolyDataReferenceSystemBoundaryMetricFilter_h

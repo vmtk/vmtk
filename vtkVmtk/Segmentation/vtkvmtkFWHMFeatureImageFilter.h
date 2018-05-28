@@ -7,7 +7,7 @@ Date:      $Date: 2006/04/06 16:48:25 $
 Version:   $Revision: 1.3 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-  See LICENCE file for details.
+  See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
@@ -23,9 +23,9 @@ Version:   $Revision: 1.3 $
 
 =========================================================================*/
 
-// .NAME vtkvmtkCollidingFrontsImageFilter - Wrapper class around itk::CollidingFrontsImageFilter
+// .NAME vtkvmtkFWHMFeatureImageFilter - Wrapper class around itk::FWHMFeatureImageFilter
 // .SECTION Description
-// vtkvmtkCollidingFrontsImageFilter
+// vtkvmtkFWHMFeatureImageFilter
 
 
 #ifndef __vtkvmtkFWHMFeatureImageFilter_h

@@ -7,7 +7,7 @@ Date:      $Date: 2006/04/06 16:46:43 $
 Version:   $Revision: 1.4 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-  See LICENCE file for details.
+  See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
@@ -18,9 +18,9 @@ Version:   $Revision: 1.4 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkPolyDataScissors - 
-  // .SECTION Description
-  // ...
+// .NAME vtkvmtkPolyDataScissors - not implemented, try to cut a surface along a line. 
+// .SECTION Description
+// ...
 
 #ifndef __vtkvmtkPolyDataScissors_h
 #define __vtkvmtkPolyDataScissors_h

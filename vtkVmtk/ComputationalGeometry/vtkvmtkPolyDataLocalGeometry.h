@@ -7,7 +7,7 @@ Date:      $Date: 2006/04/06 16:46:43 $
 Version:   $Revision: 1.4 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-  See LICENCE file for details.
+  See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
@@ -18,23 +18,22 @@ Version:   $Revision: 1.4 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-
-  // .NAME vtkvmtkPolyDataLocalGeometry - Compute shape-related quantities over a surface.
-  // .SECTION Description
-  // This class computes geodesic distance to centerlines and normalized tangency deviation distribution over a surface given the Voronoi diagram of its points, the ids of Voronoi diagram points which are poles of surface points, and the field of the geodesic distance from centerlines computed over the Voronoi diagram.
-  //
-  // Geodesic distance to centerlines field is computed as
-  // \f[ D_g(\mathbf{x}) = T(\mathbf{p}(\mathbf{x})) + |\mathbf{p}(\mathbf{x}) - \mathbf{x}| \f]
-  // where T(x) is the geodesic distance to centerlines field defined on the Voronoi diagram (computed by solving the Eikonal equation with unit speed over the Voronoi diagram by means of vtkNonManifoldFastMarching), and p(x) is the pole associated with surface point x.
-  //
-  // Normalized tangency deviation is a normalized measure of how much a surface point is far from being a tangency point to the evelope of maximal spheres defined on the centerlines (their envelope is the maximal inscribed cylinder), and it is computed as
-  // \f[\mathit{NTD}=\frac{T(\mathbf{p}(\mathbf{x}))}{D_g(\mathbf{x})}\f]
-  // This quantity ranges from 0 to 1, and it is independent from the radius of the maximal inscribed cylinder (on an elliptical base cylinder, NTD only depends on base ellipse eccentricity). 
-  //
-  // The description given here is particularly suited for the description of tubular surfaces in terms of centerlines, but this class can be used without this assumption. Whenever a geodesic distance field is computed over the Voronoi diagram associated with a shape from a subset of the Voronoi diagram itself (in this context, the centerlines), the surface geodesic distance field and the normalized tangency deviation can be defined, and this class can be used to compute them.
-  //
-  // .SECTION See Also
-  // vtkNonManifoldFastMarching vtkVoronoiDiagram3D
+// .NAME vtkvmtkPolyDataLocalGeometry - Compute shape-related quantities over a surface.
+// .SECTION Description
+// This class computes geodesic distance to centerlines and normalized tangency deviation distribution over a surface given the Voronoi diagram of its points, the ids of Voronoi diagram points which are poles of surface points, and the field of the geodesic distance from centerlines computed over the Voronoi diagram.
+//
+// Geodesic distance to centerlines field is computed as
+// \f[ D_g(\mathbf{x}) = T(\mathbf{p}(\mathbf{x})) + |\mathbf{p}(\mathbf{x}) - \mathbf{x}| \f]
+// where T(x) is the geodesic distance to centerlines field defined on the Voronoi diagram (computed by solving the Eikonal equation with unit speed over the Voronoi diagram by means of vtkNonManifoldFastMarching), and p(x) is the pole associated with surface point x.
+//
+// Normalized tangency deviation is a normalized measure of how much a surface point is far from being a tangency point to the evelope of maximal spheres defined on the centerlines (their envelope is the maximal inscribed cylinder), and it is computed as
+// \f[\mathit{NTD}=\frac{T(\mathbf{p}(\mathbf{x}))}{D_g(\mathbf{x})}\f]
+// This quantity ranges from 0 to 1, and it is independent from the radius of the maximal inscribed cylinder (on an elliptical base cylinder, NTD only depends on base ellipse eccentricity). 
+//
+// The description given here is particularly suited for the description of tubular surfaces in terms of centerlines, but this class can be used without this assumption. Whenever a geodesic distance field is computed over the Voronoi diagram associated with a shape from a subset of the Voronoi diagram itself (in this context, the centerlines), the surface geodesic distance field and the normalized tangency deviation can be defined, and this class can be used to compute them.
+//
+// .SECTION See Also
+// vtkNonManifoldFastMarching vtkVoronoiDiagram3D
 
 #ifndef __vtkvmtkPolyDataLocalGeometry_h
 #define __vtkvmtkPolyDataLocalGeometry_h

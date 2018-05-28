@@ -7,7 +7,7 @@ Date:      $Date: 2006/04/06 16:47:48 $
 Version:   $Revision: 1.2 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-  See LICENCE file for details.
+  See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
@@ -18,9 +18,9 @@ Version:   $Revision: 1.2 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkPolyDataKiteRemovalFilter - Add caps to boundaries.
-  // .SECTION Description
-  // This class closes the boundaries of a surface with a cap.
+// .NAME vtkvmtkPolyDataKiteRemovalFilter - removes small protrusions (kites) from a surface based on a SizeFactor parameter
+// .SECTION Description
+// ...
 
 #ifndef __vtkvmtkPolyDataKiteRemovalFilter_h
 #define __vtkvmtkPolyDataKiteRemovalFilter_h

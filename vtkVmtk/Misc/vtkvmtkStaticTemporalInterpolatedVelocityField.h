@@ -18,7 +18,7 @@ Program:   VMTK
 Language:  C++
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-  See LICENCE file for details.
+  See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
@@ -29,9 +29,7 @@ Language:  C++
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkStaticTemporalInterpolatedVelocityField - A concrete class for obtaining
-//  the interpolated velocity values at a point.
-//
+// .NAME vtkvmtkStaticTemporalInterpolatedVelocityField - A concrete class for obtaining the interpolated velocity values at a point.
 
 
 #ifndef __vtkvmtkStaticTemporalInterpolatedVelocityField_h

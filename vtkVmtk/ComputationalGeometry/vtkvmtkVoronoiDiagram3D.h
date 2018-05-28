@@ -7,7 +7,7 @@ Date:      $Date: 2006/04/06 16:46:43 $
 Version:   $Revision: 1.4 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-  See LICENCE file for details.
+  See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
@@ -18,9 +18,9 @@ Version:   $Revision: 1.4 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkVoronoiDiagram3D - Compute the Voronoi diagram of a set of points in 3D.
-  // .SECTION Description
-  // This class computes the Voronoi diagram of a set of points given their Delaunay tessellation. Basically, the output points are Delaunay tetrahedra circumcenters, and the cells are convex polygons constructed by connecting circumcenters of tetrahedra sharing a face. The radius of the circumsphere associated with each circumcenter is stored in a point data array with name specifed by RadiusArrayName. The id list of poles is also provided. Poles are the farthest inner and outer Voronoi points associated with a Delaunay point. Since this class is meant to deal with Delaunay tessellations which are internal to a given surface, only the internal pole is considered for each input point.
+// .NAME vtkvmtkVoronoiDiagram3D - Compute the Voronoi diagram from a Delaunay tessellation or an internal Delaunay tessellation
+// .SECTION Description
+// This class computes the Voronoi diagram of a set of points given their Delaunay tessellation. Basically, the output points are Delaunay tetrahedra circumcenters, and the cells are convex polygons constructed by connecting circumcenters of tetrahedra sharing a face. The radius of the circumsphere associated with each circumcenter is stored in a point data array with name specifed by RadiusArrayName. The id list of poles is also provided. Poles are the farthest inner and outer Voronoi points associated with a Delaunay point. Since this class is meant to deal with Delaunay tessellations which are internal to a given surface, only the internal pole is considered for each input point.
 
 #ifndef __vtkvmtkVoronoiDiagram3D_h
 #define __vtkvmtkVoronoiDiagram3D_h

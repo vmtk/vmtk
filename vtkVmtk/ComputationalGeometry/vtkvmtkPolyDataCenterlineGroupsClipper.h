@@ -7,7 +7,7 @@ Date:      $Date: 2006/04/06 16:46:43 $
 Version:   $Revision: 1.7 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-  See LICENCE file for details.
+  See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
@@ -18,9 +18,9 @@ Version:   $Revision: 1.7 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkPolyDataCenterlineGroupsClipper - .
-  // .SECTION Description
-  // ...
+// .NAME vtkvmtkPolyDataCenterlineGroupsClipper - Split a surface into groups/branches corresponding to their proximity to the polyball line of a branched centerline. 
+// .SECTION Description
+// ...
 
 #ifndef __vtkvmtkPolyDataCenterlineGroupsClipper_h
 #define __vtkvmtkPolyDataCenterlineGroupsClipper_h

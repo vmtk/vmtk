@@ -4,7 +4,7 @@
 ## Version:   1.4
 
 ##   Copyright (c) Richard Izzo, Luca Antiga, All rights reserved.
-##   See LICENCE file for details.
+##   See LICENSE file for details.
 
 ##      This software is distributed WITHOUT ANY WARRANTY; without even
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
@@ -38,6 +38,7 @@ def vmtk_scripts():
         'vmtk.vmtkscripts.vmtkcenterlineattributes',
         'vmtk.vmtkscripts.vmtkcenterlinegeometry',
         'vmtk.vmtkscripts.vmtkcenterlineinterpolation',
+        'vmtk.vmtkscripts.vmtkcenterlineimage',
         'vmtk.vmtkscripts.vmtkcenterlinelabeler',
         'vmtk.vmtkscripts.vmtkcenterlinemerge',
         'vmtk.vmtkscripts.vmtkcenterlinemodeller',
@@ -128,6 +129,7 @@ def vmtk_scripts():
         'vmtk.vmtkscripts.vmtksurfaceclipper',
         'vmtk.vmtkscripts.vmtksurfacecliploop',
         'vmtk.vmtkscripts.vmtksurfaceconnectivity',
+        'vmtk.vmtkscripts.vmtksurfaceconnectivityselector',
         'vmtk.vmtkscripts.vmtksurfacecurvature',
         'vmtk.vmtkscripts.vmtksurfacedecimation',
         'vmtk.vmtkscripts.vmtksurfacedistance',

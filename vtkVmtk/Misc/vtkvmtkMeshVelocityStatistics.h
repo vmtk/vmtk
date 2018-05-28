@@ -7,7 +7,7 @@ Date:      $Date: 2006/07/27 08:28:36 $
 Version:   $Revision: 1.1 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-  See LICENCE file for details.
+  See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
@@ -18,9 +18,9 @@ Version:   $Revision: 1.1 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkMeshVelocityStatistics - ...
-  // .SECTION Description
-  // .
+// .NAME vtkvmtkMeshVelocityStatistics - calculates average and RMS velocity statistics
+// .SECTION Description
+// .
 
 #ifndef __vtkvmtkMeshVelocityStatistics_h
 #define __vtkvmtkMeshVelocityStatistics_h

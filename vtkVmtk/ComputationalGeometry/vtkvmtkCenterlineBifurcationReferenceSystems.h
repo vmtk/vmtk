@@ -7,7 +7,7 @@ Date:      $Date: 2006/04/06 16:46:43 $
 Version:   $Revision: 1.5 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-  See LICENCE file for details.
+  See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
@@ -18,9 +18,9 @@ Version:   $Revision: 1.5 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkCenterlineBifurcationReferenceSystems - ...
-  // .SECTION Description
-  // ...
+// .NAME vtkvmtkCenterlineBifurcationReferenceSystems - Generates a normal and upnormal reference system for each bifurcation point of a split centerline. 
+// .SECTION Description
+// The "normal" vector is the normal to the bifurcation plane (which is the best fit plane in relation to bifurcation reference points). The upnormal vector is normal to the "normal" vector pointing downstream from the parent artery. 
 
 #ifndef __vtkvmtkCenterlineBifurcationReferenceSystems_h
 #define __vtkvmtkCenterlineBifurcationReferenceSystems_h

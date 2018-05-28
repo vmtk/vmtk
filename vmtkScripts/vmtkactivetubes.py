@@ -7,7 +7,7 @@
 ## Version:   $Revision: 1.3 $
 
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-##   See LICENCE file for details.
+##   See LICENSE file for details.
 
 ##      This software is distributed WITHOUT ANY WARRANTY; without even 
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
@@ -45,7 +45,7 @@ class vmtkActiveTubes(pypes.pypeScript):
         self.NegativeNormWarnings = False
 
         self.SetScriptName('vmtkactivetubes')
-        self.SetScriptDoc('')
+        self.SetScriptDoc('experimental method for generating centerlines from an image.')
         self.SetInputMembers([
             ['Centerline','i','vtkPolyData',1,'','','vmtksurfacereader'], 
             ['Image','image','vtkImageData',1,'','','vmtkimagereader'],

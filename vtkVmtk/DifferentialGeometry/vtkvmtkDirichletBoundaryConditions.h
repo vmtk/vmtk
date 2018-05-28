@@ -9,7 +9,7 @@
   Copyright (c) Luca Antiga 
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-  See LICENCE file for details.
+  See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
@@ -20,7 +20,7 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkDirichletBoundaryConditions - ..
+// .NAME vtkvmtkDirichletBoundaryConditions - Set up a Dirichlet (or first-type) boundary conditions that a linear system needs to take along the boundary of the domain.
 // .SECTION Description
 // ..
 

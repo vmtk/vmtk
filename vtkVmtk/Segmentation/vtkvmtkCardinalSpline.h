@@ -7,7 +7,7 @@ Date:      $Date: 2006/04/06 16:48:25 $
 Version:   $Revision: 1.2 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-  See LICENCE file for details.
+  See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
@@ -23,9 +23,9 @@ Version:   $Revision: 1.2 $
 
 =========================================================================*/
 
-// .NAME vtkvmtkCardinalSpline - Wrapper class around itk::VesselnessMeasureImageFilter
+// .NAME vtkvmtkCardinalSpline - Implementation of vtkCardinalSpline containing methods to calculate the spline derivative, second derivatives, at derivative values.
 // .SECTION Description
-// vtkvmtkCardinalSpline
+// ..
 
 
 #ifndef __vtkvmtkCardinalSpline_h
