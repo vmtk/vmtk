@@ -18,7 +18,7 @@ Program:   VMTK
 Language:  C++
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-  See LICENCE file for details.
+  See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
@@ -32,10 +32,7 @@ Language:  C++
 
 // .NAME vtkvmtkStaticTemporalStreamTracer - Streamline generator
 // .SECTION Description
-// vtkvmtkStaticTemporalStreamTracer is a filter that integrates a vector field to generate
-// streamlines. The integration is performed using a specified integrator,
-// by default Runge-Kutta2.
-//
+// vtkvmtkStaticTemporalStreamTracer is a filter that integrates a vector field to generate streamlines. The integration is performed using a specified integrator, by default Runge-Kutta2.
 
 #ifndef __vtkvmtkStaticTemporalStreamTracer_h
 #define __vtkvmtkStaticTemporalStreamTracer_h

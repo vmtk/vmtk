@@ -7,7 +7,7 @@
 ## Version:   $Revision: 1.5 $
 
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-##   See LICENCE file for details.
+##   See LICENSE file for details.
 
 ##      This software is distributed WITHOUT ANY WARRANTY; without even 
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
@@ -59,6 +59,7 @@ class vmtkLocalGeometry(pypes.pypeScript):
         self.PCoordsArrayName = 'PCoordsArray'
         
         self.SetScriptName('vmtklocalgeometry')
+        self.SetScriptDoc('compute local geometric properties of a surface')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','','vmtksurfacereader'],
             ['Centerlines','centerlines','vtkPolyData',1,'','','vmtksurfacereader'],

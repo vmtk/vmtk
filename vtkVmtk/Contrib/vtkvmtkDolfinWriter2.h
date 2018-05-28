@@ -7,7 +7,7 @@
   Version:   $Revision: 1.2 $
                                                                                                                                     
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-  See LICENCE file for details.
+  See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
@@ -22,14 +22,9 @@
 	Kalkulo AS
 	Simula Research Laboratory
 =========================================================================*/
-
-// .NAME vtkvmtkDolfinWriter2 - 
+// .NAME vtkvmtkDolfinWriter2 - lightly modified version of vtkvmtkDolfinWriter Modifications include bug fixes, and a new region indicators array.
 // .SECTION Description
-// Slightly modified version of vtkvmtkDolfinWriter
-// Modifications include bug fixes, and a new region indicators
-// array which corresponds to the different cell entity Ids
-// of the tetrahedra.
-
+// Slightly modified version of vtkvmtkDolfinWriter Modifications include bug fixes, and a new region indicators array which corresponds to the different cell entity Ids of the tetrahedra.
 // .SECTION See Also
 
 #ifndef __vtkvmtkDolfinWriter2_h

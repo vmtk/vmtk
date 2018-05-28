@@ -7,7 +7,7 @@
 ## Version:   $Revision: 1.1 $
 
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-##   See LICENCE file for details.
+##   See LICENSE file for details.
 
 ##      This software is distributed WITHOUT ANY WARRANTY; without even 
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
@@ -52,6 +52,7 @@ class vmtkBranchClipper(pypes.pypeScript):
         self.Interactive = 0
 
         self.SetScriptName('vmtkbranchclipper')
+        self.SetScriptDoc('divide a surface in relation to its split and grouped centerlines')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','','vmtksurfacereader'],
             ['Centerlines','centerlines','vtkPolyData',1,'','','vmtksurfacereader'],

@@ -7,7 +7,7 @@
 ## Version:   $Revision: 1.5 $
 
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-##   See LICENCE file for details.
+##   See LICENSE file for details.
 
 ##      This software is distributed WITHOUT ANY WARRANTY; without even 
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
@@ -38,6 +38,7 @@ class vmtkDistanceToCenterlines(pypes.pypeScript):
         self.RadiusArrayName = 'MaximumInscribedSphereRadius'
         
         self.SetScriptName('vmtkdistancetocenterlines')
+        self.SetScriptDoc('calculate the minimum euclidian from surface points to a centerline')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','','vmtksurfacereader'],
             ['Centerlines','centerlines','vtkPolyData',1,'','','vmtksurfacereader'],

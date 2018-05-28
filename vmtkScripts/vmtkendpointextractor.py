@@ -7,7 +7,7 @@
 ## Version:   $Revision: 1.9 $
 
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-##   See LICENCE file for details.
+##   See LICENSE file for details.
 
 ##      This software is distributed WITHOUT ANY WARRANTY; without even 
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
@@ -40,6 +40,7 @@ class vmtkEndpointExtractor(pypes.pypeScript):
         self.NumberOfGapSpheres = 1
 
         self.SetScriptName('vmtkendpointextractor')
+        self.SetScriptDoc('find the endpoints of a split and grouped centerline')
         self.SetInputMembers([
             ['Centerlines','i','vtkPolyData',1,'','','vmtksurfacereader'],
             ['GroupIdsArrayName','groupidsarray','str',1],

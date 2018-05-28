@@ -7,7 +7,7 @@ Date:      $Date: 2006/04/06 16:46:43 $
 Version:   $Revision: 1.3 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-  See LICENCE file for details.
+  See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
@@ -18,9 +18,11 @@ Version:   $Revision: 1.3 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkPolyBall - 
-  // .SECTION Description
-  // ..
+// .NAME vtkvmtkPolyBall - An instance of vtkImplicitFunction which evaluates the minimum sphere function from a collection of points with attached sphere radii as point data.
+// .SECTION Description
+// Implicit functions are real valued functions defined in 3D space, w = F(x,y,z). Two primitive operations are required: the ability to evaluate the function, and the function gradient at a given point. The implicit function divides space into three regions: on the surface (F(x,y,z)=w), outside of the surface (F(x,y,z)>c), and inside the surface (F(x,y,z)<c). (When c is zero, positive values are outside, negative values are inside, and zero is on the surface. Note also that the function gradient points from inside to outside.)
+//  
+// A polyball is just an implicit function which takes a data set containing a bunch of points in R^3 with sphere radii defined on top of them and evaluates the minimum sphere function across the entire collection for a particular point. The sphere function is zero at the sphere surface, negative inside the sphere, and positive outside the sphere. This is implemented as a brute force calculation; in order to find the minimum sphere function across the collection, the sphere function is evaluated at the query point for every point in the input data set. 
 
 #ifndef __vtkvmtkPolyBall_h
 #define __vtkvmtkPolyBall_h

@@ -7,7 +7,7 @@
   Version:   $Revision: 1.5 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-  See LICENCE file for details.
+  See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
@@ -18,7 +18,7 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkPolyDataClampedSmoothingFilter - ..
+// .NAME vtkvmtkPolyDataClampedSmoothingFilter - Apply a laplacian or curvature based smoothing filter to a surface with particular points fixed in place.
 // .SECTION Description
 // ..
 

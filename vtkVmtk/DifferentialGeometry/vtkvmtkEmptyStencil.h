@@ -7,7 +7,7 @@
   Version:   $Revision: 1.3 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-  See LICENCE file for details.
+  See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
@@ -18,7 +18,7 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkEmptyStencil - ..
+// .NAME vtkvmtkEmptyStencil - create a stencil but do not apply a weighting to the neighborhoods of the data set.
 // .SECTION Description
 // ..
 

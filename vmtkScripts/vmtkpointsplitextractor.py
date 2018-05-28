@@ -7,7 +7,7 @@
 ## Version:   $Revision: 1.9 $
 
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-##   See LICENCE file for details.
+##   See LICENSE file for details.
 
 ##      This software is distributed WITHOUT ANY WARRANTY; without even 
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
@@ -41,6 +41,7 @@ class vmtkPointSplitExtractor(pypes.pypeScript):
         self.Tolerance = 1E-4
 
         self.SetScriptName('vmtkpointsplitextractor')
+        self.SetScriptDoc('split a centerline at specific xyz coordinates')
         self.SetInputMembers([
             ['Centerlines','i','vtkPolyData',1,'','','vmtksurfacereader'],
             ['GroupIdsArrayName','groupidsarray','str',1],

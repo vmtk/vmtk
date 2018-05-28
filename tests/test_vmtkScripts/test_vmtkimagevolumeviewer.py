@@ -4,7 +4,7 @@
 ## Version:   1.4
 
 ##   Copyright (c) Richard Izzo, Luca Antiga, All rights reserved.
-##   See LICENCE file for details.
+##   See LICENSE file for details.
 
 ##      This software is distributed WITHOUT ANY WARRANTY; without even
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
@@ -34,7 +34,7 @@ def expected_results_dict(input_datadir):
     ("CT-Cropped-Volume-Bone"), ("CT-Fat"), ("CT-Liver-Vasculature"),
     ("CT-Lung"), ("CT-MIP"), ("CT-Muscle"), ("CT-Pulmonary-Arteries"),
     ("CT-Soft-Tissue"), ("MR-Angio"), ("MR-Default"),
-    ("MR-MIP"), ("MR-T2-Brain"), ("DTI-FA-Brain")
+    ("MR-MIP"), ("MR-T2-Brain")
 ])
 def test_volume_viewer_preset_values(aorta_image, preset, expected_results_dict):
     view = volumeviewer.vmtkImageVolumeViewer()

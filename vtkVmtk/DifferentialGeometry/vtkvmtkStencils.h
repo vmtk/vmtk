@@ -7,7 +7,7 @@
   Version:   $Revision: 1.4 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-  See LICENCE file for details.
+  See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
@@ -18,7 +18,7 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkStencils - ..
+// .NAME vtkvmtkStencils - Create an empty, umbrella, area weighted umbrella, finite-element LP, or finite-volume finite-element stencil for a particular data set.
 // .SECTION Description
 // ..
 

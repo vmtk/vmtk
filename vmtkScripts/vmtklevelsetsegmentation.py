@@ -7,7 +7,7 @@
 ## Version:   $Revision: 1.19 $
 
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-##   See LICENCE file for details.
+##   See LICENSE file for details.
 
 ##      This software is distributed WITHOUT ANY WARRANTY; without even 
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
@@ -72,6 +72,7 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
         self.SmoothingConductance = 0.8
 
         self.SetScriptName('vmtklevelsetsegmentation')
+        self.SetScriptDoc('interactivly initialize an initial level set and evolve it to image gradients')
         self.SetInputMembers([
             ['Image','i','vtkImageData',1,'','','vmtkimagereader'],
             ['FeatureImage','featureimage','vtkImageData',1,'','','vmtkimagereader'],

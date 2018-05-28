@@ -7,7 +7,7 @@
 ## Version:   $Revision: 1.1 $
 
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-##   See LICENCE file for details.
+##   See LICENSE file for details.
 
 ##      This software is distributed WITHOUT ANY WARRANTY; without even 
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
@@ -50,7 +50,7 @@ class vmtkBifurcationVectors(pypes.pypeScript):
         self.NormalizeBifurcationVectors = 0
 
         self.SetScriptName('vmtkbifurcationvectors')
-        self.SetScriptDoc('.')
+        self.SetScriptDoc('calculate in plane and out of place binfurcation vectors for a centerline')
         self.SetInputMembers([
             ['Centerlines','i','vtkPolyData',1,'','the input split centerlines','vmtksurfacereader'],
             ['ReferenceSystems','referencesystems','vtkPolyData',1,'','reference systems relative to the split centerlines','vmtksurfacereader'],

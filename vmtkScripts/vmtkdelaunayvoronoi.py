@@ -7,7 +7,7 @@
 ## Version:   $Revision: 1.20 $
 
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-##   See LICENCE file for details.
+##   See LICENSE file for details.
 
 ##      This software is distributed WITHOUT ANY WARRANTY; without even 
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
@@ -109,7 +109,7 @@ class vmtkDelaunayVoronoi(pypes.pypeScript):
         self.Mesh = None
 
         self.SetScriptName('vmtkdelaunayvoronoi')
-        self.SetScriptDoc('')
+        self.SetScriptDoc('calculate the delaunay tesellation, voronoi diagram, and voronoi poleIds of an input surface')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
             ['CheckNonManifold','nonmanifoldcheck','bool',1,'','toggle checking the surface for non-manifold edges'],

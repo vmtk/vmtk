@@ -7,7 +7,7 @@ Date:      $Date: 2006/07/07 10:46:19 $
 Version:   $Revision: 1.6 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-  See LICENCE file for details.
+  See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
@@ -18,9 +18,11 @@ Version:   $Revision: 1.6 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkPolyDataFlowExtensionsFilter - .
-  // .SECTION Description
-  // ...
+// .NAME vtkvmtkPolyDataFlowExtensionsFilter - remove the end caps of a surface at flow inlets/outlets and append a cylinder with matching radius that follows the centerline path.  
+// .SECTION Description
+//  Various options are explained below:
+//  - ExtensionMode: method for computing the normal for extension, can be "centerlinedirection" or "boundarynormal"
+//  - InterpolationMode: method for computing interpolation from the model section to a circular section, can be "linear" or "thinplatespline"
 
 #ifndef __vtkvmtkPolyDataFlowExtensionsFilter_h
 #define __vtkvmtkPolyDataFlowExtensionsFilter_h

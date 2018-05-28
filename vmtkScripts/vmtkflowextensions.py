@@ -7,7 +7,7 @@
 ## Version:   $Revision: 1.7 $
 
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-##   See LICENCE file for details.
+##   See LICENSE file for details.
 
 ##      This software is distributed WITHOUT ANY WARRANTY; without even 
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
@@ -50,6 +50,7 @@ class vmtkFlowExtensions(pypes.pypeScript):
         self.OwnRenderer = 0
 
         self.SetScriptName('vmtkflowextensions')
+        self.SetScriptDoc('interactivly add flow extensions to a surface for CFD processing')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','','vmtksurfacereader'],
             ['Centerlines','centerlines','vtkPolyData',1,'','','vmtksurfacereader'],

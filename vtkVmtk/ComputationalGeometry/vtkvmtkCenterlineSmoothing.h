@@ -7,7 +7,7 @@ Date:      $Date: 2006/07/17 09:52:56 $
 Version:   $Revision: 1.1 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-  See LICENCE file for details.
+  See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
@@ -18,9 +18,9 @@ Version:   $Revision: 1.1 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkCenterlineSmoothing - ...
-  // .SECTION Description
-  // ...
+// .NAME vtkvmtkCenterlineSmoothing - iteratively smooth a centerline with a laplacian kernel 
+// .SECTION Description
+// ...
 
 #ifndef __vtkvmtkCenterlineSmoothing_h
 #define __vtkvmtkCenterlineSmoothing_h

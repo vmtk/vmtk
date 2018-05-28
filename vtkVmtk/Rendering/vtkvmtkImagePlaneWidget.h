@@ -7,7 +7,7 @@ Date:      $Date: 2006/07/17 09:52:56 $
 Version:   $Revision: 1.1 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-  See LICENCE file for details.
+  See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
@@ -18,9 +18,9 @@ Version:   $Revision: 1.1 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkImagePlaneWidget - ...
-  // .SECTION Description
-  // ...
+// .NAME vtkvmtkImagePlaneWidget - generates an interactive widget used to browse through image data
+// .SECTION Description
+// ...
 
 #ifndef __vtkvmtkImagePlaneWidget_h
 #define __vtkvmtkImagePlaneWidget_h

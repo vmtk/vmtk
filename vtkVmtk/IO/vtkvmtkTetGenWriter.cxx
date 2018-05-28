@@ -7,7 +7,7 @@ Date:      Sat Feb 19 22:47:34 CET 2011
 Version:   Revision: 1.0
                                                                                                                                     
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-  See LICENCE file for details.
+  See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 

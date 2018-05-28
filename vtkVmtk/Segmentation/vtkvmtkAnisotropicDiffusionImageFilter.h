@@ -7,7 +7,7 @@ Date:      $Date: 2018/03/05 16:48:25 $
 Version:   $Revision: 1.4 $
 
   Copyright (c) Luca Antiga. All rights reserved.
-  See LICENCE file for details.
+  See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
@@ -25,10 +25,9 @@ Version:   $Revision: 1.4 $
       https://github.com/kayarre
 
 =========================================================================*/
-
-// .NAME vtkvmtkAnisotropicDiffusionImageFilter.h - Wrapper class around itk::vtkvmtkAnisotropicDiffusionImageFilter
+// .NAME vtkvmtkAnisotropicDiffusionImageFilter - Wrapper class around itk::GradientAnisotropicDiffusionImageFilter
 // .SECTION Description
-// vtkvmtkAnisotropicDiffusionImageFilter.h
+// vtkvmtkAnisotropicDiffusionImageFilter
 
 
 #ifndef __vtkvmtkAnisotropicDiffusionImageFilter_h

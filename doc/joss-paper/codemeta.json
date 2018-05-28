@@ -1,0 +1,44 @@
+{
+  "@context": "https://raw.githubusercontent.com/codemeta/codemeta/master/codemeta.jsonld",
+  "@type": "Code",
+  "author": [
+    {
+      "@id": "https://orcid.org/0000-0002-8367-227X",
+      "@type": "Person",
+      "email": "luca.antiga@orobix.com",
+      "name": "Luca Antiga",
+      "affiliation": "Orobix Srl."
+    },
+    {
+      "@id": "https://orcid.org/0000-0003-4350-659X",
+      "@type": "Person",
+      "email": "simone.manini@orobix.com",
+      "name": "Simone Manini",
+      "affiliation": "Orobix Srl."
+    },
+    {
+      "@id": "https://orcid.org/0000-0002-7963-1168",
+      "@type": "Person",
+      "email": "steinman@mie.utoronto.ca",
+      "name": "David Steinman",
+      "affiliation": "University of Toronto"
+    },
+    {
+      "@id": "https://orcid.org/0000-0002-0811-6513",
+      "@type": "Person",
+      "email": "rizzo242@gmail.com",
+      "name": "Rick Izzo",
+      "affiliation": "University at Buffalo"
+    }
+  ],
+  "identifier": "",
+  "codeRepository": "https://github.com/vmtk/vmtk",
+  "datePublished": "2018-04-23",
+  "dateModified": "2018-04-23",
+  "dateCreated": "2018-04-23",
+  "description": "The Vascular Modeling Toolkit is a collection of libraries and tools for 3D reconstruction, geometric analysis, mesh generation and surface data analysis for image-based modeling of blood vessels.",
+  "keywords": "vascular modeling, image processing, medical imaging, image segmentation, computational geometry, surface extraction, CFD meshing, hemodynamics, mesh generation, python, c++, centerline",
+  "license": "BSD",
+  "title": "The Vascular Modeling Toolkit",
+  "version": "v1.4.0"
+}

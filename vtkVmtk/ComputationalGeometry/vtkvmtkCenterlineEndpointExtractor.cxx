@@ -7,7 +7,7 @@ Date:      $Date: 2005/10/06 11:01:44 $
 Version:   $Revision: 1.6 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-  See LICENCE file for details.
+  See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 

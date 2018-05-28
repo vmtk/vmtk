@@ -7,7 +7,7 @@ Date:      Sun Feb 20 15:29:37 CET 2011
 Version:   Revision: 1.0
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-  See LICENCE file for details.
+  See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
@@ -18,9 +18,9 @@ Version:   Revision: 1.0
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkUnstructuredGridCenterlineGroupsClipper - .
-  // .SECTION Description
-  // ...
+// .NAME vtkvmtkUnstructuredGridCenterlineGroupsClipper - Split an unstructured grid into groups/branches corresponding to their proximity to the polyball line of a branched centerline. 
+// .SECTION Description
+// ..
 
 #ifndef __vtkvmtkUnstructuredGridCenterlineGroupsClipper_h
 #define __vtkvmtkUnstructuredGridCenterlineGroupsClipper_h

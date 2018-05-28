@@ -7,7 +7,7 @@
   Version:   $Revision: 1.5 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-  See LICENCE file for details.
+  See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
@@ -18,7 +18,7 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkPolyDataMeanCurvature - ..
+// .NAME vtkvmtkPolyDataMeanCurvature - Compute the mean curvature and mean curvature normals of surface point neighborhoods with a particular stencil applied.
 // .SECTION Description
 // ..
 

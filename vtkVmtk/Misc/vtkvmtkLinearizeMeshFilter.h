@@ -7,7 +7,7 @@ Date:      $Date: 2006/04/06 16:47:48 $
 Version:   $Revision: 1.4 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-  See LICENCE file for details.
+  See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
@@ -18,9 +18,9 @@ Version:   $Revision: 1.4 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkLinearizeMeshFilter - Converts linear elements to quadratic.
-  // .SECTION Description
-  // ...
+// .NAME vtkvmtkLinearizeMeshFilter - Convert linear mesh elements to quadratic mesh elements by ignoring mid side nodes.
+// .SECTION Description
+// ...
 
 #ifndef __vtkvmtkLinearizeMeshFilter_h
 #define __vtkvmtkLinearizeMeshFilter_h

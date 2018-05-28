@@ -7,7 +7,7 @@
 ## Version:   $Revision: 1.3 $
 
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-##   See LICENCE file for details.
+##   See LICENSE file for details.
 
 ##      This software is distributed WITHOUT ANY WARRANTY; without even 
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
@@ -93,7 +93,7 @@ class vmtkNetworkEditor(pypes.pypeScript):
         self.OwnRenderer = 0
 
         self.SetScriptName('vmtknetworkeditor')
-        self.SetScriptDoc('')
+        self.SetScriptDoc('extract an approximated centerline from a surface containing at least one hole')
         self.SetInputMembers([
             ['Network','i','vtkPolyData',1,'','the input network','vmtksurfacereader'],
             ['RadiusArrayName','radiusarray','str',1,''],
