@@ -2,6 +2,8 @@
 
 [![Build Status](https://travis-ci.org/vmtk/vmtk.svg?branch=master)](https://travis-ci.org/vmtk/vmtk)
 [![Build status](https://ci.appveyor.com/api/projects/status/3u6nupu2r47qbesq/branch/master?svg=true)](https://ci.appveyor.com/project/rlizzo/vmtk-bh6uc/branch/master)
+[![DOI](http://joss.theoj.org/papers/10.21105/joss.00745/status.svg)](https://doi.org/10.21105/joss.00745)
+
 
 Introduction
 ============
@@ -20,6 +22,30 @@ Getting Started
 ===============
 
 Tutorials, development instructions, and the general information is available at https://www.vmtk.org 
+
+[Installation](http://www.vmtk.org/documentation/installation.html)
+- How to install VMTK. 
+
+[Getting Started](http://www.vmtk.org/documentation/getting-started.html) 
+- Learn how to open your dataset in vmtk, navigate into a 3D volume and set up your image for further processing. 
+
+[Pypes](http://www.vmtk.org/documentation/pypes.html)
+- Learn how to use Pypes.
+
+[Tutorials](http://www.vmtk.org/tutorials)
+- Tutorials will guide you through the main features.
+
+[vmtkScripts](http://www.vmtk.org/documentation/vmtkscripts.html)
+- Automatically generated python class references
+
+[C++ Scripts](http://www.vmtk.org/doc/html/index.html)
+- Automatically generated C++ class reference
+
+[Screenshots](http://www.vmtk.org/documentation/screenshots.html)
+- Screenshots from VMTK examples.
+
+[Presentations](http://www.vmtk.org/documentation/presentations.html)
+- Presentations about VMTK. 
 
 
 Features
@@ -231,35 +257,6 @@ and from the developer’s points of view. The user wants to get things done min
 the work required and the amount of intermediate data generated. The coder wants to limit 
 the amount of code, she/he has to cut and paste (and maintain), and to quickly add new 
 functionality and make it interact with what she/he’s ever written before.
-
-
-Documentation
-==============
-
-[Installation](http://www.vmtk.org/documentation/installation.html)
-- How to install VMTK. 
-
-[Getting Started](http://www.vmtk.org/documentation/getting-started.html) 
-- Learn how to open your dataset in vmtk, navigate into a 3D volume and set up your image for further processing. 
-
-[Pypes](http://www.vmtk.org/documentation/pypes.html)
-- Learn how to use Pypes.
-
-[Tutorials](http://www.vmtk.org/tutorials)
-- Tutorials will guide you through the main features.
-
-[vmtkScripts](http://www.vmtk.org/documentation/vmtkscripts.html)
-- Automatically generated python class references
-
-[C++ Scripts](http://www.vmtk.org/doc/html/index.html)
-- Automatically generated C++ class reference
-
-[Screenshots](http://www.vmtk.org/documentation/screenshots.html)
-- Screenshots from VMTK examples.
-
-[Presentations](http://www.vmtk.org/documentation/presentations.html)
-- Presentations about VMTK. 
-
 
 Funding
 ==============
