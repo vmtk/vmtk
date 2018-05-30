@@ -7,7 +7,7 @@ Date:      $Date: 2006/04/06 16:48:25 $
 Version:   $Revision: 1.3 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-  See LICENCE file for details.
+  See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
@@ -22,10 +22,9 @@ Version:   $Revision: 1.3 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-
-  // .NAME vtkvmtkPolyDataPotentialFit - ...
-  // .SECTION Description
-  // .
+// .NAME vtkvmtkPolyDataPotentialFit - Create an explicitly deformable model which evolves a surface to gradient magnitudes of an input image.
+// .SECTION Description
+// ..
 
 #ifndef __vtkvmtkPolyDataPotentialFit_h
 #define __vtkvmtkPolyDataPotentialFit_h

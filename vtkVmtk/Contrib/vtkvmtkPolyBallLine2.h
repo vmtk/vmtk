@@ -7,7 +7,7 @@
   Version:   $$
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-  See LICENCE file for details.
+  See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
@@ -22,11 +22,9 @@
 	Kalkulo AS
 	Simula Research Laboratory
 =========================================================================*/
-  // .NAME vtkvmtkPolyBallLine2 - 
-  // .SECTION Description
-  // This is another version of a polyball line
-  // Here the ditance to the line is first computed and then the radius at the closest point is substracted
-  // This way each line segment only influences its voronoi cell
+// .NAME vtkvmtkPolyBallLine2 - Second version of polyline where distance to the line is first computed and then the radius at the closest point is subtracted.
+// .SECTION Description
+// This is another version of a polyball line. Here the distance to the line is first computed and then the radius at the closest point is subtracted. This way each line segment only influences its voronoi cell.
 
 #ifndef __vtkvmtkPolyBallLine2_h
 #define __vtkvmtkPolyBallLine2_h

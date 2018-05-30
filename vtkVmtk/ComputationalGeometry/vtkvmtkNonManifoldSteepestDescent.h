@@ -7,7 +7,7 @@ Date:      $Date: 2006/04/06 16:46:43 $
 Version:   $Revision: 1.4 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-  See LICENCE file for details.
+  See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
@@ -18,12 +18,12 @@ Version:   $Revision: 1.4 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkNonManifoldSteepestDescent - Abstract class for steepest descent on a polygonal non-manifold.
-  // .SECTION Description
-  // This class is an abstract filter used as base class for performing steepest descent on a non-manifold surface made of convex polygons (such as the Voronoi diagram) on the basis of a given scalar field. Steepest descent is performed on the edges of input polygons with a first order approximation.
-  //
-  // .SECTION See Also
-  // vtkSteepestDescentLineTracer vtkSurfaceToCenterlines vtkVoronoiDiagram3D
+// .NAME vtkvmtkNonManifoldSteepestDescent - Abstract class for steepest descent on a polygonal non-manifold.
+// .SECTION Description
+// This class is an abstract filter used as base class for performing steepest descent on a non-manifold surface made of convex polygons (such as the Voronoi diagram) on the basis of a given scalar field. Steepest descent is performed on the edges of input polygons with a first order approximation.
+//
+// .SECTION See Also
+// vtkSteepestDescentLineTracer vtkSurfaceToCenterlines vtkVoronoiDiagram3D
 
 #ifndef __vtkvmtkNonManifoldSteepestDescent_h
 #define __vtkvmtkNonManifoldSteepestDescent_h

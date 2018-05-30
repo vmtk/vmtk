@@ -7,7 +7,7 @@ Date:      $Date: 2006/07/17 09:52:56 $
 Version:   $Revision: 1.8 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-  See LICENCE file for details.
+  See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
@@ -18,9 +18,11 @@ Version:   $Revision: 1.8 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkCenterlineBranchGeometry - ...
-  // .SECTION Description
-  // ...
+// .NAME vtkvmtkCenterlineBranchGeometry - Computes the length, curvature, torsion, and tortuosity each for branch within a split centerline. 
+// .SECTION Description
+// The length, curvature, torsion, and tortuosity metrics are scalar quantities which are identical for each point / tract that makes up a branch. They are cell data which are attached to all cells in the branch.
+//
+// A laplacian smoothing filter can be applied to the line if the computation appears to be unstable (as we are using second derivatives and such here). 
 
 #ifndef __vtkvmtkCenterlineBranchGeometry_h
 #define __vtkvmtkCenterlineBranchGeometry_h

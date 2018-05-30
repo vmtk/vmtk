@@ -7,7 +7,7 @@
 ## Version:   $Revision: 1.1 $
 
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-##   See LICENCE file for details.
+##   See LICENSE file for details.
 
 ##      This software is distributed WITHOUT ANY WARRANTY; without even 
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
@@ -52,6 +52,7 @@ class vmtkMeshBranchClipper(pypes.pypeScript):
         self.Interactive = 0
 
         self.SetScriptName('vmtkmeshbranchclipper')
+        self.SetScriptDoc('interactivly clip a mesh based on proximity to a split and grouped centerline')
         self.SetInputMembers([
             ['Mesh','i','vtkUnstructuredGrid',1,'','','vmtkmeshreader'],
             ['Centerlines','centerlines','vtkPolyData',1,'','','vmtksurfacereader'],

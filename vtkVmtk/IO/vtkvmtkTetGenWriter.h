@@ -7,7 +7,7 @@ Date:      $Date: 2006/04/06 16:47:47 $
 Version:   $Revision: 1.2 $
                                                                                                                                     
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-  See LICENCE file for details.
+  See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
@@ -18,11 +18,10 @@ Version:   $Revision: 1.2 $
      PURPOSE.  See the above copyright notices for more information.
                                                                                                                                     
 =========================================================================*/
-
-// .NAME vtkvmtkTetGenWriter - 
+// .NAME vtkvmtkTetGenWriter - writes TetGen .msh files.
 // .SECTION Description
 // vtkvmtkTetGenWriter writes TetGen .msh files. Many thanks to M. Xenos, Y. Alemu and D. Bluestein, BioFluids Laboratory, Stony Brook University, Stony Brook, NY, for the inputs on the file format.
-
+//
 // .SECTION See Also
 
 #ifndef __vtkvmtkTetGenWriter_h

@@ -7,7 +7,7 @@ Date:      Sat Feb 19 15:15:16 CET 2011
 Version:   Revision: 1.0
                                                                                                                                     
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-  See LICENCE file for details.
+  See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
@@ -18,11 +18,9 @@ Version:   Revision: 1.0
      PURPOSE.  See the above copyright notices for more information.
                                                                                                                                     
 =========================================================================*/
-
-// .NAME vtkvmtkTetGenReader -
+// .NAME vtkvmtkTetGenReader - reads unstructured grid data from Tetgen node/elem format
 // .SECTION Description
 // vtkvmtkTetGenReader reads unstructured grid data from Tetgen node/elem format
-
 // Thanks to Sebastian Ordas for getting the class going.
 
 #ifndef __vtkvmtkTetGenReader_h

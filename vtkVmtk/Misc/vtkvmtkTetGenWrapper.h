@@ -7,7 +7,7 @@ Date:      $Date: 2006/04/06 16:47:48 $
 Version:   $Revision: 1.7 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-  See LICENCE file for details.
+  See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
@@ -18,9 +18,9 @@ Version:   $Revision: 1.7 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkTetGenWrapper - Converts linear elements to quadratic.
-  // .SECTION Description
-  // ...
+// .NAME vtkvmtkTetGenWrapper - Wrapped tetgen volumetric meshing utility.
+// .SECTION Description
+// ...
 
 #ifndef __vtkvmtkTetGenWrapper_h
 #define __vtkvmtkTetGenWrapper_h

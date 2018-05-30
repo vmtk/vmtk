@@ -7,7 +7,7 @@
 ## Version:   $Revision: 1.3 $
 
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-##   See LICENCE file for details.
+##   See LICENSE file for details.
 
 ##      This software is distributed WITHOUT ANY WARRANTY; without even 
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
@@ -39,7 +39,7 @@ class vmtkCenterlineViewer(pypes.pypeScript):
         self.OwnRenderer = 0
 
         self.SetScriptName('vmtkcenterlineviewer')
-        self.SetScriptDoc('')
+        self.SetScriptDoc('display a 3D centerline')
         self.SetInputMembers([
             ['Centerlines','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
             ['PointDataArrayName','pointarray','str',1,''],

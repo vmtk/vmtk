@@ -7,7 +7,7 @@ Date:      $Date: 2006/04/06 16:47:48 $
 Version:   $Revision: 1.4 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-  See LICENCE file for details.
+  See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
@@ -18,9 +18,9 @@ Version:   $Revision: 1.4 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkLinearToQuadraticMeshFilter - Converts linear elements to quadratic.
-  // .SECTION Description
-  // ...
+// .NAME vtkvmtkLinearToQuadraticMeshFilter - Converts linear mesh elements to quadratic mesh elements (optionally) by executing by projecting mid side nodes onto the surface and relaxing projection if Jacobian is negative, otherwise does not project nodes.
+// .SECTION Description
+// ...
 
 #ifndef __vtkvmtkLinearToQuadraticMeshFilter_h
 #define __vtkvmtkLinearToQuadraticMeshFilter_h

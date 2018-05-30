@@ -95,6 +95,12 @@ endif(VMTK_BUILD_TESTING)
 option( VMTK_BUNJEE_BUILD
   "Build VMTK and the projects it depends on ready for being linked from Bunjee." OFF )
 
+option( BUILD_VMTK_DOCUMENTATION "Build the methods to build doxygen documentation for VMTK locally" OFF )
+mark_as_advanced(BUILD_VMTK_DOCUMENTATION)
+if(BUILD_VMTK_DOCUMENTATION)
+  set(BUILD_DOCUMENTATION ON)
+endif(BUILD_VMTK_DOCUMENTATION)
+
 if( VMTK_USE_SUPERBUILD )
 
   if( NOT GIT_EXECUTABLE )

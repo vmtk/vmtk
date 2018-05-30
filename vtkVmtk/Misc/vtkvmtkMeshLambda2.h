@@ -7,7 +7,7 @@ Date:      $Date: 2006/07/27 08:28:36 $
 Version:   $Revision: 1.1 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-  See LICENCE file for details.
+  See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
@@ -18,7 +18,7 @@ Version:   $Revision: 1.1 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkMeshLambda2 - ...
+  // .NAME vtkvmtkMeshLambda2 - Compute the Lambda2 surface for a given flow field which allow for the visualization of fluid vortex cores. 
   // .SECTION Description
   // .
 

@@ -7,7 +7,7 @@
 ## Version:   $Revision: 1.3 $
 
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-##   See LICENCE file for details.
+##   See LICENSE file for details.
 
 ##      This software is distributed WITHOUT ANY WARRANTY; without even 
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
@@ -41,7 +41,7 @@ class vmtkMeshBoundaryInspector(pypes.pypeScript):
         self.ReferenceSystems = None
 
         self.SetScriptName('vmtkmeshboundaryinspector')
-        self.SetScriptDoc('')
+        self.SetScriptDoc('display a 3D render of the mesh with individual boundary groups colored and labeled')
         self.SetInputMembers([
             ['Mesh','i','vtkUnstructuredGrid',1,'','the input mesh','vmtkmeshreader'],
             ['CellEntityIdsArrayName','entityidsarray','str',1,''],

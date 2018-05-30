@@ -7,7 +7,7 @@ Date:      $Date: 2006/04/06 16:48:25 $
 Version:   $Revision: 1.3 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-  See LICENCE file for details.
+  See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
@@ -23,9 +23,9 @@ Version:   $Revision: 1.3 $
 
 =========================================================================*/
 
-  // .NAME vtkvmtkConstrainedLaplacianPolyDataFilter - ...
-  // .SECTION Description
-  // .
+// .NAME vtkvmtkConstrainedLaplacianPolyDataFilter - smooth a surface mesh by constraining the motion of selected point ids. 
+// .SECTION Description
+// vtkvmtkConstrainedLaplacianPolyDataFilter
 
 #ifndef __vtkvmtkConstrainedLaplacianPolyDataFilter_h
 #define __vtkvmtkConstrainedLaplacianPolyDataFilter_h

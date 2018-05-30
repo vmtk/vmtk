@@ -66,6 +66,7 @@ set(SCRIPTS_SRCS
   vmtklineresampling.py
   vmtklocalgeometry.py
   vmtkmarchingcubes.py
+  vmtkcenterlineimage.py
   vmtkmesharrayoperation.py
   vmtkmeshboundaryinspector.py
   vmtkmeshbranchclipper.py
@@ -135,6 +136,7 @@ set(SCRIPTS_SRCS
   vmtksurfacescaling.py
   vmtksurfacesmoothing.py
   vmtksurfacesubdivision.py
+  vmtksurfacetobinaryimage.py
   vmtksurfacetransform.py
   vmtksurfacetransforminteractive.py
   vmtksurfacetransformtoras.py

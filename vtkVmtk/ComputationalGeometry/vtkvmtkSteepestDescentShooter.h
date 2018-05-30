@@ -7,7 +7,7 @@ Date:      $Date: 2006/04/06 16:46:43 $
 Version:   $Revision: 1.4 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-  See LICENCE file for details.
+  See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
@@ -18,9 +18,9 @@ Version:   $Revision: 1.4 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkSteepestDescentShooter - Shoot Voronoi vertices onto centerlines.
-  // .SECTION Description
-  // ...
+// .NAME vtkvmtkSteepestDescentShooter - experimental method attempting movement across voronoi vertices; implement with caution. 
+// .SECTION Description
+// For each voronoi vertex, create lines that go from that point to the centerline by running an Eikonal equation from every point in the centerline outwards over the spikes of the voronoi diagram. then back-project similar to a steepest decent algorithm from the Voronoi back to the centerline. 
 
 
 #ifndef __vtkvmtkSteepestDescentShooter_h

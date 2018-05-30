@@ -7,7 +7,7 @@ Date:      $Date: 2006/04/06 16:46:43 $
 Version:   $Revision: 1.4 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-  See LICENCE file for details.
+  See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
@@ -18,11 +18,11 @@ Version:   $Revision: 1.4 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkSimplifyVoronoiDiagram - Remove non essential Voronoi polygon points.
-  // .SECTION Description
-  // This class identifies and removes Voronoi polygon points if they are used by one cell and they are not poles. This helps to get rid of noisy Voronoi diagram parts induced by non smooth surface point distribution. This operation has no effect on the accuracy of the computation of centerlines and of surface related quantities.
-  // .SECTION See Also
-  // vtkVoronoiDiagram3D
+// .NAME vtkvmtkSimplifyVoronoiDiagram - Remove non essential Voronoi polygon points (little spikes).
+// .SECTION Description
+// This class identifies and removes Voronoi polygon points if they are used by one cell and they are not poles. This helps to get rid of noisy Voronoi diagram parts induced by non smooth surface point distribution. This operation has no effect on the accuracy of the computation of centerlines and of surface related quantities.
+// .SECTION See Also
+// vtkVoronoiDiagram3D
 
 #ifndef __vtkvmtkSimplifyVoronoiDiagram_h
 #define __vtkvmtkSimplifyVoronoiDiagram_h

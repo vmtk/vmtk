@@ -7,7 +7,7 @@
 ## Version:   $Revision: 1.9 $
 
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-##   See LICENCE file for details.
+##   See LICENSE file for details.
 
 ##      This software is distributed WITHOUT ANY WARRANTY; without even 
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
@@ -47,6 +47,7 @@ class vmtkBranchPatching(pypes.pypeScript):
         self.PatchAreaArrayName = 'PatchArea'
 
         self.SetScriptName('vmtkbranchpatching')
+        self.SetScriptDoc('cut a set of contiguous rectangular regions on a surface that follow iso-contours in the StretchedMapping and AngularMetric arrays')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','','vmtksurfacereader'],
             ['PatchSize','patchsize','float',2,'(0.0,)'],

@@ -7,7 +7,7 @@ Date:      $Date: 2006/07/17 09:53:14 $
 Version:   $Revision: 1.5 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-  See LICENCE file for details.
+  See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
@@ -18,9 +18,9 @@ Version:   $Revision: 1.5 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkSimpleCapPolyData - Add caps to boundaries.
-  // .SECTION Description
-  // This class closes the boundaries of a surface with a cap.
+// .NAME vtkvmtkSimpleCapPolyData - Add caps to boundaries.
+// .SECTION Description
+// This class closes the boundaries of a surface with a cap.
 
 #ifndef __vtkvmtkSimpleCapPolyData_h
 #define __vtkvmtkSimpleCapPolyData_h

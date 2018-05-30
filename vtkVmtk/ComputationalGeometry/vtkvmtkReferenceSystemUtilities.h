@@ -7,7 +7,7 @@ Date:      $Date: 2006/04/06 16:46:43 $
 Version:   $Revision: 1.2 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-  See LICENCE file for details.
+  See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
@@ -18,9 +18,9 @@ Version:   $Revision: 1.2 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkReferenceSystemUtilities - ...
-  // .SECTION Description
-  // .
+// .NAME vtkvmtkReferenceSystemUtilities - Utility function to get the reference system point id of a group. 
+// .SECTION Description
+// ..
 
 #ifndef __vtkvmtkReferenceSystemUtilities_h
 #define __vtkvmtkReferenceSystemUtilities_h

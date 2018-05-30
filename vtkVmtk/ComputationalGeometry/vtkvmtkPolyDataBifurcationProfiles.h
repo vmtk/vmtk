@@ -7,7 +7,7 @@ Date:      $Date: 2006/10/17 15:16:16 $
 Version:   $Revision: 1.1 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-  See LICENCE file for details.
+  See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
@@ -18,9 +18,9 @@ Version:   $Revision: 1.1 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkPolyDataBifurcationProfiles - ...
-  // .SECTION Description
-  // ...
+// .NAME vtkvmtkPolyDataBifurcationProfiles - compute bifurcation profiles (the bifurcation splitting lines) from an input surface & grouped and split centerlines.
+// .SECTION Description
+// Used to extract the bifurcation group, the orientation, and label the group as either coming from an upstream source or leading to a downstream centerline branch. 
 
 #ifndef __vtkvmtkPolyDataBifurcationProfiles_h
 #define __vtkvmtkPolyDataBifurcationProfiles_h

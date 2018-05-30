@@ -7,7 +7,7 @@
   Version:   $$
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-  See LICENCE file for details.
+  See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
@@ -22,9 +22,9 @@
 	Kalkulo AS
 	Simula Research Laboratory
 =========================================================================*/
-// .NAME vtkvmtkInterpolateCenterlineArray - ..
+// .NAME vtkvmtkInterpolateCenterlineArray - Interpolate a point-based array from a set of provided values.
 // .SECTION Description
-// Interpolate a point-based array from a set of values provided
+// ..
 
 #ifndef __vtkvmtkCenterlineInterpolateArray_h
 #define __vtkvmtkCenterlineInterpolateArray_h

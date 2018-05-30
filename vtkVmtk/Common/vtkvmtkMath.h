@@ -7,7 +7,7 @@
   Version:   $Revision: 1.4 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
-  See LICENCE file for details.
+  See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
   See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
@@ -18,9 +18,9 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkMath - ..
+// .NAME vtkvmtkMath - Static utility mathematical functions included to avoid repeating ourselves. 
 // .SECTION Description
-// ..
+// All arguments expect doubles.
 
 #ifndef __vtkvmtkMath_h
 #define __vtkvmtkMath_h
