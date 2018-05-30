@@ -18,9 +18,9 @@ Version:   $Revision: 1.3 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkRBFInterpolation - 
-  // .SECTION Description
-  // ..
+// .NAME vtkvmtkRBFInterpolation - Implicit function which when given a set of disjoined points and a radial basis shape type will evaluate it self at its zero level set. 
+// .SECTION Description
+// ..
 
 #ifndef __vtkvmtkRBFInterpolation_h
 #define __vtkvmtkRBFInterpolation_h

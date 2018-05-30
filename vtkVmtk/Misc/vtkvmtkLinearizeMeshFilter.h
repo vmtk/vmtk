@@ -18,9 +18,9 @@ Version:   $Revision: 1.4 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkLinearizeMeshFilter - Converts linear elements to quadratic.
-  // .SECTION Description
-  // ...
+// .NAME vtkvmtkLinearizeMeshFilter - Convert linear mesh elements to quadratic mesh elements by ignoring mid side nodes.
+// .SECTION Description
+// ...
 
 #ifndef __vtkvmtkLinearizeMeshFilter_h
 #define __vtkvmtkLinearizeMeshFilter_h

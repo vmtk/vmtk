@@ -18,7 +18,7 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkBoundaryConditions - ..
+// .NAME vtkvmtkBoundaryConditions - Base class to store nodes, value, and linear system composing a boundary condition.
 // .SECTION Description
 // ..
 

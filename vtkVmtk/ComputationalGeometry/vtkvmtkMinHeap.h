@@ -18,17 +18,17 @@ Version:   $Revision: 1.3 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkMinHeap - Implementation of the min heap data structure.
-  // .SECTION Description
-  // This class is an implementation of the min heap data structure, used to handle a set of values in such a way that the retrieval of the minimum element takes constant time. A min heap is a complete binary tree where the value at each node is equal or less than the value at its children, and it is represented as an array where the children of a node stored at location k are at location 2k and 2k+1 (so that the parent of k is located at k/2). Keeping the min heap ordered after a value is updated or an id is inserted in teh heap takes O(log N). 
-  //
-  // In the present implementation, values are provided in a vtkDoubleArray, and element ids are inserted in the heap. Backpointers are used to access the heap by id. This class is optimized for working in conjunction with vtkNonManifoldFastMarching.
-  //
-  // For more insight see J.A. Sethian, Level Set Methods and Fast Marching Methods, Cambridge University Press, 2nd Edition, 1999.
-  // .SECTION Caveats
-  // Be sure to call Initialize() after defining MinHeapScalars.
-  // .SECTION See Also
-  // vtkNonManifoldFastMarching
+// .NAME vtkvmtkMinHeap - Implementation of the min heap data structure.
+// .SECTION Description
+// This class is an implementation of the min heap data structure, used to handle a set of values in such a way that the retrieval of the minimum element takes constant time. A min heap is a complete binary tree where the value at each node is equal or less than the value at its children, and it is represented as an array where the children of a node stored at location k are at location 2k and 2k+1 (so that the parent of k is located at k/2). Keeping the min heap ordered after a value is updated or an id is inserted in teh heap takes O(log N). 
+//
+// In the present implementation, values are provided in a vtkDoubleArray, and element ids are inserted in the heap. Backpointers are used to access the heap by id. This class is optimized for working in conjunction with vtkNonManifoldFastMarching.
+//
+// For more insight see J.A. Sethian, Level Set Methods and Fast Marching Methods, Cambridge University Press, 2nd Edition, 1999.
+// .SECTION Caveats
+// Be sure to call Initialize() after defining MinHeapScalars.
+// .SECTION See Also
+// vtkNonManifoldFastMarching
 
 #ifndef __vtkvmtkMinHeap_h
 #define __vtkvmtkMinHeap_h

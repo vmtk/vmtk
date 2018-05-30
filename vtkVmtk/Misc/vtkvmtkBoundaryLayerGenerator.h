@@ -18,9 +18,9 @@ Version:   $Revision: 1.4 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkBoundaryLayerGenerator - Generates boundary layers of prismatic elements by warping a surface mesh.
-  // .SECTION Description
-  // ...
+// .NAME vtkvmtkBoundaryLayerGenerator - Generates boundary layers of prismatic elements by warping a surface mesh.
+// .SECTION Description
+// ...
 
 #ifndef __vtkvmtkBoundaryLayerGenerator_h
 #define __vtkvmtkBoundaryLayerGenerator_h

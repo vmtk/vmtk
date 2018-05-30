@@ -18,9 +18,9 @@ Version:   Revision: 1.0
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkUnstructuredGridCenterlineGroupsClipper - .
-  // .SECTION Description
-  // ...
+// .NAME vtkvmtkUnstructuredGridCenterlineGroupsClipper - Split an unstructured grid into groups/branches corresponding to their proximity to the polyball line of a branched centerline. 
+// .SECTION Description
+// ..
 
 #ifndef __vtkvmtkUnstructuredGridCenterlineGroupsClipper_h
 #define __vtkvmtkUnstructuredGridCenterlineGroupsClipper_h

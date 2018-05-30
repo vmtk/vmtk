@@ -18,7 +18,7 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkLinearSystem - ..
+// .NAME vtkvmtkLinearSystem - Base container to hold sparse matrice objects representing a linear system of equations Ax = B.
 // .SECTION Description
 // ..
 

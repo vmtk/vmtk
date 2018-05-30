@@ -18,7 +18,7 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkPolyDataAreaWeightedUmbrellaStencil - ..
+// .NAME vtkvmtkPolyDataAreaWeightedUmbrellaStencil - Apply umbrella (laplacian) weighting to the neighborhood connections of a surface.
 // .SECTION Description
 // ..
 

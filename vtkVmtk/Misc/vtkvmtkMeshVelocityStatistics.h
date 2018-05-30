@@ -18,9 +18,9 @@ Version:   $Revision: 1.1 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkMeshVelocityStatistics - ...
-  // .SECTION Description
-  // .
+// .NAME vtkvmtkMeshVelocityStatistics - calculates average and RMS velocity statistics
+// .SECTION Description
+// .
 
 #ifndef __vtkvmtkMeshVelocityStatistics_h
 #define __vtkvmtkMeshVelocityStatistics_h

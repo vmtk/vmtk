@@ -18,10 +18,9 @@ Version:   $Revision: 1.4 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-
-// .NAME vtkvmtkPolyBallModeller - sample poly ball onto structured points 
+// .NAME vtkvmtkPolyBallModeller - Create an image where a polyball or polyball line are evaluated as a function.
 // .SECTION Description
-// ..
+// This creates an image which might look similar to a level set (0 at surface boundaries negative inside, positive outside), but it much more powerful. It is a finite approximation of the entire implicit sphere function solution within the bounds of the image volume.
 
 #ifndef __vtkvmtkPolyBallModeller_h
 #define __vtkvmtkPolyBallModeller_h

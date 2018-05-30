@@ -20,7 +20,7 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkDirichletBoundaryConditions - ..
+// .NAME vtkvmtkDirichletBoundaryConditions - Set up a Dirichlet (or first-type) boundary conditions that a linear system needs to take along the boundary of the domain.
 // .SECTION Description
 // ..
 

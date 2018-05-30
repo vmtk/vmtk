@@ -18,9 +18,11 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkPolyDataPatchingFilter - ..
+// .NAME vtkvmtkPolyDataPatchingFilter - “cut” a set of contiguous rectangular regions on the mesh that follow iso-contours in the StretchedMapping and AngularMetric arrays over which all the quantities of interest are averaged.
 // .SECTION Description
-// ..
+// This script is designed to help map the surface of a population of vessels onto the same parametric space in order to enable statistical analyses of surface-based quantities.
+//
+// By means of the options PatchSize and CircularPatching, we impose the dimensions of the patches, in terms of “height” (in mm) of the patch along the longitudinal direction and number of angular cut over the interval (-π, +π) respectively; the result of this discretization can be seen visualizing the Slab and Sector arrays created by the script or the mesh new surface discretization.
 
 #ifndef __vtkvmtkPolyDataPatchingFilter_h
 #define __vtkvmtkPolyDataPatchingFilter_h

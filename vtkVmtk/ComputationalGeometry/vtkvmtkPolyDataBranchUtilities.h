@@ -18,9 +18,10 @@ Version:   $Revision: 1.3 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkPolyDataBranchUtilities - ...
-  // .SECTION Description
-  // .
+// .NAME vtkvmtkPolyDataBranchUtilities - Utility functions to ease working with branches and surfaces. 
+// .SECTION Description
+// - ExtractGroup: Extract a single surface branch group from a surface which has already been grouped. 
+// - GetGroupIdsList: get the group ids which are contained within a grouped surface as a vtkIdList.
 
 #ifndef __vtkvmtkPolyDataBranchUtilities_h
 #define __vtkvmtkPolyDataBranchUtilities_h

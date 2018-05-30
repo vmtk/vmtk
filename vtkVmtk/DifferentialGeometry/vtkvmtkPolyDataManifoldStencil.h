@@ -18,7 +18,7 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkPolyDataManifoldStencil - ..
+// .NAME vtkvmtkPolyDataManifoldStencil - Base class for stencils applied to a manifold surface.
 // .SECTION Description
 // ..
 

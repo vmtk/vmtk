@@ -18,7 +18,7 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkPolyDataGradientStencil - ..
+// .NAME vtkvmtkPolyDataGradientStencil - Apply gradient weighting to the neighborhood connections of a surface.
 // .SECTION Description
 // ..
 

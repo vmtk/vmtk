@@ -18,10 +18,9 @@ Version:   $Revision: 1.2 $
      PURPOSE.  See the above copyright notices for more information.
                                                                                                                                     
 =========================================================================*/
-
-// .NAME vtkvmtkPNGWriter - 
+// .NAME vtkvmtkPNGWriter - writes .png files
 // .SECTION Description
-
+//
 // .SECTION See Also
 
 #ifndef __vtkvmtkPNGWriter_h

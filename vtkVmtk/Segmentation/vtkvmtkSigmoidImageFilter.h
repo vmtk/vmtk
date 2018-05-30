@@ -22,10 +22,9 @@ Version:   $Revision: 1.3 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-
-// .NAME vtkvmtkGradientMagnitudeImageFilter - Wrapper class around itk::GradientMagnitudeImageFilterImageFilter
+// .NAME vtkvmtkSigmoidImageFilter - Wrapper class around itk::SigmoidImageFilter
 // .SECTION Description
-// vtkvmtkGradientMagnitudeImageFilter
+// vtkvmtkSigmoidImageFilter
 
 
 #ifndef __vtkvmtkSigmoidImageFilter_h

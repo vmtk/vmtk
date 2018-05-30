@@ -18,9 +18,19 @@ Version:   $Revision: 1.1 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkCenterlineBifurcationVectors - ...
-  // .SECTION Description
-  // ...
+// .NAME vtkvmtkCenterlineBifurcationVectors - Compute vectors which represent the orientation of branches involved within a bifurcation from a split centerline and bifurcation reference system.
+// .SECTION Description
+//  For each branch of a bifurcation we compute bifurcation vectors, bifurcation vector components, and bifurcation vector angles. These represent both the in-plane and out-of-plane orientation of the bifurcation branches (which is why we need the bifurcation reference system). This allows us to later compute factors which characterize the bifurcation such as: relationship between the angle of upstream vs downstream vessels entering/leaving the bifurcation, how broad is the bifurcation, how tight is the bifurcation. 
+//
+//  This class Computes vectors which are stored as results for the following data arrays:
+//  - BifurcationVectors
+//  - InPlaneBifurcationVectors
+//  - OutOfPlaneBifurcationVectors
+//  - InPlaneBifurcationVectorAngles (the angle between the InPlaneBifurcationVectors and the bifurcation UpNormal, in radians, from -pi to pi, zero for a UpNormal oriented vector, positive in the clockwise direction with respect to the bifurcation Normal)
+//  - OutOfPlaneBifurcationVectorAngles (the angle between the BifurcationVectors and the bifurcation plane, in radians, positive if the OutOfPLaneBifurcationVector is directed as the bifurcation Normal)
+//  - BifurcationVectorsOrientation (flag accounting for the role played by the branch in the bifurcation, 0 for upstream, 1 for downstream the bifurcation)
+//  - GroupIds (the groupId of the branch described by the vector)
+//  - BifurcationGroupIds (the groupId of the bifurcation)
 
 #ifndef __vtkvmtkCenterlineBifurcationVectors_h
 #define __vtkvmtkCenterlineBifurcationVectors_h

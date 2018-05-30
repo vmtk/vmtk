@@ -18,7 +18,7 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkEllipticProblem - ..
+// .NAME vtkvmtkEllipticProblem - High level container holding references to vtkvmtkLinearSystem and associated vtkvmtkDirichletBoundaryConditions.
 // .SECTION Description
 // ..
 

@@ -18,7 +18,7 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkStencil - ..
+// .NAME vtkvmtkStencil - Apply a weighting matrix to a single neighborhood of a data set.
 // .SECTION Description
 // ..
 

@@ -18,9 +18,9 @@ Version:   $Revision: 1.1 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkPolyDataNormalPlaneEstimator - ...
-  // .SECTION Description
-  // .
+// .NAME vtkvmtkPolyDataNormalPlaneEstimator - calculate the normal plane alone a centerline path
+// .SECTION Description
+// .
 
 #ifndef __vtkvmtkPolyDataNormalPlaneEstimator_h
 #define __vtkvmtkPolyDataNormalPlaneEstimator_h

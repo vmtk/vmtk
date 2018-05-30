@@ -18,14 +18,11 @@ Version:   $Revision: 1.5 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkInternalTetrahedraExtractor - Extract internal tetrahedra from a Delaunay tessellation.
-  // .SECTION Description
-  // This class takes in input the Delaunay tessellation of a point set and extracts internal tetrahedra based on outward oriented point normals (to be provided as input point data array). A tetrahedron \f$T_i\f$ is retained if 
-  // \f[(x_j - c_i) \cdot n_j \geq 0  \qquad  \forall x_j \in T_i \f]
-  // where \f$x_i\f$ are the vertices of \f$T_i\f$, \f$c_i\f$ its circumcenter and \f$n_j\f$ the normals at the vertices.
-  // It is possible to properly handle capped regions (generated with vtkCapPolyData) by activating UseCaps and providing the ids of cap centers.
-  // .SECTION See Also
-  // vtkCapPolyData
+// .NAME vtkvmtkInternalTetrahedraExtractor - Extract internal tetrahedra from a Delaunay tessellation of a surface.
+// .SECTION Description
+// This class takes in input the Delaunay tessellation of a point set and extracts internal tetrahedra based on outward oriented point normals (to be provided as input point data array). A tetrahedron \f$T_i\f$ is retained if \f[(x_j - c_i) \cdot n_j \geq 0  \qquad  \forall x_j \in T_i \f] where \f$x_i\f$ are the vertices of \f$T_i\f$, \f$c_i\f$ its circumcenter and \f$n_j\f$ the normals at the vertices. It is possible to properly handle capped regions (generated with vtkCapPolyData) by activating UseCaps and providing the ids of cap centers.
+// .SECTION See Also
+// vtkCapPolyData
 
 #ifndef __vtkvmtkInternalTetrahedraExtractor_h
 #define __vtkvmtkInternalTetrahedraExtractor_h

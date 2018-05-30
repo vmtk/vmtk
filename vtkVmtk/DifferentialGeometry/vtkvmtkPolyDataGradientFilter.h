@@ -18,7 +18,7 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkPolyDataGradientFilter - ..
+// .NAME vtkvmtkPolyDataGradientFilter - Compute the gradient of data stored within an polydata surface.
 // .SECTION Description
 // ..
 

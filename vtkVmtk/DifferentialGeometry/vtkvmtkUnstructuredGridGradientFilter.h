@@ -18,7 +18,7 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkUnstructuredGridGradientFilter - ..
+// .NAME vtkvmtkUnstructuredGridGradientFilter - Compute the gradient of data stored within an unstructured grid mesh.
 // .SECTION Description
 // ..
 

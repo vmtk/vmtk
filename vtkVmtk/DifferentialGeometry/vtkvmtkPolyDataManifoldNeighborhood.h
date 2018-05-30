@@ -18,7 +18,7 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkPolyDataManifoldNeighborhood - ..
+// .NAME vtkvmtkPolyDataManifoldNeighborhood - Apply a neighborhood to the points of a manifold surface.
 // .SECTION Description
 // ..
 

@@ -18,11 +18,9 @@ Version:   Revision: 1.0
      PURPOSE.  See the above copyright notices for more information.
                                                                                                                                     
 =========================================================================*/
-
-// .NAME vtkvmtkTetGenReader -
+// .NAME vtkvmtkTetGenReader - reads unstructured grid data from Tetgen node/elem format
 // .SECTION Description
 // vtkvmtkTetGenReader reads unstructured grid data from Tetgen node/elem format
-
 // Thanks to Sebastian Ordas for getting the class going.
 
 #ifndef __vtkvmtkTetGenReader_h

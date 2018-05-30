@@ -18,9 +18,13 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkPolyDataCenterlineMetricFilter - ..
+// .NAME vtkvmtkPolyDataDistanceToCenterlines - calculate the minimum euclidian from surface points to a centerline.
 // .SECTION Description
-// ..
+// This function has three distinct ways of working:
+// 1) UseRadiusInformation: 1 (default=1) -> Compute the euclidian distance between a surface point and the closest centerline point (based on polyball association).
+// 2) EvaluateTubeFunction: 1 (default=0) -> Compute the euclidian distance between a surface point and the center of the tube function (based on polyball line).
+// 3) EvaluateCenterlineRadius: 1 (default=0) -> Find the centerline point which is closest to a surface point (similar to method 1), and set distance at that surface point to the radius of the sphere associated with the closest centerline point id.
+// By setting ProjectPointArrays: 1 (default=0) -> Project point data from the centerline onto every surface point by linearly interpolating the relative position of the surface point on the line formed by the two closest centerline points.
 
 #ifndef __vtkvmtkPolyDataDistanceToCenterlines_h
 #define __vtkvmtkPolyDataDistanceToCenterlines_h

@@ -18,7 +18,7 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkEmptyNeighborhood - ..
+// .NAME vtkvmtkEmptyNeighborhood - Create an an empty neighborhood instance.
 // .SECTION Description
 // ..
 

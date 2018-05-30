@@ -18,7 +18,7 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkFEShapeFunctions - ..
+// .NAME vtkvmtkFEShapeFunctions - Set of common utility (calculate jacobian, interpolation function, and interpolation function derivatives) functions used during assembly of certain finite element solutions.
 // .SECTION Description
 // ..
 

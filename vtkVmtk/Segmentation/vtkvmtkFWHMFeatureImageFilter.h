@@ -23,9 +23,9 @@ Version:   $Revision: 1.3 $
 
 =========================================================================*/
 
-// .NAME vtkvmtkCollidingFrontsImageFilter - Wrapper class around itk::CollidingFrontsImageFilter
+// .NAME vtkvmtkFWHMFeatureImageFilter - Wrapper class around itk::FWHMFeatureImageFilter
 // .SECTION Description
-// vtkvmtkCollidingFrontsImageFilter
+// vtkvmtkFWHMFeatureImageFilter
 
 
 #ifndef __vtkvmtkFWHMFeatureImageFilter_h

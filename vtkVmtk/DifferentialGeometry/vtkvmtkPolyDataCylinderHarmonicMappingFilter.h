@@ -18,7 +18,7 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkPolyDataCylinderHarmonicMappingFilter - ..
+// .NAME vtkvmtkPolyDataCylinderHarmonicMappingFilter - Create a single instance wrapping a harmonic function over a cylinder so that mapping can be applied with stretching of the longitudinal metric.
 // .SECTION Description
 // ..
 

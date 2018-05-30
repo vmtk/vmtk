@@ -18,9 +18,9 @@ Version:   $Revision: 1.4 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkCenterlineReferenceSystemAttributesOffset - ...
-  // .SECTION Description
-  // ...
+// .NAME vtkvmtkCenterlineReferenceSystemAttributesOffset - Move the abscissa metric such that its zero point is at a bifurcation center and rotate parallel transport normals such that they are normal to the bifurcation plane.
+// .SECTION Description
+// Abscissa to be set to 0 at the bifurcation. We twist the entire parallel transport reference framing (rigidly) around the centerline so that the parallel transport normals are normal to the bifurcation plane at the bifurcation. this is useful for analyses that may be conducted later on comparing vessel torsion to the parallel transport normal 
 
 #ifndef __vtkvmtkCenterlineReferenceSystemAttributesOffset_h
 #define __vtkvmtkCenterlineReferenceSystemAttributesOffset_h

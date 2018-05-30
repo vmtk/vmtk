@@ -18,9 +18,9 @@ Version:   $Revision: 1.5 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkBoundaryReferenceSystems - ...
-  // .SECTION Description
-  // .
+// .NAME vtkvmtkBoundaryReferenceSystems - Creates a reference system consisting of a radius and normals on top of boundaries.
+// .SECTION Description
+// This class has methods to estimate the location of the boundary barycenter location, the boundary mean radius, and outward normals to the boundary.
 
 #ifndef __vtkvmtkBoundaryReferenceSystems_h
 #define __vtkvmtkBoundaryReferenceSystems_h

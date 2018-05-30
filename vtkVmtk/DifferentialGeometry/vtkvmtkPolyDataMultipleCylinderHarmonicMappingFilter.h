@@ -18,7 +18,7 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkPolyDataMultipleCylinderHarmonicMappingFilter - ..
+// .NAME vtkvmtkPolyDataMultipleCylinderHarmonicMappingFilter - Wrap a harmonic function over a cylinders for every group within a surface.
 // .SECTION Description
 // ..
 

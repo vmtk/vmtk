@@ -23,9 +23,9 @@ Version:   $Revision: 1.2 $
 
 =========================================================================*/
 
-// .NAME vtkvmtkCardinalSpline - Wrapper class around itk::VesselnessMeasureImageFilter
+// .NAME vtkvmtkCardinalSpline - Implementation of vtkCardinalSpline containing methods to calculate the spline derivative, second derivatives, at derivative values.
 // .SECTION Description
-// vtkvmtkCardinalSpline
+// ..
 
 
 #ifndef __vtkvmtkCardinalSpline_h

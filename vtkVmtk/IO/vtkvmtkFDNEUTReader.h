@@ -18,11 +18,9 @@ Version:   $Revision: 1.6 $
      PURPOSE.  See the above copyright notices for more information.
                                                                                                                                     
 =========================================================================*/
-
-// .NAME vtkvmtkFDNEUTReader -
+// .NAME vtkvmtkFDNEUTReader - Reads FDNEUT Fidap files.
 // .SECTION Description
 // vtkvmtkFDNEUTReader reads unstructured grid data from Fidap FDNEUT format
-
 // .SECTION See Also
 // vtkvmtkFDNEUTWriter
 

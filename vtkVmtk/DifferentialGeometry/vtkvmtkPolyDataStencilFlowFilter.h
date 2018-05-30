@@ -18,7 +18,7 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkPolyDataStencilFlowFilter - ..
+// .NAME vtkvmtkPolyDataStencilFlowFilter - Displace points of a surface with an iterative algorithm based on stencil weighting. 
 // .SECTION Description
 // ..
 
