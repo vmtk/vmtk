@@ -14,7 +14,7 @@ See [github collaborating guide](https://help.github.com/categories/63/articles)
 
 ### Reporting bugs and issues
 
-See vmtk [open issues](https://github.com/vmtk/vmtk/issues/)</a> or [create new](https://github.com/vmtk/vmtk/issues/new) issues
+See vmtk [open issues](https://github.com/vmtk/vmtk/issues/) or [create new](https://github.com/vmtk/vmtk/issues/new) issues
 
 
 # Development Version
@@ -33,8 +33,14 @@ In order to successfully compile and use vmtk, the following software has to be 
 - [CMake](www.cmake.org) (>=3.3)
 - A C++ 11 compliant C++ compiler (see below for platform specific details)
 
-As VMTK is packaged and distributed exclusively through the anaconda package manager, we highly recomend that [Anaconda Python](www.anaconda.org) is installed on your system. 
+As VMTK is packaged and distributed exclusively through the anaconda package manager, we highly recommend that [Anaconda Python](www.anaconda.org) is installed on your system. 
 
+A number of module in VMTK require external python packages. Please ensure that the following are installed within your python environment:
+- [Numpy](http://www.numpy.org/) (<=1.13)
+- [h5py](https://www.h5py.org/)
+- [joblib](https://pythonhosted.org/joblib/index.html)
+
+These packages come as dependencies of the anaconda installation. For "from source" builds, we recommend installing dependencies using the anaconda python distribution. 
 
 #### Linux Requirements
 
@@ -97,9 +103,9 @@ source path-to-vmtk_env.sh
 
 ## Testing
 
-### Aquiring Test Data
+### Acquiring Test Data
 
-VMTK utilizes a git submodule in order to orchestrate the aquisition of large binary data files. If you have just simply cloned the vmtk repository, you will find the tests data director (`tests/vmtk-test-data`) empty.
+VMTK utilizes a git submodule in order to orchestrate the aquisition of large binary data files. If you have just simply cloned the vmtk repository, you will find the tests data director (`tests/vmtk-test-data`) empty. To acquire test data, please run `git submodule init` and `git submodule update` after cloning the repository.
 
 Setting the CMake variable `VMTK_BUILD_TESTING=ON` and building the project will use this information to download the actual binary files to this directory in the build tree. It will also automatically configure the paths to this data directory referenced in the `tests` directory. 
 

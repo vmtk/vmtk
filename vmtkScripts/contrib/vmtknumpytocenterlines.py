@@ -18,6 +18,7 @@
 from __future__ import absolute_import  # NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import vtk
 import sys
+from vtk.numpy_interface import dataset_adapter as dsa
 
 from vmtk import vtkvmtk
 from vmtk import vmtkrenderer
@@ -47,50 +48,19 @@ class vmtkNumpyToCenterlines(pypes.pypeScript):
     def Execute(self):
 
         polyData = vtk.vtkPolyData()
+        wpPolyData = dsa.WrapDataObject(polyData)
 
-        self.PrintLog('converting points')
-        points = vtk.vtkPoints()
-        for xyzPoint in self.ArrayDict['Points']:
-            points.InsertNextPoint(xyzPoint)
-
-        polyData.SetPoints(points)
+        points = self.ArrayDict['Points']
+        vtkPoints = dsa.numpyTovtkDataArray(points, 'Points')
+        wpPolyData.Points = vtkPoints
 
         self.PrintLog('converting point data')
-        for pointKey in self.ArrayDict['PointData'].keys():
-
-            if np.issubdtype(self.ArrayDict['PointData'][pointKey].dtype, float):
-                pointDataArray = vtk.vtkFloatArray()
-            else:
-                for checkDt in [int, np.uint8, np.uint16, np.uint32, np.uint64]:
-                    if np.issubdtype(self.ArrayDict['PointData'][pointKey].dtype, checkDt):
-                        pointDataArray = vtk.vtkIntArray()
-                        break
-                    else:
-                        continue
-
-            try:
-                pointDataComponents = self.ArrayDict['PointData'][pointKey].shape[1]
-            except IndexError:
-                pointDataComponents = 1
-
-            pointDataArray.SetNumberOfComponents(pointDataComponents)
-            pointDataArray.SetName(pointKey)
-
-            if pointDataComponents == 1:
-                pointDataArray.SetNumberOfValues(self.ArrayDict['PointData'][pointKey].size)
-                for index, pointData in enumerate(self.ArrayDict['PointData'][pointKey]):
-                    pointDataArray.SetValue(index, pointData)
-                polyData.GetPointData().SetActiveScalars(pointKey)
-                polyData.GetPointData().SetScalars(pointDataArray)
-            else:
-                for pointData in self.ArrayDict['PointData'][pointKey]:
-                    pointDataArray.InsertNextTuple(pointData)
-                polyData.GetPointData().SetActiveVectors(pointKey)
-                polyData.GetPointData().SetVectors(pointDataArray)
+        for pointDataKey in self.ArrayDict['PointData'].keys():
+            pointDataItem = self.ArrayDict['PointData'][pointDataKey]
+            wpPolyData.PointData.append(pointDataItem, name=pointDataKey)
 
         self.PrintLog('converting cell data')
         for cellKey in self.ArrayDict['CellData'].keys():
-
             if cellKey == 'CellPointIds':
                 cellDataArray = vtk.vtkCellArray()
                 for cellId in self.ArrayDict['CellData']['CellPointIds']:
@@ -98,38 +68,12 @@ class vmtkNumpyToCenterlines(pypes.pypeScript):
                     cellDataArray.InsertNextCell(numberOfCellPoints)
                     for cellPoint in cellId:
                         cellDataArray.InsertCellPoint(cellPoint)
-
-                polyData.SetLines(cellDataArray)
-
+                wpPolyData.VTKObject.SetLines(cellDataArray)
             else:
+                cellDataItem = self.ArrayDict['CellData'][cellKey]
+                wpPolyData.CellData.append(cellDataItem, name=cellKey)
 
-                if np.issubdtype(self.ArrayDict['CellData'][cellKey].dtype, float):
-                    cellDataArray = vtk.vtkFloatArray()
-                if np.issubdtype(self.ArrayDict['CellData'][cellKey].dtype, int):
-                    cellDataArray = vtk.vtkIntArray()
-
-                try:
-                    cellDataComponents = self.ArrayDict['CellData'][cellKey].shape[1]
-                except IndexError:
-                    cellDataComponents = 1
-
-                cellDataArray.SetNumberOfComponents(cellDataComponents)
-                cellDataArray.SetName(cellKey)
-
-                if cellDataComponents == 1:
-                    cellDataArray.SetNumberOfValues(self.ArrayDict['CellData'][cellKey].size)
-                    for index, cellData in enumerate(self.ArrayDict['CellData'][cellKey]):
-                        cellDataArray.SetValue(index, cellData)
-                    polyData.GetCellData().SetActiveScalars(cellKey)
-                    polyData.GetCellData().SetScalars(cellDataArray)
-
-                else:
-                    for cellData in self.ArrayDict['CellData'][cellKey]:
-                        pointDataArray.InsertNextTuple(cellData)
-                    polyData.GetCellData().SetActiveVectors(cellKey)
-                    polyData.GetCellData().SetVectors(cellDataArray)
-
-        self.Centerlines = polyData
+        self.Centerlines = wpPolyData.VTKObject
 
 
 if __name__ == '__main__':
