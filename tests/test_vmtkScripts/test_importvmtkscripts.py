@@ -44,6 +44,7 @@ def vmtk_scripts():
         'vmtk.vmtkcenterlineoffsetattributes',
         'vmtk.vmtkcenterlineresampling',
         'vmtk.vmtkcenterlines',
+        'vmtk.vmtkcenterlinesnetwork',
         'vmtk.vmtkcenterlinestonumpy',
         'vmtk.vmtkcenterlinesections',
         'vmtk.vmtkcenterlinesmoothing',
