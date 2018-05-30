@@ -245,6 +245,9 @@ class vmtkSurfaceWriter(pypes.pypeScript):
         elif (self.Format == 'tecplot'):
             self.WriteTecplotSurfaceFile()
         elif (self.Format == 'wavefront'):
+            if(vtk.vtkVersion.GetVTKMajorVersion() < 9):
+                self.PrintError("Error: the VTK version installed doesn't support writing this format: " +
+                                vtk.vtkVersion.GetVTKSourceVersion() + '.')
             self.WriteOBJSurfaceFile()
         else:
             self.PrintError('Error: unsupported format '+ self.Format + '.')
