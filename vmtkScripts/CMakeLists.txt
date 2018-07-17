@@ -156,10 +156,10 @@ set(MODULE_SRCS
 option(VMTK_CONTRIB_SCRIPTS "Install modules from the vmtkScripts/contrib directory." OFF)
 
 if (VMTK_CONTRIB_SCRIPTS)
-  subdirs(contrib)
+  add_subdirectory(contrib)
 endif (VMTK_CONTRIB_SCRIPTS)
 
-subdirs(resources)
+add_subdirectory(resources)
 
 if(NOT VMTK_SCRIPTS_INSTALL_BIN_DIR)
   set(VMTK_SCRIPTS_INSTALL_BIN_DIR bin)

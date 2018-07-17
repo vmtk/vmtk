@@ -89,7 +89,7 @@ option( VMTK_BUILD_TESTING
   "Build the VMTK testing libraries" OFF)
 
 if(VMTK_BUILD_TESTING)
-  subdirs(tests)
+  add_subdirectory(tests)
 endif(VMTK_BUILD_TESTING)
 
 option( VMTK_BUNJEE_BUILD
@@ -192,17 +192,20 @@ option(VMTK_SCRIPTS_ENABLED "Build and install vmtkScripts and Pypes" ON)
 mark_as_advanced(VMTK_SCRIPTS_ENABLED)
 
 if(VMTK_SCRIPTS_ENABLED)
-  subdirs(
+  set(vmtk_directories
     PypeS
     vtkVmtk
     vmtkScripts
     )
 else(VMTK_SCRIPTS_ENABLED)
-  subdirs(
+  set(vmtk_directories
     vtkVmtk
     )
 endif(VMTK_SCRIPTS_ENABLED)
 
+foreach(vmtk_directory ${vmtk_directories})
+  add_subdirectory(${vmtk_directory})
+endforeach()
 option(VMTK_MINIMAL_INSTALL "Do not install individual scripts, only vmtk.py" OFF)
 
 set(LIBRARY_OUTPUT_PATH ${VMTK_BINARY_DIR}/bin CACHE PATH
