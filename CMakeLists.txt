@@ -206,6 +206,7 @@ endif(VMTK_SCRIPTS_ENABLED)
 foreach(vmtk_directory ${vmtk_directories})
   add_subdirectory(${vmtk_directory})
 endforeach()
+
 option(VMTK_MINIMAL_INSTALL "Do not install individual scripts, only vmtk.py" OFF)
 
 set(LIBRARY_OUTPUT_PATH ${VMTK_BINARY_DIR}/bin CACHE PATH
@@ -283,6 +284,17 @@ if(VMTK_SCRIPTS_ENABLED)
   # endif(VMTK_ENABLE_DISTRIBUTION)
 
   install(EXPORT VMTK-Targets DESTINATION ${VMTK_BINARY_DIR})
+
+  get_property(_wrap_hierarchy_targets GLOBAL PROPERTY VMTK_WRAP_HIERARCHY_TARGETS)
+  if(_wrap_hierarchy_targets)
+    foreach(target ${_wrap_hierarchy_targets})
+      set(VMTK_WRAP_HIERARCHY_FILES_CONFIG
+  "${VMTK_WRAP_HIERARCHY_FILES_CONFIG}
+  set(${target}_WRAP_HIERARCHY_FILE
+    \"${${target}_WRAP_HIERARCHY_FILE}\")"
+  )
+    endforeach()
+  endif()
 
   configure_file(
     ${VMTK_SOURCE_DIR}/CMake/VMTKConfig.cmake.in
