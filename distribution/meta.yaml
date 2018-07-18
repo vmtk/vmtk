@@ -36,6 +36,7 @@ requirements:
     - cmake 
     - git
     - ninja
+    - pytest
     - setuptools             # [win] 
   host:
     - python {{ python }}
