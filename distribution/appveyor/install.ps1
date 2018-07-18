@@ -103,6 +103,14 @@ function UpdateConda ($python_home) {
     Start-Process -FilePath "$conda_path" -ArgumentList $args -Wait -Passthru
 }
 
+function AddCondaChannel ($python_home, $channels) {
+    $conda_path = $python_home + "\Scripts\conda.exe"
+    Write-Host "Updating conda channels..."
+    $args = "conda config --add channels " + $channels
+    Write-Host $conda_path $args
+    Start-Process -FilePath "$conda_path" -ArgumentList $args -Wait -Passthru
+}
+
 function UpdateCondaChannel ($python_home, $channels) {
     $conda_path = $python_home + "\Scripts\conda.exe"
     Write-Host "Updating conda channels..."
@@ -116,6 +124,7 @@ function main () {
     InstallMiniconda $env:PYTHON_VERSION $env:PYTHON_ARCH $env:PYTHON
     UpdateConda $env:PYTHON
     InstallCondaPackages $env:PYTHON "conda-build jinja2 anaconda-client"
+    AddCondaChannel $env:PYTHON "conda-forge"
     UpdateCondaChannel $env:PYTHON "vmtk"
 }
 

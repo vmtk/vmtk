@@ -24,6 +24,8 @@ conda config --set always_yes true
 
 conda install --quiet -y conda conda-build anaconda-client
 
+conda config --add channels conda-forge
+
 # set the ordering of additional channels
 conda config --prepend channels vmtk
 
