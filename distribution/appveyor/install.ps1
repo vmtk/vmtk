@@ -115,7 +115,7 @@ function UpdateCondaChannel ($python_home, $channels) {
 function main () {
     InstallMiniconda $env:PYTHON_VERSION $env:PYTHON_ARCH $env:PYTHON
     UpdateConda $env:PYTHON
-    InstallCondaPackages $env:PYTHON "conda-build jinja2 anaconda-client"
+    InstallCondaPackages $env:PYTHON "conda-build==3.9.2 jinja2 anaconda-client"
     UpdateCondaChannel $env:PYTHON "vmtk"
 }
 
