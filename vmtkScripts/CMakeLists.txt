@@ -156,10 +156,8 @@ set(MODULE_SRCS
 option(VMTK_CONTRIB_SCRIPTS "Install modules from the vmtkScripts/contrib directory." OFF)
 
 if (VMTK_CONTRIB_SCRIPTS)
-  subdirs(contrib)
+  add_subdirectory(contrib)
 endif (VMTK_CONTRIB_SCRIPTS)
-
-subdirs(resources)
 
 if(NOT VMTK_SCRIPTS_INSTALL_BIN_DIR)
   set(VMTK_SCRIPTS_INSTALL_BIN_DIR bin)
@@ -168,6 +166,8 @@ endif(NOT VMTK_SCRIPTS_INSTALL_BIN_DIR)
 if(NOT VMTK_SCRIPTS_INSTALL_LIB_DIR)
   set(VMTK_SCRIPTS_INSTALL_LIB_DIR lib/${VMTK_PYTHON_VERSION}/site-packages/vmtk)
 endif(NOT VMTK_SCRIPTS_INSTALL_LIB_DIR)
+
+add_subdirectory(resources)
 
 foreach (SCRIPT_FILE  ${SCRIPTS_SRCS})
   configure_file(${VMTK_SCRIPTS_SOURCE_DIR}/${SCRIPT_FILE} ${VMTK_SCRIPTS_BINARY_DIR}/${SCRIPT_FILE} COPYONLY)

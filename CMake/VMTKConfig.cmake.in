@@ -24,6 +24,9 @@ include(
 
 set(VMTK_LIBRARY_DIRS "@VMTK_BINARY_DIR@/bin")
 
+# VMTK VTK wrap hierarchy files
+@VMTK_WRAP_HIERARCHY_FILES_CONFIG@
+
 set(VMTK_USE_FILE
   "@VMTK_BINARY_DIR@/VMTKUse.cmake"
 )

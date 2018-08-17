@@ -1,4 +1,8 @@
 include(CMakeParseArguments)
+
+set(Slicer_VTK_WRAP_HIERARCHY_DIR ${VMTK_BINARY_DIR})
+set(Slicer_VTK_WRAP_MODULE_INSTALL_COMPONENT_IDENTIFIER "PythonRuntimeLibraries")
+set(Slicer_VTK_WRAP_HIERARCHY_TARGETS_PROPERTY_NAME "VMTK_WRAP_HIERARCHY_TARGETS")
 include(${VMTK_SOURCE_DIR}/CMake/vtkMacroKitPythonWrap.cmake)
 
 function(vmtk_build_library)
