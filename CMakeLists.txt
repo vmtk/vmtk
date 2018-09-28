@@ -197,7 +197,7 @@ if(VMTK_SCRIPTS_ENABLED)
     COMPONENT PythonRuntimeLibraries
     )
 
-  ##  
+  ##
   ## Linux or MacOS
   ##
   if (NOT WIN32)
@@ -232,7 +232,7 @@ if(VMTK_SCRIPTS_ENABLED)
       COMPONENT RuntimeExecutables)
 
   endif (NOT WIN32)
-  
+
 
   install(EXPORT VMTK-Targets DESTINATION ${VMTK_BINARY_DIR})
 

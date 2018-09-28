@@ -59,7 +59,7 @@ class Pype(object):
         if not self.LogOn:
             return
         indentUnit = '    '
-        indentation = indent * ('' + indentUnit)
+        indentation = indent * indentUnit
         self.OutputStream.write(indentation + logMessage + '\n')
 
     def PrintError(self,errorMessage):
@@ -79,17 +79,17 @@ class Pype(object):
 
         sets the class attribute "Arguments" by splitting the input string along spaces (or where
         appropriate if there are quotes for windows paths) into individual elements in a list.
-        If the argument is enclosed in {curly braces}, a key-value pair with the same name and 
-        desired value should have been feed in from the calling scope in the kwargs dict. 
+        If the argument is enclosed in {curly braces}, a key-value pair with the same name and
+        desired value should have been feed in from the calling scope in the kwargs dict.
 
         If the argument exists with curly braces, we don't need to check if it exists in the kwargs dict
         (at this point). By the time the kwargs reach this function (through vmtkinteractive), we have
-        already done the checks to make sure that the variable contained within is a valid key-value pair. 
+        already done the checks to make sure that the variable contained within is a valid key-value pair.
 
         Args:
             argumentsString (string): the input argument string
             **kwargs (`obj`:dict): stores the values or object instances associated with the key names
-                which were called from the local instance.  
+                which were called from the local instance.
 
         ex: `vmtkimageviewer -ifile foo -flip {flipvar}' (where flipvar = [0, 1, 0])
             -> ["vmtkimageviewer", "-ifile", "foo", "-flip", [0, 1, 0]]
@@ -130,7 +130,7 @@ class Pype(object):
         pype functionality like --nolog, the pyperun executable is prepended to a pype.
 
         checks if --noauto --nolog flags exist in the arguments list. if they do then execute the
-        special behavior indicated by those flags. The --help flag prints the pyperun usage string. 
+        special behavior indicated by those flags. The --help flag prints the pyperun usage string.
 
         arguments:
             arguments: (obj:`list`): the initial arguments acquired from sys.argv with each logical unit as a string element.
@@ -218,9 +218,9 @@ class Pype(object):
     def _CompatibleMember(self,memberEntry,script):
         '''given a memberEntry object, and script object, find compatible input members for a script object.
 
-        we search the output members of the script object (along with any explicitly pushed input members) 
+        we search the output members of the script object (along with any explicitly pushed input members)
         for  member entries which match the name and type of the input memberEntry object. When a comatible
-        script member is found, we return it; otherwise return None. 
+        script member is found, we return it; otherwise return None.
 
         arguments:
             memberEntry (obj): a memberEntry object
@@ -232,7 +232,7 @@ class Pype(object):
         pushedInputMembers = [scriptMember for scriptMember in script.InputMembers if scriptMember.Pushed]
         for scriptMember in pushedInputMembers + script.OutputMembers:
             if not scriptMember.AutoPipe: continue # only true when --no-auto flag is provided
-            if ((scriptMember.MemberName == memberEntry.MemberName) and 
+            if ((scriptMember.MemberName == memberEntry.MemberName) and
                 (scriptMember.MemberType == memberEntry.MemberType)):
                 # only if scriptMember name/types both match memberEntry names/types
                 return scriptMember
@@ -264,11 +264,11 @@ class Pype(object):
                 if self._CompatibleMember(memberEntry,candidateScript):
                     pipedScriptObject = candidateScript
                     pipedMember = self._CompatibleMember(memberEntry, candidateScript)
-            if not pipedScriptObject: 
+            if not pipedScriptObject:
                 continue
             # MemberPipe attribute syntax ex: 'vmtkimagereader-0.Image' or 'vmtklevelsetsegmentation-0.LevelSets'
             # this is critical attribute which specifies which script object member (script name, id, and member name)
-            # should actually be transfered to the input member of the currently executing script. 
+            # should actually be transfered to the input member of the currently executing script.
             memberEntry.MemberPipe = pipedScriptObject.ScriptName + '-' + str(pipedScriptObject.Id) + '.' + pipedMember.MemberName
             self.PrintLog(memberEntry.MemberName + ' = ' + memberEntry.MemberPipe,1)
 
@@ -306,11 +306,11 @@ class Pype(object):
             splitPipedArgument = pipedArgument.split('.')
             if len(splitPipedArgument) != 2:
                 self.PrintError('Error: invalid option piping: '+pipedArgument)
-            
+
             # check for 3 option cases described in docstring. upstreamPipedOption is common for every case
             # upstreamPipedId only overwritten in case 2
-            upstreamPipedId = '' 
-            upstreamPipedOption = splitPipedArgument[1] 
+            upstreamPipedId = ''
+            upstreamPipedOption = splitPipedArgument[1]
             if pipedArgument.startswith('.'):
                 upstreamPipedModuleName = self.ScriptObjectList[-1].ScriptName
             elif ('-' in pipedArgument) and ('.' in pipedArgument):
@@ -355,9 +355,12 @@ class Pype(object):
                 scriptMemberList.append(member)
 
         for memberEntry in scriptMemberList:
-            pipedScriptName = memberEntry.MemberPipe.split('.')[0].split('-')[0]
-            pipedScriptId = memberEntry.MemberPipe.split('.')[0].split('-')[1]
-            pipedMemberName = memberEntry.MemberPipe.split('.')[1]
+            # pipedScriptName = memberEntry.MemberPipe.split('.')[0].split('-')[0]
+            # pipedScriptId = memberEntry.MemberPipe.split('.')[0].split('-')[1]
+            # pipedMemberName = memberEntry.MemberPipe.split('.')[1]
+
+            pipedScriptInfo, pipedMemberName = memberEntry.MemberPipe.split('.')
+            pipedScriptName, pipedScriptId = pipedScriptInfo.split('-')
 
             previousScriptObjects = self.ScriptObjectList[:]
             if scriptObject in previousScriptObjects:
@@ -385,7 +388,7 @@ class Pype(object):
             from vmtk import pypes
         except ImportError:
             return None
-        
+
         self.ScriptObjectList = []
         for scriptNameAndArguments in self.ScriptList:
             self.PrintLog('')
@@ -415,7 +418,7 @@ class Pype(object):
             if self.AutoPipe:
                 self.AutoPipeScriptObject(scriptObject)
             self.PrintLog('Parsing options ' + scriptObject.ScriptName)
-            proceedToExecute = scriptObject.ParseArguments() # calls to scriptObject subclass of pypes.pypeScript ParseArguments method 
+            proceedToExecute = scriptObject.ParseArguments() # calls to scriptObject subclass of pypes.pypeScript ParseArguments method
             if proceedToExecute == False:
                 return
             if scriptObject.Disabled:
@@ -430,7 +433,7 @@ class Pype(object):
             self.PrintLog('Executing ' + scriptObject.ScriptName + ' ...')
             scriptObject.Execute()
             self.PrintLog('Done executing ' + scriptObject.ScriptName + '.')
-            
+
             scriptObject.IOWrite()
             scriptObject.PrintOutputMembers()
             self.ScriptObjectList.append(scriptObject)

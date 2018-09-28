@@ -10,8 +10,8 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
 from __future__ import absolute_import, unicode_literals #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
@@ -31,7 +31,7 @@ class TkPadOutputStream(object):
         self.text_widget = tk_text_widget
         self.output_to_file = False
         self.output_file = None
-  
+
     def write(self,text):
         from tkinter import NORMAL, END, DISABLED
         self.text_widget["state"] = NORMAL
@@ -47,7 +47,7 @@ class TkPadOutputStream(object):
         if self.output_to_file and self.output_file:
             self.output_file.write(text)
             self.output_file.flush()
-      
+
     def flush(self):
         if self.output_to_file and self.output_file:
             self.output_file.flush()
@@ -60,7 +60,7 @@ class TkPadInputStream(object):
         self.entry_widget.bind("<KeyPress-Return>",self.EntryReturnHandler)
         self.text = ''
         self.input_stream = input_stream
- 
+
     def EntryReturnHandler(self,event):
         from tkinter import END, DISABLED
         self.text = self.entry_widget.get()
@@ -68,7 +68,7 @@ class TkPadInputStream(object):
         self.entry_widget.quit()
         self.entry_widget["state"] = DISABLED
         self.input_stream.write(self.text+'\n')
-       
+
     def readline(self):
         from tkinter import NORMAL
         self.entry_widget["state"] = NORMAL
@@ -85,14 +85,14 @@ class CallbackShim:
     def __init__(self, callback, *firstArgs):
         self.__callback = callback
         self.__firstArgs = firstArgs
-  
+
     def __call__(self, *args):
-        return self.__callback (*(self.__firstArgs + args))     
+        return self.__callback (*(self.__firstArgs + args))
 
 class PypeTkPad(object):
 
     def __init__(self, master, queue, pypeOutput):
-      
+
         self.queue = queue
         self.pypeOutput = pypeOutput
 
@@ -101,7 +101,7 @@ class PypeTkPad(object):
         self.master.geometry("%dx%d%+d%+d" % (700, 500, 0, 0))
         self.master.minsize(300, 100)
         self.output_file_name = None
-        
+
         self.BuildMainFrame()
         self.UpdateOutput()
 
@@ -116,7 +116,7 @@ class PypeTkPad(object):
             return
         for line in openfile.readlines():
             self.text_input.insert(END,line)
- 
+
     def SaveCommand(self):
         import tkinter.filedialog
         from tkinter import END
@@ -125,14 +125,14 @@ class PypeTkPad(object):
             return
         alltext = self.text_input.get("1.0",END)
         saveasfile.write(alltext)
- 
+
     def QuitCommand(self):
         self.master.quit()
 
     def ClearInputCommand(self):
         from tkinter import END
         self.text_input.delete("1.0",END)
-        
+
     def ClearOutputCommand(self):
         from tkinter import NORMAL, END, DISABLED
         self.text_output["state"] = NORMAL
@@ -140,7 +140,7 @@ class PypeTkPad(object):
         self.text_output["state"] = DISABLED
         self.text_output.see(END)
         self.text_output.update()
-        
+
     def ClearAllCommand(self):
         self.ClearInputCommand()
         self.ClearOutputCommand()
@@ -173,7 +173,7 @@ class PypeTkPad(object):
             self.output_stream.output_to_file = False
 
         self.queue.append(arguments)
- 
+
     def GetWordUnderCursor(self):
         from tkinter import CURRENT
         splitindex = self.text_input.index(CURRENT).split('.')
@@ -189,7 +189,7 @@ class PypeTkPad(object):
         startindex = self.text_input.index("insert-1c wordstart")
         endindex = self.text_input.index("insert-1c wordend")
         if self.text_input.get(startindex+'-1c') == '-' and self.text_input.get(startindex+'-2c') == '-':
-           startindex = self.text_input.index("insert-1c wordstart -2c") 
+           startindex = self.text_input.index("insert-1c wordstart -2c")
         elif self.text_input.get(startindex+'-1c') == '-' and self.text_input.get(startindex+'-2c') == ' ':
            startindex = self.text_input.index("insert-1c wordstart -1c")
         self.wordIndex[0] = startindex
@@ -200,14 +200,14 @@ class PypeTkPad(object):
     def GetLogicalLine(self,physicallineid):
         indexes, lines = self.GetLogicalLines()
         return lines[indexes[physicallineid]]
- 
+
     def GetLogicalLineRange(self,physicallinefirstid,physicallinelastid):
         indexes, lines = self.GetLogicalLines()
         return lines[indexes[physicallinefirstid]:indexes[physicallinelastid]+1]
-   
+
     def GetAllLogicalLines(self):
         return self.GetLogicalLines()[1]
-   
+
     def GetLogicalLines(self):
         from tkinter import END
         # Python 2 hack to remove the u'...' prefix from unicode literal strings. does not change py3 behavior
@@ -256,7 +256,7 @@ class PypeTkPad(object):
         line = self.GetLineUnderCursor()
         if line and line.strip():
             self.RunPype(line)
-      
+
     def RunSelectionCommand(self):
         from tkinter import TclError, SEL_FIRST, SEL_LAST
         try:
@@ -296,7 +296,7 @@ class PypeTkPad(object):
             suggestionList = [scriptname for scriptname in vmtkscripts.__all__ if scriptname.count(word)]
             for index, item in enumerate(suggestionList):
                 # check if scriptname contains starting prefix 'vmtk.' and remove it before returning list to the user.
-                if 'vmtk.vmtkscripts.' == item[0:18]:
+                if item.startswith('vmtk.vmtkscripts.'):
                     splitList = item.split('.')
                     suggestionList[index] = splitList[1]
                 else:
@@ -320,7 +320,7 @@ class PypeTkPad(object):
         self.OutputText(word)
         if word:
             self.RunPype(word+' --help')
-        else: 
+        else:
             self.OutputText('Enter your vmtk Pype above and Run.\n')
 
     def AutoCompleteCommand(self):
@@ -331,11 +331,11 @@ class PypeTkPad(object):
             self.suggestionswindow.geometry("%dx%d%+d%+d" % (400, 150, self.text_output.winfo_rootx(),self.text_output.winfo_rooty()))
             self.suggestionswindow.deiconify()
             self.suggestionswindow.lift()
-            
+
     def InsertScriptName(self,scriptname):
         from tkinter import INSERT
         self.text_input.insert(INSERT,scriptname+' ')
-        
+
     def InsertFileName(self):
         from tkinter import INSERT
         import tkinter.filedialog
@@ -371,9 +371,9 @@ class PypeTkPad(object):
         else :
             self.suggestionswindow.withdraw()
             self.text_input.focus_set()
-    
+
     def NewHandler(self,event):
-        self.NewCommand() 
+        self.NewCommand()
 
     def OpenHandler(self,event):
         self.OpenCommand()
@@ -384,7 +384,7 @@ class PypeTkPad(object):
     def InsertFileNameHandler(self,event):
         self.InsertFileName()
         return "break"
- 
+
     def QuitHandler(self,event):
         self.QuitCommand()
 
@@ -393,16 +393,16 @@ class PypeTkPad(object):
 
     def RunKeyboardHandler(self,event):
         from tkinter import SEL_FIRST, TclError
-        try: 
+        try:
             self.text_input.index(SEL_FIRST)
             self.RunSelectionCommand()
         except TclError:
             self.RunLineCommand()
         return "break"
-         
+
     def RunAllHandler(self,event):
         self.RunAllCommand()
-      
+
     def PopupHandler(self,event):
         try:
             self.popupmenu.tk_popup(event.x_root, event.y_root, 0)
@@ -433,13 +433,13 @@ class PypeTkPad(object):
                 submenu.add_command(label=scriptname,command=callback)
         return menu
 
-    def BuildMainFrame(self): 
+    def BuildMainFrame(self):
         from tkinter import Menu, IntVar, StringVar, Toplevel, Listbox, Frame, PanedWindow, Text, Scrollbar, Entry
         from tkinter import X, N, S, W, E, VERTICAL, TOP, END, DISABLED, RAISED
 
         menu = Menu(self.master,activeborderwidth=0,bd=0)
         self.master.config(menu=menu)
-  
+
         filemenu = Menu(menu,tearoff=0,bd=1,activeborderwidth=0)
         menu.add_cascade(label="File", underline=0,  menu=filemenu)
         filemenu.add_command(label="New", accelerator='Ctrl+N', command=self.NewCommand)
@@ -450,15 +450,15 @@ class PypeTkPad(object):
 
         self.log_on = IntVar()
         self.log_on.set(1)
-  
+
         self.output_to_file = StringVar()
         self.output_to_file.set('n')
- 
+
         modulenames = ['vmtk.vmtkscripts']
         splitIdentifiers = ['branch', 'centerline', 'image', 'surface', 'mesh']
         for modulename in modulenames:
             scriptsubmenu = self.BuildScriptMenu(menu,modulename,splitIdentifiers)
- 
+
         editmenu = Menu(menu,tearoff=0,bd=1,activeborderwidth=0)
         menu.add_cascade(label="Edit",underline=0,  menu=editmenu)
         editmenu.add_cascade(label="Insert script",menu=scriptsubmenu)
@@ -480,7 +480,7 @@ class PypeTkPad(object):
         runmenu.add_command(label="Run all", accelerator='Ctrl+R', command=self.RunAllCommand)
         runmenu.add_command(label="Run current line", command=self.RunLineCommand)
         runmenu.add_command(label="Run selection", command=self.RunSelectionCommand)
-       
+
         helpmenu = Menu(menu,tearoff=0,bd=1,activeborderwidth=0)
         menu.add_cascade(label="Help", underline=0, menu=helpmenu)
         helpmenu.add_command(label="Help", underline=0, accelerator='F1',command=self.ShowHelpCommand)
@@ -494,9 +494,9 @@ class PypeTkPad(object):
         self.master.bind("<Control-KeyPress-r>", self.RunAllHandler)
         self.master.bind("<KeyPress-F1>", self.ShowHelpHandler)
         self.master.bind("<KeyPress>", self.KeyPressHandler)
-        
+
         self.wordIndex = ['1.0','1.0']
-               
+
         self.suggestionswindow = Toplevel(bg='#ffffff',bd=0,height=50,width=600,highlightthickness=0,takefocus=True)
         self.suggestionswindow.overrideredirect(1)
         self.suggestionslist = Listbox(self.suggestionswindow,bg='#ffffff',bd=1,fg='#336699',activestyle='none',highlightthickness=0,height=9)
@@ -507,7 +507,7 @@ class PypeTkPad(object):
 
         self.master.rowconfigure(0,weight=1)
         self.master.columnconfigure(0,weight=1)
-        content = Frame(self.master,bd=0,padx=2,pady=2) 
+        content = Frame(self.master,bd=0,padx=2,pady=2)
         content.grid(row=0,column=0,sticky=N+S+W+E)
         content.rowconfigure(0,weight=1,minsize=50)
         content.rowconfigure(1,weight=0)
@@ -516,36 +516,36 @@ class PypeTkPad(object):
         panes = PanedWindow(content,orient=VERTICAL,bd=1,sashwidth=8,sashpad=0,sashrelief=RAISED,showhandle=True)
         panes.grid(row=0,column=0,sticky=N+S+W+E)
 
-        frame1 = Frame(panes,bd=0) 
+        frame1 = Frame(panes,bd=0)
         frame1.grid(row=0,column=0,sticky=N+S+W+E)
         frame1.columnconfigure(0,weight=1)
         frame1.columnconfigure(1,weight=0)
         frame1.rowconfigure(0,weight=1)
 
-        panes.add(frame1,height=300,minsize=20)        
+        panes.add(frame1,height=300,minsize=20)
 
-        frame2 = Frame(panes,bd=0) 
+        frame2 = Frame(panes,bd=0)
         frame2.grid(row=1,column=0,sticky=N+S+W+E)
         frame2.columnconfigure(0,weight=1)
         frame2.columnconfigure(1,weight=0)
         frame2.rowconfigure(0,weight=1)
-        
-        panes.add(frame2,minsize=20) 
- 
+
+        panes.add(frame2,minsize=20)
+
         self.text_input = Text(frame1, bg='#ffffff',bd=1,highlightthickness=0)
 
         self.text_input.bind("<KeyPress>", self.KeyPressHandler)
         self.text_input.bind("<Button-3>", self.PopupHandler)
         self.text_input.bind("<Control-Return>", self.RunKeyboardHandler)
- 
+
         self.input_scrollbar = Scrollbar(frame1,orient=VERTICAL,command=self.text_input.yview)
-        self.text_input["yscrollcommand"] = self.input_scrollbar.set    
+        self.text_input["yscrollcommand"] = self.input_scrollbar.set
 
         self.text_output = Text(frame2,state=DISABLED,bd=1,bg='#ffffff',highlightthickness=0)
-        
+
         self.output_scrollbar = Scrollbar(frame2,orient=VERTICAL,command=self.text_output.yview)
-        self.text_output["yscrollcommand"] = self.output_scrollbar.set    
-      
+        self.text_output["yscrollcommand"] = self.output_scrollbar.set
+
         self.text_entry = Entry(content,bd=1,bg='#ffffff',state=DISABLED,highlightthickness=0)
 
         self.text_input.focus_set()
@@ -584,7 +584,7 @@ def RunPypeTkPad():
     root.mainloop()
 
     pypeProcess.terminate()
- 
+
 if __name__=='__main__':
 
     RunPypeTkPad()

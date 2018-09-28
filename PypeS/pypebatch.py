@@ -10,8 +10,8 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
 
@@ -42,7 +42,7 @@ class pypeBatch(object):
         for i in range(indent):
             indentation = indentation + indentUnit
         print(indentation + logMessage)
-        
+
     def PrintError(self,logMessage):
         print(logMessage)
 
@@ -90,10 +90,14 @@ class pypeBatch(object):
             #   1) is a class defined within the script
             #   2) the class is a subclass of pypes.pypescript
             scriptObjectClasses = [x for x in dir(module) if isclass(getattr(module, x)) and issubclass(getattr(module, x), pypes.pypeScript)]
-            scriptObjectClassName = scriptObjectClasses[0]
+            try:
+                assert len(scriptObjectClasses) == 1
+                scriptObjectClassName = scriptObjectClasses[0]
+            except AssertionError:
+                scriptObjectClassName = ''
         except ImportError as e:
             self.PrintError(str(e))
-        
+
         fileNames = os.listdir(self.Directory)
 
         for fileName in fileNames:
