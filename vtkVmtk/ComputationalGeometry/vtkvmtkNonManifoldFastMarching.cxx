@@ -63,6 +63,7 @@ vtkvmtkNonManifoldFastMarching::vtkvmtkNonManifoldFastMarching()
 
   this->AllowLineUpdate = 1;
   this->UpdateFromConsidered = 1;
+  this->StopSeedId = NULL;
 }
 
 vtkvmtkNonManifoldFastMarching::~vtkvmtkNonManifoldFastMarching()
@@ -91,6 +92,11 @@ vtkvmtkNonManifoldFastMarching::~vtkvmtkNonManifoldFastMarching()
     this->CostFunctionArrayName = NULL;
     }
 
+  if (this->StopSeedId)
+    {
+    this->StopSeedId->Delete();
+    this->StopSeedId = NULL;
+    }
   this->TScalars->Delete();
   this->StatusScalars->Delete();
   this->ConsideredMinHeap->Delete();
@@ -614,7 +620,16 @@ void vtkvmtkNonManifoldFastMarching::Propagate(vtkPolyData* input)
     this->UpdateNeighborhood(input,trialId);
 
     currentTravelTime = this->TScalars->GetValue(trialId);
-
+    
+    // This will stop execution once the front has propogated from the source point to the
+    // Stop point (in the case where StopSeedId is set. Default is NULL)
+    if (this->StopSeedId)
+    {
+      if (trialId == this->StopSeedId->GetId(0))
+      {
+        break;
+      }
+    }
     if ((this->StopNumberOfPoints)||(this->StopTravelTime))
       {
       if ((this->NumberOfAcceptedPoints >= this->StopNumberOfPoints)||(currentTravelTime - this->StopTravelTime > VTK_VMTK_DOUBLE_TOL))

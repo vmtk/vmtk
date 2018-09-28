@@ -31,6 +31,7 @@ set(SCRIPTS_SRCS
   vmtkcenterlines.py
   vmtkcenterlinesections.py
   vmtkcenterlinesmoothing.py
+  vmtkcenterlinesnetwork.py
   vmtkcenterlineviewer.py
   vmtkdelaunayvoronoi.py
   vmtkdistancetocenterlines.py
@@ -150,10 +151,8 @@ set(SCRIPTS_SRCS
 option(VMTK_CONTRIB_SCRIPTS "Install modules from the vmtkScripts/contrib directory." OFF)
 
 if (VMTK_CONTRIB_SCRIPTS)
-  subdirs(contrib)
+  add_subdirectory(contrib)
 endif (VMTK_CONTRIB_SCRIPTS)
-
-subdirs(resources)
 
 if(NOT VMTK_SCRIPTS_INSTALL_BIN_DIR)
   set(VMTK_SCRIPTS_INSTALL_BIN_DIR bin)
@@ -163,7 +162,9 @@ if(NOT VMTK_SCRIPTS_INSTALL_LIB_DIR)
   set(VMTK_SCRIPTS_INSTALL_LIB_DIR lib/${VMTK_PYTHON_VERSION}/site-packages/vmtk/vmtkscripts)
 endif(NOT VMTK_SCRIPTS_INSTALL_LIB_DIR)
 
-foreach (SCRIPT_FILE ${SCRIPTS_SRCS})
+add_subdirectory(resources)
+
+foreach (SCRIPT_FILE  ${SCRIPTS_SRCS})
   configure_file(${VMTK_SCRIPTS_SOURCE_DIR}/${SCRIPT_FILE} ${VMTK_SCRIPTS_BINARY_DIR}/${SCRIPT_FILE} COPYONLY)
 endforeach (SCRIPT_FILE)
 
@@ -185,4 +186,3 @@ install(PROGRAMS ${STRIPPED_SCRIPTS_SRCS}
   COMPONENT RuntimeExecutables)
 
 endif (NOT WIN32 AND NOT VMTK_MINIMAL_INSTALL)
-

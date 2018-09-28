@@ -44,6 +44,7 @@ requirements:
     - h5py
     - setuptools              # [win]
     - mesa                    # [linux]
+    - joblib
 
   run:
     - python {{ python }}
@@ -53,6 +54,7 @@ requirements:
     - numpy <=1.13
     - h5py
     - mesa                    # [linux]
+    - joblib
 
 test:
   source_files:

@@ -91,6 +91,11 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkNonManifoldFastMarching : pu
   vtkGetObjectMacro(Seeds,vtkIdList);
 
   // Description:
+  // (Set/Get) when set, the algorithm will terminate when the front has propagated from the (source) "Seeds" to this (target) "Seed".  
+  vtkSetObjectMacro(StopSeedId,vtkIdList);
+  vtkGetObjectMacro(StopSeedId,vtkIdList);
+
+  // Description:
   // Set/Get poly data were boundary conditions are specified.
   vtkSetObjectMacro(BoundaryPolyData,vtkPolyData);
   vtkGetObjectMacro(BoundaryPolyData,vtkPolyData);
@@ -154,6 +159,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkNonManifoldFastMarching : pu
   vtkvmtkMinHeap* ConsideredMinHeap;
 
   vtkIdList* Seeds;
+  vtkIdList* StopSeedId;
   vtkPolyData* BoundaryPolyData;
 
   double Regularization;

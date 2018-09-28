@@ -189,4 +189,3 @@ def test_import_vmtkScripts(vmtk_scripts):
     print(vmtk_scripts)
     for name in vmtk_scripts:
         assert importlib.import_module(name)
-

@@ -22,7 +22,7 @@ bash miniconda.sh -b -p $CONDA_INSTALL_LOCN
 export PATH=${CONDA_INSTALL_LOCN}/bin:$PATH
 conda config --set always_yes true
 
-conda install --quiet -y conda conda-build anaconda-client
+conda install --quiet -y conda conda-build==3.9.2 anaconda-client
 
 # set the ordering of additional channels
 conda config --prepend channels vmtk
