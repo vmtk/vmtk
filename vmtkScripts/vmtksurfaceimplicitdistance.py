@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 ## Program:   VMTK
-## Module:    $RCSfile: vmtksurfacecliploop.py,v $
+## Module:    $RCSfile: vmtksurfaceimplicitdistance.py,v $
 ## Language:  Python
 ## Date:      $Date: 2014/10/24 16:35:13 $
 ## Version:   $Revision: 1.10 $
@@ -24,9 +24,8 @@ import sys
 
 from vmtk import vtkvmtk
 from vmtk import pypes
-from vmtk import vmtkscripts
 
-vmtksurfaceimplicitdistance = 'vmtkSurfaceImplicitDistance'
+
 
 class vmtkSurfaceImplicitSurface(pypes.pypeScript):
 
@@ -39,20 +38,18 @@ class vmtkSurfaceImplicitSurface(pypes.pypeScript):
         self.ImplicitDistanceArrayName = 'ImplicitDistance'
         self.ComputeUnsigned = 0
         self.UnsignedImplicitDistanceArrayName = 'UnsignedImplicitDistance'
-        self.Radius = 1
-        self.GradTolerance = 0.05
 
         self.SetScriptName('vmtksurfaceimplicitdistance')
         self.SetScriptDoc('define an implicit description of a reference surface in the input surface')
         self.SetInputMembers([
-            ['Surface','i','vtkUnstructuredGrid',1,'','the input surface','vmtksurfacereader'],
+            ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
             ['ReferenceSurface','r','vtkPolyData',1,'','the reference surface','vmtksurfacereader'],
             ['ImplicitDistanceArrayName','implicitdistancearray','str',1,'','name of the array of the surface where the implicit distance is stored'],
             ['ComputeUnsigned','computeunsigned','bool',1,'','compute unsigned implicit distance'],
             ['UnsignedImplicitDistanceArrayName','unsignedimplicitdistancearray','str',1,'','name of the array of the surface where the unsigned implicit surface is stored']
             ])
         self.SetOutputMembers([
-            ['Surface','o','vtkUnstructuredGrid',1,'','the output surface','vmtksurfacewriter']
+            ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter']
             ])
 
     def Execute(self):
