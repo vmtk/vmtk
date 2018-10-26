@@ -78,6 +78,7 @@ set(SCRIPTS_SRCS
   vmtkmeshlambda2.py
   vmtkmeshlinearize.py
   vmtkmeshgenerator.py
+  vmtkmeshimplicitdistance.py
   vmtkmeshmergetimesteps.py
   vmtkmeshpolyballevaluation.py
   vmtkmeshprojection.py
