@@ -75,6 +75,7 @@ __all__ = [
     'vmtk.vmtkmeshlambda2',
     'vmtk.vmtkmeshlinearize',
     'vmtk.vmtkmeshgenerator',
+    'vmtk.vmtkmeshimplicitdistance.py',
     'vmtk.vmtkmeshmergetimesteps',
     'vmtk.vmtkmeshpolyballevaluation',
     'vmtk.vmtkmeshprojection',
