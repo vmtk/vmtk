@@ -121,6 +121,7 @@ set(SCRIPTS_SRCS
   vmtksurfacedecimation.py
   vmtksurfacedistance.py
   vmtksurfaceendclipper.py
+  vmtksurfaceimplicitdistance.py
   vmtksurfacekiteremoval.py
   vmtksurfaceloopextraction.py
   vmtksurfacemassproperties.py
