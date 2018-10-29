@@ -80,6 +80,7 @@ __all__ = [
     'vmtk.vmtkmeshpolyballevaluation',
     'vmtk.vmtkmeshprojection',
     'vmtk.vmtkmeshreader',
+    'vmtk.vmtkmeshrefinement',
     'vmtk.vmtkmeshscaling',
     'vmtk.vmtkmeshtetrahedralize',
     'vmtk.vmtkmeshtonumpy',
