@@ -50,7 +50,6 @@ class vmtkSurfaceImplicitSurface(pypes.pypeScript):
             ['ImplicitDistanceArrayName','implicitdistancearray','str',1,'','name of the array of the surface where the implicit distance is stored'],
             ['ComputeUnsigned','computeunsigned','bool',1,'','compute unsigned implicit distance'],
             ['UnsignedImplicitDistanceArrayName','unsignedimplicitdistancearray','str',1,'','name of the array of the surface where the unsigned implicit surface is stored'],
-            ['ComputeUnsigned','computeunsigned','bool',1,'','compute unsigned implicit distance'],
             ['Binary','binary','bool',1,'','fill the implicit distance array with inside/outside value instead of signed distance value'],
             ['InsideValue','inside','float',1,'','value with which the surface is filled where the distance is negative'],
             ['OutsideValue','outside','float',1,'','value with which the surface is filled where the distance is positive']
