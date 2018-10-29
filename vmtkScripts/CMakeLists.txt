@@ -83,6 +83,7 @@ set(SCRIPTS_SRCS
   vmtkmeshpolyballevaluation.py
   vmtkmeshprojection.py
   vmtkmeshreader.py
+  vmtkmeshrefinement.py
   vmtkmeshscaling.py
   vmtkmeshtetrahedralize.py
   vmtkmeshtosurface.py
