@@ -27,7 +27,7 @@ from vmtk import pypes
 
 
 
-class vmtkSurfaceImplicitSurface(pypes.pypeScript):
+class vmtkSurfaceImplicitDistance(pypes.pypeScript):
 
     def __init__(self):
 
@@ -43,7 +43,7 @@ class vmtkSurfaceImplicitSurface(pypes.pypeScript):
         self.CellData = 0
 
         self.SetScriptName('vmtksurfaceimplicitdistance')
-        self.SetScriptDoc('compute a signed implicit distance from a reference surface in an input surface')
+        self.SetScriptDoc('compute distance from a reference surface in an input surface')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
             ['ReferenceSurface','r','vtkPolyData',1,'','the reference surface','vmtksurfacereader'],
