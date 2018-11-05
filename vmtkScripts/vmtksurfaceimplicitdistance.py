@@ -36,23 +36,23 @@ class vmtkSurfaceImplicitSurface(pypes.pypeScript):
         self.ReferenceSurface = None
         self.Surface = None
         self.ImplicitDistanceArrayName = 'ImplicitDistance'
-        self.ComputeUnsigned = 0
-        self.UnsignedImplicitDistanceArrayName = 'UnsignedImplicitDistance'
+        self.ComputeSignedDistance = 1
         self.Binary = 0
         self.OutsideValue = 1.0
         self.InsideValue = 0.0
+        self.CellData = 0
 
         self.SetScriptName('vmtksurfaceimplicitdistance')
         self.SetScriptDoc('compute a signed implicit distance from a reference surface in an input surface')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
             ['ReferenceSurface','r','vtkPolyData',1,'','the reference surface','vmtksurfacereader'],
-            ['ImplicitDistanceArrayName','implicitdistancearray','str',1,'','name of the array of the surface where the implicit distance is stored'],
-            ['ComputeUnsigned','computeunsigned','bool',1,'','compute unsigned implicit distance'],
-            ['UnsignedImplicitDistanceArrayName','unsignedimplicitdistancearray','str',1,'','name of the array of the surface where the unsigned implicit surface is stored'],
-            ['Binary','binary','bool',1,'','fill the implicit distance array with inside/outside value instead of signed distance value'],
+            ['ImplicitDistanceArrayName','distancearray','str',1,'','name of the array of the surface where the implicit distance is stored'],
+            ['ComputeSignedDistance','signeddistance','bool',1,'','if true compute signed distance, else unsigned distance'],
+            ['Binary','binary','bool',1,'','fill the distance array with inside/outside values instead of distance values (overwrite the signeddistance value)  '],
             ['InsideValue','inside','float',1,'','value with which the surface is filled where the distance is negative'],
-            ['OutsideValue','outside','float',1,'','value with which the surface is filled where the distance is positive']
+            ['OutsideValue','outside','float',1,'','value with which the surface is filled where the distance is positive'],
+            ['CellData','celldata','bool',1,'','output in a Cell Data array (instead of a Point Data array)'],
             ])
         self.SetOutputMembers([
             ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter']
@@ -69,32 +69,38 @@ class vmtkSurfaceImplicitSurface(pypes.pypeScript):
         self.PrintLog('Computing Implicit Distance...')
 
         implicitPolyDataDistance = vtk.vtkImplicitPolyDataDistance()
-        implicitPolyDataDistance.SetInput(self.ReferenceSurface)
+        implicitPolyDataDistance.SetInput( self.ReferenceSurface )
 
-        numberOfNodes = self.Surface.GetNumberOfPoints()
-        implicitDistanceArray = vtk.vtkDoubleArray()
-        implicitDistanceArray.SetName(self.ImplicitDistanceArrayName)
-        implicitDistanceArray.SetNumberOfComponents(1)
-        implicitDistanceArray.SetNumberOfTuples(numberOfNodes)
-        self.Surface.GetPointData().AddArray(implicitDistanceArray)
-
-        if self.Binary:
-            for i in range(numberOfNodes):
-                value = self.OutsideValue
-                if implicitPolyDataDistance.EvaluateFunction( self.Surface.GetPoint(i) ) < 0.:
-                    value = self.InsideValue
-                implicitDistanceArray.SetComponent( i, 0, value )
+        if self.CellData:
+            numberOfNodes = self.Surface.GetNumberOfCells()
         else:
-            for i in range(numberOfNodes):
-                implicitDistanceArray.SetComponent( i, 0, implicitPolyDataDistance.EvaluateFunction( self.Surface.GetPoint(i) ) )
-            if self.ComputeUnsigned:
-                unsignedImplicitDistanceArray = vtk.vtkDoubleArray()
-                unsignedImplicitDistanceArray.SetName(self.UnsignedImplicitDistanceArrayName)
-                unsignedImplicitDistanceArray.SetNumberOfComponents(1)
-                unsignedImplicitDistanceArray.SetNumberOfTuples(numberOfNodes)
-                self.Surface.GetPointData().AddArray(unsignedImplicitDistanceArray)
-                for i in range(numberOfNodes):
-                    unsignedImplicitDistanceArray.SetComponent( i, 0, abs( implicitDistanceArray.GetComponent( i, 0 ) ) )
+            numberOfNodes = self.Surface.GetNumberOfPoints()
+        implicitDistanceArray = vtk.vtkDoubleArray()
+        implicitDistanceArray.SetName( self.ImplicitDistanceArrayName )
+        implicitDistanceArray.SetNumberOfComponents( 1 )
+        implicitDistanceArray.SetNumberOfTuples( numberOfNodes )
+        if self.CellData:
+            self.Surface.GetCellData().AddArray( implicitDistanceArray )
+        else:
+            self.Surface.GetPointData().AddArray( implicitDistanceArray )
+
+        for i in range( numberOfNodes ):
+            if self.CellData:
+                # this should be the center of the cell, not the point 0
+                inputPoint = self.Surface.GetCell(i).GetPoints().GetPoint(0)
+            else:
+                inputPoint = self.Surface.GetPoint(i)
+            signedDistance = implicitPolyDataDistance.EvaluateFunction( inputPoint )
+            if self.Binary:
+                if signedDistance < 0.:
+                    value = self.InsideValue
+                else:
+                    value = self.OutsideValue
+            elif self.ComputeSignedDistance:
+                value = signedDistance
+            else:
+                value = abs( signedDistance )
+            implicitDistanceArray.SetComponent( i, 0, value )
 
 
 
