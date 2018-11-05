@@ -27,7 +27,7 @@ from vmtk import pypes
 
 
 
-class vmtkMeshImplicitMesh(pypes.pypeScript):
+class vmtkMeshImplicitDistance(pypes.pypeScript):
 
     def __init__(self):
 
@@ -36,26 +36,26 @@ class vmtkMeshImplicitMesh(pypes.pypeScript):
         self.ReferenceSurface = None
         self.Mesh = None
         self.ImplicitDistanceArrayName = 'ImplicitDistance'
-        self.ComputeUnsigned = 0
-        self.UnsignedImplicitDistanceArrayName = 'UnsignedImplicitDistance'
+        self.ComputeSignedDistance = 1
         self.Binary = 0
         self.OutsideValue = 1.0
         self.InsideValue = 0.0
+        self.CellData = 0
 
         self.SetScriptName('vmtkmeshimplicitdistance')
-        self.SetScriptDoc('define an implicit description of a reference Mesh in the input Mesh')
+        self.SetScriptDoc('compute distance from a reference surface in an input mesh')
         self.SetInputMembers([
             ['Mesh','i','vtkUnstructuredGrid',1,'','the input mesh','vmtkmeshreader'],
             ['ReferenceSurface','r','vtkPolyData',1,'','the reference surface','vmtksurfacereader'],
-            ['ImplicitDistanceArrayName','implicitdistancearray','str',1,'','name of the array of the Mesh where the implicit distance is stored'],
-            ['ComputeUnsigned','computeunsigned','bool',1,'','compute unsigned implicit distance'],
-            ['UnsignedImplicitDistanceArrayName','unsignedimplicitdistancearray','str',1,'','name of the array of the Mesh where the unsigned implicit Mesh is stored'],
-            ['Binary','binary','bool',1,'','fill the implicit distance array with inside/outside value instead of signed distance value'],
+            ['ImplicitDistanceArrayName','distancearray','str',1,'','name of the array of the surface where the implicit distance is stored'],
+            ['ComputeSignedDistance','signeddistance','bool',1,'','if true compute signed distance, else unsigned distance'],
+            ['Binary','binary','bool',1,'','fill the distance array with inside/outside values instead of distance values (overwrite the signeddistance value)  '],
             ['InsideValue','inside','float',1,'','value with which the surface is filled where the distance is negative'],
-            ['OutsideValue','outside','float',1,'','value with which the surface is filled where the distance is positive']
+            ['OutsideValue','outside','float',1,'','value with which the surface is filled where the distance is positive'],
+            ['CellData','celldata','bool',1,'','output in a Cell Data array (instead of a Point Data array)'],
             ])
         self.SetOutputMembers([
-            ['Mesh','o','vtkUnstructuredGrid',1,'','the output Mesh','vmtkmeshwriter']
+            ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh','vmtkmeshwriter']
             ])
 
     def Execute(self):
@@ -69,32 +69,38 @@ class vmtkMeshImplicitMesh(pypes.pypeScript):
         self.PrintLog('Computing Implicit Distance...')
 
         implicitPolyDataDistance = vtk.vtkImplicitPolyDataDistance()
-        implicitPolyDataDistance.SetInput(self.ReferenceSurface)
+        implicitPolyDataDistance.SetInput( self.ReferenceSurface )
 
-        numberOfNodes = self.Mesh.GetNumberOfPoints()
-        implicitDistanceArray = vtk.vtkDoubleArray()
-        implicitDistanceArray.SetName(self.ImplicitDistanceArrayName)
-        implicitDistanceArray.SetNumberOfComponents(1)
-        implicitDistanceArray.SetNumberOfTuples(numberOfNodes)
-        self.Mesh.GetPointData().AddArray(implicitDistanceArray)
-
-        if self.Binary:
-            for i in range(numberOfNodes):
-                value = self.OutsideValue
-                if implicitPolyDataDistance.EvaluateFunction( self.Mesh.GetPoint(i) ) < 0.:
-                    value = self.InsideValue
-                implicitDistanceArray.SetComponent( i, 0, value )
+        if self.CellData:
+            numberOfNodes = self.Mesh.GetNumberOfCells()
         else:
-            for i in range(numberOfNodes):
-                implicitDistanceArray.SetComponent( i, 0, implicitPolyDataDistance.EvaluateFunction( self.Mesh.GetPoint(i) ) )
-            if self.ComputeUnsigned:
-                unsignedImplicitDistanceArray = vtk.vtkDoubleArray()
-                unsignedImplicitDistanceArray.SetName(self.UnsignedImplicitDistanceArrayName)
-                unsignedImplicitDistanceArray.SetNumberOfComponents(1)
-                unsignedImplicitDistanceArray.SetNumberOfTuples(numberOfNodes)
-                self.Mesh.GetPointData().AddArray(unsignedImplicitDistanceArray)
-                for i in range(numberOfNodes):
-                    unsignedImplicitDistanceArray.SetComponent( i, 0, abs( implicitDistanceArray.GetComponent( i, 0 ) ) )
+            numberOfNodes = self.Mesh.GetNumberOfPoints()
+        implicitDistanceArray = vtk.vtkDoubleArray()
+        implicitDistanceArray.SetName( self.ImplicitDistanceArrayName )
+        implicitDistanceArray.SetNumberOfComponents( 1 )
+        implicitDistanceArray.SetNumberOfTuples( numberOfNodes )
+        if self.CellData:
+            self.Mesh.GetCellData().AddArray( implicitDistanceArray )
+        else:
+            self.Mesh.GetPointData().AddArray( implicitDistanceArray )
+
+        for i in range( numberOfNodes ):
+            if self.CellData:
+                # this should be the center of the cell, not the point 0
+                inputPoint = self.Mesh.GetCell(i).GetPoints().GetPoint(0)
+            else:
+                inputPoint = self.Mesh.GetPoint(i)
+            signedDistance = implicitPolyDataDistance.EvaluateFunction( inputPoint )
+            if self.Binary:
+                if signedDistance < 0.:
+                    value = self.InsideValue
+                else:
+                    value = self.OutsideValue
+            elif self.ComputeSignedDistance:
+                value = signedDistance
+            else:
+                value = abs( signedDistance )
+            implicitDistanceArray.SetComponent( i, 0, value )
 
 
 
