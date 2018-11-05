@@ -92,7 +92,7 @@ class vmtkMeshImplicitMesh(pypes.pypeScript):
                 unsignedImplicitDistanceArray.SetName(self.UnsignedImplicitDistanceArrayName)
                 unsignedImplicitDistanceArray.SetNumberOfComponents(1)
                 unsignedImplicitDistanceArray.SetNumberOfTuples(numberOfNodes)
-                self.Surface.GetPointData().AddArray(unsignedImplicitDistanceArray)
+                self.Mesh.GetPointData().AddArray(unsignedImplicitDistanceArray)
                 for i in range(numberOfNodes):
                     unsignedImplicitDistanceArray.SetComponent( i, 0, abs( implicitDistanceArray.GetComponent( i, 0 ) ) )
 
