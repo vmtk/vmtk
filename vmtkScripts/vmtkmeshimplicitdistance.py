@@ -81,13 +81,18 @@ class vmtkMeshImplicitDistance(pypes.pypeScript):
         implicitDistanceArray.SetNumberOfTuples( numberOfNodes )
         if self.CellData:
             self.Mesh.GetCellData().AddArray( implicitDistanceArray )
+            cellCenterParametric = [0., 0., 0.]
+            cellCenter = [0., 0., 0.]
+            cellWeights = [0., 0., 0.]
         else:
             self.Mesh.GetPointData().AddArray( implicitDistanceArray )
 
         for i in range( numberOfNodes ):
             if self.CellData:
-                # this should be the center of the cell, not the point 0
-                inputPoint = self.Mesh.GetCell(i).GetPoints().GetPoint(0)
+                cellSubId = self.Mesh.GetCell(i).GetParametricCenter( cellCenterParametric )
+                subId = vtk.mutable( cellSubId )
+                self.Mesh.GetCell(i).EvaluateLocation( subId, cellCenterParametric, cellCenter, cellWeights ) 
+                inputPoint = cellCenter
             else:
                 inputPoint = self.Mesh.GetPoint(i)
             signedDistance = implicitPolyDataDistance.EvaluateFunction( inputPoint )
