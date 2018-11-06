@@ -84,16 +84,16 @@ int vtkvmtkTetGenReader::RequestData(
     return 1;
     }
 
-  if (!this->FileName)
+  if (!this->GetFileName())
     {
     vtkErrorMacro(<<"FileName not set.");
     return 1;
     }
 
-  std::string nodeFileName = this->FileName;
+  std::string nodeFileName = this->GetFileName();
   nodeFileName += ".node";
 
-  std::string eleFileName = this->FileName;
+  std::string eleFileName = this->GetFileName();
   eleFileName += ".ele";
 
   ifstream nodeStream(nodeFileName.c_str());

@@ -61,7 +61,7 @@ int vtkvmtkXdaReader::RequestData(
     return 1;
     }
 
-  if (!this->FileName)
+  if (!this->GetFileName())
     {
     vtkErrorMacro(<<"FileName not set.");
     return 1;
