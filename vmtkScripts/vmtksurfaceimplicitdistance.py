@@ -81,13 +81,18 @@ class vmtkSurfaceImplicitDistance(pypes.pypeScript):
         implicitDistanceArray.SetNumberOfTuples( numberOfNodes )
         if self.CellData:
             self.Surface.GetCellData().AddArray( implicitDistanceArray )
+            cellCenterParametric = [0., 0., 0.]
+            cellCenter = [0., 0., 0.]
+            cellWeights = [0., 0., 0.]
         else:
             self.Surface.GetPointData().AddArray( implicitDistanceArray )
 
         for i in range( numberOfNodes ):
             if self.CellData:
-                # this should be the center of the cell, not the point 0
-                inputPoint = self.Surface.GetCell(i).GetPoints().GetPoint(0)
+                cellSubId = self.Surface.GetCell(i).GetParametricCenter( cellCenterParametric )
+                subId = vtk.mutable( cellSubId )
+                self.Surface.GetCell(i).EvaluateLocation( subId, cellCenterParametric, cellCenter, cellWeights ) 
+                inputPoint = cellCenter
             else:
                 inputPoint = self.Surface.GetPoint(i)
             signedDistance = implicitPolyDataDistance.EvaluateFunction( inputPoint )
