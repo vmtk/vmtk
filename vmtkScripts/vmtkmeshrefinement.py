@@ -77,9 +77,9 @@ class vmtkMeshRefinement(pypes.pypeScript):
         surface = meshToSurface.Surface
 
         threshold = vtk.vtkThreshold()
-        threshold.SetInputData(self.Mesh)
-        threshold.ThresholdBetween(self.InterfaceLabel-0.5,self.InterfaceLabel+0.5)
-        threshold.SetInputArrayToProcess(0, 0, 0, 1, self.CellEntityIdsArrayName)
+        threshold.SetInputData( self.Mesh )
+        threshold.ThresholdBetween( self.InterfaceLabel - 0.5, self.InterfaceLabel + 0.5 )
+        threshold.SetInputArrayToProcess( 0, 0, 0, 1, self.CellEntityIdsArrayName )
         threshold.Update()
         meshToSurface = vmtkscripts.vmtkMeshToSurface()
         meshToSurface.Mesh = threshold.GetOutput()
@@ -89,20 +89,22 @@ class vmtkMeshRefinement(pypes.pypeScript):
         self.PrintLog("Computing refined sizing function")
         numberOfNodes = self.Mesh.GetNumberOfPoints()
         refinedSizingArray = vtk.vtkDoubleArray()
-        refinedSizingArray.SetName(self.RefinedSizingFunctionArrayName)
-        refinedSizingArray.SetNumberOfComponents(1)
-        refinedSizingArray.SetNumberOfTuples(numberOfNodes)
-        self.Mesh.GetPointData().AddArray(refinedSizingArray)
-        
-        distanceArray = self.Mesh.GetPointData().GetArray(self.DistanceArrayName)
+        refinedSizingArray.SetName( self.RefinedSizingFunctionArrayName )
+        refinedSizingArray.SetNumberOfComponents( 1 )
+        refinedSizingArray.SetNumberOfTuples( numberOfNodes )
+        self.Mesh.GetPointData().AddArray( refinedSizingArray )
+
+        distanceArray = self.Mesh.GetPointData().GetArray( self.DistanceArrayName )
+        if distanceArray == None:
+            self.PrintError( 'Error: No Point Data Array called ' + self.DistanceArrayName )
 
         mesh = self.Mesh
-        for i in range(numberOfNodes):
-            distance = distanceArray.GetComponent(i,0)
+        for i in range( numberOfNodes ):
+            distance = distanceArray.GetComponent( i, 0 )
             if self.UseMagnitude:
-                distance = abs(distanceArray.GetComponent(i,0))
+                distance = abs( distance )
             #refinedSizingArray.SetTuple1(i,max(self.SizeMin,min(vmtksize, self.Alpha * pow(distance,self.Beta))))
-            refinedSizingArray.SetTuple1(i,max(self.SizeMin, self.Alpha * pow(distance,self.Beta)))
+            refinedSizingArray.SetTuple1( i, max( self.SizeMin, self.Alpha * pow( distance, self.Beta ) ) )
         
         self.PrintLog("Generating refined mesh")
         tetgen=vmtkscripts.vmtkTetGen()
@@ -127,46 +129,47 @@ class vmtkMeshRefinement(pypes.pypeScript):
         
         self.PrintLog("Projecting surface labels")
         cellToPoint = vtk.vtkCellDataToPointData()
-        cellToPoint.SetInputData(surface)
+        cellToPoint.SetInputData( surface )
         cellToPoint.Update()
         surface2 = cellToPoint.GetPolyDataOutput()
         
-        for j in range(surface2.GetNumberOfPoints()):
-            if (surface2.GetPointData().GetArray(self.CellEntityIdsArrayName).GetComponent(j,0) > 10 ):
-                surface2.GetPointData().GetArray(self.CellEntityIdsArrayName).SetTuple1(j,self.InterfaceLabel)
+        # not really robust
+        for j in range( surface2.GetNumberOfPoints() ):
+            if (surface2.GetPointData().GetArray( self.CellEntityIdsArrayName ).GetComponent( j, 0 ) > 10 ):
+                surface2.GetPointData().GetArray( self.CellEntityIdsArrayName ).SetTuple1( j, self.InterfaceLabel )
         
         projection = vmtkscripts.vmtkSurfaceProjection()
         projection.Surface = surfaceRefined
         projection.ReferenceSurface = surface2
         projection.Execute()
-        
+
         cellList = vtk.vtkIdList()
         surfaceRefined = projection.Surface
-        for i in range(surfaceRefined.GetNumberOfPoints()):
-            if surfaceRefined.GetPointData().GetArray(self.CellEntityIdsArrayName).GetComponent(i,0) != self.InterfaceLabel:
+        for i in range( surfaceRefined.GetNumberOfPoints() ):
+            if surfaceRefined.GetPointData().GetArray( self.CellEntityIdsArrayName ).GetComponent( i, 0 ) != self.InterfaceLabel:
                 valmin = self.InterfaceLabel
-                surfaceRefined.GetPointCells(i,cellList)
-                for j in range(cellList.GetNumberOfIds()):
+                surfaceRefined.GetPointCells( i, cellList )
+                for j in range( cellList.GetNumberOfIds() ):
                     pointList = vtk.vtkIdList()
-                    surfaceRefined.GetCellPoints(cellList.GetId(j),pointList)
+                    surfaceRefined.GetCellPoints( cellList.GetId( j ), pointList )
                     for k in range(0,3):
-                        if surfaceRefined.GetPointData().GetArray(self.CellEntityIdsArrayName).GetComponent(pointList.GetId(k),0) < valmin:
-                            valmin = surfaceRefined.GetPointData().GetArray(self.CellEntityIdsArrayName).GetComponent(pointList.GetId(k),0)
-                surfaceRefined.GetPointData().GetArray(self.CellEntityIdsArrayName).SetTuple1(i,valmin)
+                        if surfaceRefined.GetPointData().GetArray( self.CellEntityIdsArrayName ).GetComponent( pointList.GetId( k ), 0 ) < valmin:
+                            valmin = surfaceRefined.GetPointData().GetArray( self.CellEntityIdsArrayName ).GetComponent( pointList.GetId( k ), 0 )
+                surfaceRefined.GetPointData().GetArray( self.CellEntityIdsArrayName ).SetTuple1( i, valmin )
         
-        surfaceRefined.GetCellData().GetArray(self.CellEntityIdsArrayName).FillComponent(0,self.InterfaceLabel)
+        surfaceRefined.GetCellData().GetArray( self.CellEntityIdsArrayName ).FillComponent( 0, self.InterfaceLabel )
         
-        for i in range(surfaceRefined.GetNumberOfPoints()):
-            if surfaceRefined.GetPointData().GetArray(self.CellEntityIdsArrayName).GetComponent(i,0) != self.InterfaceLabel:
-                value = surfaceRefined.GetPointData().GetArray(self.CellEntityIdsArrayName).GetComponent(i,0)
-                surfaceRefined.GetPointCells(i,cellList)
-                for j in range(cellList.GetNumberOfIds()):
-                    surfaceRefined.GetCellData().GetArray(self.CellEntityIdsArrayName).SetComponent(cellList.GetId(j),0,value)
+        for i in range( surfaceRefined.GetNumberOfPoints() ):
+            if surfaceRefined.GetPointData().GetArray( self.CellEntityIdsArrayName ).GetComponent( i, 0 ) != self.InterfaceLabel:
+                value = surfaceRefined.GetPointData().GetArray( self.CellEntityIdsArrayName ).GetComponent( i, 0 )
+                surfaceRefined.GetPointCells( i, cellList )
+                for j in range( cellList.GetNumberOfIds() ):
+                    surfaceRefined.GetCellData().GetArray( self.CellEntityIdsArrayName ).SetComponent( cellList.GetId( j ), 0, value )
         
         self.PrintLog("Assembling final mesh")
         appendFilter = vtkvmtk.vtkvmtkAppendFilter()
-        appendFilter.AddInputData(surfaceRefined)
-        appendFilter.AddInputData(tetgen.Mesh)
+        appendFilter.AddInputData( surfaceRefined )
+        appendFilter.AddInputData( tetgen.Mesh )
         appendFilter.Update()
         
         self.Mesh = appendFilter.GetOutput()
