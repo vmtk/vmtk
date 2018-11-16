@@ -36,7 +36,7 @@ class vmtkSurfaceModeller2(pypes.pypeScript):
         self.Surface = None
         self.Image = None
         self.Spacing = -1.0
-        self.CorrectSpacing = 0
+        self.CorrectSpacing = 1
         self.ImageVoxelExpansion = 0.
         self.ExpansionDirections = [1, 1, 1, 1, 1, 1]
         self.Binary = 0
