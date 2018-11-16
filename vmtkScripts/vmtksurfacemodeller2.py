@@ -39,6 +39,7 @@ class vmtkSurfaceModeller(pypes.pypeScript):
         self.CorrectSpacing = 0
         self.ImageVoxelExpansion = 0.
         self.ExpansionDirections = [1, 1, 1, 1, 1, 1]
+        self.Binary = 0
         self.NegativeInside = 1
 
         self.SetScriptName('vmtksurfacemodeller')
@@ -49,6 +50,7 @@ class vmtkSurfaceModeller(pypes.pypeScript):
             ['CorrectSpacing','correctspacing','bool',1,'','correct spacing in order to fit exactly the bounding box of the surface'],
             ['ImageVoxelExpansion','imagevoxelexpansion','int',1,'(0.0,)','expansion (in term of number of voxels) of the resulting image bounds compared to the input surface bounding box'],
             ['ExpansionDirections','expansiondirections','bool',6,'','expand only in true direction of this array [-x +x -y +y -z +z]'],
+            ['Binary','binary','bool',1,'','binary image as output (overwrite the signeddistance value)'],
             ['NegativeInside','negativeinside','bool',1,'','toggle sign of distance transform negative inside the surface']
             ])
         self.SetOutputMembers([
@@ -108,7 +110,13 @@ class vmtkSurfaceModeller(pypes.pypeScript):
         sys.stdout.write( "\b" * ( toolbar_width + 1 ) ) # return to start of line, after '['
 
         for i in range(N):
-            scalars.SetTuple1( i, implicitDistanceFilter.EvaluateFunction( self.Image.GetPoint(i) ) )
+            value = implicitDistanceFilter.EvaluateFunction( self.Image.GetPoint(i) )
+            if self.Binary:
+                if value > 0:
+                    value = 1
+                else:
+                    value = 0
+            scalars.SetTuple1( i, value )
             if ( i % ( int( N / toolbar_width ) ) == 0 ):
                 sys.stdout.write("-")
                 sys.stdout.flush()
