@@ -133,6 +133,7 @@ __all__ = [
     'vmtk.vmtksurfacemassproperties',
     'vmtk.vmtksurfacemodeller',
     'vmtk.vmtksurfacemodeller2',
+    'vmtk.vmtksurfacemodellerbooleanoperation',
     'vmtk.vmtksurfacenormals',
     'vmtk.vmtksurfacepointdatatocelldata',
     'vmtk.vmtksurfacepolyballevaluation',
