@@ -129,6 +129,7 @@ set(SCRIPTS_SRCS
   vmtksurfacemassproperties.py
   vmtksurfacemodeller.py
   vmtksurfacemodeller2.py
+  vmtksurfacemodellerbooleanoperation.py
   vmtksurfacenormals.py
   vmtksurfacepointdatatocelldata.py
   vmtksurfacepolyballevaluation.py
