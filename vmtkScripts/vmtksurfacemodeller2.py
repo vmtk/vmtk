@@ -27,7 +27,7 @@ import math
 from vmtk import pypes
 
 
-class vmtkSurfaceModeller(pypes.pypeScript):
+class vmtkSurfaceModeller2(pypes.pypeScript):
 
     def __init__(self):
 
@@ -42,7 +42,7 @@ class vmtkSurfaceModeller(pypes.pypeScript):
         self.Binary = 0
         self.NegativeInside = 1
 
-        self.SetScriptName('vmtksurfacemodeller')
+        self.SetScriptName('vmtksurfacemodeller2')
         self.SetScriptDoc('converts a surface to an image containing the signed distance transform from the surface points')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
