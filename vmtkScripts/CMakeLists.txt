@@ -128,6 +128,7 @@ set(SCRIPTS_SRCS
   vmtksurfaceloopextraction.py
   vmtksurfacemassproperties.py
   vmtksurfacemodeller.py
+  vmtksurfacemodeller2.py
   vmtksurfacenormals.py
   vmtksurfacepointdatatocelldata.py
   vmtksurfacepolyballevaluation.py
