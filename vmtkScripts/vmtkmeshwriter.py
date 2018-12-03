@@ -326,7 +326,7 @@ class vmtkMeshWriter(pypes.pypeScript):
                             'vtk':'vtk',
                             'xda':'xda',
                             'FDNEUT':'fdneut',
-                            'lifev':'lifev',
+                            'mesh':'lifev',
                             'xml':'dolfin',
                             'msh':'fluent',
                             'tec':'tecplot',
