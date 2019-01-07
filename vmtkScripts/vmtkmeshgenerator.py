@@ -106,11 +106,15 @@ class vmtkMeshGenerator(pypes.pypeScript):
         if self.SkipCapping or not self.BoundaryLayerOnCaps:
             self.PrintLog("Not capping surface")
             surface = self.Surface
-            cellEntityIdsArray = vtk.vtkIntArray()
-            cellEntityIdsArray.SetName(self.CellEntityIdsArrayName)
-            cellEntityIdsArray.SetNumberOfTuples(surface.GetNumberOfCells())
-            cellEntityIdsArray.FillComponent(0,0.0)
-            surface.GetCellData().AddArray(cellEntityIdsArray)
+            if surface.GetCellData().GetArray(self.CellEntityIdsArrayName) == None:
+                cellEntityIdsArray = vtk.vtkIntArray()
+                cellEntityIdsArray.SetName(self.CellEntityIdsArrayName)
+                cellEntityIdsArray.SetNumberOfTuples(surface.GetNumberOfCells())
+                cellEntityIdsArray.FillComponent(0,0.0)
+                surface.GetCellData().AddArray(cellEntityIdsArray)
+            else:
+                cellEntityIdsArray = surface.GetCellData().GetArray(self.CellEntityIdsArrayName)
+
         else:
             self.PrintLog("Capping surface")
             capper = vmtkscripts.vmtkSurfaceCapper()
