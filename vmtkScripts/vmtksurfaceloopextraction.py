@@ -80,6 +80,10 @@ class vmtkSurfaceLoopExtraction(pypes.pypeScript):
         self.ContourWidget.Initialize()
 
     def InteractCallback(self, obj):
+        # BUG: the widget is already enabled (see EnabledOn() in Execute()) when
+        # this is first called, so it gets disabled immediately instead of
+        # toggled on. The 'i' key binding below is disabled instead of fixing
+        # this toggle, since the widget is meant to start enabled anyway.
         if self.ContourWidget.GetEnabled() == 1:
             self.ContourWidget.SetEnabled(0)
         else:
@@ -123,17 +127,22 @@ class vmtkSurfaceLoopExtraction(pypes.pypeScript):
         pointPlacer = vtk.vtkPolygonalSurfacePointPlacer()
         pointPlacer.AddProp(self.tagviewer.Actor)
         pointPlacer.GetPolys().AddItem(self.Surface)
+        pointPlacer.SnapToClosestPointOn()
         rep.SetPointPlacer(pointPlacer)
 
         self.Interpolator = vtk.vtkPolygonalSurfaceContourLineInterpolator()
         self.Interpolator.GetPolys().AddItem(self.Surface)
         rep.SetLineInterpolator(self.Interpolator)
 
-        self.InputInfo("Building loop ...\n")
+        self.ContourWidget.EnabledOn()
+        self.InputInfo("Drawing loop ...\n")
 
         self.vmtkRenderer.AddKeyBinding('space','Generate loop',self.LoopCallback)
         self.vmtkRenderer.AddKeyBinding('d','Delete contour',self.DeleteContourCallback)
-        self.vmtkRenderer.AddKeyBinding('i','Start/stop contour drawing',self.InteractCallback)
+        # Disabled rather than fixed, see the BUG note on InteractCallback above.
+        # vmtksurfaceregiondrawing.py has the same widget and works around the
+        # root cause instead, via ContourWidget.KeyPressActivationOff().
+        # self.vmtkRenderer.AddKeyBinding('i','Start/stop contour drawing',self.InteractCallback)
 
         self.Display()
 
