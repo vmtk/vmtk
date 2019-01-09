@@ -80,6 +80,7 @@ class vmtkSurfaceLoopExtraction(pypes.pypeScript):
         self.ContourWidget.Initialize()
 
     def InteractCallback(self, obj):
+        # BUG: enable the widget, but immediately after it is disabled again
         if self.ContourWidget.GetEnabled() == 1:
             self.ContourWidget.SetEnabled(0)
         else:
@@ -129,11 +130,12 @@ class vmtkSurfaceLoopExtraction(pypes.pypeScript):
         self.Interpolator.GetPolys().AddItem(self.Surface)
         rep.SetLineInterpolator(self.Interpolator)
 
-        self.InputInfo("Building loop ...\n")
+        self.ContourWidget.EnabledOn()
+        self.InputInfo("Drawing loop ...\n")
 
         self.vmtkRenderer.AddKeyBinding('space','Generate loop',self.LoopCallback)
         self.vmtkRenderer.AddKeyBinding('d','Delete contour',self.DeleteContourCallback)
-        self.vmtkRenderer.AddKeyBinding('i','Start/stop contour drawing',self.InteractCallback)
+        # self.vmtkRenderer.AddKeyBinding('i','Start/stop contour drawing',self.InteractCallback)
 
         self.Display()
 
