@@ -124,6 +124,7 @@ class vmtkSurfaceLoopExtraction(pypes.pypeScript):
         pointPlacer = vtk.vtkPolygonalSurfacePointPlacer()
         pointPlacer.AddProp(self.tagviewer.Actor)
         pointPlacer.GetPolys().AddItem(self.Surface)
+        pointPlacer.SnapToClosestPointOn()
         rep.SetPointPlacer(pointPlacer)
 
         self.Interpolator = vtk.vtkPolygonalSurfaceContourLineInterpolator()
