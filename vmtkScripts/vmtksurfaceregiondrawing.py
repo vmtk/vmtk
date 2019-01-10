@@ -155,6 +155,7 @@ class vmtkSurfaceRegionDrawing(pypes.pypeScript):
         pointPlacer = vtk.vtkPolygonalSurfacePointPlacer()
         pointPlacer.AddProp(self.Actor)
         pointPlacer.GetPolys().AddItem(self.Surface)
+        pointPlacer.SnapToClosestPointOn()
         rep.SetPointPlacer(pointPlacer)
 
         self.Interpolator = vtk.vtkPolygonalSurfaceContourLineInterpolator()
