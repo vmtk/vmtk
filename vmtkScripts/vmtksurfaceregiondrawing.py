@@ -88,6 +88,16 @@ class vmtkSurfaceRegionDrawing(pypes.pypeScript):
         selectionFilter.Update()
 
         selectionScalars = selectionFilter.GetOutput().GetPointData().GetScalars()
+        selectionScalars.SetName('SelectionFilter')
+
+        if self.CellData:
+            self.Surface.GetPointData().AddArray(selectionScalars)
+            pointDataToCellDataFilter = vtk.vtkPointDataToCellData()
+            pointDataToCellDataFilter.SetInputData(self.Surface)
+            pointDataToCellDataFilter.PassPointDataOn()
+            pointDataToCellDataFilter.Update()
+            self.Surface = pointDataToCellDataFilter.GetPolyDataOutput()
+            selectionScalars = self.Surface.GetCellData().GetArray('SelectionFilter')
 
         for i in range(self.Array.GetNumberOfTuples()):
             selectionValue = selectionScalars.GetTuple1(i)
@@ -98,6 +108,10 @@ class vmtkSurfaceRegionDrawing(pypes.pypeScript):
             else:
                 if selectionValue < 0.0:
                     self.Array.SetTuple1(i,self.InsideValue)
+
+        if self.CellData:
+            self.Surface.GetPointData().RemoveArray('SelectionFilter')
+            self.Surface.GetCellData().RemoveArray('SelectionFilter')
 
         self.Actor.GetMapper().SetScalarRange(self.Array.GetRange(0))
 
@@ -156,7 +170,10 @@ class vmtkSurfaceRegionDrawing(pypes.pypeScript):
             else:
                 self.Surface.GetPointData().AddArray(self.Array)
 
-        self.Surface.GetPointData().SetActiveScalars(self.ArrayName)
+        if self.CellData:
+            self.Surface.GetCellData().SetActiveScalars(self.ArrayName)
+        else:
+            self.Surface.GetPointData().SetActiveScalars(self.ArrayName)
 
         mapper = vtk.vtkPolyDataMapper()
         mapper.SetInputData(self.Surface)
