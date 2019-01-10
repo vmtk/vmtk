@@ -34,20 +34,28 @@ class vmtkSurfaceRegionDrawing(pypes.pypeScript):
         self.Actor = None
         self.ContourWidget = None
         self.Interpolator = None
-        self.Binary = 1
-        self.OutsideValue = 1.0
-        self.InsideValue = 0.0
+        self.OutsideValue = 0.0
+        self.InsideValue = 1.0
+        self.OverwriteOutsideValue = 0
+        self.ComputeDistance = 0
+        self.TagSmallestRegion = 1
 
-        self.ContourScalarsArrayName = 'ContourScalars'
+        self.CellData = 1
+
+        self.ArrayName = 'CellEntityIds'
+        self.Array = None
 
         self.SetScriptName('vmtksurfaceregiondrawing')
-        self.SetScriptDoc('draw a closed contour on a surface and generate a distance field on the surface')
+        self.SetScriptDoc('draw a closed contour on a surface and generate a new tag inside it')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
-            ['Binary','binary','bool',1,'','fill contour with inside value instead of distance to contour'],
+            ['CellData','celldata','bool',1,'','toggle writing point or cell data array'],
             ['InsideValue','inside','float',1,'','value with which the surface within the contour is filled'],
             ['OutsideValue','outside','float',1,'','value with which the surface outside the contour is filled'],
-            ['ContourScalarsArrayName','array','str',1,'','the name of the array where the generated scalars are stored'],
+            ['OverwriteOutsideValue','overwriteoutside','bool',1,'','overwrite outside value also when a tag array already exists in the input surface'],
+            ['ArrayName','array','str',1,'','the name of the self.Array where the generated scalars are stored'],
+            ['TagSmallestRegion','tagsmallestregion','bool',1,'','toggle tagging the smallest or largest region'],
+            ['ComputeDistance','computedistance','bool',1,'','fill the array with the distance to the contour'],
             ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer']
             ])
         self.SetOutputMembers([
@@ -73,24 +81,25 @@ class vmtkSurfaceRegionDrawing(pypes.pypeScript):
         selectionFilter.SetInputData(self.Surface)
         selectionFilter.SetLoop(points)
         selectionFilter.GenerateSelectionScalarsOn()
-        selectionFilter.SetSelectionModeToSmallestRegion()
+        if self.TagSmallestRegion:
+            selectionFilter.SetSelectionModeToSmallestRegion()
+        else:
+            selectionFilter.SetSelectionModeToLargestRegion()
         selectionFilter.Update()
 
         selectionScalars = selectionFilter.GetOutput().GetPointData().GetScalars()
 
-        contourScalars = self.Surface.GetPointData().GetArray(self.ContourScalarsArrayName)
-
-        for i in range(contourScalars.GetNumberOfTuples()):
+        for i in range(self.Array.GetNumberOfTuples()):
             selectionValue = selectionScalars.GetTuple1(i)
-            if self.Binary:
-                if selectionValue < 0.0:
-                    contourScalars.SetTuple1(i,self.InsideValue)
-            else:
-                contourValue = contourScalars.GetTuple1(i)
+            if self.ComputeDistance:
+                contourValue = self.Array.GetTuple1(i)
                 if (not contourValue < 0.0 and selectionValue < 0.0) or (contourValue < 0.0 and selectionValue < contourValue):
-                    contourScalars.SetTuple1(i,selectionValue)
+                    self.Array.SetTuple1(i,selectionValue)
+            else:
+                if selectionValue < 0.0:
+                    self.Array.SetTuple1(i,self.InsideValue)
 
-        self.Actor.GetMapper().SetScalarRange(contourScalars.GetRange(0))
+        self.Actor.GetMapper().SetScalarRange(self.Array.GetRange(0))
 
         self.Surface.Modified()
 
@@ -128,14 +137,26 @@ class vmtkSurfaceRegionDrawing(pypes.pypeScript):
 
         self.Surface = triangleFilter.GetOutput()
 
-        contourScalars = vtk.vtkDoubleArray()
-        contourScalars.SetNumberOfComponents(1)
-        contourScalars.SetNumberOfTuples(self.Surface.GetNumberOfPoints())
-        contourScalars.SetName(self.ContourScalarsArrayName)
-        contourScalars.FillComponent(0,self.OutsideValue)
+        if self.CellData:
+            self.Array = self.Surface.GetCellData().GetArray(self.ArrayName)
+        else:
+            self.Array = self.Surface.GetPointData().GetArray(self.ArrayName)
 
-        self.Surface.GetPointData().AddArray(contourScalars)
-        self.Surface.GetPointData().SetActiveScalars(self.ContourScalarsArrayName)
+        if self.Array == None or self.OverwriteOutsideValue:
+            self.Array = vtk.vtkDoubleArray()
+            self.Array.SetNumberOfComponents(1)
+            if self.CellData:
+                self.Array.SetNumberOfTuples(self.Surface.GetNumberOfCells())
+            else:
+                self.Array.SetNumberOfTuples(self.Surface.GetNumberOfPoints())
+            self.Array.SetName(self.ArrayName)
+            self.Array.FillComponent(0,self.OutsideValue)
+            if self.CellData:
+                self.Surface.GetCellData().AddArray(self.Array)
+            else:
+                self.Surface.GetPointData().AddArray(self.Array)
+
+        self.Surface.GetPointData().SetActiveScalars(self.ArrayName)
 
         mapper = vtk.vtkPolyDataMapper()
         mapper.SetInputData(self.Surface)
