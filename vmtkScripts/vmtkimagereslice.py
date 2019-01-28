@@ -53,6 +53,7 @@ class vmtkImageReslice(pypes.pypeScript):
         self.Scaling = [1.0,1.0,1.0]
         self.NewZDirection = [0.0,0.0,1.0]
         self.NewZDirectionInteractive = 0
+        self.ImageExpansion = 0.0
 
         self.TransformInputSampling = 1
 
@@ -75,6 +76,7 @@ class vmtkImageReslice(pypes.pypeScript):
             ['Scaling','scaling','float',3,'','scaling of the x-,y- and z-directions'],
             ['NewZDirection','zdirection','float',3,'','direction of the new z-axis after rotation (alternative to rotation/translation/scaling)'],
             ['NewZDirectionInteractive','zdirectioninteractive','bool',1,'','interactive select two points defining the direction of the new z-axis after rotation (alternative to rotation/translation/scaling)'],
+            ['ImageExpansion','imageexpansion','float',1,'(0.0,)','expansion (in mm) of the output image bounds compared to the input image'],
             ['TransformInputSampling','transforminputsampling','bool',1,'','transform spacing, origin and extent of the Input (or the InformationInput) according to the direction cosines and origin of the ResliceAxes before applying them as the default output spacing, origin and extent']
             ])
         self.SetOutputMembers([
@@ -92,6 +94,39 @@ class vmtkImageReslice(pypes.pypeScript):
             cast.SetOutputScalarTypeToFloat()
             cast.Update()
             self.Image = cast.GetOutput()
+
+        if self.ImageExpansion != 0.0:
+            bounds = np.array( self.Image.GetBounds() )
+            bounds[0] = bounds[0] - self.ImageExpansion
+            bounds[1] = bounds[1] + self.ImageExpansion
+            bounds[2] = bounds[2] - self.ImageExpansion
+            bounds[3] = bounds[3] + self.ImageExpansion
+            bounds[4] = bounds[4] - self.ImageExpansion
+            bounds[5] = bounds[5] + self.ImageExpansion
+
+            newImage =  vtk.vtkImageData()
+            newImage.SetOrigin(bounds[0],bounds[2],bounds[4])
+            spacing = self.Image.GetSpacing()
+            newImage.SetSpacing(spacing)
+            newImage.SetExtent(
+                0, int(math.ceil((bounds[1]-bounds[0])/spacing[0])),
+                0, int(math.ceil((bounds[3]-bounds[2])/spacing[1])),
+                0, int(math.ceil((bounds[5]-bounds[4])/spacing[2]))
+            )
+            newImage.AllocateScalars( vtk.VTK_FLOAT, 1 )
+
+            scalars = self.Image.GetPointData().GetScalars()
+            dims = newImage.GetDimensions()
+            imageVoxelExpansion = [math.floor(self.ImageExpansion/spacing[0]),math.floor(self.ImageExpansion/spacing[1]),math.floor(self.ImageExpansion/spacing[2])]
+            for z in range(dims[2]):
+                for y in range(dims[1]):
+                    for x in range(dims[0]):
+                        if x<imageVoxelExpansion[0] or x>dims[0]-imageVoxelExpansion[0] or y<imageVoxelExpansion[1] or y>dims[1]-imageVoxelExpansion[1] or  z<imageVoxelExpansion[2] or z>dims[2]-imageVoxelExpansion[2]:
+                            newImage.SetScalarComponentFromFloat(x,y,z,0,self.BackgroundLevel)
+                        else:
+                            value = self.Image.GetScalarComponentAsFloat(x-imageVoxelExpansion[0],y-imageVoxelExpansion[1],z-imageVoxelExpansion[2],0)
+                            newImage.SetScalarComponentFromFloat(x,y,z,0,value)
+            self.Image = newImage
 
         resliceFilter = vtk.vtkImageReslice()
         resliceFilter.SetInputData(self.Image)
