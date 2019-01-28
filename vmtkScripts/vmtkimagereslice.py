@@ -117,11 +117,11 @@ class vmtkImageReslice(pypes.pypeScript):
 
             scalars = self.Image.GetPointData().GetScalars()
             dims = newImage.GetDimensions()
-            imageVoxelExpansion = [math.floor(self.ImageExpansion/spacing[0]),math.floor(self.ImageExpansion/spacing[1]),math.floor(self.ImageExpansion/spacing[2])]
+            imageVoxelExpansion = [math.ceil(self.ImageExpansion/spacing[0]),math.ceil(self.ImageExpansion/spacing[1]),math.ceil(self.ImageExpansion/spacing[2])]
             for z in range(dims[2]):
                 for y in range(dims[1]):
                     for x in range(dims[0]):
-                        if x<imageVoxelExpansion[0] or x>dims[0]-imageVoxelExpansion[0] or y<imageVoxelExpansion[1] or y>dims[1]-imageVoxelExpansion[1] or  z<imageVoxelExpansion[2] or z>dims[2]-imageVoxelExpansion[2]:
+                        if x<imageVoxelExpansion[0] or x>=dims[0]-imageVoxelExpansion[0] or y<imageVoxelExpansion[1] or y>=dims[1]-imageVoxelExpansion[1] or  z<imageVoxelExpansion[2] or z>=dims[2]-imageVoxelExpansion[2]:
                             newImage.SetScalarComponentFromFloat(x,y,z,0,self.BackgroundLevel)
                         else:
                             value = self.Image.GetScalarComponentAsFloat(x-imageVoxelExpansion[0],y-imageVoxelExpansion[1],z-imageVoxelExpansion[2],0)
