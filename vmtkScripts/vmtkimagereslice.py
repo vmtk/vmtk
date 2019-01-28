@@ -21,6 +21,8 @@
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import vtk
 import sys
+import math
+import numpy as np
 
 from vmtk import pypes
 
@@ -49,6 +51,7 @@ class vmtkImageReslice(pypes.pypeScript):
         self.Rotation = [0.0,0.0,0.0]
         self.Translation = [0.0,0.0,0.0]
         self.Scaling = [1.0,1.0,1.0]
+        self.NewZDirection = [0.0,0.0,1.0]
 
         self.TransformInputSampling = 1
 
@@ -69,6 +72,7 @@ class vmtkImageReslice(pypes.pypeScript):
             ['Rotation','rotation','float',3,'','rotations around the x-,y- and z-axis'],
             ['Translation','translation','float',3,'','translation in the x-,y- and z-directions'],
             ['Scaling','scaling','float',3,'','scaling of the x-,y- and z-directions'],
+            ['NewZDirection','zdirection','float',3,'','direction of the new z-axis after rotation (alternative to rotation/translation/scaling)'],
             ['TransformInputSampling','transforminputsampling','bool',1,'','transform spacing, origin and extent of the Input (or the InformationInput) according to the direction cosines and origin of the ResliceAxes before applying them as the default output spacing, origin and extent']
             ])
         self.SetOutputMembers([
@@ -126,6 +130,24 @@ class vmtkImageReslice(pypes.pypeScript):
                 transform.RotateZ(self.Rotation[2])
                 transform.Translate(self.Translation[0], self.Translation[1], self.Translation[2])
                 transform.Scale(self.Scaling[0], self.Scaling[1], self.Scaling[2])
+                self.Matrix4x4 = vtk.vtkMatrix4x4()
+                self.Matrix4x4.DeepCopy(transform.GetMatrix())
+            elif self.NewZDirection != [0.0,0.0,1.0]:
+                self.PrintLog('Setting up transform matrix using the prescribed direction of the new z-axis')
+                norm2 = np.linalg.norm(self.NewZDirection)
+                newZVersor = [self.NewZDirection[0]/norm2,self.NewZDirection[1]/norm2,self.NewZDirection[2]/norm2]
+                rotationAxis = [newZVersor[1],-newZVersor[0],0.0]
+                theta = math.degrees( math.acos( np.dot([0.0,0.0,1.0],newZVersor) ) )
+                bounds = self.Image.GetBounds()
+                offset = [
+                    bounds[0]+(bounds[1]-bounds[0])/2.0,
+                    bounds[2]+(bounds[3]-bounds[2])/2.0,
+                    bounds[4]+(bounds[5]-bounds[4])/2.0
+                ]
+                transform = vtk.vtkTransform()
+                transform.Translate(offset)
+                transform.RotateWXYZ(theta,rotationAxis)
+                transform.Translate(-offset[0],-offset[1],-offset[2])
                 self.Matrix4x4 = vtk.vtkMatrix4x4()
                 self.Matrix4x4.DeepCopy(transform.GetMatrix())
 
