@@ -52,6 +52,7 @@ class vmtkImageReslice(pypes.pypeScript):
         self.Translation = [0.0,0.0,0.0]
         self.Scaling = [1.0,1.0,1.0]
         self.NewZDirection = [0.0,0.0,1.0]
+        self.NewZDirectionInteractive = 0
 
         self.TransformInputSampling = 1
 
@@ -73,6 +74,7 @@ class vmtkImageReslice(pypes.pypeScript):
             ['Translation','translation','float',3,'','translation in the x-,y- and z-directions'],
             ['Scaling','scaling','float',3,'','scaling of the x-,y- and z-directions'],
             ['NewZDirection','zdirection','float',3,'','direction of the new z-axis after rotation (alternative to rotation/translation/scaling)'],
+            ['NewZDirectionInteractive','zdirectioninteractive','bool',1,'','interactive select two points defining the direction of the new z-axis after rotation (alternative to rotation/translation/scaling)'],
             ['TransformInputSampling','transforminputsampling','bool',1,'','transform spacing, origin and extent of the Input (or the InformationInput) according to the direction cosines and origin of the ResliceAxes before applying them as the default output spacing, origin and extent']
             ])
         self.SetOutputMembers([
@@ -118,10 +120,12 @@ class vmtkImageReslice(pypes.pypeScript):
             resliceFilter.TransformInputSamplingOff()
 
         if not self.Matrix4x4:
+
             if self.MatrixCoefficients != []:
                 self.PrintLog('Setting up transform matrix using specified coefficients')
                 self.Matrix4x4 = vtk.vtkMatrix4x4()
                 self.Matrix4x4.DeepCopy(self.MatrixCoefficients)
+
             elif self.Translation != [0.0,0.0,0.0] or self.Rotation != [0.0,0.0,0.0] or self.Scaling != [1.0,1.0,1.0]:
                 self.PrintLog('Setting up transform matrix using specified translation, rotation and/or scaling')
                 transform = vtk.vtkTransform()
@@ -132,7 +136,27 @@ class vmtkImageReslice(pypes.pypeScript):
                 transform.Scale(self.Scaling[0], self.Scaling[1], self.Scaling[2])
                 self.Matrix4x4 = vtk.vtkMatrix4x4()
                 self.Matrix4x4.DeepCopy(transform.GetMatrix())
-            elif self.NewZDirection != [0.0,0.0,1.0]:
+
+            elif self.NewZDirection != [0.0,0.0,1.0] or self.NewZDirectionInteractive == 1:
+
+                if self.NewZDirectionInteractive == 1:
+                    from vmtk import vmtkscripts
+
+                    imageSeeder = vmtkscripts.vmtkImageSeeder()
+                    imageSeeder.Image = self.Image
+                    imageSeeder.Execute()
+
+                    if imageSeeder.Seeds.GetNumberOfPoints() < 2:
+                        self.PrintError('Error: user must select two points to define a new z-axis direction')
+
+                    point1 = imageSeeder.Seeds.GetPoint(0)
+                    point2 = imageSeeder.Seeds.GetPoint(1)
+                    self.NewZDirection = [
+                        point2[0]-point1[0],
+                        point2[1]-point1[1],
+                        point2[2]-point1[2]
+                    ]
+
                 self.PrintLog('Setting up transform matrix using the prescribed direction of the new z-axis')
                 norm2 = np.linalg.norm(self.NewZDirection)
                 newZVersor = [self.NewZDirection[0]/norm2,self.NewZDirection[1]/norm2,self.NewZDirection[2]/norm2]
@@ -144,6 +168,8 @@ class vmtkImageReslice(pypes.pypeScript):
                     bounds[2]+(bounds[3]-bounds[2])/2.0,
                     bounds[4]+(bounds[5]-bounds[4])/2.0
                 ]
+                print ("rotation axis = ",rotationAxis)
+                print ("theta = ",theta)
                 transform = vtk.vtkTransform()
                 transform.Translate(offset)
                 transform.RotateWXYZ(theta,rotationAxis)
