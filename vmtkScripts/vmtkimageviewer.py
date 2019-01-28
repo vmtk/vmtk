@@ -34,6 +34,10 @@ class vmtkImageViewer(pypes.pypeScript):
         self.Display = 1
         self.ArrayName = ''
 
+        self.DisplayPlaneWidgetX = 1
+        self.DisplayPlaneWidgetY = 1
+        self.DisplayPlaneWidgetZ = 1
+
         self.Picker = None
         self.PlaneWidgetX = None
         self.PlaneWidgetY = None
@@ -53,6 +57,9 @@ class vmtkImageViewer(pypes.pypeScript):
             ['WindowLevel','windowlevel','float',2,'','the window/level for displaying the image'],
             ['Display','display','bool',1,'','toggle rendering'],
             ['Margins','margins','bool',1,'','toggle margins for tilting image planes'],
+            ['DisplayPlaneWidgetX','displayxplane','bool',1,'','toggle display the X image plane widget'],
+            ['DisplayPlaneWidgetY','displayyplane','bool',1,'','toggle display the Y image plane widget'],
+            ['DisplayPlaneWidgetZ','displayzplane','bool',1,'','toggle display the Z image plane widget'],
             ['TextureInterpolation','textureinterpolation','bool',1,'','toggle interpolation of graylevels on image planes'],
             ['ContinuousCursor','continuouscursor','bool',1,'','toggle use of physical continuous coordinates for the cursor']
             ])
@@ -114,7 +121,8 @@ class vmtkImageViewer(pypes.pypeScript):
             self.PlaneWidgetX.SetMarginSizeY(0.0)
         if self.WindowLevel[0] != 0.0:
             self.PlaneWidgetX.SetWindowLevel(self.WindowLevel[0],self.WindowLevel[1])
-        self.PlaneWidgetX.On()
+        if self.DisplayPlaneWidgetX:
+            self.PlaneWidgetX.On()
 
         self.PlaneWidgetY.SetResliceInterpolateToLinear()
         self.PlaneWidgetY.SetTextureInterpolate(self.TextureInterpolation)
@@ -138,7 +146,8 @@ class vmtkImageViewer(pypes.pypeScript):
             self.PlaneWidgetY.SetMarginSizeY(0.0)
         if self.WindowLevel[0] != 0.0:
             self.PlaneWidgetY.SetWindowLevel(self.WindowLevel[0],self.WindowLevel[1])
-        self.PlaneWidgetY.On()
+        if self.DisplayPlaneWidgetY:
+            self.PlaneWidgetY.On()
 
         self.PlaneWidgetZ.SetResliceInterpolateToLinear()
         self.PlaneWidgetZ.SetTextureInterpolate(self.TextureInterpolation)
@@ -162,7 +171,8 @@ class vmtkImageViewer(pypes.pypeScript):
             self.PlaneWidgetZ.SetMarginSizeY(0.0)
         if self.WindowLevel[0] != 0.0:
             self.PlaneWidgetZ.SetWindowLevel(self.WindowLevel[0],self.WindowLevel[1])
-        self.PlaneWidgetZ.On()
+        if self.DisplayPlaneWidgetZ:
+            self.PlaneWidgetZ.On()
 
         if (self.Display == 1):
             self.vmtkRenderer.Render()
