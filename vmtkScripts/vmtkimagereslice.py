@@ -80,7 +80,9 @@ class vmtkImageReslice(pypes.pypeScript):
             ['TransformInputSampling','transforminputsampling','bool',1,'','transform spacing, origin and extent of the Input (or the InformationInput) according to the direction cosines and origin of the ResliceAxes before applying them as the default output spacing, origin and extent']
             ])
         self.SetOutputMembers([
-            ['Image','o','vtkImageData',1,'','the output image','vmtkimagewriter']
+            ['Image','o','vtkImageData',1,'','the output image','vmtkimagewriter'],
+            ['Matrix4x4','matrix4x4','vtkMatrix4x4',1,'','the output transform matrix'],
+            ['MatrixCoefficients','matrix','float',16,'','coefficients of transform matrix']
             ])
 
     def Execute(self):
@@ -203,6 +205,7 @@ class vmtkImageReslice(pypes.pypeScript):
                     bounds[2]+(bounds[3]-bounds[2])/2.0,
                     bounds[4]+(bounds[5]-bounds[4])/2.0
                 ]
+                print ("new z-axis versor = ",newZVersor)
                 print ("rotation axis = ",rotationAxis)
                 print ("theta = ",theta)
                 transform = vtk.vtkTransform()
@@ -219,6 +222,9 @@ class vmtkImageReslice(pypes.pypeScript):
             transform = vtk.vtkMatrixToLinearTransform()
             transform.SetInput(self.Matrix4x4)
             resliceFilter.SetResliceTransform(transform)
+            for i in range(4):
+                for j in range(4):
+                    self.MatrixCoefficients.append(self.Matrix4x4.GetElement(i,j))
 
         resliceFilter.Update()
 
