@@ -75,7 +75,7 @@ class vmtkImageReslice(pypes.pypeScript):
             ['Translation','translation','float',3,'','translation in the x-,y- and z-directions'],
             ['Scaling','scaling','float',3,'','scaling of the x-,y- and z-directions'],
             ['NewZDirection','zdirection','float',3,'','direction of the new z-axis after rotation (alternative to rotation/translation/scaling)'],
-            ['NewZDirectionInteractive','zdirectioninteractive','bool',1,'','interactive select two points defining the direction of the new z-axis after rotation (alternative to rotation/translation/scaling)'],
+            ['NewZDirectionInteractive','zdirectioninteractive','bool',1,'','Interactive selecting two points to fix the new z-axis direction or three points to fix its orthogonal plane (alternative to rotation/translation/scaling)'],
             ['ImageExpansion','imageexpansion','float',1,'(0.0,)','expansion (in mm) of the output image bounds compared to the input image'],
             ['TransformInputSampling','transforminputsampling','bool',1,'','transform spacing, origin and extent of the Input (or the InformationInput) according to the direction cosines and origin of the ResliceAxes before applying them as the default output spacing, origin and extent']
             ])
@@ -179,22 +179,23 @@ class vmtkImageReslice(pypes.pypeScript):
             elif self.NewZDirection != [0.0,0.0,1.0] or self.NewZDirectionInteractive == 1:
 
                 if self.NewZDirectionInteractive == 1:
+                    self.PrintLog('Interactive selecting points to fix the new z-axis direction')
                     from vmtk import vmtkscripts
-
                     imageSeeder = vmtkscripts.vmtkImageSeeder()
                     imageSeeder.Image = self.Image
                     imageSeeder.Execute()
-
-                    if imageSeeder.Seeds.GetNumberOfPoints() < 2:
-                        self.PrintError('Error: user must select two points to define a new z-axis direction')
-
+                    numSeeds = imageSeeder.Seeds.GetNumberOfPoints()
+                    if numSeeds < 2:
+                        self.PrintError('Error: selected less than two points')
                     point1 = imageSeeder.Seeds.GetPoint(0)
                     point2 = imageSeeder.Seeds.GetPoint(1)
-                    self.NewZDirection = [
-                        point2[0]-point1[0],
-                        point2[1]-point1[1],
-                        point2[2]-point1[2]
-                    ]
+                    if numSeeds > 2:
+                        point3 = imageSeeder.Seeds.GetPoint(2)
+                        vectorA = [point2[0]-point1[0],point2[1]-point1[1],point2[2]-point1[2]]
+                        vectorB = [point3[0]-point1[0],point3[1]-point1[1],point3[2]-point1[2]]
+                        self.NewZDirection = np.cross(vectorA,vectorB)
+                    else:
+                        self.NewZDirection = [point2[0]-point1[0],point2[1]-point1[1],point2[2]-point1[2]]
 
                 self.PrintLog('Setting up transform matrix using the prescribed direction of the new z-axis')
                 norm2 = np.linalg.norm(self.NewZDirection)
