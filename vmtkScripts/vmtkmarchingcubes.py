@@ -31,6 +31,7 @@ class vmtkMarchingCubes(pypes.pypeScript):
         self.ArrayName = ''
         self.Level = 0.0
         self.Connectivity = 0
+        self.UseContourFilter = 0
 
         self.SetScriptName('vmtkmarchingcubes')
         self.SetScriptDoc('generate an isosurface of given level from a 3D image')
@@ -38,7 +39,8 @@ class vmtkMarchingCubes(pypes.pypeScript):
             ['Image','i','vtkImageData',1,'','the input image','vmtkimagereader'],
             ['ArrayName','array','str',1,'','name of the array to work with'],
             ['Level','l','float',1,'','graylevel to generate the isosurface at'],
-            ['Connectivity','connectivity','bool',1,'','only output the largest connected region of the isosurface']
+            ['Connectivity','connectivity','bool',1,'','only output the largest connected region of the isosurface'],
+            ['UseContourFilter','contourfilter','bool',1,'','use vtkContourFilter instead of vtkMarchingCubes']
             ])
         self.SetOutputMembers([
             ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter']
@@ -58,12 +60,18 @@ class vmtkMarchingCubes(pypes.pypeScript):
         if (self.ArrayName != ''):
             translateExtent.GetOutput().GetPointData().SetActiveScalars(self.ArrayName)
 
-        marchingCubes = vtk.vtkMarchingCubes()
-        marchingCubes.SetInputConnection(translateExtent.GetOutputPort())
-        marchingCubes.SetValue(0,self.Level)
-        marchingCubes.Update()
-
-        self.Surface = marchingCubes.GetOutput()
+        if self.UseContourFilter:
+            contour = vtk.vtkContourFilter()
+            contour.SetInputConnection(translateExtent.GetOutputPort())
+            contour.SetValue(0,self.Level)
+            contour.Update()
+            self.Surface = contour.GetOutput()
+        else:
+            marchingCubes = vtk.vtkMarchingCubes()
+            marchingCubes.SetInputConnection(translateExtent.GetOutputPort())
+            marchingCubes.SetValue(0,self.Level)
+            marchingCubes.Update()
+            self.Surface = marchingCubes.GetOutput()
 
         if self.Connectivity == 1:
             connectivityFilter = vtk.vtkPolyDataConnectivityFilter()
