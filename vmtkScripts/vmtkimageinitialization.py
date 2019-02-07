@@ -64,6 +64,7 @@ class vmtkImageInitialization(pypes.pypeScript):
         self.SetScriptDoc('interactivly create an initial levelset which has not been evolved to image gradients')
         self.SetInputMembers([
             ['Image','i','vtkImageData',1,'','','vmtkimagereader'],
+            ['InitialLevelSets','ilevelsets','vtkImageData',1,'','','vmtkimagereader'],
             ['NegateImage','negate','bool',1,'','negate image values before initializing'],
             ['Interactive','interactive','bool',1,'',''],
             ['Method','method','str',1,'["isosurface","threshold","collidingfronts","fastmarching","seeds","multiplecollidingfronts"]',''],
@@ -578,6 +579,9 @@ class vmtkImageInitialization(pypes.pypeScript):
         cast.SetOutputScalarTypeToFloat()
         cast.Update()
         self.Image = cast.GetOutput()
+
+        if self.InitialLevelSets != None:
+            self.MergeLevelSets()
 
         if self.NegateImage:
             scalarRange = self.Image.GetScalarRange()
