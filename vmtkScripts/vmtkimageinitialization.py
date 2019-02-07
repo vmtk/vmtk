@@ -55,7 +55,7 @@ class vmtkImageInitialization(pypes.pypeScript):
 
         self.IsoSurfaceValue = 0.0
 
-        self.MultiSeedsCollidingFronts = 0
+        self.MultiSeedsCollidingFronts = 1
 
         self.ImageSeeder = None
         self.SurfaceViewer = None
