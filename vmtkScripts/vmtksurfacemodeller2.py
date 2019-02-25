@@ -40,6 +40,7 @@ class vmtkSurfaceModeller2(pypes.pypeScript):
         self.ImageVoxelExpansion = 0.
         self.ExpansionDirections = [1, 1, 1, 1, 1, 1]
         self.Binary = 0
+        self.DistanceThreshold = None
         self.NegativeInside = 1
 
         self.SetScriptName('vmtksurfacemodeller2')
@@ -51,6 +52,7 @@ class vmtkSurfaceModeller2(pypes.pypeScript):
             ['ImageVoxelExpansion','imagevoxelexpansion','int',1,'(0.0,)','expansion (in term of number of voxels) of the resulting image bounds compared to the input surface bounding box'],
             ['ExpansionDirections','expansiondirections','bool',6,'','expand only in true direction of this array [-x +x -y +y -z +z]'],
             ['Binary','binary','bool',1,'','binary image as output (overwrite the signeddistance value)'],
+            ['DistanceThreshold','distancethreshold','float',1,'(0.0,)','if set, point more distant than this threshold are taken constant'],
             ['NegativeInside','negativeinside','bool',1,'','toggle sign of distance transform negative inside the surface']
             ])
         self.SetOutputMembers([
@@ -116,6 +118,9 @@ class vmtkSurfaceModeller2(pypes.pypeScript):
                     value = 1
                 else:
                     value = 0
+            if self.DistanceThreshold:
+                if np.absolute(value) > self.DistanceThreshold:
+                    value = np.sign(value) * self.DistanceThreshold
             scalars.SetTuple1( i, value )
             if ( i % ( int( N / toolbar_width ) ) == 0 ):
                 sys.stdout.write("-")
