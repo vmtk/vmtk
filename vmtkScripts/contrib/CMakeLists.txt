@@ -21,6 +21,7 @@ set(CONTRIB_SCRIPTS_SRCS
     vmtknumpytosurface.py
     vmtknumpywriter.py
     vmtksurfaceresolution.py
+    vmtksurfacetagger.py
     vmtksurfacetonumpy.py
     vmtksurfacewriter2.py
     vmtksurfaceextractannularwalls.py
