@@ -24,6 +24,7 @@ __all__ = [
     'vmtk.vmtknumpywriter',
     'vmtk.vmtksurfaceextractinnercylinder',
     'vmtk.vmtksurfaceresolution',
+    'vmtk.vmtksurfacetagger',
     'vmtk.vmtksurfacetonumpy',
     'vmtk.vmtksurfacewriter2',
     'vmtk.vmtkthreshold',
