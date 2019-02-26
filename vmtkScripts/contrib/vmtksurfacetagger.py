@@ -61,7 +61,7 @@ class vmtkSurfaceTagger(pypes.pypeScript):
             ['InsideTag','inside','float',1,'','tag inside the clip (i.e. where the ClipArray is negative)'],
             ['OutsideTag','outside','float',1,'','tag outside the clip (i.e. where the ClipArray is positive)'],
             ['OverwriteOutsideTag','overwriteoutside','bool',1,'','overwrite outside value also when the CellEntityIdsArray already exists in the input surface'],
-            ['Connectivity','connectivity','bool',1,'','toggle giving different tags to not connected components after clipping'],
+            ['Connectivity','connectivity','bool',1,'','toggle giving different tags to disconnected components of each tag'],
             ['ConnectivityOffset','offset','float',1,'','offset defining the inside/outside tags of the not connected regions']
             ])
         self.SetOutputMembers([
@@ -107,38 +107,7 @@ class vmtkSurfaceTagger(pypes.pypeScript):
 
         for i in range(insideSurface.GetNumberOfCells()):
             insideCellEntityIdsArray.SetComponent(i,0,self.InsideTag)
-
-        # check the connectivity of the two parts of the surface
-        if self.Connectivity:
-
-            insideConnectivityFilter = vtk.vtkConnectivityFilter()
-            insideConnectivityFilter.SetInputData(insideSurface)
-            insideConnectivityFilter.SetExtractionModeToAllRegions()
-            insideConnectivityFilter.ColorRegionsOn()
-            insideConnectivityFilter.Update()
-            insideSurface = insideConnectivityFilter.GetOutput()
-            
-            outsideConnectivityFilter = vtk.vtkConnectivityFilter()
-            outsideConnectivityFilter.SetInputData(outsideSurface)
-            outsideConnectivityFilter.SetExtractionModeToAllRegions()
-            outsideConnectivityFilter.ColorRegionsOn()
-            outsideConnectivityFilter.Update()
-            outsideSurface = outsideConnectivityFilter.GetOutput()
-
-            insideRegionIdArray = insideSurface.GetCellData().GetArray('RegionId')
-            outsideRegionIdArray = insideSurface.GetCellData().GetArray('RegionId')
-
-            for i in range(insideSurface.GetNumberOfCells()):
-                tag = insideCellEntityIdsArray.GetComponent(i,0) +insideRegionIdArray.GetComponent(i,0)*self.ConnectivityOffset
-                insideCellEntityIdsArray.SetComponent(i,0,tag)
-
-            for i in range(outsideSurface.GetNumberOfCells()):
-                tag = outsideCellEntityIdsArray.GetComponent(i,0) +outsideRegionIdArray.GetComponent(i,0)*self.ConnectivityOffset
-                outsideCellEntityIdsArray.SetComponent(i,0,tag)
-
-            insideSurface.GetCellData().AddArray(insideCellEntityIdsArray)
-            outsideSurface.GetCellData().AddArray(outsideCellEntityIdsArray)
-
+        
         # merge the inside and the outside surfaces
         mergeSurface = vtk.vtkAppendPolyData()
         mergeSurface.AddInputData(insideSurface)
@@ -146,12 +115,63 @@ class vmtkSurfaceTagger(pypes.pypeScript):
         mergeSurface.Update()
 
         self.Surface = mergeSurface.GetOutput()
+        self.CellEntityIdsArray = self.Surface.GetCellData().GetArray(self.CellEntityIdsArrayName)
+
+        # check the connectivity of the two parts of the surface
+        if self.Connectivity:
+
+            tags = set()
+            for i in range(self.Surface.GetNumberOfCells()):
+                tags.add(self.CellEntityIdsArray.GetComponent(i,0))
+            self.PrintLog('Tags of the surface: '+str(tags))
+
+            surface = []
+
+            mergeTags = vtk.vtkAppendPolyData()
+
+            for k, item in enumerate(tags):
+
+                th = vtk.vtkThreshold()
+                th.SetInputData(self.Surface)
+                th.SetInputArrayToProcess(0, 0, 0, 1, self.CellEntityIdsArrayName)
+                th.ThresholdBetween(item-0.001,item+0.001)
+                th.Update()
+                gf = vtk.vtkGeometryFilter()
+                gf.SetInputConnection(th.GetOutputPort())
+                gf.Update()
+                surface.append(gf.GetOutput())
+
+                connectivityFilter = vtk.vtkConnectivityFilter()
+                connectivityFilter.SetInputData(surface[k])
+                connectivityFilter.SetExtractionModeToAllRegions()
+                connectivityFilter.ColorRegionsOn()
+                connectivityFilter.Update()
+                surface[k] = connectivityFilter.GetOutput()
+                cellEntityIdsArray = surface[k].GetCellData().GetArray(self.CellEntityIdsArrayName)
+                
+                regionIdArray = surface[k].GetCellData().GetArray('RegionId')
+
+                for i in range(surface[k].GetNumberOfCells()):
+                    tag = cellEntityIdsArray.GetComponent(i,0) +regionIdArray.GetComponent(i,0)*self.ConnectivityOffset
+                    cellEntityIdsArray.SetComponent(i,0,tag)
+
+                mergeTags.AddInputData(surface[k])
+
+            mergeTags.Update()
+            self.Surface = mergeTags.GetOutput()
+
 
         if self.CleanOutput:
             cleaner = vtk.vtkCleanPolyData()
             cleaner.SetInputData(self.Surface)
             cleaner.Update()
             self.Surface = cleaner.GetOutput()
+            self.CellEntityIdsArray = self.Surface.GetCellData().GetArray(self.CellEntityIdsArrayName)
+
+        tags = set()
+        for i in range(self.Surface.GetNumberOfCells()):
+            tags.add(self.CellEntityIdsArray.GetComponent(i,0))
+        self.PrintLog('Tags of the surface: '+str(tags))
 
         # useless, already triangulated
         # if self.Triangulate:
