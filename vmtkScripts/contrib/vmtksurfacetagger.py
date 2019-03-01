@@ -43,11 +43,11 @@ class vmtkSurfaceTagger(pypes.pypeScript):
         self.ClipValue = 0.0
         self.CellEntityIdsArrayName = 'CellEntityIds'
         self.CellEntityIdsArray = None
-        self.InsideTag = 1.0
-        self.OutsideTag = 2.0
+        self.InsideTag = 1
+        self.OutsideTag = 2
         self.OverwriteOutsideTag = 1
         self.Connectivity = 0
-        self.ConnectivityOffset = 1.0
+        self.ConnectivityOffset = 1
 
         self.SetScriptName('vmtksurfacetagger')
         self.SetScriptDoc('tag a surface exploiting an array defined on it')
@@ -58,14 +58,15 @@ class vmtkSurfaceTagger(pypes.pypeScript):
             ['ClipArrayName','array','str',1,'','name of the array with which to define the boundary between tags'],
             ['ClipValue','value','float',1,'','scalar value at which to perform clipping between tags'],
             ['CellEntityIdsArrayName','entityidsarray','str',1,'','name of the array where the tags are stored'],
-            ['InsideTag','inside','float',1,'','tag inside the clip (i.e. where the ClipArray is lower than ClipValue)'],
-            ['OutsideTag','outside','float',1,'','tag outside the clip (i.e. where the ClipArray is greater than ClipValue)'],
+            ['InsideTag','inside','int',1,'','tag inside the clip (i.e. where the ClipArray is lower than ClipValue)'],
+            ['OutsideTag','outside','int',1,'','tag outside the clip (i.e. where the ClipArray is greater than ClipValue)'],
             ['OverwriteOutsideTag','overwriteoutside','bool',1,'','overwrite outside value also when the CellEntityIdsArray already exists in the input surface'],
             ['Connectivity','connectivity','bool',1,'','toggle giving different tags to disconnected components of each tag'],
-            ['ConnectivityOffset','offset','float',1,'','offset defining the inside/outside tags of the not connected regions']
+            ['ConnectivityOffset','offset','int',1,'','offset defining the inside/outside tags of the not connected regions']
             ])
         self.SetOutputMembers([
-            ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter']
+            ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter'],
+            ['CellEntityIdsArray','oentityidsarray','vtkIntArray',1,'','the output entity ids array']
             ])
 
 
@@ -86,7 +87,7 @@ class vmtkSurfaceTagger(pypes.pypeScript):
         tags = set()
         for i in range(self.Surface.GetNumberOfCells()):
             tags.add(self.CellEntityIdsArray.GetComponent(i,0))
-        self.PrintLog('Tags of the surface: '+str(tags))
+        self.PrintLog('Tags of the surface before connectivity filter: '+str(tags))
 
         surface = []
 
@@ -136,7 +137,7 @@ class vmtkSurfaceTagger(pypes.pypeScript):
         self.CellEntityIdsArray = self.Surface.GetCellData().GetArray(self.CellEntityIdsArrayName)
 
         if self.CellEntityIdsArray == None or self.OverwriteOutsideTag:
-            self.CellEntityIdsArray = vtk.vtkDoubleArray()
+            self.CellEntityIdsArray = vtk.vtkIntArray()
             self.CellEntityIdsArray.SetName(self.CellEntityIdsArrayName)
             self.CellEntityIdsArray.SetNumberOfComponents(1)
             self.CellEntityIdsArray.SetNumberOfTuples(self.Surface.GetNumberOfCells())
@@ -184,7 +185,7 @@ class vmtkSurfaceTagger(pypes.pypeScript):
         tags = set()
         for i in range(self.Surface.GetNumberOfCells()):
             tags.add(self.CellEntityIdsArray.GetComponent(i,0))
-        self.PrintLog('Tags of the surface: '+str(tags))
+        self.PrintLog('Tags of the output surface: '+str(tags))
 
         # useless, already triangulated
         # if self.Triangulate:
