@@ -58,8 +58,8 @@ class vmtkSurfaceTagger(pypes.pypeScript):
             ['ClipArrayName','array','str',1,'','name of the array with which to define the boundary between tags'],
             ['ClipValue','value','float',1,'','scalar value at which to perform clipping between tags'],
             ['CellEntityIdsArrayName','entityidsarray','str',1,'','name of the array where the tags are stored'],
-            ['InsideTag','inside','float',1,'','tag inside the clip (i.e. where the ClipArray is negative)'],
-            ['OutsideTag','outside','float',1,'','tag outside the clip (i.e. where the ClipArray is positive)'],
+            ['InsideTag','inside','float',1,'','tag inside the clip (i.e. where the ClipArray is lower than ClipValue)'],
+            ['OutsideTag','outside','float',1,'','tag outside the clip (i.e. where the ClipArray is greater than ClipValue)'],
             ['OverwriteOutsideTag','overwriteoutside','bool',1,'','overwrite outside value also when the CellEntityIdsArray already exists in the input surface'],
             ['Connectivity','connectivity','bool',1,'','toggle giving different tags to disconnected components of each tag'],
             ['ConnectivityOffset','offset','float',1,'','offset defining the inside/outside tags of the not connected regions']
@@ -67,6 +67,63 @@ class vmtkSurfaceTagger(pypes.pypeScript):
         self.SetOutputMembers([
             ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter']
             ])
+
+
+
+    def CleanSurface(self):
+        cleaner = vtk.vtkCleanPolyData()
+        cleaner.SetInputData(self.Surface)
+        cleaner.Update()
+        self.Surface = cleaner.GetOutput()
+        self.CellEntityIdsArray = self.Surface.GetCellData().GetArray(self.CellEntityIdsArrayName)
+
+
+
+    def TagDisconnectedPartsOfEachTag(self):
+
+        self.CleanSurface()
+
+        tags = set()
+        for i in range(self.Surface.GetNumberOfCells()):
+            tags.add(self.CellEntityIdsArray.GetComponent(i,0))
+        self.PrintLog('Tags of the surface: '+str(tags))
+
+        surface = []
+
+        mergeTags = vtk.vtkAppendPolyData()
+
+        for k, item in enumerate(tags):
+
+            th = vtk.vtkThreshold()
+            th.SetInputData(self.Surface)
+            th.SetInputArrayToProcess(0, 0, 0, 1, self.CellEntityIdsArrayName)
+            th.ThresholdBetween(item-0.001,item+0.001)
+            th.Update()
+            gf = vtk.vtkGeometryFilter()
+            gf.SetInputConnection(th.GetOutputPort())
+            gf.Update()
+            surface.append(gf.GetOutput())
+
+            connectivityFilter = vtk.vtkConnectivityFilter()
+            connectivityFilter.SetInputData(surface[k])
+            connectivityFilter.SetExtractionModeToAllRegions()
+            connectivityFilter.ColorRegionsOn()
+            connectivityFilter.Update()
+            surface[k] = connectivityFilter.GetOutput()
+            cellEntityIdsArray = surface[k].GetCellData().GetArray(self.CellEntityIdsArrayName)
+
+            regionIdArray = surface[k].GetCellData().GetArray('RegionId')
+
+            for i in range(surface[k].GetNumberOfCells()):
+                tag = cellEntityIdsArray.GetComponent(i,0) +regionIdArray.GetComponent(i,0)*self.ConnectivityOffset
+                cellEntityIdsArray.SetComponent(i,0,tag)
+
+            mergeTags.AddInputData(surface[k])
+
+        mergeTags.Update()
+        self.Surface = mergeTags.GetOutput()
+        self.CellEntityIdsArray = self.Surface.GetCellData().GetArray(self.CellEntityIdsArrayName)
+
 
 
     def Execute(self):
@@ -119,54 +176,10 @@ class vmtkSurfaceTagger(pypes.pypeScript):
 
         # check the connectivity of the two parts of the surface
         if self.Connectivity:
-
-            tags = set()
-            for i in range(self.Surface.GetNumberOfCells()):
-                tags.add(self.CellEntityIdsArray.GetComponent(i,0))
-            self.PrintLog('Tags of the surface: '+str(tags))
-
-            surface = []
-
-            mergeTags = vtk.vtkAppendPolyData()
-
-            for k, item in enumerate(tags):
-
-                th = vtk.vtkThreshold()
-                th.SetInputData(self.Surface)
-                th.SetInputArrayToProcess(0, 0, 0, 1, self.CellEntityIdsArrayName)
-                th.ThresholdBetween(item-0.001,item+0.001)
-                th.Update()
-                gf = vtk.vtkGeometryFilter()
-                gf.SetInputConnection(th.GetOutputPort())
-                gf.Update()
-                surface.append(gf.GetOutput())
-
-                connectivityFilter = vtk.vtkConnectivityFilter()
-                connectivityFilter.SetInputData(surface[k])
-                connectivityFilter.SetExtractionModeToAllRegions()
-                connectivityFilter.ColorRegionsOn()
-                connectivityFilter.Update()
-                surface[k] = connectivityFilter.GetOutput()
-                cellEntityIdsArray = surface[k].GetCellData().GetArray(self.CellEntityIdsArrayName)
-                
-                regionIdArray = surface[k].GetCellData().GetArray('RegionId')
-
-                for i in range(surface[k].GetNumberOfCells()):
-                    tag = cellEntityIdsArray.GetComponent(i,0) +regionIdArray.GetComponent(i,0)*self.ConnectivityOffset
-                    cellEntityIdsArray.SetComponent(i,0,tag)
-
-                mergeTags.AddInputData(surface[k])
-
-            mergeTags.Update()
-            self.Surface = mergeTags.GetOutput()
-
+            self.TagDisconnectedPartsOfEachTag()
 
         if self.CleanOutput:
-            cleaner = vtk.vtkCleanPolyData()
-            cleaner.SetInputData(self.Surface)
-            cleaner.Update()
-            self.Surface = cleaner.GetOutput()
-            self.CellEntityIdsArray = self.Surface.GetCellData().GetArray(self.CellEntityIdsArrayName)
+            self.CleanSurface()
 
         tags = set()
         for i in range(self.Surface.GetNumberOfCells()):
