@@ -149,7 +149,7 @@ class vmtkSurfaceTagger(pypes.pypeScript):
         clipper = vmtkscripts.vmtkSurfaceClipper()
         clipper.Surface = self.Surface
         clipper.Interactive = False
-        clipper.InsideOut = self.InsideOut
+        clipper.InsideOut = 1-self.InsideOut # inside means regions where the ClipArray is lower than ClipValue
         clipper.CleanOutput = self.CleanOutput
         clipper.ClipArrayName = self.ClipArrayName
         clipper.ClipValue = self.ClipValue
