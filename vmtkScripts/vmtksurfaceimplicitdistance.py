@@ -21,6 +21,7 @@ from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py
 
 import vtk
 import sys
+import numpy as np
 
 from vmtk import vtkvmtk
 from vmtk import pypes
@@ -39,6 +40,7 @@ class vmtkSurfaceImplicitDistance(pypes.pypeScript):
         self.ArrayName = 'ImplicitDistance'
         self.Array = None
         self.ComputeSignedDistance = 1
+        self.DistanceThreshold = None
         self.Binary = 0
         self.OutsideValue = 1.0
         self.InsideValue = 0.0
@@ -52,6 +54,7 @@ class vmtkSurfaceImplicitDistance(pypes.pypeScript):
             ['ReferenceSurface','r','vtkPolyData',1,'','the reference surface','vmtksurfacereader'],
             ['ArrayName','array','str',1,'','name of the array of the surface where the computed values are stored'],
             ['ComputeSignedDistance','signeddistance','bool',1,'','if true compute signed distance, else unsigned distance'],
+            ['DistanceThreshold','distancethreshold','float',1,'(0.0,)','if set, point more distant than this threshold are taken constant'],
             ['Binary','binary','bool',1,'','fill the distance array with inside/outside values instead of distance values (overwrite the signeddistance value)  '],
             ['InsideValue','inside','float',1,'','value with which the surface is filled where the distance is negative (binary only)'],
             ['OutsideValue','outside','float',1,'','value with which the surface is filled where the distance is positive (binary only)'],
@@ -109,10 +112,14 @@ class vmtkSurfaceImplicitDistance(pypes.pypeScript):
                     value = self.OutsideValue
                 else:
                     value = self.Array.GetValue( i )
-            elif self.ComputeSignedDistance:
-                value = signedDistance
             else:
-                value = abs( signedDistance )
+                if self.ComputeSignedDistance:
+                    value = signedDistance
+                else:
+                    value = abs( signedDistance )
+                if self.DistanceThreshold:
+                    if np.absolute(value) > self.DistanceThreshold:
+                        value = np.sign(value) * self.DistanceThreshold
             self.Array.SetComponent( i, 0, value )
 
 

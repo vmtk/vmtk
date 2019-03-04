@@ -39,6 +39,7 @@ class vmtkMeshImplicitDistance(pypes.pypeScript):
         self.ArrayName = 'ImplicitDistance'
         self.Array = None
         self.ComputeSignedDistance = 1
+        self.DistanceThreshold = None
         self.Binary = 0
         self.OutsideValue = 1.0
         self.InsideValue = 0.0
@@ -52,6 +53,7 @@ class vmtkMeshImplicitDistance(pypes.pypeScript):
             ['ReferenceSurface','r','vtkPolyData',1,'','the reference surface','vmtksurfacereader'],
             ['ArrayName','array','str',1,'','name of the array of the surface where the computed values are stored'],
             ['ComputeSignedDistance','signeddistance','bool',1,'','if true compute signed distance, else unsigned distance'],
+            ['DistanceThreshold','distancethreshold','float',1,'(0.0,)','if set, point more distant than this threshold are taken constant'],
             ['Binary','binary','bool',1,'','fill the distance array with inside/outside values instead of distance values (overwrite the signeddistance value)  '],
             ['InsideValue','inside','float',1,'','value with which the surface is filled where the distance is negative (binary only)'],
             ['OutsideValue','outside','float',1,'','value with which the surface is filled where the distance is positive (binary only)'],
@@ -78,6 +80,7 @@ class vmtkMeshImplicitDistance(pypes.pypeScript):
         implicitDistance.ReferenceSurface = self.ReferenceSurface
         implicitDistance.ArrayName = self.ArrayName
         implicitDistance.ComputeSignedDistance = self.ComputeSignedDistance
+        ImplicitDistance.DistanceThreshold = self.DistanceThreshold
         implicitDistance.Binary = self.Binary
         implicitDistance.OutsideValue = self.OutsideValue
         implicitDistance.InsideValue = self.InsideValue
