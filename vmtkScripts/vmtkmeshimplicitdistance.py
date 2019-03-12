@@ -80,7 +80,7 @@ class vmtkMeshImplicitDistance(pypes.pypeScript):
         implicitDistance.ReferenceSurface = self.ReferenceSurface
         implicitDistance.ArrayName = self.ArrayName
         implicitDistance.ComputeSignedDistance = self.ComputeSignedDistance
-        ImplicitDistance.DistanceThreshold = self.DistanceThreshold
+        implicitDistance.DistanceThreshold = self.DistanceThreshold
         implicitDistance.Binary = self.Binary
         implicitDistance.OutsideValue = self.OutsideValue
         implicitDistance.InsideValue = self.InsideValue
