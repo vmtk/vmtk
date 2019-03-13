@@ -31,38 +31,35 @@ class vmtkSurfaceTagger(pypes.pypeScript):
         pypes.pypeScript.__init__(self)
 
         self.Surface = None
-        self.ClippedSurface = None
-        self.CutLines = None
-
-        self.CleanOutput = 1
-
-        self.InsideOut = 0
-
-        self.ClipArrayName = None
-        self.ClipArray = None
-        self.ClipValue = 0.0
+        self.Method = 'cliparray'
         self.CellEntityIdsArrayName = 'CellEntityIds'
         self.CellEntityIdsArray = None
-        self.InsideTag = 1
-        self.OutsideTag = 2
+        self.ArrayName = None
+        self.Array = None
+        self.Value = 0.0
+        self.InsideTag = 2
+        self.OutsideTag = 1
         self.OverwriteOutsideTag = 1
-        self.Connectivity = 0
+        self.InsideOut = 0
         self.ConnectivityOffset = 1
+        self.CleanOutput = 1
+        self.PrintTags = 1
 
         self.SetScriptName('vmtksurfacetagger')
         self.SetScriptDoc('tag a surface exploiting an array defined on it')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
-            ['CleanOutput','cleanoutput','bool',1,'','toggle cleaning the unused points'],
-            ['InsideOut','insideout','bool',1,'','toggle switching inside and outside tags'],
-            ['ClipArrayName','array','str',1,'','name of the array with which to define the boundary between tags'],
-            ['ClipValue','value','float',1,'','scalar value at which to perform clipping between tags'],
+            ['Method','method','str',1,'["cliparray","array","connectivity"]','tagging method (cliparray: exploit an array to clip the surface at a certain value tagging the two parts; array: the same of cliparray, but without clipping the original triangles; connectivity: given an already tagged surface, tag disconnected part of each input tag)'],
             ['CellEntityIdsArrayName','entityidsarray','str',1,'','name of the array where the tags are stored'],
-            ['InsideTag','inside','int',1,'','tag inside the clip (i.e. where the ClipArray is lower than ClipValue)'],
-            ['OutsideTag','outside','int',1,'','tag outside the clip (i.e. where the ClipArray is greater than ClipValue)'],
+            ['ArrayName','array','str',1,'','name of the array with which to define the boundary between tags'],
+            ['Value','value','float',1,'','scalar value of the array identifying the boundary between tags'],
+            ['InsideTag','inside','int',1,'','tag of the inside region (i.e. where the Array is lower than Value)'],
+            ['OutsideTag','outside','int',1,'','tag of the outside region (i.e. where the Array is greater than Value)'],
             ['OverwriteOutsideTag','overwriteoutside','bool',1,'','overwrite outside value also when the CellEntityIdsArray already exists in the input surface'],
-            ['Connectivity','connectivity','bool',1,'','toggle giving different tags to disconnected components of each tag'],
-            ['ConnectivityOffset','offset','int',1,'','offset defining the inside/outside tags of the not connected regions']
+            ['InsideOut','insideout','bool',1,'','toggle switching inside and outside tags'],
+            ['ConnectivityOffset','offset','int',1,'','offset added to the entityidsarray of each disconnected parts of each input tag (connectivity only)'],
+            ['CleanOutput','cleanoutput','bool',1,'','toggle cleaning the unused points'],
+            ['PrintTags','printtags','bool',1,'','toggle printing the set of tags']
             ])
         self.SetOutputMembers([
             ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter'],
@@ -80,17 +77,59 @@ class vmtkSurfaceTagger(pypes.pypeScript):
 
 
 
-    def TagDisconnectedPartsOfEachTag(self):
+    def ClipArrayTagger(self):
+
+        from vmtk import vmtkscripts
+
+        # clip the surface according to the Array
+        clipper = vmtkscripts.vmtkSurfaceClipper()
+        clipper.Surface = self.Surface
+        clipper.Interactive = False
+        clipper.InsideOut = 1-self.InsideOut # inside means regions where the Array is lower than Value
+        clipper.CleanOutput = self.CleanOutput
+        clipper.ClipArrayName = self.ArrayName
+        clipper.ClipValue = self.Value
+
+        clipper.Execute()
+
+        insideSurface = clipper.Surface
+        outsideSurface = clipper.ClippedSurface
+
+        # change values of the inside tags
+        insideCellEntityIdsArray = insideSurface.GetCellData().GetArray( self.CellEntityIdsArrayName )
+        outsideCellEntityIdsArray = outsideSurface.GetCellData().GetArray( self.CellEntityIdsArrayName )
+
+        for i in range(insideSurface.GetNumberOfCells()):
+            insideCellEntityIdsArray.SetComponent(i,0,self.InsideTag)
+
+        # merge the inside and the outside surfaces
+        mergeSurface = vtk.vtkAppendPolyData()
+        mergeSurface.AddInputData(insideSurface)
+        mergeSurface.AddInputData(outsideSurface)
+        mergeSurface.Update()
+
+        self.Surface = mergeSurface.GetOutput()
+        self.CellEntityIdsArray = self.Surface.GetCellData().GetArray(self.CellEntityIdsArrayName)
+
+
+
+    def ArrayTagger(self):
+        self.PrintError("array method not yet implemented")
+
+
+
+    def ConnectivityTagger(self):
 
         self.CleanSurface()
 
         tags = set()
         for i in range(self.Surface.GetNumberOfCells()):
             tags.add(self.CellEntityIdsArray.GetComponent(i,0))
-        self.PrintLog('Tags of the surface before connectivity filter: '+str(tags))
+        tags = sorted(tags)
+        if self.PrintTags:
+            self.PrintLog('Initial tags: '+str(tags))
 
         surface = []
-
         mergeTags = vtk.vtkAppendPolyData()
 
         for k, item in enumerate(tags):
@@ -129,14 +168,13 @@ class vmtkSurfaceTagger(pypes.pypeScript):
 
     def Execute(self):
 
-        from vmtk import vmtkscripts
-
         if self.Surface == None:
             self.PrintError('Error: no Surface.')
 
         self.CellEntityIdsArray = self.Surface.GetCellData().GetArray(self.CellEntityIdsArrayName)
 
-        if self.CellEntityIdsArray == None or self.OverwriteOutsideTag:
+        # initialize the CellEntityIdsArray with OutsideTag in some cases
+        if self.CellEntityIdsArray == None or (self.OverwriteOutsideTag and self.Method != "connectivity"):
             self.CellEntityIdsArray = vtk.vtkIntArray()
             self.CellEntityIdsArray.SetName(self.CellEntityIdsArrayName)
             self.CellEntityIdsArray.SetNumberOfComponents(1)
@@ -145,47 +183,24 @@ class vmtkSurfaceTagger(pypes.pypeScript):
             for i in range(self.Surface.GetNumberOfCells()):
                 self.CellEntityIdsArray.SetComponent(i,0,self.OutsideTag)
 
-        # clip the surface according to the ClipArray
-        clipper = vmtkscripts.vmtkSurfaceClipper()
-        clipper.Surface = self.Surface
-        clipper.Interactive = False
-        clipper.InsideOut = 1-self.InsideOut # inside means regions where the ClipArray is lower than ClipValue
-        clipper.CleanOutput = self.CleanOutput
-        clipper.ClipArrayName = self.ClipArrayName
-        clipper.ClipValue = self.ClipValue
-
-        clipper.Execute()
-
-        insideSurface = clipper.Surface
-        outsideSurface = clipper.ClippedSurface
-
-        # change values of the inside tags
-        insideCellEntityIdsArray = insideSurface.GetCellData().GetArray( self.CellEntityIdsArrayName )
-        outsideCellEntityIdsArray = outsideSurface.GetCellData().GetArray( self.CellEntityIdsArrayName )
-
-        for i in range(insideSurface.GetNumberOfCells()):
-            insideCellEntityIdsArray.SetComponent(i,0,self.InsideTag)
-        
-        # merge the inside and the outside surfaces
-        mergeSurface = vtk.vtkAppendPolyData()
-        mergeSurface.AddInputData(insideSurface)
-        mergeSurface.AddInputData(outsideSurface)
-        mergeSurface.Update()
-
-        self.Surface = mergeSurface.GetOutput()
-        self.CellEntityIdsArray = self.Surface.GetCellData().GetArray(self.CellEntityIdsArrayName)
-
-        # check the connectivity of the two parts of the surface
-        if self.Connectivity:
-            self.TagDisconnectedPartsOfEachTag()
+        if self.Method == 'cliparray':
+            self.ClipArrayTagger()
+        elif self.Method == 'array':
+            self.ArrayTagger()
+        elif self.Method == 'connectivity':
+            self.ConnectivityTagger()
+        else:
+            self.PrintError("Method unknown (available: cliparray, array, connectivity)")
 
         if self.CleanOutput:
             self.CleanSurface()
 
-        tags = set()
-        for i in range(self.Surface.GetNumberOfCells()):
-            tags.add(self.CellEntityIdsArray.GetComponent(i,0))
-        self.PrintLog('Tags of the output surface: '+str(tags))
+        if self.PrintTags:
+            tags = set()
+            for i in range(self.Surface.GetNumberOfCells()):
+                tags.add(self.CellEntityIdsArray.GetComponent(i,0))
+            tags = sorted(tags)
+            self.PrintLog('Tags of the output surface: '+str(tags))
 
         # useless, already triangulated
         # if self.Triangulate:
