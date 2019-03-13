@@ -114,7 +114,16 @@ class vmtkSurfaceTagger(pypes.pypeScript):
 
 
     def ArrayTagger(self):
-        self.PrintError("array method not yet implemented")
+        pointsToCells = vtk.vtkPointDataToCellData()
+        pointsToCells.SetInputData(self.Surface)
+        pointsToCells.PassPointDataOn()
+        pointsToCells.Update()
+        self.Surface = pointsToCells.GetPolyDataOutput()
+        self.CellEntityIdsArray = self.Surface.GetCellData().GetArray(self.CellEntityIdsArrayName)
+        cellArray = self.Surface.GetCellData().GetArray(self.ArrayName)
+        for i in range(self.Surface.GetNumberOfCells()):
+            if cellArray.GetValue(i) < self.Value:
+                self.CellEntityIdsArray.SetValue(i,self.InsideTag)
 
 
 
