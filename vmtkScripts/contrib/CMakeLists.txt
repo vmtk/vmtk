@@ -20,6 +20,7 @@ set(CONTRIB_SCRIPTS_SRCS
     vmtknumpytomesh.py
     vmtknumpytosurface.py
     vmtknumpywriter.py
+    vmtksurfaceconnector.py
     vmtksurfaceresolution.py
     vmtksurfacetagger.py
     vmtksurfacetonumpy.py
