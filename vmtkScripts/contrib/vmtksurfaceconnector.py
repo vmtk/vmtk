@@ -22,6 +22,7 @@ import vtk
 import sys
 import numpy as np
 
+from vmtk import vmtkrenderer
 from vmtk import pypes
 
 
@@ -39,6 +40,12 @@ class vmtkSurfaceConnector(pypes.pypeScript):
         self.CellEntityIdsArrayName = 'CellEntityIds'
         #self.Method = 'simple'
 
+        self.Display = 0
+        self.vmtkRenderer = None
+        self.OwnRenderer = 0
+        self.Actor = None
+        self.Representation = 'edges'
+
         self.SetScriptName('vmtksurfaceconnector')
         self.SetScriptDoc('connect two rings of two different surfaces.')
         self.SetInputMembers([
@@ -48,11 +55,61 @@ class vmtkSurfaceConnector(pypes.pypeScript):
             ['Ring2','i2','vtkPolyData',1,'','the second input ring','vmtksurfacereader'],
             ['CellEntityIdsArrayName','entityidsarray','str',1,'',''],
             #['Method','method','str',1,'["simple","delaunay"]','connecting method']
+            ['Display','display','bool',1,'','toggle rendering while algorithm advances'],
+            ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer']
             ])
         self.SetOutputMembers([
-            ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter']
+            ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter'],
+            ['Actor','oactor','vtkActor',1,'','the output actor']
             ])
-    
+
+
+    def SetSurfaceRepresentation(self, representation):
+        if representation == 'surface':
+            self.Actor.GetProperty().SetRepresentationToSurface()
+            self.Actor.GetProperty().EdgeVisibilityOff()
+        elif representation == 'edges':
+            self.Actor.GetProperty().SetRepresentationToSurface()
+            self.Actor.GetProperty().EdgeVisibilityOn()
+        elif representation == 'wireframe':
+            self.Actor.GetProperty().SetRepresentationToWireframe()
+            self.Actor.GetProperty().EdgeVisibilityOff()
+        self.Representation = representation
+
+
+    def RepresentationCallback(self, obj):
+        if not self.Actor:
+            return
+        if self.Representation == 'surface':
+            representation = 'edges'
+        elif self.Representation == 'edges':
+            representation = 'wireframe'
+        elif self.Representation == 'wireframe':
+            representation = 'surface'
+        self.SetSurfaceRepresentation(representation)
+        self.vmtkRenderer.RenderWindow.Render()
+
+
+    def ViewSurface(self,polydata,color):
+        mapper = vtk.vtkPolyDataMapper()
+        mapper.SetInputData(polydata)
+        mapper.ScalarVisibilityOff()
+        self.Actor = vtk.vtkActor()
+        self.Actor.SetMapper(mapper)
+        self.Actor.GetProperty().SetColor(color)
+        self.SetSurfaceRepresentation(self.Representation)
+        self.vmtkRenderer.Renderer.AddActor(self.Actor)
+        self.vmtkRenderer.AddKeyBinding('w','Change surface representation.',self.RepresentationCallback)
+        self.vmtkRenderer.Render()
+
+
+    def ViewTriangle(self,triangle,color):
+            trianglePolydata = vtk.vtkPolyData()
+            triangleCell = vtk.vtkCellArray()
+            triangleCell.InsertNextCell(triangle)
+            trianglePolydata.SetPoints(self.Surface.GetPoints())
+            trianglePolydata.SetPolys(triangleCell)
+            self.ViewSurface(trianglePolydata,color)
 
 
     def Execute(self):
@@ -63,12 +120,16 @@ class vmtkSurfaceConnector(pypes.pypeScript):
         if self.Ring == None and self.Ring2 == None:
             self.PrintError('Error: No input rings.')
 
-        self.Surface = vtk.vtkPolyData()
         n1 = self.Ring.GetNumberOfPoints()
         n2 = self.Ring2.GetNumberOfPoints()
 
         points = vtk.vtkPoints()
         cells = vtk.vtkCellArray()
+
+        self.Surface = vtk.vtkPolyData()
+        self.Surface.SetPoints(points)
+        self.Surface.SetPolys(cells)
+
         points1 = self.Ring.GetPoints()
         points2 = self.Ring2.GetPoints()
         points.SetNumberOfPoints(n1+n2)
@@ -80,6 +141,23 @@ class vmtkSurfaceConnector(pypes.pypeScript):
         print("Ring1: ",n1," points")
         print("Ring2: ",n2," points")
         print("Total: ",n1+n2," points")
+
+        red = [1.,0.,0.]
+        green = [0.,1.,0.]
+        blue = [0.,0.,1.]
+        white = [1.,1.,1.]
+
+        # initial rendering
+        if self.Display:
+            if not self.vmtkRenderer:
+                self.vmtkRenderer = vmtkrenderer.vmtkRenderer()
+                self.vmtkRenderer.Initialize()
+                self.OwnRenderer = 1
+            self.vmtkRenderer.RegisterScript(self) 
+            if self.Actor:
+                self.vmtkRenderer.Renderer.RemoveActor(self.Actor)
+            self.ViewSurface(self.Ring,red)
+            self.ViewSurface(self.Ring2,green)
  
         def nextPointId(ring,cellId,currentPointId):
             idList = vtk.vtkIdList()
@@ -97,12 +175,14 @@ class vmtkSurfaceConnector(pypes.pypeScript):
             else:
                 return idList.GetId(0)
 
-        def insertNextTriangle(cells,idA,idB,idC):
+        def insertNextTriangle(cells,idA,idB,idC,color):
             cell = vtk.vtkTriangle()
             cell.GetPointIds().SetId(0,idA)
             cell.GetPointIds().SetId(1,idB)
             cell.GetPointIds().SetId(2,idC)
-            cells.InsertNextCell(cell)          
+            cells.InsertNextCell(cell)
+            if self.Display:
+                self.ViewTriangle(cell,color)
 
         # initialize cellId1, cellId2, pointId1, pointId2
         cellId1 = 0 #self.Ring.GetCells.GetId(0)
@@ -134,26 +214,23 @@ class vmtkSurfaceConnector(pypes.pypeScript):
         iteration = 1
 
         while iteration < (n1+n2):
-            # print('iteration ',iteration)
             d1 = math.Distance2BetweenPoints( self.Ring.GetPoint(pointId1), self.Ring2.GetPoint(nextPointId(self.Ring2,cellId2,pointId2)) )
             d2 = math.Distance2BetweenPoints( self.Ring2.GetPoint(pointId2), self.Ring.GetPoint(nextPointId(self.Ring,cellId1,pointId1)) )
             if d1>d2:
-                insertNextTriangle( cells, pointId1, pointId2+n1, nextPointId(self.Ring,cellId1,pointId1) )
+                insertNextTriangle( cells, pointId1, pointId2+n1, nextPointId(self.Ring,cellId1,pointId1), red )
                 pointId1 = nextPointId(self.Ring,cellId1,pointId1)
                 cellId1 = nextCellId(self.Ring,pointId1,cellId1)
-                # print('  pointId1=',pointId1,'; CellId1=',cellId1)
             else:
-                insertNextTriangle( cells, pointId2+n1, nextPointId(self.Ring2,cellId2,pointId2)+n1, pointId1 )
+                insertNextTriangle( cells, pointId2+n1, nextPointId(self.Ring2,cellId2,pointId2)+n1, pointId1, green )
                 pointId2 = nextPointId(self.Ring2,cellId2,pointId2)
                 cellId2 = nextCellId(self.Ring2,pointId2,cellId2)
-                # print('  pointId2=',pointId2,'; CellId2=',cellId2)
             iteration = iteration+1
 
         # last triangle insertion
         if pointId1 == firstPointId1:
-            insertNextTriangle( cells, pointId2+n1, nextPointId(self.Ring2,cellId2,pointId2)+n1, pointId1 )
+            insertNextTriangle( cells, pointId2+n1, nextPointId(self.Ring2,cellId2,pointId2)+n1, pointId1, blue )
         else:
-            insertNextTriangle( cells, pointId1, pointId2+n1, nextPointId(self.Ring,cellId1,pointId1) )
+            insertNextTriangle( cells, pointId1, pointId2+n1, nextPointId(self.Ring,cellId1,pointId1), blue )
 
         self.Surface = vtk.vtkPolyData()
         self.Surface.SetPoints(points)
