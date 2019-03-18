@@ -23,6 +23,7 @@ import sys
 import numpy as np
 
 from vmtk import vmtkrenderer
+from vmtk import vtkvmtk
 from vmtk import pypes
 
 
@@ -38,6 +39,7 @@ class vmtkSurfaceConnector(pypes.pypeScript):
         self.Ring = None
         self.Ring2 = None
         self.CellEntityIdsArrayName = 'CellEntityIds'
+        self.IdValue = 1
         #self.Method = 'simple'
 
         self.Display = 0
@@ -54,6 +56,7 @@ class vmtkSurfaceConnector(pypes.pypeScript):
             ['Ring','i','vtkPolyData',1,'','the first input ring','vmtksurfacereader'],
             ['Ring2','i2','vtkPolyData',1,'','the second input ring','vmtksurfacereader'],
             ['CellEntityIdsArrayName','entityidsarray','str',1,'',''],
+            ['IdValue','idvalue','int',1,'','entity id value in the connecting surface'],
             #['Method','method','str',1,'["simple","delaunay"]','connecting method']
             ['Display','display','bool',1,'','toggle rendering while algorithm advances'],
             ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer']
@@ -62,6 +65,13 @@ class vmtkSurfaceConnector(pypes.pypeScript):
             ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter'],
             ['Actor','oactor','vtkActor',1,'','the output actor']
             ])
+
+
+    def CleanPolyData(self,polydata):
+        cleaner = vtk.vtkCleanPolyData()
+        cleaner.SetInputData(polydata)
+        cleaner.Update()
+        polydata = cleaner.GetOutput()
 
 
     def SetSurfaceRepresentation(self, representation):
@@ -104,21 +114,159 @@ class vmtkSurfaceConnector(pypes.pypeScript):
 
 
     def ViewTriangle(self,triangle,color):
-            trianglePolydata = vtk.vtkPolyData()
-            triangleCell = vtk.vtkCellArray()
-            triangleCell.InsertNextCell(triangle)
-            trianglePolydata.SetPoints(self.Surface.GetPoints())
-            trianglePolydata.SetPolys(triangleCell)
-            self.ViewSurface(trianglePolydata,color)
+        trianglePolydata = vtk.vtkPolyData()
+        triangleCell = vtk.vtkCellArray()
+        triangleCell.InsertNextCell(triangle)
+        trianglePolydata.SetPoints(self.Surface.GetPoints())
+        trianglePolydata.SetPolys(triangleCell)
+        self.ViewSurface(trianglePolydata,color)
+
+
+    def LabelValidator(self,text):
+        import string
+        if not text:
+            return 0
+        if not text.split():
+            return 0
+        for char in text:
+            if char not in string.digits + " ":
+                return 0
+        return 1
+
+
+    def InteractiveRingExtraction(self,surface):
+
+        boundaryIds = vtk.vtkIdList()
+
+        if not self.vmtkRenderer:
+            self.vmtkRenderer = vmtkrenderer.vmtkRenderer()
+            self.vmtkRenderer.Initialize()
+            self.OwnRenderer = 1
+
+        self.vmtkRenderer.RegisterScript(self)
+
+        featureEdges = vtk.vtkFeatureEdges()
+        featureEdges.BoundaryEdgesOn()
+        featureEdges.FeatureEdgesOff()
+        featureEdges.NonManifoldEdgesOff()
+        featureEdges.ManifoldEdgesOff()
+        featureEdges.ColoringOff()
+        featureEdges.SetInputData(surface)
+        featureEdges.CreateDefaultLocator()
+        featureEdges.Update()
+        rings = featureEdges.GetOutput()
+
+        connectivity = vtk.vtkConnectivityFilter()
+        connectivity.SetInputData(rings)
+        connectivity.SetExtractionModeToAllRegions()
+        connectivity.ColorRegionsOn()
+        connectivity.Update()
+        rings = connectivity.GetOutput()
+
+        ringIdsArray = rings.GetCellData().GetArray('RegionId')
+
+        ringIds = set()
+        for i in range(rings.GetNumberOfCells()):
+            ringIds.add(ringIdsArray.GetComponent(i,0))
+        ringIds = sorted(ringIds)
+
+        print('ringIds: ',ringIds)
+
+        numberOfRings = len(ringIds)
+
+        boundaries = []
+        for i in range(numberOfRings):
+            th = vtk.vtkThreshold()
+            th.SetInputData(rings)
+            th.ThresholdBetween(ringIds[i]-0.5,ringIds[i]+0.5)
+            th.Update()
+            gf = vtk.vtkGeometryFilter()
+            gf.SetInputConnection(th.GetOutputPort())
+            gf.Update()
+            boundaries.append(gf.GetOutput())
+
+        numberOfBoundaries = numberOfRings
+        seedPoints = vtk.vtkPoints()
+        for i in range(numberOfRings):
+            barycenter = [0.0, 0.0, 0.0]
+            vtkvmtk.vtkvmtkBoundaryReferenceSystems.ComputeBoundaryBarycenter(boundaries[i].GetPoints(),barycenter)
+            seedPoints.InsertNextPoint(barycenter)
+        seedPolyData = vtk.vtkPolyData()
+        seedPolyData.SetPoints(seedPoints)
+        labelsMapper = vtk.vtkLabeledDataMapper();
+        labelsMapper.SetInputData(seedPolyData)
+        labelsMapper.SetLabelModeToLabelIds()
+        labelsActor = vtk.vtkActor2D()
+        labelsActor.SetMapper(labelsMapper)
+
+        self.vmtkRenderer.Renderer.AddActor(labelsActor)
+
+        surfaceMapper = vtk.vtkPolyDataMapper()
+        surfaceMapper.SetInputData(surface)
+        surfaceMapper.ScalarVisibilityOff()
+        surfaceActor = vtk.vtkActor()
+        surfaceActor.SetMapper(surfaceMapper)
+        surfaceActor.GetProperty().SetOpacity(0.25)
+        #surfaceActor.GetProperty().SetColor(color)
+
+        self.vmtkRenderer.Renderer.AddActor(surfaceActor)
+
+        ok = False
+        if self.Surface2 == None:
+            maxNumberOfBoundaries = 2
+        else:
+            maxNumberOfBoundaries = 1
+        while not ok :
+            labelString = self.InputText("Please input "+str(maxNumberOfBoundaries)+" boundary ids: ",self.LabelValidator)
+            labels = [int(label) for label in labelString.split()]
+            print(labels,len(labels))
+            ok = True
+            for label in labels:
+                if label not in list(range(numberOfBoundaries)):
+                    ok = False
+            if len(labels) != maxNumberOfBoundaries:
+                ok = False
+
+        for label in labels:
+            boundaryIds.InsertNextId(label)
+
+        #self.vmtkRenderer.Render()
+        surfaceActor.GetProperty().SetOpacity(0.1)
+        surfaceActor.GetProperty().SetColor([1.,1.,1.])
+        self.vmtkRenderer.Renderer.RemoveActor(labelsActor)
+        #self.vmtkRenderer.Renderer.RemoveActor(surfaceActor)
+        
+        return boundaries, boundaryIds
+
+
+    def InitializeRingsFromSurfaces(self):
+        [boundaries,boundaryIds] = self.InteractiveRingExtraction(self.Surface)
+
+        numIds = boundaryIds.GetNumberOfIds()
+        for i in range(numIds):
+            print('Boundary Id: ',boundaryIds.GetId(i))
+
+        self.Ring = boundaries[boundaryIds.GetId(0)]
+        if numIds > 1:
+            self.Ring2 = boundaries[boundaryIds.GetId(1)]
+        else:
+            [boundaries2,boundaryId2] = self.InteractiveRingExtraction(self.Surface2)
+            print('Boundary Id: ',boundaryId2.GetId(0))
+            self.Ring2 = boundaries2[boundaryId2.GetId(0)]
 
 
     def Execute(self):
 
-        if self.Surface and self.Surface2:
-            self.PrintError('Error: Option with input surfaces not yet implemented.')
+        if self.Surface:
+            self.InitializeRingsFromSurfaces()
 
         if self.Ring == None and self.Ring2 == None:
-            self.PrintError('Error: No input rings.')
+            self.PrintError('Error: No input surface or rings.')
+
+        red = [1.,0.,0.]
+        green = [0.,1.,0.]
+        blue = [0.,0.,1.]
+        white = [1.,1.,1.]
 
         n1 = self.Ring.GetNumberOfPoints()
         n2 = self.Ring2.GetNumberOfPoints()
@@ -142,10 +290,6 @@ class vmtkSurfaceConnector(pypes.pypeScript):
         print("Ring2: ",n2," points")
         print("Total: ",n1+n2," points")
 
-        red = [1.,0.,0.]
-        green = [0.,1.,0.]
-        blue = [0.,0.,1.]
-        white = [1.,1.,1.]
 
         # initial rendering
         if self.Display:
@@ -217,10 +361,12 @@ class vmtkSurfaceConnector(pypes.pypeScript):
             d1 = math.Distance2BetweenPoints( self.Ring.GetPoint(pointId1), self.Ring2.GetPoint(nextPointId(self.Ring2,cellId2,pointId2)) )
             d2 = math.Distance2BetweenPoints( self.Ring2.GetPoint(pointId2), self.Ring.GetPoint(nextPointId(self.Ring,cellId1,pointId1)) )
             if d1>d2:
+                print(iteration, ' down')
                 insertNextTriangle( cells, pointId1, pointId2+n1, nextPointId(self.Ring,cellId1,pointId1), red )
                 pointId1 = nextPointId(self.Ring,cellId1,pointId1)
                 cellId1 = nextCellId(self.Ring,pointId1,cellId1)
             else:
+                print(iteration, ' up')
                 insertNextTriangle( cells, pointId2+n1, nextPointId(self.Ring2,cellId2,pointId2)+n1, pointId1, green )
                 pointId2 = nextPointId(self.Ring2,cellId2,pointId2)
                 cellId2 = nextCellId(self.Ring2,pointId2,cellId2)
@@ -232,10 +378,16 @@ class vmtkSurfaceConnector(pypes.pypeScript):
         else:
             insertNextTriangle( cells, pointId1, pointId2+n1, nextPointId(self.Ring,cellId1,pointId1), blue )
 
-        self.Surface = vtk.vtkPolyData()
-        self.Surface.SetPoints(points)
-        self.Surface.SetPolys(cells)
         self.Surface.BuildLinks()
+
+        cellEntityIdsArray = vtk.vtkIntArray()
+        cellEntityIdsArray.SetName(self.CellEntityIdsArrayName)
+        cellEntityIdsArray.SetNumberOfComponents(1)
+        cellEntityIdsArray.SetNumberOfTuples(self.Surface.GetNumberOfCells())
+        self.Surface.GetCellData().AddArray(cellEntityIdsArray)
+
+        for i in range(self.Surface.GetNumberOfCells()):
+            cellEntityIdsArray.SetComponent(i,0,self.IdValue)
  
 
 
