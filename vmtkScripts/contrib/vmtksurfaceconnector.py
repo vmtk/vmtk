@@ -38,6 +38,7 @@ class vmtkSurfaceConnector(pypes.pypeScript):
         self.Surface2 = None
         self.Ring = None
         self.Ring2 = None
+        self.OutputSurface = None
         self.CellEntityIdsArrayName = 'CellEntityIds'
         self.IdValue = 1
         #self.Method = 'simple'
@@ -51,10 +52,10 @@ class vmtkSurfaceConnector(pypes.pypeScript):
         self.SetScriptName('vmtksurfaceconnector')
         self.SetScriptDoc('connect two rings of two different surfaces.')
         self.SetInputMembers([
-            ['Surface','isurface','vtkPolyData',1,'','the first input surface','vmtksurfacereader'],
-            ['Surface2','i2surface','vtkPolyData',1,'','the second input surface','vmtksurfacereader'],
-            ['Ring','i','vtkPolyData',1,'','the first input ring','vmtksurfacereader'],
-            ['Ring2','i2','vtkPolyData',1,'','the second input ring','vmtksurfacereader'],
+            ['Surface','i','vtkPolyData',1,'','the first input surface','vmtksurfacereader'],
+            ['Surface2','i2','vtkPolyData',1,'','the second input surface','vmtksurfacereader'],
+            ['Ring','iring','vtkPolyData',1,'','the first input ring','vmtksurfacereader'],
+            ['Ring2','i2ring','vtkPolyData',1,'','the second input ring','vmtksurfacereader'],
             ['CellEntityIdsArrayName','entityidsarray','str',1,'',''],
             ['IdValue','idvalue','int',1,'','entity id value in the connecting surface'],
             #['Method','method','str',1,'["simple","delaunay"]','connecting method']
@@ -62,7 +63,7 @@ class vmtkSurfaceConnector(pypes.pypeScript):
             ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer']
             ])
         self.SetOutputMembers([
-            ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter'],
+            ['OutputSurface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter'],
             ['Actor','oactor','vtkActor',1,'','the output actor']
             ])
 
@@ -117,7 +118,7 @@ class vmtkSurfaceConnector(pypes.pypeScript):
         trianglePolydata = vtk.vtkPolyData()
         triangleCell = vtk.vtkCellArray()
         triangleCell.InsertNextCell(triangle)
-        trianglePolydata.SetPoints(self.Surface.GetPoints())
+        trianglePolydata.SetPoints(self.OutputSurface.GetPoints())
         trianglePolydata.SetPolys(triangleCell)
         self.ViewSurface(trianglePolydata,color)
 
@@ -169,9 +170,6 @@ class vmtkSurfaceConnector(pypes.pypeScript):
         for i in range(rings.GetNumberOfCells()):
             ringIds.add(ringIdsArray.GetComponent(i,0))
         ringIds = sorted(ringIds)
-
-        print('ringIds: ',ringIds)
-
         numberOfRings = len(ringIds)
 
         boundaries = []
@@ -243,16 +241,43 @@ class vmtkSurfaceConnector(pypes.pypeScript):
         [boundaries,boundaryIds] = self.InteractiveRingExtraction(self.Surface)
 
         numIds = boundaryIds.GetNumberOfIds()
-        for i in range(numIds):
-            print('Boundary Id: ',boundaryIds.GetId(i))
 
         self.Ring = boundaries[boundaryIds.GetId(0)]
         if numIds > 1:
             self.Ring2 = boundaries[boundaryIds.GetId(1)]
         else:
             [boundaries2,boundaryId2] = self.InteractiveRingExtraction(self.Surface2)
-            print('Boundary Id: ',boundaryId2.GetId(0))
             self.Ring2 = boundaries2[boundaryId2.GetId(0)]
+
+    def MergeSurfacesAndEntityIdsArray(self):
+
+        def addEntityIdsArray(surface,idValue):
+            cellEntityIdsArray = surface.GetCellData().GetArray(self.CellEntityIdsArrayName)
+            if cellEntityIdsArray == None:
+                cellEntityIdsArray = vtk.vtkIntArray()
+                cellEntityIdsArray.SetName(self.CellEntityIdsArrayName)
+                cellEntityIdsArray.SetNumberOfComponents(1)
+                cellEntityIdsArray.SetNumberOfTuples(surface.GetNumberOfCells())
+                surface.GetCellData().AddArray(cellEntityIdsArray)
+                for i in range(surface.GetNumberOfCells()):
+                    cellEntityIdsArray.SetComponent(i,0,idValue)
+
+        addEntityIdsArray(self.OutputSurface,self.IdValue)
+        if self.Surface:
+            addEntityIdsArray(self.Surface,self.IdValue-1)
+        if self.Surface2:
+            addEntityIdsArray(self.Surface2,self.IdValue+1)
+
+        mergeSurfaces = vtk.vtkAppendPolyData()
+        mergeSurfaces.AddInputData(self.OutputSurface)
+        if self.Surface:
+            mergeSurfaces.AddInputData(self.Surface)
+        if self.Surface2:
+            mergeSurfaces.AddInputData(self.Surface2)
+        mergeSurfaces.Update()
+        self.OutputSurface = mergeSurfaces.GetOutput()
+        self.CleanPolyData(self.OutputSurface)
+
 
 
     def Execute(self):
@@ -274,9 +299,9 @@ class vmtkSurfaceConnector(pypes.pypeScript):
         points = vtk.vtkPoints()
         cells = vtk.vtkCellArray()
 
-        self.Surface = vtk.vtkPolyData()
-        self.Surface.SetPoints(points)
-        self.Surface.SetPolys(cells)
+        self.OutputSurface = vtk.vtkPolyData()
+        self.OutputSurface.SetPoints(points)
+        self.OutputSurface.SetPolys(cells)
 
         points1 = self.Ring.GetPoints()
         points2 = self.Ring2.GetPoints()
@@ -289,7 +314,6 @@ class vmtkSurfaceConnector(pypes.pypeScript):
         print("Ring1: ",n1," points")
         print("Ring2: ",n2," points")
         print("Total: ",n1+n2," points")
-
 
         # initial rendering
         if self.Display:
@@ -361,12 +385,10 @@ class vmtkSurfaceConnector(pypes.pypeScript):
             d1 = math.Distance2BetweenPoints( self.Ring.GetPoint(pointId1), self.Ring2.GetPoint(nextPointId(self.Ring2,cellId2,pointId2)) )
             d2 = math.Distance2BetweenPoints( self.Ring2.GetPoint(pointId2), self.Ring.GetPoint(nextPointId(self.Ring,cellId1,pointId1)) )
             if d1>d2:
-                print(iteration, ' down')
                 insertNextTriangle( cells, pointId1, pointId2+n1, nextPointId(self.Ring,cellId1,pointId1), red )
                 pointId1 = nextPointId(self.Ring,cellId1,pointId1)
                 cellId1 = nextCellId(self.Ring,pointId1,cellId1)
             else:
-                print(iteration, ' up')
                 insertNextTriangle( cells, pointId2+n1, nextPointId(self.Ring2,cellId2,pointId2)+n1, pointId1, green )
                 pointId2 = nextPointId(self.Ring2,cellId2,pointId2)
                 cellId2 = nextCellId(self.Ring2,pointId2,cellId2)
@@ -378,17 +400,10 @@ class vmtkSurfaceConnector(pypes.pypeScript):
         else:
             insertNextTriangle( cells, pointId1, pointId2+n1, nextPointId(self.Ring,cellId1,pointId1), blue )
 
-        self.Surface.BuildLinks()
+        self.OutputSurface.BuildLinks()
+        self.MergeSurfacesAndEntityIdsArray()
 
-        cellEntityIdsArray = vtk.vtkIntArray()
-        cellEntityIdsArray.SetName(self.CellEntityIdsArrayName)
-        cellEntityIdsArray.SetNumberOfComponents(1)
-        cellEntityIdsArray.SetNumberOfTuples(self.Surface.GetNumberOfCells())
-        self.Surface.GetCellData().AddArray(cellEntityIdsArray)
 
-        for i in range(self.Surface.GetNumberOfCells()):
-            cellEntityIdsArray.SetComponent(i,0,self.IdValue)
- 
 
 
 if __name__=='__main__':
