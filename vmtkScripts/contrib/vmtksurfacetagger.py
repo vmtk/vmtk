@@ -49,11 +49,11 @@ class vmtkSurfaceTagger(pypes.pypeScript):
         self.SetScriptDoc('tag a surface exploiting an array defined on it')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
-            ['Method','method','str',1,'["cliparray","array","connectivity"]','tagging method (cliparray: exploit an array to clip the surface at a certain value tagging the two parts; array: the same of cliparray, but without clipping the original triangles; connectivity: given an already tagged surface, tag disconnected part of each input tag)'],
+            ['Method','method','str',1,'["cliparray","array","connectivity","constant"]','tagging method (cliparray: exploit an array to clip the surface at a certain value tagging the two parts; array: the same of cliparray, but without clipping the original triangles; connectivity: given an already tagged surface, tag disconnected part of each input tag); constant: assign a constant tag to the input surface'],
             ['CellEntityIdsArrayName','entityidsarray','str',1,'','name of the array where the tags are stored'],
             ['ArrayName','array','str',1,'','name of the array with which to define the boundary between tags'],
             ['Value','value','float',1,'','scalar value of the array identifying the boundary between tags'],
-            ['InsideTag','inside','int',1,'','tag of the inside region (i.e. where the Array is lower than Value)'],
+            ['InsideTag','inside','int',1,'','tag of the inside region (i.e. where the Array is lower than Value; used also in case of "constant" method)'],
             ['OutsideTag','outside','int',1,'','tag of the outside region (i.e. where the Array is greater than Value)'],
             ['OverwriteOutsideTag','overwriteoutside','bool',1,'','overwrite outside value also when the CellEntityIdsArray already exists in the input surface'],
             ['InsideOut','insideout','bool',1,'','toggle switching inside and outside tags'],
@@ -196,6 +196,8 @@ class vmtkSurfaceTagger(pypes.pypeScript):
             self.ArrayTagger()
         elif self.Method == 'connectivity':
             self.ConnectivityTagger()
+        elif self.Method == 'constant':
+            self.CellEntityIdsArray.FillComponent(0,self.InsideTag)
         else:
             self.PrintError("Method unknown (available: cliparray, array, connectivity)")
 
