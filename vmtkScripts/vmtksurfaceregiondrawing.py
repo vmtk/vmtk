@@ -174,7 +174,7 @@ class vmtkSurfaceRegionDrawing(pypes.pypeScript):
         mapper = vtk.vtkPolyDataMapper()
         mapper.SetInputData(self.Surface)
         mapper.ScalarVisibilityOn()
-        arrayRange = self.Array.GetValueRange(0)
+        arrayRange = [e for e in self.Array.GetValueRange(0)]
         if self.InsideValue > arrayRange[1]:
             arrayRange[1] = self.InsideValue
         elif self.InsideValue < arrayRange[0]:
