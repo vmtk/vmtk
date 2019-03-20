@@ -39,9 +39,10 @@ class vmtkSurfaceTagger(pypes.pypeScript):
         self.Value = 0.0
         self.InsideTag = 2
         self.OutsideTag = 1
-        self.OverwriteOutsideTag = 1
+        self.OverwriteOutsideTag = 0
         self.InsideOut = 0
         self.ConnectivityOffset = 1
+        self.TagSmallestRegion = 1
         self.CleanOutput = 1
         self.PrintTags = 1
 
@@ -49,15 +50,16 @@ class vmtkSurfaceTagger(pypes.pypeScript):
         self.SetScriptDoc('tag a surface exploiting an array defined on it')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
-            ['Method','method','str',1,'["cliparray","array","connectivity","constant"]','tagging method (cliparray: exploit an array to clip the surface at a certain value tagging the two parts; array: the same of cliparray, but without clipping the original triangles; connectivity: given an already tagged surface, tag disconnected part of each input tag); constant: assign a constant tag to the input surface'],
+            ['Method','method','str',1,'["cliparray","array","connectivity","constant","drawing"]','tagging method (cliparray: exploit an array to clip the surface at a certain value tagging the two parts; array: the same of cliparray, but without clipping the original triangles; connectivity: given an already tagged surface, tag disconnected part of each input tag; constant: assign a constant tag to the input surface; drawing: interactive drawing a region)'],
             ['CellEntityIdsArrayName','entityidsarray','str',1,'','name of the array where the tags are stored'],
             ['ArrayName','array','str',1,'','name of the array with which to define the boundary between tags'],
             ['Value','value','float',1,'','scalar value of the array identifying the boundary between tags'],
             ['InsideTag','inside','int',1,'','tag of the inside region (i.e. where the Array is lower than Value; used also in case of "constant" method)'],
-            ['OutsideTag','outside','int',1,'','tag of the outside region (i.e. where the Array is greater than Value)'],
             ['OverwriteOutsideTag','overwriteoutside','bool',1,'','overwrite outside value also when the CellEntityIdsArray already exists in the input surface'],
+            ['OutsideTag','outside','int',1,'','tag of the outside region (i.e. where the Array is greater than Value)'],
             ['InsideOut','insideout','bool',1,'','toggle switching inside and outside tags'],
             ['ConnectivityOffset','offset','int',1,'','offset added to the entityidsarray of each disconnected parts of each input tag (connectivity only)'],
+            ['TagSmallestRegion','tagsmallestregion','bool',1,'','toggle tagging the smallest or the largest region (drawing only)'],
             ['CleanOutput','cleanoutput','bool',1,'','toggle cleaning the unused points'],
             ['PrintTags','printtags','bool',1,'','toggle printing the set of tags']
             ])
@@ -174,6 +176,23 @@ class vmtkSurfaceTagger(pypes.pypeScript):
 
 
 
+    def DrawingTagger(self):
+        from vmtk import vmtkscripts
+
+        drawer = vmtkscripts.vmtkSurfaceRegionDrawing()
+        drawer.Surface = self.Surface
+        drawer.InsideValue = self.InsideTag
+        drawer.OutsideValue = self.OutsideTag
+        drawer.OverwriteOutsideValue = self.OverwriteOutsideTag
+        drawer.ArrayName = self.CellEntityIdsArrayName
+        drawer.TagSmallestRegion = self.TagSmallestRegion
+        drawer.CellData = 1
+        drawer.ComputeDisance = 0
+        drawer.Execute()
+        self.Surface = drawer.Surface
+
+
+
     def Execute(self):
 
         if self.Surface == None:
@@ -198,8 +217,10 @@ class vmtkSurfaceTagger(pypes.pypeScript):
             self.ConnectivityTagger()
         elif self.Method == 'constant':
             self.CellEntityIdsArray.FillComponent(0,self.InsideTag)
+        elif self.Method == 'drawing':
+            self.DrawingTagger()
         else:
-            self.PrintError("Method unknown (available: cliparray, array, connectivity)")
+            self.PrintError("Method unknown (available: cliparray, array, connectivity, constant, drawing)")
 
         if self.CleanOutput:
             self.CleanSurface()
