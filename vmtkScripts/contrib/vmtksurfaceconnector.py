@@ -259,8 +259,7 @@ class vmtkSurfaceConnector(pypes.pypeScript):
                 cellEntityIdsArray.SetNumberOfComponents(1)
                 cellEntityIdsArray.SetNumberOfTuples(surface.GetNumberOfCells())
                 surface.GetCellData().AddArray(cellEntityIdsArray)
-                for i in range(surface.GetNumberOfCells()):
-                    cellEntityIdsArray.SetComponent(i,0,idValue)
+                cellEntityIdsArray.FillComponent(0,idValue)
 
         addEntityIdsArray(self.OutputSurface,self.IdValue)
         if self.Surface:

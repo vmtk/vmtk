@@ -99,8 +99,7 @@ class vmtkSurfaceTagger(pypes.pypeScript):
         insideCellEntityIdsArray = insideSurface.GetCellData().GetArray( self.CellEntityIdsArrayName )
         outsideCellEntityIdsArray = outsideSurface.GetCellData().GetArray( self.CellEntityIdsArrayName )
 
-        for i in range(insideSurface.GetNumberOfCells()):
-            insideCellEntityIdsArray.SetComponent(i,0,self.InsideTag)
+        insideCellEntityIdsArray.FillComponent(0,self.InsideTag)
 
         # merge the inside and the outside surfaces
         mergeSurface = vtk.vtkAppendPolyData()
@@ -189,8 +188,7 @@ class vmtkSurfaceTagger(pypes.pypeScript):
             self.CellEntityIdsArray.SetNumberOfComponents(1)
             self.CellEntityIdsArray.SetNumberOfTuples(self.Surface.GetNumberOfCells())
             self.Surface.GetCellData().AddArray(self.CellEntityIdsArray)
-            for i in range(self.Surface.GetNumberOfCells()):
-                self.CellEntityIdsArray.SetComponent(i,0,self.OutsideTag)
+            self.CellEntityIdsArray.FillComponent(0,self.OutsideTag)
 
         if self.Method == 'cliparray':
             self.ClipArrayTagger()
