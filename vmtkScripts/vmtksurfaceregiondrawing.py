@@ -106,7 +106,7 @@ class vmtkSurfaceRegionDrawing(pypes.pypeScript):
                 if (not contourValue < 0.0 and selectionValue < 0.0) or (contourValue < 0.0 and selectionValue < contourValue):
                     self.Array.SetTuple1(i,selectionValue)
             else:
-                if selectionValue < 0.0:
+                if selectionValue <= 0.0:
                     self.Array.SetTuple1(i,self.InsideValue)
 
         if self.CellData:
@@ -128,10 +128,6 @@ class vmtkSurfaceRegionDrawing(pypes.pypeScript):
             self.ContourWidget.SetEnabled(0)
         else:
             self.ContourWidget.SetEnabled(1)
-
-    def Display(self):
-
-        self.vmtkRenderer.Render()
 
     def Execute(self):
 
@@ -178,10 +174,16 @@ class vmtkSurfaceRegionDrawing(pypes.pypeScript):
         mapper = vtk.vtkPolyDataMapper()
         mapper.SetInputData(self.Surface)
         mapper.ScalarVisibilityOn()
+        arrayRange = self.Array.GetValueRange(0)
+        if self.InsideValue > arrayRange[1]:
+            arrayRange[1] = self.InsideValue
+        elif self.InsideValue < arrayRange[0]:
+            arrayRange[0] = self.InsideValue
         self.Actor = vtk.vtkActor()
         self.Actor.SetMapper(mapper)
-        self.Actor.GetMapper().SetScalarRange(-1.0,0.0)
+        self.Actor.GetMapper().SetScalarRange(arrayRange[0],arrayRange[1])
         self.vmtkRenderer.Renderer.AddActor(self.Actor)
+        self.vmtkRenderer.Render()
 
         self.ContourWidget = vtk.vtkContourWidget()
         self.ContourWidget.SetInteractor(self.vmtkRenderer.RenderWindowInteractor)
@@ -206,7 +208,9 @@ class vmtkSurfaceRegionDrawing(pypes.pypeScript):
         self.vmtkRenderer.AddKeyBinding('space','Generate scalars',self.ScalarsCallback)
         self.vmtkRenderer.AddKeyBinding('d','Delete contour',self.DeleteContourCallback)
         #self.vmtkRenderer.AddKeyBinding('i','Start interaction',self.InteractCallback)
-        self.Display()
+        self.vmtkRenderer.Render()
+
+
 
         if self.OwnRenderer:
             self.vmtkRenderer.Deallocate()
