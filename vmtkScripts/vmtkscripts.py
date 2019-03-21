@@ -127,6 +127,7 @@ __all__ = [
     'vmtk.vmtksurfacedecimation',
     'vmtk.vmtksurfacedistance',
     'vmtk.vmtksurfaceendclipper',
+    'vmtk.vmtksurfaceedgelengtharray',
     'vmtk.vmtksurfaceimplicitdistance',
     'vmtk.vmtksurfacekiteremoval',
     'vmtk.vmtksurfaceloopextraction',
