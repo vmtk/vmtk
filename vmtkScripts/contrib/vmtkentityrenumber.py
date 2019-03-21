@@ -11,9 +11,11 @@ class VmtkEntityRenumber(pypes.pypeScript):
         pypes.pypeScript.__init__(self)
 
         self.SetScriptName('vmtkentityrenumber')
-        self.SetScriptDoc('Renumber cell entity id array.')
+        self.SetScriptDoc('Renumber cell entity ids array (in a mesh or a surface).')
 
         self.Mesh = None
+        self.Surface = None
+        self.Input = None
         self.CellEntityIdsArrayName = "CellEntityIds"
         self.CellEntityIdOffset = 0
         self.CellEntityIdRenumbering = []
@@ -23,6 +25,8 @@ class VmtkEntityRenumber(pypes.pypeScript):
         self.SetInputMembers([
                 ['Mesh', 'i', 'vtkUnstructuredGrid', 1, '',
                  'the input mesh', 'vmtkmeshreader'],
+                ['Surface', 'isurface', 'vtkPolyData', 1, '',
+                 'the input surface (alternative to the input mesh)', 'vmtksurfacereader'],
                 ['CellEntityIdsArrayName', 'entityidsarray', 'str', 1, '',
                  'name of the array where entity ids have been stored'],
                 ['CellEntityIdOffset', 'offset', 'int', 1, '',
@@ -35,13 +39,20 @@ class VmtkEntityRenumber(pypes.pypeScript):
         self.SetOutputMembers([
                 ['Mesh', 'o', 'vtkUnstructuredGrid', 1, '',
                  'the output mesh', 'vmtkmeshwriter'],
+                 ['Surface', 'osurface', 'vtkPolyData', 1, '',
+                 'the output surface', 'vmtksurfacewriter'],
                 ['CellEntityIdsArrayName', 'entityidsarray', 'str', 1, '',
                  'name of the array where entity ids have been stored'],
                 ])
 
     def Execute(self):
-        if self.Mesh is None:
-            self.PrintError('Error: No Mesh.')
+
+        if self.Surface == None and self.Mesh == None:
+            self.PrintError('Error: No Surface or Mesh.')
+        if self.Surface != None and self.Mesh != None:
+            self.PrintError('Error: Both Surface and Mesh, expecting only one.')
+
+        self.Input = self.Surface or self.Mesh
 
         if len(self.CellEntityIdRenumbering) % 2 != 0:
             self.PrintError('Renumbering must have even length.')
@@ -52,7 +63,7 @@ class VmtkEntityRenumber(pypes.pypeScript):
             b = self.CellEntityIdRenumbering[2*i+1]
             renumbering[a] = b
 
-        cellids = self.Mesh.GetCellData().GetScalars(self.CellEntityIdsArrayName)
+        cellids = self.Input.GetCellData().GetScalars(self.CellEntityIdsArrayName)
         for i in range(cellids.GetNumberOfTuples()):
             v = cellids.GetValue(i)
 
@@ -65,16 +76,16 @@ class VmtkEntityRenumber(pypes.pypeScript):
 
             # Add offset if cell is an interior facet
             if self.InteriorFacetsOffset:
-                if self.Mesh.GetCell(i).GetCellType() in faceTypes:
+                if self.Input.GetCell(i).GetCellType() in faceTypes:
                     pIds = vtk.vtkIdList()
                     cIds = vtk.vtkIdList()
-                    self.Mesh.GetCellPoints(i, pIds)
-                    self.Mesh.GetCellNeighbors(i, pIds, cIds)
+                    self.Input.GetCellPoints(i, pIds)
+                    self.Input.GetCellNeighbors(i, pIds, cIds)
 
                     nIds = cIds.GetNumberOfIds()
                     if nIds == 2:
                         def getCellType(j):
-                            return self.Mesh.GetCell(cIds.GetId(j)).GetCellType()
+                            return self.Input.GetCell(cIds.GetId(j)).GetCellType()
                         if all(getCellType(j) in volumeTypes for j in range(nIds)):
                             v += self.InteriorFacetsOffset
 
