@@ -31,6 +31,7 @@ class vmtkSurfaceRegionDrawing(pypes.pypeScript):
         self.vmtkRenderer = None
         self.OwnRenderer = 0
 
+        self.Representation = 'edges'
         self.Actor = None
         self.ContourWidget = None
         self.Interpolator = None
@@ -61,6 +62,30 @@ class vmtkSurfaceRegionDrawing(pypes.pypeScript):
         self.SetOutputMembers([
             ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter']
             ])
+
+    def SetSurfaceRepresentation(self, representation):
+        if representation == 'surface':
+            self.Actor.GetProperty().SetRepresentationToSurface()
+            self.Actor.GetProperty().EdgeVisibilityOff()
+        elif representation == 'edges':
+            self.Actor.GetProperty().SetRepresentationToSurface()
+            self.Actor.GetProperty().EdgeVisibilityOn()
+        elif representation == 'wireframe':
+            self.Actor.GetProperty().SetRepresentationToWireframe()
+            self.Actor.GetProperty().EdgeVisibilityOff()
+        self.Representation = representation
+
+    def RepresentationCallback(self, obj):
+        if not self.Actor:
+            return
+        if self.Representation == 'surface':
+            representation = 'edges'
+        elif self.Representation == 'edges':
+            representation = 'wireframe'
+        elif self.Representation == 'wireframe':
+            representation = 'surface'
+        self.SetSurfaceRepresentation(representation)
+        self.vmtkRenderer.RenderWindow.Render()
 
     def ScalarsCallback(self, obj):
 
@@ -113,10 +138,7 @@ class vmtkSurfaceRegionDrawing(pypes.pypeScript):
             self.Surface.GetPointData().RemoveArray('SelectionFilter')
             self.Surface.GetCellData().RemoveArray('SelectionFilter')
 
-        self.Actor.GetMapper().SetScalarRange(self.Array.GetRange(0))
-
         self.Surface.Modified()
-
         self.ContourWidget.Initialize()
 
     def DeleteContourCallback(self, obj):
@@ -166,14 +188,17 @@ class vmtkSurfaceRegionDrawing(pypes.pypeScript):
             else:
                 self.Surface.GetPointData().AddArray(self.Array)
 
-        if self.CellData:
-            self.Surface.GetCellData().SetActiveScalars(self.ArrayName)
-        else:
-            self.Surface.GetPointData().SetActiveScalars(self.ArrayName)
-
         mapper = vtk.vtkPolyDataMapper()
         mapper.SetInputData(self.Surface)
         mapper.ScalarVisibilityOn()
+
+        if self.CellData:
+            self.Surface.GetCellData().SetActiveScalars(self.ArrayName)
+            mapper.SetScalarModeToUseCellData()
+        else:
+            self.Surface.GetPointData().SetActiveScalars(self.ArrayName)
+            mapper.SetScalarModeToUsePointData()
+
         arrayRange = [e for e in self.Array.GetValueRange(0)]
         if self.InsideValue > arrayRange[1]:
             arrayRange[1] = self.InsideValue
@@ -205,6 +230,7 @@ class vmtkSurfaceRegionDrawing(pypes.pypeScript):
         self.ContourWidget.EnabledOn()
         self.InputInfo("Drawing contour ...\n")
 
+        self.vmtkRenderer.AddKeyBinding('w','Change surface representation.',self.RepresentationCallback)
         self.vmtkRenderer.AddKeyBinding('space','Generate scalars',self.ScalarsCallback)
         self.vmtkRenderer.AddKeyBinding('d','Delete contour',self.DeleteContourCallback)
         #self.vmtkRenderer.AddKeyBinding('i','Start interaction',self.InteractCallback)
