@@ -35,8 +35,9 @@ class vmtkSurfaceThickness(pypes.pypeScript):
         self.CellEntityIdsArray = None
         self.ThicknessArrayName = 'Thickness'
         self.ThicknessArray = None
-        self.InternalWallEntityIds = []
         self.ExternalWallEntityIds = []
+        self.InternalWallEntityIds = []
+        self.InternalWall2EntityIds = []
 
         self.SetScriptName('vmtksurfacethickness')
         self.SetScriptDoc('compute local thickness of a structure as distance between the internal and the external walls (exploiting their entity ids)')
@@ -44,8 +45,9 @@ class vmtkSurfaceThickness(pypes.pypeScript):
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
             ['CellEntityIdsArrayName','entityidsarray','str',1,'','name of the array where the tags are stored'],
             ['ThicknessArrayName','thicknessarray','str',1,'','name of the array with which to define the boundary between tags'],
+            ['ExternalWallEntityIds','externalwallids','int',-1,'','entity ids on the external wall of the structure'],
             ['InternalWallEntityIds','internalwallids','int',-1,'','entity ids on the internal wall of the structure'],
-            ['ExternalWallEntityIds','externalwallids','int',-1,'','entity ids on the external wall of the structure']
+            ['InternalWall2EntityIds','internalwall2ids','int',-1,'','entity ids on the second internal wall of the structure (necessary only in case of two disconnected internal walls, e.g. heart ventricles)']
             ])
         self.SetOutputMembers([
             ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter'],
@@ -80,10 +82,6 @@ class vmtkSurfaceThickness(pypes.pypeScript):
             appendFilter.Update()
             return appendFilter.GetOutput()
 
-        internalWall = extractWall(self.InternalWallEntityIds)
-        externalWall = extractWall(self.ExternalWallEntityIds)
-        bothWalls = extractWall(self.InternalWallEntityIds+self.ExternalWallEntityIds)
-
         def ComputeDistance(surface,referenceSurface):
             distance = vmtkscripts.vmtkSurfaceImplicitDistance()
             distance.Surface = surface
@@ -93,19 +91,36 @@ class vmtkSurfaceThickness(pypes.pypeScript):
             distance.Execute()
             return distance.Array
 
-        internalWallDistanceArray = ComputeDistance(bothWalls,internalWall)
-        externalWallDistanceArray = ComputeDistance(bothWalls,externalWall)
+        allWalls = extractWall(self.ExternalWallEntityIds+self.InternalWallEntityIds+self.InternalWall2EntityIds)
 
-        numberOfTuple = bothWalls.GetNumberOfPoints()
+        externalWall = extractWall(self.ExternalWallEntityIds)
+        externalWallDistanceArray = ComputeDistance(allWalls,externalWall)
+
+        internalWall = extractWall(self.InternalWallEntityIds)
+        internalWallDistanceArray = ComputeDistance(allWalls,internalWall)
+
+        if self.InternalWall2EntityIds != []:
+            internalWall2 = extractWall(self.InternalWall2EntityIds)
+            internalWalls = extractWall(self.InternalWallEntityIds+self.InternalWall2EntityIds)
+            internalWall2DistanceArray = ComputeDistance(allWalls,internalWall2)
+            internalWallsDistanceArray = ComputeDistance(allWalls,internalWalls)
+
+        numberOfTuple = allWalls.GetNumberOfPoints()
         thicknessArray = vtk.vtkDoubleArray()
         thicknessArray.SetName(self.ThicknessArrayName)
         thicknessArray.SetNumberOfComponents(1)
         thicknessArray.SetNumberOfTuples(numberOfTuple)
         for i in range(numberOfTuple):
-            d1 = internalWallDistanceArray.GetComponent(i,0)
-            d2 = externalWallDistanceArray.GetComponent(i,0)
-            thicknessArray.SetComponent(i,0,max(d1,d2))
-        bothWalls.GetPointData().AddArray(thicknessArray)
+            d_a = externalWallDistanceArray.GetComponent(i,0)
+            d_b = internalWallDistanceArray.GetComponent(i,0)
+            if self.InternalWall2EntityIds != []:
+                d_b2 = internalWall2DistanceArray.GetComponent(i,0)
+                d_b3 = internalWallsDistanceArray.GetComponent(i,0)
+                value = max(min(max(d_b,d_b2),d_a),d_b3)
+            else:
+                value = max(d_a,d_b)
+            thicknessArray.SetComponent(i,0,value)
+        allWalls.GetPointData().AddArray(thicknessArray)
 
         # project the thickness also in regions outside the two walls (e.g. caps)
         # WARNING: it works only with PointData
@@ -114,7 +129,7 @@ class vmtkSurfaceThickness(pypes.pypeScript):
 
         surfaceProjection = vmtkscripts.vmtkSurfaceProjection()
         surfaceProjection.Surface = surfaceCopy
-        surfaceProjection.ReferenceSurface = bothWalls
+        surfaceProjection.ReferenceSurface = allWalls
         surfaceProjection.Execute()
         surfaceCopy = surfaceProjection.Surface
 
