@@ -315,6 +315,8 @@ class vmtkSurfaceViewer(pypes.pypeScript):
 
         surfaceMapper = vtk.vtkPolyDataMapper()
         surfaceMapper.SetInputData(self.Surface)
+        if self.DisplayCellData:
+            surfaceMapper.SetScalarModeToUseCellData()
         surfaceMapper.ScalarVisibilityOn()
         surfaceMapper.SetScalarRange(self.TagSet[0], self.TagSet[self.NumberOfRegions-1])
         self.Actor = vtk.vtkActor()
