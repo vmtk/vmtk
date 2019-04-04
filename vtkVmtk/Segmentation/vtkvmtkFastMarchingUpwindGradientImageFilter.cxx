@@ -28,7 +28,7 @@ Version:   $Revision: 1.1 $
 
 #include "vtkvmtkITKFilterUtilities.h"
 
-#include "itkFastMarchingUpwindGradientImageFilter.h"
+#include <itkFastMarchingUpwindGradientImageFilter.h>
 
 vtkStandardNewMacro(vtkvmtkFastMarchingUpwindGradientImageFilter);
 
