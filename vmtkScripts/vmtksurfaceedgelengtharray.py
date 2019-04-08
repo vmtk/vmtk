@@ -44,12 +44,17 @@ class vmtkSurfaceEdgeLengthArray(pypes.pypeScript):
         self.Beta = 1.0
         self.Constant = 1.0
         self.Overwrite = 1
+        self.Smoothing = 1
+        self.SmoothingConnexity = 1
+        self.SmoothingRelaxation = 1.0
+        self.SmoothingIterations = 1
         self.Interactive = 0
         self.ColorMap = 'rainbow'
         self.vmtkRenderer = None
         self.OwnRenderer = 0
 
         self.TagsSet = set()
+        self.SurfaceViewer = None
 
 
         self.SetScriptName('vmtksurfaceedgelengtharray')
@@ -65,6 +70,10 @@ class vmtkSurfaceEdgeLengthArray(pypes.pypeScript):
             ['Beta','beta','float',1,'(0.0,)','exponent to the input array'],
             ['Constant','constant','float',1,'(0.0,)','constant value for the edge-length array ("constant" method only)'],
             ['CellEntityIdsArrayName','entityidsarray','str',1,'','name of the array where the tags are stored'],
+            ['Smoothing','smoothing','bool',1,'','toggle saving a smoothed version of the OutputArray called "OutputArrayName"+"Smooth"'],
+            ['SmoothingConnexity','connexity','int',1,'(1,2)','patch connexity considered in the smoothing procedure'],
+            ['SmoothingRelaxation','relaxation','float',1,'(0.0,1.0)','relaxation factor for the smoothing'],
+            ['SmoothingIterations','iterations','int',1,'','number of smoothing iterations'],
             ['Interactive','interactive','bool',1,'','interactively selection of some entity ids to assign specific parameters in the associated regions'],
             ['ColorMap','colormap','str',1,'["rainbow","blackbody","cooltowarm","grayscale"]','choose the color map (interactive only)'],
             ['Overwrite','overwrite','bool',1,'','toggle overwriting an already existing output array on the input surface'],
@@ -113,30 +122,30 @@ class vmtkSurfaceEdgeLengthArray(pypes.pypeScript):
             return 1
         return 0
 
-    def ViewTag(self,surfaceViewer):
-        surfaceViewer.Surface = self.Surface
-        surfaceViewer.Legend = 1
-        surfaceViewer.LegendTitle = 'EntityIds'
-        surfaceViewer.ColorMap = self.ColorMap
-        surfaceViewer.DisplayTag = 1
-        surfaceViewer.RegionTagArrayName = self.CellEntityIdsArrayName
-        surfaceViewer.DisplayCellData = 1
-        surfaceViewer.Execute()
+    def ViewTag(self):
+        self.SurfaceViewer.Surface = self.Surface
+        self.SurfaceViewer.Legend = 1
+        self.SurfaceViewer.LegendTitle = 'EntityIds'
+        self.SurfaceViewer.ColorMap = self.ColorMap
+        self.SurfaceViewer.DisplayTag = 1
+        self.SurfaceViewer.RegionTagArrayName = self.CellEntityIdsArrayName
+        self.SurfaceViewer.DisplayCellData = 1
+        self.SurfaceViewer.Execute()
 
-    def ViewEdgeLength(self,surfaceViewer):
-        surfaceViewer.Surface = self.Surface
-        surfaceViewer.Legend = 1
-        surfaceViewer.LegendTitle = 'EdgeLength'
-        surfaceViewer.ColorMap = self.ColorMap
-        surfaceViewer.DisplayTag = 0
-        surfaceViewer.ArrayName = self.OutputArrayName
-        surfaceViewer.DisplayCellData = 0
-        surfaceViewer.Execute()
+    def ViewEdgeLength(self,arrayName):
+        self.SurfaceViewer.Surface = self.Surface
+        self.SurfaceViewer.Legend = 1
+        self.SurfaceViewer.LegendTitle = arrayName
+        self.SurfaceViewer.ColorMap = self.ColorMap
+        self.SurfaceViewer.DisplayTag = 0
+        self.SurfaceViewer.ArrayName = arrayName
+        self.SurfaceViewer.DisplayCellData = 0
+        self.SurfaceViewer.Execute()
 
-    def DeleteActors(self,surfaceViewer):
-        self.vmtkRenderer.Renderer.RemoveActor(surfaceViewer.Actor)
-        if surfaceViewer.LabelsActor:
-            self.vmtkRenderer.Renderer.RemoveActor(surfaceViewer.LabelsActor)
+    def DeleteActors(self):
+        self.vmtkRenderer.Renderer.RemoveActor(self.SurfaceViewer.Actor)
+        if self.SurfaceViewer.LabelsActor:
+            self.vmtkRenderer.Renderer.RemoveActor(self.SurfaceViewer.LabelsActor)
 
 
     def InteractiveEdgeLengthArray(self):
@@ -158,16 +167,16 @@ class vmtkSurfaceEdgeLengthArray(pypes.pypeScript):
             self.OwnRenderer = 1
         self.vmtkRenderer.RegisterScript(self)
 
-        surfaceViewer = vmtkscripts.vmtkSurfaceViewer()
-        surfaceViewer.vmtkRenderer = self.vmtkRenderer
+        self.SurfaceViewer = vmtkscripts.vmtkSurfaceViewer()
+        self.SurfaceViewer.vmtkRenderer = self.vmtkRenderer
 
-        self.ViewEdgeLength(surfaceViewer)
+        self.ViewEdgeLength(self.OutputArrayName)
 
         yes = True
         while yes:
 
-            self.DeleteActors(surfaceViewer)
-            self.ViewTag(surfaceViewer)
+            self.DeleteActors()
+            self.ViewTag()
 
             # input an ids list
             ok = False
@@ -280,8 +289,8 @@ class vmtkSurfaceEdgeLengthArray(pypes.pypeScript):
             self.Surface = finalAppend.GetOutput()
             self.Surface = self.CleanSurface(self.Surface)
 
-            self.DeleteActors(surfaceViewer)
-            self.ViewEdgeLength(surfaceViewer)
+            self.DeleteActors()
+            self.ViewEdgeLength(self.OutputArrayName)
 
             queryString = 'Do you want to continue with other ids?\n(y/n, default = no): '
             string = self.InputText(queryString,self.YesNoValidator)
@@ -316,6 +325,31 @@ class vmtkSurfaceEdgeLengthArray(pypes.pypeScript):
             self.PrintError("Method unknown (available: function, constant)")
 
 
+    def EdgeLengthArraySmoother(self):
+        from vmtk import vmtkscripts
+
+        smoothedOutputArray = vtk.vtkDoubleArray()
+        smoothedOutputArray.SetName(self.OutputArrayName+"Smooth")
+        smoothedOutputArray.SetNumberOfComponents(1)
+        smoothedOutputArray.SetNumberOfTuples(self.Surface.GetNumberOfPoints())
+        for i in range(self.Surface.GetNumberOfPoints()):
+            smoothedOutputArray.SetValue(i,self.OutputArray.GetValue(i))
+        self.Surface.GetPointData().AddArray(smoothedOutputArray)
+
+        smoother = vmtkscripts.vmtkSurfaceArraySmoothing()
+        smoother.Surface = self.Surface
+        smoother.SurfaceArrayName = self.OutputArrayName+"Smooth"
+        smoother.Connexity = self.SmoothingConnexity
+        smoother.Relaxation = self.SmoothingRelaxation
+        smoother.Iterations = self.SmoothingIterations
+        smoother.Execute()
+        self.Surface = smoother.Surface
+
+        if self.Interactive:
+            self.ViewEdgeLength(self.OutputArrayName+"Smooth")
+
+
+
     def Execute(self):
         if self.Surface == None:
             self.PrintError('Error: No Surface.')
@@ -338,6 +372,13 @@ class vmtkSurfaceEdgeLengthArray(pypes.pypeScript):
 
         if self.Interactive:
             self.InteractiveEdgeLengthArray()
+            self.OutputArray = self.Surface.GetPointData().GetArray(self.OutputArrayName)
+
+        if self.Smoothing:
+            self.EdgeLengthArraySmoother()
+            
+
+
 
 
 if __name__=='__main__':
