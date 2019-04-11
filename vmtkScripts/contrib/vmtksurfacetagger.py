@@ -57,7 +57,7 @@ class vmtkSurfaceTagger(pypes.pypeScript):
             ['InsideTag','inside','int',1,'','tag of the inside region (i.e. where the Array is lower than Value; used also in case of "constant" method)'],
             ['OverwriteOutsideTag','overwriteoutside','bool',1,'','overwrite outside value also when the CellEntityIdsArray already exists in the input surface'],
             ['OutsideTag','outside','int',1,'','tag of the outside region (i.e. where the Array is greater than Value)'],
-            ['InsideOut','insideout','bool',1,'','toggle switching inside and outside tags'],
+            ['InsideOut','insideout','bool',1,'','toggle switching inside and outside tags ("cliparray" and "array" methods only)'],
             ['ConnectivityOffset','offset','int',1,'','offset added to the entityidsarray of each disconnected parts of each input tag (connectivity only)'],
             ['TagSmallestRegion','tagsmallestregion','bool',1,'','toggle tagging the smallest or the largest region (drawing only)'],
             ['CleanOutput','cleanoutput','bool',1,'','toggle cleaning the unused points'],
@@ -122,9 +122,14 @@ class vmtkSurfaceTagger(pypes.pypeScript):
         self.Surface = pointsToCells.GetPolyDataOutput()
         self.CellEntityIdsArray = self.Surface.GetCellData().GetArray(self.CellEntityIdsArrayName)
         cellArray = self.Surface.GetCellData().GetArray(self.ArrayName)
-        for i in range(self.Surface.GetNumberOfCells()):
-            if cellArray.GetValue(i) < self.Value:
-                self.CellEntityIdsArray.SetValue(i,self.InsideTag)
+        if self.InsideOut:
+            for i in range(self.Surface.GetNumberOfCells()):
+                if cellArray.GetValue(i) > self.Value:
+                    self.CellEntityIdsArray.SetValue(i,self.InsideTag)
+        else:
+            for i in range(self.Surface.GetNumberOfCells()):
+                if cellArray.GetValue(i) < self.Value:
+                    self.CellEntityIdsArray.SetValue(i,self.InsideTag)
 
 
 
