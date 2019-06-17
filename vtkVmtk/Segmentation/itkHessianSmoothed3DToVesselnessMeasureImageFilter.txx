@@ -89,28 +89,28 @@ HessianSmoothed3DToVesselnessMeasureImageFilter< TPixel >
 
 
     // Find the smallest eigenvalue
-    double smallest = vnl_math_abs( eigenValue[0] );
+    double smallest = itk::Math::abs( eigenValue[0] );
     double Lambda1 = eigenValue[0];
  
     for ( unsigned int i=1; i <=2; i++ )
       {
-      if ( vnl_math_abs( eigenValue[i] ) < smallest )
+      if ( itk::Math::abs( eigenValue[i] ) < smallest )
         {
         Lambda1 = eigenValue[i];
-        smallest = vnl_math_abs( eigenValue[i] );
+        smallest = itk::Math::abs( eigenValue[i] );
         }
       }
 
     // Find the largest eigenvalue
-    double largest = vnl_math_abs( eigenValue[0] );
+    double largest = itk::Math::abs( eigenValue[0] );
     double Lambda3 = eigenValue[0];
  
     for ( unsigned int i=1; i <=2; i++ )
       {
-      if (  vnl_math_abs( eigenValue[i] > largest ) )
+      if (  itk::Math::abs( eigenValue[i] > largest ) )
         {
         Lambda3 = eigenValue[i];
-        largest = vnl_math_abs( eigenValue[i] );
+        largest = itk::Math::abs( eigenValue[i] );
         }
       }
 
@@ -128,41 +128,41 @@ HessianSmoothed3DToVesselnessMeasureImageFilter< TPixel >
       }
 
     if ( Lambda2 >= 0.0 ||  Lambda3 >= 0.0 || 
-         vnl_math_abs( Lambda2) < EPSILON  || 
-         vnl_math_abs( Lambda3 ) < EPSILON )
+         itk::Math::abs( Lambda2) < EPSILON  || 
+         itk::Math::abs( Lambda3 ) < EPSILON )
       {
       oit.Set( NumericTraits< OutputPixelType >::Zero );
       } 
     else
       {
    
-      double Lambda1Abs = vnl_math_abs( Lambda1 );
-      double Lambda2Abs = vnl_math_abs( Lambda2 );
-      double Lambda3Abs = vnl_math_abs( Lambda3 );
+      double Lambda1Abs = itk::Math::abs( Lambda1 );
+      double Lambda2Abs = itk::Math::abs( Lambda2 );
+      double Lambda3Abs = itk::Math::abs( Lambda3 );
 
-      double Lambda1Sqr = vnl_math_sqr( Lambda1 );
-      double Lambda2Sqr = vnl_math_sqr( Lambda2 );
-      double Lambda3Sqr = vnl_math_sqr( Lambda3 );
+      double Lambda1Sqr = itk::Math::sqr( Lambda1 );
+      double Lambda2Sqr = itk::Math::sqr( Lambda2 );
+      double Lambda3Sqr = itk::Math::sqr( Lambda3 );
 
-      double AlphaSqr = vnl_math_sqr( m_Alpha );
-      double BetaSqr = vnl_math_sqr( m_Beta );
-      double GammaSqr = vnl_math_sqr( m_Gamma );
+      double AlphaSqr = itk::Math::sqr( m_Alpha );
+      double BetaSqr = itk::Math::sqr( m_Beta );
+      double GammaSqr = itk::Math::sqr( m_Gamma );
 
       double A  = Lambda2Abs / Lambda3Abs; 
-      double B  = Lambda1Abs / vcl_sqrt ( vnl_math_abs( Lambda2 * Lambda3 )); 
-      double S  = vcl_sqrt( Lambda1Sqr + Lambda2Sqr + Lambda3Sqr );
+      double B  = Lambda1Abs / std::sqrt ( itk::Math::abs( Lambda2 * Lambda3 )); 
+      double S  = std::sqrt( Lambda1Sqr + Lambda2Sqr + Lambda3Sqr );
 
       double vesMeasure_1  = 
-         ( 1 - vcl_exp(-1.0*(( vnl_math_sqr(A) ) / ( 2.0 * ( AlphaSqr)))));
+         ( 1 - std::exp(-1.0*(( itk::Math::sqr(A) ) / ( 2.0 * ( AlphaSqr)))));
 
       double vesMeasure_2  = 
-         vcl_exp ( -1.0 * ((vnl_math_sqr( B )) /  ( 2.0 * (BetaSqr))));
+         std::exp ( -1.0 * ((itk::Math::sqr( B )) /  ( 2.0 * (BetaSqr))));
 
       double vesMeasure_3  = 
-         ( 1 - vcl_exp( -1.0 * (( vnl_math_sqr( S )) / ( 2.0 * ( GammaSqr)))));
+         ( 1 - std::exp( -1.0 * (( itk::Math::sqr( S )) / ( 2.0 * ( GammaSqr)))));
 
       double vesMeasure_4  = 
-         vcl_exp ( -1.0 * ( 2.0 * vnl_math_sqr( m_C )) / 
+         std::exp ( -1.0 * ( 2.0 * itk::Math::sqr( m_C )) / 
                                    ( Lambda2Abs * (Lambda3Sqr))); 
 
       double vesselnessMeasure = 
