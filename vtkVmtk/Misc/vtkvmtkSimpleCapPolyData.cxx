@@ -76,17 +76,7 @@ int vtkvmtkSimpleCapPolyData::RequestData(
     return 1;
     }
 
-  bool markCells = true;
-
-  if (!this->CellEntityIdsArrayName)
-    {
-    markCells = false;
-    }
-
-  if (strcmp(this->CellEntityIdsArrayName,"") == 0)
-    {
-    markCells = false;
-    }
+  bool markCells = this->CellEntityIdsArrayName && this->CellEntityIdsArrayName[0];
 
   input->BuildLinks();
 
