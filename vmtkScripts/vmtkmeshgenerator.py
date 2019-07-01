@@ -119,6 +119,7 @@ class vmtkMeshGenerator(pypes.pypeScript):
             capper.Method = self.CappingMethod
             capper.TriangleOutput = 0
             capper.CellEntityIdOffset = wallEntityOffset
+            capper.CellEntityIdsArrayName = self.CellEntityIdsArrayName
             capper.Execute()
             surface = capper.Surface
 
