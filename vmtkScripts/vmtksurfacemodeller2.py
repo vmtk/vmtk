@@ -35,60 +35,73 @@ class vmtkSurfaceModeller2(pypes.pypeScript):
         
         self.Surface = None
         self.Image = None
-        self.Spacing = -1.0
+        self.Spacing = None
         self.CorrectSpacing = 1
         self.ImageVoxelExpansion = 0.
         self.ExpansionDirections = [1, 1, 1, 1, 1, 1]
         self.Binary = 0
         self.DistanceThreshold = None
         self.NegativeInside = 1
+        self.Bounds = []
 
         self.SetScriptName('vmtksurfacemodeller2')
         self.SetScriptDoc('converts a surface to an image containing the signed distance transform from the surface points')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
-            ['Spacing','samplespacing','float',1,'(0.0,)','spacing of the output image (isotropic)'],
+            ['Spacing','samplespacing','float',3,'(0.0,)','spacing of the output image'],
             ['CorrectSpacing','correctspacing','bool',1,'','correct spacing in order to fit exactly the bounding box of the surface'],
-            ['ImageVoxelExpansion','imagevoxelexpansion','int',1,'(0.0,)','expansion (in term of number of voxels) of the resulting image bounds compared to the input surface bounding box'],
+            ['Bounds','bounds','float',6,'(0.0,)','the output image bounding box (if not set, the input surface bounding box is used)'],
+            ['ImageVoxelExpansion','imagevoxelexpansion','int',1,'(0.0,)','expansion (in term of number of voxels) of the resulting image bounds compared to the input surface bounding box (only if bounds are not directly passed as input)'],
             ['ExpansionDirections','expansiondirections','bool',6,'','expand only in true direction of this array [-x +x -y +y -z +z]'],
             ['Binary','binary','bool',1,'','binary image as output (overwrite the signeddistance value)'],
             ['DistanceThreshold','distancethreshold','float',1,'(0.0,)','if set, point more distant than this threshold are taken constant'],
             ['NegativeInside','negativeinside','bool',1,'','toggle sign of distance transform negative inside the surface']
             ])
         self.SetOutputMembers([
-            ['Image','o','vtkImageData',1,'','the output image','vmtkimagewriter']])
+            ['Image','o','vtkImageData',1,'','the output image','vmtkimagewriter'],
+            ['Spacing','samplespacing','float',3,'(0.0,)','spacing of the output image'],
+            ['Bounds','bounds','float',6,'(0.0,)','the output image bounding box (if not set, the input surface bounding box is used)']
+            ])
 
     def Execute(self):
 
         if self.Surface == None:
             self.PrintError('Error: No input surface.')
 
-        bounds = np.array( self.Surface.GetBounds() )
-        spacing = np.array( [self.Spacing, self.Spacing, self.Spacing] )
+        boundsAsInput = False
+        if self.Bounds == []:
+            self.Bounds = np.array( self.Surface.GetBounds() )
+        else:
+            boundsAsInput = True
+
+        self.Spacing = np.array( [self.Spacing[0], self.Spacing[1], self.Spacing[2]] )
 
         # correct spacing in order to fit the bounding box
         if self.CorrectSpacing:
-            xvoxels = (bounds[1] - bounds[0]) / self.Spacing
-            yvoxels = (bounds[3] - bounds[2]) / self.Spacing
-            zvoxels = (bounds[5] - bounds[4]) / self.Spacing
-            spacing[0] = self.Spacing + ( xvoxels - math.floor( xvoxels ) ) * self.Spacing / math.floor( xvoxels )
-            spacing[1] = self.Spacing + ( yvoxels - math.floor( yvoxels ) ) * self.Spacing / math.floor( yvoxels )
-            spacing[2] = self.Spacing + ( zvoxels - math.floor( zvoxels ) ) * self.Spacing / math.floor( zvoxels )
-            self.PrintLog( '    Corrected Spacing = ' + str(spacing) )
+            xvoxels = (self.Bounds[1] - self.Bounds[0]) / self.Spacing[0]
+            yvoxels = (self.Bounds[3] - self.Bounds[2]) / self.Spacing[1]
+            zvoxels = (self.Bounds[5] - self.Bounds[4]) / self.Spacing[2]
+            self.Spacing[0] = self.Spacing[0] + ( xvoxels - math.floor( xvoxels ) ) * self.Spacing[0] / math.floor( xvoxels )
+            self.Spacing[1] = self.Spacing[1] + ( yvoxels - math.floor( yvoxels ) ) * self.Spacing[1] / math.floor( yvoxels )
+            self.Spacing[2] = self.Spacing[2] + ( zvoxels - math.floor( zvoxels ) ) * self.Spacing[2] / math.floor( zvoxels )
+            self.PrintLog( '    Corrected Spacing = ' + str(self.Spacing) )
 
-        # expanding bounds only in ExpansionDirections using ImageVoxelExpansion values
-        bounds[0] = bounds[0] - self.ImageVoxelExpansion * spacing[0] * self.ExpansionDirections[0]
-        bounds[1] = bounds[1] + self.ImageVoxelExpansion * spacing[0] * self.ExpansionDirections[1]
-        bounds[2] = bounds[2] - self.ImageVoxelExpansion * spacing[1] * self.ExpansionDirections[2]
-        bounds[3] = bounds[3] + self.ImageVoxelExpansion * spacing[1] * self.ExpansionDirections[3]
-        bounds[4] = bounds[4] - self.ImageVoxelExpansion * spacing[2] * self.ExpansionDirections[4]
-        bounds[5] = bounds[5] + self.ImageVoxelExpansion * spacing[2] * self.ExpansionDirections[5]
+        if not boundsAsInput:
+            # expanding self.Bounds only in ExpansionDirections using ImageVoxelExpansion values
+            self.Bounds[0] = self.Bounds[0] - self.ImageVoxelExpansion * self.Spacing[0] * self.ExpansionDirections[0]
+            self.Bounds[1] = self.Bounds[1] + self.ImageVoxelExpansion * self.Spacing[0] * self.ExpansionDirections[1]
+            self.Bounds[2] = self.Bounds[2] - self.ImageVoxelExpansion * self.Spacing[1] * self.ExpansionDirections[2]
+            self.Bounds[3] = self.Bounds[3] + self.ImageVoxelExpansion * self.Spacing[1] * self.ExpansionDirections[3]
+            self.Bounds[4] = self.Bounds[4] - self.ImageVoxelExpansion * self.Spacing[2] * self.ExpansionDirections[4]
+            self.Bounds[5] = self.Bounds[5] + self.ImageVoxelExpansion * self.Spacing[2] * self.ExpansionDirections[5]
+
+
 
         # creating the image
         self.Image = vtk.vtkImageData()
-        self.Image.SetOrigin( bounds[0], bounds[2], bounds[4] )
-        self.Image.SetSpacing( spacing )
-        self.Image.SetExtent( 0, int(math.ceil((bounds[1]-bounds[0])/spacing[0])), 0, int(math.ceil((bounds[3]-bounds[2])/spacing[1])), 0, int(math.ceil((bounds[5]-bounds[4])/spacing[2])) )
+        self.Image.SetOrigin( self.Bounds[0], self.Bounds[2], self.Bounds[4] )
+        self.Image.SetSpacing( self.Spacing )
+        self.Image.SetExtent( 0, int(math.ceil((self.Bounds[1]-self.Bounds[0])/self.Spacing[0])), 0, int(math.ceil((self.Bounds[3]-self.Bounds[2])/self.Spacing[1])), 0, int(math.ceil((self.Bounds[5]-self.Bounds[4])/self.Spacing[2])) )
         self.Image.AllocateScalars( vtk.VTK_DOUBLE, 1 )
 
         # fill the image with the distance with the respective surface
