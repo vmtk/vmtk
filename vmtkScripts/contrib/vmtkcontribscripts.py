@@ -27,6 +27,7 @@ __all__ = [
     'vmtk.vmtksurfaceextractinnercylinder',
     'vmtk.vmtksurfaceresolution',
     'vmtk.vmtksurfacetagger',
+    'vmtk.vmtksurfacethickening',
     'vmtk.vmtksurfacetonumpy',
     'vmtk.vmtksurfacewriter2',
     'vmtk.vmtkthreshold',
