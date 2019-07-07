@@ -45,6 +45,7 @@ class vmtkSurfaceHarmonicSections(pypes.pypeScript):
         self.SurfaceHarmonic = None
         self.SurfaceSectionsPoints = None
         self.ComputeSections = 1
+        self.BoundaryConditions = []
 
         self.SetScriptName('vmtksurfaceharmonicsections')
         self.SetScriptDoc('')
@@ -160,6 +161,9 @@ class vmtkSurfaceHarmonicSections(pypes.pypeScript):
 
             if len(self.BoundaryConditions) > numOfCells:
                 self.PrintError("Error: too many boundary conditions given")
+
+            if len(self.BoundaryConditions) < 1 and numOfCells > 1:
+                bc[1] = 1.0
 
             for i, item in enumerate(self.BoundaryConditions):
                 bc[i] = item
