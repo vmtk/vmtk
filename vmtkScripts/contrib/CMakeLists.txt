@@ -9,7 +9,11 @@ set(CONTRIB_SCRIPTS_SRCS
     vmtkgeodesicsurfaceresolution.py
     vmtkimagetonumpy.py
     vmtkmeshaddexternallayer.py
+    vmtkmeshconnector.py
     vmtkmeshclipcenterlines.py
+    vmtkmeshinfo.py
+    vmtkmeshinternalfacescleaner.py
+    vmtkmeshtethex.py
     vmtkmeshtetrahedralize2.py
     vmtkmeshtonumpy.py
     vmtkmeshviewer2.py
@@ -20,12 +24,22 @@ set(CONTRIB_SCRIPTS_SRCS
     vmtknumpytomesh.py
     vmtknumpytosurface.py
     vmtknumpywriter.py
+    vmtksurfacebooleanconnector.py
+    vmtksurfaceconnector.py
+    vmtksurfacefeatureedges.py
+    vmtksurfaceharmonicconnector.py
+    vmtksurfaceharmonicextension.py
+    vmtksurfaceharmonicsections.py
+    vmtksurfaceharmonicsolver.py
     vmtksurfaceresolution.py
+    vmtksurfacetagger.py
+    vmtksurfacethickening.py
     vmtksurfacetonumpy.py
     vmtksurfacewriter2.py
     vmtksurfaceextractannularwalls.py
     vmtksurfaceextractinnercylinder.py
     vmtkthreshold.py
+    vmtkarraythreshold.py
     vmtkmeshmerge.py
     vmtkentityrenumber.py
     vmtkpeterresurface.py
