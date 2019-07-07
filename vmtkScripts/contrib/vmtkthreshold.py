@@ -29,9 +29,9 @@ class vmtkThreshold(pypes.pypeScript):
                  'the input mesh', 'vmtkmeshreader'],
                 ['CellEntityIdsArrayName', 'entityidsarray', 'str', 1, '',
                  'name of the array where entity ids have been stored'],
-                ['LowThreshold', 'lowthreshold', 'int', 1, '',
+                ['LowThreshold', 'lowthreshold', 'float', 1, '',
                  'lower threshold for surface filtering', ''],
-                ['HighThreshold', 'highthreshold', 'int', 1, '',
+                ['HighThreshold', 'highthreshold', 'float', 1, '',
                  'higher threshold for surface filtering', ''],
                 ])
         self.SetOutputMembers([
