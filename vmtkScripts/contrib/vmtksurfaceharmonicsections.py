@@ -54,7 +54,8 @@ class vmtkSurfaceHarmonicSections(pypes.pypeScript):
             ['NumberOfSections','sections','int',1,'(0,)','number of sections'],
             ['NumberOfSubdivisions','subdivisions','int',1,'(0,)','number of subdivisions, if zero no subdivisions occurs'],
             ['DirName','dirname','str',1],
-            ['ComputeSections','computesections','bool',1,'','toggle computing harmonic sections (if false, only the harmonic solution on the surface is computed']
+            ['ComputeSections','computesections','bool',1,'','toggle computing harmonic sections (if false, only the harmonic solution on the surface is computed'],
+            ['BoundaryConditions','bcs','float',-1,'','list of bcs, one for each boundary, ordered as boundary id (only if computesections is false)']
             ])
         self.SetOutputMembers([
             ['SurfaceHarmonic','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter'],
@@ -130,27 +131,47 @@ class vmtkSurfaceHarmonicSections(pypes.pypeScript):
         
         numOfCells = boundaries.GetNumberOfCells()
         print ("number of boundaries", numOfCells)
-        if numOfCells != 2:
-            print ("Error: this script works only with two boundaries")
+
+        if self.ComputeSections:
+            if numOfCells != 2:
+                self.PrintError("Error: this script works only with two boundaries")
+            else:
+                print ("number of points boundary 1 =", boundaries.GetCell(0).GetNumberOfPoints() )
+                print (surface_out.GetPoint(int(boundaries.GetPointData().GetScalars().GetComponent(boundaries.GetCell(0).GetPointId(0),0))) )
+                Lines.InsertNextCell(boundaries.GetCell(0).GetNumberOfPoints())
+                for j in range(boundaries.GetCell(0).GetNumberOfPoints()):
+                    idb1 = int(boundaries.GetPointData().GetScalars().GetComponent(boundaries.GetCell(0).GetPointId(j),0))
+                    boundaryIds.InsertNextId(idb1)
+                    Boundary.SetTuple1(idb1,5)
+                    temperature.InsertNextTuple1(1.0)
+                    Lines.InsertCellPoint(j)
+                    Points.InsertNextPoint(surface_out.GetPoint(idb1))
+
+                print ("number of points boundary 2 =", boundaries.GetCell(1).GetNumberOfPoints() )
+                print (surface_out.GetPoint(int(boundaries.GetPointData().GetScalars().GetComponent(boundaries.GetCell(1).GetPointId(0),0))) )
+                for k in range(boundaries.GetCell(1).GetNumberOfPoints()):
+                    idb2 = int(boundaries.GetPointData().GetScalars().GetComponent(boundaries.GetCell(1).GetPointId(k),0))
+                    boundaryIds.InsertNextId(idb2)
+                    Boundary.SetTuple1(idb2,2)
+                    temperature.InsertNextTuple1(0.0)
         else:
-            print ("number of points boundary 1 =", boundaries.GetCell(0).GetNumberOfPoints() )
-            print (surface_out.GetPoint(int(boundaries.GetPointData().GetScalars().GetComponent(boundaries.GetCell(0).GetPointId(0),0))) )
-            Lines.InsertNextCell(boundaries.GetCell(0).GetNumberOfPoints())
-            for j in range(boundaries.GetCell(0).GetNumberOfPoints()):
-                idb1 = int(boundaries.GetPointData().GetScalars().GetComponent(boundaries.GetCell(0).GetPointId(j),0))
-                boundaryIds.InsertNextId(idb1)
-                Boundary.SetTuple1(idb1,5)
-                temperature.InsertNextTuple1(1.0)
-                Lines.InsertCellPoint(j)
-                Points.InsertNextPoint(surface_out.GetPoint(idb1))
-                
-            print ("number of points boundary 2 =", boundaries.GetCell(1).GetNumberOfPoints() )
-            print (surface_out.GetPoint(int(boundaries.GetPointData().GetScalars().GetComponent(boundaries.GetCell(1).GetPointId(0),0))) )
-            for k in range(boundaries.GetCell(1).GetNumberOfPoints()):
-                idb2 = int(boundaries.GetPointData().GetScalars().GetComponent(boundaries.GetCell(1).GetPointId(k),0))
-                boundaryIds.InsertNextId(idb2)
-                Boundary.SetTuple1(idb2,2)
-                temperature.InsertNextTuple1(0.0)
+
+            bc = [0.0] * numOfCells;
+
+            if len(self.BoundaryConditions) > numOfCells:
+                self.PrintError("Error: too many boundary conditions given")
+
+            for i, item in enumerate(self.BoundaryConditions):
+                bc[i] = item
+
+            for i in range(numOfCells):
+                currentCell = boundaries.GetCell(i)
+                for j in range(currentCell.GetNumberOfPoints()):
+                    idb = int(boundaries.GetPointData().GetScalars().GetComponent(currentCell.GetPointId(j),0))
+                    boundaryIds.InsertNextId(idb)
+                    Boundary.SetTuple1(idb,1) # 1 on boundary, 0 otherwise
+                    temperature.InsertNextTuple1(bc[i])
+
 
         print ("\nboundaries identified and temperature assigned\n")
 
