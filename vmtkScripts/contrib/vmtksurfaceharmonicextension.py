@@ -35,7 +35,7 @@ class vmtkSurfaceHarmonicExtension(pypes.pypeScript):
 
         self.Surface = None
         self.InputArrayName = 'Displacement'
-        self.OutputArrayName = 'Displacement'
+        self.OutputArrayName = 'DisplacementOut'
         self.InputArray = None
         self.OutputArray = None
         self.RangeIds = None
@@ -53,7 +53,7 @@ class vmtkSurfaceHarmonicExtension(pypes.pypeScript):
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
             ['InputArrayName','inputarray','str',1,'','input array to be extended on some tags'],
-            ['OutputArrayName','inputarray','str',1,'','output array name'],
+            ['OutputArrayName','outputarray','str',1,'','output array name'],
             ['RangeIds','rangeids','int',2,'','range of ids where to extend the input array'],
             ['OutletIds','outletids','int',-1,'','ids where to impose the heat equation bcs (these ids must be in rangeids)'],
             ['MethodX','methodx','str',1,'["harmonic","closestpoint","ring"]','possible extensions methods'],
@@ -150,6 +150,26 @@ class vmtkSurfaceHarmonicExtension(pypes.pypeScript):
         self.Surface = surfaceAppend(surfaceHarmonicDomain,surfaceHarmonicCaps)
         self.Surface = surfaceAppend(self.Surface,surfaceNotProcessed)
 
+        u = self.Surface.GetPointData().GetArray('HarmonicMappedTemperature')
+        for i in range(u.GetNumberOfTuples()):
+            if u.GetTuple1(i) < 0.0:
+                u.SetTuple1(i,0.0)
+
+        self.InputArray = self.Surface.GetPointData().GetArray(self.InputArrayName)
+        self.OutputArray = vtk.vtkDoubleArray()
+        self.OutputArray.SetNumberOfComponents(3)
+        self.OutputArray.SetNumberOfTuples(self.Surface.GetNumberOfPoints())
+        self.OutputArray.SetName(self.OutputArrayName)
+
+        for i in range(self.OutputArray.GetNumberOfTuples()):
+            val = self.InputArray.GetComponent(i,0) * u.GetTuple1(i)
+            self.OutputArray.SetComponent(i,0,val)
+            val = self.InputArray.GetComponent(i,1) * u.GetTuple1(i)
+            self.OutputArray.SetComponent(i,1,val)
+            val = self.InputArray.GetComponent(i,2) * u.GetTuple1(i)
+            self.OutputArray.SetComponent(i,2,val)
+
+        self.Surface.GetPointData().AddArray(self.OutputArray)
         # self.Surface = surfaceHarmonicDomain
 
         
