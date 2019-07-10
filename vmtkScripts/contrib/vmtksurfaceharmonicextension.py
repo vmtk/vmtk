@@ -40,11 +40,15 @@ class vmtkSurfaceHarmonicExtension(pypes.pypeScript):
         self.OutputArray = None
         self.RangeIds = None
         self.OutletIds = []
+        self.BoundaryConditions = []
         self.MethodX = "harmonic"
         self.MethodY = "harmonic"
         self.MethodZ = "harmonic"
         self.ProjectionMethod = "surface"
-        self.BoundaryConditions = []
+        self.SmoothProjection = 0
+        self.SmoothingConnexity = 1
+        self.SmoothingRelaxation = 1.0
+        self.SmoothingIterations = 1
         self.CellEntityIdsArrayName = 'CellEntityIds'
         self.CellEntityIdsArray = None
 
@@ -57,11 +61,15 @@ class vmtkSurfaceHarmonicExtension(pypes.pypeScript):
             ['OutputArrayName','outputarray','str',1,'','output array name'],
             ['RangeIds','rangeids','int',2,'','range of ids where to extend the input array'],
             ['OutletIds','outletids','int',-1,'','ids where to impose the heat equation bcs (these ids must be in rangeids)'],
+            ['BoundaryConditions','bcs','float',-1,'','list of bcs for the harmonic extension outlets, ordered as boundary id'],
             ['MethodX','methodx','str',1,'["harmonic","projection","meanring"]','possible extensions methods'],
-            ['MethodY','methody','str',1,'["harmonic","projection","menaring"]','possible extensions methods'],
+            ['MethodY','methody','str',1,'["harmonic","projection","meanring"]','possible extensions methods'],
             ['MethodZ','methodz','str',1,'["harmonic","projection","meanring"]','possible extensions methods'],
             ['ProjectionMethod','projectionmethod','str',1,'["surface","ring","none"]','possible projection methods'],
-            ['BoundaryConditions','bcs','float',-1,'','list of bcs for the harmonic extension outlets, ordered as boundary id'],
+            ['SmoothProjection','smoothprojection','bool',1,'','toggle smoothing of the projected array on the harmonic surface'],
+            ['SmoothingConnexity','connexity','int',1,'(1,2)','patch connexity considered in the smoothing procedure'],
+            ['SmoothingRelaxation','relaxation','float',1,'(0.0,1.0)','relaxation factor'],
+            ['SmoothingIterations','iterations','int',1,'','number of smoothing iterations'],
             ['CellEntityIdsArrayName', 'entityidsarray', 'str', 1, '','name of the array where entity ids have been stored'],
             ])
         self.SetOutputMembers([
@@ -145,7 +153,7 @@ class vmtkSurfaceHarmonicExtension(pypes.pypeScript):
         if self.ProjectionMethod == "surface":
             surfaceHarmonicCaps = surfaceProjection(surfaceHarmonicCaps,surfaceNotProcessed)
             surfaceHarmonicDomain = surfaceProjection(surfaceHarmonicDomain,surfaceNotProcessed)
-        
+
         # if metodo ring:
         # estrai i ring da surfaceNotProcessed
         # proietta il valore di InputArray nel ring su surfaceHarmonic
@@ -199,6 +207,17 @@ class vmtkSurfaceHarmonicExtension(pypes.pypeScript):
         surfaceNotProcessed.GetPointData().AddArray(uNotProcessed)
 
         surfaceHarmonic = surfaceAppend(surfaceHarmonicDomain,surfaceHarmonicCaps)
+
+        if self.SmoothProjection:
+            arraySmoothing = vmtkscripts.vmtkSurfaceArraySmoothing()
+            arraySmoothing.Surface = surfaceHarmonic
+            arraySmoothing.SurfaceArrayName = self.InputArrayName
+            arraySmoothing.Connexity = self.SmoothingConnexity
+            arraySmoothing.Relaxation = self.SmoothingRelaxation
+            arraySmoothing.Iterations = self.SmoothingIterations
+            arraySmoothing.Execute()
+            surfaceHarmonic = arraySmoothing.Surface
+
         self.Surface = surfaceAppend(surfaceHarmonic,surfaceNotProcessed)
 
         u = self.Surface.GetPointData().GetArray('HarmonicMappedTemperature')
