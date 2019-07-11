@@ -36,6 +36,7 @@ class vmtkSurfaceHarmonicExtension(pypes.pypeScript):
         self.Surface = None
         self.InputArrayName = 'Displacement'
         self.OutputArrayName = 'DisplacementOut'
+        self.ArrayIndexes = []
         self.InputArray = None
         self.OutputArray = None
         self.RangeIds = None
@@ -59,6 +60,7 @@ class vmtkSurfaceHarmonicExtension(pypes.pypeScript):
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
             ['InputArrayName','inputarray','str',1,'','input array to be extended on some tags'],
             ['OutputArrayName','outputarray','str',1,'','output array name'],
+            ['ArrayIndexes','arrayindexes','str',-1,'','set of indexes to be added to input/output arrays in order to process a set of arrays instead only one (if not set, only a single inputarray is processed)'],
             ['RangeIds','rangeids','int',2,'','range of ids where to extend the input array'],
             ['OutletIds','outletids','int',-1,'','ids where to impose the heat equation bcs (these ids must be in rangeids)'],
             ['BoundaryConditions','bcs','float',-1,'','list of bcs for the harmonic extension outlets, ordered as boundary id'],
@@ -92,6 +94,20 @@ class vmtkSurfaceHarmonicExtension(pypes.pypeScript):
             tags.add(self.CellEntityIdsArray.GetComponent(i,0))
         tags = sorted(tags)
         self.PrintLog('Tags of the input surface: '+str(tags))
+
+        # add indexes to input/output arrays
+        inputArrayNames = []
+        outputArrayNames = []
+        if self.ArrayIndexes == []:
+            inputArrayNames.append(self.InputArrayName)
+            outputArrayNames.append(self.OutputArrayName)
+        else:
+            for index in self.ArrayIndexes:
+                inputArrayNames.append(self.InputArrayName+index)
+                outputArrayNames.append(self.OutputArrayName+index)
+
+        self.PrintLog("Input arrays: "+str(inputArrayNames))
+        self.PrintLog("Output arrays: "+str(outputArrayNames))
 
 
         def surfaceThreshold(surface,low,high):
@@ -171,15 +187,22 @@ class vmtkSurfaceHarmonicExtension(pypes.pypeScript):
             surfaceHarmonicCaps = surfaceProjection(surfaceHarmonicCaps,rings)
             surfaceHarmonicDomain = surfaceProjection(surfaceHarmonicDomain,rings)
             # compute mean ring
-            ringInputArray = rings.GetPointData().GetArray(self.InputArrayName)
             numRingPoints = rings.GetNumberOfPoints()
-            for i in range(numRingPoints):
-                meanRingX = meanRingX + ringInputArray.GetComponent(i,0)
-                meanRingY = meanRingY + ringInputArray.GetComponent(i,1)
-                meanRingZ = meanRingZ + ringInputArray.GetComponent(i,2)
-            meanRingX = meanRingX / numRingPoints
-            meanRingY = meanRingY / numRingPoints
-            meanRingZ = meanRingZ / numRingPoints
+            meanRingX = []
+            meanRingY = []
+            meanRingZ = []
+            for name in inputArrayNames:
+                ringInputArray = rings.GetPointData().GetArray(name)
+                sumRingX = 0.0
+                sumRingY = 0.0
+                sumRingZ = 0.0
+                for i in range(numRingPoints):
+                    sumRingX = sumRingX + ringInputArray.GetComponent(i,0)
+                    sumRingY = sumRingY + ringInputArray.GetComponent(i,1)
+                    sumRingZ = sumRingZ + ringInputArray.GetComponent(i,2)
+                meanRingX.append( sumRingX / numRingPoints )
+                meanRingY.append( sumRingY / numRingPoints )
+                meanRingZ.append( sumRingZ / numRingPoints )
 
         else:
             self.PrintLog("No projection active")
@@ -209,14 +232,15 @@ class vmtkSurfaceHarmonicExtension(pypes.pypeScript):
         surfaceHarmonic = surfaceAppend(surfaceHarmonicDomain,surfaceHarmonicCaps)
 
         if self.SmoothProjection:
-            arraySmoothing = vmtkscripts.vmtkSurfaceArraySmoothing()
-            arraySmoothing.Surface = surfaceHarmonic
-            arraySmoothing.SurfaceArrayName = self.InputArrayName
-            arraySmoothing.Connexity = self.SmoothingConnexity
-            arraySmoothing.Relaxation = self.SmoothingRelaxation
-            arraySmoothing.Iterations = self.SmoothingIterations
-            arraySmoothing.Execute()
-            surfaceHarmonic = arraySmoothing.Surface
+            for name in inputArrayNames:
+                arraySmoothing = vmtkscripts.vmtkSurfaceArraySmoothing()
+                arraySmoothing.Surface = surfaceHarmonic
+                arraySmoothing.SurfaceArrayName = name
+                arraySmoothing.Connexity = self.SmoothingConnexity
+                arraySmoothing.Relaxation = self.SmoothingRelaxation
+                arraySmoothing.Iterations = self.SmoothingIterations
+                arraySmoothing.Execute()
+                surfaceHarmonic = arraySmoothing.Surface
 
         self.Surface = surfaceAppend(surfaceHarmonic,surfaceNotProcessed)
 
@@ -225,39 +249,39 @@ class vmtkSurfaceHarmonicExtension(pypes.pypeScript):
             if u.GetTuple1(i) < 0.0:
                 u.SetTuple1(i,0.0)
 
-        self.InputArray = self.Surface.GetPointData().GetArray(self.InputArrayName)
-        self.OutputArray = vtk.vtkDoubleArray()
-        self.OutputArray.SetNumberOfComponents(3)
-        self.OutputArray.SetNumberOfTuples(self.Surface.GetNumberOfPoints())
-        self.OutputArray.SetName(self.OutputArrayName)
+        for j in range(len(inputArrayNames)):
+            inputArray = self.Surface.GetPointData().GetArray(inputArrayNames[j])
+            outputArray = vtk.vtkDoubleArray()
+            outputArray.SetNumberOfComponents(3)
+            outputArray.SetNumberOfTuples(self.Surface.GetNumberOfPoints())
+            outputArray.SetName(outputArrayNames[j])
 
-        for i in range(self.OutputArray.GetNumberOfTuples()):
-            val = self.InputArray.GetComponent(i,0)
-            if self.MethodX == "harmonic":
-                val = val * u.GetTuple1(i)
-            elif self.MethodX == "meanring":
-                val = (val - meanRingX) * u.GetTuple1(i) + meanRingX
-            self.OutputArray.SetComponent(i,0,val)
+            for i in range(outputArray.GetNumberOfTuples()):
+                val = inputArray.GetComponent(i,0)
+                if self.MethodX == "harmonic":
+                    val = val * u.GetTuple1(i)
+                elif self.MethodX == "meanring":
+                    val = (val - meanRingX[j]) * u.GetTuple1(i) + meanRingX[j]
+                outputArray.SetComponent(i,0,val)
 
-            val = self.InputArray.GetComponent(i,1)
-            if self.MethodY == "harmonic":
-                val = val * u.GetTuple1(i)
-            elif self.MethodY == "meanring":
-                val = (val - meanRingY) * u.GetTuple1(i) + meanRingY
-            self.OutputArray.SetComponent(i,1,val)
+                val = inputArray.GetComponent(i,1)
+                if self.MethodY == "harmonic":
+                    val = val * u.GetTuple1(i)
+                elif self.MethodY == "meanring":
+                    val = (val - meanRingY[j]) * u.GetTuple1(i) + meanRingY[j]
+                outputArray.SetComponent(i,1,val)
 
-            val = self.InputArray.GetComponent(i,2)
-            if self.MethodZ == "harmonic":
-                val = val * u.GetTuple1(i)
-            elif self.MethodZ == "meanring":
-                val = (val - meanRingZ) * u.GetTuple1(i) + meanRingZ
-            self.OutputArray.SetComponent(i,2,val)
-            # mean ring 
-            # sposti di: [ val - mean(ring) ] * u + mean(ring)
-        
-
-        self.Surface.GetPointData().AddArray(self.OutputArray)
-        # self.Surface = surfaceHarmonicDomain
+                val = inputArray.GetComponent(i,2)
+                if self.MethodZ == "harmonic":
+                    val = val * u.GetTuple1(i)
+                elif self.MethodZ == "meanring":
+                    val = (val - meanRingZ[j]) * u.GetTuple1(i) + meanRingZ[j]
+                outputArray.SetComponent(i,2,val)
+                # mean ring 
+                # sposti di: [ val - mean(ring) ] * u + mean(ring)
+            
+            self.Surface.GetPointData().AddArray(outputArray)
+            # self.Surface = surfaceHarmonicDomain
 
         
 
