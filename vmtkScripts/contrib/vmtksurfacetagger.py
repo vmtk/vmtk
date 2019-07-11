@@ -145,6 +145,95 @@ class vmtkSurfaceTagger(pypes.pypeScript):
         return surface
 
 
+    def CleanPreciseRingDistance(self,ring):
+
+        def nextPointId(ring,cellId,currentPointId):
+            idList = vtk.vtkIdList()
+            ring.GetCellPoints(cellId,idList)
+            if idList.GetId(0) == currentPointId:
+                return idList.GetId(1)
+            else:
+                return idList.GetId(0)
+
+        def nextCellId(ring,pointId,currentCellId):
+            idList = vtk.vtkIdList()
+            ring.GetPointCells(pointId,idList)
+            if idList.GetId(0) == currentCellId:
+                return idList.GetId(1)
+            else:
+                return idList.GetId(0)
+
+        def checkThreeConsecutiveTriangles(lastThreeCellIdLists):
+            for item in lastThreeCellIdLists[2]:
+                if item in lastThreeCellIdLists[1]:
+                    if item in lastThreeCellIdLists[0]:
+                        return True
+            return False
+
+
+
+        pointLocator = vtk.vtkPointLocator()
+        pointLocator.SetDataSet(self.Surface)
+        pointLocator.BuildLocator()
+
+        distanceArray = ring.GetPointData().GetArray('PreciseRingDistance')
+
+        nP = ring.GetNumberOfPoints()
+        nC = ring.GetNumberOfCells()
+        print ("points and cells: ", nP, ", ", nC)
+
+        lastThreePointsIds = []
+        lastThreeCellIdLists = []
+        distanceCleaned = [0, 0, 0, 0]
+
+        currentCellId = 0
+        pointIdList = vtk.vtkIdList()
+        cellIdList = vtk.vtkIdList()
+
+        ring.GetCellPoints(currentCellId,pointIdList)
+        currentRingPointId = pointIdList.GetId(0)
+
+        for i in range(nP):
+            lastThreePointsIds.append(currentRingPointId)
+
+            currentSurfPointId = pointLocator.FindClosestPoint(ring.GetPoint(currentRingPointId))
+            self.Surface.GetPointCells(currentSurfPointId,cellIdList)
+            cellIds=[]
+            for k in range(cellIdList.GetNumberOfIds()):
+                cellIds.append(cellIdList.GetId(k))
+            lastThreeCellIdLists.append(cellIds)
+
+            currentCellId = nextCellId(ring,currentRingPointId,currentCellId)
+            currentRingPointId = nextPointId(ring,currentCellId,currentRingPointId)
+
+            if i > 1:
+                # print("last three points: ",lastThreePointsIds)
+                # print("last three cell id Lists: ",lastThreeCellIdLists)
+                answer = checkThreeConsecutiveTriangles(lastThreeCellIdLists)
+                print("answer: ", answer)
+                if answer:
+                    if distanceCleaned[0] == 0:
+                        distanceCleaned[1] = 1
+                        distanceArray.SetComponent(lastThreePointsIds[0],0,0.0)
+                        distanceArray.SetComponent(lastThreePointsIds[0],1,0.0)
+                        distanceArray.SetComponent(lastThreePointsIds[0],2,0.0)
+                    else:
+                        distanceCleaned[2] = 1
+                        distanceArray.SetComponent(lastThreePointsIds[1],0,0.0)
+                        distanceArray.SetComponent(lastThreePointsIds[1],1,0.0)
+                        distanceArray.SetComponent(lastThreePointsIds[1],2,0.0)
+                print("distance cleaned: ", distanceCleaned)
+                print("")
+                lastThreePointsIds.pop(0)
+                lastThreeCellIdLists.pop(0)
+                distanceCleaned.append(0)
+                distanceCleaned.pop(0)
+
+        # ring.GetPointData().AddArray(distanceArray)
+
+        return ring
+
+
     def HarmonicTagger(self):
         from vmtk import vmtkscripts
         from vmtk import vmtkcontribscripts
@@ -162,22 +251,21 @@ class vmtkSurfaceTagger(pypes.pypeScript):
             th.Execute()
             surf = th.Surface
 
-            boundaryExtractor = vtkvmtk.vtkvmtkPolyDataBoundaryExtractor()
-            boundaryExtractor.SetInputData(surf)
-            boundaryExtractor.Update()
-            # zigZagRing = vtk.vtkPolyData()
-            zigZagRing = boundaryExtractor.GetOutput()
+            # boundaryExtractor = vtkvmtk.vtkvmtkPolyDataBoundaryExtractor()
+            # boundaryExtractor.SetInputData(surf)
+            # boundaryExtractor.Update()
+            # zigZagRing = boundaryExtractor.GetOutput()
 
-            # featureEdges = vtk.vtkFeatureEdges()
-            # featureEdges.SetInputData(surf)
-            # featureEdges.BoundaryEdgesOn()
-            # featureEdges.FeatureEdgesOff()
-            # featureEdges.NonManifoldEdgesOff()
-            # featureEdges.ManifoldEdgesOff()
-            # featureEdges.ColoringOff()
-            # featureEdges.CreateDefaultLocator()
-            # featureEdges.Update()
-            # zigZagRing = featureEdges.GetOutput()
+            featureEdges = vtk.vtkFeatureEdges()
+            featureEdges.SetInputData(surf)
+            featureEdges.BoundaryEdgesOn()
+            featureEdges.FeatureEdgesOff()
+            featureEdges.NonManifoldEdgesOff()
+            featureEdges.ManifoldEdgesOff()
+            featureEdges.ColoringOff()
+            featureEdges.CreateDefaultLocator()
+            featureEdges.Update()
+            zigZagRing = featureEdges.GetOutput()
             return zigZagRing
 
 
@@ -205,6 +293,8 @@ class vmtkSurfaceTagger(pypes.pypeScript):
         passArray.AddPointDataArray('PreciseRingDistance')
         passArray.Update()
         zigZagRing = passArray.GetOutput()
+
+        zigZagRing = self.CleanPreciseRingDistance(zigZagRing)
 
         writer = vtk.vtkXMLPolyDataWriter()
         writer.SetInputData(zigZagRing)
