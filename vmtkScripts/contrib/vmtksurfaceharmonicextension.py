@@ -215,19 +215,21 @@ class vmtkSurfaceHarmonicExtension(pypes.pypeScript):
         hs.Execute()
         surfaceHarmonicDomain = hs.SurfaceHarmonic
 
-        uCaps = vtk.vtkDoubleArray()
-        uCaps.SetNumberOfComponents(1)
-        uCaps.SetNumberOfTuples(surfaceHarmonicCaps.GetNumberOfPoints())
-        uCaps.SetName('HarmonicMappedTemperature')
-        uCaps.FillComponent(0,0.0)
-        surfaceHarmonicCaps.GetPointData().AddArray(uCaps)
+        if surfaceHarmonicCaps != None:
+            uCaps = vtk.vtkDoubleArray()
+            uCaps.SetNumberOfComponents(1)
+            uCaps.SetNumberOfTuples(surfaceHarmonicCaps.GetNumberOfPoints())
+            uCaps.SetName('HarmonicMappedTemperature')
+            uCaps.FillComponent(0,0.0)
+            surfaceHarmonicCaps.GetPointData().AddArray(uCaps)
 
-        uNotProcessed = vtk.vtkDoubleArray()
-        uNotProcessed.SetNumberOfComponents(1)
-        uNotProcessed.SetNumberOfTuples(surfaceNotProcessed.GetNumberOfPoints())
-        uNotProcessed.SetName('HarmonicMappedTemperature')
-        uNotProcessed.FillComponent(0,1.0)
-        surfaceNotProcessed.GetPointData().AddArray(uNotProcessed)
+        if surfaceNotProcessed != None:
+            uNotProcessed = vtk.vtkDoubleArray()
+            uNotProcessed.SetNumberOfComponents(1)
+            uNotProcessed.SetNumberOfTuples(surfaceNotProcessed.GetNumberOfPoints())
+            uNotProcessed.SetName('HarmonicMappedTemperature')
+            uNotProcessed.FillComponent(0,1.0)
+            surfaceNotProcessed.GetPointData().AddArray(uNotProcessed)
 
         surfaceHarmonic = surfaceAppend(surfaceHarmonicDomain,surfaceHarmonicCaps)
 
