@@ -148,6 +148,38 @@ class vmtkSurfaceTagger(pypes.pypeScript):
     def HarmonicTagger(self):
         from vmtk import vmtkscripts
         from vmtk import vmtkcontribscripts
+        from vmtk import vtkvmtk
+
+        def zigZagRingExtractor(surface,arrayname,tag,rangevalues):
+            surf = vtk.vtkPolyData()
+            surf.DeepCopy(surface)
+            surf = self.ArrayTagger(surf,arrayname,tag,rangevalues)
+            th = vmtkcontribscripts.vmtkThreshold()
+            th.Surface = surf
+            th.CellEntityIdsArrayName = self.CellEntityIdsArrayName
+            th.LowThreshold = tag
+            th.HighThreshold = tag
+            th.Execute()
+            surf = th.Surface
+
+            boundaryExtractor = vtkvmtk.vtkvmtkPolyDataBoundaryExtractor()
+            boundaryExtractor.SetInputData(surf)
+            boundaryExtractor.Update()
+            # zigZagRing = vtk.vtkPolyData()
+            zigZagRing = boundaryExtractor.GetOutput()
+
+            # featureEdges = vtk.vtkFeatureEdges()
+            # featureEdges.SetInputData(surf)
+            # featureEdges.BoundaryEdgesOn()
+            # featureEdges.FeatureEdgesOff()
+            # featureEdges.NonManifoldEdgesOff()
+            # featureEdges.ManifoldEdgesOff()
+            # featureEdges.ColoringOff()
+            # featureEdges.CreateDefaultLocator()
+            # featureEdges.Update()
+            # zigZagRing = featureEdges.GetOutput()
+            return zigZagRing
+
 
         tags = set()
         for i in range(self.Surface.GetNumberOfCells()):
@@ -157,70 +189,71 @@ class vmtkSurfaceTagger(pypes.pypeScript):
         # use clip-array method only to extract the ring
         preciseRing = self.ClipArrayTagger(True)
 
-        # tag using array method
         self.ArrayTagger()
 
-        # warp the points on the zig-zag ring till the precise ring and harmonically extend the warp
-        th = vmtkcontribscripts.vmtkThreshold()
-        th.Surface = self.Surface
-        th.CellEntityIdsArrayName = self.CellEntityIdsArrayName
-        th.LowThreshold = self.InsideTag
-        th.HighThreshold = self.InsideTag
-        th.Execute()
-        newTag = th.Surface
+        zigZagRing = zigZagRingExtractor(self.Surface,self.ArrayName,12345,[-math.inf, self.Value])
 
-        featureEdges = vtk.vtkFeatureEdges()
-        featureEdges.BoundaryEdgesOn()
-        featureEdges.FeatureEdgesOff()
-        featureEdges.NonManifoldEdgesOff()
-        featureEdges.ManifoldEdgesOff()
-        featureEdges.ColoringOff()
-        featureEdges.SetInputData(newTag)
-        featureEdges.CreateDefaultLocator()
-        featureEdges.Update()
-        zigZagRing = featureEdges.GetOutput()
+        # from here
+        # surfaceDistance = vmtkscripts.vmtkSurfaceDistance()
+        # surfaceDistance.Surface = zigZagRing
+        # surfaceDistance.ReferenceSurface = preciseRing
+        # surfaceDistance.DistanceVectorsArrayName = 'PreciseRingDistance'
+        # surfaceDistance.Execute()
+        # zigZagRing = surfaceDistance.Surface
 
-        surfaceDistance = vmtkscripts.vmtkSurfaceDistance()
-        surfaceDistance.Surface = zigZagRing
-        surfaceDistance.ReferenceSurface = preciseRing
-        surfaceDistance.DistanceVectorsArrayName = 'PreciseRingDistance'
-        surfaceDistance.Execute()
-        zigZagRing = surfaceDistance.Surface
+        # passArray = vtk.vtkPassArrays()
+        # passArray.SetInputData(zigZagRing)
+        # passArray.AddPointDataArray('PreciseRingDistance')
+        # passArray.Update()
+        # zigZagRing = passArray.GetOutput()
 
-        passArray = vtk.vtkPassArrays()
-        passArray.SetInputData(zigZagRing)
-        passArray.AddPointDataArray('PreciseRingDistance')
-        passArray.Update()
-        zigZagRing = passArray.GetOutput()
-
-        proj = vmtkscripts.vmtkSurfaceProjection()
-        proj.Surface = newTag
-        proj.ReferenceSurface = zigZagRing
-        proj.Execute()
-        newTag = proj.Surface
+        # proj = vmtkscripts.vmtkSurfaceProjection()
+        # proj.Surface = self.Surface
+        # proj.ReferenceSurface = zigZagRing
+        # proj.Execute()
+        # self.Surface = proj.Surface
+        # to here
+        # is it necessary?
 
         surfaceDistance2 = vmtkscripts.vmtkSurfaceDistance()
-        surfaceDistance2.Surface = newTag
+        surfaceDistance2.Surface = self.Surface
         surfaceDistance2.ReferenceSurface = zigZagRing
         surfaceDistance2.DistanceArrayName = 'ZigZagRingDistance'
         surfaceDistance2.Execute()
-        newTag = surfaceDistance2.Surface
+        self.Surface = surfaceDistance2.Surface
 
-        # adding a temporary tag
-        newTag = self.ArrayTagger(newTag,'ZigZagRingDistance',20,[-math.inf, self.HarmonicRadius])
-        # self.Surface = self.ArrayTagger(self.Surface,'ZigZagRingDistance',21,[-self.HarmonicRadius,0.0])
+        homogeneousBoundaries = zigZagRingExtractor(self.Surface,'ZigZagRingDistance',2435,[-math.inf,self.HarmonicRadius])
 
-        harmonicExtension = vmtkcontribscripts.vmtkSurfaceHarmonicExtension()
-        harmonicExtension.Surface = newTag
-        harmonicExtension.InputArrayName = 'PreciseRingDistance'
-        harmonicExtension.OutputArrayName = 'TagWarper'
-        harmonicExtension.ProjectionMethod = 'none'
-        harmonicExtension.SmoothProjection = 0
-        harmonicExtension.RangeIds = [self.InsideTag, 20]
-        harmonicExtension.OutletIds = [self.InsideTag]
-        harmonicExtension.BoundaryConditions = [0.0, 1.0]
-        harmonicExtension.Execute()
-        self.Surface = harmonicExtension.Surface
+        pointLocator = vtk.vtkPointLocator()
+        pointLocator.SetDataSet(self.Surface)
+        pointLocator.BuildLocator()
+        
+        boundaryIds = vtk.vtkIdList()
+        temperature = vtk.vtkDoubleArray()
+        temperature.SetNumberOfComponents(1)
+
+        for i in range(homogeneousBoundaries.GetNumberOfPoints()):
+            idb = pointLocator.FindClosestPoint(homogeneousBoundaries.GetPoint(i))
+            boundaryIds.InsertNextId(idb)
+            temperature.InsertNextTuple1(0.0)
+
+        warpArray = zigZagRing.GetPointData().GetArray('PreciseRingDistance')
+        for i in range(zigZagRing.GetNumberOfPoints()):
+            idb = pointLocator.FindClosestPoint(zigZagRing.GetPoint(i))
+            boundaryIds.InsertNextId(idb)
+            temperature.InsertNextTuple1(1.0)
+            # temperature.InsertNextTuple1(warpArray.GetComponent(i,0))
+
+        # perform harmonic mapping using temperature as boundary condition
+        harmonicMappingFilter = vtkvmtk.vtkvmtkPolyDataHarmonicMappingFilter()
+        harmonicMappingFilter.SetInputData(self.Surface)
+        harmonicMappingFilter.SetHarmonicMappingArrayName("HarmonicMappedTemperature")
+        harmonicMappingFilter.SetBoundaryPointIds(boundaryIds)
+        harmonicMappingFilter.SetBoundaryValues(temperature)
+        harmonicMappingFilter.SetAssemblyModeToFiniteElements()
+        harmonicMappingFilter.Update()
+
+        self.Surface = harmonicMappingFilter.GetOutput()
 
 
 
@@ -334,7 +367,7 @@ class vmtkSurfaceTagger(pypes.pypeScript):
             self.CleanSurface()
 
         if self.PrintTags:
-            # self.CellEntityIdsArray = self.Surface.GetPointData().GetArray(self.CellEntityIdsArrayName)
+            self.CellEntityIdsArray = self.Surface.GetPointData().GetArray(self.CellEntityIdsArrayName)
             tags = set()
             for i in range(self.Surface.GetNumberOfCells()):
                 tags.add(self.CellEntityIdsArray.GetComponent(i,0))
