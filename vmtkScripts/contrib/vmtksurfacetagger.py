@@ -57,7 +57,7 @@ class vmtkSurfaceTagger(pypes.pypeScript):
             ['CellEntityIdsArrayName','entityidsarray','str',1,'','name of the array where the tags are stored'],
             ['ArrayName','array','str',1,'','name of the array with which to define the boundary between tags'],
             ['Value','value','float',1,'','scalar value of the array identifying the boundary between tags'],
-            ['Range','range','float',2,'','range scalar values of the array identifying the region for the new tag (alternative to value)'],
+            ['Range','range','float',2,'','range scalar values of the array identifying the region for the new tag (alternative to value, only array method)'],
             ['HarmonicRadius','harmonicradius','float',1,'','buffer zone radius for the harmonic method'],
             ['InsideTag','inside','int',1,'','tag of the inside region (i.e. where the Array is lower than Value; used also in case of "constant" method)'],
             ['OverwriteOutsideTag','overwriteoutside','bool',1,'','overwrite outside value also when the CellEntityIdsArray already exists in the input surface'],
@@ -122,15 +122,16 @@ class vmtkSurfaceTagger(pypes.pypeScript):
 
 
 
-    def ArrayTagger(self,surface=None,arrayName=None,insideTag=None,value=None,value2=None,):
+    def ArrayTagger(self,surface=None,arrayName=None,insideTag=None,rangeValues=[]):
         if surface == None:
             surface = self.Surface
         if arrayName == None:
             arrayName = self.ArrayName
         if insideTag == None:
             insideTag = self.InsideTag
-        if value == None:
-            value = self.Value
+        if rangeValues == []:
+            rangeValues = self.Range
+        print("!!!range: ",rangeValues)
         pointsToCells = vtk.vtkPointDataToCellData()
         pointsToCells.SetInputData(surface)
         pointsToCells.PassPointDataOn()
@@ -138,20 +139,9 @@ class vmtkSurfaceTagger(pypes.pypeScript):
         surface = pointsToCells.GetPolyDataOutput()
         cellEntityIdsArray = surface.GetCellData().GetArray(self.CellEntityIdsArrayName)
         cellArray = surface.GetCellData().GetArray(arrayName)
-        if value2 == None:
-            if self.InsideOut:
-                for i in range(surface.GetNumberOfCells()):
-                    if cellArray.GetValue(i) > value:
-                        cellEntityIdsArray.SetValue(i,insideTag)
-            else:
-                for i in range(surface.GetNumberOfCells()):
-                    if cellArray.GetValue(i) < value:
-                        cellEntityIdsArray.SetValue(i,insideTag)
-        else:
-            for i in range(surface.GetNumberOfCells()):
-                if cellArray.GetValue(i) > value and cellArray.GetValue(i) < value2:
-                    cellEntityIdsArray.SetValue(i,insideTag)
-
+        for i in range(surface.GetNumberOfCells()):
+            if cellArray.GetValue(i) > rangeValues[0] and cellArray.GetValue(i) < rangeValues[1]:
+                cellEntityIdsArray.SetValue(i,insideTag)
         return surface
 
 
@@ -217,13 +207,13 @@ class vmtkSurfaceTagger(pypes.pypeScript):
         newTag = surfaceDistance2.Surface
 
         # adding a temporary tag
-        newTag = self.ArrayTagger(newTag,'ZigZagRingDistance',20,self.HarmonicRadius)
-        # self.Surface = self.ArrayTagger(self.Surface,'ZigZagRingDistance',21,-self.HarmonicRadius,0.0)
+        newTag = self.ArrayTagger(newTag,'ZigZagRingDistance',20,[-math.inf, self.HarmonicRadius])
+        # self.Surface = self.ArrayTagger(self.Surface,'ZigZagRingDistance',21,[-self.HarmonicRadius,0.0])
 
         harmonicExtension = vmtkcontribscripts.vmtkSurfaceHarmonicExtension()
         harmonicExtension.Surface = newTag
         harmonicExtension.InputArrayName = 'PreciseRingDistance'
-        harmonicExtension.OutputArrayName = 'WarpTagging'
+        harmonicExtension.OutputArrayName = 'TagWarper'
         harmonicExtension.ProjectionMethod = 'none'
         harmonicExtension.SmoothProjection = 0
         harmonicExtension.RangeIds = [self.InsideTag, 20]
@@ -315,7 +305,7 @@ class vmtkSurfaceTagger(pypes.pypeScript):
             self.Surface.GetCellData().AddArray(self.CellEntityIdsArray)
             self.CellEntityIdsArray.FillComponent(0,self.OutsideTag)
 
-        if self.Method in ['cliparray','array','harmonic']:
+        if self.Method in ['array','harmonic']: # to be extended also to other method ['cliparray','array','harmonic']:
             if self.Value == None and self.Range == None:
                 self.PrintError("This method need the definition of a value or a range")
             elif self.Range == None:
@@ -344,6 +334,7 @@ class vmtkSurfaceTagger(pypes.pypeScript):
             self.CleanSurface()
 
         if self.PrintTags:
+            # self.CellEntityIdsArray = self.Surface.GetPointData().GetArray(self.CellEntityIdsArrayName)
             tags = set()
             for i in range(self.Surface.GetNumberOfCells()):
                 tags.add(self.CellEntityIdsArray.GetComponent(i,0))
