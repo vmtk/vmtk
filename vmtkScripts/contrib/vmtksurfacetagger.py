@@ -193,20 +193,26 @@ class vmtkSurfaceTagger(pypes.pypeScript):
 
         zigZagRing = zigZagRingExtractor(self.Surface,self.ArrayName,12345,[-math.inf, self.Value])
 
+        surfaceDistance = vmtkscripts.vmtkSurfaceDistance()
+        surfaceDistance.Surface = zigZagRing
+        surfaceDistance.ReferenceSurface = preciseRing
+        surfaceDistance.DistanceVectorsArrayName = 'PreciseRingDistance'
+        surfaceDistance.Execute()
+        zigZagRing = surfaceDistance.Surface
+
+        passArray = vtk.vtkPassArrays()
+        passArray.SetInputData(zigZagRing)
+        passArray.AddPointDataArray('PreciseRingDistance')
+        passArray.Update()
+        zigZagRing = passArray.GetOutput()
+
+        writer = vtk.vtkXMLPolyDataWriter()
+        writer.SetInputData(zigZagRing)
+        writer.SetFileName('zigZagRing.vtp')
+        writer.SetDataModeToBinary()
+        writer.Write()
+
         # from here
-        # surfaceDistance = vmtkscripts.vmtkSurfaceDistance()
-        # surfaceDistance.Surface = zigZagRing
-        # surfaceDistance.ReferenceSurface = preciseRing
-        # surfaceDistance.DistanceVectorsArrayName = 'PreciseRingDistance'
-        # surfaceDistance.Execute()
-        # zigZagRing = surfaceDistance.Surface
-
-        # passArray = vtk.vtkPassArrays()
-        # passArray.SetInputData(zigZagRing)
-        # passArray.AddPointDataArray('PreciseRingDistance')
-        # passArray.Update()
-        # zigZagRing = passArray.GetOutput()
-
         # proj = vmtkscripts.vmtkSurfaceProjection()
         # proj.Surface = self.Surface
         # proj.ReferenceSurface = zigZagRing
@@ -228,32 +234,49 @@ class vmtkSurfaceTagger(pypes.pypeScript):
         pointLocator.SetDataSet(self.Surface)
         pointLocator.BuildLocator()
         
-        boundaryIds = vtk.vtkIdList()
-        temperature = vtk.vtkDoubleArray()
-        temperature.SetNumberOfComponents(1)
+        for k in range(3):
+            print("K = ",k)
+            boundaryIds = vtk.vtkIdList()
+            temperature = vtk.vtkDoubleArray()
+            temperature.SetNumberOfComponents(1)
 
-        for i in range(homogeneousBoundaries.GetNumberOfPoints()):
-            idb = pointLocator.FindClosestPoint(homogeneousBoundaries.GetPoint(i))
-            boundaryIds.InsertNextId(idb)
-            temperature.InsertNextTuple1(0.0)
+            for i in range(homogeneousBoundaries.GetNumberOfPoints()):
+                idb = pointLocator.FindClosestPoint(homogeneousBoundaries.GetPoint(i))
+                boundaryIds.InsertNextId(idb)
+                temperature.InsertNextTuple1(0.0)
 
-        warpArray = zigZagRing.GetPointData().GetArray('PreciseRingDistance')
-        for i in range(zigZagRing.GetNumberOfPoints()):
-            idb = pointLocator.FindClosestPoint(zigZagRing.GetPoint(i))
-            boundaryIds.InsertNextId(idb)
-            temperature.InsertNextTuple1(1.0)
-            # temperature.InsertNextTuple1(warpArray.GetComponent(i,0))
+            warpArray = zigZagRing.GetPointData().GetArray('PreciseRingDistance')
+            for i in range(zigZagRing.GetNumberOfPoints()):
+                idb = pointLocator.FindClosestPoint(zigZagRing.GetPoint(i))
+                boundaryIds.InsertNextId(idb)
+                #temperature.InsertNextTuple1(1.0)
+                temperature.InsertNextTuple1(warpArray.GetComponent(i,k))
 
-        # perform harmonic mapping using temperature as boundary condition
-        harmonicMappingFilter = vtkvmtk.vtkvmtkPolyDataHarmonicMappingFilter()
-        harmonicMappingFilter.SetInputData(self.Surface)
-        harmonicMappingFilter.SetHarmonicMappingArrayName("HarmonicMappedTemperature")
-        harmonicMappingFilter.SetBoundaryPointIds(boundaryIds)
-        harmonicMappingFilter.SetBoundaryValues(temperature)
-        harmonicMappingFilter.SetAssemblyModeToFiniteElements()
-        harmonicMappingFilter.Update()
+            # perform harmonic mapping using temperature as boundary condition
+            harmonicMappingFilter = vtkvmtk.vtkvmtkPolyDataHarmonicMappingFilter()
+            harmonicMappingFilter.SetInputData(self.Surface)
+            harmonicMappingFilter.SetHarmonicMappingArrayName('WarpVector'+str(k))
+            harmonicMappingFilter.SetBoundaryPointIds(boundaryIds)
+            harmonicMappingFilter.SetBoundaryValues(temperature)
+            harmonicMappingFilter.SetAssemblyModeToFiniteElements()
+            harmonicMappingFilter.Update()
 
-        self.Surface = harmonicMappingFilter.GetOutput()
+            self.Surface = harmonicMappingFilter.GetOutput()
+
+        warpVector = vtk.vtkDoubleArray()
+        warpVector.SetNumberOfComponents(3)
+        warpVector.SetNumberOfTuples(self.Surface.GetNumberOfPoints())
+        warpVector.SetName('WarpVector')
+        warpVectorX = self.Surface.GetPointData().GetArray('WarpVector0')
+        warpVectorY = self.Surface.GetPointData().GetArray('WarpVector1')
+        warpVectorZ = self.Surface.GetPointData().GetArray('WarpVector2')
+        for i in range(self.Surface.GetNumberOfPoints()):
+            warpVector.SetComponent(i,0,warpVectorX.GetComponent(i,0))
+            warpVector.SetComponent(i,1,warpVectorY.GetComponent(i,0))
+            warpVector.SetComponent(i,2,warpVectorZ.GetComponent(i,0))
+
+        self.Surface.GetPointData().AddArray(warpVector)
+
 
 
 
