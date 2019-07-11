@@ -212,24 +212,22 @@ class vmtkSurfaceTagger(pypes.pypeScript):
                 answer = checkThreeConsecutiveTriangles(lastThreeCellIdLists)
                 print("answer: ", answer)
                 if answer:
-                    if distanceCleaned[0] == 0:
-                        distanceCleaned[1] = 1
-                        distanceArray.SetComponent(lastThreePointsIds[0],0,0.0)
-                        distanceArray.SetComponent(lastThreePointsIds[0],1,0.0)
-                        distanceArray.SetComponent(lastThreePointsIds[0],2,0.0)
-                    else:
+                    if distanceCleaned[1] == 0:
                         distanceCleaned[2] = 1
                         distanceArray.SetComponent(lastThreePointsIds[1],0,0.0)
                         distanceArray.SetComponent(lastThreePointsIds[1],1,0.0)
                         distanceArray.SetComponent(lastThreePointsIds[1],2,0.0)
+                    else:
+                        distanceCleaned[1] = 1
+                        distanceArray.SetComponent(lastThreePointsIds[0],0,0.0)
+                        distanceArray.SetComponent(lastThreePointsIds[0],1,0.0)
+                        distanceArray.SetComponent(lastThreePointsIds[0],2,0.0)
                 print("distance cleaned: ", distanceCleaned)
                 print("")
                 lastThreePointsIds.pop(0)
                 lastThreeCellIdLists.pop(0)
                 distanceCleaned.append(0)
                 distanceCleaned.pop(0)
-
-        # ring.GetPointData().AddArray(distanceArray)
 
         return ring
 
