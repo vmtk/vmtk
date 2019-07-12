@@ -365,6 +365,13 @@ class vmtkSurfaceTagger(pypes.pypeScript):
 
         self.Surface.GetPointData().AddArray(warpVector)
 
+        warper = vtk.vtkWarpVector()
+        warper.SetInputData(self.Surface)
+        warper.SetInputArrayToProcess(0,0,0,0,'WarpVector')
+        warper.SetScaleFactor(1.) # it is already in the calculator
+        warper.Update()
+
+        self.Surface = warper.GetOutput()
 
 
 
