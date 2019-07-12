@@ -478,7 +478,7 @@ class vmtkSurfaceTagger(pypes.pypeScript):
             self.CleanSurface()
 
         if self.PrintTags:
-            self.CellEntityIdsArray = self.Surface.GetPointData().GetArray(self.CellEntityIdsArrayName)
+            self.CellEntityIdsArray = self.Surface.GetCellData().GetArray(self.CellEntityIdsArrayName)
             tags = set()
             for i in range(self.Surface.GetNumberOfCells()):
                 tags.add(self.CellEntityIdsArray.GetComponent(i,0))
