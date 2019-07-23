@@ -48,18 +48,20 @@ class vmtkSurfaceTagger(pypes.pypeScript):
         self.CleanOutput = 1
         self.PrintTags = 1
         self.HarmonicRadius = 1.0
+        self.HarmonicGenerateTag = 0
 
         self.SetScriptName('vmtksurfacetagger')
         self.SetScriptDoc('tag a surface exploiting an array defined on it')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
-            ['Method','method','str',1,'["cliparray","array","harmonic","connectivity","constant","drawing"]','tagging method (cliparray: exploit an array to clip the surface at a certain value tagging the two parts; array: the same of cliparray, but without clipping the original triangles; harmonic: the same of array, but trying to moving harmonically the original points toward the tag value; connectivity: given an already tagged surface, tag disconnected part of each input tag; constant: assign a constant tag to the input surface; drawing: interactive drawing a region)'],
+            ['Method','method','str',1,'["cliparray","array","harmonic","connectivity","constant","drawing"]','tagging method (cliparray: exploit an array to clip the surface at a certain value tagging the two parts, it creates skew triangles that need a successive remeshing; array: the same of cliparray, but without clipping the original triangles, thus creating a zig-zag tag; harmonic: move harmonically the original points of the input surface toward the array value in order to be able to obtain a precise tag also with a successive call of the array method without the need of remeshing; connectivity: given an already tagged surface, tag disconnected part of each input tag; constant: assign a constant tag to the input surface; drawing: interactive drawing a region)'],
             ['CellEntityIdsArrayName','entityidsarray','str',1,'','name of the array where the tags are stored'],
             ['ArrayName','array','str',1,'','name of the array with which to define the boundary between tags'],
             ['Value','value','float',1,'','scalar value of the array identifying the boundary between tags'],
             ['Range','range','float',2,'','range scalar values of the array identifying the region for the new tag (alternative to value, only array method)'],
-            ['HarmonicRadius','harmonicradius','float',1,'','buffer zone radius for the harmonic method'],
             ['InsideTag','inside','int',1,'','tag of the inside region (i.e. where the Array is lower than Value; used also in case of "constant" method)'],
+            ['HarmonicRadius','harmonicradius','float',1,'','buffer zone radius for the harmonic method beyond which the points are not moved'],
+            ['HarmonicGenerateTag','harmonicgeneratetag','float',1,'','toggle tagging with the array method after the harmonic movement, it is suggested not to tag directly the surface, but to recompute the array on the warped surface and to use the array method on the recomputed array'],
             ['OverwriteOutsideTag','overwriteoutside','bool',1,'','overwrite outside value also when the CellEntityIdsArray already exists in the input surface'],
             ['OutsideTag','outside','int',1,'','tag of the outside region (i.e. where the Array is greater than Value)'],
             ['InsideOut','insideout','bool',1,'','toggle switching inside and outside tags ("cliparray" and "array" methods, only when specifying value and not range)'],
@@ -131,7 +133,6 @@ class vmtkSurfaceTagger(pypes.pypeScript):
             insideTag = self.InsideTag
         if rangeValues == []:
             rangeValues = self.Range
-        print("!!!range: ",rangeValues)
         pointsToCells = vtk.vtkPointDataToCellData()
         pointsToCells.SetInputData(surface)
         pointsToCells.PassPointDataOn()
@@ -180,7 +181,7 @@ class vmtkSurfaceTagger(pypes.pypeScript):
 
         nP = ring.GetNumberOfPoints()
         nC = ring.GetNumberOfCells()
-        print ("points and cells: ", nP, ", ", nC)
+        # print ("points and cells: ", nP, ", ", nC)
 
         lastThreePointsIds = []
         lastThreeCellIdLists = []
@@ -210,7 +211,7 @@ class vmtkSurfaceTagger(pypes.pypeScript):
                 # print("last three points: ",lastThreePointsIds)
                 # print("last three cell id Lists: ",lastThreeCellIdLists)
                 answer = checkThreeConsecutiveTriangles(lastThreeCellIdLists)
-                print("answer: ", answer)
+                # print("answer: ", answer)
                 if answer:
                     if distanceCleaned[1] == 0:
                         distanceCleaned[2] = 1
@@ -222,8 +223,8 @@ class vmtkSurfaceTagger(pypes.pypeScript):
                         distanceArray.SetComponent(lastThreePointsIds[0],0,0.0)
                         distanceArray.SetComponent(lastThreePointsIds[0],1,0.0)
                         distanceArray.SetComponent(lastThreePointsIds[0],2,0.0)
-                print("distance cleaned: ", distanceCleaned)
-                print("")
+                # print("distance cleaned: ", distanceCleaned)
+                # print("")
                 lastThreePointsIds.pop(0)
                 lastThreeCellIdLists.pop(0)
                 distanceCleaned.append(0)
@@ -275,7 +276,8 @@ class vmtkSurfaceTagger(pypes.pypeScript):
         # use clip-array method only to extract the ring
         preciseRing = self.ClipArrayTagger(True)
 
-        self.ArrayTagger()
+        if self.HarmonicGenerateTag:
+            self.ArrayTagger()
 
         zigZagRing = zigZagRingExtractor(self.Surface,self.ArrayName,12345,[-math.inf, self.Value])
 
@@ -294,20 +296,11 @@ class vmtkSurfaceTagger(pypes.pypeScript):
 
         zigZagRing = self.CleanPreciseRingDistance(zigZagRing)
 
-        writer = vtk.vtkXMLPolyDataWriter()
-        writer.SetInputData(zigZagRing)
-        writer.SetFileName('zigZagRing.vtp')
-        writer.SetDataModeToBinary()
-        writer.Write()
-
-        # from here
-        # proj = vmtkscripts.vmtkSurfaceProjection()
-        # proj.Surface = self.Surface
-        # proj.ReferenceSurface = zigZagRing
-        # proj.Execute()
-        # self.Surface = proj.Surface
-        # to here
-        # is it necessary?
+        # writer = vtk.vtkXMLPolyDataWriter()
+        # writer.SetInputData(zigZagRing)
+        # writer.SetFileName('zigZagRing.vtp')
+        # writer.SetDataModeToBinary()
+        # writer.Write()
 
         surfaceDistance2 = vmtkscripts.vmtkSurfaceDistance()
         surfaceDistance2.Surface = self.Surface
@@ -323,7 +316,7 @@ class vmtkSurfaceTagger(pypes.pypeScript):
         pointLocator.BuildLocator()
         
         for k in range(3):
-            print("K = ",k)
+            print("Harmonic extension of component ",k)
             boundaryIds = vtk.vtkIdList()
             temperature = vtk.vtkDoubleArray()
             temperature.SetNumberOfComponents(1)
@@ -368,7 +361,7 @@ class vmtkSurfaceTagger(pypes.pypeScript):
         warper = vtk.vtkWarpVector()
         warper.SetInputData(self.Surface)
         warper.SetInputArrayToProcess(0,0,0,0,'WarpVector')
-        warper.SetScaleFactor(1.) # it is already in the calculator
+        warper.SetScaleFactor(1.)
         warper.Update()
 
         self.Surface = warper.GetOutput()
@@ -464,7 +457,7 @@ class vmtkSurfaceTagger(pypes.pypeScript):
                     self.Range = [self.Value, math.inf]
                 else:
                     self.Range = [-math.inf, self.Value]
-                print("range: ",self.Range)
+                # print("range: ",self.Range)
 
         if self.Method == 'cliparray':
             self.ClipArrayTagger()
