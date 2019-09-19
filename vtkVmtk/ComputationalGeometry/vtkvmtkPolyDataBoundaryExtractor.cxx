@@ -79,8 +79,11 @@ int vtkvmtkPolyDataBoundaryExtractor::RequestData(
     for (j=0; j<3; j++)
       {
       cellEdgeNeighbors->Initialize();
-      id0 = cell->GetEdge(j)->GetPointIds()->GetId(0);
-      id1 = cell->GetEdge(j)->GetPointIds()->GetId(1);
+      auto edge = cell->GetEdge(j);
+      if (!edge) continue;
+      auto pointIds = edge->GetPointIds();
+      id0 = pointIds->GetId(0);
+      id1 = pointIds->GetId(1);
       input->GetCellEdgeNeighbors(i,id0,id1,cellEdgeNeighbors);
       if (cellEdgeNeighbors->GetNumberOfIds()==0)
         {
