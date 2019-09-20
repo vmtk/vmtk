@@ -11,3 +11,5 @@
 #if defined(_MSC_VER) && !defined(VTK_VMTK_STATIC)
 #pragma warning ( disable : 4275 )
 #endif
+
+#define VMTK_VERSION "@VMTK_VERSION@"
