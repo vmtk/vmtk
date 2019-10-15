@@ -30,7 +30,6 @@ class vmtkSurfaceThickening(pypes.pypeScript):
         pypes.pypeScript.__init__(self)
 
         self.Surface = None
-        self.CellEntityIdsArrayName = 'CellEntityIds'
         self.CellEntityIdsArray = None
         self.ThicknessArrayName = 'Thickness'
         self.ThicknessArray = None
@@ -38,6 +37,8 @@ class vmtkSurfaceThickening(pypes.pypeScript):
         self.WarpFactor = 0.5
         self.WarpArrayName = 'WarpVector'
         self.CleanOutput = 1
+        self.CellEntityIdsArrayName = 'CellEntityIds'
+        self.ExcludeEntityIds = []
 
         self.SetScriptName('vmtksurfacethickening')
         self.SetScriptDoc('warp a surface along its normal direction to obtain a surface thicker than a certain threshold')
@@ -46,7 +47,9 @@ class vmtkSurfaceThickening(pypes.pypeScript):
             ['ThicknessArrayName','thicknessarray','str',1,'','name of the array where the thickness of the surface is defined'],
             ['ThicknessThreshold','threshold','float',1,'','all points on the surface where the thickness is lower than this threshold will be warped in normal direction to obtain a surface thick as this threshold'],
             ['WarpFactor','warpfactor','float',1,'','the surface is warped by [(thickness>threshold)*(threshold-thickness)*warpfactor+0]'],
-            ['WarpArrayName','warparray','str',1,'','name of the array where the warping vector is stored']
+            ['WarpArrayName','warparray','str',1,'','name of the array where the warping vector is stored'],
+            ['CellEntityIdsArrayName','entityidsarray','str',1],
+            ['ExcludeEntityIds','exclude','int',-1,'','entity ids to be excluded from the thickening processing'],
             ])
         self.SetOutputMembers([
             ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter']
@@ -70,13 +73,36 @@ class vmtkSurfaceThickening(pypes.pypeScript):
         normalFilter.Execute()
         self.Surface = normalFilter.Surface
 
+        cellDataToPointDataFilter = vtk.vtkCellDataToPointData()
+        cellDataToPointDataFilter.SetInputData(self.Surface)
+        cellDataToPointDataFilter.PassCellDataOn()
+        cellDataToPointDataFilter.Update()
+
+        self.Surface = cellDataToPointDataFilter.GetPolyDataOutput() 
+
+        numberOfTuple = self.Surface.GetNumberOfPoints()
+        indicatorFunction = vtk.vtkDoubleArray()
+        indicatorFunction.SetName("IndicatorFunction")
+        indicatorFunction.SetNumberOfComponents(1)
+        indicatorFunction.SetNumberOfTuples(numberOfTuple)
+        indicatorFunction.FillComponent(0,1.0)
+
+        # getarray of ids
+        entityIdsArray = self.Surface.GetPointData().GetArray(self.CellEntityIdsArrayName)
+        for i in range(numberOfTuple):
+            if entityIdsArray.GetValue(i) in self.ExcludeEntityIds:
+                indicatorFunction.SetComponent(i,0,0.0)
+
+        self.Surface.GetPointData().AddArray(indicatorFunction)
+
         calculator = vtk.vtkArrayCalculator()
         calculator.SetInputData(self.Surface)
         calculator.SetAttributeTypeToPointData()
         calculator.AddScalarVariable('thickness', self.ThicknessArrayName)
+        calculator.AddScalarVariable('chi', "IndicatorFunction")
         calculator.AddVectorVariable('n', 'Normals')
         calculator.SetResultArrayName(self.WarpArrayName)
-        calculator.SetFunction( str(self.WarpFactor) + ' * n * ( (thickness < ' + str(self.ThicknessThreshold) + ') * (' + str(self.ThicknessThreshold) + ' - thickness) + 0.0 )')
+        calculator.SetFunction( str(self.WarpFactor) + ' * chi * n * ( (thickness < ' + str(self.ThicknessThreshold) + ') * (' + str(self.ThicknessThreshold) + ' - thickness) + 0.0 )')
 
         self.PrintLog('calculator = '+calculator.GetFunction())
         calculator.Update()
