@@ -32,6 +32,8 @@ class vmtkMeshTetHex(pypes.pypeScript):
 
         self.Mesh = None
         self.CellEntityIdsArrayName = 'CellEntityIds'
+        self.GlobalPtId = 0
+        self.NewPointSet = dict()
 
         self.SetScriptName('vmtkmeshtethex')
         self.SetScriptDoc('generate hexahedral mesh from a tetrahedral one, splitting each triangle in three quads and each tetrahedron in four hexahedron')
@@ -45,52 +47,47 @@ class vmtkMeshTetHex(pypes.pypeScript):
 
     def Execute(self):
 
-        tetraPoints = vtk.vtkPoints()
-        tetraPoints.SetNumberOfPoints(4)
-        tetraPoints.InsertPoint(0, 0, 0, 0)
-        tetraPoints.InsertPoint(1, 1, 0, 0)
-        tetraPoints.InsertPoint(2, .5, 1, 0)
-        tetraPoints.InsertPoint(3, .5, .5, 1)
-        aTetra = vtk.vtkTetra()
-        aTetra.GetPointIds().SetId(0, 0)
-        aTetra.GetPointIds().SetId(1, 1)
-        aTetra.GetPointIds().SetId(2, 2)
-        aTetra.GetPointIds().SetId(3, 3)
-        aTetraGrid = vtk.vtkUnstructuredGrid()
-        aTetraGrid.Allocate(1, 1)
-        aTetraGrid.InsertNextCell(aTetra.GetCellType(), aTetra.GetPointIds())
-        aTetraGrid.SetPoints(tetraPoints)
+        def InsertPoint(pt):
+            dictKey = np.array2string(pt,None,10)
+            if dictKey not in self.NewPointSet:
+                meshPoints.InsertPoint(self.GlobalPtId, pt)
+                ptId = self.GlobalPtId
+                self.NewPointSet[dictKey] = ptId
+                self.GlobalPtId += 1
+            else:
+                ptId = self.NewPointSet[dictKey]
+            return ptId
 
-        inputMesh = aTetraGrid
+        inputMesh = self.Mesh
         print('Input number of cells:',inputMesh.GetNumberOfCells())
 
-        tetraCellType = 10 # Tetrahedra
-        tetraCellIdArray = vtk.vtkIdTypeArray()
-        inputMesh.GetIdsOfCellsOfType(tetraCellType,tetraCellIdArray) # extract all the tetra cell
+        tetraType = 10 # Tetrahedra
+        tetraIdArray = vtk.vtkIdTypeArray()
+        inputMesh.GetIdsOfCellsOfType(tetraType,tetraIdArray) # extract all the tetra cell
 
         meshPoints = vtk.vtkPoints()
         meshPoints.DeepCopy(inputMesh.GetPoints())
 
         numberOfPoints = inputMesh.GetNumberOfPoints()
-        globalPtId = numberOfPoints
+        self.GlobalPtId = numberOfPoints
 
         self.Mesh = vtk.vtkUnstructuredGrid()
         self.Mesh.SetPoints(meshPoints)
 
-        numberOfTetras = tetraCellIdArray.GetNumberOfTuples()
+        numberOfTetras = tetraIdArray.GetNumberOfTuples()
 
         for i in range(numberOfTetras):
 
-            tetraId = tetraCellIdArray.GetValue(i) 
+            tetraId = tetraIdArray.GetValue(i) 
             tetra = inputMesh.GetCell(tetraId)
             tetraPointIds = tetra.GetPointIds()
 
-            ptId0 = tetraPointIds.GetId(0)
+            pt0Id = tetraPointIds.GetId(0)
             pt1Id = tetraPointIds.GetId(1)
             pt2Id = tetraPointIds.GetId(2)
             pt3Id = tetraPointIds.GetId(3)
 
-            pt0 = np.array(meshPoints.GetPoint(ptId0))
+            pt0 = np.array(meshPoints.GetPoint(pt0Id))
             pt1 = np.array(meshPoints.GetPoint(pt1Id))
             pt2 = np.array(meshPoints.GetPoint(pt2Id))
             pt3 = np.array(meshPoints.GetPoint(pt3Id))
@@ -116,50 +113,19 @@ class vmtkMeshTetHex(pypes.pypeScript):
             face2 = tetra.GetFace(2)
             face3 = tetra.GetFace(3)
 
-            print('Tetrahedra:',i)
-            print('\tpointIds:',ptId0,pt1Id,pt2Id,pt3Id)
-            print('\tpoints:\n\t\t',pt0,'\n\t\t',pt1,'\n\t\t',pt2,'\n\t\t',pt3)
-            print('\tmiddle points:\n\t\t',mp01,'\n\t\t',mp02,'\n\t\t',mp03,'\n\t\t',mp12,'\n\t\t',mp13,'\n\t\t',mp23)
-            print('\tface centers:\n\t\t',ct012,'\n\t\t',ct013,'\n\t\t',ct023,'\n\t\t',ct123)
-            print('\ttetra center:\n\t\t',g)
+            mp01Id = InsertPoint(mp01)
+            mp02Id = InsertPoint(mp02)
+            mp03Id = InsertPoint(mp03)
+            mp12Id = InsertPoint(mp12)
+            mp13Id = InsertPoint(mp13)
+            mp23Id = InsertPoint(mp23)
 
-            meshPoints.InsertPoint(globalPtId, mp01)
-            mp01Id = globalPtId
-            globalPtId += 1
-            meshPoints.InsertPoint(globalPtId, mp02)
-            mp02Id = globalPtId
-            globalPtId += 1
-            meshPoints.InsertPoint(globalPtId, mp03)
-            mp03Id = globalPtId
-            globalPtId += 1
-            meshPoints.InsertPoint(globalPtId, mp12)
-            mp12Id = globalPtId
-            globalPtId += 1
-            meshPoints.InsertPoint(globalPtId, mp13)
-            mp13Id = globalPtId
-            globalPtId += 1
-            meshPoints.InsertPoint(globalPtId, mp23)
-            mp23Id = globalPtId
-            globalPtId += 1
+            ct012Id = InsertPoint(ct012)
+            ct013Id = InsertPoint(ct013)
+            ct023Id = InsertPoint(ct023)
+            ct123Id = InsertPoint(ct123)
 
-            meshPoints.InsertPoint(globalPtId, ct012)
-            ct012Id = globalPtId
-            globalPtId += 1
-            meshPoints.InsertPoint(globalPtId, ct013)
-            ct013Id = globalPtId
-            globalPtId += 1
-            meshPoints.InsertPoint(globalPtId, ct023)
-            ct023Id = globalPtId
-            globalPtId += 1
-            meshPoints.InsertPoint(globalPtId, ct123)
-            ct123Id = globalPtId
-            globalPtId += 1
-
-            meshPoints.InsertPoint(globalPtId, g)
-            gId = globalPtId
-            globalPtId += 1
-
-            print(mp01Id,mp02Id,mp03Id,mp12Id,mp13Id,mp23Id,ct012Id,ct013Id,ct023Id,ct123Id,gId)
+            gId = InsertPoint(g)
 
             hexa1 = vtk.vtkHexahedron()
             hexa1.GetPointIds().SetId(0,mp01Id)
@@ -183,7 +149,7 @@ class vmtkMeshTetHex(pypes.pypeScript):
 
             hexa3 = vtk.vtkHexahedron()
             hexa3.GetPointIds().SetId(0,mp02Id)
-            hexa3.GetPointIds().SetId(1,ptId0)
+            hexa3.GetPointIds().SetId(1,pt0Id)
             hexa3.GetPointIds().SetId(2,mp01Id)
             hexa3.GetPointIds().SetId(3,ct012Id)
             hexa3.GetPointIds().SetId(4,ct023Id)
