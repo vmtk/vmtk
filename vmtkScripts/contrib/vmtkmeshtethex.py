@@ -61,6 +61,8 @@ class vmtkMeshTetHex(pypes.pypeScript):
         inputMesh = self.Mesh
         print('Input number of cells:',inputMesh.GetNumberOfCells())
 
+        inputCellEntityIdsArray = inputMesh.GetCellData().GetArray(self.CellEntityIdsArrayName)
+
         meshPoints = vtk.vtkPoints()
         meshPoints.DeepCopy(inputMesh.GetPoints())
 
@@ -69,6 +71,10 @@ class vmtkMeshTetHex(pypes.pypeScript):
 
         self.Mesh = vtk.vtkUnstructuredGrid()
         self.Mesh.SetPoints(meshPoints)
+        cellEntityIdsArray = vtk.vtkIntArray()
+        cellEntityIdsArray.SetName(self.CellEntityIdsArrayName)
+        self.Mesh.GetCellData().AddArray(cellEntityIdsArray)
+        numberOfCells = 0
 
         tetraType = 10 # Tetrahedra
         tetraIdArray = vtk.vtkIdTypeArray()
@@ -77,7 +83,8 @@ class vmtkMeshTetHex(pypes.pypeScript):
 
         for i in range(numberOfTetras):
 
-            tetraId = tetraIdArray.GetValue(i) 
+            tetraId = tetraIdArray.GetValue(i)
+            tetraEntityId = inputCellEntityIdsArray.GetValue(tetraId)
             tetra = inputMesh.GetCell(tetraId)
             tetraPointIds = tetra.GetPointIds()
 
@@ -164,6 +171,11 @@ class vmtkMeshTetHex(pypes.pypeScript):
             self.Mesh.InsertNextCell(hexa3.GetCellType(),hexa3.GetPointIds())
             self.Mesh.InsertNextCell(hexa4.GetCellType(),hexa4.GetPointIds())
 
+            cellEntityIdsArray.InsertNextTuple1(tetraEntityId)
+            cellEntityIdsArray.InsertNextTuple1(tetraEntityId)
+            cellEntityIdsArray.InsertNextTuple1(tetraEntityId)
+            cellEntityIdsArray.InsertNextTuple1(tetraEntityId)
+
         triType = 5 # Triangles
         triIdArray = vtk.vtkIdTypeArray()
         inputMesh.GetIdsOfCellsOfType(triType,triIdArray) # extract all the tetra cell
@@ -173,6 +185,7 @@ class vmtkMeshTetHex(pypes.pypeScript):
 
             triId = triIdArray.GetValue(i) 
             tri = inputMesh.GetCell(triId)
+            triEntityId = inputCellEntityIdsArray.GetValue(triId)
             triPointIds = tri.GetPointIds()
 
             pt0Id = triPointIds.GetId(0)
@@ -217,6 +230,10 @@ class vmtkMeshTetHex(pypes.pypeScript):
             self.Mesh.InsertNextCell(quad2.GetCellType(),quad2.GetPointIds())
             self.Mesh.InsertNextCell(quad3.GetCellType(),quad3.GetPointIds())
 
+            cellEntityIdsArray.InsertNextTuple1(triEntityId)
+            cellEntityIdsArray.InsertNextTuple1(triEntityId)
+            cellEntityIdsArray.InsertNextTuple1(triEntityId)
+
         lineType = 3 # Lines
         lineIdArray = vtk.vtkIdTypeArray()
         inputMesh.GetIdsOfCellsOfType(lineType,lineIdArray) # extract all the tetra cell
@@ -226,6 +243,7 @@ class vmtkMeshTetHex(pypes.pypeScript):
 
             lineId = lineIdArray.GetValue(i) 
             line = inputMesh.GetCell(triId)
+            lineEntityId = inputCellEntityIdsArray.GetValue(lineId)
             linePointIds = line.GetPointIds()
 
             pt0Id = linePointIds.GetId(0)
@@ -248,6 +266,9 @@ class vmtkMeshTetHex(pypes.pypeScript):
 
             self.Mesh.InsertNextCell(line1.GetCellType(),line1.GetPointIds())
             self.Mesh.InsertNextCell(line2.GetCellType(),line2.GetPointIds())
+
+            cellEntityIdsArray.InsertNextTuple1(lineEntityId)
+            cellEntityIdsArray.InsertNextTuple1(lineEntityId)
 
         print('Final number of cells:',self.Mesh.GetNumberOfCells())
         hexaIdArray = vtk.vtkIdTypeArray()
