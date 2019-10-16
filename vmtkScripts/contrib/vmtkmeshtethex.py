@@ -61,33 +61,39 @@ class vmtkMeshTetHex(pypes.pypeScript):
         aTetraGrid.InsertNextCell(aTetra.GetCellType(), aTetra.GetPointIds())
         aTetraGrid.SetPoints(tetraPoints)
 
-        self.Mesh = aTetraGrid
+        inputMesh = aTetraGrid
+        print('Input number of cells:',inputMesh.GetNumberOfCells())
 
         tetraCellType = 10 # Tetrahedra
         tetraCellIdArray = vtk.vtkIdTypeArray()
-        self.Mesh.GetIdsOfCellsOfType(tetraCellType,tetraCellIdArray) # extract all the tetra cell
+        inputMesh.GetIdsOfCellsOfType(tetraCellType,tetraCellIdArray) # extract all the tetra cell
 
-        meshPoints = self.Mesh.GetPoints()
+        meshPoints = vtk.vtkPoints()
+        meshPoints.DeepCopy(inputMesh.GetPoints())
 
-        numberOfPoints = self.Mesh.GetNumberOfPoints()
+        numberOfPoints = inputMesh.GetNumberOfPoints()
         globalPtId = numberOfPoints
 
+        self.Mesh = vtk.vtkUnstructuredGrid()
+        self.Mesh.SetPoints(meshPoints)
+
         numberOfTetras = tetraCellIdArray.GetNumberOfTuples()
+
         for i in range(numberOfTetras):
-            tetraCellId = tetraCellIdArray.GetValue(i) 
-            tetra = self.Mesh.GetCell(tetraCellId)
-            cellPointIds = tetra.GetPointIds()
+
+            tetraId = tetraCellIdArray.GetValue(i) 
+            tetra = inputMesh.GetCell(tetraId)
             tetraPointIds = tetra.GetPointIds()
 
             ptId0 = tetraPointIds.GetId(0)
-            ptId1 = tetraPointIds.GetId(1)
-            ptId2 = tetraPointIds.GetId(2)
-            ptId3 = tetraPointIds.GetId(3)
+            pt1Id = tetraPointIds.GetId(1)
+            pt2Id = tetraPointIds.GetId(2)
+            pt3Id = tetraPointIds.GetId(3)
 
             pt0 = np.array(meshPoints.GetPoint(ptId0))
-            pt1 = np.array(meshPoints.GetPoint(ptId1))
-            pt2 = np.array(meshPoints.GetPoint(ptId2))
-            pt3 = np.array(meshPoints.GetPoint(ptId3))
+            pt1 = np.array(meshPoints.GetPoint(pt1Id))
+            pt2 = np.array(meshPoints.GetPoint(pt2Id))
+            pt3 = np.array(meshPoints.GetPoint(pt3Id))
 
             mp01 = (pt0 + pt1) / 2.0
             mp02 = (pt0 + pt2) / 2.0
@@ -111,7 +117,7 @@ class vmtkMeshTetHex(pypes.pypeScript):
             face3 = tetra.GetFace(3)
 
             print('Tetrahedra:',i)
-            print('\tpointIds:',ptId0,ptId1,ptId2,ptId3)
+            print('\tpointIds:',ptId0,pt1Id,pt2Id,pt3Id)
             print('\tpoints:\n\t\t',pt0,'\n\t\t',pt1,'\n\t\t',pt2,'\n\t\t',pt3)
             print('\tmiddle points:\n\t\t',mp01,'\n\t\t',mp02,'\n\t\t',mp03,'\n\t\t',mp12,'\n\t\t',mp13,'\n\t\t',mp23)
             print('\tface centers:\n\t\t',ct012,'\n\t\t',ct013,'\n\t\t',ct023,'\n\t\t',ct123)
@@ -157,7 +163,7 @@ class vmtkMeshTetHex(pypes.pypeScript):
 
             hexa1 = vtk.vtkHexahedron()
             hexa1.GetPointIds().SetId(0,mp01Id)
-            hexa1.GetPointIds().SetId(1,ptId1)
+            hexa1.GetPointIds().SetId(1,pt1Id)
             hexa1.GetPointIds().SetId(2,mp12Id)
             hexa1.GetPointIds().SetId(3,ct012Id)
             hexa1.GetPointIds().SetId(4,ct013Id)
@@ -167,7 +173,7 @@ class vmtkMeshTetHex(pypes.pypeScript):
 
             hexa2 = vtk.vtkHexahedron()
             hexa2.GetPointIds().SetId(0,mp12Id)
-            hexa2.GetPointIds().SetId(1,ptId2)
+            hexa2.GetPointIds().SetId(1,pt2Id)
             hexa2.GetPointIds().SetId(2,mp02Id)
             hexa2.GetPointIds().SetId(3,ct012Id)
             hexa2.GetPointIds().SetId(4,ct123Id)
@@ -187,7 +193,7 @@ class vmtkMeshTetHex(pypes.pypeScript):
 
             hexa4 = vtk.vtkHexahedron()
             hexa4.GetPointIds().SetId(0,mp23Id)
-            hexa4.GetPointIds().SetId(1,ptId3)
+            hexa4.GetPointIds().SetId(1,pt3Id)
             hexa4.GetPointIds().SetId(2,mp03Id)
             hexa4.GetPointIds().SetId(3,ct023Id)
             hexa4.GetPointIds().SetId(4,ct123Id)
@@ -199,6 +205,8 @@ class vmtkMeshTetHex(pypes.pypeScript):
             self.Mesh.InsertNextCell(hexa2.GetCellType(),hexa2.GetPointIds())
             self.Mesh.InsertNextCell(hexa3.GetCellType(),hexa3.GetPointIds())
             self.Mesh.InsertNextCell(hexa4.GetCellType(),hexa4.GetPointIds())
+
+        print('Final number of cells:',self.Mesh.GetNumberOfCells())
 
 
 if __name__=='__main__':
