@@ -10,6 +10,7 @@ set(CONTRIB_SCRIPTS_SRCS
     vmtkimagetonumpy.py
     vmtkmeshaddexternallayer.py
     vmtkmeshclipcenterlines.py
+    vmtkmeshinfo.py
     vmtkmeshtethex.py
     vmtkmeshtetrahedralize2.py
     vmtkmeshtonumpy.py
