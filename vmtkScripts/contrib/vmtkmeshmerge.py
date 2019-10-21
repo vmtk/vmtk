@@ -60,7 +60,7 @@ class vmtkMeshMerge(pypes.pypeScript):
         for mesh, offsets in data:
             addIds(mesh, offsets)
             if mesh != None:
-                merger.AddInput(mesh)
+                merger.AddInputData(mesh)
         merger.SetMergeDuplicatePoints(1)
         merger.Update()
 
