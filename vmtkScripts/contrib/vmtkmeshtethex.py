@@ -32,6 +32,8 @@ class vmtkMeshTetHex(pypes.pypeScript):
 
         self.Mesh = None
         self.CellEntityIdsArrayName = 'CellEntityIds'
+        self.CellEntityIdsArray = None
+        self.NumberOfRefineBySplitting = 0
         self.GlobalPtId = 0
         self.NewPointSet = dict()
 
@@ -39,7 +41,8 @@ class vmtkMeshTetHex(pypes.pypeScript):
         self.SetScriptDoc('generate hexahedral mesh from a tetrahedral one, splitting each triangle in three quads and each tetrahedron in four hexahedron')
         self.SetInputMembers([
             ['Mesh','i','vtkUnstructuredGrid',1,'','the input mesh','vmtkmeshreader'],
-            ['CellEntityIdsArrayName','entityidsarray','str',1]
+            ['CellEntityIdsArrayName','entityidsarray','str',1],
+            ['NumberOfRefineBySplitting','refinebysplitting','int',1,'','number of refine-by-splitting performed after first hexahedral mesh generation'],
             ])
         self.SetOutputMembers([
             ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh','vmtkmeshwriter']
@@ -58,9 +61,42 @@ class vmtkMeshTetHex(pypes.pypeScript):
                 ptId = self.NewPointSet[dictKey]
             return ptId
 
-        inputMesh = self.Mesh
-        print('Input number of cells:',inputMesh.GetNumberOfCells())
+        def InsertHexa(id0,id1,id2,id3,id4,id5,id6,id7):
+            hexa = vtk.vtkHexahedron()
+            hexa.GetPointIds().SetId(0,id0)
+            hexa.GetPointIds().SetId(1,id1)
+            hexa.GetPointIds().SetId(2,id2)
+            hexa.GetPointIds().SetId(3,id3)
+            hexa.GetPointIds().SetId(4,id4)
+            hexa.GetPointIds().SetId(5,id5)
+            hexa.GetPointIds().SetId(6,id6)
+            hexa.GetPointIds().SetId(7,id7)
+            self.Mesh.InsertNextCell(hexa.GetCellType(),hexa.GetPointIds())
 
+        def InsertQuad(id0,id1,id2,id3):
+            quad = vtk.vtkQuad()
+            quad.GetPointIds().SetId(0,id0)
+            quad.GetPointIds().SetId(1,id1)
+            quad.GetPointIds().SetId(2,id2)
+            quad.GetPointIds().SetId(3,id3)
+            self.Mesh.InsertNextCell(quad.GetCellType(),quad.GetPointIds())
+
+        def InsertLine(id0,id1):
+            line = vtk.vtkLine()
+            line.GetPointIds().SetId(0,id0)
+            line.GetPointIds().SetId(1,id1)
+            self.Mesh.InsertNextCell(line.GetCellType(),line.GetPointIds())
+
+
+        self.PrintLog("    Generation of the hexahedral mesh:")
+        # initialize toolbar
+        toolbar_width = 40
+        sys.stdout.write( "    [%s]" % (" " * toolbar_width) )
+        sys.stdout.flush()
+        sys.stdout.write( "\b" * ( toolbar_width + 1 ) ) # return to start of line, after '['
+        inputCells = self.Mesh.GetNumberOfCells()
+
+        inputMesh = self.Mesh
         inputCellEntityIdsArray = inputMesh.GetCellData().GetArray(self.CellEntityIdsArrayName)
 
         meshPoints = vtk.vtkPoints()
@@ -71,9 +107,9 @@ class vmtkMeshTetHex(pypes.pypeScript):
 
         self.Mesh = vtk.vtkUnstructuredGrid()
         self.Mesh.SetPoints(meshPoints)
-        cellEntityIdsArray = vtk.vtkIntArray()
-        cellEntityIdsArray.SetName(self.CellEntityIdsArrayName)
-        self.Mesh.GetCellData().AddArray(cellEntityIdsArray)
+        self.CellEntityIdsArray = vtk.vtkIntArray()
+        self.CellEntityIdsArray.SetName(self.CellEntityIdsArrayName)
+        self.Mesh.GetCellData().AddArray(self.CellEntityIdsArray)
         numberOfCells = 0
 
         tetraType = 10 # Tetrahedra
@@ -126,55 +162,19 @@ class vmtkMeshTetHex(pypes.pypeScript):
 
             gId = InsertPoint(g)
 
-            hexa1 = vtk.vtkHexahedron()
-            hexa1.GetPointIds().SetId(0,mp01Id)
-            hexa1.GetPointIds().SetId(1,pt1Id)
-            hexa1.GetPointIds().SetId(2,mp12Id)
-            hexa1.GetPointIds().SetId(3,ct012Id)
-            hexa1.GetPointIds().SetId(4,ct013Id)
-            hexa1.GetPointIds().SetId(5,mp13Id)
-            hexa1.GetPointIds().SetId(6,ct123Id)
-            hexa1.GetPointIds().SetId(7,gId)
+            InsertHexa(mp01Id,pt1Id,mp12Id,ct012Id,ct013Id,mp13Id,ct123Id,gId)
+            InsertHexa(mp12Id,pt2Id,mp02Id,ct012Id,ct123Id,mp23Id,ct023Id,gId)
+            InsertHexa(mp02Id,pt0Id,mp01Id,ct012Id,ct023Id,mp03Id,ct013Id,gId)
+            InsertHexa(mp23Id,pt3Id,mp03Id,ct023Id,ct123Id,mp13Id,ct013Id,gId)
 
-            hexa2 = vtk.vtkHexahedron()
-            hexa2.GetPointIds().SetId(0,mp12Id)
-            hexa2.GetPointIds().SetId(1,pt2Id)
-            hexa2.GetPointIds().SetId(2,mp02Id)
-            hexa2.GetPointIds().SetId(3,ct012Id)
-            hexa2.GetPointIds().SetId(4,ct123Id)
-            hexa2.GetPointIds().SetId(5,mp23Id)
-            hexa2.GetPointIds().SetId(6,ct023Id)
-            hexa2.GetPointIds().SetId(7,gId)
+            for j in range(4):
+                self.CellEntityIdsArray.InsertNextTuple1(tetraEntityId)
 
-            hexa3 = vtk.vtkHexahedron()
-            hexa3.GetPointIds().SetId(0,mp02Id)
-            hexa3.GetPointIds().SetId(1,pt0Id)
-            hexa3.GetPointIds().SetId(2,mp01Id)
-            hexa3.GetPointIds().SetId(3,ct012Id)
-            hexa3.GetPointIds().SetId(4,ct023Id)
-            hexa3.GetPointIds().SetId(5,mp03Id)
-            hexa3.GetPointIds().SetId(6,ct013Id)
-            hexa3.GetPointIds().SetId(7,gId)
+            # print toolbar
+            if ( i % ( int( inputCells / toolbar_width ) ) == 0 ):
+                sys.stdout.write("-")
+                sys.stdout.flush()
 
-            hexa4 = vtk.vtkHexahedron()
-            hexa4.GetPointIds().SetId(0,mp23Id)
-            hexa4.GetPointIds().SetId(1,pt3Id)
-            hexa4.GetPointIds().SetId(2,mp03Id)
-            hexa4.GetPointIds().SetId(3,ct023Id)
-            hexa4.GetPointIds().SetId(4,ct123Id)
-            hexa4.GetPointIds().SetId(5,mp13Id)
-            hexa4.GetPointIds().SetId(6,ct013Id)
-            hexa4.GetPointIds().SetId(7,gId)
-
-            self.Mesh.InsertNextCell(hexa1.GetCellType(),hexa1.GetPointIds())
-            self.Mesh.InsertNextCell(hexa2.GetCellType(),hexa2.GetPointIds())
-            self.Mesh.InsertNextCell(hexa3.GetCellType(),hexa3.GetPointIds())
-            self.Mesh.InsertNextCell(hexa4.GetCellType(),hexa4.GetPointIds())
-
-            cellEntityIdsArray.InsertNextTuple1(tetraEntityId)
-            cellEntityIdsArray.InsertNextTuple1(tetraEntityId)
-            cellEntityIdsArray.InsertNextTuple1(tetraEntityId)
-            cellEntityIdsArray.InsertNextTuple1(tetraEntityId)
 
         triType = 5 # Triangles
         triIdArray = vtk.vtkIdTypeArray()
@@ -208,78 +208,143 @@ class vmtkMeshTetHex(pypes.pypeScript):
 
             gId = InsertPoint(g)
 
-            quad1 = vtk.vtkQuad()
-            quad1.GetPointIds().SetId(0,mp02Id)
-            quad1.GetPointIds().SetId(1,pt0Id)
-            quad1.GetPointIds().SetId(2,mp01Id)
-            quad1.GetPointIds().SetId(3,gId)
+            InsertQuad(mp02Id,pt0Id,mp01Id,gId)
+            InsertQuad(mp01Id,pt1Id,mp12Id,gId)
+            InsertQuad(mp12Id,pt2Id,mp02Id,gId)
 
-            quad2 = vtk.vtkQuad()
-            quad2.GetPointIds().SetId(0,mp01Id)
-            quad2.GetPointIds().SetId(1,pt1Id)
-            quad2.GetPointIds().SetId(2,mp12Id)
-            quad2.GetPointIds().SetId(3,gId)
+            for j in range(3):
+                self.CellEntityIdsArray.InsertNextTuple1(triEntityId)
 
-            quad3 = vtk.vtkQuad()
-            quad3.GetPointIds().SetId(0,mp12Id)
-            quad3.GetPointIds().SetId(1,pt2Id)
-            quad3.GetPointIds().SetId(2,mp02Id)
-            quad3.GetPointIds().SetId(3,gId)
+            # print toolbar
+            if ( (i + numberOfTetras) % ( int( inputCells / toolbar_width ) ) == 0 ):
+                sys.stdout.write("-")
+                sys.stdout.flush()
 
-            self.Mesh.InsertNextCell(quad1.GetCellType(),quad1.GetPointIds())
-            self.Mesh.InsertNextCell(quad2.GetCellType(),quad2.GetPointIds())
-            self.Mesh.InsertNextCell(quad3.GetCellType(),quad3.GetPointIds())
 
-            cellEntityIdsArray.InsertNextTuple1(triEntityId)
-            cellEntityIdsArray.InsertNextTuple1(triEntityId)
-            cellEntityIdsArray.InsertNextTuple1(triEntityId)
+        def SplitLine(inputMesh,cellCounterShift=0):
+            lineType = 3 # Lines
+            lineIdArray = vtk.vtkIdTypeArray()
+            inputMesh.GetIdsOfCellsOfType(lineType,lineIdArray) # extract all the line cell
+            numberOfLines = lineIdArray.GetNumberOfTuples()
 
-        lineType = 3 # Lines
-        lineIdArray = vtk.vtkIdTypeArray()
-        inputMesh.GetIdsOfCellsOfType(lineType,lineIdArray) # extract all the tetra cell
-        numberOfLines = lineIdArray.GetNumberOfTuples()
+            for i in range(numberOfLines):
 
-        for i in range(numberOfLines):
+                lineId = lineIdArray.GetValue(i) 
+                line = inputMesh.GetCell(triId)
+                lineEntityId = inputCellEntityIdsArray.GetValue(lineId)
+                linePointIds = line.GetPointIds()
 
-            lineId = lineIdArray.GetValue(i) 
-            line = inputMesh.GetCell(triId)
-            lineEntityId = inputCellEntityIdsArray.GetValue(lineId)
-            linePointIds = line.GetPointIds()
+                pt0Id = linePointIds.GetId(0)
+                pt1Id = linePointIds.GetId(1)
 
-            pt0Id = linePointIds.GetId(0)
-            pt1Id = linePointIds.GetId(1)
+                pt0 = np.array(meshPoints.GetPoint(pt0Id))
+                pt1 = np.array(meshPoints.GetPoint(pt1Id))
 
-            pt0 = np.array(meshPoints.GetPoint(pt0Id))
-            pt1 = np.array(meshPoints.GetPoint(pt1Id))
+                g = (pt0 + pt1) / 2.0
 
-            g = (pt0 + pt1) / 2.0
+                gId = InsertPoint(g)
 
-            gId = InsertPoint(g)
+                InsertLine(pt0Id,gId)
+                InsertLine(gId,pt1Id)
 
-            line1 = vtk.vtkLine()
-            line1.GetPointIds().SetId(0,pt0Id)
-            line1.GetPointIds().SetId(1,gId)
+                for j in range(2):
+                    self.CellEntityIdsArray.InsertNextTuple1(lineEntityId)
 
-            line2 = vtk.vtkLine()
-            line2.GetPointIds().SetId(0,gId)
-            line2.GetPointIds().SetId(1,pt1Id)
+                # print toolbar
+                if ( (i + cellCounterShift) % ( int( inputCells / toolbar_width ) ) == 0 ):
+                    sys.stdout.write("-")
+                    sys.stdout.flush()
 
-            self.Mesh.InsertNextCell(line1.GetCellType(),line1.GetPointIds())
-            self.Mesh.InsertNextCell(line2.GetCellType(),line2.GetPointIds())
+        SplitLine(inputMesh,numberOfTetras+numberOfTris)
 
-            cellEntityIdsArray.InsertNextTuple1(lineEntityId)
-            cellEntityIdsArray.InsertNextTuple1(lineEntityId)
+        # close toolbar
+        sys.stdout.write("]\n\n")
 
-        print('Final number of cells:',self.Mesh.GetNumberOfCells())
-        hexaIdArray = vtk.vtkIdTypeArray()
-        self.Mesh.GetIdsOfCellsOfType(12,hexaIdArray)
-        print('\tnumber of hexahedra:',hexaIdArray.GetNumberOfTuples())
-        quadIdArray = vtk.vtkIdTypeArray()
-        self.Mesh.GetIdsOfCellsOfType(9,quadIdArray)
-        print('\tnumber of quads:',quadIdArray.GetNumberOfTuples())
-        lineIdArray = vtk.vtkIdTypeArray()
-        self.Mesh.GetIdsOfCellsOfType(3,lineIdArray)
-        print('\tnumber of lines:',lineIdArray.GetNumberOfTuples())
+
+        # perform a refine-by-splitting
+        for i in range(self.NumberOfRefineBySplitting):
+
+            self.PrintLog("    refine-by-splitting number "+str(i+1))
+            # repeated code ...
+            # initialize toolbar
+            toolbar_width = 40
+            sys.stdout.write( "    [%s]" % (" " * toolbar_width) )
+            sys.stdout.flush()
+            sys.stdout.write( "\b" * ( toolbar_width + 1 ) ) # return to start of line, after '['
+            inputCells = self.Mesh.GetNumberOfCells()
+
+            inputMesh = self.Mesh
+            inputCellEntityIdsArray = inputMesh.GetCellData().GetArray(self.CellEntityIdsArrayName)
+
+            meshPoints = vtk.vtkPoints()
+            meshPoints.DeepCopy(inputMesh.GetPoints())
+
+            numberOfPoints = inputMesh.GetNumberOfPoints()
+            self.GlobalPtId = numberOfPoints
+
+            self.Mesh = vtk.vtkUnstructuredGrid()
+            self.Mesh.SetPoints(meshPoints)
+            self.CellEntityIdsArray = vtk.vtkIntArray()
+            self.CellEntityIdsArray.SetName(self.CellEntityIdsArrayName)
+            self.Mesh.GetCellData().AddArray(self.CellEntityIdsArray)
+            numberOfCells = 0
+            # ... till here
+
+            SplitLine(inputMesh)
+
+            quadType = 9 # Quad
+            quadIdArray = vtk.vtkIdTypeArray()
+            inputMesh.GetIdsOfCellsOfType(quadType,quadIdArray) # extract all the tetra cell
+            numberOfQuads = quadIdArray.GetNumberOfTuples()
+
+            for i in range(numberOfQuads):
+
+                quadId = quadIdArray.GetValue(i) 
+                quad = inputMesh.GetCell(quadId)
+                quadEntityId = inputCellEntityIdsArray.GetValue(quadId)
+                quadPointIds = quad.GetPointIds()
+
+                pt0Id = quadPointIds.GetId(0)
+                pt1Id = quadPointIds.GetId(1)
+                pt2Id = quadPointIds.GetId(2)
+                pt3Id = quadPointIds.GetId(3)
+
+                pt0 = np.array(meshPoints.GetPoint(pt0Id))
+                pt1 = np.array(meshPoints.GetPoint(pt1Id))
+                pt2 = np.array(meshPoints.GetPoint(pt2Id))
+                pt3 = np.array(meshPoints.GetPoint(pt3Id))
+
+                mp01 = (pt0 + pt1) / 2.0
+                mp03 = (pt0 + pt3) / 2.0
+                mp12 = (pt1 + pt2) / 2.0
+                mp23 = (pt2 + pt3) / 2.0
+
+                g = (pt0 + pt1 + pt2 + pt3) / 4.0
+
+                mp01Id = InsertPoint(mp01)
+                mp03Id = InsertPoint(mp03)
+                mp12Id = InsertPoint(mp12)
+                mp23Id = InsertPoint(mp23)
+
+                gId = InsertPoint(g)
+
+                InsertQuad(mp03Id,pt0Id,mp01Id,gId)
+                InsertQuad(mp01Id,pt1Id,mp12Id,gId)
+                InsertQuad(mp12Id,pt2Id,mp23Id,gId)
+                InsertQuad(mp23Id,pt3Id,mp03Id,gId)
+
+                for j in range(4):
+                    self.CellEntityIdsArray.InsertNextTuple1(triEntityId)
+
+                # print toolbar
+                if ( (i + numberOfQuads) % ( int( inputCells / toolbar_width ) ) == 0 ):
+                    sys.stdout.write("-")
+                    sys.stdout.flush()
+
+            # TODO: divide hexahedra
+
+            # close toolbar
+            sys.stdout.write("]\n\n")
 
 
 if __name__=='__main__':
