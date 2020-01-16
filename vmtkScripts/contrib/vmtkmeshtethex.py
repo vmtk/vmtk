@@ -90,11 +90,11 @@ class vmtkMeshTetHex(pypes.pypeScript):
 
         self.PrintLog("    Generation of the hexahedral mesh:")
         # initialize toolbar
-        toolbar_width = 40
+        inputCells = self.Mesh.GetNumberOfCells()
+        toolbar_width = min(40,inputCells)
         sys.stdout.write( "    [%s]" % (" " * toolbar_width) )
         sys.stdout.flush()
         sys.stdout.write( "\b" * ( toolbar_width + 1 ) ) # return to start of line, after '['
-        inputCells = self.Mesh.GetNumberOfCells()
 
         inputMesh = self.Mesh
         inputCellEntityIdsArray = inputMesh.GetCellData().GetArray(self.CellEntityIdsArrayName)
@@ -120,7 +120,10 @@ class vmtkMeshTetHex(pypes.pypeScript):
         for i in range(numberOfTetras):
 
             tetraId = tetraIdArray.GetValue(i)
-            tetraEntityId = inputCellEntityIdsArray.GetValue(tetraId)
+            if inputCellEntityIdsArray != None:
+                tetraEntityId = inputCellEntityIdsArray.GetValue(tetraId)
+            else:
+                tetraEntityId = 1
             tetra = inputMesh.GetCell(tetraId)
             tetraPointIds = tetra.GetPointIds()
 
@@ -185,7 +188,10 @@ class vmtkMeshTetHex(pypes.pypeScript):
 
             triId = triIdArray.GetValue(i) 
             tri = inputMesh.GetCell(triId)
-            triEntityId = inputCellEntityIdsArray.GetValue(triId)
+            if inputCellEntityIdsArray != None:
+                triEntityId = inputCellEntityIdsArray.GetValue(triId)
+            else:
+                triEntityId = 2
             triPointIds = tri.GetPointIds()
 
             pt0Id = triPointIds.GetId(0)
@@ -231,7 +237,10 @@ class vmtkMeshTetHex(pypes.pypeScript):
 
                 lineId = lineIdArray.GetValue(i) 
                 line = inputMesh.GetCell(triId)
-                lineEntityId = inputCellEntityIdsArray.GetValue(lineId)
+                if inputCellEntityIdsArray != None:
+                    lineEntityId = inputCellEntityIdsArray.GetValue(lineId)
+                else:
+                    lineEntityId = 3
                 linePointIds = line.GetPointIds()
 
                 pt0Id = linePointIds.GetId(0)
@@ -260,6 +269,8 @@ class vmtkMeshTetHex(pypes.pypeScript):
         # close toolbar
         sys.stdout.write("]\n\n")
 
+        if self.Mesh.GetNumberOfCells() == 0:
+            self.Mesh = inputMesh
 
         # perform a refine-by-splitting
         for i in range(self.NumberOfRefineBySplitting):
@@ -267,11 +278,11 @@ class vmtkMeshTetHex(pypes.pypeScript):
             self.PrintLog("    refine-by-splitting number "+str(i+1))
             # repeated code ...
             # initialize toolbar
-            toolbar_width = 40
+            inputCells = self.Mesh.GetNumberOfCells()
+            toolbar_width = min(40,inputCells)
             sys.stdout.write( "    [%s]" % (" " * toolbar_width) )
             sys.stdout.flush()
             sys.stdout.write( "\b" * ( toolbar_width + 1 ) ) # return to start of line, after '['
-            inputCells = self.Mesh.GetNumberOfCells()
 
             inputMesh = self.Mesh
             inputCellEntityIdsArray = inputMesh.GetCellData().GetArray(self.CellEntityIdsArrayName)
@@ -301,7 +312,10 @@ class vmtkMeshTetHex(pypes.pypeScript):
 
                 quadId = quadIdArray.GetValue(i) 
                 quad = inputMesh.GetCell(quadId)
-                quadEntityId = inputCellEntityIdsArray.GetValue(quadId)
+                if inputCellEntityIdsArray != None:
+                    quadEntityId = inputCellEntityIdsArray.GetValue(quadId)
+                else:
+                    quadEntityId = 2
                 quadPointIds = quad.GetPointIds()
 
                 pt0Id = quadPointIds.GetId(0)
@@ -334,7 +348,7 @@ class vmtkMeshTetHex(pypes.pypeScript):
                 InsertQuad(mp23Id,pt3Id,mp03Id,gId)
 
                 for j in range(4):
-                    self.CellEntityIdsArray.InsertNextTuple1(triEntityId)
+                    self.CellEntityIdsArray.InsertNextTuple1(quadEntityId)
 
                 # print toolbar
                 if ( (i + numberOfQuads) % ( int( inputCells / toolbar_width ) ) == 0 ):
