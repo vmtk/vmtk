@@ -155,6 +155,7 @@ __all__ = [
     'vmtk.vmtksurfacetriangle',
     'vmtk.vmtksurfacetomesh',
     'vmtk.vmtksurfaceviewer',
+    'vmtk.vmtksurfacewarpbyvector',
     'vmtk.vmtksurfacewriter',
     'vmtk.vmtksurfmesh',
     'vmtk.vmtktetgen',
