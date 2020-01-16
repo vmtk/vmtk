@@ -150,6 +150,7 @@ set(SCRIPTS_SRCS
   vmtksurfacetriangle.py
   vmtksurfacetomesh.py
   vmtksurfaceviewer.py
+  vmtksurfacewarpbyvector.py
   vmtksurfacewriter.py
   vmtksurfmesh.py
   vmtktetgen.py
