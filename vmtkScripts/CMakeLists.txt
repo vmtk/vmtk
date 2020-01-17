@@ -94,6 +94,7 @@ set(SCRIPTS_SRCS
   vmtkmeshvolume.py
   vmtkmeshvorticityhelicity.py
   vmtkmeshwallshearrate.py
+  vmtkmeshwarpbyvector.py
   vmtkmeshwriter.py
   vmtknetworkextraction.py
   vmtknetworkeditor.py

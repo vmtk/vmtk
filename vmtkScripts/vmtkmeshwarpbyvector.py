@@ -23,51 +23,43 @@ import sys
 
 from vmtk import pypes
 
-class vmtkSurfaceWarpByVector(pypes.pypeScript):
+class vmtkMeshWarpByVector(pypes.pypeScript):
 
     def __init__(self):
 
         pypes.pypeScript.__init__(self)
 
-        self.Input = None
-        self.Surface = None
+        self.Mesh = None
         self.CellEntityIdsArray = None
         self.WarpArrayName = None
         self.ScaleFactor = 1.0
         self.WarpArray = None
 
-        self.SetScriptName('vmtksurfacewarpbyvector')
-        self.SetScriptDoc('warp a surface by a vector')
+        self.SetScriptName('vmtkmeshwarpbyvector')
+        self.SetScriptDoc('warp a mesh by a vector')
         self.SetInputMembers([
-            ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
-            ['WarpArrayName','vector','str',1,'','name of the vector used to warp the surface'],
+            ['Mesh','i','vtkPolyData',1,'','the input mesh','vmtkmeshreader'],
+            ['WarpArrayName','vector','str',1,'','name of the vector used to warp the mesh'],
             ['ScaleFactor','scale','float',1,'','warping scaling factor']
             ])
         self.SetOutputMembers([
-            ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter']
+            ['Mesh','o','vtkPolyData',1,'','the output mesh','vmtkmeshwriter']
             ])
 
-    def Update(self):
-        self.WarpArray = self.Input.GetPointData().GetArray(self.WarpArrayName)
-        if self.WarpArray == None:
-            self.PrintError('Error: no vector called '+self.WarpArrayName+' defined on the surface')
-
-        warper = vtk.vtkWarpVector()
-        self.Input.GetPointData().SetActiveVectors(self.WarpArrayName)
-        warper.SetInputData(self.Input)
-        warper.SetScaleFactor(self.ScaleFactor)
-        warper.Update()
-
-        self.Input = warper.GetOutput()
 
 
     def Execute(self):
-        if self.Surface == None:
-            self.PrintError('Error: no Surface.')
+        if self.Mesh == None:
+            self.PrintError('Error: no Mesh.')
 
-        self.Input = self.Surface
 
-        self.Update()
+        from vmtk import vmtkscripts
+
+        warper = vmtkscripts.vmtkSurfaceWarpByVector()
+        warper.Input = self.Mesh
+        warper.WarpArrayName = self.WarpArrayName
+        warper.Update()
+        self.Mesh = warper.Input
 
 
 
