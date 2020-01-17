@@ -91,6 +91,7 @@ __all__ = [
     'vmtk.vmtkmeshviewer',
     'vmtk.vmtkmeshvolume',
     'vmtk.vmtkmeshvorticityhelicity',
+    'vmtk.vmtkmeshwarpbyvector',
     'vmtk.vmtkmeshwallshearrate',
     'vmtk.vmtkmeshwriter',
     'vmtk.vmtknetworkeditor',
