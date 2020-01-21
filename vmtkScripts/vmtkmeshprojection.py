@@ -29,6 +29,7 @@ class vmtkMeshProjection(pypes.pypeScript):
 
         self.ReferenceMesh = None
         self.Mesh = None
+        self.ActiveArrays = []
         self.Tolerance = 1E-8
 
         self.SetScriptName('vmtkmeshprojection')
@@ -36,6 +37,7 @@ class vmtkMeshProjection(pypes.pypeScript):
         self.SetInputMembers([
             ['Mesh','i','vtkUnstructuredGrid',1,'','the input mesh','vmtkmeshreader'],
             ['ReferenceMesh','r','vtkUnstructuredGrid',1,'','the reference mesh','vmtkmeshreader'],
+            ['ActiveArrays','activearrays','str',-1,'','list of the point-data arrays to project (if empty, all the arrays are projected)'],
             ['Tolerance','tolerance','double',1,'(0.0,)','locator tolerance']
             ])
         self.SetOutputMembers([
@@ -49,6 +51,16 @@ class vmtkMeshProjection(pypes.pypeScript):
 
         if self.ReferenceMesh == None:
             self.PrintError('Error: No ReferenceMesh.')
+
+        if len(self.ActiveArrays) != 0:        
+            passArray = vtk.vtkPassArrays()
+            passArray.SetInputData(self.ReferenceMesh)
+
+            for name in self.ActiveArrays:
+                passArray.AddPointDataArray(name)
+
+            passArray.Update()
+            self.ReferenceMesh = passArray.GetOutput()
 
         self.PrintLog('Computing projection.')
         meshProjection = vtkvmtk.vtkvmtkMeshProjection()
