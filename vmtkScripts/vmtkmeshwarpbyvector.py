@@ -38,12 +38,12 @@ class vmtkMeshWarpByVector(pypes.pypeScript):
         self.SetScriptName('vmtkmeshwarpbyvector')
         self.SetScriptDoc('warp a mesh by a vector')
         self.SetInputMembers([
-            ['Mesh','i','vtkPolyData',1,'','the input mesh','vmtkmeshreader'],
+            ['Mesh','i','vtkUnstructuredGrid',1,'','the input mesh','vmtkmeshreader'],
             ['WarpArrayName','vector','str',1,'','name of the vector used to warp the mesh'],
             ['ScaleFactor','scale','float',1,'','warping scaling factor']
             ])
         self.SetOutputMembers([
-            ['Mesh','o','vtkPolyData',1,'','the output mesh','vmtkmeshwriter']
+            ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh','vmtkmeshwriter']
             ])
 
 
