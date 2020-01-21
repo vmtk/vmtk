@@ -29,11 +29,13 @@ class vmtkSurfaceProjection(pypes.pypeScript):
 
         self.ReferenceSurface = None
         self.Surface = None
+        self.ActiveArrays = []
 
         self.SetScriptName('vmtksurfaceprojection')
         self.SetScriptDoc('interpolates the point data of a reference surface onto the input surface based on minimum distance criterion')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
+            ['ActiveArrays','activearrays','str',-1,'','list of the point-data arrays to project (if empty, all the arrays are projected)'],
             ['ReferenceSurface','r','vtkPolyData',1,'','the reference surface','vmtksurfacereader']
             ])
         self.SetOutputMembers([
@@ -47,6 +49,16 @@ class vmtkSurfaceProjection(pypes.pypeScript):
 
         if self.ReferenceSurface == None:
             self.PrintError('Error: No ReferenceSurface.')
+
+        if len(self.ActiveArrays) != 0:        
+            passArray = vtk.vtkPassArrays()
+            passArray.SetInputData(self.ReferenceSurface)
+
+            for name in self.ActiveArrays:
+                passArray.AddPointDataArray(name)
+
+            passArray.Update()
+            self.ReferenceSurface = passArray.GetOutput()
 
         self.PrintLog('Computing projection')
         surfaceProjection = vtkvmtk.vtkvmtkSurfaceProjection()
