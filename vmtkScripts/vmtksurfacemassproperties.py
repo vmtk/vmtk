@@ -32,6 +32,8 @@ class vmtkSurfaceMassProperties(pypes.pypeScript):
         self.Volume = 0.0
         self.ShapeIndex = 0.0
 
+        self.CenterOfMass = []
+
         self.SetScriptName('vmtksurfacemassproperties')
         self.SetScriptDoc('compute the volume of a closed surface.')
         self.SetInputMembers([
@@ -40,7 +42,8 @@ class vmtkSurfaceMassProperties(pypes.pypeScript):
         self.SetOutputMembers([
             ['SurfaceArea','area','float',1,''],
             ['Volume','volume','float',1,''],
-            ['ShapeIndex','shape','float',1,'']
+            ['ShapeIndex','shape','float',1,''],
+            ['CenterOfMass','center','float',3,'']
             ])
 
     def Execute(self):
@@ -59,6 +62,13 @@ class vmtkSurfaceMassProperties(pypes.pypeScript):
         massProps = vtk.vtkMassProperties()
         massProps.SetInputConnection(triangleFilter.GetOutputPort())
         massProps.Update()
+
+        centerOfMassFilter = vtk.vtkCenterOfMass()
+        centerOfMassFilter.SetInputData(self.Surface)
+        centerOfMassFilter.SetUseScalarsAsWeights(False)
+        centerOfMassFilter.Update()
+
+        self.CenterOfMass = centerOfMassFilter.GetCenter()
 
         self.SurfaceArea = massProps.GetSurfaceArea()
         self.Volume = massProps.GetVolume()
