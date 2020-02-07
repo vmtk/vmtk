@@ -40,13 +40,13 @@ void vtkvmtkFDNEUTWriter::WriteData()
 {
   vtkUnstructuredGrid *input= vtkUnstructuredGrid::SafeDownCast(this->GetInput());
 
-  if (!this->FileName)
+  if (!this->GetFileName())
     {
     vtkErrorMacro(<<"FileName not set.");
     return;
     }
         
-  FILE* FDNEUTFile = fopen(this->FileName,"w");
+  FILE* FDNEUTFile = fopen(this->GetFileName(),"w");
 
   if (!FDNEUTFile)
     {
