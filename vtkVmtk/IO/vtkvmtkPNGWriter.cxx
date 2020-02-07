@@ -126,7 +126,7 @@ void vtkvmtkPNGWriter::Write()
     vtkErrorMacro(<<"Write:Please specify an input!");
     return;
     }
-  if (!this->WriteToMemory && !this->FileName && !this->FilePattern)
+  if (!this->WriteToMemory && !this->GetFileName() && !this->GetFilePattern())
     {
     vtkErrorMacro(<<"Write:Please specify either a FileName or a file prefix and pattern");
     this->SetErrorCode(vtkErrorCode::NoFileNameError);
@@ -135,9 +135,9 @@ void vtkvmtkPNGWriter::Write()
 
   // Make sure the file name is allocated
   this->InternalFileName =
-    new char[(this->FileName ? strlen(this->FileName) : 1) +
-            (this->FilePrefix ? strlen(this->FilePrefix) : 1) +
-            (this->FilePattern ? strlen(this->FilePattern) : 1) + 10];
+    new char[(this->GetFileName() ? strlen(this->GetFileName()) : 1) +
+            (this->GetFilePrefix() ? strlen(this->GetFilePrefix()) : 1) +
+            (this->GetFilePattern() ? strlen(this->GetFilePattern()) : 1) + 10];
 
   // Fill in image information.
   int *wExtent;
@@ -167,20 +167,20 @@ void vtkvmtkPNGWriter::Write()
     this->GetInput()->SetUpdateExtent(updatedExtent);
 #endif
     // determine the name
-    if (this->FileName)
+    if (this->GetFileName())
       {
-      sprintf(this->InternalFileName,"%s",this->FileName);
+      sprintf(this->InternalFileName,"%s",this->GetFileName());
       }
     else
       {
-      if (this->FilePrefix)
+      if (this->GetFilePrefix())
         {
-        sprintf(this->InternalFileName, this->FilePattern,
-                this->FilePrefix, this->FileNumber);
+        sprintf(this->InternalFileName, this->GetFilePattern(),
+                this->GetFilePrefix(), this->FileNumber);
         }
       else
         {
-        sprintf(this->InternalFileName, this->FilePattern,this->FileNumber);
+        sprintf(this->InternalFileName, this->GetFilePattern(), this->FileNumber);
         }
       }
 #if (VTK_MAJOR_VERSION <= 5)
