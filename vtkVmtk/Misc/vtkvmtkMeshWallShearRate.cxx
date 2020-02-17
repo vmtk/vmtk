@@ -3,10 +3,10 @@
 Program:   VMTK
 Module:    $RCSfile: vtkvmtkMeshWallShearRate.cxx,v $
 Language:  C++
-Date:      $Date: 2006/07/27 08:28:36 $
-Version:   $Revision: 1.1 $
+Date:      $Date: 2020/02/17 10:20:00 $
+Version:   $Revision: 2.0 $
 
-  Copyright (c) Luca Antiga, David Steinman. All rights reserved.
+  Copyright (c) Luca Antiga, David Steinman, Mehrdad Yousefi. All rights reserved.
   See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
@@ -148,18 +148,59 @@ int vtkvmtkMeshWallShearRate::RequestData(
   wallShearRateArray->SetNumberOfTuples(numberOfPoints);
 
   double velocityGradient[9];
+  double shearRateTensor[3][3];
   double normal[3];
   double wallShearRate[3];
-  
-  int i, j;
+ 
+/*=========================================================================
+
+  Calculate shear rate tensor: S = 0.5 * (\nabla u + (\nabla u)^{T})
+  Calculate wall shear rate vector: \vec{\tau} = 2 * (S \cdot n - (n \cdot S \cdot n) \cdot n)
+  Reference: Equation A.4 from Matyka et. al. (Wall orientation and shear stress in the lattice Boltzmann model) http://dx.doi.org/10.1016/j.compfluid.2012.12.018
+
+=========================================================================*/
+
+  int i, j, k;
+  int alpha, beta;
   for (i=0; i<numberOfPoints; i++)
     {
     velocityGradientArray->GetTuple(i,velocityGradient);
     normalsArray->GetTuple(i,normal);
+
+    shearRateTensor[0][0] = 0.5*(velocityGradient[0] + velocityGradient[0]);
+    shearRateTensor[0][1] = 0.5*(velocityGradient[1] + velocityGradient[3]);
+    shearRateTensor[0][2] = 0.5*(velocityGradient[2] + velocityGradient[6]);
+
+    shearRateTensor[1][0] = 0.5*(velocityGradient[3] + velocityGradient[1]);
+    shearRateTensor[1][1] = 0.5*(velocityGradient[4] + velocityGradient[4]);
+    shearRateTensor[1][2] = 0.5*(velocityGradient[5] + velocityGradient[7]);
+
+    shearRateTensor[2][0] = 0.5*(velocityGradient[6] + velocityGradient[2]);
+    shearRateTensor[2][1] = 0.5*(velocityGradient[7] + velocityGradient[5]);
+    shearRateTensor[2][2] = 0.5*(velocityGradient[8] + velocityGradient[8]);
+
+    double nSn = 0.0;
+
+    for (alpha=0; alpha<3; alpha++)
+    {
+            for (beta=0; beta<3; beta++)
+            {
+      nSn = nSn - 2.0 * shearRateTensor[alpha][beta] * normal[alpha] * normal[beta];
+            }
+    }
+
+    double nS = 0.0;
+
     for (j=0; j<3; j++)
-      {
-      wallShearRate[j] = -normal[0] * velocityGradient[3*j + 0] - normal[1] * velocityGradient[3*j + 1] - normal[2] * velocityGradient[3*j + 2];
-      }
+    {
+	    nS = 0.0;
+	    for (k = 0; k < 3; k++)
+	    {
+		    nS = nS - 2.0 * shearRateTensor[j][k] * normal[k];
+	    }
+
+	    wallShearRate[j] = nS - nSn * normal[j];
+    }
     wallShearRateArray->SetTuple(i,wallShearRate);
     }
 
