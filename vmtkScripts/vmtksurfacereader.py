@@ -35,7 +35,7 @@ class vmtkSurfaceReader(pypes.pypeScript):
         self.SetScriptName('vmtksurfacereader')
         self.SetScriptDoc('read a surface and store it in a vtkPolyData object')
         self.SetInputMembers([
-            ['Format','f','str',1,'["vtkxml","vtk","stl","ply","tecplot", "wavefront"]','file format'],
+            ['Format','f','str',1,'["vtkxml","vtk","stl","ply","tecplot", "wavefront", "vtm"]','file format'],
             ['GuessFormat','guessformat','bool',1,'','guess file format from extension'],
             ['Surface','i','vtkPolyData',1,'','the input surface'],
             ['InputFileName','ifile','str',1,'','input file name']
@@ -49,6 +49,15 @@ class vmtkSurfaceReader(pypes.pypeScript):
             self.PrintError('Error: no InputFileName.')
         self.PrintLog('Reading VTK surface file.')
         reader = vtk.vtkPolyDataReader()
+        reader.SetFileName(self.InputFileName)
+        reader.Update()
+        self.Surface = reader.GetOutput()
+
+    def ReadVTKXMLMultiBlockDataFile(self):
+        if (self.InputFileName == ''):
+            self.PrintError('Error: no InputFileName.')
+        self.PrintLog('Reading MultiBlockData File.')
+        reader = vtk.vtkXMLMultiBlockDataReader()
         reader.SetFileName(self.InputFileName)
         reader.Update()
         self.Surface = reader.GetOutput()
@@ -197,7 +206,8 @@ class vmtkSurfaceReader(pypes.pypeScript):
                             'ply':'ply',
                             'tec':'tecplot',
                             'dat':'tecplot',
-                            'obj':'wavefront'}
+                            'obj':'wavefront',
+                            'vtm':'vtm'}
 
         if self.InputFileName == 'BROWSER':
             import tkinter.filedialog
@@ -228,6 +238,8 @@ class vmtkSurfaceReader(pypes.pypeScript):
             self.ReadTecplotSurfaceFile()
         elif (self.Format == 'wavefront'):
             self.ReadOBJSurfaceFile()
+        elif (self.Format == 'vtm'):
+            self.ReadVTKXMLMultiBlockDataFile()
         else:
             self.PrintError('Error: unsupported format '+ self.Format + '.')
 
