@@ -38,7 +38,7 @@ class vmtkSurfaceWriter(pypes.pypeScript):
         self.SetScriptDoc('write surface to disk')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
-            ['Format','f','str',1,'["vtkxml","vtk","stl","ply","pointdata","tecplot", "wavefront"]','file format'],
+            ['Format','f','str',1,'["vtkxml","vtk","stl","ply","pointdata","tecplot", "wavefront","vtm"]','file format'],
             ['GuessFormat','guessformat','bool',1,'','guess file format from extension'],
             ['CellData','celldata','bool',1,'','write CellData when using pointdata format'],
             ['Mode','mode','str',1,'["ascii","binary"]','write files in ASCII or binary mode'],
@@ -46,6 +46,20 @@ class vmtkSurfaceWriter(pypes.pypeScript):
             ['OutputFileName','o','str',1,'','output file name (deprecated: use -ofile)']
             ])
         self.SetOutputMembers([])
+
+    def WriteVTKXMLMultiBlockDataFile(self):
+        if (self.OutputFileName == ''):
+            self.PrintError('Error: no OutputFileName.')
+
+        self.PrintLog('Writing VTK XMLMultiBlock File.')
+        writer = vtk.vtkXMLMultiBlockDataWriter()
+        writer.SetInputData(self.Surface)
+        writer.SetFileName(self.OutputFileName)
+        if self.Mode == "binary":
+           writer.SetDataModeToBinary()
+        elif self.Mode == "ascii":
+           writer.SetDataModeToAscii()
+        writer.Write()
 
     def WriteVTKSurfaceFile(self):
         if (self.OutputFileName == ''):
@@ -213,7 +227,8 @@ class vmtkSurfaceWriter(pypes.pypeScript):
                             'ply':'ply',
                             'tec':'tecplot',
                             'dat':'pointdata',
-                            'obj':'wavefront'}
+                            'obj':'wavefront',
+                            'vtm':'vtm'}
 
         if self.OutputFileName == 'BROWSER':
             import tkinter.filedialog
@@ -249,6 +264,8 @@ class vmtkSurfaceWriter(pypes.pypeScript):
                 self.PrintError("Error: the VTK version installed doesn't support writing this format: " +
                                 vtk.vtkVersion.GetVTKSourceVersion() + '.')
             self.WriteOBJSurfaceFile()
+        elif (self.Format == 'vtm'):
+            self.WriteVTKXMLMultiBlockDataFile()
         else:
             self.PrintError('Error: unsupported format '+ self.Format + '.')
 
