@@ -27,6 +27,9 @@ set(CONTRIB_SCRIPTS_SRCS
     vmtkthreshold.py
     vmtkmeshmerge.py
     vmtkentityrenumber.py
+    vmtkpeterresurface.py
+    vmtkpetergeneratesurface.py
+    vmtkpetersurfaceclipper.py 
   )
   
 set(CONTRIB_MODULE_SRCS
