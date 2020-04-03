@@ -58,7 +58,7 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
 
 
         self.SetScriptName('vmtksurfaceharmonicconnector')
-        self.SetScriptDoc('extend an input vector harmonically on a surface')
+        self.SetScriptDoc('connect to a reference surface harmonically deform the input surface onto the reference one; note that the deformation depends on the distance between two selected boundary rings of the two surfaces; thus, the surfaces must be open surfaces; if a surface have more than a boundary ring, an interactive interface allows to select the ring to connect')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
             ['ReferenceSurface','r','vtkPolyData',1,'','the reference surface with which you want to connect','vmtksurfacereader'],
