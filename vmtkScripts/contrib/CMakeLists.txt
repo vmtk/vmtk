@@ -23,6 +23,7 @@ set(CONTRIB_SCRIPTS_SRCS
     vmtknumpytosurface.py
     vmtknumpywriter.py
     vmtksurfaceconnector.py
+    vmtksurfaceharmonicconnector.py
     vmtksurfaceharmonicextension.py
     vmtksurfaceharmonicsections.py
     vmtksurfaceresolution.py
