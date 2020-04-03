@@ -49,8 +49,11 @@ class vmtkSurfaceConnector(pypes.pypeScript):
         self.Actor = None
         self.Representation = 'edges'
 
+        self.SurfaceIsRendered = False
+        self.Surface2IsRendered = False
+
         self.SetScriptName('vmtksurfaceconnector')
-        self.SetScriptDoc('connect two rings of two different surfaces.')
+        self.SetScriptDoc('connect two rings of two different surfaces; if a surface has more than a boundary ring, an interactive interface allows to select the ring to connect')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the first input surface','vmtksurfacereader'],
             ['Surface2','i2','vtkPolyData',1,'','the second input surface','vmtksurfacereader'],
@@ -101,14 +104,19 @@ class vmtkSurfaceConnector(pypes.pypeScript):
         self.vmtkRenderer.RenderWindow.Render()
 
 
-    def ViewSurface(self,polydata,color):
+    def ViewSurface(self,polydata,color,opacity=1.0,representation=None):
+        if representation==None:
+            representation = self.Representation
+
         mapper = vtk.vtkPolyDataMapper()
         mapper.SetInputData(polydata)
         mapper.ScalarVisibilityOff()
         self.Actor = vtk.vtkActor()
         self.Actor.SetMapper(mapper)
         self.Actor.GetProperty().SetColor(color)
-        self.SetSurfaceRepresentation(self.Representation)
+        self.Actor.GetProperty().SetOpacity(opacity)
+
+        self.SetSurfaceRepresentation(representation)
         self.vmtkRenderer.Renderer.AddActor(self.Actor)
         self.vmtkRenderer.AddKeyBinding('w','Change surface representation.',self.RepresentationCallback)
         self.vmtkRenderer.Render()
@@ -138,13 +146,6 @@ class vmtkSurfaceConnector(pypes.pypeScript):
     def InteractiveRingExtraction(self,surface):
 
         boundaryIds = vtk.vtkIdList()
-
-        if not self.vmtkRenderer:
-            self.vmtkRenderer = vmtkrenderer.vmtkRenderer()
-            self.vmtkRenderer.Initialize()
-            self.OwnRenderer = 1
-
-        self.vmtkRenderer.RegisterScript(self)
 
         featureEdges = vtk.vtkFeatureEdges()
         featureEdges.BoundaryEdgesOn()
@@ -184,61 +185,75 @@ class vmtkSurfaceConnector(pypes.pypeScript):
             boundaries.append(gf.GetOutput())
 
         numberOfBoundaries = numberOfRings
-        seedPoints = vtk.vtkPoints()
-        for i in range(numberOfRings):
-            barycenter = [0.0, 0.0, 0.0]
-            vtkvmtk.vtkvmtkBoundaryReferenceSystems.ComputeBoundaryBarycenter(boundaries[i].GetPoints(),barycenter)
-            seedPoints.InsertNextPoint(barycenter)
-        seedPolyData = vtk.vtkPolyData()
-        seedPolyData.SetPoints(seedPoints)
-        labelsMapper = vtk.vtkLabeledDataMapper();
-        labelsMapper.SetInputData(seedPolyData)
-        labelsMapper.SetLabelModeToLabelIds()
-        labelsActor = vtk.vtkActor2D()
-        labelsActor.SetMapper(labelsMapper)
 
-        self.vmtkRenderer.Renderer.AddActor(labelsActor)
+        if numberOfBoundaries>1:
 
-        surfaceMapper = vtk.vtkPolyDataMapper()
-        surfaceMapper.SetInputData(surface)
-        surfaceMapper.ScalarVisibilityOff()
-        surfaceActor = vtk.vtkActor()
-        surfaceActor.SetMapper(surfaceMapper)
-        surfaceActor.GetProperty().SetOpacity(0.25)
-        #surfaceActor.GetProperty().SetColor(color)
+            if not self.vmtkRenderer:
+                self.vmtkRenderer = vmtkrenderer.vmtkRenderer()
+                self.vmtkRenderer.Initialize()
+                self.OwnRenderer = 1
 
-        self.vmtkRenderer.Renderer.AddActor(surfaceActor)
+            self.vmtkRenderer.RegisterScript(self)
 
-        ok = False
-        if self.Surface2 == None:
-            maxNumberOfBoundaries = 2
-        else:
-            maxNumberOfBoundaries = 1
-        while not ok :
-            labelString = self.InputText("Please input "+str(maxNumberOfBoundaries)+" boundary ids: ",self.LabelValidator)
-            labels = [int(label) for label in labelString.split()]
-            print(labels,len(labels))
-            ok = True
-            for label in labels:
-                if label not in list(range(numberOfBoundaries)):
+            seedPoints = vtk.vtkPoints()
+            for i in range(numberOfRings):
+                barycenter = [0.0, 0.0, 0.0]
+                vtkvmtk.vtkvmtkBoundaryReferenceSystems.ComputeBoundaryBarycenter(boundaries[i].GetPoints(),barycenter)
+                seedPoints.InsertNextPoint(barycenter)
+            seedPolyData = vtk.vtkPolyData()
+            seedPolyData.SetPoints(seedPoints)
+            labelsMapper = vtk.vtkLabeledDataMapper();
+            labelsMapper.SetInputData(seedPolyData)
+            labelsMapper.SetLabelModeToLabelIds()
+            labelsActor = vtk.vtkActor2D()
+            labelsActor.SetMapper(labelsMapper)
+
+
+            self.vmtkRenderer.Renderer.AddActor(labelsActor)
+
+            surfaceMapper = vtk.vtkPolyDataMapper()
+            surfaceMapper.SetInputData(surface)
+            surfaceMapper.ScalarVisibilityOff()
+            surfaceActor = vtk.vtkActor()
+            surfaceActor.SetMapper(surfaceMapper)
+            surfaceActor.GetProperty().SetOpacity(0.25)
+            #surfaceActor.GetProperty().SetColor(color)
+
+            self.vmtkRenderer.Renderer.AddActor(surfaceActor)
+
+            ok = False
+            if self.Surface2 == None:
+                maxNumberOfBoundaries = 2
+            else:
+                maxNumberOfBoundaries = 1
+            while not ok :
+                labelString = self.InputText("Please input "+str(maxNumberOfBoundaries)+" boundary ids: ",self.LabelValidator)
+                labels = [int(label) for label in labelString.split()]
+                print(labels,len(labels))
+                ok = True
+                for label in labels:
+                    if label not in list(range(numberOfBoundaries)):
+                        ok = False
+                if len(labels) != maxNumberOfBoundaries:
                     ok = False
-            if len(labels) != maxNumberOfBoundaries:
-                ok = False
 
-        for label in labels:
-            boundaryIds.InsertNextId(label)
+            for label in labels:
+                boundaryIds.InsertNextId(label)
 
-        #self.vmtkRenderer.Render()
-        surfaceActor.GetProperty().SetOpacity(0.1)
-        surfaceActor.GetProperty().SetColor([1.,1.,1.])
-        self.vmtkRenderer.Renderer.RemoveActor(labelsActor)
-        #self.vmtkRenderer.Renderer.RemoveActor(surfaceActor)
+            #self.vmtkRenderer.Render()
+            surfaceActor.GetProperty().SetOpacity(0.1)
+            surfaceActor.GetProperty().SetColor([1.,1.,1.])
+            self.vmtkRenderer.Renderer.RemoveActor(labelsActor)
+            #self.vmtkRenderer.Renderer.RemoveActor(surfaceActor)
+
+            return boundaries, boundaryIds, True
         
-        return boundaries, boundaryIds
+        boundaryIds.InsertNextId(0)
+        return boundaries, boundaryIds, False
 
 
     def InitializeRingsFromSurfaces(self):
-        [boundaries,boundaryIds] = self.InteractiveRingExtraction(self.Surface)
+        [boundaries,boundaryIds,self.SurfaceIsRendered] = self.InteractiveRingExtraction(self.Surface)
 
         numIds = boundaryIds.GetNumberOfIds()
 
@@ -246,7 +261,7 @@ class vmtkSurfaceConnector(pypes.pypeScript):
         if numIds > 1:
             self.Ring2 = boundaries[boundaryIds.GetId(1)]
         else:
-            [boundaries2,boundaryId2] = self.InteractiveRingExtraction(self.Surface2)
+            [boundaries2,boundaryId2,self.Surface2IsRendered] = self.InteractiveRingExtraction(self.Surface2)
             self.Ring2 = boundaries2[boundaryId2.GetId(0)]
 
     def MergeSurfacesAndEntityIdsArray(self):
@@ -323,9 +338,17 @@ class vmtkSurfaceConnector(pypes.pypeScript):
             self.vmtkRenderer.RegisterScript(self) 
             if self.Actor:
                 self.vmtkRenderer.Renderer.RemoveActor(self.Actor)
+
+            if self.Surface and not self.SurfaceIsRendered:
+                self.ViewSurface(self.Surface,white,0.1,'surface')
+                self.SurfaceIsRendered = True
+            if self.Surface2 and not self.Surface2IsRendered:
+                self.ViewSurface(self.Surface2,white,0.1,'surface')
+                self.Surface2IsRendered = True
+
             self.ViewSurface(self.Ring,red)
             self.ViewSurface(self.Ring2,green)
- 
+
         def nextPointId(ring,cellId,currentPointId):
             idList = vtk.vtkIdList()
             ring.GetCellPoints(cellId,idList)
