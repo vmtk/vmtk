@@ -36,6 +36,9 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
         self.Surface = None
         self.ReferenceSurface = None
 
+        self.Ring = None
+        self.ReferenceRing = None
+
         self.Ids = set()
         self.DeformableIds = []
 
@@ -50,6 +53,7 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
 
         self.CleanOutput = 1
 
+        self.vmtkRenderer = None
 
 
 
@@ -64,7 +68,8 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
             ['RemeshingEdgeLength','remeshingedgelength','float',1,'(0.0,)'],
             ['RemeshingIterations','remeshingiterations','int',1,'(0,)'],
             ['SkipConnection','skipconnection','bool',1,'','deform input surface onto the reference one without connecting to it'],
-            ['CleanOutput','cleanoutput','bool',1,'','toggle cleaning the unused points']
+            ['CleanOutput','cleanoutput','bool',1,'','toggle cleaning the unused points'],
+            ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer']
             ])
         self.SetOutputMembers([
             ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter']
@@ -127,6 +132,28 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
             if item not in self.Ids:
                 self.PrintError('Error: entity id '+str(item)+ ' not defined on the input Surface.')
 
+        # 1. Extract rings using vmtkSurfaceConnector
+        connector = vmtkcontribscripts.vmtkSurfaceConnector()
+        connector.Surface = self.Surface
+        connector.Surface2 = self.ReferenceSurface
+        connector.vmtkRenderer = self.vmtkRenderer
+
+        [boundaries,boundaryIds] = connector.InteractiveRingExtraction(self.Surface)
+        self.Ring =  boundaries[boundaryIds.GetId(0)]
+
+        [boundaries,boundaryIds] = connector.InteractiveRingExtraction(self.ReferenceSurface)
+        self.ReferenceRing = boundaries[boundaryIds.GetId(0)]
+
+        # 2. Compute distance from Ring to ReferenceRing
+        distance = vmtkscripts.vmtkSurfaceDistance()
+        distance.Surface = self.Ring
+        distance.ReferenceSurface = self.ReferenceRing
+        distance.DistanceVectorsArrayName = 'DistanceFromReference'
+        distance.Execute()
+
+        self.Ring = distance.Surface
+
+        self.Surface = self.Ring
 
 
 
