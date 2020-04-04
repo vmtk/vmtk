@@ -108,6 +108,9 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
         if not self.VectorialEq and numberOfComponents!=1:
             self.PrintError('Error: scalar equation need a single-component array as BCs.')
 
+        harmonicOutput = vtk.vtkPolyData()
+        harmonicOutput.DeepCopy(self.Surface)
+
         for k in range(numberOfComponents):
             print("Solving Laplace-Beltrami equation for component ",k)
             
@@ -122,14 +125,26 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
 
             # perform harmonic mapping using temperature as boundary condition
             harmonicSolver = vtkvmtk.vtkvmtkPolyDataHarmonicMappingFilter()
-            harmonicSolver.SetInputData(self.Surface)
+            harmonicSolver.SetInputData(harmonicOutput)
             harmonicSolver.SetHarmonicMappingArrayName(self.SolutionArrayName+str(k))
             harmonicSolver.SetBoundaryPointIds(boundaryIds)
             harmonicSolver.SetBoundaryValues(boundaryValues)
             harmonicSolver.SetAssemblyModeToFiniteElements()
             harmonicSolver.Update()
 
-            self.Surface = harmonicSolver.GetOutput()
+            harmonicOutput = harmonicSolver.GetOutput()
+
+        self.SolutionArray = vtk.vtkDoubleArray()
+        self.SolutionArray.SetNumberOfComponents(numberOfComponents)
+        self.SolutionArray.SetNumberOfTuples(self.Surface.GetNumberOfPoints())
+        self.SolutionArray.SetName(self.SolutionArrayName)
+
+        for i in range(self.Surface.GetNumberOfPoints()):
+            for k in range(numberOfComponents):
+                value = harmonicOutput.GetPointData().GetArray(self.SolutionArrayName+str(k)).GetComponent(i,0)
+                self.SolutionArray.SetComponent(i,k,value)
+
+        self.Surface.GetPointData().AddArray(self.SolutionArray)
 
 
 
