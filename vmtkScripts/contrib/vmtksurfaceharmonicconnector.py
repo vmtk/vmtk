@@ -45,11 +45,11 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
         self.CellEntityIdsArrayName = 'CellEntityIds'
         self.CellEntityIdsArray = None
 
-        self.Remeshing = True
+        self.SkipRemeshing = 0
         self.RemeshingEdgeLength = 1.0
         self.RemeshingIterations = 10
 
-        self.SkipConnection = False
+        self.SkipConnection = 0
 
         self.CleanOutput = 1
 
@@ -64,7 +64,7 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
             ['ReferenceSurface','r','vtkPolyData',1,'','the reference surface with which you want to connect','vmtksurfacereader'],
             ['DeformableIds','deformableids','int',-1,'','input surface entity ids to deform onto the reference surface'],
             ['CellEntityIdsArrayName', 'entityidsarray', 'str', 1, '','name of the array where entity ids have been stored'],
-            ['Remeshing','remeshing','bool',1,'','toggle remeshing the deformed part of the final surface'],
+            ['SkipRemeshing','skipremeshing','bool',1,'','toggle skipping remeshing the deformed part of the final surface'],
             ['RemeshingEdgeLength','remeshingedgelength','float',1,'(0.0,)'],
             ['RemeshingIterations','remeshingiterations','int',1,'(0,)'],
             ['SkipConnection','skipconnection','bool',1,'','deform input surface onto the reference one without connecting to it'],
@@ -221,11 +221,37 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
             clipper.Execute()
             self.Surface = clipper.Surface
 
+            if not self.SkipRemeshing:
+                excludedIds = []
+                for item in self.Ids:
+                    if item not in self.DeformableIds:
+                        excludedIds.append(int(item)) # dangerous cast to int
+                print("Excluded Ids: ",excludedIds)
+
+                remeshing = vmtkscripts.vmtkSurfaceRemeshing()
+                remeshing.Surface = self.Surface
+                remeshing.CellEntityIdsArrayName = self.CellEntityIdsArrayName
+                remeshing.ElementSizeMode = 'edgelength'
+                remeshing.TargetEdgeLength = self.RemeshingEdgeLength
+                remeshing.NumberOfIterations = int((self.RemeshingIterations+1)/2)
+                remeshing.ExcludeEntityIds = excludedIds
+                remeshing.CleanOutput = self.CleanOutput
+                remeshing.Execute()
+
+                self.Surface = remeshing.Surface
+
             connector = vmtkcontribscripts.vmtkSurfaceConnector()
             connector.Surface = self.Surface
             connector.Surface2 = self.ReferenceSurface
+            connector.IdValue = self.DeformableIds[0] # How to fix this?
             connector.Execute()
             self.Surface = connector.OutputSurface
+
+            if not self.SkipRemeshing:
+                remeshing.Surface = self.Surface
+                remeshing.NumberOfIterations = self.RemeshingIterations
+                remeshing.Execute()
+                self.Surface = remeshing.Surface
 
 
 
