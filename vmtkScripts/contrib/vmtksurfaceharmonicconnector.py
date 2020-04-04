@@ -76,6 +76,7 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
             ])
 
     def SurfaceThreshold(self,surface,low,high):
+        from vmtk import vmtkcontribscripts
         th = vmtkcontribscripts.vmtkThreshold()
         th.Surface = surface
         th.CellEntityIdsArrayName = self.CellEntityIdsArrayName
@@ -86,6 +87,7 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
         return surf
 
     def SurfaceAppend(self,surface1,surface2):
+        from vmtk import vmtkscripts
         if surface1 == None:
             surf = surface2
         elif surface2 == None:
@@ -103,6 +105,7 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
         return surf
 
     def SurfaceProjection(self,isurface,rsurface):
+        from vmtk import vmtkscripts
         proj = vmtkscripts.vmtkSurfaceProjection()
         proj.Surface = isurface
         proj.ReferenceSurface = rsurface
@@ -138,23 +141,72 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
         connector.Surface2 = self.ReferenceSurface
         connector.vmtkRenderer = self.vmtkRenderer
 
-        [boundaries,boundaryIds] = connector.InteractiveRingExtraction(self.Surface)
+        [boundaries,boundaryIds,tmp] = connector.InteractiveRingExtraction(self.Surface)
         self.Ring =  boundaries[boundaryIds.GetId(0)]
 
-        [boundaries,boundaryIds] = connector.InteractiveRingExtraction(self.ReferenceSurface)
+        [boundaries,boundaryIds,tmp] = connector.InteractiveRingExtraction(self.ReferenceSurface)
         self.ReferenceRing = boundaries[boundaryIds.GetId(0)]
 
         # 2. Compute distance from Ring to ReferenceRing
         distance = vmtkscripts.vmtkSurfaceDistance()
         distance.Surface = self.Ring
         distance.ReferenceSurface = self.ReferenceRing
-        distance.DistanceVectorsArrayName = 'DistanceFromReference'
+        distance.DistanceVectorsArrayName = 'BCs'
         distance.Execute()
 
         self.Ring = distance.Surface
 
-        self.Surface = self.Ring
+        # 3. Extract boundaries of the deformable subset of the surface
+        surfaceSubset = None
+        for item in self.DeformableIds:
+            singleId = self.SurfaceThreshold(self.Surface,item,item)
+            surfaceSubset = self.SurfaceAppend(singleId,surfaceSubset)
 
+        extractBoundaries = vtk.vtkFeatureEdges()
+        extractBoundaries.BoundaryEdgesOn()
+        extractBoundaries.FeatureEdgesOff()
+        extractBoundaries.NonManifoldEdgesOff()
+        extractBoundaries.ManifoldEdgesOff()
+        extractBoundaries.ColoringOff()
+        extractBoundaries.SetInputData(surfaceSubset)
+        extractBoundaries.CreateDefaultLocator()
+        extractBoundaries.Update()
+        ringsForBCs = extractBoundaries.GetOutput()
+
+        # 4. Fill the boundary rings array using the distance at the ring
+        #    to deform and 0.0 otherwise
+        arrayForBCs = vtk.vtkDoubleArray()
+        arrayForBCs.SetNumberOfComponents(3)
+        arrayForBCs.SetNumberOfTuples(ringsForBCs.GetNumberOfPoints())
+        arrayForBCs.SetName('BCs')
+        for k in range(3):
+            arrayForBCs.FillComponent(k,0.0)
+        ringsForBCs.GetPointData().AddArray(arrayForBCs)
+
+        ringsForBCs = self.SurfaceAppend(self.Ring,ringsForBCs)
+
+        # 3. Extend harmonically the distance from the ring to the DeformableIds
+        harmonicSolver = vmtkcontribscripts.vmtkSurfaceHarmonicSolver()
+        harmonicSolver.Surface = self.Surface
+        harmonicSolver.Rings = ringsForBCs
+        harmonicSolver.Interactive = False
+        harmonicSolver.VectorialEq = True
+        harmonicSolver.SolutionArrayName = 'WarpVector'
+        harmonicSolver.Execute()
+
+        self.Surface = harmonicSolver.Surface
+
+        # 4. Warp by vector the surface and the ring
+        warper = vmtkscripts.vmtkSurfaceWarpByVector()
+        warper.Surface = self.Surface
+        warper.WarpArrayName = 'WarpVector'
+        warper.Execute()
+        self.Surface = warper.Surface
+
+        warper.Surface = self.Ring
+        warper.WarpArrayName = 'BCs'
+        warper.Execute()
+        self.Ring = warper.Surface
 
 
 
