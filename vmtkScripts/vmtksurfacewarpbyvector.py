@@ -66,8 +66,8 @@ class vmtkSurfaceWarpByVector(pypes.pypeScript):
             self.PrintError('Error: no Surface.')
 
         self.Input = self.Surface
-
         self.Update()
+        self.Surface = self.Input
 
 
 
