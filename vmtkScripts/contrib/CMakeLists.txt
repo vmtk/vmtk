@@ -26,6 +26,7 @@ set(CONTRIB_SCRIPTS_SRCS
     vmtksurfaceharmonicconnector.py
     vmtksurfaceharmonicextension.py
     vmtksurfaceharmonicsections.py
+    vmtksurfaceharmonicsolver.py
     vmtksurfaceresolution.py
     vmtksurfacetagger.py
     vmtksurfacethickening.py

@@ -28,6 +28,7 @@ __all__ = [
     'vmtk.vmtksurfaceharmonicconnector',
     'vmtk.vmtksurfaceharmonicextension',
     'vmtk.vmtksurfaceharmonicsections',
+    'vmtk.vmtksurfaceharmonicsolver',
     'vmtk.vmtksurfaceextractinnercylinder',
     'vmtk.vmtksurfaceresolution',
     'vmtk.vmtksurfacetagger',
