@@ -203,10 +203,31 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
         warper.Execute()
         self.Surface = warper.Surface
 
-        warper.Surface = self.Ring
-        warper.WarpArrayName = 'BCs'
-        warper.Execute()
-        self.Ring = warper.Surface
+        # 5. Connecting to the reference surface
+        if not self.SkipConnection:
+            distance = vmtkscripts.vmtkSurfaceDistance()
+            distance.Surface = self.Surface
+            distance.ReferenceSurface = self.ReferenceRing
+            distance.DistanceArrayName = 'DistanceToReference'
+            distance.Execute()
+            self.Surface = distance.Surface
+
+            clipper = vmtkscripts.vmtkSurfaceClipper()
+            clipper.Surface = self.Surface
+            clipper.ClipArrayName = 'DistanceToReference'
+            clipper.ClipValue = self.RemeshingEdgeLength
+            clipper.Interactive = 0
+            clipper.CleanOutput = 1
+            clipper.Execute()
+            self.Surface = clipper.Surface
+
+            connector = vmtkcontribscripts.vmtkSurfaceConnector()
+            connector.Surface = self.Surface
+            connector.Surface2 = self.ReferenceSurface
+            connector.Execute()
+            self.Surface = connector.OutputSurface
+
+
 
 
 
