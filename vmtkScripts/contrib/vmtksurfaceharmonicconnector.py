@@ -42,7 +42,8 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
         self.RingsForBCs = None
 
         self.Ids = set()
-        self.DeformableIds = []
+        self.ExcludeIds = []
+        self.ConnectorId = 1
 
         self.CellEntityIdsArrayName = 'CellEntityIds'
         self.CellEntityIdsArray = None
@@ -53,7 +54,8 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
 
         self.SkipConnection = 0
 
-        self.Projection = 0
+        self.ProjectionFromInput = 0
+        self.ProjectionFromReference = 0
 
         self.CleanOutput = 1
 
@@ -66,13 +68,15 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
             ['ReferenceSurface','r','vtkPolyData',1,'','the reference surface with which you want to connect','vmtksurfacereader'],
-            ['DeformableIds','deformableids','int',-1,'','input surface entity ids to deform onto the reference surface'],
+            ['ExcludeIds','excludeids','int',-1,'','entity ids of the input surface excluded by the deformation'],
+            ['ConnectorId','connectorid','int',1,'','entity id for the thin ring of elements connecting the two surfaces'],
             ['CellEntityIdsArrayName', 'entityidsarray', 'str', 1, '','name of the array where entity ids have been stored'],
             ['SkipRemeshing','skipremeshing','bool',1,'','toggle skipping remeshing the deformed part of the final surface'],
             ['RemeshingEdgeLength','remeshingedgelength','float',1,'(0.0,)'],
             ['RemeshingIterations','remeshingiterations','int',1,'(0,)'],
             ['SkipConnection','skipconnection','bool',1,'','deform input surface onto the reference one without connecting to it'],
-            ['Projection','projection','bool',1,'','toggle performing a projection of the input surface point-data arrays onto the output surface'],
+            ['ProjectionFromInput','iprojection','bool',1,'','toggle performing a projection of the input surface point-data arrays onto the output surface'],
+            ['ProjectionFromReference','rprojection','bool',1,'','toggle performing a projection of the reference surface point-data arrays onto the output surface'],
             ['CleanOutput','cleanoutput','bool',1,'','toggle cleaning the unused points'],
             ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer']
             ])
@@ -82,34 +86,6 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
             ['RingsForBCs','obcs','vtkPolyData',1,'','the rings containing the array used for BCs of the Laplace-Beltrami equation','vmtksurfacewriter']
             ])
 
-    def SurfaceThreshold(self,surface,low,high):
-        from vmtk import vmtkcontribscripts
-        th = vmtkcontribscripts.vmtkThreshold()
-        th.Surface = surface
-        th.CellEntityIdsArrayName = self.CellEntityIdsArrayName
-        th.LowThreshold = low
-        th.HighThreshold = high
-        th.Execute()
-        surf = th.Surface
-        return surf
-
-    def SurfaceAppend(self,surface1,surface2):
-        from vmtk import vmtkscripts
-        if surface1 == None:
-            surf = surface2
-        elif surface2 == None:
-            surf = surface1
-        else:
-            a = vmtkscripts.vmtkSurfaceAppend()
-            a.Surface = surface1
-            a.Surface2 = surface2
-            a.Execute()
-            surf = a.Surface
-            tr = vmtkscripts.vmtkSurfaceTriangle()
-            tr.Surface = surf
-            tr.Execute()
-            surf = tr.Surface
-        return surf
 
     def SurfaceProjection(self,isurface,rsurface):
         from vmtk import vmtkscripts
@@ -131,17 +107,6 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
         if self.ReferenceSurface == None:
             self.PrintError('Error: no ReferenceSurface.')
 
-        self.CellEntityIdsArray = self.Surface.GetCellData().GetArray(self.CellEntityIdsArrayName)
-
-        for i in range(self.Surface.GetNumberOfCells()):
-            self.Ids.add(self.CellEntityIdsArray.GetComponent(i,0))
-        self.Ids = sorted(self.Ids)
-        self.PrintLog('Tags of the input surface: '+str(self.Ids))
-
-        for item in self.DeformableIds:
-            if item not in self.Ids:
-                self.PrintError('Error: entity id '+str(item)+ ' not defined on the input Surface.')
-
         # 1. Extract rings using vmtkSurfaceConnector
         connector = vmtkcontribscripts.vmtkSurfaceConnector()
         connector.Surface = self.Surface
@@ -158,50 +123,25 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
         distance = vmtkscripts.vmtkSurfaceDistance()
         distance.Surface = self.Ring
         distance.ReferenceSurface = self.ReferenceRing
-        distance.DistanceVectorsArrayName = 'BCs'
+        distance.DistanceVectorsArrayName = 'DistanceToReference'
         distance.Execute()
 
         self.Ring = distance.Surface
 
-        # 3. Extract boundaries of the deformable subset of the surface
-        surfaceSubset = None
-        for item in self.DeformableIds:
-            singleId = self.SurfaceThreshold(self.Surface,item,item)
-            surfaceSubset = self.SurfaceAppend(singleId,surfaceSubset)
-
-        extractBoundaries = vtk.vtkFeatureEdges()
-        extractBoundaries.BoundaryEdgesOn()
-        extractBoundaries.FeatureEdgesOff()
-        extractBoundaries.NonManifoldEdgesOff()
-        extractBoundaries.ManifoldEdgesOff()
-        extractBoundaries.ColoringOff()
-        extractBoundaries.SetInputData(surfaceSubset)
-        extractBoundaries.CreateDefaultLocator()
-        extractBoundaries.Update()
-        self.RingsForBCs = extractBoundaries.GetOutput()
-
-        # 4. Fill the boundary rings array using the distance at the ring
-        #    to deform and 0.0 otherwise
-        arrayForBCs = vtk.vtkDoubleArray()
-        arrayForBCs.SetNumberOfComponents(3)
-        arrayForBCs.SetNumberOfTuples(self.RingsForBCs.GetNumberOfPoints())
-        arrayForBCs.SetName('BCs')
-        for k in range(3):
-            arrayForBCs.FillComponent(k,0.0)
-        self.RingsForBCs.GetPointData().AddArray(arrayForBCs)
-
-        self.RingsForBCs = self.SurfaceAppend(self.Ring,self.RingsForBCs) # this overwrite the zeros on the self.Ring
-
-        # 3. Extend harmonically the distance from the ring to the DeformableIds
+        # 3. Extend harmonically the distance from the ring
         harmonicSolver = vmtkcontribscripts.vmtkSurfaceHarmonicSolver()
         harmonicSolver.Surface = self.Surface
-        harmonicSolver.Rings = self.RingsForBCs
+        harmonicSolver.InputRings = self.Ring
         harmonicSolver.Interactive = False
         harmonicSolver.VectorialEq = True
         harmonicSolver.SolutionArrayName = 'WarpVector'
+        harmonicSolver.InputRingsBCsArrayName = 'DistanceToReference'
+        harmonicSolver.InitWithZeroDirBCs = 1
+        harmonicSolver.ExcludeIds = self.ExcludeIds
         harmonicSolver.Execute()
 
         self.Surface = harmonicSolver.Surface
+        self.RingsForBCs = harmonicSolver.DirichletBoundaries
 
         # 4. Warp by vector the surface
         warper = vmtkscripts.vmtkSurfaceWarpByVector()
@@ -230,19 +170,13 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
             self.Surface = clipper.Surface
 
             if not self.SkipRemeshing:
-                excludedIds = []
-                for item in self.Ids:
-                    if item not in self.DeformableIds:
-                        excludedIds.append(int(item)) # dangerous cast to int
-                print("Excluded Ids: ",excludedIds)
-
                 remeshing = vmtkscripts.vmtkSurfaceRemeshing()
                 remeshing.Surface = self.Surface
                 remeshing.CellEntityIdsArrayName = self.CellEntityIdsArrayName
                 remeshing.ElementSizeMode = 'edgelength'
                 remeshing.TargetEdgeLength = self.RemeshingEdgeLength
                 remeshing.NumberOfIterations = int((self.RemeshingIterations+1)/2)
-                remeshing.ExcludeEntityIds = excludedIds
+                remeshing.ExcludeEntityIds = self.ExcludeIds
                 remeshing.CleanOutput = self.CleanOutput
                 remeshing.Execute()
 
@@ -251,7 +185,7 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
             connector = vmtkcontribscripts.vmtkSurfaceConnector()
             connector.Surface = self.Surface
             connector.Surface2 = self.ReferenceSurface
-            connector.IdValue = self.DeformableIds[0] # How to fix this?
+            connector.IdValue = self.ConnectorId
             connector.Execute()
             self.Surface = connector.OutputSurface
 
@@ -261,12 +195,11 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
                 remeshing.Execute()
                 self.Surface = remeshing.Surface
 
-            if self.Projection:
-                projector = vmtkscripts.vmtkSurfaceProjection()
-                projector.Surface = self.Surface
-                projector.ReferenceSurface = self.DeformedSurface
-                projector.Execute()
-                self.Surface = projector.Surface
+            if self.ProjectionFromReference:
+                self.Surface = self.SurfaceProjection(self.Surface,self.ReferenceSurface)
+
+            if self.ProjectionFromInput:
+                self.Surface = self.SurfaceProjection(self.Surface,self.DeformedSurface)
 
 
 
