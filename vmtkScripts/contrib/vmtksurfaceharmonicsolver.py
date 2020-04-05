@@ -47,7 +47,7 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
         self.SolutionArrayName = 'Temperature'
         self.SolutionArray = None
 
-        self.InputRingsBCsArrayName = 'BCs'
+        self.InputRingsBCsArrayName = None
         self.RingsBCsArray = None
 
         self.ExcludeIds = []
@@ -178,7 +178,7 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
         if self.InitWithZeroDirBcs:
             zeroBCsArray = vtk.vtkDoubleArray()
             zeroBCsArray.SetNumberOfComponents(numberOfComponents)
-            zeroBCsArray.SetName('BCs')
+            zeroBCsArray.SetName('DirichletBCs')
             zeroBCsArray.SetNumberOfTuples(boundaries.GetNumberOfPoints())
             for k in range(numberOfComponents):
                 zeroBCsArray.FillComponent(k,0.0)
@@ -192,7 +192,7 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
         if self.InputRings!=None:
             dirichletBoundaries = self.AddInputRingsBCs(dirichletBoundaries)
 
-        if dirichletBoundaries==None: # or dirichletBoundaries.GetPointData().GetArray('BCs')==None:
+        if dirichletBoundaries==None or dirichletBoundaries.GetPointData().GetArray('DirichletBCs')==None:
             self.PrintError("Error: no BCs defined.")
 
         return dirichletBoundaries
@@ -200,6 +200,7 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
 
     def AddInputRingsBCs(self,dirichletBoundaries):
         inputRingsBCsArray = self.InputRings.GetPointData().GetArray(self.InputRingsBCsArrayName)
+        inputRingsBCsArray.SetName('DirichletBCs')
 
         numberOfComponents = inputRingsBCsArray.GetNumberOfComponents()
 
@@ -209,21 +210,7 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
         if not self.VectorialEq and numberOfComponents!=1:
             self.PrintError('Error: scalar equation need a single-component array defined on InputRings as BCs.')
 
-        calculator = vtk.vtkArrayCalculator()
-        calculator.SetInputData(self.InputRings)
-        if numberOfComponents==3:
-            calculator.AddVectorArrayName(self.InputRingsBCsArrayName)
-        else:
-            calculator.AddScalarArrayName(self.InputRingsBCsArrayName)
-        calculator.SetFunction(self.InputRingsBCsArrayName)
-        calculator.SetResultArrayName('BCs')
-        calculator.Update()
-        ringsToAdd = calculator.GetOutput()
-
-        # TOFIX: this foes not work if ringsToAdd and dirichletBoundaries have common points
-        dirichletBoundaries = self.SurfaceAppend(ringsToAdd,dirichletBoundaries)
-
-        return dirichletBoundaries
+        return self.SurfaceAppend(self.InputRings,dirichletBoundaries)
 
 
     def AddInteractiveBCs(self,boundaries):
@@ -246,7 +233,7 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
 
         self.DirichletBoundaries = self.DefineDirichletBCs(self.Boundaries)
 
-        bcsArray = self.DirichletBoundaries.GetPointData().GetArray('BCs')
+        bcsArray = self.DirichletBoundaries.GetPointData().GetArray('DirichletBCs')
 
         if self.VectorialEq:
             numberOfComponents = 3
