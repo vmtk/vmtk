@@ -34,6 +34,7 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
         pypes.pypeScript.__init__(self)
 
         self.Surface = None
+        self.DeformedSurface = None
         self.ReferenceSurface = None
 
         self.Ring = None
@@ -50,6 +51,8 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
         self.RemeshingIterations = 10
 
         self.SkipConnection = 0
+
+        self.Projection = 0
 
         self.CleanOutput = 1
 
@@ -68,11 +71,13 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
             ['RemeshingEdgeLength','remeshingedgelength','float',1,'(0.0,)'],
             ['RemeshingIterations','remeshingiterations','int',1,'(0,)'],
             ['SkipConnection','skipconnection','bool',1,'','deform input surface onto the reference one without connecting to it'],
+            ['Projection','projection','bool',1,'','toggle performing a projection of the input surface point-data arrays onto the output surface'],
             ['CleanOutput','cleanoutput','bool',1,'','toggle cleaning the unused points'],
             ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer']
             ])
         self.SetOutputMembers([
-            ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter']
+            ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter'],
+            ['DeformedSurface','odeformed','vtkPolyData',1,'','the deformed surface before connection and remeshing','vmtksurfacewriter'],
             ])
 
     def SurfaceThreshold(self,surface,low,high):
@@ -196,12 +201,13 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
 
         self.Surface = harmonicSolver.Surface
 
-        # 4. Warp by vector the surface and the ring
+        # 4. Warp by vector the surface
         warper = vmtkscripts.vmtkSurfaceWarpByVector()
         warper.Surface = self.Surface
         warper.WarpArrayName = 'WarpVector'
         warper.Execute()
         self.Surface = warper.Surface
+        self.DeformedSurface = self.Surface
 
         # 5. Connecting to the reference surface
         if not self.SkipConnection:
@@ -253,6 +259,12 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
                 remeshing.Execute()
                 self.Surface = remeshing.Surface
 
+            if self.Projection:
+                projector = vmtkscripts.vmtkSurfaceProjection()
+                projector.Surface = self.Surface
+                projector.ReferenceSurface = self.DeformedSurface
+                projector.Execute()
+                self.Surface = projector.Surface
 
 
 
