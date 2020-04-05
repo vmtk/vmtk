@@ -54,7 +54,7 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
         self.ExcludeIdsArrayName = None
         self.ExcludeIdsArray = None
 
-        self.InitWithZeroDirBcs = 0
+        self.InitWithZeroDirBCs = 0
 
         self.CellEntityIdsArrayName = 'CellEntityIds'
         self.CellEntityIdsArray = None
@@ -73,7 +73,7 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
             ['InputRingsBCsArrayName', 'ringsbcsarray', 'str', 1, '','name of the point-data array where the BCs values are stored'],
             ['ExcludeIds','excludeids','int',-1,'','entity ids excluded by the solution of the equation'],
             ['ExcludeIdsArrayName', 'excludeidsarray', 'str', 1, '','name of the point-data array defined on the input surface that replaces the solution on the excluded ids; if None, the solutions is set to zero on these ids'],
-            ['InitWithZeroDirBcs','zerodirbcs','bool',1,'','toggle initializing all the boundary rings with an homogeneous Dirichlet condition'],
+            ['InitWithZeroDirBCs','zerodirbcs','bool',1,'','toggle initializing all the boundary rings with an homogeneous Dirichlet condition'],
             ['CellEntityIdsArrayName', 'entityidsarray', 'str', 1, '','name of the cell-data array where entity ids have been stored'],
             ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer']
             ])
@@ -175,7 +175,7 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
         else:
             numberOfComponents = 1
 
-        if self.InitWithZeroDirBcs:
+        if self.InitWithZeroDirBCs:
             zeroBCsArray = vtk.vtkDoubleArray()
             zeroBCsArray.SetNumberOfComponents(numberOfComponents)
             zeroBCsArray.SetName('DirichletBCs')
