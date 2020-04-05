@@ -44,7 +44,7 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
         self.Interactive = True
         self.VectorialEq = False
 
-        self.SolutionArrayName = 'Temperature'
+        self.SolutionArrayName = 'HarmonicSolution'
         self.SolutionArray = None
 
         self.InputRingsBCsArrayName = None
@@ -78,7 +78,9 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
             ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer']
             ])
         self.SetOutputMembers([
-            ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter']
+            ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter'],
+            ['DirichletBoundaries','odirbcs','vtkPolyData',1,'','the rings where the applied Dirichlet BCs have been defined','vmtksurfacewriter'],
+
             ])
 
 
@@ -219,21 +221,10 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
         # a constant BCs on it
 
 
-    def Execute(self):
+    def SolveHarmonicProblem(self,domainSurface,dirichletBoundaries):
         from vmtk import vtkvmtk
-        from vmtk import vmtkscripts
-        from vmtk import vmtkcontribscripts
 
-        if self.Surface == None:
-            self.PrintError('Error: no Surface.')
-
-        [self.IncludeSurface, self.ExcludeSurface] = self.ExtractDomain(self.Surface,self.ExcludeIds)
-
-        self.Boundaries = self.ExtractBoundaries(self.IncludeSurface)
-
-        self.DirichletBoundaries = self.DefineDirichletBCs(self.Boundaries)
-
-        bcsArray = self.DirichletBoundaries.GetPointData().GetArray('DirichletBCs')
+        bcsArray = dirichletBoundaries.GetPointData().GetArray('DirichletBCs')
 
         if self.VectorialEq:
             numberOfComponents = 3
@@ -241,11 +232,11 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
             numberOfComponents = 1
 
         pointLocator = vtk.vtkPointLocator()
-        pointLocator.SetDataSet(self.IncludeSurface)
+        pointLocator.SetDataSet(domainSurface)
         pointLocator.BuildLocator()
 
         harmonicOutput = vtk.vtkPolyData()
-        harmonicOutput.DeepCopy(self.IncludeSurface)
+        harmonicOutput.DeepCopy(domainSurface)
 
         for k in range(numberOfComponents):
             print("Solving Laplace-Beltrami equation for component ",k)
@@ -254,8 +245,8 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
             boundaryValues = vtk.vtkDoubleArray()
             boundaryValues.SetNumberOfComponents(1)
 
-            for i in range(self.DirichletBoundaries.GetNumberOfPoints()):
-                boundaryId = pointLocator.FindClosestPoint(self.DirichletBoundaries.GetPoint(i))
+            for i in range(dirichletBoundaries.GetNumberOfPoints()):
+                boundaryId = pointLocator.FindClosestPoint(dirichletBoundaries.GetPoint(i))
                 boundaryIds.InsertNextId(boundaryId)
                 boundaryValues.InsertNextTuple1(bcsArray.GetComponent(i,k))
 
@@ -272,35 +263,63 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
 
         solutionArray = vtk.vtkDoubleArray()
         solutionArray.SetNumberOfComponents(numberOfComponents)
-        solutionArray.SetNumberOfTuples(self.IncludeSurface.GetNumberOfPoints())
+        solutionArray.SetNumberOfTuples(domainSurface.GetNumberOfPoints())
         solutionArray.SetName(self.SolutionArrayName)
 
-        for i in range(self.IncludeSurface.GetNumberOfPoints()):
+        for i in range(domainSurface.GetNumberOfPoints()):
             for k in range(numberOfComponents):
                 value = harmonicOutput.GetPointData().GetArray(self.SolutionArrayName+str(k)).GetComponent(i,0)
                 solutionArray.SetComponent(i,k,value)
 
-        self.IncludeSurface.GetPointData().AddArray(solutionArray)
+        domainSurface.GetPointData().AddArray(solutionArray)
+
+        return domainSurface
+
+
+    def ExtendSolutionOnExcludedDomain(self,excludedDomain):
+
+        if self.VectorialEq:
+            numberOfComponents = 3
+        else:
+            numberOfComponents = 1
+
+        solutionArray = vtk.vtkDoubleArray()
+        solutionArray.SetNumberOfComponents(numberOfComponents)
+        solutionArray.SetNumberOfTuples(excludedDomain.GetNumberOfPoints())
+        solutionArray.SetName(self.SolutionArrayName)
+
+        if self.ExcludeIdsArrayName==None:
+            for k in range(numberOfComponents):
+                solutionArray.FillComponent(k,0.0)
+        else:
+            excludeIdsArray = excludedDomain.GetPointData().GetArray(self.ExcludeIdsArrayName)
+            if excludeIdsArray.GetNumberOfComponents()!=numberOfComponents:
+                self.PrintError('Error: ExcludeIdsArray has a not compatible number of components')
+            for i in range(self.ExcludeSurface.GetNumberOfPoints()):
+                for k in range(numberOfComponents):
+                    value = excludeIdsArray.GetComponent(i,k)
+                    solutionArray.SetComponent(i,k,value)
+
+        excludedDomain.GetPointData().AddArray(solutionArray)
+
+        return excludedDomain
+
+
+    def Execute(self):
+
+        if self.Surface == None:
+            self.PrintError('Error: no Surface.')
+
+        [self.IncludeSurface, self.ExcludeSurface] = self.ExtractDomain(self.Surface,self.ExcludeIds)
+
+        self.Boundaries = self.ExtractBoundaries(self.IncludeSurface)
+
+        self.DirichletBoundaries = self.DefineDirichletBCs(self.Boundaries)
+
+        self.IncludeSurface = self.SolveHarmonicProblem(self.IncludeSurface, self.DirichletBoundaries)
 
         if self.ExcludeSurface!=None:
-            solutionArray = vtk.vtkDoubleArray()
-            solutionArray.SetNumberOfComponents(numberOfComponents)
-            solutionArray.SetNumberOfTuples(self.ExcludeSurface.GetNumberOfPoints())
-            solutionArray.SetName(self.SolutionArrayName)
-
-            if self.ExcludeIdsArrayName==None:
-                for k in range(numberOfComponents):
-                    solutionArray.FillComponent(k,0.0)
-            else:
-                excludeIdsArray = self.ExcludeSurface.GetPointData().GetArray(self.ExcludeIdsArrayName)
-                if excludeIdsArray.GetNumberOfComponents()!=numberOfComponents:
-                    self.PrintError('Error: ExcludeIdsArray has a not compatible number of components')
-                for i in range(self.ExcludeSurface.GetNumberOfPoints()):
-                    for k in range(numberOfComponents):
-                        value = excludeIdsArray.GetComponent(i,k)
-                        solutionArray.SetComponent(i,k,value)
-
-            self.ExcludeSurface.GetPointData().AddArray(solutionArray)
+            self.ExcludeSurface = self.ExtendSolutionOnExcludedDomain(self.ExcludeSurface)
 
         self.Surface = self.SurfaceAppend(self.IncludeSurface,self.ExcludeSurface)
 
