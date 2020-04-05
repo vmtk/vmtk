@@ -34,7 +34,12 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
         pypes.pypeScript.__init__(self)
 
         self.Surface = None
-        self.Rings = None
+        self.ExcludeSurface = None
+        self.IncludeSurface = None
+        
+        self.Boundaries = None
+        self.InputRings = None
+        self.DirichletBoundaries = None
 
         self.Interactive = True
         self.VectorialEq = False
@@ -42,12 +47,14 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
         self.SolutionArrayName = 'Temperature'
         self.SolutionArray = None
 
-        self.RingsBCsArrayName = 'BCs'
+        self.InputRingsBCsArrayName = 'BCs'
         self.RingsBCsArray = None
 
         self.ExcludeIds = []
         self.ExcludeIdsArrayName = None
         self.ExcludeIdsArray = None
+
+        self.InitWithZeroDirBcs = 0
 
         self.CellEntityIdsArrayName = 'CellEntityIds'
         self.CellEntityIdsArray = None
@@ -62,10 +69,11 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
             ['Interactive','interactive','bool',1,'','toggle opening an interactive window to choose the constant boundary conditions at each boundary ring'],
             ['VectorialEq','vectorialeq','bool',1,'','toggle solving the scalar or the vectorial Laplace-Beltrami equation'],
             ['SolutionArrayName', 'solutionarray', 'str', 1, '','name of the point-data array where the solution is stored'],
-            ['Rings','irings','vtkPolyData',1,'','the optional input rings where an array storing values to impose as BCs is defined (more than one ring can be passed, provided that they are stored all together in a unique vtkPolyData)','vmtksurfacereader'],
-            ['RingsBCsArrayName', 'ringsbcsarray', 'str', 1, '','name of the point-data array where the BCs values are stored'],
+            ['InputRings','irings','vtkPolyData',1,'','the optional input rings where an array storing values to impose as BCs is defined; more than one ring can be passed, provided that they are stored all together in a unique vtkPolyData','vmtksurfacereader'],
+            ['InputRingsBCsArrayName', 'ringsbcsarray', 'str', 1, '','name of the point-data array where the BCs values are stored'],
             ['ExcludeIds','excludeids','int',-1,'','entity ids excluded by the solution of the equation'],
-            ['ExcludeIdsArrayName', 'excludeidsarray', 'str', 1, '','name of the point-data array defined on the input surface that replaces the solution on the excluded ids'],
+            ['ExcludeIdsArrayName', 'excludeidsarray', 'str', 1, '','name of the point-data array defined on the input surface that replaces the solution on the excluded ids; if None, the solutions is set to zero on these ids'],
+            ['InitWithZeroDirBcs','zerodirbcs','bool',1,'','toggle initializing all the boundary rings with an homogeneous Dirichlet condition'],
             ['CellEntityIdsArrayName', 'entityidsarray', 'str', 1, '','name of the cell-data array where entity ids have been stored'],
             ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer']
             ])
@@ -74,7 +82,151 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
             ])
 
 
-    def InteractiveBCs(self):
+    def SurfaceThreshold(self,surface,low,high):
+        from vmtk import vmtkcontribscripts
+        th = vmtkcontribscripts.vmtkThreshold()
+        th.Surface = surface
+        th.CellEntityIdsArrayName = self.CellEntityIdsArrayName
+        th.LowThreshold = low
+        th.HighThreshold = high
+        th.Execute()
+        surf = th.Surface
+        return surf
+
+    def SurfaceAppend(self,surface1,surface2):
+        from vmtk import vmtkscripts
+        if surface1 == None:
+            surf = surface2
+        elif surface2 == None:
+            surf = surface1
+        else:
+            a = vmtkscripts.vmtkSurfaceAppend()
+            a.Surface = surface1
+            a.Surface2 = surface2
+            a.Execute()
+            surf = a.Surface
+            tr = vmtkscripts.vmtkSurfaceTriangle()
+            tr.Surface = surf
+            tr.Execute()
+            surf = tr.Surface
+        return surf
+
+
+    def ExtractDomain(self,surface,excludeIds):
+        if self.ExcludeIds!=[]:
+
+            self.CellEntityIdsArray = self.Surface.GetCellData().GetArray(self.CellEntityIdsArrayName)
+
+            ids = set()
+            includeIds = []
+
+            for i in range(self.Surface.GetNumberOfCells()):
+                ids.add(int(self.CellEntityIdsArray.GetComponent(i,0)))
+            ids = sorted(ids)
+            self.PrintLog('Entity Ids:\t'+str(ids))
+
+            for item in excludeIds:
+                if item not in ids:
+                    self.PrintError('Error: entity id '+str(item)+ ' not defined on the input Surface.')
+
+            for item in ids:
+                if item not in excludeIds:
+                    includeIds.append(item)
+
+            self.PrintLog('Excluded Ids:\t'+str(excludeIds))
+            self.PrintLog('Included Ids:\t'+str(includeIds))
+
+            excludeSurface = None
+            includeSurface = None
+
+            for item in excludeIds:
+                singleId =  self.SurfaceThreshold(self.Surface,item,item)
+                excludeSurface = self.SurfaceAppend(singleId,excludeSurface)
+
+            for item in includeIds:
+                singleId =  self.SurfaceThreshold(self.Surface,item,item)
+                includeSurface = self.SurfaceAppend(singleId,includeSurface)
+
+        else:
+            includeSurface = self.Surface
+            excludeSurface = None
+
+        return [includeSurface,excludeSurface]
+
+
+    def ExtractBoundaries(self,surface):
+        extractBoundaries = vtk.vtkFeatureEdges()
+        extractBoundaries.BoundaryEdgesOn()
+        extractBoundaries.FeatureEdgesOff()
+        extractBoundaries.NonManifoldEdgesOff()
+        extractBoundaries.ManifoldEdgesOff()
+        extractBoundaries.ColoringOff()
+        extractBoundaries.SetInputData(surface)
+        extractBoundaries.CreateDefaultLocator()
+        extractBoundaries.Update()
+        return extractBoundaries.GetOutput()
+
+        
+    def DefineDirichletBCs(self,boundaries):
+        dirichletBoundaries = None
+
+        if self.VectorialEq:
+            numberOfComponents = 3
+        else:
+            numberOfComponents = 1
+
+        if self.InitWithZeroDirBcs:
+            zeroBCsArray = vtk.vtkDoubleArray()
+            zeroBCsArray.SetNumberOfComponents(numberOfComponents)
+            zeroBCsArray.SetName('BCs')
+            zeroBCsArray.SetNumberOfTuples(boundaries.GetNumberOfPoints())
+            for k in range(numberOfComponents):
+                zeroBCsArray.FillComponent(k,0.0)
+            dirichletBoundaries = vtk.vtkPolyData()
+            dirichletBoundaries.DeepCopy(boundaries)
+            dirichletBoundaries.GetPointData().AddArray(zeroBCsArray)
+
+        if self.Interactive:
+            dirichletBoundaries = self.AddInteractiveBCs(boundaries)
+
+        if self.InputRings!=None:
+            dirichletBoundaries = self.AddInputRingsBCs(dirichletBoundaries)
+
+        if dirichletBoundaries==None: # or dirichletBoundaries.GetPointData().GetArray('BCs')==None:
+            self.PrintError("Error: no BCs defined.")
+
+        return dirichletBoundaries
+
+
+    def AddInputRingsBCs(self,dirichletBoundaries):
+        inputRingsBCsArray = self.InputRings.GetPointData().GetArray(self.InputRingsBCsArrayName)
+
+        numberOfComponents = inputRingsBCsArray.GetNumberOfComponents()
+
+        if self.VectorialEq and numberOfComponents!=3:
+            self.PrintError('Error: vectorial equation need a three-component array defined on InputRings as BCs.')
+
+        if not self.VectorialEq and numberOfComponents!=1:
+            self.PrintError('Error: scalar equation need a single-component array defined on InputRings as BCs.')
+
+        calculator = vtk.vtkArrayCalculator()
+        calculator.SetInputData(self.InputRings)
+        if numberOfComponents==3:
+            calculator.AddVectorArrayName(self.InputRingsBCsArrayName)
+        else:
+            calculator.AddScalarArrayName(self.InputRingsBCsArrayName)
+        calculator.SetFunction(self.InputRingsBCsArrayName)
+        calculator.SetResultArrayName('BCs')
+        calculator.Update()
+        ringsToAdd = calculator.GetOutput()
+
+        # TOFIX: this foes not work if ringsToAdd and dirichletBoundaries have common points
+        dirichletBoundaries = self.SurfaceAppend(ringsToAdd,dirichletBoundaries)
+
+        return dirichletBoundaries
+
+
+    def AddInteractiveBCs(self,boundaries):
         from vmtk import vmtkscripts
         # extract the boundary rings and interactively set
         # a constant BCs on it
@@ -88,28 +240,25 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
         if self.Surface == None:
             self.PrintError('Error: no Surface.')
 
-        if self.Interactive:
-            self.InteractiveBCs()
+        [self.IncludeSurface, self.ExcludeSurface] = self.ExtractDomain(self.Surface,self.ExcludeIds)
 
-        if self.Rings == None:
-            self.PrintError('Error: no BCs defined.')
+        self.Boundaries = self.ExtractBoundaries(self.IncludeSurface)
 
-        self.RingsBCsArray = self.Rings.GetPointData().GetArray(self.RingsBCsArrayName)
+        self.DirichletBoundaries = self.DefineDirichletBCs(self.Boundaries)
+
+        bcsArray = self.DirichletBoundaries.GetPointData().GetArray('BCs')
+
+        if self.VectorialEq:
+            numberOfComponents = 3
+        else:
+            numberOfComponents = 1
 
         pointLocator = vtk.vtkPointLocator()
-        pointLocator.SetDataSet(self.Surface)
+        pointLocator.SetDataSet(self.IncludeSurface)
         pointLocator.BuildLocator()
 
-        numberOfComponents = self.RingsBCsArray.GetNumberOfComponents()
-
-        if self.VectorialEq and numberOfComponents!=3:
-            self.PrintError('Error: vectorial equation need a three-component array as BCs.')
-
-        if not self.VectorialEq and numberOfComponents!=1:
-            self.PrintError('Error: scalar equation need a single-component array as BCs.')
-
         harmonicOutput = vtk.vtkPolyData()
-        harmonicOutput.DeepCopy(self.Surface)
+        harmonicOutput.DeepCopy(self.IncludeSurface)
 
         for k in range(numberOfComponents):
             print("Solving Laplace-Beltrami equation for component ",k)
@@ -118,10 +267,10 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
             boundaryValues = vtk.vtkDoubleArray()
             boundaryValues.SetNumberOfComponents(1)
 
-            for i in range(self.Rings.GetNumberOfPoints()):
-                boundaryId = pointLocator.FindClosestPoint(self.Rings.GetPoint(i))
+            for i in range(self.DirichletBoundaries.GetNumberOfPoints()):
+                boundaryId = pointLocator.FindClosestPoint(self.DirichletBoundaries.GetPoint(i))
                 boundaryIds.InsertNextId(boundaryId)
-                boundaryValues.InsertNextTuple1(self.RingsBCsArray.GetComponent(i,k))
+                boundaryValues.InsertNextTuple1(bcsArray.GetComponent(i,k))
 
             # perform harmonic mapping using temperature as boundary condition
             harmonicSolver = vtkvmtk.vtkvmtkPolyDataHarmonicMappingFilter()
@@ -134,17 +283,39 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
 
             harmonicOutput = harmonicSolver.GetOutput()
 
-        self.SolutionArray = vtk.vtkDoubleArray()
-        self.SolutionArray.SetNumberOfComponents(numberOfComponents)
-        self.SolutionArray.SetNumberOfTuples(self.Surface.GetNumberOfPoints())
-        self.SolutionArray.SetName(self.SolutionArrayName)
+        solutionArray = vtk.vtkDoubleArray()
+        solutionArray.SetNumberOfComponents(numberOfComponents)
+        solutionArray.SetNumberOfTuples(self.IncludeSurface.GetNumberOfPoints())
+        solutionArray.SetName(self.SolutionArrayName)
 
-        for i in range(self.Surface.GetNumberOfPoints()):
+        for i in range(self.IncludeSurface.GetNumberOfPoints()):
             for k in range(numberOfComponents):
                 value = harmonicOutput.GetPointData().GetArray(self.SolutionArrayName+str(k)).GetComponent(i,0)
-                self.SolutionArray.SetComponent(i,k,value)
+                solutionArray.SetComponent(i,k,value)
 
-        self.Surface.GetPointData().AddArray(self.SolutionArray)
+        self.IncludeSurface.GetPointData().AddArray(solutionArray)
+
+        if self.ExcludeSurface!=None:
+            solutionArray = vtk.vtkDoubleArray()
+            solutionArray.SetNumberOfComponents(numberOfComponents)
+            solutionArray.SetNumberOfTuples(self.ExcludeSurface.GetNumberOfPoints())
+            solutionArray.SetName(self.SolutionArrayName)
+
+            if self.ExcludeIdsArrayName==None:
+                for k in range(numberOfComponents):
+                    solutionArray.FillComponent(k,0.0)
+            else:
+                excludeIdsArray = self.ExcludeSurface.GetPointData().GetArray(self.ExcludeIdsArrayName)
+                if excludeIdsArray.GetNumberOfComponents()!=numberOfComponents:
+                    self.PrintError('Error: ExcludeIdsArray has a not compatible number of components')
+                for i in range(self.ExcludeSurface.GetNumberOfPoints()):
+                    for k in range(numberOfComponents):
+                        value = excludeIdsArray.GetComponent(i,k)
+                        solutionArray.SetComponent(i,k,value)
+
+            self.ExcludeSurface.GetPointData().AddArray(solutionArray)
+
+        self.Surface = self.SurfaceAppend(self.IncludeSurface,self.ExcludeSurface)
 
 
 
