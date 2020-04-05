@@ -39,6 +39,7 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
 
         self.Ring = None
         self.ReferenceRing = None
+        self.RingsForBCs = None
 
         self.Ids = set()
         self.DeformableIds = []
@@ -78,6 +79,7 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
         self.SetOutputMembers([
             ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter'],
             ['DeformedSurface','odeformed','vtkPolyData',1,'','the deformed surface before connection and remeshing','vmtksurfacewriter'],
+            ['RingsForBCs','obcs','vtkPolyData',1,'','the rings containing the array used for BCs of the Laplace-Beltrami equation','vmtksurfacewriter']
             ])
 
     def SurfaceThreshold(self,surface,low,high):
@@ -176,24 +178,24 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
         extractBoundaries.SetInputData(surfaceSubset)
         extractBoundaries.CreateDefaultLocator()
         extractBoundaries.Update()
-        ringsForBCs = extractBoundaries.GetOutput()
+        self.RingsForBCs = extractBoundaries.GetOutput()
 
         # 4. Fill the boundary rings array using the distance at the ring
         #    to deform and 0.0 otherwise
         arrayForBCs = vtk.vtkDoubleArray()
         arrayForBCs.SetNumberOfComponents(3)
-        arrayForBCs.SetNumberOfTuples(ringsForBCs.GetNumberOfPoints())
+        arrayForBCs.SetNumberOfTuples(self.RingsForBCs.GetNumberOfPoints())
         arrayForBCs.SetName('BCs')
         for k in range(3):
             arrayForBCs.FillComponent(k,0.0)
-        ringsForBCs.GetPointData().AddArray(arrayForBCs)
+        self.RingsForBCs.GetPointData().AddArray(arrayForBCs)
 
-        ringsForBCs = self.SurfaceAppend(self.Ring,ringsForBCs)
+        self.RingsForBCs = self.SurfaceAppend(self.Ring,self.RingsForBCs) # this overwrite the zeros on the self.Ring
 
         # 3. Extend harmonically the distance from the ring to the DeformableIds
         harmonicSolver = vmtkcontribscripts.vmtkSurfaceHarmonicSolver()
         harmonicSolver.Surface = self.Surface
-        harmonicSolver.Rings = ringsForBCs
+        harmonicSolver.Rings = self.RingsForBCs
         harmonicSolver.Interactive = False
         harmonicSolver.VectorialEq = True
         harmonicSolver.SolutionArrayName = 'WarpVector'
@@ -265,7 +267,6 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
                 projector.ReferenceSurface = self.DeformedSurface
                 projector.Execute()
                 self.Surface = projector.Surface
-
 
 
 
