@@ -51,7 +51,7 @@ UpwindGradientMagnitudeImageFilter<TInputImage, TOutputImage>
 template <typename TInputImage, typename TOutputImage>
 void 
 UpwindGradientMagnitudeImageFilter<TInputImage,TOutputImage>
-::GenerateInputRequestedRegion() throw(InvalidRequestedRegionError)
+::GenerateInputRequestedRegion() //throw(InvalidRequestedRegionError)
 {
   // call the superclass' implementation of this method
   Superclass::GenerateInputRequestedRegion();
