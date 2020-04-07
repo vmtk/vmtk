@@ -52,16 +52,16 @@ void vtkvmtkTetGenWriter::WriteData()
 {
   vtkUnstructuredGrid *input= vtkUnstructuredGrid::SafeDownCast(this->GetInput());
 
-  if (!this->FileName)
+  if (!this->GetFileName())
     {
     vtkErrorMacro(<<"FileName not set.");
     return;
     }
 
-  std::string nodeFileName = this->FileName;
+  std::string nodeFileName = this->GetFileName();
   nodeFileName += ".node";
 
-  std::string eleFileName = this->FileName;
+  std::string eleFileName = this->GetFileName();
   eleFileName += ".ele";
 
   ofstream nodeStream(nodeFileName.c_str());

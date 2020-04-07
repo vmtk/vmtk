@@ -111,13 +111,13 @@ void vtkvmtkFluentWriter::WriteData()
       }
     }
 
-  if (!this->FileName)
+  if (!this->GetFileName())
     {
     vtkErrorMacro(<<"FileName not set.");
     return;
     }
         
-  ofstream out (this->FileName);
+  ofstream out (this->GetFileName());
 
   if (!out.good())
     {
