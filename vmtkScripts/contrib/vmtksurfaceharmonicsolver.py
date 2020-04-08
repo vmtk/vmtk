@@ -20,8 +20,10 @@
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import vtk
 import sys
+import string
 
-
+from vmtk import vmtkrenderer
+from vmtk import vtkvmtk
 from vmtk import pypes
 
 
@@ -60,6 +62,7 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
         self.CellEntityIdsArray = None
 
         self.vmtkRenderer = None
+        self.OwnRenderer = 0
 
 
         self.SetScriptName('vmtksurfaceharmonicsolver')
@@ -84,16 +87,19 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
             ])
 
 
-    def SurfaceThreshold(self,surface,low,high):
+    def SurfaceThreshold(self,surface,low,high,arrayName=None):
         from vmtk import vmtkcontribscripts
+        if arrayName==None:
+            arrayName=self.CellEntityIdsArrayName
         th = vmtkcontribscripts.vmtkThreshold()
         th.Surface = surface
-        th.CellEntityIdsArrayName = self.CellEntityIdsArrayName
+        th.CellEntityIdsArrayName = arrayName
         th.LowThreshold = low
         th.HighThreshold = high
         th.Execute()
         surf = th.Surface
         return surf
+
 
     def SurfaceAppend(self,surface1,surface2):
         from vmtk import vmtkscripts
@@ -169,7 +175,7 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
         return extractBoundaries.GetOutput()
 
         
-    def DefineDirichletBCs(self,boundaries):
+    def DefineDirichletBCs(self,boundaries,domain):
         dirichletBoundaries = None
 
         if self.VectorialEq:
@@ -189,7 +195,7 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
             dirichletBoundaries.GetPointData().AddArray(zeroBCsArray)
 
         if self.Interactive:
-            dirichletBoundaries = self.AddInteractiveBCs(boundaries)
+            dirichletBoundaries = self.AddInteractiveBCs(boundaries,domain)
 
         if self.InputRings!=None:
             dirichletBoundaries = self.AddInputRingsBCs(dirichletBoundaries)
@@ -215,14 +221,134 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
         return self.SurfaceAppend(self.InputRings,dirichletBoundaries)
 
 
-    def AddInteractiveBCs(self,boundaries):
-        from vmtk import vmtkscripts
-        # extract the boundary rings and interactively set
-        # a constant BCs on it
+    def LabelValidator(self,text):
+        import string
+        if text=='':
+            return 1
+        if not text:
+            return 0
+        if not text.split():
+            return 0
+        allowedChars = string.digits+" .-"
+        for char in text:
+            if char not in allowedChars:
+                return 0
+        return 1
+
+
+    def AddInteractiveBCs(self,boundaries,domain):
+
+        rings = vtk.vtkPolyData()
+        rings.DeepCopy(boundaries)
+
+        connectivity = vtk.vtkConnectivityFilter()
+        connectivity.SetInputData(rings)
+        connectivity.SetExtractionModeToAllRegions()
+        connectivity.ColorRegionsOn()
+        connectivity.Update()
+        rings = connectivity.GetOutput()
+
+        ringIdsArray = rings.GetCellData().GetArray('RegionId')
+
+        ringIds = set()
+        for i in range(rings.GetNumberOfCells()):
+            ringIds.add(ringIdsArray.GetComponent(i,0))
+        ringIds = sorted(ringIds)
+        numberOfRings = len(ringIds)
+
+        ringList = []
+        for item in ringIds:
+            ringList.append(self.SurfaceThreshold(rings,item,item,'RegionId'))
+
+        if not self.vmtkRenderer:
+            self.vmtkRenderer = vmtkrenderer.vmtkRenderer()
+            self.vmtkRenderer.Initialize()
+            self.OwnRenderer = 1
+
+        self.vmtkRenderer.RegisterScript(self)
+
+        # render numbers at each boundary ring 
+        seedPoints = vtk.vtkPoints()
+        for i in range(numberOfRings):
+            barycenter = [0.0, 0.0, 0.0]
+            vtkvmtk.vtkvmtkBoundaryReferenceSystems.ComputeBoundaryBarycenter(ringList[i].GetPoints(),barycenter)
+            seedPoints.InsertNextPoint(barycenter)
+        seedPolyData = vtk.vtkPolyData()
+        seedPolyData.SetPoints(seedPoints)
+        labelsMapper = vtk.vtkLabeledDataMapper();
+        labelsMapper.SetInputData(seedPolyData)
+        labelsMapper.SetLabelModeToLabelIds()
+        labelsActor = vtk.vtkActor2D()
+        labelsActor.SetMapper(labelsMapper)
+        self.vmtkRenderer.Renderer.AddActor(labelsActor)
+
+        # render the domain in transparency
+        surfaceMapper = vtk.vtkPolyDataMapper()
+        surfaceMapper.SetInputData(domain)
+        surfaceMapper.ScalarVisibilityOff()
+        surfaceActor = vtk.vtkActor()
+        surfaceActor.SetMapper(surfaceMapper)
+        surfaceActor.GetProperty().SetOpacity(0.25)
+        surfaceActor.GetProperty().SetColor(1.0,1.0,1.0)
+        self.vmtkRenderer.Renderer.AddActor(surfaceActor)
+
+        bcString='whatever'
+        bcId = []
+        bcValue = []
+        while bcString!='':
+            ok = False
+            while not ok:
+                inputString = "Please input an id followed by a constant BC, e.g.:  0  -0.5"
+                if self.VectorialEq:
+                    inputString += "  -1.3  2.1"
+                inputString += "\nJust type 'return' if all BCs have been assigned:\n"
+
+                bcString = self.InputText(inputString,self.LabelValidator)
+                ok = True
+                if bcString!='':
+                    bcAsList = bcString.split()
+                    # check dimension
+                    if self.VectorialEq:
+                        if len(bcAsList)!=4:
+                            ok = False
+                    else:
+                        if len(bcAsList)!=2:
+                            ok = False
+                    # check the Id is an integer number and if it is in ringIds
+                    if not bcAsList[0].isdigit():
+                        ok = False
+                    elif int(bcAsList[0]) not in ringIds:
+                        ok = False
+                    # check if BC is made of float
+                    for item in bcAsList:
+                        try:
+                            float(item)
+                        except:
+                            ok = False
+                    if ok:
+                        bcId.append(int(bcAsList[0]))
+                        bcValue.append([float(item) for item in bcAsList[1:]])
+                        self.PrintLog('BC '+bcString+' correctly inserted\n')
+                    else:
+                        self.PrintLog('Not allowed string\n')
+
+        print('BCs Ids   : ',bcId)
+        print('BCs values: ',bcValue)
+
+        # boundaryIds = vtk.vtkIdList()
+
+        # for label in labels:
+        #     boundaryIds.InsertNextId(label)
+
+        self.vmtkRenderer.Render()
+        surfaceActor.GetProperty().SetOpacity(0.1)
+        self.vmtkRenderer.Renderer.RemoveActor(labelsActor)
+
+        # return boundaries, boundaryIds
+        return boundaries
 
 
     def SolveHarmonicProblem(self,domainSurface,dirichletBoundaries):
-        from vmtk import vtkvmtk
 
         bcsArray = dirichletBoundaries.GetPointData().GetArray('DirichletBCs')
 
@@ -314,7 +440,7 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
 
         self.Boundaries = self.ExtractBoundaries(self.IncludeSurface)
 
-        self.DirichletBoundaries = self.DefineDirichletBCs(self.Boundaries)
+        self.DirichletBoundaries = self.DefineDirichletBCs(self.Boundaries,self.IncludeSurface)
 
         self.IncludeSurface = self.SolveHarmonicProblem(self.IncludeSurface, self.DirichletBoundaries)
 
