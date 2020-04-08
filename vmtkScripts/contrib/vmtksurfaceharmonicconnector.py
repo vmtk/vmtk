@@ -57,8 +57,7 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
         self.ProjectionFromInput = 0
         self.ProjectionFromReference = 0
 
-        self.CleanOutput = 1
-
+        self.Display = 0
         self.vmtkRenderer = None
 
 
@@ -68,7 +67,7 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
             ['ReferenceSurface','r','vtkPolyData',1,'','the reference surface with which you want to connect','vmtksurfacereader'],
-            ['ExcludeIds','excludeids','int',-1,'','entity ids of the input surface excluded by the deformation'],
+            ['ExcludeIds','excludeids','int',-1,'','entity ids of the input surface excluded by the deformation (a null deformation is imposed on it)'],
             ['ConnectorId','connectorid','int',1,'','entity id for the thin ring of elements connecting the two surfaces'],
             ['CellEntityIdsArrayName', 'entityidsarray', 'str', 1, '','name of the array where entity ids have been stored'],
             ['SkipRemeshing','skipremeshing','bool',1,'','toggle skipping remeshing the deformed part of the final surface'],
@@ -77,7 +76,7 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
             ['SkipConnection','skipconnection','bool',1,'','deform input surface onto the reference one without connecting to it'],
             ['ProjectionFromInput','iprojection','bool',1,'','toggle performing a projection of the input surface point-data arrays onto the output surface'],
             ['ProjectionFromReference','rprojection','bool',1,'','toggle performing a projection of the reference surface point-data arrays onto the output surface'],
-            ['CleanOutput','cleanoutput','bool',1,'','toggle cleaning the unused points'],
+            ['Display','display','bool',1,'','toggle rendering the harmonic solver'],
             ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer']
             ])
         self.SetOutputMembers([
@@ -132,8 +131,9 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
         harmonicSolver = vmtkcontribscripts.vmtkSurfaceHarmonicSolver()
         harmonicSolver.Surface = self.Surface
         harmonicSolver.InputRings = self.Ring
-        harmonicSolver.Interactive = False
-        harmonicSolver.VectorialEq = True
+        harmonicSolver.Interactive = 0
+        harmonicSolver.Display = self.Display
+        harmonicSolver.VectorialEq = 1
         harmonicSolver.SolutionArrayName = 'WarpVector'
         harmonicSolver.InputRingsBCsArrayName = 'DistanceToReference'
         harmonicSolver.InitWithZeroDirBCs = 1
@@ -177,7 +177,7 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
                 remeshing.TargetEdgeLength = self.RemeshingEdgeLength
                 remeshing.NumberOfIterations = int((self.RemeshingIterations+1)/2)
                 remeshing.ExcludeEntityIds = self.ExcludeIds
-                remeshing.CleanOutput = self.CleanOutput
+                remeshing.CleanOutput = 1
                 remeshing.Execute()
 
                 self.Surface = remeshing.Surface
