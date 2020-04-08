@@ -152,7 +152,7 @@ int vtkvmtkMeshWallShearRate::RequestData(
   double normal[3];
   double wallShearRate[3];
  
-  int i, j;
+  int i, j, k;
 
   if (!this->UseFullStrainRateTensor) {
     for (i=0; i<numberOfPoints; i++)
@@ -168,32 +168,42 @@ int vtkvmtkMeshWallShearRate::RequestData(
   }
   else {
 
-    /*=========================================================================
-    
-      Calculate shear rate tensor: S = 0.5 * (\nabla u + (\nabla u)^{T})
-      Calculate wall shear rate vector: \vec{\tau} = 2 * (S \cdot n - (n \cdot S \cdot n) \cdot n)
-      Reference: Equation A.4 from Matyka et. al. (Wall orientation and shear stress in the lattice Boltzmann model) http://dx.doi.org/10.1016/j.compfluid.2012.12.018
-    
-    =========================================================================*/
+    /**********************************************************************
+      Calculate strain rate tensor: E = 0.5 * (\nabla u + (\nabla u)^T)
+      Calculate wall shear rate vector: tau = -2 * E*n * (1-n^T*n)
+      Reference: Matyka et al., http://dx.doi.org/10.1016/j.compfluid.2012.12.018
+    **********************************************************************/
 
-    double nSn, Sn[3], strainRateTensor[3][3];
+    double normalShear, shearVector[3], strainRateTensor[9];
+
     for (i=0; i<numberOfPoints; i++)
     {
-      velocityGradientArray->GetTuple(i,velocityGradient); normalsArray->GetTuple(i,normal);
-      // compute the strain rate tensor
-      strainRateTensor[0][0] = 0.5*(velocityGradient[0] + velocityGradient[0]); strainRateTensor[0][1] = 0.5*(velocityGradient[1] + velocityGradient[3]); strainRateTensor[0][2] = 0.5*(velocityGradient[2] + velocityGradient[6]);
-      strainRateTensor[1][0] = 0.5*(velocityGradient[3] + velocityGradient[1]); strainRateTensor[1][1] = 0.5*(velocityGradient[4] + velocityGradient[4]); strainRateTensor[1][2] = 0.5*(velocityGradient[5] + velocityGradient[7]);
-      strainRateTensor[2][0] = 0.5*(velocityGradient[6] + velocityGradient[2]); strainRateTensor[2][1] = 0.5*(velocityGradient[7] + velocityGradient[5]); strainRateTensor[2][2] = 0.5*(velocityGradient[8] + velocityGradient[8]);
-      // determine the projection of strain rate tensor on normal direction: StrainRate.normal and normal.StrainRate.normal
-      nSn = 0.0;
+
+      // compute strain rate tensor
+      velocityGradientArray->GetTuple(i,velocityGradient);
       for (j=0; j<3; j++) {
-        Sn[j] = strainRateTensor[j][0] * normal[0] + strainRateTensor[j][1] * normal[1] + strainRateTensor[j][2] * normal[2];
-        nSn += normal[j] * Sn[j];
+	for (k=0; k<3; k++) {
+	  strainRateTensor[3*j + k] = 0.5 * (velocityGradient[3*j + k] + velocityGradient[3*k + j]);
+	}
       }
-      // normal vectors are outward facing, so negative of 2*(Sn[j] - nSn * normal[j]) should be the correct wall shear rate components
+
+      // compute shear rate vector and normal projection
+      normalsArray->GetTuple(i,normal);
+      normalShear = 0.0;
       for (j=0; j<3; j++) {
-        wallShearRate[j] = 2.0 * ( nSn * normal[j] - Sn[j] );
+	shearVector[j] = 0.0;
+	for (k=0; k<3; k++) {
+	  shearVector[j] += strainRateTensor[3*j + k] * normal[k];
+	}
+	normalShear += shearVector[j] * normal[j];
       }
+
+      // compute wall shear rate
+      for (j=0; j<3; j++) {
+	// sign due to normals pointing outwards
+	wallShearRate[j] = -2.0 * (shearVector[j] - normalShear*normal[j]);
+      }
+
       wallShearRateArray->SetTuple(i,wallShearRate);
     }
   }
