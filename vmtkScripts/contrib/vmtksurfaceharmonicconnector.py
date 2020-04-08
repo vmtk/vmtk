@@ -48,6 +48,9 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
         self.CellEntityIdsArrayName = 'CellEntityIds'
         self.CellEntityIdsArray = None
 
+        self.PreICP = 0
+        self.ICPIters = 100
+
         self.SkipRemeshing = 0
         self.RemeshingEdgeLength = 1.0
         self.RemeshingIterations = 10
@@ -70,6 +73,8 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
             ['ExcludeIds','excludeids','int',-1,'','entity ids of the input surface excluded by the deformation (a null deformation is imposed on it)'],
             ['ConnectorId','connectorid','int',1,'','entity id for the thin ring of elements connecting the two surfaces'],
             ['CellEntityIdsArrayName', 'entityidsarray', 'str', 1, '','name of the array where entity ids have been stored'],
+            ['PreICP','preicp','bool',1,'','toggle rigidly transforming the input surface using an icp registration on the rings to be connected, before computing the harmonic deformation'],
+            ['ICPIters','icpiterations','int',1,'(0,)','number of icp iterations'],
             ['SkipRemeshing','skipremeshing','bool',1,'','toggle skipping remeshing the deformed part of the final surface'],
             ['RemeshingEdgeLength','remeshingedgelength','float',1,'(0.0,)'],
             ['RemeshingIterations','remeshingiterations','int',1,'(0,)'],
@@ -106,7 +111,7 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
         if self.ReferenceSurface == None:
             self.PrintError('Error: no ReferenceSurface.')
 
-        # 1. Extract rings using vmtkSurfaceConnector
+        # 1. Extract rings using vmtkSurfaceConnector and optionally perform icp
         connector = vmtkcontribscripts.vmtkSurfaceConnector()
         connector.Surface = self.Surface
         connector.Surface2 = self.ReferenceSurface
@@ -117,6 +122,21 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
 
         [boundaries,boundaryIds,tmp] = connector.InteractiveRingExtraction(self.ReferenceSurface)
         self.ReferenceRing = boundaries[boundaryIds.GetId(0)]
+
+        if self.PreICP:
+            icp = vmtkscripts.vmtkICPRegistration()
+            icp.Surface = self.Ring
+            icp.ReferenceSurface = self.ReferenceRing
+            icp.MaximumNumberOfIterations = self.ICPIters
+            icp.Execute()
+            self.Ring = icp.Surface
+
+            transform = vmtkscripts.vmtkSurfaceTransform()
+            transform.Surface = self.Surface
+            transform.Matrix4x4 = icp.Matrix4x4
+            transform.Execute()
+            self.Surface = transform.Surface
+
 
         # 2. Compute distance from Ring to ReferenceRing
         distance = vmtkscripts.vmtkSurfaceDistance()
