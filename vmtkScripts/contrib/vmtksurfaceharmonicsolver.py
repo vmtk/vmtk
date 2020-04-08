@@ -61,6 +61,7 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
         self.CellEntityIdsArrayName = 'CellEntityIds'
         self.CellEntityIdsArray = None
 
+        self.Display = 1
         self.vmtkRenderer = None
         self.OwnRenderer = 0
 
@@ -78,6 +79,7 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
             ['ExcludeIdsArrayName', 'excludeidsarray', 'str', 1, '','name of the point-data array defined on the input surface that replaces the solution on the excluded ids; if None, the solutions is set to zero on these ids'],
             ['InitWithZeroDirBCs','zerodirbcs','bool',1,'','toggle initializing all the boundary rings with an homogeneous Dirichlet condition'],
             ['CellEntityIdsArrayName', 'entityidsarray', 'str', 1, '','name of the cell-data array where entity ids have been stored'],
+            ['Display','display','bool',1,'','toggle rendering'],
             ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer']
             ])
         self.SetOutputMembers([
@@ -195,7 +197,7 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
             dirichletBoundaries.GetPointData().AddArray(zeroBCsArray)
 
         if self.Interactive:
-            dirichletBoundaries = self.AddInteractiveBCs(boundaries,domain)
+            dirichletBoundaries = self.AddInteractiveBCs(boundaries,domain,dirichletBoundaries)
 
         if self.InputRings!=None:
             dirichletBoundaries = self.AddInputRingsBCs(dirichletBoundaries)
@@ -236,7 +238,7 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
         return 1
 
 
-    def AddInteractiveBCs(self,boundaries,domain):
+    def AddInteractiveBCs(self,boundaries,domain,dirichletBoundaries):
 
         rings = vtk.vtkPolyData()
         rings.DeepCopy(boundaries)
@@ -335,17 +337,34 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
         print('BCs Ids   : ',bcId)
         print('BCs values: ',bcValue)
 
-        # boundaryIds = vtk.vtkIdList()
+        if self.VectorialEq:
+            numberOfComponents = 3
+        else:
+            numberOfComponents = 1
 
-        # for label in labels:
-        #     boundaryIds.InsertNextId(label)
+        for i,item in enumerate(bcId):
+            constantBCsArray = vtk.vtkDoubleArray()
+            constantBCsArray.SetNumberOfComponents(numberOfComponents)
+            constantBCsArray.SetName('DirichletBCs')
+            constantBCsArray.SetNumberOfTuples(ringList[item].GetNumberOfPoints())
+            for k in range(numberOfComponents):
+                constantBCsArray.FillComponent(k,bcValue[i][k])
+            ringList[item].GetPointData().AddArray(constantBCsArray)
+            dirichletBoundaries = self.SurfaceAppend(ringList[item],dirichletBoundaries)
 
-        self.vmtkRenderer.Render()
+        # render the domain in transparency and the rings with the constant BC
         surfaceActor.GetProperty().SetOpacity(0.1)
-        self.vmtkRenderer.Renderer.RemoveActor(labelsActor)
 
-        # return boundaries, boundaryIds
-        return boundaries
+        self.vmtkRenderer.Renderer.RemoveActor(labelsActor)
+        self.vmtkRenderer.Renderer.RemoveActor(surfaceActor)
+
+        
+        # self.vmtkRenderer.Render()
+
+        if self.OwnRenderer and not self.Display:
+            self.vmtkRenderer.Deallocate()
+
+        return dirichletBoundaries
 
 
     def SolveHarmonicProblem(self,domainSurface,dirichletBoundaries):
@@ -431,6 +450,58 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
         return excludedDomain
 
 
+    def DisplayDirichletBCs(self,domain,dirichletBoundaries):
+        from vmtk import vmtkscripts
+
+        if not self.vmtkRenderer:
+            self.vmtkRenderer = vmtkrenderer.vmtkRenderer()
+            self.vmtkRenderer.Initialize()
+            self.OwnRenderer = 1
+
+        self.vmtkRenderer.RegisterScript(self)
+
+        # render the domain in transparency
+        surfaceMapper = vtk.vtkPolyDataMapper()
+        surfaceMapper.SetInputData(domain)
+        surfaceMapper.ScalarVisibilityOff()
+        surfaceActor = vtk.vtkActor()
+        surfaceActor.SetMapper(surfaceMapper)
+        surfaceActor.GetProperty().SetOpacity(0.25)
+        surfaceActor.GetProperty().SetColor(1.0,1.0,1.0)
+        self.vmtkRenderer.Renderer.AddActor(surfaceActor)
+
+        surfaceViewer = vmtkscripts.vmtkSurfaceViewer()
+        surfaceViewer.Surface = dirichletBoundaries
+        surfaceViewer.ArrayName = 'DirichletBCs'
+        surfaceViewer.Representation = 'surface'
+        surfaceViewer.LineWidth = 4
+        surfaceViewer.Legend = 1
+        surfaceViewer.LegendTitle = 'Dirichlet BCs'
+        surfaceViewer.ColorMap = 'rainbow'
+        surfaceViewer.vmtkRenderer = self.vmtkRenderer
+        surfaceViewer.Execute()
+
+        # self.vmtkRenderer.Renderer.RemoveActor(surfaceViewer.Surface)
+        self.vmtkRenderer.Renderer.RemoveActor(surfaceActor)
+        self.vmtkRenderer.Renderer.RemoveActor(surfaceViewer.ScalarBarActor)
+
+
+    def DisplaySolution(self,surface):
+        from vmtk import vmtkscripts
+        surfaceViewer = vmtkscripts.vmtkSurfaceViewer()
+        surfaceViewer.Surface = surface
+        surfaceViewer.ArrayName = self.SolutionArrayName
+        surfaceViewer.Representation = 'surface'
+        surfaceViewer.Legend = 1
+        surfaceViewer.LegendTitle = self.SolutionArrayName
+        surfaceViewer.ColorMap = 'rainbow'
+        surfaceViewer.vmtkRenderer = self.vmtkRenderer
+        surfaceViewer.Execute()
+
+        if self.OwnRenderer:
+            self.vmtkRenderer.Deallocate()
+
+
     def Execute(self):
 
         if self.Surface == None:
@@ -442,12 +513,18 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
 
         self.DirichletBoundaries = self.DefineDirichletBCs(self.Boundaries,self.IncludeSurface)
 
+        if self.Display:
+            self.DisplayDirichletBCs(self.IncludeSurface,self.DirichletBoundaries)
+
         self.IncludeSurface = self.SolveHarmonicProblem(self.IncludeSurface, self.DirichletBoundaries)
 
         if self.ExcludeSurface!=None:
             self.ExcludeSurface = self.ExtendSolutionOnExcludedDomain(self.ExcludeSurface)
 
         self.Surface = self.SurfaceAppend(self.IncludeSurface,self.ExcludeSurface)
+
+        if self.Display:
+            self.DisplaySolution(self.Surface)
 
 
 
