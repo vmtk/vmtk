@@ -38,6 +38,7 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
         self.Surface = None
         self.ExcludeSurface = None
         self.IncludeSurface = None
+        self.SurfaceForBCs = None
         
         self.Boundaries = None
         self.InputRings = None
@@ -55,6 +56,7 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
         self.ExcludeIds = []
         self.ExcludeIdsArrayName = None
         self.ExcludeIdsArray = None
+        self.ExcludeIdsForBCs = []
 
         self.InitWithZeroDirBCs = 0
 
@@ -75,8 +77,9 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
             ['SolutionArrayName', 'solutionarray', 'str', 1, '','name of the point-data array where the solution is stored'],
             ['InputRings','irings','vtkPolyData',1,'','the optional input rings where an array storing values to impose as BCs is defined; more than one ring can be passed, provided that they are stored all together in a unique vtkPolyData','vmtksurfacereader'],
             ['InputRingsBCsArrayName', 'ringsbcsarray', 'str', 1, '','name of the point-data array where the BCs values are stored'],
-            ['ExcludeIds','excludeids','int',-1,'','entity ids excluded by the solution of the equation'],
+            ['ExcludeIds','excludeids','int',-1,'','entity ids excluded by the equation domain'],
             ['ExcludeIdsArrayName', 'excludeidsarray', 'str', 1, '','name of the point-data array defined on the input surface that replaces the solution on the excluded ids; if None, the solutions is set to zero on these ids'],
+            ['ExcludeIdsForBCs','excludeidsforbcs','int',-1,'','entity ids excluded by the domain only for the definition of the rings where to set the Dirichlet BCs; these ids are not excluded by the equation domain; this options has some effects only if "Interactive" or "InitWithZeroDirBCs" are true'],
             ['InitWithZeroDirBCs','zerodirbcs','bool',1,'','toggle initializing all the boundary rings with an homogeneous Dirichlet condition'],
             ['CellEntityIdsArrayName', 'entityidsarray', 'str', 1, '','name of the cell-data array where entity ids have been stored'],
             ['Display','display','bool',1,'','toggle rendering'],
@@ -123,7 +126,7 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
 
 
     def ExtractDomain(self,surface,excludeIds):
-        if self.ExcludeIds!=[]:
+        if excludeIds!=[]:
 
             self.CellEntityIdsArray = self.Surface.GetCellData().GetArray(self.CellEntityIdsArrayName)
 
@@ -508,13 +511,15 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
             self.PrintError('Error: no Surface.')
 
         [self.IncludeSurface, self.ExcludeSurface] = self.ExtractDomain(self.Surface,self.ExcludeIds)
+        self.ExcludeIdsForBCs.extend(self.ExcludeIds)
+        self.SurfaceForBCs = self.ExtractDomain(self.Surface,self.ExcludeIdsForBCs)[0]
 
-        self.Boundaries = self.ExtractBoundaries(self.IncludeSurface)
+        self.Boundaries = self.ExtractBoundaries(self.SurfaceForBCs)
 
-        self.DirichletBoundaries = self.DefineDirichletBCs(self.Boundaries,self.IncludeSurface)
+        self.DirichletBoundaries = self.DefineDirichletBCs(self.Boundaries,self.SurfaceForBCs)
 
         if self.Display:
-            self.DisplayDirichletBCs(self.IncludeSurface,self.DirichletBoundaries)
+            self.DisplayDirichletBCs(self.SurfaceForBCs,self.DirichletBoundaries)
 
         self.IncludeSurface = self.SolveHarmonicProblem(self.IncludeSurface, self.DirichletBoundaries)
 
