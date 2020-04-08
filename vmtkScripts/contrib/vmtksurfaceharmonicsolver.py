@@ -463,6 +463,21 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
 
         self.vmtkRenderer.RegisterScript(self)
 
+        arrayToDisplay = 'DirichletBCs'
+        arrayLegend = arrayToDisplay
+
+        if self.VectorialEq:
+            calculator = vtk.vtkArrayCalculator()
+            calculator.SetInputData(dirichletBoundaries)
+            calculator.AddVectorArrayName('DirichletBCs')
+            calculator.SetFunction('mag(DirichletBCs)')
+            calculator.SetResultArrayName('DirichletBCsMag')
+            calculator.Update()
+            dirichletBoundaries = calculator.GetOutput()
+
+            arrayToDisplay += 'Mag'
+            arrayLegend = '|'+arrayLegend+'|'
+
         # render the domain in transparency
         surfaceMapper = vtk.vtkPolyDataMapper()
         surfaceMapper.SetInputData(domain)
@@ -475,11 +490,11 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
 
         surfaceViewer = vmtkscripts.vmtkSurfaceViewer()
         surfaceViewer.Surface = dirichletBoundaries
-        surfaceViewer.ArrayName = 'DirichletBCs'
+        surfaceViewer.ArrayName = arrayToDisplay
         surfaceViewer.Representation = 'surface'
         surfaceViewer.LineWidth = 3
         surfaceViewer.Legend = 1
-        surfaceViewer.LegendTitle = 'Dirichlet BCs'
+        surfaceViewer.LegendTitle = arrayLegend
         surfaceViewer.ColorMap = 'rainbow'
         surfaceViewer.vmtkRenderer = self.vmtkRenderer
         surfaceViewer.Execute()
@@ -493,25 +508,50 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
     def DisplaySolution(self,surface,dirichletBoundaries):
         from vmtk import vmtkscripts
 
+        surfaceArrayToDisplay = self.SolutionArrayName
+        ringArrayToDisplay = 'DirichletBCs'
+        surfaceArrayLegend = self.SolutionArrayName
+
+        if self.VectorialEq:
+            calculator = vtk.vtkArrayCalculator()
+            calculator.SetInputData(surface)
+            calculator.AddVectorArrayName(self.SolutionArrayName)
+            calculator.SetFunction('mag('+self.SolutionArrayName+')')
+            calculator.SetResultArrayName(self.SolutionArrayName+'Mag')
+            calculator.Update()
+            surface = calculator.GetOutput()
+
+            calculator2 = vtk.vtkArrayCalculator()
+            calculator2.SetInputData(dirichletBoundaries)
+            calculator2.AddVectorArrayName('DirichletBCs')
+            calculator2.SetFunction('mag(DirichletBCs)')
+            calculator2.SetResultArrayName('DirichletBCsMag')
+            calculator2.Update()
+            dirichletBoundaries = calculator2.GetOutput()
+
+            surfaceArrayToDisplay += 'Mag'
+            ringArrayToDisplay += 'Mag'
+            surfaceArrayLegend = '|'+surfaceArrayLegend+'|'
+
+        scalarRange = list(surface.GetPointData().GetArray(surfaceArrayToDisplay).GetRange(0))    
+
         surfaceViewer = vmtkscripts.vmtkSurfaceViewer()
         surfaceViewer.Surface = surface
-        surfaceViewer.ArrayName = self.SolutionArrayName
+        surfaceViewer.ArrayName = surfaceArrayToDisplay
         surfaceViewer.Representation = 'surface'
         surfaceViewer.Legend = 1
-        surfaceViewer.LegendTitle = self.SolutionArrayName
+        surfaceViewer.LegendTitle = surfaceArrayLegend
         surfaceViewer.ColorMap = 'rainbow'
         surfaceViewer.vmtkRenderer = self.vmtkRenderer
         surfaceViewer.Display = 0
         surfaceViewer.Execute()
 
-        scalarRange = list(surface.GetPointData().GetArray(self.SolutionArrayName).GetRange(-1))
-
         surfaceViewer2 = vmtkscripts.vmtkSurfaceViewer()
         surfaceViewer2.Surface = dirichletBoundaries
-        surfaceViewer2.ArrayName = 'DirichletBCs'
+        surfaceViewer2.ArrayName = ringArrayToDisplay
         surfaceViewer2.ScalarRange = scalarRange
         surfaceViewer2.Representation = 'surface'
-        surfaceViewer2.LineWidth = 5
+        surfaceViewer2.LineWidth = 6
         surfaceViewer2.Legend = 0
         surfaceViewer2.ColorMap = 'rainbow'
         surfaceViewer2.vmtkRenderer = self.vmtkRenderer
