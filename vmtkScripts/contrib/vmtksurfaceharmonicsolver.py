@@ -477,7 +477,7 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
         surfaceViewer.Surface = dirichletBoundaries
         surfaceViewer.ArrayName = 'DirichletBCs'
         surfaceViewer.Representation = 'surface'
-        surfaceViewer.LineWidth = 4
+        surfaceViewer.LineWidth = 3
         surfaceViewer.Legend = 1
         surfaceViewer.LegendTitle = 'Dirichlet BCs'
         surfaceViewer.ColorMap = 'rainbow'
@@ -486,11 +486,13 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
 
         # self.vmtkRenderer.Renderer.RemoveActor(surfaceViewer.Surface)
         self.vmtkRenderer.Renderer.RemoveActor(surfaceActor)
+        self.vmtkRenderer.Renderer.RemoveActor(surfaceViewer.Actor)
         self.vmtkRenderer.Renderer.RemoveActor(surfaceViewer.ScalarBarActor)
 
 
-    def DisplaySolution(self,surface):
+    def DisplaySolution(self,surface,dirichletBoundaries):
         from vmtk import vmtkscripts
+
         surfaceViewer = vmtkscripts.vmtkSurfaceViewer()
         surfaceViewer.Surface = surface
         surfaceViewer.ArrayName = self.SolutionArrayName
@@ -499,7 +501,21 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
         surfaceViewer.LegendTitle = self.SolutionArrayName
         surfaceViewer.ColorMap = 'rainbow'
         surfaceViewer.vmtkRenderer = self.vmtkRenderer
+        surfaceViewer.Display = 0
         surfaceViewer.Execute()
+
+        scalarRange = list(surface.GetPointData().GetArray(self.SolutionArrayName).GetRange(-1))
+
+        surfaceViewer2 = vmtkscripts.vmtkSurfaceViewer()
+        surfaceViewer2.Surface = dirichletBoundaries
+        surfaceViewer2.ArrayName = 'DirichletBCs'
+        surfaceViewer2.ScalarRange = scalarRange
+        surfaceViewer2.Representation = 'surface'
+        surfaceViewer2.LineWidth = 5
+        surfaceViewer2.Legend = 0
+        surfaceViewer2.ColorMap = 'rainbow'
+        surfaceViewer2.vmtkRenderer = self.vmtkRenderer
+        surfaceViewer2.Execute()
 
         if self.OwnRenderer:
             self.vmtkRenderer.Deallocate()
@@ -529,7 +545,7 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
         self.Surface = self.SurfaceAppend(self.IncludeSurface,self.ExcludeSurface)
 
         if self.Display:
-            self.DisplaySolution(self.Surface)
+            self.DisplaySolution(self.Surface,self.DirichletBoundaries)
 
 
 
