@@ -79,7 +79,7 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
             ['InputRingsBCsArrayName', 'ringsbcsarray', 'str', 1, '','name of the point-data array where the BCs values are stored'],
             ['ExcludeIds','excludeids','int',-1,'','entity ids excluded by the equation domain'],
             ['ExcludeIdsArrayName', 'excludeidsarray', 'str', 1, '','name of the point-data array defined on the input surface that replaces the solution on the excluded ids; if None, the solutions is set to zero on these ids'],
-            ['ExcludeIdsForBCs','excludeidsforbcs','int',-1,'','entity ids excluded by the domain only for the definition of the rings where to set the Dirichlet BCs; these ids are not excluded by the equation domain; this options has some effects only if "Interactive" or "InitWithZeroDirBCs" are true'],
+            ['ExcludeIdsForBCs','excludeidsforbcs','int',-1,'','entity ids excluded by the domain only for the definition of the rings where to set the Dirichlet BCs; these ids are not excluded by the equation domain; this option only takes effect if "Interactive" or "InitWithZeroDirBCs" are true'],
             ['InitWithZeroDirBCs','zerodirbcs','bool',1,'','toggle initializing all the boundary rings with an homogeneous Dirichlet condition'],
             ['CellEntityIdsArrayName', 'entityidsarray', 'str', 1, '','name of the cell-data array where entity ids have been stored'],
             ['Display','display','bool',1,'','toggle rendering'],
