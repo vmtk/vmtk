@@ -45,6 +45,8 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
         self.ExcludeIds = []
         self.ConnectorId = 1
 
+        self.UseNullDirichletBCs = 1
+
         self.CellEntityIdsArrayName = 'CellEntityIds'
         self.CellEntityIdsArray = None
 
@@ -70,7 +72,8 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
             ['ReferenceSurface','r','vtkPolyData',1,'','the reference surface with which you want to connect','vmtksurfacereader'],
-            ['ExcludeIds','excludeids','int',-1,'','entity ids of the input surface excluded by the deformation (a null deformation is imposed on it)'],
+            ['ExcludeIds','excludeids','int',-1,'','entity ids of the input surface excluded by the deformation, where a null deformation is imposed, but only if "dirichletbcs" is true)'],
+            ['UseNullDirichletBCs','dirichletbcs','bool',1,'','toggle imposing homogeneous Dirichlet BCs at the boundary rings of the deformation domain; note that these BCs can be applied only if, on the deformation domain, there is at least a boundary ring other than the one to be connected'],
             ['ConnectorId','connectorid','int',1,'','entity id for the thin ring of elements connecting the two surfaces'],
             ['CellEntityIdsArrayName', 'entityidsarray', 'str', 1, '','name of the array where entity ids have been stored'],
             ['PreICP','preicp','bool',1,'','toggle rigidly transforming the input surface using an icp registration on the rings to be connected, before computing the harmonic deformation'],
@@ -156,8 +159,11 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
         harmonicSolver.VectorialEq = 1
         harmonicSolver.SolutionArrayName = 'WarpVector'
         harmonicSolver.InputRingsBCsArrayName = 'DistanceToReference'
-        harmonicSolver.InitWithZeroDirBCs = 1
-        harmonicSolver.ExcludeIds = self.ExcludeIds
+        if self.UseNullDirichletBCs:
+            harmonicSolver.InitWithZeroDirBCs = 1
+            harmonicSolver.ExcludeIds = self.ExcludeIds
+        else:
+            harmonicSolver.InitWithZeroDirBCs = 0
         harmonicSolver.Execute()
 
         self.Surface = harmonicSolver.Surface
@@ -196,7 +202,8 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
                 remeshing.ElementSizeMode = 'edgelength'
                 remeshing.TargetEdgeLength = self.RemeshingEdgeLength
                 remeshing.NumberOfIterations = int((self.RemeshingIterations+1)/2)
-                remeshing.ExcludeEntityIds = self.ExcludeIds
+                if self.UseNullDirichletBCs:
+                    remeshing.ExcludeEntityIds = self.ExcludeIds
                 remeshing.CleanOutput = 1
                 remeshing.Execute()
 
