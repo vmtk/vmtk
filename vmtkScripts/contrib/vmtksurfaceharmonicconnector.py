@@ -68,11 +68,11 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
 
 
         self.SetScriptName('vmtksurfaceharmonicconnector')
-        self.SetScriptDoc('connect to a reference surface harmonically deform the input surface onto the reference one; note that the deformation depends on the distance between two selected boundary rings of the two surfaces; thus, the surfaces must be open surfaces; if a surface have more than a boundary ring, an interactive interface allows to select the ring to connect')
+        self.SetScriptDoc('connect to a reference surface harmonically deforming the input surface onto the reference one; note that the deformation depends on the distance between two selected boundary rings of the two surfaces; thus, the surfaces must be open surfaces; if a surface have more than a boundary ring, an interactive interface allows to select the rings to be connected')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
             ['ReferenceSurface','r','vtkPolyData',1,'','the reference surface with which you want to connect','vmtksurfacereader'],
-            ['ExcludeIds','excludeids','int',-1,'','entity ids of the input surface excluded by the deformation, where a null deformation is imposed, but only if "dirichletbcs" is true)'],
+            ['ExcludeIds','excludeids','int',-1,'','entity ids of the input surface excluded by the deformation, where a null deformation is imposed; this option only takes effect if "dirichletbcs" is true'],
             ['UseNullDirichletBCs','dirichletbcs','bool',1,'','toggle imposing homogeneous Dirichlet BCs at the boundary rings of the deformation domain; note that these BCs can be applied only if, on the deformation domain, there is at least a boundary ring other than the one to be connected'],
             ['ConnectorId','connectorid','int',1,'','entity id for the thin ring of elements connecting the two surfaces'],
             ['CellEntityIdsArrayName', 'entityidsarray', 'str', 1, '','name of the array where entity ids have been stored'],
@@ -164,6 +164,7 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
             harmonicSolver.ExcludeIds = self.ExcludeIds
         else:
             harmonicSolver.InitWithZeroDirBCs = 0
+        harmonicSolver.CellEntityIdsArrayName = self.CellEntityIdsArrayName
         harmonicSolver.Execute()
 
         self.Surface = harmonicSolver.Surface
