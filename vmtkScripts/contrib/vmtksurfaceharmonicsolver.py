@@ -92,13 +92,14 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
             ])
 
 
-    def SurfaceThreshold(self,surface,low,high,arrayName=None):
+    def SurfaceThreshold(self,surface,low,high,arrayName=None,cellData=True):
         from vmtk import vmtkcontribscripts
         if arrayName==None:
             arrayName=self.CellEntityIdsArrayName
         th = vmtkcontribscripts.vmtkThreshold()
         th.Surface = surface
-        th.CellEntityIdsArrayName = arrayName
+        th.ArrayName = arrayName
+        th.CellData = cellData
         th.LowThreshold = low
         th.HighThreshold = high
         th.Execute()
