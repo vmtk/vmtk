@@ -303,7 +303,8 @@ class vmtkSurfaceTagger(pypes.pypeScript):
             surf = self.ArrayTagger(surf,arrayname,tag,rangevalues)
             th = vmtkcontribscripts.vmtkThreshold()
             th.Surface = surf
-            th.CellEntityIdsArrayName = self.CellEntityIdsArrayName
+            th.ArrayName = self.CellEntityIdsArrayName
+            th.CellData = True
             th.LowThreshold = tag
             th.HighThreshold = tag
             th.Execute()
