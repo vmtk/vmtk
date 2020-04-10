@@ -106,6 +106,7 @@ class vmtkSurfaceHarmonicExtension(pypes.pypeScript):
         self.PrintLog("Output arrays: "+str(outputArrayNames))
 
         for i in range(len(inputArrayNames)):
+            self.PrintLog('\nProcessing array "'+inputArrayNames[i]+'"\n')
             inputArray = self.Surface.GetPointData().GetArray(inputArrayNames[i])
             numberOfComponents = inputArray.GetNumberOfComponents()
 
@@ -128,10 +129,22 @@ class vmtkSurfaceHarmonicExtension(pypes.pypeScript):
             harmonicSolver.Display = self.Display
             harmonicSolver.vmtkRenderer = self.vmtkRenderer
 
-            # extract rings between includedDomain and excludedDomain 
+            # extract rings between includedDomain and excludedDomain
+            # using distance between the two sets of boundary rings
             [includedDomain, excludedDomain] = harmonicSolver.ExtractDomain(self.Surface,self.ExcludeIds)
-            rings = harmonicSolver.ExtractBoundaries(excludedDomain) # THIS IS TO FIX
-            harmonicSolver.InputRings = rings
+            excludedDomainRings = harmonicSolver.ExtractBoundaries(excludedDomain)
+            includedDomainRings = harmonicSolver.ExtractBoundaries(includedDomain)
+
+            distance = vmtkscripts.vmtkSurfaceDistance()
+            distance.Surface = excludedDomainRings
+            distance.ReferenceSurface = includedDomainRings
+            distance.DistanceArrayName = 'distanceFromIncludedRings'
+            distance.Execute()
+            excludedDomainRings = distance.Surface
+
+            ringsBetween = harmonicSolver.SurfaceThreshold(excludedDomainRings,0,0,'distanceFromIncludedRings',False)
+
+            harmonicSolver.InputRings = ringsBetween
             harmonicSolver.InputRingsBCsArrayName = inputArrayNames[i]
 
             harmonicSolver.Execute()
