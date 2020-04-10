@@ -137,7 +137,6 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
             for i in range(self.Surface.GetNumberOfCells()):
                 ids.add(int(self.CellEntityIdsArray.GetComponent(i,0)))
             ids = sorted(ids)
-            self.PrintLog('Entity Ids:\t'+str(ids))
 
             for item in excludeIds:
                 if item not in ids:
@@ -147,8 +146,9 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
                 if item not in excludeIds:
                     includeIds.append(item)
 
-            self.PrintLog('Excluded Ids:\t'+str(excludeIds))
-            self.PrintLog('Included Ids:\t'+str(includeIds))
+            # self.PrintLog('Entity Ids:\t'+str(ids))
+            # self.PrintLog('Excluded Ids:\t'+str(excludeIds))
+            # self.PrintLog('Included Ids:\t'+str(includeIds))
 
             excludeSurface = None
             includeSurface = None
@@ -569,6 +569,7 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
 
         [self.IncludeSurface, self.ExcludeSurface] = self.ExtractDomain(self.Surface,self.ExcludeIds)
         self.ExcludeIdsForBCs.extend(self.ExcludeIds)
+        self.ExcludeIdsForBCs = list(dict.fromkeys(self.ExcludeIdsForBCs)) # remove repeated elements
         self.SurfaceForBCs = self.ExtractDomain(self.Surface,self.ExcludeIdsForBCs)[0]
 
         self.Boundaries = self.ExtractBoundaries(self.SurfaceForBCs)
