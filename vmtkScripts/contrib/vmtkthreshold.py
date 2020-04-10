@@ -17,7 +17,8 @@ class vmtkThreshold(pypes.pypeScript):
 
         self.Surface = None
         self.Mesh = None
-        self.CellEntityIdsArrayName = 'CellEntityIds'
+        self.ArrayName = 'CellEntityIds'
+        self.CellData = 1
         self.LowThreshold = 0
         self.HighThreshold = 1
 
@@ -27,8 +28,9 @@ class vmtkThreshold(pypes.pypeScript):
                  'the input surface', 'vmtksurfacereader'],
                 ['Mesh', 'imesh', 'vtkUnstructuredGrid', 1, '',
                  'the input mesh', 'vmtkmeshreader'],
-                ['CellEntityIdsArrayName', 'entityidsarray', 'str', 1, '',
-                 'name of the array where entity ids have been stored'],
+                ['ArrayName', 'array', 'str', 1, '',
+                 'array to process'],
+                ['CellData','celldata','bool',1,'','toggle processing a cell-data or a point-data array'],
                 ['LowThreshold', 'lowthreshold', 'float', 1, '',
                  'lower threshold for surface filtering', ''],
                 ['HighThreshold', 'highthreshold', 'float', 1, '',
@@ -39,8 +41,8 @@ class vmtkThreshold(pypes.pypeScript):
                  'the output surface', 'vmtksurfacewriter'],
                 ['Mesh', 'omesh', 'vtkUnstructuredGrid', 1, '',
                  'the output mesh', 'vmtkmeshwriter'],
-                ['CellEntityIdsArrayName', 'entityidsarray', 'str', 1, '',
-                 'name of the array where entity ids have been stored'],
+                ['ArrayName', 'array', 'str', 1, '',
+                 'processed array name'],
                 ])
 
     def Execute(self):
@@ -53,7 +55,10 @@ class vmtkThreshold(pypes.pypeScript):
 
         th = vtk.vtkThreshold()
         th.SetInputData(input)
-        th.SetInputArrayToProcess(0, 0, 0, 1, self.CellEntityIdsArrayName)
+        if self.CellData:
+            th.SetInputArrayToProcess(0, 0, 0, 1, self.ArrayName)
+        else:
+            th.SetInputArrayToProcess(0, 0, 0, 0, self.ArrayName)
         th.ThresholdBetween(self.LowThreshold, self.HighThreshold)
         th.Update()
 
