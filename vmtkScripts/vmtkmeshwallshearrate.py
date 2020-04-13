@@ -13,6 +13,10 @@
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
 ##      PURPOSE.  See the above copyright notices for more information.
 
+## Note: full tensor WSR computation was contributed by
+##       Ulf Shiller & Mehrdad Yousefi, Clemson University
+##       Mehdi Najafi, University of Toronto
+
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 from vmtk import vtkvmtk
 import vtk
