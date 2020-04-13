@@ -46,6 +46,10 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkMeshWallShearRate : public vtkPolyDataAlgorith
   vtkGetMacro(ComputeIndividualPartialDerivatives,int);
   vtkBooleanMacro(ComputeIndividualPartialDerivatives,int);
 
+  vtkSetMacro(UseFullStrainRateTensor,int);
+  vtkGetMacro(UseFullStrainRateTensor,int);
+  vtkBooleanMacro(UseFullStrainRateTensor,int);
+
   vtkSetMacro(ConvergenceTolerance,double);
   vtkGetMacro(ConvergenceTolerance,double);
 
@@ -66,6 +70,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkMeshWallShearRate : public vtkPolyDataAlgorith
 
   double ConvergenceTolerance;
   int QuadratureOrder;
+  int UseFullStrainRateTensor;
 
   private:
   vtkvmtkMeshWallShearRate(const vtkvmtkMeshWallShearRate&);  // Not implemented.

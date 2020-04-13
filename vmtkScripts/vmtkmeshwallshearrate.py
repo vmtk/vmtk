@@ -13,6 +13,10 @@
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
 ##      PURPOSE.  See the above copyright notices for more information.
 
+## Note: full tensor WSR computation was contributed by
+##       Ulf Shiller & Mehrdad Yousefi, Clemson University
+##       Mehdi Najafi, University of Toronto
+
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 from vmtk import vtkvmtk
 import vtk
@@ -35,6 +39,7 @@ class vmtkMeshWallShearRate(pypes.pypeScript):
 
         self.ConvergenceTolerance = 1E-6
         self.QuadratureOrder = 3
+        self.UseFullStrainRateTensor = 0
 
         self.SetScriptName('vmtkmeshwallshearrate')
         self.SetScriptDoc('compute wall shear rate from a velocity field, producing a surface in output')
@@ -43,6 +48,7 @@ class vmtkMeshWallShearRate(pypes.pypeScript):
             ['VelocityArrayName','velocityarray','str',1,'',''],
             ['WallShearRateArrayName','wsrarray','str',1,'',''],
             ['ConvergenceTolerance','tolerance','float',1,'',''],
+            ['UseFullStrainRateTensor','fulltensor','bool',1,'',''],
             ['QuadratureOrder','quadratureorder','int',1,'','']
             ])
         self.SetOutputMembers([
@@ -60,6 +66,7 @@ class vmtkMeshWallShearRate(pypes.pypeScript):
         wallShearRateFilter.SetWallShearRateArrayName(self.WallShearRateArrayName)
         wallShearRateFilter.SetConvergenceTolerance(self.ConvergenceTolerance)
         wallShearRateFilter.SetQuadratureOrder(self.QuadratureOrder)
+        wallShearRateFilter.SetUseFullStrainRateTensor(self.UseFullStrainRateTensor)
         wallShearRateFilter.ComputeIndividualPartialDerivativesOn()
         wallShearRateFilter.Update()
 
