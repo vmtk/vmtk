@@ -50,7 +50,7 @@ class vmtkSurfaceModeller2(pypes.pypeScript):
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
             ['Spacing','samplespacing','float',3,'(0.0,)','spacing of the output image'],
             ['CorrectSpacing','correctspacing','bool',1,'','correct spacing in order to fit exactly the bounding box of the surface'],
-            ['Bounds','bounds','float',6,'(0.0,)','the output image bounding box (if not set, the input surface bounding box is used)'],
+            ['Bounds','bounds','float',6,'','the output image bounding box (if not set, the input surface bounding box is used)'],
             ['ImageVoxelExpansion','imagevoxelexpansion','int',1,'(0.0,)','expansion (in term of number of voxels) of the resulting image bounds compared to the input surface bounding box (only if bounds are not directly passed as input)'],
             ['ExpansionDirections','expansiondirections','bool',6,'','expand only in true direction of this array [-x +x -y +y -z +z]'],
             ['Binary','binary','bool',1,'','binary image as output (overwrite the signeddistance value)'],
