@@ -5,6 +5,7 @@ set(CONTRIB_SCRIPTS_SRCS
     vmtkcenterlinestonumpy.py
     vmtkdijkstradistancetopoints.py
     vmtkdistancetospheres.py
+    vmtkendpointsections.py
     vmtkgeodesicsurfaceresolution.py
     vmtkimagetonumpy.py
     vmtkmeshaddexternallayer.py
