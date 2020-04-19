@@ -6,6 +6,7 @@ __all__ = [
     'vmtk.vmtkdijkstradistancetopoints',
     'vmtk.vmtkdistancetospheres',
     'vmtk.vmtkentityrenumber',
+    'vmtk.vmtkendpointsections',
     'vmtk.vmtkgeodesicsurfaceresolution',
     'vmtk.vmtkimagetonumpy',
     'vmtk.vmtkmeshaddexternallayer',
