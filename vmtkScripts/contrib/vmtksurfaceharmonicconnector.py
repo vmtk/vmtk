@@ -37,6 +37,9 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
         self.DeformedSurface = None
         self.ReferenceSurface = None
 
+        self.Valve = None
+        self.ValveDistanceThreshold = 1
+
         self.Ring = None
         self.ReferenceRing = None
         self.RingsForBCs = None
@@ -72,10 +75,12 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
             ['ReferenceSurface','r','vtkPolyData',1,'','the reference surface with which you want to connect','vmtksurfacereader'],
+            ['Valve','ivalve','vtkPolyData',1,'','an optional additional surface near the input surface (e.g. a valve) deformed coherently with the input surface','vmtksurfacereader'],
             ['ExcludeIds','excludeids','int',-1,'','entity ids of the input surface excluded by the deformation, where a null deformation is imposed; this option only takes effect if "dirichletbcs" is true'],
             ['UseNullDirichletBCs','dirichletbcs','bool',1,'','toggle imposing homogeneous Dirichlet BCs at the boundary rings of the deformation domain; note that these BCs can be applied only if, on the deformation domain, there is at least a boundary ring other than the one to be connected'],
             ['ConnectorId','connectorid','int',1,'','entity id for the thin ring of elements connecting the two surfaces'],
             ['CellEntityIdsArrayName', 'entityidsarray', 'str', 1, '','name of the array where entity ids have been stored'],
+            ['ValveDistanceThreshold','valvedistancethreshold','float',1,'(0,)','if Valve is set, distance threshold from the input surface used to set the region where to impose a Dirichlet BC on it'],
             ['PreICP','preicp','bool',1,'','toggle rigidly transforming the input surface using an icp registration on the rings to be connected, before computing the harmonic deformation'],
             ['ICPIters','icpiterations','int',1,'(0,)','number of icp iterations'],
             ['SkipRemeshing','skipremeshing','bool',1,'','toggle skipping remeshing the deformed part of the final surface'],
@@ -90,6 +95,7 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
         self.SetOutputMembers([
             ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter'],
             ['DeformedSurface','odeformed','vtkPolyData',1,'','the deformed surface before connection and remeshing','vmtksurfacewriter'],
+            ['Valve','ovalve','vtkPolyData',1,'','the deformed additional surface (e.g. a valve)','vmtksurfacewriter'],
             ['RingsForBCs','obcs','vtkPolyData',1,'','the rings containing the array used for BCs of the Laplace-Beltrami equation','vmtksurfacewriter']
             ])
 
@@ -140,6 +146,11 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
             transform.Execute()
             self.Surface = transform.Surface
 
+            if self.Valve != None:
+                transform.Surface = self.Valve
+                transform.Execute()
+                self.Valve = transform.Surface
+
 
         # 2. Compute distance from Ring to ReferenceRing
         distance = vmtkscripts.vmtkSurfaceDistance()
@@ -170,6 +181,46 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
         self.Surface = harmonicSolver.Surface
         self.RingsForBCs = harmonicSolver.DirichletBoundaries
 
+        if self.Valve != None:
+            print("\n\n\nsolving for valve\n\n\n")
+
+            computeDistance = vmtkscripts.vmtkSurfaceDistance()
+            computeDistance.Surface = self.Valve
+            computeDistance.ReferenceSurface = self.Surface
+            computeDistance.DistanceArrayName = 'DistanceFromSurface'
+            computeDistance.Execute()
+            self.Valve = computeDistance.Surface
+
+            threshold = vmtkcontribscripts.vmtkThreshold()
+            threshold.Surface = self.Valve
+            threshold.ArrayName = 'DistanceFromSurface'
+            threshold.CellData = 0
+            threshold.LowThreshold = -1 # distance is positive
+            threshold.HighThreshold = self.ValveDistanceThreshold
+            threshold.Execute()
+            valveForBCs = threshold.Surface
+
+            projector = vmtkscripts.vmtkSurfaceProjection()
+            projector.Surface = valveForBCs
+            projector.ReferenceSurface = self.Surface
+            projector.Execute()
+            valveForBCs = projector.Surface
+
+            harmonicValveSolver = vmtkcontribscripts.vmtkSurfaceHarmonicSolver()
+            harmonicValveSolver.Surface = self.Valve
+            harmonicValveSolver.InputRings = valveForBCs
+            harmonicValveSolver.Interactive = 0
+            harmonicValveSolver.Display = self.Display
+            harmonicValveSolver.VectorialEq = 1
+            harmonicValveSolver.SolutionArrayName = 'WarpVector'
+            harmonicValveSolver.InputRingsBCsArrayName = 'WarpVector'
+            harmonicValveSolver.InitWithZeroDirBCs = 0
+            harmonicValveSolver.CellEntityIdsArrayName = self.CellEntityIdsArrayName
+            harmonicValveSolver.ExcludeIds = []
+            harmonicValveSolver.Execute()
+            self.Valve = harmonicValveSolver.Surface
+
+
         # 4. Warp by vector the surface
         warper = vmtkscripts.vmtkSurfaceWarpByVector()
         warper.Surface = self.Surface
@@ -177,6 +228,11 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
         warper.Execute()
         self.Surface = warper.Surface
         self.DeformedSurface = self.Surface
+
+        if self.Valve!=None:
+            warper.Surface = self.Valve
+            warper.Execute()
+            self.Valve = warper.Surface
 
         # 5. Connecting to the reference surface
         if not self.SkipConnection:
