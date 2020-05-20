@@ -43,6 +43,7 @@ class vmtkSurfaceTagger(pypes.pypeScript):
         self.OutsideTag = 1
         self.OverwriteOutsideTag = 0
         self.InsideOut = 0
+        self.TagsToModify = None
         self.ConnectivityOffset = 1
         self.TagSmallestRegion = 1
         self.CleanOutput = 1
@@ -67,7 +68,8 @@ class vmtkSurfaceTagger(pypes.pypeScript):
             ['OverwriteOutsideTag','overwriteoutside','bool',1,'','overwrite outside value also when the CellEntityIdsArray already exists in the input surface'],
             ['OutsideTag','outside','int',1,'','tag of the outside region (i.e. where the Array is greater than Value)'],
             ['InsideOut','insideout','bool',1,'','toggle switching inside and outside tags ("cliparray" and "array" methods, only when specifying value and not range)'],
-            ['ConnectivityOffset','offset','int',1,'','offset added to the entityidsarray of each disconnected parts of each input tag (connectivity only)'],
+            ['TagsToModify','tagstomodify','int',-1,'','if set, new tag is created only in this subset of existing tags ("cliparray" only)'],
+            ['ConnectivityOffset','offset','int',1,'','offset added to the entityidsarray of each disconnected parts of each input tag ("connectivity" only)'],
             ['TagSmallestRegion','tagsmallestregion','bool',1,'','toggle tagging the smallest or the largest region (drawing only)'],
             ['CleanOutput','cleanoutput','bool',1,'','toggle cleaning the unused points'],
             ['PrintTags','printtags','bool',1,'','toggle printing the set of tags']
@@ -113,7 +115,12 @@ class vmtkSurfaceTagger(pypes.pypeScript):
             insideCellEntityIdsArray = insideSurface.GetCellData().GetArray( self.CellEntityIdsArrayName )
             outsideCellEntityIdsArray = outsideSurface.GetCellData().GetArray( self.CellEntityIdsArrayName )
 
-            insideCellEntityIdsArray.FillComponent(0,self.InsideTag)
+            if self.TagsToModify!=None:
+                for i in range(insideCellEntityIdsArray.GetNumberOfTuples()):
+                    if insideCellEntityIdsArray.GetValue(i) in self.TagsToModify:
+                        insideCellEntityIdsArray.SetValue(i,self.InsideTag)
+            else:
+                insideCellEntityIdsArray.FillComponent(0,self.InsideTag)
 
             # merge the inside and the outside surfaces
             mergeSurface = vtk.vtkAppendPolyData()
