@@ -46,6 +46,9 @@ class vmtkSurfaceHarmonicExtension(pypes.pypeScript):
 
         self.UseNullDirichletBCs = 1
 
+        self.Valve = None
+        self.ValveDistanceThreshold = 1
+
         self.CellEntityIdsArrayName = 'CellEntityIds'
         self.CellEntityIdsArray = None
 
@@ -57,6 +60,7 @@ class vmtkSurfaceHarmonicExtension(pypes.pypeScript):
         self.SetScriptDoc('extend an input array harmonically on a surface; the extension takes effect on a subset of the input surface selected using  entity ids; the output array remains the same of the input one outside the extension domain and the values of this array at the boundary rings of the excluded domain are used as Dirichlet BCs for the harmonic extension')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
+            ['Valve','ivalve','vtkPolyData',1,'','an optional additional surface near the input surface (e.g. a valve) where the extension is also performed','vmtksurfacereader'],
             ['InputArrayName','inputarray','str',1,'','input array to be extended on some tags'],
             ['OutputArrayName','outputarray','str',1,'','output array name'],
             ['ArraySuffixes','arraysuffixes','str',-1,'','set of suffixes for the input/output arrays in order to process a set of arrays instead only one (if not set, only a single inputarray is processed)'],
@@ -64,11 +68,13 @@ class vmtkSurfaceHarmonicExtension(pypes.pypeScript):
             ['ExcludeIdsForBCs','excludeidsforbcs','int',-1,'','subset of extension domain to be excluded only for the boundary rings definition, where to set the Dirichlet BCs; this option only takes effect if "UseNullDirichletBCs" is true'],
             ['UseNullDirichletBCs','dirichletbcs','bool',1,'','toggle imposing homogeneous Dirichlet BCs on the rings of the extension domain; "ExcludeIdsForBCs" option can be exploited to define these rings'],
             ['CellEntityIdsArrayName', 'entityidsarray', 'str', 1, '','name of the array where entity ids have been stored'],
+            ['ValveDistanceThreshold','valvedistancethreshold','float',1,'(0,)','if Valve is set, distance threshold from the input surface used to set the region where to impose a Dirichlet BC on it'],
             ['Display','display','bool',1,'','toggle rendering'],
             ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer']
             ])
         self.SetOutputMembers([
-            ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter']
+            ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter'],
+            ['Valve','ovalve','vtkPolyData',1,'','the optional additional surface (e.g. a valve)','vmtksurfacewriter']
             ])
 
 
@@ -149,7 +155,56 @@ class vmtkSurfaceHarmonicExtension(pypes.pypeScript):
 
             harmonicSolver.Execute()
             self.Surface = harmonicSolver.Surface
-        
+
+
+        if self.Valve != None:
+
+            print("\n\n\nsolving for valve\n\n\n")
+
+            computeDistance = vmtkscripts.vmtkSurfaceDistance()
+            computeDistance.Surface = self.Valve
+            computeDistance.ReferenceSurface = self.Surface
+            computeDistance.DistanceArrayName = 'DistanceFromSurface'
+            computeDistance.Execute()
+            self.Valve = computeDistance.Surface
+
+            threshold = vmtkcontribscripts.vmtkThreshold()
+            threshold.Surface = self.Valve
+            threshold.ArrayName = 'DistanceFromSurface'
+            threshold.CellData = 0
+            threshold.LowThreshold = -1 # distance is positive
+            threshold.HighThreshold = self.ValveDistanceThreshold
+            threshold.Execute()
+            valveForBCs = threshold.Surface
+
+            projector = vmtkscripts.vmtkSurfaceProjection()
+            projector.Surface = valveForBCs
+            projector.ReferenceSurface = self.Surface
+            projector.Execute()
+            valveForBCs = projector.Surface
+
+            for i in range(len(inputArrayNames)):
+                self.PrintLog('\nProcessing array "'+inputArrayNames[i]+'"\n')
+                inputArray = self.Surface.GetPointData().GetArray(inputArrayNames[i])
+                numberOfComponents = inputArray.GetNumberOfComponents()
+
+                harmonicSolver = vmtkcontribscripts.vmtkSurfaceHarmonicSolver()
+                harmonicSolver.Surface = self.Valve
+                harmonicSolver.InputRings = valveForBCs
+                harmonicSolver.InputRingsBCsArrayName = outputArrayNames[i]
+                harmonicSolver.Interactive = False
+                if numberOfComponents == 3:
+                    harmonicSolver.VectorialEq = True
+                else:
+                    harmonicSolver.VectorialEq = False
+                harmonicSolver.SolutionArrayName = outputArrayNames[i]
+                harmonicSolver.InitWithZeroDirBCs = False
+                harmonicSolver.CellEntityIdsArrayName = self.CellEntityIdsArrayName
+                harmonicSolver.Display = self.Display
+                harmonicSolver.vmtkRenderer = self.vmtkRenderer
+                harmonicSolver.Execute()
+                self.Valve = harmonicSolver.Surface
+
 
 
 if __name__=='__main__':
