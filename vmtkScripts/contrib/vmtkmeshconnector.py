@@ -35,7 +35,7 @@ class vmtkMeshConnector(pypes.pypeScript):
 
         self.Mesh = None
         self.Mesh2 = None
-        self.MeshConnection = None
+        self.ConnectionMesh = None
 
         self.IdsToConnect1 = []
         self.IdsToConnect2 = []
@@ -43,8 +43,7 @@ class vmtkMeshConnector(pypes.pypeScript):
         self.ConnectionEdgeLength = 1.0
 
         self.ConnectionVolumeId = 1
-        self.ConnectionWallId = 10
-        self.ConnectionWallId2 = 20
+        self.ConnectionWallIds = []
 
         self.VolumeId1 = None
         self.VolumeId2 = None
@@ -60,25 +59,141 @@ class vmtkMeshConnector(pypes.pypeScript):
             ['Mesh2','i2','vtkUnstructuredGrid',1,'','the second input mesh','vmtkmeshreader'],
             ['IdsToConnect1','ids1','int',-1,'','entity ids of the first input mesh to be connected to the second input mesh'],
             ['IdsToConnect2','ids2','int',-1,'','entity ids of the second input mesh to be connected to the first input mesh'],
-            ['ConnectionEdgeLength','edgelength','float',1,'(0.0,)','the edgelenth of the connection mesh'],
+            ['ConnectionEdgeLength','edgelength','float',1,'(0.0,)','the edgelength of the connection mesh'],
             ['ConnectionVolumeId','volumeid','int',1,'','the id to be assigned to the generated volume between the input meshes'],
-            ['ConnectionWallId','wallid','int',1,'','the id to be assigned to the wall of the generated volume'],
-            ['ConnectionWallId2','wallid2','int',1,'','the id to be assigned to the second wall of the generated volume (if it exists)'],
+            ['ConnectionWallIds','wallids','int',-1,'','list of ids to be assigned to the walls of the generated volume'],
             ['VolumeId1','volumeid1','int',1,'','the id to be assigned to the first input mesh; if None, the input id is mantained'],
             ['VolumeId2','volumeid2','int',1,'','the id to be assigned to the second input mesh; if None, the input id is mantained'],
             ['CellEntityIdsArrayName', 'entityidsarray', 'str', 1, '','name of the array where entity ids have been stored'],
             ])
         self.SetOutputMembers([
             ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh','vmtkmeshwriter'],
-            ['MeshConnection','oconnection','vtkUnstructuredGrid',1,'','the output connection mesh between the two input meshes','vmtkmeshwriter']
+            ['ConnectionMesh','oconnection','vtkUnstructuredGrid',1,'','the output connection mesh between the two input meshes','vmtkmeshwriter']
             ])
 
+
+    def MeshBoundaryThreshold(self,mesh,low,high):
+        from vmtk import vmtkscripts
+        from vmtk import vmtkcontribscripts
+
+        th = vmtkcontribscripts.vmtkThreshold()
+        th.Mesh = mesh
+        th.ArrayName = self.CellEntityIdsArrayName
+        th.CellData = 1
+        th.LowThreshold = low
+        th.HighThreshold = high
+        th.Execute()
+
+        ms = vmtkscripts.vmtkMeshToSurface()
+        ms.Mesh = th.Mesh
+        ms.CleanOutput = 1
+        ms.Execute()
+
+        return ms.Surface
+
+
+    def SurfaceAppend(self,surface1,surface2):
+        from vmtk import vmtkscripts
+        if surface1 == None:
+            surf = surface2
+        elif surface2 == None:
+            surf = surface1
+        else:
+            a = vmtkscripts.vmtkSurfaceAppend()
+            a.Surface = surface1
+            a.Surface2 = surface2
+            a.Execute()
+            surf = a.Surface
+            tr = vmtkscripts.vmtkSurfaceTriangle()
+            tr.Surface = surf
+            tr.Execute()
+            surf = tr.Surface
+        return surf
+
+
+    def CheckClosedSurface(self,surface):
+        fe = vtk.vtkFeatureEdges()
+        fe.FeatureEdgesOff()
+        fe.BoundaryEdgesOn()
+        fe.NonManifoldEdgesOn()
+        fe.SetInputData(surface)
+        fe.Update()
+        return True if fe.GetOutput().GetNumberOfCells()==0 else False
 
 
     def Execute(self):
         from vmtk import vtkvmtk
         from vmtk import vmtkscripts
         from vmtk import vmtkcontribscripts
+
+        if self.Mesh == None:
+            self.PrintError('Error: no first input mesh.')
+
+        if self.Mesh2 == None:
+            self.PrintError('Error: no second input mesh.')
+
+        if self.IdsToConnect1==[] or self.IdsToConnect2==[]:
+            self.PrintError('Error: empty list of ids to be connected')
+
+
+        # 1. extract surface to be connected and join them
+        self.IdsToConnect1 = set(self.IdsToConnect1)
+        self.IdsToConnect2 = set(self.IdsToConnect2)
+
+        surface1 = vtk.vtkPolyData()
+        for item in self.IdsToConnect1:
+            tag = self.MeshBoundaryThreshold(self.Mesh,item,item)
+            surface1 = self.SurfaceAppend(surface1,tag)
+
+        surface2 = vtk.vtkPolyData()
+        for item in self.IdsToConnect2:
+            tag = self.MeshBoundaryThreshold(self.Mesh2,item,item)
+            surface2 = self.SurfaceAppend(surface2,tag)
+
+        connectionSurface = self.SurfaceAppend(surface1, surface2)
+
+
+        # 2. connect the two surfaces
+        if not set(self.ConnectionWallIds).isdisjoint(self.IdsToConnect1 | self.IdsToConnect2):
+            self.PrintError('ConnectionWallIds cannot be the same ids to be connected')
+
+        while not self.CheckClosedSurface(connectionSurface):
+            if not self.ConnectionWallIds:
+                self.PrintError('ConnectionWallIds are less than the need walls')
+            surfConn = vmtkcontribscripts.vmtkSurfaceConnector()
+            surfConn.Surface = connectionSurface
+            surfConn.CellEntityIdsArrayName = self.CellEntityIdsArrayName
+            surfConn.IdValue = self.ConnectionWallIds.pop(0)
+            surfConn.Execute()
+            connectionSurface = surfConn.OutputSurface
+
+
+        # 3. generate the connection volumetric mesh
+        sr = vmtkscripts.vmtkSurfaceRemeshing()
+        sr.Surface = connectionSurface
+        sr.ElementSizeMode ='edgelength'
+        sr.TargetEdgeLength = self.ConnectionEdgeLength
+        sr.CellEntityIdsArrayName = self.CellEntityIdsArrayName
+        sr.ExcludeEntityIds = list(self.IdsToConnect1 | self.IdsToConnect2)
+        sr.CleanOutput = 1
+        sr.Execute()
+        connectionSurface = sr.Surface
+
+        mg = vmtkscripts.vmtkMeshGenerator()
+        mg.Surface = connectionSurface
+        mg.VolumeElementScaleFactor = 1.0
+        mg.SkipRemeshing = 1
+        mg.Execute()
+        self.ConnectionMesh = mg.Mesh
+
+
+        # 4. assign to each volume elements the ConnectionVolumeId
+
+
+        # 5. modify the volume tag of the two input meshes
+
+
+        # 6. append the geoemtries into a unique mesh
 
 
 
