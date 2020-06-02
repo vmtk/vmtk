@@ -41,7 +41,7 @@ class vmtkSurfaceConnector(pypes.pypeScript):
         self.OutputSurface = None
         self.CellEntityIdsArrayName = 'CellEntityIds'
         self.IdValue = 1
-        #self.Method = 'simple'
+        self.CleanOutput = 1
 
         self.Display = 0
         self.vmtkRenderer = None
@@ -61,7 +61,7 @@ class vmtkSurfaceConnector(pypes.pypeScript):
             ['Ring2','i2ring','vtkPolyData',1,'','the second input ring','vmtksurfacereader'],
             ['CellEntityIdsArrayName','entityidsarray','str',1,'',''],
             ['IdValue','idvalue','int',1,'','entity id value in the connecting surface'],
-            #['Method','method','str',1,'["simple","delaunay"]','connecting method']
+            ['CleanOutput','cleanoutput','bool',1,'','clean the unused points in the output and triangulate it'],
             ['Display','display','bool',1,'','toggle rendering while algorithm advances'],
             ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer']
             ])
@@ -70,12 +70,6 @@ class vmtkSurfaceConnector(pypes.pypeScript):
             ['Actor','oactor','vtkActor',1,'','the output actor']
             ])
 
-
-    def CleanPolyData(self,polydata):
-        cleaner = vtk.vtkCleanPolyData()
-        cleaner.SetInputData(polydata)
-        cleaner.Update()
-        polydata = cleaner.GetOutput()
 
 
     def SetSurfaceRepresentation(self, representation):
@@ -290,7 +284,13 @@ class vmtkSurfaceConnector(pypes.pypeScript):
             mergeSurfaces.AddInputData(self.Surface2)
         mergeSurfaces.Update()
         self.OutputSurface = mergeSurfaces.GetOutput()
-        self.CleanPolyData(self.OutputSurface)
+
+        if self.CleanOutput:
+            from vmtk import vmtkscripts
+            cleaner = vmtkscripts.vmtkSurfaceTriangle()
+            cleaner.Surface = self.OutputSurface
+            cleaner.Execute()
+            self.OutputSurface = cleaner.Surface
 
 
 
