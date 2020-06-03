@@ -121,6 +121,13 @@ class vmtkMeshConnector(pypes.pypeScript):
         return True if fe.GetOutput().GetNumberOfCells()==0 else False
 
 
+    def ChangeVolumeId(self,mesh,newId):
+        idsArray = mesh.GetCellData().GetArray(self.CellEntityIdsArrayName)
+        for i in range(idsArray.GetNumberOfTuples()):
+            if mesh.GetCellType(i) == 10: # 10 -> tetraedra
+                idsArray.SetValue(i,newId)
+
+
     def Execute(self):
         from vmtk import vtkvmtk
         from vmtk import vmtkscripts
@@ -187,13 +194,24 @@ class vmtkMeshConnector(pypes.pypeScript):
         self.ConnectionMesh = mg.Mesh
 
 
-        # 4. assign to each volume elements the ConnectionVolumeId
+        # 4. assign to each volume elements the correct VolumeId
+        self.ChangeVolumeId(self.ConnectionMesh,self.ConnectionVolumeId)
+
+        if self.VolumeId1!=None:
+            self.ChangeVolumeId(self.Mesh,self.VolumeId1)
+
+        if self.VolumeId2!=None:
+            self.ChangeVolumeId(self.Mesh2,self.VolumeId2)
 
 
-        # 5. modify the volume tag of the two input meshes
-
-
-        # 6. append the geoemtries into a unique mesh
+        # 5. append the geometries into a unique mesh
+        append = vtk.vtkAppendFilter()
+        append.MergePointsOn()
+        append.AddInputData(self.ConnectionMesh)
+        append.AddInputData(self.Mesh)
+        append.AddInputData(self.Mesh2)
+        append.Update()
+        self.Mesh = append.GetOutput()
 
 
 
