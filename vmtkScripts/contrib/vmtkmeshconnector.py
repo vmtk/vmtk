@@ -51,6 +51,8 @@ class vmtkMeshConnector(pypes.pypeScript):
         self.CellEntityIdsArrayName = 'CellEntityIds'
         self.CellEntityIdsArray = None
 
+        self.ExportConnectionRegions = 1
+
 
         self.SetScriptName('vmtkmeshconnector')
         self.SetScriptDoc('connect two meshes generating a volumetric mesh between two selected regions of the input meshes')
@@ -64,7 +66,8 @@ class vmtkMeshConnector(pypes.pypeScript):
             ['ConnectionWallIds','wallids','int',-1,'','list of ids to be assigned to the walls of the generated volume'],
             ['VolumeId1','volumeid1','int',1,'','the id to be assigned to the first input mesh; if None, the input id is mantained'],
             ['VolumeId2','volumeid2','int',1,'','the id to be assigned to the second input mesh; if None, the input id is mantained'],
-            ['CellEntityIdsArrayName', 'entityidsarray', 'str', 1, '','name of the array where entity ids have been stored'],
+            ['CellEntityIdsArrayName','entityidsarray','str',1,'','name of the array where entity ids have been stored'],
+            ['ExportConnectionRegions','exportregions','bool',1,'','toggle exporting connection regions of the input meshes on the output ConnectionMesh']
             ])
         self.SetOutputMembers([
             ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh','vmtkmeshwriter'],
@@ -72,7 +75,7 @@ class vmtkMeshConnector(pypes.pypeScript):
             ])
 
 
-    def MeshBoundaryThreshold(self,mesh,low,high):
+    def MeshBoundaryThreshold(self,mesh,value):
         from vmtk import vmtkscripts
         from vmtk import vmtkcontribscripts
 
@@ -80,8 +83,8 @@ class vmtkMeshConnector(pypes.pypeScript):
         th.Mesh = mesh
         th.ArrayName = self.CellEntityIdsArrayName
         th.CellData = 1
-        th.LowThreshold = low
-        th.HighThreshold = high
+        th.LowThreshold = value
+        th.HighThreshold = value
         th.Execute()
 
         ms = vmtkscripts.vmtkMeshToSurface()
@@ -90,6 +93,20 @@ class vmtkMeshConnector(pypes.pypeScript):
         ms.Execute()
 
         return ms.Surface
+
+
+    def MeshThreshold(self,mesh,value):
+        from vmtk import vmtkcontribscripts
+
+        th = vmtkcontribscripts.vmtkThreshold()
+        th.Mesh = mesh
+        th.ArrayName = self.CellEntityIdsArrayName
+        th.CellData = 1
+        th.LowThreshold = value
+        th.HighThreshold = value
+        th.Execute()
+
+        return th.Mesh
 
 
     def SurfaceAppend(self,surface1,surface2):
@@ -152,12 +169,12 @@ class vmtkMeshConnector(pypes.pypeScript):
 
         surface1 = vtk.vtkPolyData()
         for item in self.IdsToConnect1:
-            tag = self.MeshBoundaryThreshold(self.Mesh,item,item)
+            tag = self.MeshBoundaryThreshold(self.Mesh,item)
             surface1 = self.SurfaceAppend(surface1,tag)
 
         surface2 = vtk.vtkPolyData()
         for item in self.IdsToConnect2:
-            tag = self.MeshBoundaryThreshold(self.Mesh2,item,item)
+            tag = self.MeshBoundaryThreshold(self.Mesh2,item)
             surface2 = self.SurfaceAppend(surface2,tag)
 
         connectionSurface = self.SurfaceAppend(surface1, surface2)
@@ -167,15 +184,17 @@ class vmtkMeshConnector(pypes.pypeScript):
         if not set(self.ConnectionWallIds).isdisjoint(self.IdsToConnect1 | self.IdsToConnect2):
             self.PrintError('ConnectionWallIds cannot be the same ids to be connected')
 
+        numConnectionWalls = 0
         while not self.CheckClosedSurface(connectionSurface):
             if not self.ConnectionWallIds:
                 self.PrintError('ConnectionWallIds are less than the need walls')
             surfConn = vmtkcontribscripts.vmtkSurfaceConnector()
             surfConn.Surface = connectionSurface
             surfConn.CellEntityIdsArrayName = self.CellEntityIdsArrayName
-            surfConn.IdValue = self.ConnectionWallIds.pop(0)
+            surfConn.IdValue = self.ConnectionWallIds[numConnectionWalls]
             surfConn.Execute()
             connectionSurface = surfConn.OutputSurface
+            numConnectionWalls += 1
 
 
         # 3. generate the connection volumetric mesh
@@ -208,9 +227,19 @@ class vmtkMeshConnector(pypes.pypeScript):
 
 
         # 5. append the geometries into a unique mesh
+        connectionVolume = self.MeshThreshold(self.ConnectionMesh,self.ConnectionVolumeId)
+        connectionWalls = []
+        for i in range(numConnectionWalls):
+            connectionWalls.append(self.MeshThreshold(self.ConnectionMesh,self.ConnectionWallIds[i]))
+
         append = vtk.vtkAppendFilter()
         append.MergePointsOn()
-        append.AddInputData(self.ConnectionMesh)
+        append.AddInputData(connectionVolume)
+        for item in connectionWalls:
+            append.AddInputData(item)
+        if not self.ExportConnectionRegions:
+            append.Update()
+            self.ConnectionMesh.DeepCopy(append.GetOutput())
         append.AddInputData(self.Mesh)
         if doubleMesh:
             append.AddInputData(self.Mesh2)
