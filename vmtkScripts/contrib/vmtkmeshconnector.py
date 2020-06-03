@@ -56,9 +56,9 @@ class vmtkMeshConnector(pypes.pypeScript):
         self.SetScriptDoc('connect two meshes generating a volumetric mesh between two selected regions of the input meshes')
         self.SetInputMembers([
             ['Mesh','i','vtkUnstructuredGrid',1,'','the first input mesh','vmtkmeshreader'],
-            ['Mesh2','i2','vtkUnstructuredGrid',1,'','the second input mesh','vmtkmeshreader'],
-            ['IdsToConnect1','ids1','int',-1,'','entity ids of the first input mesh to be connected to the second input mesh'],
-            ['IdsToConnect2','ids2','int',-1,'','entity ids of the second input mesh to be connected to the first input mesh'],
+            ['Mesh2','i2','vtkUnstructuredGrid',1,'','the second input mesh; if None, the regions to be connected are supposed to be both on the first input mesh','vmtkmeshreader'],
+            ['IdsToConnect1','ids1','int',-1,'','entity ids identifying the first region to be connected on the first input mesh'],
+            ['IdsToConnect2','ids2','int',-1,'','entity ids identifying the second region to be connected on the second input mesh (or on the first one when the second one is None)'],
             ['ConnectionEdgeLength','edgelength','float',1,'(0.0,)','the edgelength of the connection mesh'],
             ['ConnectionVolumeId','volumeid','int',1,'','the id to be assigned to the generated volume between the input meshes'],
             ['ConnectionWallIds','wallids','int',-1,'','list of ids to be assigned to the walls of the generated volume'],
@@ -137,7 +137,10 @@ class vmtkMeshConnector(pypes.pypeScript):
             self.PrintError('Error: no first input mesh.')
 
         if self.Mesh2 == None:
-            self.PrintError('Error: no second input mesh.')
+            self.Mesh2 = self.Mesh
+            doubleMesh = False
+        else:
+            doubleMesh = True
 
         if self.IdsToConnect1==[] or self.IdsToConnect2==[]:
             self.PrintError('Error: empty list of ids to be connected')
@@ -200,7 +203,7 @@ class vmtkMeshConnector(pypes.pypeScript):
         if self.VolumeId1!=None:
             self.ChangeVolumeId(self.Mesh,self.VolumeId1)
 
-        if self.VolumeId2!=None:
+        if self.VolumeId2!=None and doubleMesh:
             self.ChangeVolumeId(self.Mesh2,self.VolumeId2)
 
 
@@ -209,7 +212,8 @@ class vmtkMeshConnector(pypes.pypeScript):
         append.MergePointsOn()
         append.AddInputData(self.ConnectionMesh)
         append.AddInputData(self.Mesh)
-        append.AddInputData(self.Mesh2)
+        if doubleMesh:
+            append.AddInputData(self.Mesh2)
         append.Update()
         self.Mesh = append.GetOutput()
 
