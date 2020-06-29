@@ -98,7 +98,7 @@ class vmtkSurfaceConnector(pypes.pypeScript):
         self.vmtkRenderer.RenderWindow.Render()
 
 
-    def ViewSurface(self,polydata,color,opacity=1.0,representation=None):
+    def ViewSurface(self,polydata,color,opacity=1.0,representation=None,linewidth=1):
         if representation==None:
             representation = self.Representation
 
@@ -109,6 +109,7 @@ class vmtkSurfaceConnector(pypes.pypeScript):
         self.Actor.SetMapper(mapper)
         self.Actor.GetProperty().SetColor(color)
         self.Actor.GetProperty().SetOpacity(opacity)
+        self.Actor.GetProperty().SetLineWidth(linewidth)
 
         self.SetSurfaceRepresentation(representation)
         self.vmtkRenderer.Renderer.AddActor(self.Actor)
@@ -346,8 +347,8 @@ class vmtkSurfaceConnector(pypes.pypeScript):
                 self.ViewSurface(self.Surface2,white,0.1,'surface')
                 self.Surface2IsRendered = True
 
-            self.ViewSurface(self.Ring,red)
-            self.ViewSurface(self.Ring2,green)
+            self.ViewSurface(self.Ring,red,1,None,3)
+            self.ViewSurface(self.Ring2,green,1,None,3)
 
         def nextPointId(ring,cellId,currentPointId):
             idList = vtk.vtkIdList()
