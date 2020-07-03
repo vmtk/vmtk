@@ -34,9 +34,10 @@ class vmtkSurfaceThickening(pypes.pypeScript):
         self.ThicknessArrayName = 'Thickness'
         self.ThicknessArray = None
         self.ThicknessThreshold = 0
-        self.WarpFactor = 0.5
+        self.WarpFactor = 1.0
         self.WarpArrayName = 'WarpVector'
         self.CleanOutput = 1
+        self.Invert = 0
         self.CellEntityIdsArrayName = 'CellEntityIds'
         self.ExcludeEntityIds = []
 
@@ -46,8 +47,9 @@ class vmtkSurfaceThickening(pypes.pypeScript):
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
             ['ThicknessArrayName','thicknessarray','str',1,'','name of the array where the thickness of the surface is defined'],
             ['ThicknessThreshold','threshold','float',1,'','all points on the surface where the thickness is lower than this threshold will be warped in normal direction to obtain a surface thick as this threshold'],
-            ['WarpFactor','warpfactor','float',1,'','the surface is warped by [(thickness>threshold)*(threshold-thickness)*warpfactor+0]'],
+            ['WarpFactor','warpfactor','float',1,'','the surface is warped by [(thickness<threshold)*0.5*warpfactor*(threshold-thickness)]'],
             ['WarpArrayName','warparray','str',1,'','name of the array where the warping vector is stored'],
+            ['Invert','invert','bool',1,'','toggle inverting the behavior of the algorithm (make thiner the part of the surface thicker of the threshold)'],
             ['CellEntityIdsArrayName','entityidsarray','str',1],
             ['ExcludeEntityIds','exclude','int',-1,'','entity ids to be excluded from the thickening processing'],
             ])
@@ -95,6 +97,13 @@ class vmtkSurfaceThickening(pypes.pypeScript):
 
         self.Surface.GetPointData().AddArray(indicatorFunction)
 
+        if self.Invert:
+            calculatorString = '( (thickness > '
+        else:
+            calculatorString = '( (thickness < '
+
+        calculatorString += str(self.ThicknessThreshold) + ') * ' + str(self.WarpFactor) + ' * chi * (' + str(self.ThicknessThreshold) + ' - thickness) + 0.0 ) * n'
+
         calculator = vtk.vtkArrayCalculator()
         calculator.SetInputData(self.Surface)
         calculator.SetAttributeTypeToPointData()
@@ -102,7 +111,7 @@ class vmtkSurfaceThickening(pypes.pypeScript):
         calculator.AddScalarVariable('chi', "IndicatorFunction")
         calculator.AddVectorVariable('n', 'Normals')
         calculator.SetResultArrayName(self.WarpArrayName)
-        calculator.SetFunction( str(self.WarpFactor) + ' * chi * n * ( (thickness < ' + str(self.ThicknessThreshold) + ') * (' + str(self.ThicknessThreshold) + ' - thickness) + 0.0 )')
+        calculator.SetFunction(calculatorString)
 
         self.PrintLog('calculator = '+calculator.GetFunction())
         calculator.Update()
