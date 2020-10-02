@@ -338,6 +338,7 @@ class vmtkMeshWriter(pypes.pypeScript):
         for i in range(numberOfHexa):
             hexaCellId = hexaCellIdArray.GetValue(i)
             cellPointIds = self.Mesh.GetCell(hexaCellId).GetPointIds()
+            cellEntityId = cellEntityIdsArray.GetValue(hexaCellId)
             line = '%d 5 2 %d %d ' % (i+numberOfQuad+1, cellEntityId, cellEntityId)
             for j in range(cellPointIds.GetNumberOfIds()):
                 if j>0:
