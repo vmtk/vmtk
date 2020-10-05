@@ -126,13 +126,43 @@ class vmtkSurfaceBooleanConnector(pypes.pypeScript):
         [self.Surface,self.Rings] = clipWithArray(self.Surface,'Distance',self.Eps,False)
         [self.Surface2,self.Rings2] = clipWithArray(self.Surface2,'Distance',self.Eps,False)
 
-        # 4. remeshing
+        # 4. initialize CellEntityIdsArray
+        def initEntityIdsArray(surface,entityId):
+            if surface.GetCellData().GetArray(self.CellEntityIdsArrayName) == None:
+                    array = vtk.vtkIntArray()
+                    array.SetName(self.CellEntityIdsArrayName)
+                    array.SetNumberOfComponents(1)
+                    array.SetNumberOfTuples(surface.GetNumberOfCells())
+                    array.FillComponent(0,entityId)
+                    surface.GetCellData().AddArray(array)
+
+            return
+
+        initEntityIdsArray(self.Surface,self.ConnectingId-1)
+        initEntityIdsArray(self.Surface2,self.ConnectingId+1)
+
+        # 5. remeshing
+        # idea: optionally create a buffer zone to limit the remeshing
+        #       in the regions near the intresection of the input surfaces
+
+        def surfaceRemeshing(surface,iters,idsArrayName=self.CellEntityIdsArrayName,excludeIds=[]):
+            sr = vmtkscripts.vmtkSurfaceRemeshing()
+            sr.Surface = surface
+            sr.TargetEdgeLength = self.EdgeLength
+            sr.ElementSizeMode = 'edgelength'
+            sr.CellEntityIdsArrayName = idsArrayName
+            sr.NumberOfIterations = iters
+            sr.ExcludeEntityIds = excludeIds
+            sr.CleanOutput = 1
+            sr.Execute()
+            return sr.Surface
+
+        if not self.SkipRemeshing:
+            self.Surface = surfaceRemeshing(self.Surface,5)
+            self.Surface2 = surfaceRemeshing(self.Surface2,5)
 
 
-        # 5. connecting
-
-
-        # 6. remeshing the connection
+        # 6. connecting
         conn = vmtkcontribscripts.vmtkSurfaceConnector()
         conn.Surface = self.Surface
         conn.Surface2 = self.Surface2
@@ -142,6 +172,9 @@ class vmtkSurfaceBooleanConnector(pypes.pypeScript):
 
         self.Surface = conn.OutputSurface
 
+        # 7. remeshing the connection
+        if not self.SkipRemeshing:
+            self.Surface = surfaceRemeshing(self.Surface,10)
 
 
 
