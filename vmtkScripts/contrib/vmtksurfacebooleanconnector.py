@@ -47,6 +47,10 @@ class vmtkSurfaceBooleanConnector(pypes.pypeScript):
         self.ThresholdOnFirst = 1
         self.ThresholdOnSecond = 1
 
+        self.RemeshOnlyBuffer = 0
+        self.Buffer = None
+        self.BufferTags = [4, 5]
+
         self.SkipRemeshing = 0
         self.EdgeLength = 1.0
 
@@ -65,6 +69,9 @@ class vmtkSurfaceBooleanConnector(pypes.pypeScript):
             ['Eps','threshold','float',1,'(0.0,)','the distance threshold from the intersection of the two input surfaces, where to cut them in order to create a regular connecting triangulation'],
             ['ThresholdOnFirst','thresholdonfirst','bool',1,'','toggle applying threshold on the first input surface'],
             ['ThresholdOnSecond','thresholdonsecond','bool',1,'','toggle applying threshold on the second input surface'],
+            ['RemeshOnlyBuffer','remeshonlybuffer','bool',1,'','toggle remeshing only a buffer zone near the intersection of the two input surfaces'],
+            ['Buffer','buffer','float',1,'(0.0,)','the buffer width, measured from the intersection lines of the two input surfaces (if None, it is set equal to 3*Eps)'],
+            ['BufferTags','buffertags','int',2,'','entity ids of the two buffer zones on the two surfaces'],
             ['SkipRemeshing','skipremeshing','bool',1,'','toggle skipping the remeshing (if true, the connection is performed between boundaries made of irregular triangles)'],
             ['EdgeLength','edgelength','float',1,'(0.0,)','the constant edgelength for the remeshing'],
             ['CellEntityIdsArrayName','entityidsarray','str',1,'',''],
@@ -125,7 +132,6 @@ class vmtkSurfaceBooleanConnector(pypes.pypeScript):
             d.Execute()
             return d.Surface
 
-
         self.Surface = unsignedDistance(self.Surface,self.Rings)
         self.Surface2 = unsignedDistance(self.Surface2,self.Rings2)
 
@@ -147,22 +153,40 @@ class vmtkSurfaceBooleanConnector(pypes.pypeScript):
                     array.SetNumberOfTuples(surface.GetNumberOfCells())
                     array.FillComponent(0,entityId)
                     surface.GetCellData().AddArray(array)
-
             return
 
         initEntityIdsArray(self.Surface,self.ConnectingId-1)
         initEntityIdsArray(self.Surface2,self.ConnectingId+1)
 
         # 5. remeshing
-        # idea: optionally create a buffer zone to limit the remeshing
-        #       in the regions near the intresection of the input surfaces
+        def tagBuffer(surface,arrayName,value,tag):
+            st = vmtkcontribscripts.vmtkSurfaceTagger()
+            st.Surface = surface
+            st.Method = 'array'
+            st.ArrayName = arrayName
+            st.Value = value
+            st.InsideTag = tag
+            st.CellEntityIdsArrayName = self.CellEntityIdsArrayName
+            st.PrintTags = 1
+            st.Execute()
+            tagsToExclude = st.Tags
+            tagsToExclude.remove(tag)
+            return tagsToExclude
 
-        def surfaceRemeshing(surface,iters,idsArrayName=self.CellEntityIdsArrayName,excludeIds=[]):
+        tagsToExclude = set()
+        tagsToExclude2 = set()
+        if not self.SkipRemeshing and self.RemeshOnlyBuffer:
+            if self.Buffer == None:
+                self.Buffer = 3.0*self.Eps
+            tagsToExclude = tagBuffer(self.Surface,'Distance',self.Buffer,self.BufferTags[0])
+            tagsToExclude2 = tagBuffer(self.Surface2,'Distance',self.Buffer,self.BufferTags[1])
+
+        def surfaceRemeshing(surface,iters,excludeIds):
             sr = vmtkscripts.vmtkSurfaceRemeshing()
             sr.Surface = surface
             sr.TargetEdgeLength = self.EdgeLength
             sr.ElementSizeMode = 'edgelength'
-            sr.CellEntityIdsArrayName = idsArrayName
+            sr.CellEntityIdsArrayName = self.CellEntityIdsArrayName
             sr.NumberOfIterations = iters
             sr.ExcludeEntityIds = excludeIds
             sr.CleanOutput = 1
@@ -170,8 +194,8 @@ class vmtkSurfaceBooleanConnector(pypes.pypeScript):
             return sr.Surface
 
         if not self.SkipRemeshing:
-            self.Surface = surfaceRemeshing(self.Surface,5)
-            self.Surface2 = surfaceRemeshing(self.Surface2,5)
+            self.Surface = surfaceRemeshing(self.Surface,5,list(map(int,tagsToExclude)))
+            self.Surface2 = surfaceRemeshing(self.Surface2,5,list(map(int,tagsToExclude2)))
 
 
         # 6. connecting
@@ -186,7 +210,8 @@ class vmtkSurfaceBooleanConnector(pypes.pypeScript):
 
         # 7. remeshing the connection
         if not self.SkipRemeshing:
-            self.Surface = surfaceRemeshing(self.Surface,10)
+            set(tagsToExclude).union(set(tagsToExclude2))
+            self.Surface = surfaceRemeshing(self.Surface,10,list(map(int,tagsToExclude)))
 
 
 
