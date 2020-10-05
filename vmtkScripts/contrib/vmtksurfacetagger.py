@@ -48,6 +48,7 @@ class vmtkSurfaceTagger(pypes.pypeScript):
         self.TagSmallestRegion = 1
         self.CleanOutput = 1
         self.PrintTags = 1
+        self.Tags = None
         self.HarmonicRadius = 1.0
         self.HarmonicGenerateTag = 0
         self.HarmonicCleaningFixPoints = 0
@@ -547,11 +548,11 @@ class vmtkSurfaceTagger(pypes.pypeScript):
 
         if self.PrintTags:
             self.CellEntityIdsArray = self.Surface.GetCellData().GetArray(self.CellEntityIdsArrayName)
-            tags = set()
+            self.Tags = set()
             for i in range(self.Surface.GetNumberOfCells()):
-                tags.add(self.CellEntityIdsArray.GetComponent(i,0))
-            tags = sorted(tags)
-            self.PrintLog('Tags of the output surface: '+str(tags))
+                self.Tags.add(self.CellEntityIdsArray.GetComponent(i,0))
+            self.Tags = sorted(self.Tags)
+            self.PrintLog('Tags of the output surface: '+str(self.Tags))
 
         # useless, already triangulated
         # if self.Triangulate:
