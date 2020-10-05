@@ -44,6 +44,9 @@ class vmtkSurfaceBooleanConnector(pypes.pypeScript):
 
 
         self.Eps = 1.0
+        self.ThresholdOnFirst = 1
+        self.ThresholdOnSecond = 1
+
         self.SkipRemeshing = 0
         self.EdgeLength = 1.0
 
@@ -59,7 +62,9 @@ class vmtkSurfaceBooleanConnector(pypes.pypeScript):
             ['Surface','i','vtkPolyData',1,'','the first input surface','vmtksurfacereader'],
             ['Surface2','i2','vtkPolyData',1,'','the second input surface','vmtksurfacereader'],
             ['Operation','operation','str',1,'["union","intersection","difference"]','the boolean operation to be performed'],
-            ['Eps','threshold','float',1,'(0.0,)','the distance threshold where to cut the two input surfaces to create a regular connecting triangulation'],
+            ['Eps','threshold','float',1,'(0.0,)','the distance threshold from the intersection of the two input surfaces, where to cut them in order to create a regular connecting triangulation'],
+            ['ThresholdOnFirst','thresholdonfirst','bool',1,'','toggle applying threshold on the first input surface'],
+            ['ThresholdOnSecond','thresholdonsecond','bool',1,'','toggle applying threshold on the second input surface'],
             ['SkipRemeshing','skipremeshing','bool',1,'','toggle skipping the remeshing (if true, the connection is performed between boundaries made of irregular triangles)'],
             ['EdgeLength','edgelength','float',1,'(0.0,)','the constant edgelength for the remeshing'],
             ['CellEntityIdsArrayName','entityidsarray','str',1,'',''],
@@ -120,11 +125,18 @@ class vmtkSurfaceBooleanConnector(pypes.pypeScript):
             d.Execute()
             return d.Surface
 
+
         self.Surface = unsignedDistance(self.Surface,self.Rings)
         self.Surface2 = unsignedDistance(self.Surface2,self.Rings2)
 
-        [self.Surface,self.Rings] = clipWithArray(self.Surface,'Distance',self.Eps,False)
-        [self.Surface2,self.Rings2] = clipWithArray(self.Surface2,'Distance',self.Eps,False)
+        if not self.ThresholdOnFirst and not self.ThresholdOnSecond:
+            self.PrintError('Error: at least one of ThresholdOnFirst/Second should be true.')
+
+        if self.ThresholdOnFirst:
+            [self.Surface,self.Rings] = clipWithArray(self.Surface,'Distance',self.Eps,False)
+
+        if self.ThresholdOnSecond:
+            [self.Surface2,self.Rings2] = clipWithArray(self.Surface2,'Distance',self.Eps,False)
 
         # 4. initialize CellEntityIdsArray
         def initEntityIdsArray(surface,entityId):
