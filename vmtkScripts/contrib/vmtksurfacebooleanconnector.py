@@ -171,15 +171,21 @@ class vmtkSurfaceBooleanConnector(pypes.pypeScript):
             st.Execute()
             tagsToExclude = st.Tags
             tagsToExclude.remove(tag)
-            return tagsToExclude
+            return list(map(int,tagsToExclude))
 
-        tagsToExclude = set()
-        tagsToExclude2 = set()
+        tagsToExclude = []
+        tagsToExclude2 = []
+        allTagsToExclude = []
         if not self.SkipRemeshing and self.RemeshOnlyBuffer:
             if self.Buffer == None:
                 self.Buffer = 3.0*self.Eps
             tagsToExclude = tagBuffer(self.Surface,'Distance',self.Buffer,self.BufferTags[0])
             tagsToExclude2 = tagBuffer(self.Surface2,'Distance',self.Buffer,self.BufferTags[1])
+            allTagsToExclude = list(set().union(tagsToExclude,tagsToExclude2))
+            self.PrintLog('\nRemeshOnlyBuffer - tags excluded from remeshing:')
+            self.PrintLog('\tfirst input surface:  '+str(tagsToExclude))
+            self.PrintLog('\tsecond input surface: '+str(tagsToExclude2))
+            self.PrintLog('\toutput surface:       '+str(allTagsToExclude)+'\n')
 
         def surfaceRemeshing(surface,iters,excludeIds):
             sr = vmtkscripts.vmtkSurfaceRemeshing()
@@ -194,8 +200,8 @@ class vmtkSurfaceBooleanConnector(pypes.pypeScript):
             return sr.Surface
 
         if not self.SkipRemeshing:
-            self.Surface = surfaceRemeshing(self.Surface,5,list(map(int,tagsToExclude)))
-            self.Surface2 = surfaceRemeshing(self.Surface2,5,list(map(int,tagsToExclude2)))
+            self.Surface = surfaceRemeshing(self.Surface,5,tagsToExclude)
+            self.Surface2 = surfaceRemeshing(self.Surface2,5,tagsToExclude2)
 
 
         # 6. connecting
@@ -210,8 +216,7 @@ class vmtkSurfaceBooleanConnector(pypes.pypeScript):
 
         # 7. remeshing the connection
         if not self.SkipRemeshing:
-            set(tagsToExclude).union(set(tagsToExclude2))
-            self.Surface = surfaceRemeshing(self.Surface,10,list(map(int,tagsToExclude)))
+            self.Surface = surfaceRemeshing(self.Surface,10,allTagsToExclude)
 
 
 
