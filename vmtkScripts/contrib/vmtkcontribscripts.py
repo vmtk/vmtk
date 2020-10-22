@@ -5,6 +5,8 @@ __all__ = [
     'vmtk.vmtkcenterlinestonumpy',
     'vmtk.vmtkdijkstradistancetopoints',
     'vmtk.vmtkdistancetospheres',
+    'vmtk.vmtkentityextractor',
+    'vmtk.vmtkentitylist',
     'vmtk.vmtkentityrenumber',
     'vmtk.vmtkendpointsections',
     'vmtk.vmtkgeodesicsurfaceresolution',
