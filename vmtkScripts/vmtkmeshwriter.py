@@ -292,9 +292,9 @@ class vmtkMeshWriter(pypes.pypeScript):
         cellEntityIdsArray = vtk.vtkIntArray()
         cellEntityIdsArray.DeepCopy(self.Mesh.GetCellData().GetArray(self.CellEntityIdsArrayName))
 
-        hexaCellType = 12
-        quadCellType = 9
-        # missing lines!
+        lineCellType = vtk.vtkLine().GetCellType()
+        quadCellType = vtk.vtkQuad().GetCellType()
+        hexaCellType = vtk.vtkHexahedron().GetCellType()
 
         f=open(self.OutputFileName, 'w')
         line =  "$MeshFormat\n"
@@ -311,23 +311,25 @@ class vmtkMeshWriter(pypes.pypeScript):
         line = "$EndNodes\n"
         line += "$Elements\n"
 
+        lineCellIdArray = vtk.vtkIdTypeArray()
+        self.Mesh.GetIdsOfCellsOfType(lineCellType,lineCellIdArray)
+
         quadCellIdArray = vtk.vtkIdTypeArray()
         self.Mesh.GetIdsOfCellsOfType(quadCellType,quadCellIdArray)
 
         hexaCellIdArray = vtk.vtkIdTypeArray()
         self.Mesh.GetIdsOfCellsOfType(hexaCellType,hexaCellIdArray)
 
-        numberOfHexa = hexaCellIdArray.GetNumberOfTuples()
+        numberOfLine = lineCellIdArray.GetNumberOfTuples()
         numberOfQuad = quadCellIdArray.GetNumberOfTuples()
+        numberOfHexa = hexaCellIdArray.GetNumberOfTuples()
 
-        line += "%d\n" % (numberOfHexa + numberOfQuad)
+        line += "%d\n" % (numberOfLine+numberOfQuad+numberOfHexa)
         f.write(line)
 
-        for i in range(numberOfQuad):
-            quadCellId = quadCellIdArray.GetValue(i)
-            cellPointIds = self.Mesh.GetCell(quadCellId).GetPointIds()
-            cellEntityId = cellEntityIdsArray.GetValue(quadCellId)
-            line = '%d 3 2 %d %d ' % (i+1, cellEntityId, cellEntityId)
+        def writeLine(cellId,cellType,tag,cellPointIds):
+            line = '%d ' % (cellId)
+            line += cellType+' 2 %d %d ' % (tag,tag)
             for j in range(cellPointIds.GetNumberOfIds()):
                 if j>0:
                     line += '  '
@@ -335,17 +337,26 @@ class vmtkMeshWriter(pypes.pypeScript):
             line += "\n"
             f.write(line)
 
+        for i in range(numberOfLine):
+            lineCellId = lineCellIdArray.GetValue(i)
+            cellPointIds = self.Mesh.GetCell(lineCellId).GetPointIds()
+            cellEntityId = cellEntityIdsArray.GetValue(lineCellId)
+            idx = i+1
+            writeLine(idx,'1',cellEntityId,cellPointIds)
+
+        for i in range(numberOfQuad):
+            quadCellId = quadCellIdArray.GetValue(i)
+            cellPointIds = self.Mesh.GetCell(quadCellId).GetPointIds()
+            cellEntityId = cellEntityIdsArray.GetValue(quadCellId)
+            idx = numberOfLine+i+1
+            writeLine(idx,'3',cellEntityId,cellPointIds)
+
         for i in range(numberOfHexa):
             hexaCellId = hexaCellIdArray.GetValue(i)
             cellPointIds = self.Mesh.GetCell(hexaCellId).GetPointIds()
             cellEntityId = cellEntityIdsArray.GetValue(hexaCellId)
-            line = '%d 5 2 %d %d ' % (i+numberOfQuad+1, cellEntityId, cellEntityId)
-            for j in range(cellPointIds.GetNumberOfIds()):
-                if j>0:
-                    line += '  '
-                line += "%d" % (cellPointIds.GetId(j)+1)
-            line += '\n'
-            f.write(line)
+            idx = numberOfLine+numberOfQuad+i+1
+            writeLine(idx,'5',cellEntityId,cellPointIds)
 
         line = "$EndElements\n"
         f.write(line)
@@ -442,12 +453,14 @@ class vmtkMeshWriter(pypes.pypeScript):
         elif (self.Format == 'pointdata'):
             self.WritePointDataMeshFile()
         elif (self.Format == 'dealii' or self.Format == 'lifex'):
+            quadIdArray = vtk.vtkIdTypeArray()
             hexaIdArray = vtk.vtkIdTypeArray()
+            self.Mesh.GetIdsOfCellsOfType(9,quadIdArray)
             self.Mesh.GetIdsOfCellsOfType(12,hexaIdArray)
-            if hexaIdArray.GetNumberOfTuples() > 0:
+            if quadIdArray.GetNumberOfTuples()>0 or hexaIdArray.GetNumberOfTuples()>0:
                 self.WriteHexMshFile()
             else:
-                self.PrintError('Error: dealii/lifex writer works only with hexahedral meshes, use vmtkmeshtethex.')
+                self.PrintError('Error: dealii/lifex writer works only with quad/hexahedral meshes, use vmtkmeshtethex.')
         else:
             self.PrintError('Error: unsupported format '+ self.Format + '.')
 
