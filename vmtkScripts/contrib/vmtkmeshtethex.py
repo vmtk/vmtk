@@ -236,7 +236,7 @@ class vmtkMeshTetHex(pypes.pypeScript):
             for i in range(numberOfLines):
 
                 lineId = lineIdArray.GetValue(i) 
-                line = inputMesh.GetCell(triId)
+                line = inputMesh.GetCell(lineId)
                 if inputCellEntityIdsArray != None:
                     lineEntityId = inputCellEntityIdsArray.GetValue(lineId)
                 else:
