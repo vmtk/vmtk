@@ -84,12 +84,7 @@ class vmtkEntityList(pypes.pypeScript):
 
         if self.ConvertToInt and self.CellEntityIdsArray.GetDataType()!=6: # 6 = int
             idsArray = vtk.vtkIntArray()
-            # idsArray = vtk.vtkIntArray.FastDownCast(self.CellEntityIdsArray) # use vtk Cast to convert it more quickly?
-            idsArray.SetNumberOfComponents(1)
-            idsArray.SetNumberOfTuples(self.Input.GetNumberOfCells())
-            idsArray.SetName(self.CellEntityIdsArrayName)
-            for i in range(self.Input.GetNumberOfCells()):
-                idsArray.SetValue(i,int(self.CellEntityIdsArray.GetValue(i)))
+            idsArray.DeepCopy(self.Mesh.GetCellData().GetArray(self.CellEntityIdsArrayName))
             self.Input.GetCellData().RemoveArray(self.CellEntityIdsArrayName)
             self.Input.GetCellData().AddArray(idsArray)
             self.CellEntityIdsArray = self.Input.GetCellData().GetArray(self.CellEntityIdsArrayName)
