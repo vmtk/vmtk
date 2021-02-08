@@ -52,14 +52,12 @@ class vmtkMeshRefinement(pypes.pypeScript):
             ['Mesh','i','vtkUnstructuredGrid',1,'','the input mesh','vmtkmeshreader'],
             ['DistanceArrayName','distancearray','str',1,'','name of the array of the mesh where the distance is stored'],
             ['UseMagnitude','usemagnitude','bool',1,'','use magnitude of the input distance array'],
-            ['InterfaceLabel','ilabel','float',1,'(0.0,)','label of the interface '],
             ['SizeMin','minsize','float',1,'(0.0,)','target minimum refinement size (on the mfm)'],
             ['Alpha','alpha','float',1,'(0.0,)','target alpha factor (surface refinement with h = alpha * distance ^ beta)'],
             ['Beta','beta','float',1,'(0.0,)','target beta factor (surface refinement with h = alpha * distance ^ beta)']
             ])
         self.SetOutputMembers([
-            ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh','vmtkmeshwriter'],
-            ['InterfaceSurface','intsurface','vtkPolyData',1,'','the surface','vmtksurfacewriter'],
+            ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh','vmtkmeshwriter']
             ])
 
     def Execute(self):
@@ -67,26 +65,9 @@ class vmtkMeshRefinement(pypes.pypeScript):
         if self.Mesh == None:
             self.PrintError('Error: No Mesh.')
 
-        #agiungere tutti i controlli tipo se esiste l'array ecc
-
         from vmtk import vmtkscripts
 
-        meshToSurface = vmtkscripts.vmtkMeshToSurface()
-        meshToSurface.Mesh = self.Mesh
-        meshToSurface.Execute()
-        surface = meshToSurface.Surface
-
-        threshold = vtk.vtkThreshold()
-        threshold.SetInputData( self.Mesh )
-        threshold.ThresholdBetween( self.InterfaceLabel - 0.5, self.InterfaceLabel + 0.5 )
-        threshold.SetInputArrayToProcess( 0, 0, 0, 1, self.CellEntityIdsArrayName )
-        threshold.Update()
-        meshToSurface = vmtkscripts.vmtkMeshToSurface()
-        meshToSurface.Mesh = threshold.GetOutput()
-        meshToSurface.Execute()
-        interfaceSurface = meshToSurface.Surface
-
-        self.PrintLog("Computing refined sizing function")
+        self.PrintLog("Computing refined sizing function ...")
         numberOfNodes = self.Mesh.GetNumberOfPoints()
         refinedSizingArray = vtk.vtkDoubleArray()
         refinedSizingArray.SetName( self.RefinedSizingFunctionArrayName )
@@ -98,17 +79,19 @@ class vmtkMeshRefinement(pypes.pypeScript):
         if distanceArray == None:
             self.PrintError( 'Error: No Point Data Array called ' + self.DistanceArrayName )
 
-        mesh = self.Mesh
         for i in range( numberOfNodes ):
             distance = distanceArray.GetComponent( i, 0 )
             if self.UseMagnitude:
                 distance = abs( distance )
             #refinedSizingArray.SetTuple1(i,max(self.SizeMin,min(vmtksize, self.Alpha * pow(distance,self.Beta))))
             refinedSizingArray.SetTuple1( i, max( self.SizeMin, self.Alpha * pow( distance, self.Beta ) ) )
-        
-        self.PrintLog("Generating refined mesh")
-        tetgen=vmtkscripts.vmtkTetGen()
-        tetgen.Mesh= mesh
+
+        inputMesh =  vtk.vtkUnstructuredGrid()
+        inputMesh.DeepCopy(self.Mesh)
+
+        self.PrintLog("Generating refined mesh ...")
+        tetgen = vmtkscripts.vmtkTetGen()
+        tetgen.Mesh = self.Mesh
         tetgen.GenerateCaps = 0
         tetgen.UseSizingFunction = 1
         tetgen.Refine = 1
@@ -117,65 +100,36 @@ class vmtkMeshRefinement(pypes.pypeScript):
         tetgen.Order = 1
         tetgen.Quality = 1
         tetgen.PLC = 0
-        tetgen.NoBoundarySplit = 0 #consente il raffinamento della superficie
+        tetgen.NoBoundarySplit = 0 # to allow surface-refinemnt
         tetgen.RemoveSliver = 0
         tetgen.OutputSurfaceElements = 0
         tetgen.OutputVolumeElements = 1
         tetgen.Execute()
-        
-        meshToSurface.Mesh = tetgen.Mesh
-        meshToSurface.Execute()
-        surfaceRefined = meshToSurface.Surface
-        
-        self.PrintLog("Projecting surface labels")
-        cellToPoint = vtk.vtkCellDataToPointData()
-        cellToPoint.SetInputData( surface )
-        cellToPoint.Update()
-        surface2 = cellToPoint.GetPolyDataOutput()
-        
-        # not really robust
-        for j in range( surface2.GetNumberOfPoints() ):
-            if (surface2.GetPointData().GetArray( self.CellEntityIdsArrayName ).GetComponent( j, 0 ) > 10 ):
-                surface2.GetPointData().GetArray( self.CellEntityIdsArrayName ).SetTuple1( j, self.InterfaceLabel )
-        
-        projection = vmtkscripts.vmtkSurfaceProjection()
-        projection.Surface = surfaceRefined
-        projection.ReferenceSurface = surface2
-        projection.Execute()
 
-        cellList = vtk.vtkIdList()
-        surfaceRefined = projection.Surface
-        for i in range( surfaceRefined.GetNumberOfPoints() ):
-            if surfaceRefined.GetPointData().GetArray( self.CellEntityIdsArrayName ).GetComponent( i, 0 ) != self.InterfaceLabel:
-                valmin = self.InterfaceLabel
-                surfaceRefined.GetPointCells( i, cellList )
-                for j in range( cellList.GetNumberOfIds() ):
-                    pointList = vtk.vtkIdList()
-                    surfaceRefined.GetCellPoints( cellList.GetId( j ), pointList )
-                    for k in range(0,3):
-                        if surfaceRefined.GetPointData().GetArray( self.CellEntityIdsArrayName ).GetComponent( pointList.GetId( k ), 0 ) < valmin:
-                            valmin = surfaceRefined.GetPointData().GetArray( self.CellEntityIdsArrayName ).GetComponent( pointList.GetId( k ), 0 )
-                surfaceRefined.GetPointData().GetArray( self.CellEntityIdsArrayName ).SetTuple1( i, valmin )
-        
-        surfaceRefined.GetCellData().GetArray( self.CellEntityIdsArrayName ).FillComponent( 0, self.InterfaceLabel )
-        
-        for i in range( surfaceRefined.GetNumberOfPoints() ):
-            if surfaceRefined.GetPointData().GetArray( self.CellEntityIdsArrayName ).GetComponent( i, 0 ) != self.InterfaceLabel:
-                value = surfaceRefined.GetPointData().GetArray( self.CellEntityIdsArrayName ).GetComponent( i, 0 )
-                surfaceRefined.GetPointCells( i, cellList )
-                for j in range( cellList.GetNumberOfIds() ):
-                    surfaceRefined.GetCellData().GetArray( self.CellEntityIdsArrayName ).SetComponent( cellList.GetId( j ), 0, value )
-        
-        self.PrintLog("Assembling final mesh")
-        appendFilter = vtkvmtk.vtkvmtkAppendFilter()
-        appendFilter.AddInputData( surfaceRefined )
-        appendFilter.AddInputData( tetgen.Mesh )
-        appendFilter.Update()
-        
-        self.Mesh = appendFilter.GetOutput()
-        self.InterfaceSurface = surfaceRefined
+        self.PrintLog("Projecting entityids ...")
+        mts = vmtkscripts.vmtkMeshToSurface()
+        mts.Mesh = tetgen.Mesh
+        mts.CleanOutput = 1
+        mts.Execute()
 
-        
+        af = vtkvmtk.vtkvmtkAppendFilter()
+        af.AddInputData(tetgen.Mesh)
+        af.AddInputData(mts.Surface)
+        af.Update()
+        self.Mesh = af.GetOutput()
+
+        meshProj = vmtkscripts.vmtkMeshProjection()
+        meshProj.Mesh =  self.Mesh
+        meshProj.ReferenceMesh = inputMesh
+        meshProj.Method = 'closestpoint'
+        meshProj.ActiveArrays = [self.CellEntityIdsArrayName]
+        meshProj.LineSurfaceVolume = 1
+        meshProj.Execute()
+
+        self.Mesh = meshProj.Mesh
+
+
+
 if __name__=='__main__':
     main = pypes.pypeMain()
     main.Arguments = sys.argv
