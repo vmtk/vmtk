@@ -45,13 +45,13 @@ class vmtkSurfaceProjection(pypes.pypeScript):
             ])
 
 
-    def ClosestPointProjection(self):
-        refPointData = self.ReferenceSurface.GetPointData()
-        refCellData = self.ReferenceSurface.GetCellData()
+    def ClosestPointProjection(self,idata,rdata):
+        refPointData = rdata.GetPointData()
+        refCellData = rdata.GetCellData()
         nPointArrays = refPointData.GetNumberOfArrays()
         nCellArrays = refCellData.GetNumberOfArrays()
-        nPoints = self.Surface.GetNumberOfPoints()
-        nCells = self.Surface.GetNumberOfCells()
+        nPoints = idata.GetNumberOfPoints()
+        nCells = idata.GetNumberOfCells()
 
         if nPointArrays > 0:
             # initialize point data arrays on the Surface
@@ -64,18 +64,18 @@ class vmtkSurfaceProjection(pypes.pypeScript):
                 pointDataArrays[i].SetNumberOfTuples(nPoints)
                 pointDataArrays[i].SetName(refArray.GetName())
                 pointArrayNames += refArray.GetName() + ","
-                self.Surface.GetPointData().AddArray(pointDataArrays[i])
+                idata.GetPointData().AddArray(pointDataArrays[i])
 
             self.PrintLog("\tProcessing PointData arrays: ["+pointArrayNames[:-1]+"] ...")
 
             # initialize pointlocator on the ReferenceSurface
             pointLocator = vtk.vtkPointLocator()
-            pointLocator.SetDataSet(self.ReferenceSurface)
+            pointLocator.SetDataSet(rdata)
             pointLocator.BuildLocator()
 
             for j in range(nPoints):
                 # find closest point on the reference
-                pointId = pointLocator.FindClosestPoint(self.Surface.GetPoint(j))
+                pointId = pointLocator.FindClosestPoint(idata.GetPoint(j))
 
                 # assign the value of the closest point arrays to current point
                 for i in range(nPointArrays):
@@ -93,19 +93,19 @@ class vmtkSurfaceProjection(pypes.pypeScript):
                 cellDataArrays[i].SetNumberOfTuples(nCells)
                 cellDataArrays[i].SetName(refArray.GetName())
                 cellArrayNames += refArray.GetName() + ","
-                self.Surface.GetCellData().AddArray(cellDataArrays[i])
+                idata.GetCellData().AddArray(cellDataArrays[i])
 
             self.PrintLog("\tProcessing CellData arrays: ["+cellArrayNames[:-1]+"] ...")
 
             # initialize celllocator on the ReferenceSurface
             cellLocator = vtk.vtkCellLocator()
-            cellLocator.SetDataSet(self.ReferenceSurface)
+            cellLocator.SetDataSet(rdata)
             cellLocator.BuildLocator()
 
             for j in range(nCells):
                 # set the test point as the barycenter of the current cell
                 cell = vtk.vtkGenericCell()
-                self.Surface.GetCell(j,cell)
+                idata.GetCell(j,cell)
                 pcoords = [0.0,0.0,0.0]
                 weights = [0.0,0.0,0.0]
                 center = [0.0,0.0,0.0]
@@ -120,7 +120,8 @@ class vmtkSurfaceProjection(pypes.pypeScript):
                 # assign the value of the closest point arrays to current point
                 for i in range(nCellArrays):
                     cellDataArrays[i].InsertTuple(j,cellId,refCellData.GetArray(i))
-        return
+
+        return idata
 
 
     def Execute(self):
@@ -153,7 +154,7 @@ class vmtkSurfaceProjection(pypes.pypeScript):
             self.Surface = surfaceProjection.GetOutput()
         elif self.Method == 'closestpoint':
             self.PrintLog('Computing closest point projection ...')
-            self.ClosestPointProjection()
+            self.Surface = self.ClosestPointProjection(self.Surface,self.ReferenceSurface)
 
 
 
