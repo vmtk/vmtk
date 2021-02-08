@@ -129,9 +129,12 @@ class vmtkMeshProjection(pypes.pypeScript):
 
                 if lin.GetNumberOfCells()>0 and rlin.GetNumberOfCells()>0:
                     lin = cpProj.ClosestPointProjection(lin,rlin)
+                    self.PrintLog('\tprojecting lines-to-lines ...')
                 if sur.GetNumberOfCells()>0 and rsur.GetNumberOfCells()>0:
+                    self.PrintLog('\tprojecting surface-to-surface ...')
                     sur = cpProj.ClosestPointProjection(sur,rsur)
                 if vol.GetNumberOfCells()>0 and rvol.GetNumberOfCells()>0:
+                    self.PrintLog('\tprojecting volume-to-volume ...')
                     vol = cpProj.ClosestPointProjection(vol,rvol)
 
                 af = vtkvmtk.vtkvmtkAppendFilter()
