@@ -178,8 +178,9 @@ class vmtkMeshWriter(pypes.pypeScript):
         cellEntityIdsArray = vtk.vtkIntArray()
         cellEntityIdsArray.DeepCopy(self.Mesh.GetCellData().GetArray(self.CellEntityIdsArrayName))
 
-        tetraCellType = 10
-        triangleCellType = 5
+        lineCellType = vtk.vtkLine().GetCellType()
+        triangleCellType = vtk.vtkTriangle().GetCellType()
+        tetraCellType = vtk.vtkTetra().GetCellType()
 
         f=open(self.OutputFileName, 'w')
         line = "MeshVersionFormatted 1\n\n"
@@ -244,6 +245,29 @@ class vmtkMeshWriter(pypes.pypeScript):
             cellEntityId = cellEntityIdsArray.GetValue(triangleCellId)
             line += '  %d\n' % cellEntityId
             f.write(line)
+
+        lineCellIdArray = vtk.vtkIdTypeArray()
+        self.Mesh.GetIdsOfCellsOfType(lineCellType,lineCellIdArray)
+        numberOfLines = lineCellIdArray.GetNumberOfTuples()
+
+        if numberOfLines>0:
+            line += "Edges\n"
+            line += "%d\n" % numberOfLines
+            f.write(line)
+            for i in range(numberOfLines):
+                lineCellId = lineCellIdArray.GetValue(i)
+                cellPointIds = self.Mesh.GetCell(lineCellId).GetPointIds()
+                line = ''
+                for j in range(cellPointIds.GetNumberOfIds()):
+                    if j>0:
+                        line += '  '
+                    line += "%d" % (cellPointIds.GetId(j)+1)
+                cellEntityId = cellEntityIdsArray.GetValue(lineCellId)
+                line += '  %d\n' % cellEntityId
+                f.write(line)
+
+        f.close()
+
 
     def WriteDolfinMeshFile(self):
         if (self.OutputFileName == ''):
