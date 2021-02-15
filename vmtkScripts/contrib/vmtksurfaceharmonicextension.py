@@ -56,12 +56,12 @@ class vmtkSurfaceHarmonicExtension(pypes.pypeScript):
 
 
         self.SetScriptName('vmtksurfaceharmonicextension')
-        self.SetScriptDoc('extend some input arrays harmonically on a surface; the extension takes effect on a subset of the input surface selected using  entity ids; the output array remains the same of the input one outside the extension domain and the values of this array at the boundary rings of the excluded domain are used as Dirichlet BCs for the harmonic extension')
+        self.SetScriptDoc('extend point data arrays harmonically on a surface; the extension takes effect on a subset of the input surface selected using  entity ids; the output array remains the same of the input one outside the extension domain and the values of this array at the boundary rings of the excluded domain are used as Dirichlet BCs for the harmonic extension')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
             ['Valve','ivalve','vtkPolyData',1,'','an optional additional surface near the input surface (e.g. a valve) where the extension is also performed','vmtksurfacereader'],
-            ['InputArrayNames','iarrays','str',1,'','input arrays to be extended'],
-            ['OutputArrayNames','oarrays','str',1,'','output arrays, if not set output arrays overwrite input ones'],
+            ['InputArrayNames','iarrays','str',1,'','input arrays to be extended (if not set, all the point data arrays are extended)'],
+            ['OutputArrayNames','oarrays','str',1,'','output arrays (if not set, output arrays overwrite input ones)'],
             ['ExtensionIds','extensionids','int',-1,'','entity ids of the surface identifying the extension domain, i.e. where to extend the input array'],
             ['ExcludeIdsForBCs','excludeidsforbcs','int',-1,'','subset of extension domain to be excluded only for the boundary rings definition, where to set the Dirichlet BCs; this option only takes effect if "UseNullDirichletBCs" is true'],
             ['UseNullDirichletBCs','dirichletbcs','bool',1,'','toggle imposing homogeneous Dirichlet BCs on the rings of the extension domain; "ExcludeIdsForBCs" option can be exploited to define these rings'],
@@ -94,8 +94,11 @@ class vmtkSurfaceHarmonicExtension(pypes.pypeScript):
             if item not in self.ExtensionIds:
                 self.ExcludeIds.append(item)
 
+        # set input/output arrays
+        if self.InputArrayNames == []:
+            for i in range(self.Surface.GetPointData().GetNumberOfArrays()):
+                self.InputArrayNames.append(self.Surface.GetPointData().GetArrayName(i))
 
-        # add indexes to input/output arrays
         if self.OutputArrayNames == []:
             self.OutputArrayNames = self.InputArrayNames
         elif len(self.OutputArrayNames)!=len(self.InputArrayNames):
