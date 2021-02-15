@@ -34,10 +34,9 @@ class vmtkSurfaceHarmonicExtension(pypes.pypeScript):
         pypes.pypeScript.__init__(self)
 
         self.Surface = None
-        self.InputArrayName = 'Displacement'
-        self.OutputArrayName = 'DisplacementOut'
+        self.InputArrayNames = []
+        self.OutputArrayNames = []
         self.OutputArray = None
-        self.ArraySuffixes = []
 
         self.Ids = set()
         self.ExtensionIds = []
@@ -57,13 +56,12 @@ class vmtkSurfaceHarmonicExtension(pypes.pypeScript):
 
 
         self.SetScriptName('vmtksurfaceharmonicextension')
-        self.SetScriptDoc('extend an input array harmonically on a surface; the extension takes effect on a subset of the input surface selected using  entity ids; the output array remains the same of the input one outside the extension domain and the values of this array at the boundary rings of the excluded domain are used as Dirichlet BCs for the harmonic extension')
+        self.SetScriptDoc('extend some input arrays harmonically on a surface; the extension takes effect on a subset of the input surface selected using  entity ids; the output array remains the same of the input one outside the extension domain and the values of this array at the boundary rings of the excluded domain are used as Dirichlet BCs for the harmonic extension')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
             ['Valve','ivalve','vtkPolyData',1,'','an optional additional surface near the input surface (e.g. a valve) where the extension is also performed','vmtksurfacereader'],
-            ['InputArrayName','inputarray','str',1,'','input array to be extended on some tags'],
-            ['OutputArrayName','outputarray','str',1,'','output array name'],
-            ['ArraySuffixes','arraysuffixes','str',-1,'','set of suffixes for the input/output arrays in order to process a set of arrays instead only one (if not set, only a single inputarray is processed)'],
+            ['InputArrayNames','iarrays','str',1,'','input arrays to be extended'],
+            ['OutputArrayNames','oarrays','str',1,'','output arrays, if not set output arrays overwrite input ones'],
             ['ExtensionIds','extensionids','int',-1,'','entity ids of the surface identifying the extension domain, i.e. where to extend the input array'],
             ['ExcludeIdsForBCs','excludeidsforbcs','int',-1,'','subset of extension domain to be excluded only for the boundary rings definition, where to set the Dirichlet BCs; this option only takes effect if "UseNullDirichletBCs" is true'],
             ['UseNullDirichletBCs','dirichletbcs','bool',1,'','toggle imposing homogeneous Dirichlet BCs on the rings of the extension domain; "ExcludeIdsForBCs" option can be exploited to define these rings'],
@@ -98,22 +96,17 @@ class vmtkSurfaceHarmonicExtension(pypes.pypeScript):
 
 
         # add indexes to input/output arrays
-        inputArrayNames = []
-        outputArrayNames = []
-        if self.ArraySuffixes == []:
-            inputArrayNames.append(self.InputArrayName)
-            outputArrayNames.append(self.OutputArrayName)
-        else:
-            for suffix in self.ArraySuffixes:
-                inputArrayNames.append(self.InputArrayName+suffix)
-                outputArrayNames.append(self.OutputArrayName+suffix)
+        if self.OutputArrayNames == []:
+            self.OutputArrayNames = self.InputArrayNames
+        elif len(self.OutputArrayNames)!=len(self.InputArrayNames):
+            self.PrintError('Different number of input and output arrays')
 
-        self.PrintLog("Input arrays:  "+str(inputArrayNames))
-        self.PrintLog("Output arrays: "+str(outputArrayNames))
+        self.PrintLog("Input arrays:  "+str(self.InputArrayNames))
+        self.PrintLog("Output arrays: "+str(self.OutputArrayNames))
 
-        for i in range(len(inputArrayNames)):
-            self.PrintLog('\nProcessing array "'+inputArrayNames[i]+'"\n')
-            inputArray = self.Surface.GetPointData().GetArray(inputArrayNames[i])
+        for i in range(len(self.InputArrayNames)):
+            self.PrintLog('\nProcessing array "'+self.InputArrayNames[i]+'"\n')
+            inputArray = self.Surface.GetPointData().GetArray(self.InputArrayNames[i])
             numberOfComponents = inputArray.GetNumberOfComponents()
 
             harmonicSolver = vmtkcontribscripts.vmtkSurfaceHarmonicSolver()
@@ -123,9 +116,9 @@ class vmtkSurfaceHarmonicExtension(pypes.pypeScript):
                 harmonicSolver.VectorialEq = True
             else:
                 harmonicSolver.VectorialEq = False
-            harmonicSolver.SolutionArrayName = outputArrayNames[i]
+            harmonicSolver.SolutionArrayName = self.OutputArrayNames[i]
             harmonicSolver.ExcludeIds = self.ExcludeIds
-            harmonicSolver.ExcludeIdsArrayName = inputArrayNames[i]
+            harmonicSolver.ExcludeIdsArrayName = self.InputArrayNames[i]
             harmonicSolver.ExcludeIdsForBCs = self.ExcludeIdsForBCs
             if self.UseNullDirichletBCs:
                 harmonicSolver.InitWithZeroDirBCs = True
@@ -151,7 +144,7 @@ class vmtkSurfaceHarmonicExtension(pypes.pypeScript):
             ringsBetween = harmonicSolver.SurfaceThreshold(excludedDomainRings,0,0,'distanceFromIncludedRings',False)
 
             harmonicSolver.InputRings = ringsBetween
-            harmonicSolver.InputRingsBCsArrayName = inputArrayNames[i]
+            harmonicSolver.InputRingsBCsArrayName = self.InputArrayNames[i]
 
             harmonicSolver.Execute()
             self.Surface = harmonicSolver.Surface
@@ -183,21 +176,21 @@ class vmtkSurfaceHarmonicExtension(pypes.pypeScript):
             projector.Execute()
             valveForBCs = projector.Surface
 
-            for i in range(len(inputArrayNames)):
-                self.PrintLog('\nProcessing array "'+inputArrayNames[i]+'"\n')
-                inputArray = self.Surface.GetPointData().GetArray(inputArrayNames[i])
+            for i in range(len(self.InputArrayNames)):
+                self.PrintLog('\nProcessing array "'+self.InputArrayNames[i]+'"\n')
+                inputArray = self.Surface.GetPointData().GetArray(self.InputArrayNames[i])
                 numberOfComponents = inputArray.GetNumberOfComponents()
 
                 harmonicSolver = vmtkcontribscripts.vmtkSurfaceHarmonicSolver()
                 harmonicSolver.Surface = self.Valve
                 harmonicSolver.InputRings = valveForBCs
-                harmonicSolver.InputRingsBCsArrayName = outputArrayNames[i]
+                harmonicSolver.InputRingsBCsArrayName = self.OutputArrayNames[i]
                 harmonicSolver.Interactive = False
                 if numberOfComponents == 3:
                     harmonicSolver.VectorialEq = True
                 else:
                     harmonicSolver.VectorialEq = False
-                harmonicSolver.SolutionArrayName = outputArrayNames[i]
+                harmonicSolver.SolutionArrayName = self.OutputArrayNames[i]
                 harmonicSolver.InitWithZeroDirBCs = False
                 harmonicSolver.CellEntityIdsArrayName = self.CellEntityIdsArrayName
                 harmonicSolver.Display = self.Display
