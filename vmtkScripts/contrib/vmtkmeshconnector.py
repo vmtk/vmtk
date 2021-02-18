@@ -9,11 +9,11 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENCE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
-## Note: this class was contributed by 
+## Note: this class was contributed by
 ##       Marco Fedele (marco.fedele@polimi.it)
 ##       Politecnico di Milano
 
@@ -52,7 +52,7 @@ class vmtkMeshConnector(pypes.pypeScript):
         self.CellEntityIdsArray = None
 
         self.ExportConnectionRegions = 1
-
+        self.SkipRemeshing = 0
 
         self.SetScriptName('vmtkmeshconnector')
         self.SetScriptDoc('connect two meshes generating a volumetric mesh between two selected regions of the input meshes')
@@ -67,7 +67,8 @@ class vmtkMeshConnector(pypes.pypeScript):
             ['VolumeId1','volumeid1','int',1,'','the id to be assigned to the first input mesh; if None, the input id is mantained'],
             ['VolumeId2','volumeid2','int',1,'','the id to be assigned to the second input mesh; if None, the input id is mantained'],
             ['CellEntityIdsArrayName','entityidsarray','str',1,'','name of the array where entity ids have been stored'],
-            ['ExportConnectionRegions','exportregions','bool',1,'','toggle exporting connection regions of the input meshes on the output ConnectionMesh']
+            ['ExportConnectionRegions','exportregions','bool',1,'','toggle exporting connection regions of the input meshes on the output ConnectionMesh'],
+            ['SkipRemeshing','skipremeshing','bool',1,'','toggle skipping the remeshing of the connection region']
             ])
         self.SetOutputMembers([
             ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh','vmtkmeshwriter'],
@@ -198,15 +199,16 @@ class vmtkMeshConnector(pypes.pypeScript):
 
 
         # 3. generate the connection volumetric mesh
-        sr = vmtkscripts.vmtkSurfaceRemeshing()
-        sr.Surface = connectionSurface
-        sr.ElementSizeMode ='edgelength'
-        sr.TargetEdgeLength = self.ConnectionEdgeLength
-        sr.CellEntityIdsArrayName = self.CellEntityIdsArrayName
-        sr.ExcludeEntityIds = list(self.IdsToConnect1 | self.IdsToConnect2)
-        sr.CleanOutput = 1
-        sr.Execute()
-        connectionSurface = sr.Surface
+        if not self.SkipRemeshing:
+            sr = vmtkscripts.vmtkSurfaceRemeshing()
+            sr.Surface = connectionSurface
+            sr.ElementSizeMode ='edgelength'
+            sr.TargetEdgeLength = self.ConnectionEdgeLength
+            sr.CellEntityIdsArrayName = self.CellEntityIdsArrayName
+            sr.ExcludeEntityIds = list(self.IdsToConnect1 | self.IdsToConnect2)
+            sr.CleanOutput = 1
+            sr.Execute()
+            connectionSurface = sr.Surface
 
         mg = vmtkscripts.vmtkMeshGenerator()
         mg.Surface = connectionSurface
