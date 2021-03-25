@@ -57,7 +57,7 @@ class vmtkPointTransform(pypes.pypeScript):
         transform.SetInput(matrix)
 
         outputPoints = []
-        for i in range(len(self.Points)/3):
+        for i in range(len(self.Points)//3):
             point = [self.Points[3*i+0],self.Points[3*i+1],self.Points[3*i+2]]
             outputPoint = transform.TransformPoint(point)
             outputPoints.append(outputPoint)

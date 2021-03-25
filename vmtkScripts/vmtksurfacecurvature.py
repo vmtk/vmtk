@@ -111,7 +111,7 @@ class vmtkSurfaceCurvature(pypes.pypeScript):
                 values.sort()
                 if not values:
                     continue
-                medianValue = values[(len(values) - 1)/2]
+                medianValue = values[(len(values) - 1)//2]
                 activeScalars.SetTuple1(pointId,medianValue)
 
         if self.MedianFiltering:
@@ -125,7 +125,7 @@ class vmtkSurfaceCurvature(pypes.pypeScript):
                 values.sort()
                 if not values:
                     continue
-                medianValue = values[(len(values) - 1)/2]
+                medianValue = values[(len(values) - 1)//2]
                 activeScalars.SetTuple1(i,medianValue)
 
         if self.BoundedReciprocal:

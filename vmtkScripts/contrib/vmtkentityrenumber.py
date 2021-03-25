@@ -47,7 +47,7 @@ class VmtkEntityRenumber(pypes.pypeScript):
             self.PrintError('Renumbering must have even length.')
 
         renumbering = {}
-        for i in range(len(self.CellEntityIdRenumbering)/2):
+        for i in range(len(self.CellEntityIdRenumbering)//2):
             a = self.CellEntityIdRenumbering[2*i]
             b = self.CellEntityIdRenumbering[2*i+1]
             renumbering[a] = b
