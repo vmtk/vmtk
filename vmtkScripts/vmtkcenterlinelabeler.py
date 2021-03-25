@@ -119,7 +119,7 @@ class vmtkCenterlineLabeler(pypes.pypeScript):
             if len(self.Labeling) != 2 * len(uniqueGroupIds):
                 self.PrintError('Error: incorrect labeling specified')
 
-            for i in range(len(self.Labeling)/2):
+            for i in range(len(self.Labeling)//2):
                 groupId = self.Labeling[2*i]
                 labelId = self.Labeling[2*i+1]
                 if not groupId in uniqueGroupIds:
