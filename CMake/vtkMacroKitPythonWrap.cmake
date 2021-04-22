@@ -80,7 +80,7 @@ endmacro()
 #!
 #!   Slicer_VTK_WRAP_HIERARCHY_DIR:
 #!
-#!     Directory where to ouptut the hierarchy files
+#!     Directory where to output the hierarchy files
 #!     Default is ${Slicer_BINARY_DIR}
 #!
 #!   Slicer_VTK_WRAP_MODULE_INSTALL_COMPONENT_IDENTIFIER:
@@ -126,14 +126,14 @@ macro(vtkMacroKitPythonWrap)
     set(MY_KIT_MODULE_INSTALL_LIB_DIR ${MY_KIT_INSTALL_LIB_DIR})
   endif()
   # Default global variables
-  if(NOT DEFINED Slicer_VTK_WRAP_HIERARCHY_DIR)
-    set(Slicer_VTK_WRAP_HIERARCHY_DIR ${Slicer_BINARY_DIR})
+  if(NOT DEFINED VMTK_VTK_WRAP_HIERARCHY_DIR)
+    set(VMTK_VTK_WRAP_HIERARCHY_DIR ${VMTK_BINARY_DIR})
   endif()
-  if(NOT DEFINED Slicer_VTK_WRAP_MODULE_INSTALL_COMPONENT_IDENTIFIER)
-    set(Slicer_VTK_WRAP_MODULE_INSTALL_COMPONENT_IDENTIFIER "RuntimeLibraries")
+  if(NOT DEFINED VMTK_VTK_WRAP_MODULE_INSTALL_COMPONENT_IDENTIFIER)
+    set(VMTK_VTK_WRAP_MODULE_INSTALL_COMPONENT_IDENTIFIER "RuntimeLibraries")
   endif()
-  if(NOT DEFINED Slicer_VTK_WRAP_HIERARCHY_TARGETS_PROPERTY_NAME)
-    set(Slicer_VTK_WRAP_HIERARCHY_TARGETS_PROPERTY_NAME "SLICER_WRAP_HIERARCHY_TARGETS")
+  if(NOT DEFINED VMTK_VTK_WRAP_HIERARCHY_TARGETS_PROPERTY_NAME)
+    set(VMTK_VTK_WRAP_HIERARCHY_TARGETS_PROPERTY_NAME "SLICER_WRAP_HIERARCHY_TARGETS")
   endif()
 
   if(VTK_WRAP_PYTHON AND BUILD_SHARED_LIBS)
@@ -151,8 +151,8 @@ macro(vtkMacroKitPythonWrap)
 
     # Add kit include dirs
     list(APPEND _kit_wrap_include_dirs ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
-    if(DEFINED Slicer_Base_INCLUDE_DIRS)
-      list(APPEND _kit_wrap_include_dirs ${Slicer_Base_INCLUDE_DIRS})
+    if(DEFINED VMTK_Base_INCLUDE_DIRS)
+      list(APPEND _kit_wrap_include_dirs ${VMTK_Base_INCLUDE_DIRS})
     endif()
     set(_kit_include_dirs ${${MY_KIT_NAME}_INCLUDE_DIRS})
     if(_kit_include_dirs)
@@ -191,20 +191,21 @@ macro(vtkMacroKitPythonWrap)
       #  - <module_name>_WRAP_DEPENDS
       #  - <module_name>_WRAP_HIERARCHY_FILE
       set(${MY_KIT_NAME}_WRAP_DEPENDS "${_kit_wrap_depends}" CACHE INTERNAL "${MY_KIT_NAME} wrapping dependencies" FORCE)
-      set(_wrap_hierarchy_file "${Slicer_VTK_WRAP_HIERARCHY_DIR}/${MY_KIT_NAME}Hierarchy.txt")
-      if(${VTK_VERSION_MAJOR} VERSION_LESS 9)
+      set(_wrap_hierarchy_file "${VMTK_VTK_WRAP_HIERARCHY_DIR}/${MY_KIT_NAME}Hierarchy.txt")
+
+      if(${VTK_VERSION_MAJOR}.${VTK_VERSION_MINOR} VERSION_LESS "8.2")
         set(_wrap_hierarchy_stamp_file ${CMAKE_CURRENT_BINARY_DIR}/${MY_KIT_NAME}Hierarchy.stamp.txt)
       endif()
       set(${MY_KIT_NAME}_WRAP_HIERARCHY_FILE "${_wrap_hierarchy_file}" CACHE INTERNAL "${MY_KIT_NAME} wrap hierarchy file" FORCE)
 
-      set_property(GLOBAL APPEND PROPERTY ${Slicer_VTK_WRAP_HIERARCHY_TARGETS_PROPERTY_NAME} ${MY_KIT_NAME})
+      set_property(GLOBAL APPEND PROPERTY ${VMTK_VTK_WRAP_HIERARCHY_TARGETS_PROPERTY_NAME} ${MY_KIT_NAME})
 
       # Set variables for vtk_wrap_python3:
       #   - KIT_HIERARCHY_FILE
       set(KIT_HIERARCHY_FILE "${_wrap_hierarchy_file}")
 
       # Generate hierarchy files
-      vtk_wrap_hierarchy(${MY_KIT_NAME} ${Slicer_VTK_WRAP_HIERARCHY_DIR} "${TMP_WRAP_FILES}")
+      vtk_wrap_hierarchy(${MY_KIT_NAME} ${VMTK_VTK_WRAP_HIERARCHY_DIR} "${TMP_WRAP_FILES}")
     endif()
 
     VTK_WRAP_PYTHON3(${MY_KIT_NAME}Python KitPython_SRCS "${TMP_WRAP_FILES}")
@@ -219,7 +220,7 @@ macro(vtkMacroKitPythonWrap)
     # hierarchy file is created.
     # XXX Use target_sources if cmake_minimum_required >= 3.1
     get_target_property(_kit_srcs ${MY_KIT_NAME} SOURCES)
-    if(${VTK_VERSION_MAJOR} VERSION_LESS 9)
+    if(${VTK_VERSION_MAJOR}.${VTK_VERSION_MINOR} VERSION_LESS "8.2")
       list(APPEND _kit_srcs ${_wrap_hierarchy_stamp_file})
     else()
       list(APPEND _kit_srcs ${_wrap_hierarchy_file})
@@ -247,17 +248,19 @@ macro(vtkMacroKitPythonWrap)
       endif()
     endforeach()
     set(VTK_PYTHON_CORE vtkWrappingPythonCore)
+    if (NOT APPLE)
+      set(vtk_python_libs ${VTK_PYTHON_LIBRARIES})
+    endif (NOT APPLE)
     target_link_libraries(
       ${MY_KIT_NAME}PythonD
       ${MY_KIT_NAME}
       ${VTK_PYTHON_CORE}
-      ${VTK_PYTHON_LIBRARIES}
+      ${vtk_python_libs}
       ${VTK_KIT_PYTHON_LIBRARIES}
       ${MY_KIT_PYTHON_LIBRARIES}
       )
 
     install(TARGETS ${MY_KIT_NAME}PythonD
-      EXPORT VMTK-Targets
       RUNTIME DESTINATION ${MY_KIT_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries
       LIBRARY DESTINATION ${MY_KIT_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
       ARCHIVE DESTINATION ${MY_KIT_INSTALL_LIB_DIR} COMPONENT Development
@@ -282,6 +285,11 @@ macro(vtkMacroKitPythonWrap)
       ${MY_KIT_NAME}PythonD
       )
 
+    if (APPLE)
+      set_target_properties( ${MY_KIT_NAME}Python PROPERTIES LINK_FLAGS "-undefined dynamic_lookup" )
+      set_target_properties( ${MY_KIT_NAME}PythonD PROPERTIES LINK_FLAGS "-undefined dynamic_lookup" )
+    endif (APPLE)
+
     # Python extension modules on Windows must have the extension ".pyd"
     # instead of ".dll" as of Python 2.5.  Older python versions do support
     # this suffix.
@@ -292,13 +300,19 @@ macro(vtkMacroKitPythonWrap)
     # Make sure that no prefix is set on the library
     set_target_properties(${MY_KIT_NAME}Python PROPERTIES PREFIX "")
 
-    install(TARGETS ${MY_KIT_NAME}Python
-      EXPORT VMTK-Targets
-      RUNTIME DESTINATION ${MY_KIT_MODULE_INSTALL_BIN_DIR} COMPONENT ${Slicer_VTK_WRAP_MODULE_INSTALL_COMPONENT_IDENTIFIER}
-      LIBRARY DESTINATION ${MY_KIT_MODULE_INSTALL_LIB_DIR} COMPONENT ${Slicer_VTK_WRAP_MODULE_INSTALL_COMPONENT_IDENTIFIER}
-      ARCHIVE DESTINATION ${MY_KIT_MODULE_INSTALL_LIB_DIR} COMPONENT Development
-      )
+    if (APPLE)
+      install(TARGETS ${MY_KIT_NAME}Python
+        RUNTIME DESTINATION ${MY_KIT_MODULE_INSTALL_BIN_DIR} COMPONENT ${VMTK_VTK_WRAP_MODULE_INSTALL_COMPONENT_IDENTIFIER}
+        LIBRARY DESTINATION ${MY_KIT_MODULE_INSTALL_LIB_DIR} COMPONENT ${VMTK_VTK_WRAP_MODULE_INSTALL_COMPONENT_IDENTIFIER}
+        ARCHIVE DESTINATION ${MY_KIT_MODULE_INSTALL_LIB_DIR} COMPONENT Development
+        )
+    else (APPLE)
+      install(TARGETS ${MY_KIT_NAME}Python
+        RUNTIME DESTINATION ${MY_KIT_MODULE_INSTALL_BIN_DIR} COMPONENT ${VMTK_VTK_WRAP_MODULE_INSTALL_COMPONENT_IDENTIFIER}
+        LIBRARY DESTINATION ${MY_KIT_MODULE_INSTALL_LIB_DIR} COMPONENT ${VMTK_VTK_WRAP_MODULE_INSTALL_COMPONENT_IDENTIFIER}
+        ARCHIVE DESTINATION ${MY_KIT_MODULE_INSTALL_LIB_DIR} COMPONENT Development
+        )
+    endif (APPLE)
   endif()
 
 endmacro()
-

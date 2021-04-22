@@ -65,14 +65,14 @@ int vtkvmtkFDNEUTReader::RequestData(
     return 1;
     }
 
-  if (!this->FileName)
+  if (!this->GetFileName())
     {
     vtkErrorMacro(<<"FileName not set.");
     return 1;
     }
         
   FILE* FDNEUTFile;
-  FDNEUTFile = fopen(this->FileName,"r");
+  FDNEUTFile = fopen(this->GetFileName(),"r");
 
   if (!FDNEUTFile)
     {

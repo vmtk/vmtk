@@ -113,6 +113,7 @@ int vtkvmtkCurvedMPRImageFilter::RequestInformation (
         this->GetOutputInformation(0)->Get(
           vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT()), 6);
         }
+      outputImage->AllocateScalars(outInfo);
 #endif
 
       }
@@ -254,6 +255,7 @@ int vtkvmtkCurvedMPRImageFilter::RequestData(
           this->GetOutputInformation(0)->Get(
           vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT()), 6);
         }
+      outputImage->AllocateScalars(outInfo);
 #endif
       }
    

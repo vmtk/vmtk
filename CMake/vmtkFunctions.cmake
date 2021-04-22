@@ -1,8 +1,8 @@
 include(CMakeParseArguments)
 
-set(Slicer_VTK_WRAP_HIERARCHY_DIR ${VMTK_BINARY_DIR})
-set(Slicer_VTK_WRAP_MODULE_INSTALL_COMPONENT_IDENTIFIER "PythonRuntimeLibraries")
-set(Slicer_VTK_WRAP_HIERARCHY_TARGETS_PROPERTY_NAME "VMTK_WRAP_HIERARCHY_TARGETS")
+set(VMTK_VTK_WRAP_HIERARCHY_DIR ${VMTK_BINARY_DIR})
+set(VMTK_VTK_WRAP_MODULE_INSTALL_COMPONENT_IDENTIFIER "PythonRuntimeLibraries")
+set(VMTK_VTK_WRAP_HIERARCHY_TARGETS_PROPERTY_NAME "VMTK_WRAP_HIERARCHY_TARGETS")
 include(${VMTK_SOURCE_DIR}/CMake/vtkMacroKitPythonWrap.cmake)
 
 function(vmtk_build_library)
@@ -36,13 +36,26 @@ function(vmtk_build_library)
   endif(VMTK_LIBRARY_PROPERTIES)
 
   set_target_properties(${lib_name} PROPERTIES LINKER_LANGUAGE CXX)
+  if (APPLE)
+    set_target_properties( ${lib_name} PROPERTIES LINK_FLAGS "-undefined dynamic_lookup" )
+  endif (APPLE)
 
   if(NOT WIN32)
     set_target_properties(${lib_name} PROPERTIES COMPILE_FLAGS -fPIC)
   endif(NOT WIN32)
 
   if(VMTK_LIB_TARGET_LINK_LIBRARIES)
-    target_link_libraries(${lib_name} ${VMTK_LIB_TARGET_LINK_LIBRARIES})
+    if (APPLE)
+      set(vmtk_target_link_libs )
+      foreach(lib IN LISTS VMTK_LIB_TARGET_LINK_LIBRARIES)
+        if(NOT lib MATCHES "python")
+          list(APPEND vmtk_target_link_libs ${lib})
+        endif()
+      endforeach()
+      target_link_libraries(${lib_name} ${vmtk_target_link_libs})
+    else (APPLE)
+      target_link_libraries(${lib_name} ${VMTK_LIB_TARGET_LINK_LIBRARIES})
+    endif (APPLE)
   endif()
 
   install(TARGETS ${lib_name}
