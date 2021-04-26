@@ -13,6 +13,7 @@ set(CONTRIB_SCRIPTS_SRCS
     vmtkimagetonumpy.py
     vmtkmeshaddexternallayer.py
     vmtkmeshconnector.py
+    vmtkmeshconnectorfsi.py
     vmtkmeshclipcenterlines.py
     vmtkmeshinfo.py
     vmtkmeshmerge.py
@@ -46,7 +47,7 @@ set(CONTRIB_SCRIPTS_SRCS
     vmtkpetergeneratesurface.py
     vmtkpetersurfaceclipper.py 
   )
-  
+
 set(CONTRIB_MODULE_SRCS
   vmtkcontribscripts.py
   )
