@@ -84,7 +84,7 @@ class vmtkEntityList(pypes.pypeScript):
 
         if self.ConvertToInt and self.CellEntityIdsArray.GetDataType()!=6: # 6 = int
             idsArray = vtk.vtkIntArray()
-            idsArray.DeepCopy(self.Mesh.GetCellData().GetArray(self.CellEntityIdsArrayName))
+            idsArray.DeepCopy(self.Input.GetCellData().GetArray(self.CellEntityIdsArrayName))
             self.Input.GetCellData().RemoveArray(self.CellEntityIdsArrayName)
             self.Input.GetCellData().AddArray(idsArray)
             self.CellEntityIdsArray = self.Input.GetCellData().GetArray(self.CellEntityIdsArrayName)
