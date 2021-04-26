@@ -53,6 +53,7 @@ class vmtkMeshConnector(pypes.pypeScript):
 
         self.ExportConnectionRegions = 1
         self.SkipRemeshing = 0
+        self.Display = 0
 
         self.SetScriptName('vmtkmeshconnector')
         self.SetScriptDoc('connect two meshes generating a volumetric mesh between two selected regions of the input meshes')
@@ -68,7 +69,8 @@ class vmtkMeshConnector(pypes.pypeScript):
             ['VolumeId2','volumeid2','int',1,'','the id to be assigned to the second input mesh; if None, the input id is mantained'],
             ['CellEntityIdsArrayName','entityidsarray','str',1,'','name of the array where entity ids have been stored'],
             ['ExportConnectionRegions','exportregions','bool',1,'','toggle exporting connection regions of the input meshes on the output ConnectionMesh'],
-            ['SkipRemeshing','skipremeshing','bool',1,'','toggle skipping the remeshing of the connection region']
+            ['SkipRemeshing','skipremeshing','bool',1,'','toggle skipping the remeshing of the connection region'],
+            ['Display','display','bool',1,'','toggle displaying connection algorithm progress']
             ])
         self.SetOutputMembers([
             ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh','vmtkmeshwriter'],
@@ -193,6 +195,7 @@ class vmtkMeshConnector(pypes.pypeScript):
             surfConn.Surface = connectionSurface
             surfConn.CellEntityIdsArrayName = self.CellEntityIdsArrayName
             surfConn.IdValue = self.ConnectionWallIds[numConnectionWalls]
+            surfConn.Display = self.Display
             surfConn.Execute()
             connectionSurface = surfConn.OutputSurface
             numConnectionWalls += 1
