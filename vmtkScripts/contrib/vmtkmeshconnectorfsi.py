@@ -327,12 +327,14 @@ class vmtkMeshConnectorFSI(pypes.pypeScript):
         self.FluidMesh = append.GetOutput()
 
         structureConnectionVolume = self.MeshThreshold(self.StructureConnectionMesh, self.ConnectionVolumeId)
-        structureConnectionWall = self.MeshThreshold(self.StructureConnectionMesh, self.ConnectionWallIds[0])
+        structureConnectionWall1 = self.MeshThreshold(self.StructureConnectionMesh, self.ConnectionWallIds[0])
+        structureConnectionWall2 = self.MeshThreshold(self.StructureConnectionMesh, self.ConnectionWallIds[1])
 
         append = vtk.vtkAppendFilter()
         append.MergePointsOn()
         append.AddInputData(structureConnectionVolume)
-        append.AddInputData(structureConnectionWall)
+        append.AddInputData(structureConnectionWall1)
+        append.AddInputData(structureConnectionWall2)
 
         if not self.ExportConnectionRegions:
             append.Update()
