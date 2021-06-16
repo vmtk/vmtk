@@ -87,7 +87,7 @@ class vmtkSurfaceCapper(pypes.pypeScript):
 
         if self.Interactive:
             if not self.vmtkRenderer:
-                from vmtk import vmtkrenderer
+                from . import vmtkrenderer
                 self.vmtkRenderer = vmtkrenderer.vmtkRenderer()
                 self.vmtkRenderer.Initialize()
                 self.OwnRenderer = 1

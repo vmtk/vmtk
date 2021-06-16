@@ -15,7 +15,7 @@
 ##       University at Buffalo
 
 import pytest
-import vmtk.vmtkimagevesselenhancement as vesselenhancement
+import vmtk.vmtkscripts.vmtkimagevesselenhancement as vesselenhancement
 
 
 #TODO: VEDM Method is currently diabled in vtkVmtk (vtkvmtkVesselEnhancingDiffusion3DImageFilter). Find a fix or remove.

@@ -17,8 +17,8 @@
 import pytest
 import os
 from hashlib import sha1
-import vmtk.vmtksurfacetonumpy as wrap
-import vmtk.vmtksurfacereader as r
+import vmtk.vmtkscripts.vmtksurfacetonumpy as wrap
+import vmtk.vmtkscripts.vmtksurfacereader as r
 
 
 def test_read_vtp_surface(input_datadir):

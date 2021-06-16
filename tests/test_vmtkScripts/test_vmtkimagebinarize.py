@@ -15,7 +15,7 @@
 ##       University at Buffalo
 
 import pytest
-import vmtk.vmtkimagebinarize as binarize
+import vmtk.vmtkscripts.vmtkimagebinarize as binarize
 
 
 def test_binarize_default_parameters(aorta_image, compare_images):

@@ -19,7 +19,7 @@ import sys
 import math
 
 from vmtk import vtkvmtk
-from vmtk import vmtkrenderer
+from . import vmtkrenderer
 from vmtk import pypes
 
 class vmtkImageVOIPainter(pypes.pypeScript):

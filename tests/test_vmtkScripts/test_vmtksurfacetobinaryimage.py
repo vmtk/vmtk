@@ -15,7 +15,7 @@
 ##       University at Buffalo
 
 import pytest
-import vmtk.vmtksurfacetobinaryimage as surfacetobinaryimage
+import vmtk.vmtkscripts.vmtksurfacetobinaryimage as surfacetobinaryimage
 
 @pytest.mark.parametrize("insidevalue,outsidevalue,paramid", [
     (1, 0 ,'0'),

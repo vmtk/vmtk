@@ -12,12 +12,12 @@ from .vtkvmtkDifferentialGeometryPython import *
 from .vtkvmtkIOPython import *
 from .vtkvmtkMiscPython import *
 try:
-  from .vtkvmtkRenderingPython import *
+    from .vtkvmtkRenderingPython import *
 except:
-  pass
+    pass
 from .vtkvmtkSegmentationPython import *
 from .vtkvmtkITKPython import *
 try:
-  from .vtkvmtkContribPython import *
+    from .vtkvmtkContribPython import *
 except:
-  pass
+    pass

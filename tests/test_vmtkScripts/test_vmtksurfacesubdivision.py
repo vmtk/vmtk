@@ -15,7 +15,7 @@
 ##       University at Buffalo
 
 import pytest
-import vmtk.vmtksurfacesubdivision as surfacesubdivision
+import vmtk.vmtkscripts.vmtksurfacesubdivision as surfacesubdivision
 
 
 @pytest.mark.parametrize("method,numsubdivisions,expected_points,expected_cells,paramid", [

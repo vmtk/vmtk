@@ -15,7 +15,7 @@
 ##       University at Buffalo
 
 import pytest
-import vmtk.vmtkimageshiftscale as imageshiftscale
+import vmtk.vmtkscripts.vmtkimageshiftscale as imageshiftscale
 
 
 @pytest.mark.parametrize("outputType,expected_type", [

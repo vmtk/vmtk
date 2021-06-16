@@ -15,7 +15,7 @@
 ##       University at Buffalo
 
 import pytest
-import vmtk.vmtkcenterlinegeometry as centerlinegeometry
+import vmtk.vmtkscripts.vmtkcenterlinegeometry as centerlinegeometry
 
 def test_default_parameters(aorta_centerline, compare_centerlines):
     name = __name__ + '_test_default_parameters.vtp'

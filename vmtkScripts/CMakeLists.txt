@@ -1,7 +1,6 @@
 project(VMTK_SCRIPTS)
 
 set(SCRIPTS_SRCS
-  __init__.py
   vmtkmeshcompare.py
   vmtkimagecompare.py
   vmtksurfacecompare.py
@@ -21,6 +20,7 @@ set(SCRIPTS_SRCS
   vmtkbranchsections.py
   vmtkcenterlineattributes.py
   vmtkcenterlinegeometry.py
+  vmtkcenterlineimage.py
   vmtkcenterlineinterpolation.py
   vmtkcenterlinelabeler.py
   vmtkcenterlinemeshsections.py
@@ -66,7 +66,6 @@ set(SCRIPTS_SRCS
   vmtklineresampling.py
   vmtklocalgeometry.py
   vmtkmarchingcubes.py
-  vmtkcenterlineimage.py
   vmtkmesharrayoperation.py
   vmtkmeshboundaryinspector.py
   vmtkmeshbranchclipper.py
@@ -149,10 +148,6 @@ set(SCRIPTS_SRCS
   vmtktetringenerator.py
   )
 
-set(MODULE_SRCS
-  vmtkscripts.py
-  )
-
 option(VMTK_CONTRIB_SCRIPTS "Install modules from the vmtkScripts/contrib directory." OFF)
 
 if (VMTK_CONTRIB_SCRIPTS)
@@ -164,7 +159,7 @@ if(NOT VMTK_SCRIPTS_INSTALL_BIN_DIR)
 endif(NOT VMTK_SCRIPTS_INSTALL_BIN_DIR)
 
 if(NOT VMTK_SCRIPTS_INSTALL_LIB_DIR)
-  set(VMTK_SCRIPTS_INSTALL_LIB_DIR lib/${VMTK_PYTHON_VERSION}/site-packages/vmtk)
+  set(VMTK_SCRIPTS_INSTALL_LIB_DIR lib/${VMTK_PYTHON_VERSION}/site-packages/vmtk/vmtkscripts)
 endif(NOT VMTK_SCRIPTS_INSTALL_LIB_DIR)
 
 add_subdirectory(resources)
@@ -173,7 +168,7 @@ foreach (SCRIPT_FILE  ${SCRIPTS_SRCS})
   configure_file(${VMTK_SCRIPTS_SOURCE_DIR}/${SCRIPT_FILE} ${VMTK_SCRIPTS_BINARY_DIR}/${SCRIPT_FILE} COPYONLY)
 endforeach (SCRIPT_FILE)
 
-install(FILES ${SCRIPTS_SRCS} ${MODULE_SRCS}
+install(FILES __init__.py ${SCRIPTS_SRCS}
   DESTINATION ${VMTK_SCRIPTS_INSTALL_LIB_DIR}
   COMPONENT PythonRuntimeLibraries)
 
@@ -191,4 +186,3 @@ install(PROGRAMS ${STRIPPED_SCRIPTS_SRCS}
   COMPONENT RuntimeExecutables)
 
 endif (NOT WIN32 AND NOT VMTK_MINIMAL_INSTALL)
-

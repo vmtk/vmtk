@@ -19,7 +19,7 @@ import sys
 
 from vmtk import pypes
 
-from vmtk import vmtklineresampling
+from . import vmtklineresampling
 
 
 class vmtkCenterlineResampling(pypes.pypeScript):

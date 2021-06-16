@@ -15,7 +15,7 @@
 ##       University at Buffalo
 
 import pytest
-import vmtk.vmtkcenterlinesmoothing as centerlinesmoothing
+import vmtk.vmtkscripts.vmtkcenterlinesmoothing as centerlinesmoothing
 from vtk.numpy_interface import dataset_adapter as dsa 
 import numpy as np
 

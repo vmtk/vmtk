@@ -15,12 +15,12 @@
 ##       University at Buffalo
 
 import pytest
-import vmtk.vmtklevelsetsegmentation as levelsetsegmentation
+import vmtk.vmtkscripts.vmtklevelsetsegmentation as levelsetsegmentation
 
 
 @pytest.fixture(scope='module')
 def initial_level_sets(input_datadir):
-    import vmtk.vmtkimagereader as reader
+    import vmtk.vmtkscripts.vmtkimagereader as reader
     import os
     read = reader.vmtkImageReader()
     read.InputFileName = os.path.join(input_datadir, 'aorta-fastmarching-initial-levelset.mha')
@@ -31,7 +31,7 @@ def initial_level_sets(input_datadir):
 
 @pytest.fixture(scope='module')
 def feature_image(input_datadir):
-    import vmtk.vmtkimagereader as reader
+    import vmtk.vmtkscripts.vmtkimagereader as reader
     import os
     read = reader.vmtkImageReader()
     read.InputFileName = os.path.join(input_datadir, 'aorta-feature-image.mha')

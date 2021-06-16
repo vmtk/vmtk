@@ -15,7 +15,7 @@
 ##       University at Buffalo
 
 import pytest
-import vmtk.vmtkbranchextractor as branchextractor
+import vmtk.vmtkscripts.vmtkbranchextractor as branchextractor
 from vtk.numpy_interface import dataset_adapter as dsa 
 import numpy as np
 

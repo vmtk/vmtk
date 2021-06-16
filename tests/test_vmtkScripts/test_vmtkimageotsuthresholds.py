@@ -15,7 +15,7 @@
 ##       University at Buffalo
 
 import pytest
-import vmtk.vmtkimageotsuthresholds as otsu
+import vmtk.vmtkscripts.vmtkimageotsuthresholds as otsu
 
 
 @pytest.mark.parametrize("thresholds,paramid", [

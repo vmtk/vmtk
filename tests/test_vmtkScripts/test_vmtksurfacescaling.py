@@ -15,7 +15,7 @@
 ##       University at Buffalo
 
 import pytest
-import vmtk.vmtksurfacescaling as scaling
+import vmtk.vmtkscripts.vmtksurfacescaling as scaling
 
 def test_isotropic_scale(aorta_surface, compare_surfaces):
     name = __name__ + '_test_isotropic_scale.vtp'

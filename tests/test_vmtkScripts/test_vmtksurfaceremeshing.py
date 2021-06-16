@@ -15,7 +15,7 @@
 ##       University at Buffalo
 
 import pytest
-import vmtk.vmtksurfaceremeshing as remeshing
+import vmtk.vmtkscripts.vmtksurfaceremeshing as remeshing
 
 
 @pytest.mark.parametrize('elementsizemode,paramid', [

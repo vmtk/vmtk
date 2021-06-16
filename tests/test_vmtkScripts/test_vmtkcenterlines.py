@@ -15,8 +15,8 @@
 ##       University at Buffalo
 
 import pytest
-import vmtk.vmtkcenterlines as vmtkcenterlines
-import vmtk.vmtkcenterlineviewer as viewer
+import vmtk.vmtkscripts.vmtkcenterlines as vmtkcenterlines
+import vmtk.vmtkscripts.vmtkcenterlineviewer as viewer
 
 def test_idlist_centerlines(aorta_surface, compare_centerlines):
     name = __name__ + '_test_idlist_centerlines.vtp'

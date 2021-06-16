@@ -15,8 +15,8 @@
 ##       University at Buffalo
 
 import pytest
-import vmtk.vmtkbifurcationvectors as bifurcationvectors
-import vmtk.vmtksurfacereader as surfacereader
+import vmtk.vmtkscripts.vmtkbifurcationvectors as bifurcationvectors
+import vmtk.vmtkscripts.vmtksurfacereader as surfacereader
 import os
 from vtk.numpy_interface import dataset_adapter as dsa 
 import numpy as np

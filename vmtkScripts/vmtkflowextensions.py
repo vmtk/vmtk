@@ -19,7 +19,7 @@ import sys
 
 from vmtk import vtkvmtk
 from vmtk import pypes
-from vmtk import vmtkrenderer
+from . import vmtkrenderer
 
 
 class vmtkFlowExtensions(pypes.pypeScript):

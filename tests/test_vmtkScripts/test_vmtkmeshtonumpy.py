@@ -15,7 +15,7 @@
 ##       University at Buffalo
 
 import pytest
-import vmtk.vmtkmeshtonumpy as meshtonumpy
+import vmtk.vmtkscripts.vmtkmeshtonumpy as meshtonumpy
 
 @pytest.fixture(scope='module')
 def mesh_arraydict(aorta_mesh):

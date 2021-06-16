@@ -4,16 +4,15 @@ set(PYPES_SRCS
   pypebatch.py
   pypepad.py
   pypeserver.py
-  pypetest.py
-  pypetestrunner.py
   pypewrapper.py
   pyperun.py
   )
 
 set(PYPES_BASE_SRCS
+  __init__.py
+  pypesutils.py
   pype.py
   pypescript.py
-  pypes.py
   )
 
 foreach (SCRIPT_FILE ${PYPES_BASE_SRCS})
@@ -25,7 +24,7 @@ if(NOT PYPES_INSTALL_BIN_DIR)
 endif(NOT PYPES_INSTALL_BIN_DIR)
 
 if(NOT PYPES_MODULE_INSTALL_LIB_DIR)
-  set(PYPES_MODULE_INSTALL_LIB_DIR lib/${VMTK_PYTHON_VERSION}/site-packages/vmtk)
+  set(PYPES_MODULE_INSTALL_LIB_DIR lib/${VMTK_PYTHON_VERSION}/site-packages/vmtk/pypes)
 endif(NOT PYPES_MODULE_INSTALL_LIB_DIR)
 
 foreach(SCRIPT_FILE ${PYPES_SRCS})

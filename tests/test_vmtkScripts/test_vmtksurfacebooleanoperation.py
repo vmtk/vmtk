@@ -15,7 +15,7 @@
 ##       University at Buffalo
 
 import pytest
-import vmtk.vmtksurfacebooleanoperation as surfacebooleanoperation
+import vmtk.vmtkscripts.vmtksurfacebooleanoperation as surfacebooleanoperation
 
 
 @pytest.mark.parametrize("operation,paramid", [

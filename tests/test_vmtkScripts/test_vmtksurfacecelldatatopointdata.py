@@ -15,7 +15,7 @@
 ##       University at Buffalo
 
 import pytest
-import vmtk.vmtksurfacecelldatatopointdata as celltopoint
+import vmtk.vmtkscripts.vmtksurfacecelldatatopointdata as celltopoint
 from vtk.numpy_interface import dataset_adapter as dsa 
 import numpy as np
 

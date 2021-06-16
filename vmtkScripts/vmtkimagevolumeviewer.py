@@ -18,8 +18,8 @@ import vtk
 import sys
 
 from vmtk import vtkvmtk
-from vmtk import vmtkrenderer
-from vmtk import vmtkimageviewer
+from . import vmtkrenderer
+from . import vmtkimageviewer
 from vmtk import pypes
 import xml.etree.ElementTree as ET
 import os

@@ -15,11 +15,11 @@
 ##       University at Buffalo
 
 import pytest
-import vmtk.vmtkmarchingcubes as marchingcubes
+import vmtk.vmtkscripts.vmtkmarchingcubes as marchingcubes
 
 @pytest.fixture()
 def level_set_image(input_datadir):
-    import vmtk.vmtkimagereader as reader
+    import vmtk.vmtkscripts.vmtkimagereader as reader
     import os
     read = reader.vmtkImageReader()
     read.InputFileName = os.path.join(input_datadir, 'aorta-final-levelset.mha')

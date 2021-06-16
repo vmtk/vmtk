@@ -15,7 +15,7 @@
 ##       University at Buffalo
 
 import pytest
-import vmtk.vmtkbifurcationprofiles as bifurcationprofiles
+import vmtk.vmtkscripts.vmtkbifurcationprofiles as bifurcationprofiles
 from vtk.numpy_interface import dataset_adapter as dsa 
 import numpy as np
 

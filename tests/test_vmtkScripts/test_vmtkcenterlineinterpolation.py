@@ -15,7 +15,7 @@
 ##       University at Buffalo
 
 import pytest
-import vmtk.vmtkcenterlineinterpolation as centerlineinterpolation
+import vmtk.vmtkscripts.vmtkcenterlineinterpolation as centerlineinterpolation
 
 
 def test_default_params_MaximumInscribedSphereRadius(aorta_centerline, compare_centerlines):

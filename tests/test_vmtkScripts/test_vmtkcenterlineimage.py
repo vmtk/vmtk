@@ -15,7 +15,7 @@
 ##       University at Buffalo
 
 import pytest
-import vmtk.vmtkcenterlineimage as centerlineimage
+import vmtk.vmtkscripts.vmtkcenterlineimage as centerlineimage
 import sys
 
 @pytest.fixture(scope='module')

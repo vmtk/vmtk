@@ -15,7 +15,7 @@
 ##       University at Buffalo
 
 import pytest
-import vmtk.vmtkimageinitialization as imageinitialization
+import vmtk.vmtkscripts.vmtkimageinitialization as imageinitialization
 
 #TODO: How do we test interaction?
 

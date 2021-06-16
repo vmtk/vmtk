@@ -15,12 +15,12 @@
 ##       University at Buffalo
 
 import pytest
-import vmtk.vmtksurfaceconnectivity as connectivity
+import vmtk.vmtkscripts.vmtksurfaceconnectivity as connectivity
 import os
 
 @pytest.fixture(scope='module')
 def aorta_surface_two_segments(input_datadir):
-    import vmtk.vmtksurfacereader as surfacereader
+    import vmtk.vmtkscripts.vmtksurfacereader as surfacereader
     reader = surfacereader.vmtkSurfaceReader()
     reader.InputFileName = os.path.join(input_datadir, 'aorta-surface-two-segments.vtp')
     reader.Execute()

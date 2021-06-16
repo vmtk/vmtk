@@ -15,7 +15,7 @@
 ##       University at Buffalo
 
 import pytest
-import vmtk.vmtksurfacemodeller as modeller
+import vmtk.vmtkscripts.vmtksurfacemodeller as modeller
 
 def test_default_params(aorta_surface, compare_images):
     name = __name__ + '_test_default_params.mha'

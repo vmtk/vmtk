@@ -15,7 +15,7 @@
 ##       University at Buffalo
 
 import pytest
-import vmtk.vmtkimagesmoothing as imagesmoothing
+import vmtk.vmtkscripts.vmtkimagesmoothing as imagesmoothing
 
 
 # with default gauss smoothig

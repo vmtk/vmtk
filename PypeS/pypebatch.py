@@ -1,4 +1,5 @@
 #!${PYTHON_SHEBANG}
+# -*- coding: utf-8 -*-
 
 ## Program:   PypeS
 ## Module:    $RCSfile: pypebatch.py,v $
@@ -9,8 +10,8 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
 
@@ -18,6 +19,9 @@ from __future__ import print_function, absolute_import # NEED TO STAY AS TOP IMP
 import sys
 import os
 import os.path
+from vmtk import pypes
+import importlib
+from inspect import isclass
 
 class pypeBatch(object):
 
@@ -38,7 +42,7 @@ class pypeBatch(object):
         for i in range(indent):
             indentation = indentation + indentUnit
         print(indentation + logMessage)
-        
+
     def PrintError(self,logMessage):
         print(logMessage)
 
@@ -69,7 +73,6 @@ class pypeBatch(object):
             pattern = arg[1:-1]
             actualArgument = self.Directory + '/'
             if (pattern != ''):
-##                exec('actualArgument += fileName.' + pattern)
                 actualArgument += fileName.__getattribute__(pattern)
             else:
                 actualArgument += fileName
@@ -79,18 +82,27 @@ class pypeBatch(object):
     def Execute(self):
         self.PrintLog('')
         moduleName = self.ScriptName
-        exec('from vmtk import '+ moduleName)
-        scriptObjectClassName = ''
-        exec ('scriptObjectClassName =  '+moduleName+'.'+moduleName)
-        moduleScriptObjectClassName = moduleName+'.'+scriptObjectClassName
-        scriptObject = 0
-        
+        self.PrintLog('module name: '+ moduleName)
+        try:
+            module = importlib.import_module('vmtk.vmtkscripts.'+moduleName)
+            # Find the principle class to instantiate the requested action defined inside the requested writerModule script.
+            # Returns a single member list (containing the principle class name) which satisfies the following criteria:
+            #   1) is a class defined within the script
+            #   2) the class is a subclass of pypes.pypescript
+            scriptObjectClasses = [x for x in dir(module) if isclass(getattr(module, x)) and issubclass(getattr(module, x), pypes.pypeScript)]
+            try:
+                assert len(scriptObjectClasses) == 1
+                scriptObjectClassName = scriptObjectClasses[0]
+            except AssertionError:
+                scriptObjectClassName = ''
+        except ImportError as e:
+            self.PrintError(str(e))
+
         fileNames = os.listdir(self.Directory)
 
         for fileName in fileNames:
-
-            self.PrintLog('Creating ' + scriptObjectClassName + ' instance.')
-            exec ('scriptObject = '+moduleScriptObjectClassName+'()')
+            scriptObject = getattr(module, scriptObjectClassName)
+            scriptObject = scriptObject()
             completeFileName = os.path.normpath(self.Directory + '/' + fileName)
             self.PrintLog('Replacing FileNames in ' + scriptObject.ScriptName + ' arguments')
             actualScriptArguments = self.ReplaceFileNamesInScriptArguments(fileName)

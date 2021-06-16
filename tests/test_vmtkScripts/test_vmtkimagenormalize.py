@@ -15,7 +15,7 @@
 ##       University at Buffalo
 
 import pytest
-import vmtk.vmtkimagenormalize as norm
+import vmtk.vmtkscripts.vmtkimagenormalize as norm
 
 def test_normalize_image(aorta_image, compare_images):
     name = __name__ + '_test_normalize_image.mha'

@@ -15,7 +15,7 @@
 ##       University at Buffalo
 
 import pytest
-import vmtk.vmtkimagefeatures as imagefeatures
+import vmtk.vmtkscripts.vmtkimagefeatures as imagefeatures
 
 
 #TODO: WHY DOES "fwhm" seg fault?

@@ -23,8 +23,8 @@ import sys
 import os
 
 from vmtk import vtkvmtk
-from vmtk import vmtkmeshreader
-from vmtk import vmtkmeshvectorfromcomponents
+from . import vmtkmeshreader
+from . import vmtkmeshvectorfromcomponents
 from vmtk import pypes
 
 

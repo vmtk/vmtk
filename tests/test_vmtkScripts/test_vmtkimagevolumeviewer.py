@@ -15,7 +15,7 @@
 ##       University at Buffalo
 
 import pytest
-import vmtk.vmtkimagevolumeviewer as volumeviewer
+import vmtk.vmtkscripts.vmtkimagevolumeviewer as volumeviewer
 import copy
 
 @pytest.fixture(scope='module')

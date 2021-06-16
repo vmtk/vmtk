@@ -16,11 +16,11 @@
 
 import pytest
 import os
-import vmtk.vmtksurfacetransformtoras as transformtoras
+import vmtk.vmtkscripts.vmtksurfacetransformtoras as transformtoras
 
 @pytest.fixture(scope='module')
 def transform_image(input_datadir):
-    import vmtk.vmtkimagereader as imagereader
+    import vmtk.vmtkscripts.vmtkimagereader as imagereader
     reader = imagereader.vmtkImageReader()
     reader.InputFileName = os.path.join(input_datadir, 'image-test-transform.nrrd')
     reader.Execute()
@@ -29,7 +29,7 @@ def transform_image(input_datadir):
 
 def test_default_parameters(transform_image, compare_surfaces):
     name = __name__ + '_test_default_parameters.stl'
-    import vmtk.vmtkmarchingcubes as marching
+    import vmtk.vmtkscripts.vmtkmarchingcubes as marching
     image = transform_image[0]
     matrixCoefficients = transform_image[1]
     mc = marching.vmtkMarchingCubes()
@@ -46,7 +46,7 @@ def test_default_parameters(transform_image, compare_surfaces):
 
 def test_invert_on(transform_image, compare_surfaces):
     name = __name__ + '_test_invert_on.stl'
-    import vmtk.vmtkmarchingcubes as marching
+    import vmtk.vmtkscripts.vmtkmarchingcubes as marching
     image = transform_image[0]
     matrixCoefficients = transform_image[1]
     mc = marching.vmtkMarchingCubes()

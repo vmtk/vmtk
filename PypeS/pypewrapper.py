@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 ## Program:   PypeS
 ## Module:    $RCSfile: pype.py,v $
@@ -141,7 +142,7 @@ class PypeWrapper(object):
                 if enumeration:
                     for element in enumeration:
                         self.XMLDescription += 3*ind + '<element>%s</element>\n' % (str(element))
-                values = exposedMember.GetRangeValues()
+                values = exposedMember._GetRangeValues()
                 if values:
                     self.XMLDescription += 3*ind + '<constraints>\n'
                     if values[0] != None:

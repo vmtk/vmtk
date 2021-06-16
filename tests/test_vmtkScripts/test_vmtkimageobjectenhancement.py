@@ -15,7 +15,7 @@
 ##       University at Buffalo
 
 import pytest
-import vmtk.vmtkimageobjectenhancement as enhance
+import vmtk.vmtkscripts.vmtkimageobjectenhancement as enhance
 
 def test_enhance_image_with_defaults(aorta_image, compare_images):
     name = __name__ + '_test_enhance_image_with_defaults.mha'

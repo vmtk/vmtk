@@ -17,8 +17,8 @@
 import pytest
 import os
 from hashlib import sha1
-import vmtk.vmtkimagetonumpy as wrap
-import vmtk.vmtkimagecast as cast
+import vmtk.vmtkscripts.vmtkimagetonumpy as wrap
+import vmtk.vmtkscripts.vmtkimagecast as cast
 
 
 @pytest.mark.parametrize("output_type,expected_scalar_size", [

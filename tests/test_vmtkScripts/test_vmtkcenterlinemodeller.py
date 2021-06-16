@@ -15,7 +15,7 @@
 ##       University at Buffalo
 
 import pytest
-import vmtk.vmtkcenterlinemodeller as centerlinemodeller
+import vmtk.vmtkscripts.vmtkcenterlinemodeller as centerlinemodeller
 
 def test_default_params(aorta_centerline, compare_images):
     name = __name__ + '_test_default_params.vti'

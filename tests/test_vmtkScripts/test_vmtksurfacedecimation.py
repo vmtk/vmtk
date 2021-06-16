@@ -15,7 +15,7 @@
 ##       University at Buffalo
 
 import pytest
-import vmtk.vmtksurfacedecimation as surfacedecimation
+import vmtk.vmtkscripts.vmtksurfacedecimation as surfacedecimation
 
 
 def test_default_params(aorta_surface, compare_surfaces):
