@@ -249,11 +249,12 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
         if self.Image == None:
             self.PrintError('Error: no Image.')
 
-        cast = vtk.vtkImageCast()
-        cast.SetInputData(self.Image)
-        cast.SetOutputScalarTypeToFloat()
-        cast.Update()
-        self.Image = cast.GetOutput()
+        if self.Image.GetScalarTypeAsString() != 'float':
+            cast = vtk.vtkImageCast()
+            cast.SetInputData(self.Image)
+            cast.SetOutputScalarTypeToFloat()
+            cast.Update()
+            self.Image = cast.GetOutput()
 
         if not self.InitializationImage:
             self.InitializationImage = self.Image
