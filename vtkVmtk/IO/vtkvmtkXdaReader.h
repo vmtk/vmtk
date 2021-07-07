@@ -38,7 +38,7 @@ class VTK_VMTK_IO_EXPORT vtkvmtkXdaReader : public vtkUnstructuredGridReader
 public:
   static vtkvmtkXdaReader *New();
   vtkTypeMacro(vtkvmtkXdaReader,vtkUnstructuredGridReader);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkSetStringMacro(BoundaryDataArrayName);
   vtkGetStringMacro(BoundaryDataArrayName);
@@ -47,7 +47,7 @@ protected:
   vtkvmtkXdaReader();
   ~vtkvmtkXdaReader();
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   static void GetLibmeshConnectivity(int cellType, vtkIdList* libmeshConnectivity);
 

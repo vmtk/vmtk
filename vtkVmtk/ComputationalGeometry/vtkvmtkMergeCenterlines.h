@@ -33,7 +33,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkMergeCenterlines : public vt
 {
   public: 
   vtkTypeMacro(vtkvmtkMergeCenterlines,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE; 
+  void PrintSelf(ostream& os, vtkIndent indent) override; 
 
   static vtkvmtkMergeCenterlines *New();
   
@@ -63,7 +63,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkMergeCenterlines : public vt
   vtkvmtkMergeCenterlines();
   ~vtkvmtkMergeCenterlines();  
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   char* RadiusArrayName;
   char* GroupIdsArrayName;

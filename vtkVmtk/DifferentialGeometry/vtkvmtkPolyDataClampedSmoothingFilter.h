@@ -35,7 +35,7 @@ public:
 
   static vtkvmtkPolyDataClampedSmoothingFilter *New();
   vtkTypeMacro(vtkvmtkPolyDataClampedSmoothingFilter,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE; 
+  void PrintSelf(ostream& os, vtkIndent indent) override; 
 
   vtkSetMacro(SmoothingType,int);
   vtkGetMacro(SmoothingType,int);
@@ -71,7 +71,7 @@ protected:
   vtkvmtkPolyDataClampedSmoothingFilter();
   ~vtkvmtkPolyDataClampedSmoothingFilter();
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
   void LaplacianIteration(vtkPolyData* surface);
   void CurvatureDiffusionIteration(vtkPolyData* surface);
   double ComputeTimeStep(vtkPolyData* surface);

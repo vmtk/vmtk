@@ -51,7 +51,7 @@ protected:
   vtkvmtkRecursiveGaussian2DImageFilter();
   ~vtkvmtkRecursiveGaussian2DImageFilter() {};
 
-  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output) VTK_OVERRIDE;
+  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output) override;
 
 private:
   vtkvmtkRecursiveGaussian2DImageFilter(const vtkvmtkRecursiveGaussian2DImageFilter&);  // Not implemented.

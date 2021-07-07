@@ -35,7 +35,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkCenterlineSmoothing : public
 {
   public: 
   vtkTypeMacro(vtkvmtkCenterlineSmoothing,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE; 
+  void PrintSelf(ostream& os, vtkIndent indent) override; 
 
   static vtkvmtkCenterlineSmoothing* New();
 
@@ -51,7 +51,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkCenterlineSmoothing : public
   vtkvmtkCenterlineSmoothing();
   ~vtkvmtkCenterlineSmoothing();  
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   double SmoothingFactor;
   int NumberOfSmoothingIterations;

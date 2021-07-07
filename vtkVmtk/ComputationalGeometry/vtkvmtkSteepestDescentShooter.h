@@ -39,7 +39,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkSteepestDescentShooter : pub
 {
   public: 
   vtkTypeMacro(vtkvmtkSteepestDescentShooter,vtkvmtkNonManifoldSteepestDescent);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE; 
+  void PrintSelf(ostream& os, vtkIndent indent) override; 
 
   static vtkvmtkSteepestDescentShooter *New();
 
@@ -65,7 +65,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkSteepestDescentShooter : pub
   vtkvmtkSteepestDescentShooter();
   ~vtkvmtkSteepestDescentShooter();  
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   void Backtrace(vtkPolyData* input, vtkIdType seedId);
 

@@ -83,7 +83,7 @@ protected:
   vtkvmtkPolyDataPatchingFilter();
   ~vtkvmtkPolyDataPatchingFilter();
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   char* LongitudinalMappingArrayName;
   char* CircularMappingArrayName;

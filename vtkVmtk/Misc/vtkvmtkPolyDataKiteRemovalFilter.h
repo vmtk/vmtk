@@ -32,7 +32,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkPolyDataKiteRemovalFilter : public vtkPolyData
 {
   public: 
   vtkTypeMacro(vtkvmtkPolyDataKiteRemovalFilter,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE; 
+  void PrintSelf(ostream& os, vtkIndent indent) override; 
 
   static vtkvmtkPolyDataKiteRemovalFilter *New();
   
@@ -43,7 +43,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkPolyDataKiteRemovalFilter : public vtkPolyData
   vtkvmtkPolyDataKiteRemovalFilter();
   ~vtkvmtkPolyDataKiteRemovalFilter();  
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   double SizeFactor;
 

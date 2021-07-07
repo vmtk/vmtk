@@ -32,7 +32,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkStreamlineOsculatingCentersFilter : public vtk
 {
   public: 
   vtkTypeMacro(vtkvmtkStreamlineOsculatingCentersFilter,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE; 
+  void PrintSelf(ostream& os, vtkIndent indent) override; 
 
   static vtkvmtkStreamlineOsculatingCentersFilter *New();
 
@@ -48,7 +48,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkStreamlineOsculatingCentersFilter : public vtk
   vtkvmtkStreamlineOsculatingCentersFilter();
   ~vtkvmtkStreamlineOsculatingCentersFilter();  
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   vtkPolyData* VoronoiDiagram;
   char* VoronoiSheetIdsArrayName;

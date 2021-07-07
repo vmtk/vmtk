@@ -108,7 +108,7 @@ protected:
   vtkvmtkThresholdSegmentationLevelSetImageFilter();
   ~vtkvmtkThresholdSegmentationLevelSetImageFilter();
 
-  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output) VTK_OVERRIDE;
+  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output) override;
 
 private:
   vtkvmtkThresholdSegmentationLevelSetImageFilter(const vtkvmtkThresholdSegmentationLevelSetImageFilter&);  // Not implemented.

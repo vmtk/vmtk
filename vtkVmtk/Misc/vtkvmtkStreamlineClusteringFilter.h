@@ -33,7 +33,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkStreamlineClusteringFilter : public vtkPolyDat
 {
   public: 
   vtkTypeMacro(vtkvmtkStreamlineClusteringFilter,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE; 
+  void PrintSelf(ostream& os, vtkIndent indent) override; 
 
   static vtkvmtkStreamlineClusteringFilter *New();
   
@@ -43,7 +43,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkStreamlineClusteringFilter : public vtkPolyDat
   vtkvmtkStreamlineClusteringFilter();
   ~vtkvmtkStreamlineClusteringFilter();  
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   vtkPolyData* ClusterCenters;
 
