@@ -137,7 +137,7 @@ int vtkvmtkMeshVorticity::RequestData(
   return 1;
 }
 
-void vtkvmtkMeshVorticity::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkMeshVorticity::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

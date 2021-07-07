@@ -326,7 +326,7 @@ int vtkvmtkSteepestDescentShooter::RequestData(
   return 1;
 }
 
-void vtkvmtkSteepestDescentShooter::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkSteepestDescentShooter::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

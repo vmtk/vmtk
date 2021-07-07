@@ -361,7 +361,7 @@ int vtkvmtkAnnularCapPolyData::RequestData(
   return 1;
 }
 
-void vtkvmtkAnnularCapPolyData::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkAnnularCapPolyData::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

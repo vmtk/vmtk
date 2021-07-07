@@ -392,7 +392,7 @@ int vtkvmtkPolyDataScissors::RequestData(
   return 1;
 }
 
-void vtkvmtkPolyDataScissors::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkPolyDataScissors::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

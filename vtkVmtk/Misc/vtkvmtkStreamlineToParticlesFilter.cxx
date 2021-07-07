@@ -224,7 +224,7 @@ int vtkvmtkStreamlineToParticlesFilter::RequestData(
   return 1;
 }
 
-void vtkvmtkStreamlineToParticlesFilter::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkStreamlineToParticlesFilter::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

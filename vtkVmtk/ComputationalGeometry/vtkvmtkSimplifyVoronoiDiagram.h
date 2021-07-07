@@ -43,7 +43,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkSimplifyVoronoiDiagram : pub
 {
   public: 
   vtkTypeMacro(vtkvmtkSimplifyVoronoiDiagram,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) override; 
+  void PrintSelf(std::ostream& os, vtkIndent indent) override;
 
   static vtkvmtkSimplifyVoronoiDiagram *New();
 

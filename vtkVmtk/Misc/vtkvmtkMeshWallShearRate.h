@@ -32,7 +32,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkMeshWallShearRate : public vtkPolyDataAlgorith
 {
   public: 
   vtkTypeMacro(vtkvmtkMeshWallShearRate,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) override; 
+  void PrintSelf(std::ostream& os, vtkIndent indent) override;
 
   static vtkvmtkMeshWallShearRate *New();
 

@@ -331,7 +331,7 @@ void vtkvmtkPolyDataCenterlineSections::ComputeCenterlineSections(vtkPolyData* i
   }  
 }
 
-void vtkvmtkPolyDataCenterlineSections::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkPolyDataCenterlineSections::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

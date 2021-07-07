@@ -35,7 +35,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkRBFInterpolation : public vtkImplicitFunction
 {
   public:
   vtkTypeMacro(vtkvmtkRBFInterpolation,vtkImplicitFunction);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  void PrintSelf(std::ostream& os, vtkIndent indent) override;
 
   static vtkvmtkRBFInterpolation *New();
 

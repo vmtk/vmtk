@@ -548,7 +548,7 @@ int vtkvmtkBoundaryLayerGenerator2::RequestData(
   return 1;
 }
 
-void vtkvmtkBoundaryLayerGenerator2::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkBoundaryLayerGenerator2::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

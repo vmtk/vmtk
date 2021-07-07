@@ -84,7 +84,7 @@ int vtkvmtkPolyDataToUnstructuredGridFilter::RequestData(
   return 1;
 }
 
-void vtkvmtkPolyDataToUnstructuredGridFilter::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkPolyDataToUnstructuredGridFilter::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

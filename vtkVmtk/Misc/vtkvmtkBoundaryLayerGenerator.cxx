@@ -943,7 +943,7 @@ void vtkvmtkBoundaryLayerGenerator::IncrementalWarpPoints(vtkUnstructuredGrid* i
   neighborIds->Delete();
 }
 
-void vtkvmtkBoundaryLayerGenerator::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkBoundaryLayerGenerator::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

@@ -35,7 +35,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkSurfaceDistance : public vtkPolyDataAlgorithm
 {
   public: 
   vtkTypeMacro(vtkvmtkSurfaceDistance,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) override; 
+  void PrintSelf(std::ostream& os, vtkIndent indent) override;
 
   static vtkvmtkSurfaceDistance *New();
 

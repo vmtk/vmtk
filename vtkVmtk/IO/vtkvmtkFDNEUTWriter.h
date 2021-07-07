@@ -36,7 +36,7 @@ class VTK_VMTK_IO_EXPORT vtkvmtkFDNEUTWriter : public vtkUnstructuredGridWriter
 public:
   static vtkvmtkFDNEUTWriter *New();
   vtkTypeMacro(vtkvmtkFDNEUTWriter,vtkUnstructuredGridWriter);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  void PrintSelf(std::ostream& os, vtkIndent indent) override;
 
   //BTX
   enum

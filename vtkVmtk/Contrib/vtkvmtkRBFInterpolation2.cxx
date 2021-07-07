@@ -210,7 +210,7 @@ unsigned long vtkvmtkRBFInterpolation2::GetMTime()
   return mTime;
 }
 
-void vtkvmtkRBFInterpolation2::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkRBFInterpolation2::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 

@@ -34,7 +34,7 @@ public:
   static vtkvmtkImagePlaneWidget *New();
 
   vtkTypeMacro(vtkvmtkImagePlaneWidget,vtkImagePlaneWidget);
-  //void PrintSelf(ostream& os, vtkIndent indent);
+  //void PrintSelf(std::ostream& os, vtkIndent indent);
 
 protected:
 

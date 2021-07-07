@@ -317,7 +317,7 @@ int vtkvmtkPolyBallModeller::RequestData(
   return 1;
 }
 
-void vtkvmtkPolyBallModeller::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkPolyBallModeller::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 

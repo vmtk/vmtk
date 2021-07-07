@@ -308,7 +308,7 @@ int vtkvmtkVoronoiDiagram3D::RequestData(
   return 1;
 }
 
-void vtkvmtkVoronoiDiagram3D::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkVoronoiDiagram3D::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

@@ -292,7 +292,7 @@ int vtkvmtkPolyDataClampedSmoothingFilter::RequestData(
   return 1;
 }
 
-void vtkvmtkPolyDataClampedSmoothingFilter::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkPolyDataClampedSmoothingFilter::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

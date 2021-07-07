@@ -36,7 +36,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkUnstructuredGridTetraFilter : public vtkUnstru
 public:
   static vtkvmtkUnstructuredGridTetraFilter *New();
   vtkTypeMacro(vtkvmtkUnstructuredGridTetraFilter,vtkUnstructuredGridAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  void PrintSelf(std::ostream& os, vtkIndent indent) override;
 
   vtkSetMacro(TetrahedraOnly, int);
   vtkGetMacro(TetrahedraOnly, int);

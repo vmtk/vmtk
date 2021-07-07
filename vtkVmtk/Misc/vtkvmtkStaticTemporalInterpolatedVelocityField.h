@@ -65,7 +65,7 @@ public:
                       vtkInterpolatedVelocityField );
 
 #endif
-  void PrintSelf( ostream & os, vtkIndent indent ) override;
+  void PrintSelf( std::ostream & os, vtkIndent indent ) override;
 
   // Description:
   // Construct a vtkvmtkStaticTemporalInterpolatedVelocityField without an initial dataset.

@@ -33,7 +33,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkMeshLambda2 : public vtkUnstructuredGridAlgori
 {
   public: 
   vtkTypeMacro(vtkvmtkMeshLambda2,vtkUnstructuredGridAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) override; 
+  void PrintSelf(std::ostream& os, vtkIndent indent) override;
 
   static vtkvmtkMeshLambda2 *New();
 

@@ -404,7 +404,7 @@ void vtkvmtkFDNEUTWriter::WriteData()
   fclose(FDNEUTFile);
 }
 
-void vtkvmtkFDNEUTWriter::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkFDNEUTWriter::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   vtkUnstructuredGridWriter::PrintSelf(os,indent);
 }
