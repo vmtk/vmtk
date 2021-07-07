@@ -35,7 +35,7 @@ public:
   static vtkvmtkPolyDataFEGradientAssembler* New();
   vtkTypeMacro(vtkvmtkPolyDataFEGradientAssembler,vtkvmtkFEAssembler);
 
-  virtual void Build() VTK_OVERRIDE;
+  virtual void Build() override;
 
   vtkSetStringMacro(ScalarsArrayName);
   vtkGetStringMacro(ScalarsArrayName);

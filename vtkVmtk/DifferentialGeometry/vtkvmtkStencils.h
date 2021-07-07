@@ -74,7 +74,7 @@ protected:
   vtkvmtkStencils();
   ~vtkvmtkStencils() {};
 
-  virtual vtkvmtkItem* InstantiateNewItem(int itemType) VTK_OVERRIDE;
+  virtual vtkvmtkItem* InstantiateNewItem(int itemType) override;
 
   int WeightScaling;
 

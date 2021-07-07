@@ -37,15 +37,15 @@ public:
   static vtkvmtkPolyDataGradientStencil *New();
   vtkTypeMacro(vtkvmtkPolyDataGradientStencil,vtkvmtkPolyDataManifoldStencil);
 
-  virtual vtkIdType GetItemType() VTK_OVERRIDE {return VTK_VMTK_GRADIENT_STENCIL;};
+  virtual vtkIdType GetItemType() override {return VTK_VMTK_GRADIENT_STENCIL;};
   
-  void Build() VTK_OVERRIDE;
+  void Build() override;
 
 protected:
   vtkvmtkPolyDataGradientStencil();
   ~vtkvmtkPolyDataGradientStencil() {};
 
-  void ScaleWithArea() VTK_OVERRIDE;
+  void ScaleWithArea() override;
 
   void Gamma(double p0[3], double p1[3], double p2[3], double gamma[3]);
   

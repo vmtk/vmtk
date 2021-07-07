@@ -38,7 +38,7 @@ public:
   static vtkvmtkDirichletBoundaryConditions* New();
   vtkTypeMacro(vtkvmtkDirichletBoundaryConditions,vtkvmtkBoundaryConditions);
 
-  void Apply() VTK_OVERRIDE;
+  void Apply() override;
 
 protected:
   vtkvmtkDirichletBoundaryConditions() {};

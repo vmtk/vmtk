@@ -34,7 +34,7 @@ class VTK_VMTK_IO_EXPORT vtkvmtkFDNEUTReader : public vtkUnstructuredGridReader
 {
   public:
   vtkTypeMacro(vtkvmtkFDNEUTReader,vtkUnstructuredGridReader);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   static vtkvmtkFDNEUTReader *New();
 
@@ -65,7 +65,7 @@ class VTK_VMTK_IO_EXPORT vtkvmtkFDNEUTReader : public vtkUnstructuredGridReader
   vtkvmtkFDNEUTReader();
   ~vtkvmtkFDNEUTReader();
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   static void OneToZeroOffset(int npts, int* pts)
   { for (int i=0; i<npts; i++) --pts[i]; }

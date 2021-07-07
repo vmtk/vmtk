@@ -34,7 +34,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataScissors : public vt
 {
   public: 
   vtkTypeMacro(vtkvmtkPolyDataScissors,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE; 
+  void PrintSelf(ostream& os, vtkIndent indent) override; 
   
   static vtkvmtkPolyDataScissors *New();
 
@@ -48,7 +48,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataScissors : public vt
   vtkvmtkPolyDataScissors();
   ~vtkvmtkPolyDataScissors();  
   
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
   int GetCellsOnSameSide(vtkPolyData* input, vtkIdType targetCellId0, vtkIdType targetCellId1, vtkIdType referenceCellId, vtkIdType linePointId0, vtkIdType linePointId1, vtkIdType linePointId2, vtkIdList *cellsOnSameSide);
   int IsEdgeInCell(vtkPolyData *input, vtkIdType edgePointId0, vtkIdType edgePointId1, vtkIdType cellId);
 

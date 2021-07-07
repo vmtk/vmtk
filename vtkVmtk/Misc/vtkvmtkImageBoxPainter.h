@@ -55,7 +55,7 @@ protected:
   vtkvmtkImageBoxPainter();
   ~vtkvmtkImageBoxPainter() {};
 
-  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output) VTK_OVERRIDE;
+  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output) override;
 
   double PaintValue;
   double BoxBounds[6];

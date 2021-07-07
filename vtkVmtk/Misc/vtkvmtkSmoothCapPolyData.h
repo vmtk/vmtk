@@ -33,7 +33,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkSmoothCapPolyData : public vtkPolyDataAlgorith
 {
   public:
   vtkTypeMacro(vtkvmtkSmoothCapPolyData,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   static vtkvmtkSmoothCapPolyData *New();
 
@@ -56,7 +56,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkSmoothCapPolyData : public vtkPolyDataAlgorith
   vtkvmtkSmoothCapPolyData();
   ~vtkvmtkSmoothCapPolyData();
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   vtkIdList* BoundaryIds;
   char* CellEntityIdsArrayName;

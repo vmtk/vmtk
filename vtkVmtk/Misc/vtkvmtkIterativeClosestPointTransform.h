@@ -33,7 +33,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkIterativeClosestPointTransform : public vtkIte
 public:
   static vtkvmtkIterativeClosestPointTransform *New();
   vtkTypeMacro(vtkvmtkIterativeClosestPointTransform,vtkIterativeClosestPointTransform);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description: 
   // Set/Get the threshold to declare a point to not have a corresponding
@@ -58,7 +58,7 @@ protected:
   vtkvmtkIterativeClosestPointTransform();
   ~vtkvmtkIterativeClosestPointTransform();
 
-  void InternalUpdate() VTK_OVERRIDE;
+  void InternalUpdate() override;
 
   double FarThreshold;
   int UseFarThreshold;

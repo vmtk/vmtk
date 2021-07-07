@@ -38,7 +38,7 @@ class VTK_VMTK_IO_EXPORT vtkvmtkXdaWriter : public vtkUnstructuredGridWriter
 public:
   static vtkvmtkXdaWriter *New();
   vtkTypeMacro(vtkvmtkXdaWriter,vtkUnstructuredGridWriter);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkSetStringMacro(BoundaryDataArrayName);
   vtkGetStringMacro(BoundaryDataArrayName);
@@ -47,7 +47,7 @@ protected:
   vtkvmtkXdaWriter();
   ~vtkvmtkXdaWriter();
 
-  void WriteData() VTK_OVERRIDE;
+  void WriteData() override;
 
   static void GetLibmeshConnectivity(int cellType, vtkIdList* libmeshConnectivity);
   static void GetLibmeshFaceOrder(int cellType, vtkIdList* libmeshFaceOrder);

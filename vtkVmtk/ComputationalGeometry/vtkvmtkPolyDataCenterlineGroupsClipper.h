@@ -35,7 +35,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataCenterlineGroupsClip
 {
   public: 
   vtkTypeMacro(vtkvmtkPolyDataCenterlineGroupsClipper,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE; 
+  void PrintSelf(ostream& os, vtkIndent indent) override; 
 
   static vtkvmtkPolyDataCenterlineGroupsClipper *New();
   
@@ -81,7 +81,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataCenterlineGroupsClip
   vtkvmtkPolyDataCenterlineGroupsClipper();
   ~vtkvmtkPolyDataCenterlineGroupsClipper();
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   vtkPolyData* Centerlines;
 

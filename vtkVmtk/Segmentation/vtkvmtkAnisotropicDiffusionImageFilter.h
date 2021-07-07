@@ -57,7 +57,7 @@ protected:
   vtkvmtkAnisotropicDiffusionImageFilter();
   ~vtkvmtkAnisotropicDiffusionImageFilter() {};
 
-  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output) VTK_OVERRIDE;
+  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output) override;
 
 private:
   template< class TImage >

@@ -32,7 +32,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkMeshWallShearRate : public vtkPolyDataAlgorith
 {
   public: 
   vtkTypeMacro(vtkvmtkMeshWallShearRate,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE; 
+  void PrintSelf(ostream& os, vtkIndent indent) override; 
 
   static vtkvmtkMeshWallShearRate *New();
 
@@ -60,8 +60,8 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkMeshWallShearRate : public vtkPolyDataAlgorith
   vtkvmtkMeshWallShearRate();
   ~vtkvmtkMeshWallShearRate();  
 
-  int FillInputPortInformation(int, vtkInformation *info) VTK_OVERRIDE;
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
+  int FillInputPortInformation(int, vtkInformation *info) override;
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   char* VelocityArrayName;
   char* WallShearRateArrayName;

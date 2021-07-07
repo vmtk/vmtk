@@ -38,7 +38,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkPolyDataNetworkExtraction : public vtkPolyData
 {
   public: 
   vtkTypeMacro(vtkvmtkPolyDataNetworkExtraction,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE; 
+  void PrintSelf(ostream& os, vtkIndent indent) override; 
 
   static vtkvmtkPolyDataNetworkExtraction *New();
  
@@ -119,7 +119,7 @@ protected:
   void MarkModelRealBoundary(vtkPolyData* model, vtkPolyData* modelBoundary);
   void Graph(vtkPolyData* network, vtkPolyData* graphLayout);
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   vtkPolyData* GraphLayout;
 

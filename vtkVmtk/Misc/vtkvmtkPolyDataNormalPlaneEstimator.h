@@ -32,7 +32,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkPolyDataNormalPlaneEstimator : public vtkPolyD
 {
   public:
   vtkTypeMacro(vtkvmtkPolyDataNormalPlaneEstimator,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   static vtkvmtkPolyDataNormalPlaneEstimator *New();
 
@@ -53,7 +53,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkPolyDataNormalPlaneEstimator : public vtkPolyD
   vtkvmtkPolyDataNormalPlaneEstimator();
   ~vtkvmtkPolyDataNormalPlaneEstimator();
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   vtkIdType OriginPointId;
 

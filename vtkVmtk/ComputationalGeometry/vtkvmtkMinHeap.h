@@ -42,7 +42,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkMinHeap : public vtkObject
 {
   public: 
   vtkTypeMacro(vtkvmtkMinHeap,vtkObject);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE; 
+  void PrintSelf(ostream& os, vtkIndent indent) override; 
 
   static vtkvmtkMinHeap *New();
   

@@ -35,7 +35,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkSurfaceDistance : public vtkPolyDataAlgorithm
 {
   public: 
   vtkTypeMacro(vtkvmtkSurfaceDistance,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE; 
+  void PrintSelf(ostream& os, vtkIndent indent) override; 
 
   static vtkvmtkSurfaceDistance *New();
 
@@ -63,7 +63,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkSurfaceDistance : public vtkPolyDataAlgorithm
   vtkvmtkSurfaceDistance();
   ~vtkvmtkSurfaceDistance();  
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   char *DistanceArrayName;
   char *DistanceVectorsArrayName;
