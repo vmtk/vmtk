@@ -563,7 +563,12 @@ void vtkvmtkPolyDataBranchSections::ExtractCylinderSection(vtkPolyData* cylinder
 
   unsigned short ncells;
   vtkIdType* cells;
-  vtkIdType npts, *pts;
+  vtkIdType npts;
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
+  const vtkIdType *pts;
+#else
+  vtkIdType *pts;
+#endif
 
   int numberOfSingleCellPoints = 0;
   vtkIdType firstPointId = -1;

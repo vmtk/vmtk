@@ -106,7 +106,12 @@ void vtkvmtkNonManifoldFastMarching::InitPropagation(vtkPolyData* input)
 {
   vtkIdType i, j, k, l;
   vtkIdType pointId;
-  vtkIdType npts, *pts, *cells;
+  vtkIdType npts, *cells;
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
+  const vtkIdType *pts;
+#else
+  vtkIdType *pts;
+#endif
   unsigned short ncells;
   vtkIdType intersectedEdge[2];
   vtkDataArray* initializationArray, *costFunctionArray, *intersectedEdgesArray;
@@ -254,7 +259,12 @@ void vtkvmtkNonManifoldFastMarching::InitPropagation(vtkPolyData* input)
 void vtkvmtkNonManifoldFastMarching::GetNeighbors(vtkPolyData* input, vtkIdType pointId, vtkIdList* neighborIds)
 {
   vtkIdType i, j;
-  vtkIdType npts, *pts, *cells;
+  vtkIdType npts, *cells;
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
+  const vtkIdType *pts;
+#else
+  vtkIdType *pts;
+#endif
   unsigned short ncells;
 
   input->GetPointCells(pointId,ncells,cells);
@@ -533,7 +543,12 @@ double vtkvmtkNonManifoldFastMarching::ComputeUpdateFromCellNeighbor(vtkPolyData
 void vtkvmtkNonManifoldFastMarching::UpdateNeighbor(vtkPolyData* input, vtkIdType neighborId)
 {
   vtkIdType i, j, k;
-  vtkIdType npts, *pts;
+  vtkIdType npts;
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
+  const vtkIdType *pts;
+#else
+  vtkIdType *pts;
+#endif
   vtkIdType trianglePts[3];
   double tMin, tScalar;
   vtkIdList* neighborCellNeighborIds;

@@ -109,7 +109,12 @@ int vtkvmtkSimplifyVoronoiDiagram::RequestData(
   bool* isUnremovable;
   vtkIdType i, j, id;
   vtkIdType n;
-  vtkIdType npts, *pts, ncells;
+  vtkIdType npts, ncells;
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
+  const vtkIdType *pts;
+#else
+  vtkIdType *pts;
+#endif
   npts = 0;
   pts = NULL;
   vtkIdType edge[2];
