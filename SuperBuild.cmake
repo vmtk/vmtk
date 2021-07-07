@@ -37,18 +37,18 @@ if (APPLE AND VMTK_BREW_PYTHON)
     OUTPUT_STRIP_TRAILING_WHITESPACE)
   set(PYTHON_INCLUDE_DIR ${PYTHON_PREFIX}/Headers CACHE PATH "")
   set(PYTHON_LIBRARY ${PYTHON_PREFIX}/Python CACHE FILEPATH "")
-else (APPLE AND VMTK_BREW_PYTHON)
+else ()
   find_package( PythonLibs )
-endif (APPLE AND VMTK_BREW_PYTHON)
+endif ()
 
 if (WIN32)
   set( PYTHON_MAJORMINOR ${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR} )
   string( REGEX MATCH "[0-9][0-9]" PYTHON_MIN_MINOR ${PYTHON_EXECUTABLE}  )
   string( REGEX MATCH "(.*[/])*" PYTHON_ROOT_DIR ${PYTHON_EXECUTABLE}  )
   file( TO_NATIVE_PATH ${PYTHON_ROOT_DIR} PYTHON_ROOT_DIR_NATIVE )
-endif (WIN32)
+endif ()
 
-endif( VTK_VMTK_WRAP_PYTHON )
+endif()
 
 
 ##
@@ -98,7 +98,7 @@ if( NOT USE_SYSTEM_ITK )
 
   set( VMTK_DEPENDS ${VMTK_DEPENDS} "ITK" )
 
-endif( NOT USE_SYSTEM_ITK )
+endif()
 
 ##
 ## Check if sytem VTK or superbuild VTK
@@ -109,10 +109,10 @@ if( NOT USE_SYSTEM_VTK )
   if (VMTK_USE_VTK8)
     set(VTK_GIT_TAG "v8.1.2")
     set( VTK_VERSION 8.0 )
-  else (VMTK_USE_VTK8)
+  else ()
     set(VTK_GIT_TAG "v7.1.0")
     set( VTK_VERSION 7.1 )
-  endif (VMTK_USE_VTK8)
+  endif ()
 
 
   ##
@@ -171,7 +171,7 @@ if( NOT USE_SYSTEM_VTK )
 
   set( VMTK_DEPENDS ${VMTK_DEPENDS} "VTK" )
 
-endif( NOT USE_SYSTEM_VTK )
+endif()
 
 ##
 ## VMTK - Normal Build
@@ -245,11 +245,11 @@ if (WIN32)
   #file( TO_NATIVE_PATH ${PYTHON_ROOT_DIR} PYTHON_ROOT_DIR_NATIVE )
 
   configure_file( vmtk_startup.bat.in ${VMTK_INSTALL_DIR}/vmtk_startup.bat )
-else (WIN32)
+else ()
   if (APPLE)
     set( LIBRARY_PATH_ENV_VAR "DYLD_LIBRARY_PATH")
-  else (APPLE)
+  else ()
     set( LIBRARY_PATH_ENV_VAR "LD_LIBRARY_PATH")
-  endif (APPLE)
+  endif ()
   configure_file( vmtk_env.sh.in ${VMTK_INSTALL_DIR}/vmtk_env.sh )
-endif (WIN32)
+endif ()

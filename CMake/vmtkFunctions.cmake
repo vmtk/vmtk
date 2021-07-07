@@ -33,16 +33,16 @@ function(vmtk_build_library)
 
   if(VMTK_LIBRARY_PROPERTIES)
     set_target_properties(${lib_name} PROPERTIES ${VMTK_LIBRARY_PROPERTIES})
-  endif(VMTK_LIBRARY_PROPERTIES)
+  endif()
 
   set_target_properties(${lib_name} PROPERTIES LINKER_LANGUAGE CXX)
   if (APPLE)
     set_target_properties( ${lib_name} PROPERTIES LINK_FLAGS "-undefined dynamic_lookup" )
-  endif (APPLE)
+  endif ()
 
   if(NOT WIN32)
     set_target_properties(${lib_name} PROPERTIES COMPILE_FLAGS -fPIC)
-  endif(NOT WIN32)
+  endif()
 
   if(VMTK_LIB_TARGET_LINK_LIBRARIES)
     if (APPLE)
@@ -53,9 +53,9 @@ function(vmtk_build_library)
         endif()
       endforeach()
       target_link_libraries(${lib_name} ${vmtk_target_link_libs})
-    else (APPLE)
+    else ()
       target_link_libraries(${lib_name} ${VMTK_LIB_TARGET_LINK_LIBRARIES})
-    endif (APPLE)
+    endif ()
   endif()
 
   install(TARGETS ${lib_name}
@@ -94,6 +94,6 @@ function(vmtk_build_library)
       KIT_INSTALL_LIB_DIR ${VTK_VMTK_INSTALL_LIB_DIR}
       KIT_MODULE_INSTALL_LIB_DIR ${VTK_VMTK_WRAPPED_MODULE_INSTALL_LIB_DIR}
       )
-  endif (VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
+  endif ()
 
 endfunction()
