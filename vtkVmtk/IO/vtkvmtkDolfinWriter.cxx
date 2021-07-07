@@ -59,7 +59,7 @@ void vtkvmtkDolfinWriter::WriteData()
     vtkErrorMacro(<<"FileName not set.");
     return;
     }
-  ofstream out (this->FileName);
+  std::ofstream out (this->FileName);
   if (!out.good())
     {
     vtkErrorMacro(<<"Could not open file for writing.");
@@ -308,7 +308,7 @@ void vtkvmtkDolfinWriter::WriteData()
     }
 }
 
-void vtkvmtkDolfinWriter::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkDolfinWriter::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   vtkUnstructuredGridWriter::PrintSelf(os,indent);
 }

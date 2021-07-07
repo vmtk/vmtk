@@ -34,7 +34,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataLineEmbedder : publi
 {
   public: 
   vtkTypeMacro(vtkvmtkPolyDataLineEmbedder,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) override; 
+  void PrintSelf(std::ostream& os, vtkIndent indent) override;
 
   static vtkvmtkPolyDataLineEmbedder *New();
   

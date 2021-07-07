@@ -35,7 +35,7 @@ public:
 
   static vtkvmtkPolyDataClampedSmoothingFilter *New();
   vtkTypeMacro(vtkvmtkPolyDataClampedSmoothingFilter,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) override; 
+  void PrintSelf(std::ostream& os, vtkIndent indent) override;
 
   vtkSetMacro(SmoothingType,int);
   vtkGetMacro(SmoothingType,int);

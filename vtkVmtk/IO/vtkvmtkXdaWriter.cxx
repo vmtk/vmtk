@@ -57,7 +57,7 @@ void vtkvmtkXdaWriter::WriteData()
     return;
     }
         
-  ofstream out (this->GetFileName());
+  std::ofstream out (this->GetFileName());
 
   if (!out.good())
     {
@@ -574,7 +574,7 @@ void vtkvmtkXdaWriter::GetLibmeshFaceOrder(int cellType, vtkIdList* libmeshFaceO
     }
 }
 
-void vtkvmtkXdaWriter::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkXdaWriter::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   vtkUnstructuredGridWriter::PrintSelf(os,indent);
 }

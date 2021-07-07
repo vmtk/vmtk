@@ -37,7 +37,7 @@ public:
 
   static vtkvmtkPolyDataMeanCurvature *New();
   vtkTypeMacro(vtkvmtkPolyDataMeanCurvature,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) override; 
+  void PrintSelf(std::ostream& os, vtkIndent indent) override;
 
   vtkSetMacro(StencilType,int);
   vtkGetMacro(StencilType,int);

@@ -551,7 +551,7 @@ int vtkvmtkActiveTubeFilter::RequestData(vtkInformation *vtkNotUsed(request), vt
   return 1;
 }
 
-void vtkvmtkActiveTubeFilter::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkActiveTubeFilter::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

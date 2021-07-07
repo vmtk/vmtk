@@ -580,7 +580,7 @@ double vtkvmtkCenterlineBranchGeometry::ComputeGroupTortuosity(vtkPolyData* inpu
   return groupTortuosity;
 }
 
-void vtkvmtkCenterlineBranchGeometry::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkCenterlineBranchGeometry::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

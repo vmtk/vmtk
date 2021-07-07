@@ -2038,7 +2038,7 @@ int vtkvmtkPolyDataNetworkExtraction::RequestData(vtkInformation *vtkNotUsed(req
   return 1;
 }
 
-void vtkvmtkPolyDataNetworkExtraction::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkPolyDataNetworkExtraction::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

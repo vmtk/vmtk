@@ -39,7 +39,7 @@ public:
 
   static vtkvmtkPolyDataSurfaceRemeshing *New();
   vtkTypeMacro(vtkvmtkPolyDataSurfaceRemeshing,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) override; 
+  void PrintSelf(std::ostream& os, vtkIndent indent) override;
 
   vtkSetMacro(AspectRatioThreshold,double);
   vtkGetMacro(AspectRatioThreshold,double);

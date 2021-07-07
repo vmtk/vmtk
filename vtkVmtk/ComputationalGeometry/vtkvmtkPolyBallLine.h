@@ -39,7 +39,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyBallLine : public vtkImp
 
   static vtkvmtkPolyBallLine *New();
   vtkTypeMacro(vtkvmtkPolyBallLine,vtkImplicitFunction);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  void PrintSelf(std::ostream& os, vtkIndent indent) override;
 
   // Description
   // Evaluate polyball.

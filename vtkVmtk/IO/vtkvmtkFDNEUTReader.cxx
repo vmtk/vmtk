@@ -485,7 +485,7 @@ int vtkvmtkFDNEUTReader::RequestData(
   return 1;
 }
 
-void vtkvmtkFDNEUTReader::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkFDNEUTReader::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os,indent);
 }

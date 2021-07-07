@@ -245,7 +245,7 @@ int vtkvmtkNonManifoldSteepestDescent::RequestData(
   return 1;
 }
 
-void vtkvmtkNonManifoldSteepestDescent::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkNonManifoldSteepestDescent::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

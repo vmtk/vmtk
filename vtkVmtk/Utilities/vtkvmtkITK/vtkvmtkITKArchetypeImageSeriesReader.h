@@ -46,7 +46,7 @@ class VTK_VMTK_ITK_EXPORT vtkvmtkITKArchetypeImageSeriesReader : public vtkImage
 public:
   static vtkvmtkITKArchetypeImageSeriesReader *New();
   vtkTypeMacro(vtkvmtkITKArchetypeImageSeriesReader,vtkImageAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  void PrintSelf(std::ostream& os, vtkIndent indent) override;
 
   typedef itk::SpatialOrientation::ValidCoordinateOrientationFlags CoordinateOrientationCode;
 

@@ -45,7 +45,7 @@ int vtkvmtkPolyDataRigidSurfaceModelling::RequestData(
   return 1;
 }
 
-void vtkvmtkPolyDataRigidSurfaceModelling::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkPolyDataRigidSurfaceModelling::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

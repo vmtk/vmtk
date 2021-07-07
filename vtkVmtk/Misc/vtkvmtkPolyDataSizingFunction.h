@@ -33,7 +33,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkPolyDataSizingFunction : public vtkPolyDataAlg
 {
   public: 
   vtkTypeMacro(vtkvmtkPolyDataSizingFunction,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) override; 
+  void PrintSelf(std::ostream& os, vtkIndent indent) override;
 
   static vtkvmtkPolyDataSizingFunction *New();
   

@@ -570,7 +570,7 @@ int vtkvmtkPolyDataDiscreteElasticaFilter::RequestData(
   return 1;
 }
 #endif
-void vtkvmtkPolyDataDiscreteElasticaFilter::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkPolyDataDiscreteElasticaFilter::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

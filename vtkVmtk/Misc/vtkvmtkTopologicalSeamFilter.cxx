@@ -268,7 +268,7 @@ int vtkvmtkTopologicalSeamFilter::RequestData(vtkInformation *vtkNotUsed(request
   return 1;
 }
 
-void vtkvmtkTopologicalSeamFilter::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkTopologicalSeamFilter::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

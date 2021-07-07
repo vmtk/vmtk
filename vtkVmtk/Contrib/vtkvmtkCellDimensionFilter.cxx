@@ -127,7 +127,7 @@ int vtkvmtkCellDimensionFilter::RequestData(
   return 1;
 }
 
-void vtkvmtkCellDimensionFilter::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkCellDimensionFilter::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

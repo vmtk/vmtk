@@ -33,7 +33,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkMeshProjection : public vtkUnstructuredGridAlg
 {
   public: 
   vtkTypeMacro(vtkvmtkMeshProjection,vtkUnstructuredGridAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) override; 
+  void PrintSelf(std::ostream& os, vtkIndent indent) override;
 
   static vtkvmtkMeshProjection *New();
 

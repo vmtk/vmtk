@@ -32,7 +32,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkStreamlineOsculatingCentersFilter : public vtk
 {
   public: 
   vtkTypeMacro(vtkvmtkStreamlineOsculatingCentersFilter,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) override; 
+  void PrintSelf(std::ostream& os, vtkIndent indent) override;
 
   static vtkvmtkStreamlineOsculatingCentersFilter *New();
 

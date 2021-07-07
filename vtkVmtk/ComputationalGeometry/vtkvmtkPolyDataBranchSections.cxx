@@ -917,7 +917,7 @@ double vtkvmtkPolyDataBranchSections::ComputeBranchSectionShape(vtkPolyData* bra
 }
 #endif
 
-void vtkvmtkPolyDataBranchSections::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkPolyDataBranchSections::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

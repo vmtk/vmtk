@@ -450,7 +450,7 @@ void vtkvmtkStaticTemporalInterpolatedVelocityField::CopyParameters( vtkAbstract
     }
 }
 
-void vtkvmtkStaticTemporalInterpolatedVelocityField::PrintSelf( ostream & os, vtkIndent indent )
+void vtkvmtkStaticTemporalInterpolatedVelocityField::PrintSelf( std::ostream & os, vtkIndent indent )
 {
   this->Superclass::PrintSelf( os, indent );
 }

@@ -223,7 +223,7 @@ int vtkvmtkLinearizeMeshFilter::RequestData(
   return 1;
 }
 
-void vtkvmtkLinearizeMeshFilter::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkLinearizeMeshFilter::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

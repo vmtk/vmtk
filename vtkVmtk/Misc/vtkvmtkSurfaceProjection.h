@@ -35,7 +35,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkSurfaceProjection : public vtkPolyDataAlgorith
 {
   public: 
   vtkTypeMacro(vtkvmtkSurfaceProjection,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) override; 
+  void PrintSelf(std::ostream& os, vtkIndent indent) override;
 
   static vtkvmtkSurfaceProjection *New();
 

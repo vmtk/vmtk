@@ -48,7 +48,7 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkMedialCurveFilter : public vtkSimpleIm
 
     static vtkvmtkMedialCurveFilter *New();
     vtkTypeMacro(vtkvmtkMedialCurveFilter, vtkSimpleImageToImageFilter);
-    // void PrintSelf(ostream& os, vtkIndent indent) override; 
+    // void PrintSelf(std::ostream& os, vtkIndent indent) override;
 
     vtkGetMacro(Sigma,double);
     vtkSetMacro(Sigma,double);
