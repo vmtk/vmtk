@@ -250,7 +250,7 @@ macro(vtkMacroKitPythonWrap)
     set(VTK_PYTHON_CORE vtkWrappingPythonCore)
     if (NOT APPLE)
       set(vtk_python_libs ${VTK_PYTHON_LIBRARIES})
-    endif (NOT APPLE)
+    endif ()
     target_link_libraries(
       ${MY_KIT_NAME}PythonD
       ${MY_KIT_NAME}
@@ -288,7 +288,7 @@ macro(vtkMacroKitPythonWrap)
     if (APPLE)
       set_target_properties( ${MY_KIT_NAME}Python PROPERTIES LINK_FLAGS "-undefined dynamic_lookup" )
       set_target_properties( ${MY_KIT_NAME}PythonD PROPERTIES LINK_FLAGS "-undefined dynamic_lookup" )
-    endif (APPLE)
+    endif ()
 
     # Python extension modules on Windows must have the extension ".pyd"
     # instead of ".dll" as of Python 2.5.  Older python versions do support
@@ -306,13 +306,13 @@ macro(vtkMacroKitPythonWrap)
         LIBRARY DESTINATION ${MY_KIT_MODULE_INSTALL_LIB_DIR} COMPONENT ${VMTK_VTK_WRAP_MODULE_INSTALL_COMPONENT_IDENTIFIER}
         ARCHIVE DESTINATION ${MY_KIT_MODULE_INSTALL_LIB_DIR} COMPONENT Development
         )
-    else (APPLE)
+    else ()
       install(TARGETS ${MY_KIT_NAME}Python
         RUNTIME DESTINATION ${MY_KIT_MODULE_INSTALL_BIN_DIR} COMPONENT ${VMTK_VTK_WRAP_MODULE_INSTALL_COMPONENT_IDENTIFIER}
         LIBRARY DESTINATION ${MY_KIT_MODULE_INSTALL_LIB_DIR} COMPONENT ${VMTK_VTK_WRAP_MODULE_INSTALL_COMPONENT_IDENTIFIER}
         ARCHIVE DESTINATION ${MY_KIT_MODULE_INSTALL_LIB_DIR} COMPONENT Development
         )
-    endif (APPLE)
+    endif ()
   endif()
 
 endmacro()
