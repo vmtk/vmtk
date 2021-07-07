@@ -48,7 +48,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataLocalGeometry : publ
 {
   public: 
   vtkTypeMacro(vtkvmtkPolyDataLocalGeometry,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) override; 
+  void PrintSelf(std::ostream& os, vtkIndent indent) override;
 
   static vtkvmtkPolyDataLocalGeometry *New();
   

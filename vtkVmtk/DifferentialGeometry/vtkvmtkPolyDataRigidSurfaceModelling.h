@@ -35,7 +35,7 @@ public:
 
   static vtkvmtkPolyDataRigidSurfaceModelling *New();
   vtkTypeMacro(vtkvmtkPolyDataRigidSurfaceModelling,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) override; 
+  void PrintSelf(std::ostream& os, vtkIndent indent) override;
 
 protected:
   vtkvmtkPolyDataRigidSurfaceModelling();

@@ -39,7 +39,7 @@ class VTK_VMTK_CONTRIB_EXPORT vtkvmtkSurfaceProjectCellArray : public vtkPolyDat
 {
   public: 
   vtkTypeMacro(vtkvmtkSurfaceProjectCellArray,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) override; 
+  void PrintSelf(std::ostream& os, vtkIndent indent) override;
 
   static vtkvmtkSurfaceProjectCellArray *New();
 

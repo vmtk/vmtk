@@ -125,7 +125,7 @@ vtkMatrix4x4* vtkvmtkITKArchetypeImageSeriesReader::GetMeasurementFrameMatrix()
 }
 
 //----------------------------------------------------------------------------
-void vtkvmtkITKArchetypeImageSeriesReader::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkITKArchetypeImageSeriesReader::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   int idx;
 

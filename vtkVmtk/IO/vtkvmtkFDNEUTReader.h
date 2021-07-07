@@ -34,7 +34,7 @@ class VTK_VMTK_IO_EXPORT vtkvmtkFDNEUTReader : public vtkUnstructuredGridReader
 {
   public:
   vtkTypeMacro(vtkvmtkFDNEUTReader,vtkUnstructuredGridReader);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  void PrintSelf(std::ostream& os, vtkIndent indent) override;
 
   static vtkvmtkFDNEUTReader *New();
 

@@ -587,7 +587,7 @@ int vtkvmtkTetGenWrapper::RequestData(
   return 1;
 }
 
-void vtkvmtkTetGenWrapper::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkTetGenWrapper::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

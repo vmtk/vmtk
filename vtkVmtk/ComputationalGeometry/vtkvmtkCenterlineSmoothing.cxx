@@ -111,7 +111,7 @@ void vtkvmtkCenterlineSmoothing::SmoothLine(vtkPoints* linePoints, vtkPoints* sm
     }
 }
 
-void vtkvmtkCenterlineSmoothing::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkCenterlineSmoothing::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

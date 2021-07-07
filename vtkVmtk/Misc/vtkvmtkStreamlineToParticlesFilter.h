@@ -32,7 +32,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkStreamlineToParticlesFilter : public vtkPolyDa
 {
   public: 
   vtkTypeMacro(vtkvmtkStreamlineToParticlesFilter,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) override; 
+  void PrintSelf(std::ostream& os, vtkIndent indent) override;
 
   static vtkvmtkStreamlineToParticlesFilter *New();
  

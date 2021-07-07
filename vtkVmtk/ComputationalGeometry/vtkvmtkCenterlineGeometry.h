@@ -40,7 +40,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkCenterlineGeometry : public 
 {
   public: 
   vtkTypeMacro(vtkvmtkCenterlineGeometry,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) override; 
+  void PrintSelf(std::ostream& os, vtkIndent indent) override;
 
   static vtkvmtkCenterlineGeometry* New();
 

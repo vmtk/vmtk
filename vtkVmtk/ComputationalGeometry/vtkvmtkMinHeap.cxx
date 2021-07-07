@@ -339,7 +339,7 @@ void vtkvmtkMinHeap::Swap(vtkIdType loc0, vtkIdType loc1)
   this->BackPointers->SetId(this->Heap->GetId(loc1),loc1);
 }
 
-void vtkvmtkMinHeap::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkMinHeap::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

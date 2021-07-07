@@ -33,7 +33,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkMeshVorticity : public vtkUnstructuredGridAlgo
 {
   public: 
   vtkTypeMacro(vtkvmtkMeshVorticity,vtkUnstructuredGridAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) override; 
+  void PrintSelf(std::ostream& os, vtkIndent indent) override;
 
   static vtkvmtkMeshVorticity *New();
 

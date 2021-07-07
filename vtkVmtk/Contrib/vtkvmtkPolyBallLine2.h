@@ -44,7 +44,7 @@ class VTK_VMTK_CONTRIB_EXPORT vtkvmtkPolyBallLine2 : public vtkImplicitFunction
 
   static vtkvmtkPolyBallLine2 *New();
   vtkTypeMacro(vtkvmtkPolyBallLine2,vtkImplicitFunction);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  void PrintSelf(std::ostream& os, vtkIndent indent) override;
 
   // Description
   // Evaluate polyball.

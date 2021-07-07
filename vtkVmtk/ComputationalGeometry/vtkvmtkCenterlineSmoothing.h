@@ -35,7 +35,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkCenterlineSmoothing : public
 {
   public: 
   vtkTypeMacro(vtkvmtkCenterlineSmoothing,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) override; 
+  void PrintSelf(std::ostream& os, vtkIndent indent) override;
 
   static vtkvmtkCenterlineSmoothing* New();
 

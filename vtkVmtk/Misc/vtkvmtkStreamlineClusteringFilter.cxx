@@ -261,7 +261,7 @@ int vtkvmtkStreamlineClusteringFilter::RequestData(
   return 1;
 }
 
-void vtkvmtkStreamlineClusteringFilter::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkStreamlineClusteringFilter::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

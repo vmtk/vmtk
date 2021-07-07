@@ -52,7 +52,7 @@ public:
   static vtkvmtkAppendFilter *New();
 
   vtkTypeMacro(vtkvmtkAppendFilter,vtkAppendFilter);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  void PrintSelf(std::ostream& os, vtkIndent indent) override;
 
   vtkSetMacro(MergeDuplicatePoints,int);
   vtkGetMacro(MergeDuplicatePoints,int);

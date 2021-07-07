@@ -110,7 +110,7 @@ void vtkvmtkPolyBall::EvaluateGradient(double x[3], double n[3])
   //   n[2] = 2.0 * (x[2] - this->Center[2]);
 }
 
-void vtkvmtkPolyBall::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkPolyBall::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 

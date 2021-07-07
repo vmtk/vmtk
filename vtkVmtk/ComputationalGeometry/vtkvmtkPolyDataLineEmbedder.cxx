@@ -589,7 +589,7 @@ int vtkvmtkPolyDataLineEmbedder::RequestData(
   return 1;
 }
 
-void vtkvmtkPolyDataLineEmbedder::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkPolyDataLineEmbedder::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

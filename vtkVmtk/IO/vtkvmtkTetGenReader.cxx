@@ -96,8 +96,8 @@ int vtkvmtkTetGenReader::RequestData(
   std::string eleFileName = this->GetFileName();
   eleFileName += ".ele";
 
-  ifstream nodeStream(nodeFileName.c_str());
-  ifstream eleStream(eleFileName.c_str());
+  std::ifstream nodeStream(nodeFileName.c_str());
+  std::ifstream eleStream(eleFileName.c_str());
 
   if (!nodeStream.good())
     {
@@ -291,7 +291,7 @@ int vtkvmtkTetGenReader::RequestData(
   return 1;
 }
 
-void vtkvmtkTetGenReader::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkTetGenReader::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   Superclass::PrintSelf(os,indent);
 }

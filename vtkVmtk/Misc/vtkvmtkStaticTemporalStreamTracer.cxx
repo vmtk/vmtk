@@ -801,7 +801,7 @@ void vtkvmtkStaticTemporalStreamTracer::Integrate(vtkDataSet *input0,
   return;
 }
 
-void vtkvmtkStaticTemporalStreamTracer::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkStaticTemporalStreamTracer::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 

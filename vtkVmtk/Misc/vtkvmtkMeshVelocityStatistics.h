@@ -35,7 +35,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkMeshVelocityStatistics : public vtkUnstructure
 {
   public: 
   vtkTypeMacro(vtkvmtkMeshVelocityStatistics,vtkUnstructuredGridAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) override; 
+  void PrintSelf(std::ostream& os, vtkIndent indent) override;
 
   static vtkvmtkMeshVelocityStatistics *New();
 

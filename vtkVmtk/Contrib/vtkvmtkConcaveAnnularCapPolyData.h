@@ -38,7 +38,7 @@ class VTK_VMTK_CONTRIB_EXPORT vtkvmtkConcaveAnnularCapPolyData : public vtkPolyD
 {
   public:
   vtkTypeMacro(vtkvmtkConcaveAnnularCapPolyData,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  void PrintSelf(std::ostream& os, vtkIndent indent) override;
 
   static vtkvmtkConcaveAnnularCapPolyData *New();
 

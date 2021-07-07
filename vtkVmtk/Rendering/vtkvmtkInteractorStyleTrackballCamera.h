@@ -34,7 +34,7 @@ public:
   static vtkvmtkInteractorStyleTrackballCamera *New();
 
   vtkTypeMacro(vtkvmtkInteractorStyleTrackballCamera,vtkInteractorStyleTrackballCamera);
-  //void PrintSelf(ostream& os, vtkIndent indent);
+  //void PrintSelf(std::ostream& os, vtkIndent indent);
 
 protected:
 

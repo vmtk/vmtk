@@ -404,7 +404,7 @@ int vtkvmtkCenterlineReferenceSystemAttributesOffset::RequestData(
   return 1;
 }
 
-void vtkvmtkCenterlineReferenceSystemAttributesOffset::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkCenterlineReferenceSystemAttributesOffset::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

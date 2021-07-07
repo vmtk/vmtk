@@ -117,7 +117,7 @@ void vtkvmtkFluentWriter::WriteData()
     return;
     }
         
-  ofstream out (this->GetFileName());
+  std::ofstream out (this->GetFileName());
 
   if (!out.good())
     {
@@ -327,7 +327,7 @@ void vtkvmtkFluentWriter::WriteData()
   tetraCellIdMap->Delete();
 }
 
-void vtkvmtkFluentWriter::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkFluentWriter::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   vtkUnstructuredGridWriter::PrintSelf(os,indent);
 }

@@ -815,7 +815,7 @@ void vtkvmtkCenterlineSplittingAndGroupingFilter::SplitCenterline(vtkPolyData* i
   blankingArray->Delete();
 }
 
-void vtkvmtkCenterlineSplittingAndGroupingFilter::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkCenterlineSplittingAndGroupingFilter::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

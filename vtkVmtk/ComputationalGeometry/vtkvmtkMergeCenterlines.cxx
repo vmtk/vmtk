@@ -469,7 +469,7 @@ int vtkvmtkMergeCenterlines::RequestData(vtkInformation *vtkNotUsed(request), vt
   return 1;
 }
 
-void vtkvmtkMergeCenterlines::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkMergeCenterlines::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

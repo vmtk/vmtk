@@ -28,6 +28,7 @@ Version:   $Revision: 1.2 $
 #define __vtkvmtkTetGenWriter_h
 
 #include "vtkvmtkWin32Header.h"
+#include "vtkUnstructuredGrid.h"
 #include "vtkUnstructuredGridWriter.h"
 
 class vtkCell;
@@ -38,7 +39,7 @@ class VTK_VMTK_IO_EXPORT vtkvmtkTetGenWriter : public vtkUnstructuredGridWriter
 public:
   static vtkvmtkTetGenWriter *New();
   vtkTypeMacro(vtkvmtkTetGenWriter,vtkUnstructuredGridWriter);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  void PrintSelf(std::ostream& os, vtkIndent indent) override;
 
   vtkSetStringMacro(BoundaryDataArrayName);
   vtkGetStringMacro(BoundaryDataArrayName);

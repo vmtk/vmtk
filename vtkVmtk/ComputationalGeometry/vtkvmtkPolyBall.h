@@ -36,7 +36,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyBall : public vtkImplici
 {
   public:
   vtkTypeMacro(vtkvmtkPolyBall,vtkImplicitFunction);
-  void PrintSelf(ostream& os, vtkIndent indent) override;
+  void PrintSelf(std::ostream& os, vtkIndent indent) override;
 
   static vtkvmtkPolyBall *New();
 
