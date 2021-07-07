@@ -34,7 +34,7 @@ if (APPLE AND VMTK_BREW_PYTHON)
     set(PYTHON_SHEBANG "/usr/bin/env python")
   endif()
   #if(VMTK_BREW_PYTHON)
-  #  EXECUTE_PROCESS(
+  #  execute_process(
   #    COMMAND /usr/local/bin/python -c "from distutils import sysconfig; print sysconfig.get_python_inc()"
   #    OUTPUT_VARIABLE PYTHON_INCLUDE_DIR
   #    OUTPUT_STRIP_TRAILING_WHITESPACE)
@@ -280,7 +280,7 @@ if(VMTK_SCRIPTS_ENABLED)
 
   # option(VMTK_ENABLE_DISTRIBUTION "Enable distribution targets." OFF)
   # if(VMTK_ENABLE_DISTRIBUTION)
-  #   ADD_SUBDIRECTORY(distribution)
+  #   add_subdirectory(distribution)
   # endif()
 
   install(EXPORT VMTK-Targets DESTINATION ${VMTK_BINARY_DIR})
