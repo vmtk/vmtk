@@ -90,7 +90,12 @@ void vtkvmtkPolyDataLineEmbedder::GetNeighbors(vtkIdType pointId, vtkIdList* nei
 {
   vtkIdType i, j;
   unsigned short ncells;
-  vtkIdType *cells, npts, *pts;
+  vtkIdType *cells, npts;
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
+  const vtkIdType *pts;
+#else
+  vtkIdType *pts;
+#endif
 
   this->Lines->GetPointCells(pointId,ncells,cells);
 
@@ -274,7 +279,12 @@ int vtkvmtkPolyDataLineEmbedder::RequestData(
   vtkIdType i, j, k;
   vtkIdType id, lineNumberOfPoints, lineNumberOfCells, cellId;
   vtkIdType inputNumberOfPoints;
-  vtkIdType npts, *pts;
+  vtkIdType npts;
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
+  const vtkIdType *pts;
+#else
+  vtkIdType *pts;
+#endif
   vtkIdType edgePointIds0[2], edgePointIds1[2];
   double pCoord;
   vtkPoints* newPoints;

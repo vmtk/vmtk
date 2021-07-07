@@ -56,7 +56,12 @@ vtkvmtkPolyDataClampedSmoothingFilter::~vtkvmtkPolyDataClampedSmoothingFilter()
 double vtkvmtkPolyDataClampedSmoothingFilter::ComputeTimeStep(vtkPolyData* surface)
 {
   int numberOfCells = surface->GetNumberOfCells();
-  vtkIdType npts, *pts;
+  vtkIdType npts;
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
+  const vtkIdType *pts;
+#else
+  vtkIdType *pts;
+#endif
   double point0[3], point1[3], point2[3];
   double minTriangleArea = 1E20;
   for (int i=0; i<numberOfCells; i++)
