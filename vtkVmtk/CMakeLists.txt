@@ -1,5 +1,13 @@
 project(VTK_VMTK)
 
+if(NOT VMTK_USE_VTK9)
+  set(VTK_COMPONENT_PREFIX "vtk")
+  set(VTK_TARGET_PREFIX "vtk")
+else()
+  set(VTK_COMPONENT_PREFIX "")
+  set(VTK_TARGET_PREFIX "VTK::")
+endif()
+
 include(${VMTK_SOURCE_DIR}/CMake/vmtkFunctions.cmake)
 
 set(dirs

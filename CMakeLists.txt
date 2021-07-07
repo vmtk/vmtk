@@ -9,6 +9,13 @@ set(VMTK_VERSION_PATCH 0)
 set(VMTK_VERSION
     "${VMTK_VERSION_MAJOR}.${VMTK_VERSION_MINOR}.${VMTK_VERSION_PATCH}")
 
+set(VMTK_CMAKE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/CMake)
+add_subdirectory(CMake)
+list(INSERT CMAKE_MODULE_PATH 0
+  ${VMTK_CMAKE_DIR}
+  ${vtkAddon_CMAKE_DIR}
+  )
+
 # Append the library version information to the library target properties.
 option(VMTK_WITH_LIBRARY_VERSION "Build with library version information" OFF)
 if(VMTK_WITH_LIBRARY_VERSION)
@@ -82,8 +89,11 @@ option( VMTK_USE_SUPERBUILD
 # option( VMTK_USE_VTK7
 #  "Compile vmtk against VTK 7. OFF is VTK 6.3." ON )
 
-option( VMTK_USE_VTK8
-  "Compile vmtk against VTK 8. OFF is VTK 7.1" ON )
+#option( VMTK_USE_VTK8
+#  "Compile vmtk against VTK 8. OFF is VTK 7.1" ON )
+
+option( VMTK_USE_VTK9
+  "Compile vmtk against VTK 9. OFF is VTK 8" ON )
 
 option( VMTK_BUILD_TESTING
   "Build the VMTK testing libraries" OFF)

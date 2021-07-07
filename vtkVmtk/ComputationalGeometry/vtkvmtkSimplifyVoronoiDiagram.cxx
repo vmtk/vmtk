@@ -187,7 +187,13 @@ int vtkvmtkSimplifyVoronoiDiagram::RequestData(
   currentPolys->DeepCopy(inputPolys);
 
   currentLinks->Allocate(input->GetNumberOfPoints());
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
+  // Reworking cell links classes for performance and consistent API
+  // See https://github.com/Kitware/VTK/commit/88efc809a25130c2ab83dd89a80cea458e3bb56a
+  #warning "vtkvmtkSimplifyVoronoiDiagram::RequestData not functional. Must be updated based on Kitware/VTK@88efc809a"
+#else
   currentLinks->BuildLinks(input,currentPolys);
+#endif
 
   anyRemoved = true;
   while (anyRemoved)
@@ -276,7 +282,13 @@ int vtkvmtkSimplifyVoronoiDiagram::RequestData(
     currentLinks->Delete();
     currentLinks = vtkCellLinks::New();
     currentLinks->Allocate(input->GetNumberOfPoints());
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
+  // Reworking cell links classes for performance and consistent API
+  // See https://github.com/Kitware/VTK/commit/88efc809a25130c2ab83dd89a80cea458e3bb56a
+  #warning "vtkvmtkSimplifyVoronoiDiagram::RequestData not functional. Must be updated based on Kitware/VTK@88efc809a"
+#else
     currentLinks->BuildLinks(input,currentPolys);
+#endif
 
     newPolys->Delete();
     newCell->Delete();

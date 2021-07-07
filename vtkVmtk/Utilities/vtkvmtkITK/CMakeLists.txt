@@ -1,16 +1,18 @@
 set(vtkvmtkITK_TARGET_LINK_LIBRARIES ${ITK_LIBRARIES})
 
 set( vtkvmtkITK_COMPONENTS
-vtkIOImage
-vtkImagingCore
-)
-if (VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
-list(APPEND vtkvmtkITK_COMPONENTS
-  vtkWrappingPythonCore
+  ${VTK_COMPONENT_PREFIX}IOImage
+  ${VTK_COMPONENT_PREFIX}ImagingCore
   )
+if (VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
+  list(APPEND vtkvmtkITK_COMPONENTS
+    ${VTK_COMPONENT_PREFIX}WrappingPythonCore
+    )
 endif()
 find_package( VTK ${VTK_VERSION_MAJOR}.${VTK_VERSION_MINOR} COMPONENTS ${vtkvmtkITK_COMPONENTS} REQUIRED )
-include( ${VTK_USE_FILE} )
+if(NOT VMTK_USE_VTK9)
+  include( ${VTK_USE_FILE} )
+endif()
 list( APPEND vtkvmtkITK_TARGET_LINK_LIBRARIES ${VTK_LIBRARIES} )
 
 # --------------------------------------------------------------------------
