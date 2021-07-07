@@ -8,7 +8,7 @@ add_library (nl STATIC ${OPENNL_SRCS})
 
 if(NOT WIN32)
   set_target_properties(nl PROPERTIES COMPILE_FLAGS -fPIC)
-endif(NOT WIN32)
+endif()
 
 install(TARGETS nl
   EXPORT VMTK-Targets

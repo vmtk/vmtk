@@ -31,5 +31,5 @@ if (BUILD_DOCUMENTATION)
   #install_files(${VTK_VMTK_INSTALL_LIB_DIR}/doxygen .txt )
   #install_files(${VTK_VMTK_INSTALL_LIB_DIR}/doxygen .txt authors doc_readme)
 
-endif (BUILD_DOCUMENTATION)
+endif ()
                                                                                                                
