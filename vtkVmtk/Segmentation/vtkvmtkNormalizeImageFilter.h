@@ -46,7 +46,7 @@ protected:
   vtkvmtkNormalizeImageFilter();
   ~vtkvmtkNormalizeImageFilter();
 
-  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output) VTK_OVERRIDE;
+  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output) override;
 
 private:
   vtkvmtkNormalizeImageFilter(const vtkvmtkNormalizeImageFilter&);  // Not implemented.

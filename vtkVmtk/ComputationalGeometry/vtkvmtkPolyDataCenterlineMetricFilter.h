@@ -74,7 +74,7 @@ protected:
   vtkvmtkPolyDataCenterlineMetricFilter();
   ~vtkvmtkPolyDataCenterlineMetricFilter();
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   virtual void EvaluateMetric(vtkIdType pointId, double point[3], vtkIdType groupId, vtkDataArray* metricArray) = 0;
 

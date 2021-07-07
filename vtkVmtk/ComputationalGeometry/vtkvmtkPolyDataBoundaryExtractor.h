@@ -33,7 +33,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataBoundaryExtractor : 
 {
   public: 
   vtkTypeMacro(vtkvmtkPolyDataBoundaryExtractor,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE; 
+  void PrintSelf(ostream& os, vtkIndent indent) override; 
 
   static vtkvmtkPolyDataBoundaryExtractor *New();
   
@@ -41,7 +41,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataBoundaryExtractor : 
   vtkvmtkPolyDataBoundaryExtractor();
   ~vtkvmtkPolyDataBoundaryExtractor() {};
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   private:
   vtkvmtkPolyDataBoundaryExtractor(const vtkvmtkPolyDataBoundaryExtractor&);  // Not implemented.

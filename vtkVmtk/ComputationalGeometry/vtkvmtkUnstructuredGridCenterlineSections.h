@@ -36,7 +36,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkUnstructuredGridCenterlineSe
 {
   public: 
   vtkTypeMacro(vtkvmtkUnstructuredGridCenterlineSections,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE; 
+  void PrintSelf(ostream& os, vtkIndent indent) override; 
 
   static vtkvmtkUnstructuredGridCenterlineSections* New();
 
@@ -85,9 +85,9 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkUnstructuredGridCenterlineSe
   vtkvmtkUnstructuredGridCenterlineSections();
   ~vtkvmtkUnstructuredGridCenterlineSections();  
 
-  int FillInputPortInformation(int, vtkInformation *info) VTK_OVERRIDE;
+  int FillInputPortInformation(int, vtkInformation *info) override;
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   double ComputeAngle(double vector0[3], double vector1[3]);
   void CreateTransform(vtkTransform* transform, double currentOrigin[3], double currentNormal[3], double currentUpNormal[3], double targetOrigin[3], double targetNormal[3], double targetUpNormal[3]);

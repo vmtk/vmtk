@@ -36,7 +36,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkUnstructuredGridTetraFilter : public vtkUnstru
 public:
   static vtkvmtkUnstructuredGridTetraFilter *New();
   vtkTypeMacro(vtkvmtkUnstructuredGridTetraFilter,vtkUnstructuredGridAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkSetMacro(TetrahedraOnly, int);
   vtkGetMacro(TetrahedraOnly, int);
@@ -46,7 +46,7 @@ protected:
   vtkvmtkUnstructuredGridTetraFilter();
   ~vtkvmtkUnstructuredGridTetraFilter();
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   int TriangulateQuad(vtkUnstructuredGrid* output, vtkIdList *quadPtIds, vtkIdList *ptIds);
 

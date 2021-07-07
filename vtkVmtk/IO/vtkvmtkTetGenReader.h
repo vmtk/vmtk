@@ -35,7 +35,7 @@ class VTK_VMTK_IO_EXPORT vtkvmtkTetGenReader : public vtkUnstructuredGridReader
 {
 public:
   vtkTypeMacro(vtkvmtkTetGenReader,vtkUnstructuredGridReader);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   static vtkvmtkTetGenReader *New();
 
@@ -46,7 +46,7 @@ protected:
   vtkvmtkTetGenReader();
   ~vtkvmtkTetGenReader();
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
 //BTX
   void Tokenize(const std::string& str, std::vector<std::string>& tokens, const std::string& delimiters);

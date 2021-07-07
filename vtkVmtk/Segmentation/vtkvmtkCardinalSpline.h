@@ -40,7 +40,7 @@ public:
   static vtkvmtkCardinalSpline *New();
 
   vtkTypeMacro(vtkvmtkCardinalSpline,vtkCardinalSpline);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   virtual double EvaluateDerivative(double t);
 

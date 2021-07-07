@@ -40,7 +40,7 @@ public:
 
   // Description:
   // Build the stencil.
-  virtual void Build() VTK_OVERRIDE;
+  virtual void Build() override;
 
   virtual void ComputeArea();
   virtual void ScaleWithArea() = 0;

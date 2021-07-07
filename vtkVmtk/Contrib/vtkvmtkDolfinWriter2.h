@@ -41,7 +41,7 @@ class VTK_VMTK_CONTRIB_EXPORT vtkvmtkDolfinWriter2 : public vtkUnstructuredGridW
 public:
   static vtkvmtkDolfinWriter2 *New();
   vtkTypeMacro(vtkvmtkDolfinWriter2,vtkUnstructuredGridWriter);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   vtkSetStringMacro(CellEntityIdsArrayName);
   vtkGetStringMacro(CellEntityIdsArrayName);
@@ -53,7 +53,7 @@ protected:
   vtkvmtkDolfinWriter2();
   ~vtkvmtkDolfinWriter2();
 
-  void WriteData() VTK_OVERRIDE;
+  void WriteData() override;
 
   static void GetDolfinConnectivity(int cellType, vtkIdList* dolfinConnectivity);
   static void GetDolfinFaceOrder(int cellType, vtkIdList* dolfinFaceOrder);

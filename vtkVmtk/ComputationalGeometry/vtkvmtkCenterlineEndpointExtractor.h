@@ -33,7 +33,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkCenterlineEndpointExtractor 
 {
   public: 
   vtkTypeMacro(vtkvmtkCenterlineEndpointExtractor,vtkvmtkCenterlineSplittingAndGroupingFilter);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE; 
+  void PrintSelf(ostream& os, vtkIndent indent) override; 
 
   static vtkvmtkCenterlineEndpointExtractor *New();
 
@@ -56,7 +56,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkCenterlineEndpointExtractor 
   vtkvmtkCenterlineEndpointExtractor();
   ~vtkvmtkCenterlineEndpointExtractor();  
 
-  virtual void ComputeCenterlineSplitting(vtkPolyData* input, vtkIdType cellId) VTK_OVERRIDE;
+  virtual void ComputeCenterlineSplitting(vtkPolyData* input, vtkIdType cellId) override;
 
   int NumberOfEndpointSpheres;
   int NumberOfGapSpheres;

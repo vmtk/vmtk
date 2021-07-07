@@ -37,7 +37,7 @@ public:
 
   static vtkvmtkPolyDataMeanCurvature *New();
   vtkTypeMacro(vtkvmtkPolyDataMeanCurvature,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE; 
+  void PrintSelf(ostream& os, vtkIndent indent) override; 
 
   vtkSetMacro(StencilType,int);
   vtkGetMacro(StencilType,int);
@@ -67,7 +67,7 @@ protected:
   vtkvmtkPolyDataMeanCurvature();
   ~vtkvmtkPolyDataMeanCurvature();
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   void ComputePointMeanCurvatureVector(vtkPolyData* input, vtkIdType pointId, double* meanCurvatureVector);
   void ReleaseStencils();

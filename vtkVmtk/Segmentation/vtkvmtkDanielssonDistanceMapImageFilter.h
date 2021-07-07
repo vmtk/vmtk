@@ -53,7 +53,7 @@ protected:
   vtkvmtkDanielssonDistanceMapImageFilter();
   ~vtkvmtkDanielssonDistanceMapImageFilter() {};
 
-  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output) VTK_OVERRIDE;
+  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output) override;
 
 private:
   vtkvmtkDanielssonDistanceMapImageFilter(const vtkvmtkDanielssonDistanceMapImageFilter&);  // Not implemented.

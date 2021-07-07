@@ -38,7 +38,7 @@ class VTK_VMTK_CONTRIB_EXPORT vtkvmtkConcaveAnnularCapPolyData : public vtkPolyD
 {
   public:
   vtkTypeMacro(vtkvmtkConcaveAnnularCapPolyData,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   static vtkvmtkConcaveAnnularCapPolyData *New();
 
@@ -55,7 +55,7 @@ class VTK_VMTK_CONTRIB_EXPORT vtkvmtkConcaveAnnularCapPolyData : public vtkPolyD
   vtkvmtkConcaveAnnularCapPolyData();
   ~vtkvmtkConcaveAnnularCapPolyData();
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   vtkIdList* BoundaryIds;
   char* CellEntityIdsArrayName;

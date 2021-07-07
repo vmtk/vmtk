@@ -33,7 +33,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkTopologicalSeamFilter : public vtkPolyDataAlgo
 {
   public:
   vtkTypeMacro(vtkvmtkTopologicalSeamFilter,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE;
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   static vtkvmtkTopologicalSeamFilter *New();
 
@@ -50,7 +50,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkTopologicalSeamFilter : public vtkPolyDataAlgo
   vtkvmtkTopologicalSeamFilter();
   ~vtkvmtkTopologicalSeamFilter();
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   double ClosestPoint[3];
   char* SeamScalarsArrayName;

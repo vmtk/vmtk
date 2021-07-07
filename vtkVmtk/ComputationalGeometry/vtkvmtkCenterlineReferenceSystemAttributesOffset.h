@@ -37,7 +37,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkCenterlineReferenceSystemAtt
 {
   public: 
   vtkTypeMacro(vtkvmtkCenterlineReferenceSystemAttributesOffset,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent) VTK_OVERRIDE; 
+  void PrintSelf(ostream& os, vtkIndent indent) override; 
 
   static vtkvmtkCenterlineReferenceSystemAttributesOffset* New();
 
@@ -75,7 +75,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkCenterlineReferenceSystemAtt
   vtkvmtkCenterlineReferenceSystemAttributesOffset();
   ~vtkvmtkCenterlineReferenceSystemAttributesOffset();  
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) VTK_OVERRIDE;
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   char* OffsetAbscissasArrayName;
   char* OffsetNormalsArrayName;
