@@ -146,7 +146,12 @@ void vtkvmtkPolyDataNetworkExtraction::BoundarySeparator(vtkPolyData* appendedBo
     {
     vtkPoints* boundaryPoints = vtkPoints::New();
     vtkCellArray* boundaryCellArray = vtkCellArray::New();
-    vtkIdType npts, *pts;
+    vtkIdType npts;
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
+    const vtkIdType *pts;
+#else
+    vtkIdType *pts;
+#endif
     appendedBoundaries->GetCellPoints(i,npts,pts);
     boundaryCellArray->InsertNextCell(npts+1);
     vtkIdType j;
@@ -453,7 +458,12 @@ bool vtkvmtkPolyDataNetworkExtraction::LookForNeighbors(vtkPolyData* model, vtkI
   vtkIdType i;
   for (i=0; i<ncells; i++)
     {
-    vtkIdType npts; vtkIdType* pts;
+    vtkIdType npts;
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
+    const vtkIdType *pts;
+#else
+    vtkIdType *pts;
+#endif
     model->GetCellPoints(cell[i],npts,pts);
     vtkIdType j;
     for (j=0; j<npts; j++)
