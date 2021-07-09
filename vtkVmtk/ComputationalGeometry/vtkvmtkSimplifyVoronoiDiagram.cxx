@@ -190,7 +190,12 @@ int vtkvmtkSimplifyVoronoiDiagram::RequestData(
 #if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
   // Reworking cell links classes for performance and consistent API
   // See https://github.com/Kitware/VTK/commit/88efc809a25130c2ab83dd89a80cea458e3bb56a
-  #warning "vtkvmtkSimplifyVoronoiDiagram::RequestData not functional. Must be updated based on Kitware/VTK@88efc809a"
+  #pragma message "vtkvmtkSimplifyVoronoiDiagram::RequestData not functional. Must be updated based on Kitware/VTK@88efc809a"
+  if (true)
+    {
+    vtkErrorMacro(<< "vtkvmtkSimplifyVoronoiDiagram::RequestData is not functionnal when built against VTK >= 9");
+    return 0;
+    }
 #else
   currentLinks->BuildLinks(input,currentPolys);
 #endif
@@ -285,7 +290,8 @@ int vtkvmtkSimplifyVoronoiDiagram::RequestData(
 #if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
   // Reworking cell links classes for performance and consistent API
   // See https://github.com/Kitware/VTK/commit/88efc809a25130c2ab83dd89a80cea458e3bb56a
-  #warning "vtkvmtkSimplifyVoronoiDiagram::RequestData not functional. Must be updated based on Kitware/VTK@88efc809a"
+  #pragma message "vtkvmtkSimplifyVoronoiDiagram::RequestData not functional. Must be updated based on Kitware/VTK@88efc809a"
+  vtkErrorMacro(<< "!");
 #else
     currentLinks->BuildLinks(input,currentPolys);
 #endif
