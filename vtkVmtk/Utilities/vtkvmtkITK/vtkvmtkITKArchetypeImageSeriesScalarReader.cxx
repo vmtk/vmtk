@@ -68,7 +68,7 @@ vtkvmtkITKArchetypeImageSeriesScalarReader::~vtkvmtkITKArchetypeImageSeriesScala
 }
 
 //----------------------------------------------------------------------------
-void vtkvmtkITKArchetypeImageSeriesScalarReader::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkITKArchetypeImageSeriesScalarReader::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
   os << indent << "vtk ITK Archetype Image Series Scalar Reader\n";

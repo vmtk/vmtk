@@ -254,7 +254,7 @@ void vtkvmtkPNGWriter::Write()
   this->SetWriteToMemory(previousWriteToMemory);
 } 
 
-void vtkvmtkPNGWriter::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkPNGWriter::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   vtkPNGWriter::PrintSelf(os,indent);
 }

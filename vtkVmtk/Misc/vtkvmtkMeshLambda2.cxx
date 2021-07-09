@@ -182,7 +182,7 @@ int vtkvmtkMeshLambda2::RequestData(
   return 1;
 }
 
-void vtkvmtkMeshLambda2::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkMeshLambda2::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

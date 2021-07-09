@@ -265,7 +265,7 @@ void vtkvmtkCenterlineAttributesFilter::ComputeParallelTransportNormals(vtkPolyD
   transform->Delete();
 }
 
-void vtkvmtkCenterlineAttributesFilter::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkCenterlineAttributesFilter::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

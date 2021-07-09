@@ -373,7 +373,7 @@ int vtkvmtkUnstructuredGridCenterlineGroupsClipper::RequestData(
   return 1;
 }
 
-void vtkvmtkUnstructuredGridCenterlineGroupsClipper::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkUnstructuredGridCenterlineGroupsClipper::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

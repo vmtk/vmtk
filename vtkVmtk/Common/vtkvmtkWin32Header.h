@@ -23,7 +23,7 @@
 //Do_not_include_vtkWin32Header_directly__vtkSystemIncludes_includes_it;
 //#endif
 
-#include <vtkvmtkConfigure.h>
+#include "vtkvmtkConfigure.h"
 
 //
 // Windows specific stuff------------------------------------------

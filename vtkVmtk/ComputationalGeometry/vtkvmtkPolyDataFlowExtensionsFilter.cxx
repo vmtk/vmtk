@@ -584,7 +584,7 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
   return 1;
 }
 
-void vtkvmtkPolyDataFlowExtensionsFilter::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkPolyDataFlowExtensionsFilter::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

@@ -709,7 +709,7 @@ void vtkvmtkPolyDataCenterlines::ReverseCenterlines()
   reversedCenterlinesCellArray->Delete();
 }
 
-void vtkvmtkPolyDataCenterlines::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkPolyDataCenterlines::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

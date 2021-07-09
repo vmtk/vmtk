@@ -202,7 +202,7 @@ void vtkvmtkConstrainedLaplacianPolyDataFilter::Execute()
   constrainedStatusArray->Delete();
 }
 
-void vtkvmtkConstrainedLaplacianPolyDataFilter::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkConstrainedLaplacianPolyDataFilter::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

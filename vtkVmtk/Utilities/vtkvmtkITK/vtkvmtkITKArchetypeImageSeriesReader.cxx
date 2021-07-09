@@ -125,7 +125,7 @@ vtkMatrix4x4* vtkvmtkITKArchetypeImageSeriesReader::GetMeasurementFrameMatrix()
 }
 
 //----------------------------------------------------------------------------
-void vtkvmtkITKArchetypeImageSeriesReader::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkITKArchetypeImageSeriesReader::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   int idx;
 
@@ -406,7 +406,7 @@ int vtkvmtkITKArchetypeImageSeriesReader::RequestInformation(
   double origin[3];
 
 
-  itk::ImageIOBase::Pointer imageIO = NULL;
+  itk::ImageIOBase::Pointer imageIO = nullptr;
 
   try
     {

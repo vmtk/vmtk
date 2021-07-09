@@ -256,7 +256,7 @@ void vtkvmtkCenterlineSphereDistance::FindTouchingSphereCenter(vtkPolyData* cent
   subIds->Delete();
 }
 
-void vtkvmtkCenterlineSphereDistance::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkCenterlineSphereDistance::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

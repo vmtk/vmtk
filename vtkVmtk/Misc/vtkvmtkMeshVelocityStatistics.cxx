@@ -160,7 +160,7 @@ int vtkvmtkMeshVelocityStatistics::RequestData(
   return 1;
 }
 
-void vtkvmtkMeshVelocityStatistics::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkMeshVelocityStatistics::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

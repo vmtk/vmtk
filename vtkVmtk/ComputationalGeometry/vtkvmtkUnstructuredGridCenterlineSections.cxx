@@ -618,7 +618,7 @@ int vtkvmtkUnstructuredGridCenterlineSections::RequestData(
   return 1;
 }
 
-void vtkvmtkUnstructuredGridCenterlineSections::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkUnstructuredGridCenterlineSections::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

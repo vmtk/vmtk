@@ -35,7 +35,7 @@ public:
   static vtkvmtkUnstructuredGridFEGradientAssembler* New();
   vtkTypeMacro(vtkvmtkUnstructuredGridFEGradientAssembler,vtkvmtkFEAssembler);
 
-  virtual void Build() VTK_OVERRIDE;
+  virtual void Build() override;
 
   vtkSetStringMacro(ScalarsArrayName);
   vtkGetStringMacro(ScalarsArrayName);

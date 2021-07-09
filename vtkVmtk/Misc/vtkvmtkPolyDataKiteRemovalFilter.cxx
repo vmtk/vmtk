@@ -178,7 +178,7 @@ int vtkvmtkPolyDataKiteRemovalFilter::RequestData(
   return 1;
 }
 
-void vtkvmtkPolyDataKiteRemovalFilter::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkPolyDataKiteRemovalFilter::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

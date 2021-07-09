@@ -111,7 +111,7 @@ AnisotropicDiffusionVesselEnhancementImageFilter<TInputImage, TOutputImage, TVes
     }
 
   double ratio = 
-     minSpacing /vcl_pow(2.0, static_cast<double>(ImageDimension) + 1);
+     minSpacing /std::pow(2.0, static_cast<double>(ImageDimension) + 1);
 
   if ( m_TimeStep > ratio ) 
     {
@@ -287,8 +287,8 @@ AnisotropicDiffusionVesselEnhancementImageFilter<TInputImage, TOutputImage, TVes
 
     double vesselnessValue = static_cast<double> (iv.Get());
     
-    Lambda1 = 1 + ( m_WStrength - 1 ) * vcl_pow ( vesselnessValue, iS ); 
-    Lambda2 = Lambda3 = 1 + ( m_Epsilon - 1 ) * vcl_pow ( vesselnessValue, iS ); 
+    Lambda1 = 1 + ( m_WStrength - 1 ) * std::pow ( vesselnessValue, iS ); 
+    Lambda2 = Lambda3 = 1 + ( m_Epsilon - 1 ) * std::pow ( vesselnessValue, iS ); 
 //    Lambda1 = m_Epsilon + (1 - m_Epsilon) * vesselnessValue; 
 //    Lambda2 = Lambda3 = m_Epsilon; 
 
@@ -366,7 +366,11 @@ AnisotropicDiffusionVesselEnhancementImageFilter<TInputImage, TOutputImage, TVes
     str->Filter->ThreadedApplyUpdate(str->TimeStep, splitRegion, splitRegionDiffusionImage, threadId);
     }
 
+#if ITK_VERSION_MAJOR >= 5
+  return itk::ITK_THREAD_RETURN_DEFAULT_VALUE;
+#else
   return ITK_THREAD_RETURN_VALUE;
+#endif
 }
 
 template <class TInputImage, class TOutputImage, class TVesselnessFilter>
@@ -443,7 +447,11 @@ AnisotropicDiffusionVesselEnhancementImageFilter<TInputImage, TOutputImage, TVes
     str->ValidTimeStepList[threadId] = true;
     }
 
-  return ITK_THREAD_RETURN_VALUE;  
+#if ITK_VERSION_MAJOR >= 5
+  return itk::ITK_THREAD_RETURN_DEFAULT_VALUE;
+#else
+  return ITK_THREAD_RETURN_VALUE;
+#endif
 }
 
 template <class TInputImage, class TOutputImage, class TVesselnessFilter>

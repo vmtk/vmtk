@@ -244,7 +244,7 @@ int vtkvmtkPolyDataNormalPlaneEstimator::RequestData(
   return 1;
 }
 
-void vtkvmtkPolyDataNormalPlaneEstimator::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkPolyDataNormalPlaneEstimator::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

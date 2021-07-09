@@ -132,7 +132,7 @@ void vtkvmtkCenterlineEndpointExtractor::ComputeCenterlineSplitting(vtkPolyData*
     }
 }
 
-void vtkvmtkCenterlineEndpointExtractor::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkCenterlineEndpointExtractor::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

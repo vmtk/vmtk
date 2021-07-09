@@ -601,7 +601,7 @@ double vtkvmtkCenterlineGeometry::ComputeLineTorsion(vtkPoints* linePoints, vtkD
   return averageTorsion;
 }
 
-void vtkvmtkCenterlineGeometry::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkCenterlineGeometry::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

@@ -276,7 +276,7 @@ int vtkvmtkAppendFilter::RequestData(
   return 1;
 }
 
-void vtkvmtkAppendFilter::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkAppendFilter::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

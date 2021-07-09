@@ -38,15 +38,15 @@ public:
   static vtkvmtkPolyDataAreaWeightedUmbrellaStencil *New();
   vtkTypeMacro(vtkvmtkPolyDataAreaWeightedUmbrellaStencil,vtkvmtkPolyDataManifoldStencil);
 
-  virtual vtkIdType GetItemType() VTK_OVERRIDE {return VTK_VMTK_AREA_WEIGHTED_UMBRELLA_STENCIL;};
+  virtual vtkIdType GetItemType() override {return VTK_VMTK_AREA_WEIGHTED_UMBRELLA_STENCIL;};
 
-  void Build() VTK_OVERRIDE;
+  void Build() override;
 
 protected:
   vtkvmtkPolyDataAreaWeightedUmbrellaStencil();
   ~vtkvmtkPolyDataAreaWeightedUmbrellaStencil() {};
 
-  void ScaleWithArea() VTK_OVERRIDE;
+  void ScaleWithArea() override;
 
 private:
   vtkvmtkPolyDataAreaWeightedUmbrellaStencil(const vtkvmtkPolyDataAreaWeightedUmbrellaStencil&);  // Not implemented.

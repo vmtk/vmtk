@@ -165,7 +165,7 @@ int vtkvmtkSimpleCapPolyData::RequestData(
   return 1;
 }
 
-void vtkvmtkSimpleCapPolyData::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkSimpleCapPolyData::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

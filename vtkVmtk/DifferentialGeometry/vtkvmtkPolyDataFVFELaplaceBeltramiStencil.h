@@ -38,14 +38,14 @@ public:
   static vtkvmtkPolyDataFVFELaplaceBeltramiStencil *New();
   vtkTypeMacro(vtkvmtkPolyDataFVFELaplaceBeltramiStencil,vtkvmtkPolyDataLaplaceBeltramiStencil);
 
-  virtual vtkIdType GetItemType() VTK_OVERRIDE {return VTK_VMTK_FVFE_LAPLACE_BELTRAMI_STENCIL;};
+  virtual vtkIdType GetItemType() override {return VTK_VMTK_FVFE_LAPLACE_BELTRAMI_STENCIL;};
 
 protected:
   vtkvmtkPolyDataFVFELaplaceBeltramiStencil();
   ~vtkvmtkPolyDataFVFELaplaceBeltramiStencil() {};
 
   void ComputeArea(vtkPolyData *data, vtkIdType pointId);
-  void ScaleWithArea() VTK_OVERRIDE;
+  void ScaleWithArea() override;
 
 private:
   vtkvmtkPolyDataFVFELaplaceBeltramiStencil(const vtkvmtkPolyDataFVFELaplaceBeltramiStencil&);  // Not implemented.

@@ -38,11 +38,11 @@ public:
   static vtkvmtkUnstructuredGridNeighborhood *New();
   vtkTypeMacro(vtkvmtkUnstructuredGridNeighborhood,vtkvmtkNeighborhood);
 
-  virtual vtkIdType GetItemType() VTK_OVERRIDE {return VTK_VMTK_UNSTRUCTUREDGRID_NEIGHBORHOOD;};
+  virtual vtkIdType GetItemType() override {return VTK_VMTK_UNSTRUCTUREDGRID_NEIGHBORHOOD;};
 
   // Description:
   // Build the neighborhood.
-  virtual void Build() VTK_OVERRIDE;
+  virtual void Build() override;
 
 protected:
   vtkvmtkUnstructuredGridNeighborhood() {};

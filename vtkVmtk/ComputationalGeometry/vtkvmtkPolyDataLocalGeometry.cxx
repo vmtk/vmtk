@@ -580,7 +580,7 @@ void vtkvmtkPolyDataLocalGeometry::AdjustBoundaryQuantities(vtkPolyData* output)
   boundaryExtractor->Delete();
 }
 
-void vtkvmtkPolyDataLocalGeometry::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkPolyDataLocalGeometry::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

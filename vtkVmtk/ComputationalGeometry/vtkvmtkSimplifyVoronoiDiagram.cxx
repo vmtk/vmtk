@@ -109,7 +109,12 @@ int vtkvmtkSimplifyVoronoiDiagram::RequestData(
   bool* isUnremovable;
   vtkIdType i, j, id;
   vtkIdType n;
-  vtkIdType npts, *pts, ncells;
+  vtkIdType npts, ncells;
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
+  const vtkIdType *pts;
+#else
+  vtkIdType *pts;
+#endif
   npts = 0;
   pts = NULL;
   vtkIdType edge[2];
@@ -182,7 +187,18 @@ int vtkvmtkSimplifyVoronoiDiagram::RequestData(
   currentPolys->DeepCopy(inputPolys);
 
   currentLinks->Allocate(input->GetNumberOfPoints());
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
+  // Reworking cell links classes for performance and consistent API
+  // See https://github.com/Kitware/VTK/commit/88efc809a25130c2ab83dd89a80cea458e3bb56a
+  #pragma message "vtkvmtkSimplifyVoronoiDiagram::RequestData not functional. Must be updated based on Kitware/VTK@88efc809a"
+  if (true)
+    {
+    vtkErrorMacro(<< "vtkvmtkSimplifyVoronoiDiagram::RequestData is not functionnal when built against VTK >= 9");
+    return 0;
+    }
+#else
   currentLinks->BuildLinks(input,currentPolys);
+#endif
 
   anyRemoved = true;
   while (anyRemoved)
@@ -271,7 +287,14 @@ int vtkvmtkSimplifyVoronoiDiagram::RequestData(
     currentLinks->Delete();
     currentLinks = vtkCellLinks::New();
     currentLinks->Allocate(input->GetNumberOfPoints());
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
+  // Reworking cell links classes for performance and consistent API
+  // See https://github.com/Kitware/VTK/commit/88efc809a25130c2ab83dd89a80cea458e3bb56a
+  #pragma message "vtkvmtkSimplifyVoronoiDiagram::RequestData not functional. Must be updated based on Kitware/VTK@88efc809a"
+  vtkErrorMacro(<< "!");
+#else
     currentLinks->BuildLinks(input,currentPolys);
+#endif
 
     newPolys->Delete();
     newCell->Delete();
@@ -326,7 +349,7 @@ int vtkvmtkSimplifyVoronoiDiagram::RequestData(
   return 1;
 }
 
-void vtkvmtkSimplifyVoronoiDiagram::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkSimplifyVoronoiDiagram::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

@@ -62,11 +62,11 @@ public:
 
   // Description:
   // Build the stencil.
-  virtual void Build() VTK_OVERRIDE = 0;
+  virtual void Build() override = 0;
 
   // Description:
   // Standard DeepCopy method.
-  virtual void DeepCopy(vtkvmtkItem *src) VTK_OVERRIDE;
+  virtual void DeepCopy(vtkvmtkItem *src) override;
 
   vtkSetMacro(WeightScaling,int)
   vtkGetMacro(WeightScaling,int)

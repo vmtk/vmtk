@@ -445,7 +445,7 @@ int vtkvmtkSteepestDescentLineTracer::RequestData(
   return 1;
 }
 
-void vtkvmtkSteepestDescentLineTracer::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkSteepestDescentLineTracer::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

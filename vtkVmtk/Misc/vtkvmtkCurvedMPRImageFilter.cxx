@@ -440,7 +440,7 @@ if (this->GetOutputInformation(0))
   return 1;
 }
 
-void vtkvmtkCurvedMPRImageFilter::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkCurvedMPRImageFilter::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
   

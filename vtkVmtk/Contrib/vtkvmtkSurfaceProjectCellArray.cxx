@@ -173,7 +173,7 @@ int vtkvmtkSurfaceProjectCellArray::RequestData(
   return 1;
 }
 
-void vtkvmtkSurfaceProjectCellArray::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkSurfaceProjectCellArray::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

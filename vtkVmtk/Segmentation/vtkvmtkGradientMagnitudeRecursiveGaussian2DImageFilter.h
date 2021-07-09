@@ -51,7 +51,7 @@ protected:
   vtkvmtkGradientMagnitudeRecursiveGaussian2DImageFilter();
   ~vtkvmtkGradientMagnitudeRecursiveGaussian2DImageFilter() {};
 
-  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output) VTK_OVERRIDE;
+  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output) override;
 
 private:
   vtkvmtkGradientMagnitudeRecursiveGaussian2DImageFilter(const vtkvmtkGradientMagnitudeRecursiveGaussian2DImageFilter&);  // Not implemented.

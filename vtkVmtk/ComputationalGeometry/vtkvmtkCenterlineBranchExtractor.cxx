@@ -357,7 +357,7 @@ void vtkvmtkCenterlineBranchExtractor::GroupTracts(vtkPolyData* input, vtkPolyDa
   // loop over group ids, if blanked group, if same centerlineId as another tract in same group, make it another group. And what about the rest? No, better: assume net is a tree. For every group, look at which tracts of each centerline are downstream (via TractIdsArray) and group them in a bifurcation. In order to relax the assumption on the tree, for every group, for every direction, look for all the groups to which the next next tracts belong (tractId + 2 or -2).
 }
 
-void vtkvmtkCenterlineBranchExtractor::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkCenterlineBranchExtractor::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

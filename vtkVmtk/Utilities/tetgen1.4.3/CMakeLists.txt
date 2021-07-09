@@ -13,6 +13,6 @@ set_target_properties(tet PROPERTIES COMPILE_FLAGS "-O0")
 
 if(NOT WIN32)
   set_target_properties(tet PROPERTIES COMPILE_FLAGS "-O0 -fPIC")
-endif(NOT WIN32)
+endif()
 
 install(TARGETS tet DESTINATION ${VTK_VMTK_INSTALL_BIN_DIR} EXPORT VMTK-Targets)

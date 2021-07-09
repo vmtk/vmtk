@@ -13,7 +13,7 @@ mark_as_advanced(LIBRARY_OUTPUT_PATH EXECUTABLE_OUTPUT_PATH)
 if ( NOT VTK_FOUND )
   find_package(VTK REQUIRED)
   include(${VTK_USE_FILE})
-endif ( NOT VTK_FOUND )
+endif ()
 
 #
 # Try to find ITK and include its settings (otherwise complain)
@@ -21,7 +21,7 @@ endif ( NOT VTK_FOUND )
 if ( NOT ITK_FOUND )
   find_package(ITK REQUIRED)
   include(${ITK_USE_FILE})
-endif ( NOT ITK_FOUND )
+endif ()
 
 #
 # Build shared libs ?
@@ -47,8 +47,8 @@ if (EXISTS ${VTK_DIR}/bin)
   if (USE_VTK_OUTPUT_PATHS)
     set (LIBRARY_OUTPUT_PATH ${VTK_DIR}/bin)
     set (EXECUTABLE_OUTPUT_PATH ${VTK_DIR}/bin)
-  endif (USE_VTK_OUTPUT_PATHS)
-endif (EXISTS ${VTK_DIR}/bin)
+  endif ()
+endif ()
 
 
 #
@@ -72,25 +72,25 @@ if (VTK_WRAP_PYTHON)
 
   if (VTK_VMTK_WRAP_PYTHON)
     set(VTK_WRAP_PYTHON3_INIT_DIR "${VTK_VMTK_SOURCE_DIR}/Wrapping")
-    include(${VTK_CMAKE_DIR}/vtkWrapPython.cmake)
+    #include(${VTK_CMAKE_DIR}/vtkWrapPython.cmake)
     if (WIN32)
       if (NOT BUILD_SHARED_LIBS)
         message(FATAL_ERROR "Python support requires BUILD_SHARED_LIBS to be ON.")
         set (VTK_VMTK_CAN_BUILD 0)
-      endif (NOT BUILD_SHARED_LIBS)
-    endif (WIN32)
-  endif (VTK_VMTK_WRAP_PYTHON)
+      endif ()
+    endif ()
+  endif ()
 
-else (VTK_WRAP_PYTHON)
+else ()
 
   if (VTK_VMTK_WRAP_PYTHON)
     message("Warning. VTK_VMTK_WRAP_PYTHON is ON but the VTK version you have "
             "chosen has not support for Python (VTK_WRAP_PYTHON is OFF).  "
             "Please set VTK_VMTK_WRAP_PYTHON to OFF.")
     set (VTK_VMTK_WRAP_PYTHON OFF)
-  endif (VTK_VMTK_WRAP_PYTHON)
+  endif ()
 
-endif (VTK_WRAP_PYTHON)
+endif ()
 
 #
 # Java
@@ -103,30 +103,33 @@ if (VTK_WRAP_JAVA)
          ON)
 
   if (VTK_VMTK_WRAP_JAVA)
+    if (VMTK_USE_VTK9)
+      message(FATAL_ERROR "Java wrapping of classes is not supported with VTK 9")
+    endif ()
     set(VTK_WRAP_JAVA3_INIT_DIR "${VTK_VMTK_SOURCE_DIR}/Wrapping")
     include(${VTK_CMAKE_DIR}/vtkWrapJava.cmake)
     if (WIN32)
       if (NOT BUILD_SHARED_LIBS)
         message(FATAL_ERROR "Java support requires BUILD_SHARED_LIBS to be ON.")
         set (VTK_VMTK_CAN_BUILD 0)
-      endif (NOT BUILD_SHARED_LIBS)
-    endif (WIN32)
+      endif ()
+    endif ()
 
     # Tell the java wrappers where to go.
     set(VTK_JAVA_HOME ${VTK_VMTK_BINARY_DIR}/java/vtkvmtk)
-    MAKE_DIRECTORY(${VTK_JAVA_HOME})
-  endif (VTK_VMTK_WRAP_JAVA)
+    make_directory(${VTK_JAVA_HOME})
+  endif ()
 
-else (VTK_WRAP_JAVA)
+else ()
 
   if (VTK_VMTK_WRAP_JAVA)
     message("Warning. VTK_VMTK_WRAP_JAVA is ON but the VTK version you have "
             "chosen has not support for Java (VTK_WRAP_JAVA is OFF).  "
             "Please set VTK_VMTK_WRAP_JAVA to OFF.")
     set (VTK_VMTK_WRAP_JAVA OFF)
-  endif (VTK_VMTK_WRAP_JAVA)
+  endif ()
 
-endif (VTK_WRAP_JAVA)
+endif ()
 
 # setup our local hints file in case wrappers need them.
 set(VTK_WRAP_HINTS ${VTK_VMTK_SOURCE_DIR}/Wrapping/hints)

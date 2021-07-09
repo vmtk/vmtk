@@ -175,7 +175,7 @@ void vtkvmtkCardinalSpline::EvaluateValueAndDerivatives(double t, double valueAn
                               2 * *(coefficients + index * 4 + 2);
 }
 
-void vtkvmtkCardinalSpline::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkCardinalSpline::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

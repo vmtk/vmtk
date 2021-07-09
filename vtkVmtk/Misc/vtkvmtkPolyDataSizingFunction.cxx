@@ -121,7 +121,7 @@ int vtkvmtkPolyDataSizingFunction::RequestData(
   return 1;
 }
 
-void vtkvmtkPolyDataSizingFunction::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkPolyDataSizingFunction::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

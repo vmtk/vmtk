@@ -625,7 +625,7 @@ void vtkvmtkPolyDataBifurcationSections::ComputeBifurcationSections(vtkPolyData*
   bifurcationSectionOrientations->Delete();
 }
 
-void vtkvmtkPolyDataBifurcationSections::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkPolyDataBifurcationSections::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

@@ -233,7 +233,7 @@ int vtkvmtkStreamlineOsculatingCentersFilter::RequestData(
   return 1;
 }
 
-void vtkvmtkStreamlineOsculatingCentersFilter::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkStreamlineOsculatingCentersFilter::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

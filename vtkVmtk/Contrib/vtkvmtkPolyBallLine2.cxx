@@ -230,7 +230,7 @@ void vtkvmtkPolyBallLine2::EvaluateGradient(double x[3], double n[3])
   // TODO
 }
 
-void vtkvmtkPolyBallLine2::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkPolyBallLine2::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 

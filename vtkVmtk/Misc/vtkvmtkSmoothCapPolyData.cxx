@@ -290,7 +290,7 @@ int vtkvmtkSmoothCapPolyData::RequestData(
   return 1;
 }
 
-void vtkvmtkSmoothCapPolyData::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkSmoothCapPolyData::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

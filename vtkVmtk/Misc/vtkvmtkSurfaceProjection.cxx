@@ -124,7 +124,7 @@ int vtkvmtkSurfaceProjection::RequestData(
   return 1;
 }
 
-void vtkvmtkSurfaceProjection::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkSurfaceProjection::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

@@ -44,7 +44,7 @@ protected:
   vtkvmtkPolyDataCenterlineAngularMetricFilter();
   ~vtkvmtkPolyDataCenterlineAngularMetricFilter();
 
-  virtual void EvaluateMetric(vtkIdType pointId, double point[3], vtkIdType groupId, vtkDataArray* metricArray) VTK_OVERRIDE;
+  virtual void EvaluateMetric(vtkIdType pointId, double point[3], vtkIdType groupId, vtkDataArray* metricArray) override;
 
   char* CenterlineNormalsArrayName;
 

@@ -280,7 +280,7 @@ void vtkvmtkUnstructuredGridTetraFilter::Execute(vtkUnstructuredGrid *dataSetInp
   cell->Delete();
 }
 
-void vtkvmtkUnstructuredGridTetraFilter::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkUnstructuredGridTetraFilter::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
   os << indent << "TetrahedraOnly: " << (this->TetrahedraOnly ? "On":"Off") << "\n";

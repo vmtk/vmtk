@@ -70,7 +70,7 @@ int vtkvmtkXdaReader::RequestData(
   return 1;
 }
 
-void vtkvmtkXdaReader::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkXdaReader::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   vtkUnstructuredGridReader::PrintSelf(os,indent);
 }

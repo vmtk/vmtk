@@ -184,7 +184,11 @@ int vtkvmtkLinearizeMeshFilter::RequestData(
   int numberOfOutputCells = outputCellArray->GetNumberOfCells();
   outputCellArray->InitTraversal();
   vtkIdType npts = 0;
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
+  const vtkIdType *pts = NULL;
+#else
   vtkIdType *pts = NULL;
+#endif
   for (i=0; i<numberOfOutputCells; i++)
     {
     outputCellArray->GetNextCell(npts,pts);
@@ -223,7 +227,7 @@ int vtkvmtkLinearizeMeshFilter::RequestData(
   return 1;
 }
 
-void vtkvmtkLinearizeMeshFilter::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkLinearizeMeshFilter::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

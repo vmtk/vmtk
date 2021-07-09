@@ -225,7 +225,7 @@ int vtkvmtkMeshWallShearRate::RequestData(
   return 1;
 }
 
-void vtkvmtkMeshWallShearRate::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkMeshWallShearRate::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

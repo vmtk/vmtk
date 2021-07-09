@@ -1,18 +1,20 @@
 set(VTK_VMTK_MISC_TARGET_LINK_LIBRARIES vtkvmtkComputationalGeometry vtkvmtkDifferentialGeometry)
 
 set( VTK_VMTK_MISC_COMPONENTS
-vtkFiltersFlowPaths
-vtkFiltersGeometry
-vtkFiltersModeling
-vtkImagingCore
-)
-if (VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
-list(APPEND VTK_VMTK_MISC_COMPONENTS
-  vtkWrappingPythonCore
+  ${VTK_COMPONENT_PREFIX}FiltersFlowPaths
+  ${VTK_COMPONENT_PREFIX}FiltersGeometry
+  ${VTK_COMPONENT_PREFIX}FiltersModeling
+  ${VTK_COMPONENT_PREFIX}ImagingCore
   )
-endif(VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
+if (VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
+  list(APPEND VTK_VMTK_MISC_COMPONENTS
+    ${VTK_COMPONENT_PREFIX}WrappingPythonCore
+    )
+endif()
 find_package( VTK ${VTK_VERSION_MAJOR}.${VTK_VERSION_MINOR} COMPONENTS ${VTK_VMTK_MISC_COMPONENTS} REQUIRED )
-include( ${VTK_USE_FILE} )
+if(NOT VMTK_USE_VTK9)
+  include( ${VTK_USE_FILE} )
+endif()
 list( APPEND VTK_VMTK_MISC_TARGET_LINK_LIBRARIES ${VTK_LIBRARIES} )
 
 set (VTK_VMTK_MISC_SRCS
@@ -58,8 +60,8 @@ if (DEFINED VMTK_BUILD_TETGEN)
     link_directories(${TETGEN_LIB_DIR})
 
     set (VTK_VMTK_MISC_TARGET_LINK_LIBRARIES ${VTK_VMTK_MISC_TARGET_LINK_LIBRARIES} tet)
-  endif (VMTK_BUILD_TETGEN AND VTK_VMTK_BUILD_TETGEN)
-else (DEFINED VMTK_BUILD_TETGEN) 
+  endif ()
+else () 
   if (VTK_VMTK_BUILD_TETGEN)
     set (VTK_VMTK_MISC_SRCS ${VTK_VMTK_MISC_SRCS} vtkvmtkTetGenWrapper.cxx)
 
@@ -68,13 +70,13 @@ else (DEFINED VMTK_BUILD_TETGEN)
     link_directories(${TETGEN_LIB_DIR})
 
     set (VTK_VMTK_MISC_TARGET_LINK_LIBRARIES ${VTK_VMTK_MISC_TARGET_LINK_LIBRARIES} tet)
-  endif (VTK_VMTK_BUILD_TETGEN)
-endif (DEFINED VMTK_BUILD_TETGEN)
+  endif ()
+endif ()
 
 if (VTK_VMTK_BUILD_STREAMTRACER)
   set (VTK_VMTK_MISC_SRCS ${VTK_VMTK_MISC_SRCS} vtkvmtkStaticTemporalInterpolatedVelocityField.cxx vtkvmtkStaticTemporalStreamTracer.cxx)
 
-endif (VTK_VMTK_BUILD_STREAMTRACER)
+endif ()
 
 vmtk_build_library(
   NAME Misc

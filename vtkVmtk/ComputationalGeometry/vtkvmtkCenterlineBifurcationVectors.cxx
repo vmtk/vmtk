@@ -684,7 +684,7 @@ void vtkvmtkCenterlineBifurcationVectors::ComputeBifurcationVectorAngles(int bif
   }
 }
 
-void vtkvmtkCenterlineBifurcationVectors::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkCenterlineBifurcationVectors::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

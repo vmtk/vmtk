@@ -473,7 +473,7 @@ void vtkvmtkCenterlineBifurcationReferenceSystems::ComputeGroupReferenceSystem(v
   bifurcationNormals->Delete();
 }
 
-void vtkvmtkCenterlineBifurcationReferenceSystems::PrintSelf(ostream& os, vtkIndent indent)
+void vtkvmtkCenterlineBifurcationReferenceSystems::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }

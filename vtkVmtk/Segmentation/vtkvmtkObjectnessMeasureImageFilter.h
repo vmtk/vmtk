@@ -91,7 +91,7 @@ protected:
   vtkvmtkObjectnessMeasureImageFilter();
   ~vtkvmtkObjectnessMeasureImageFilter();
 
-  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output) VTK_OVERRIDE;
+  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output) override;
 
 private:
   vtkvmtkObjectnessMeasureImageFilter(const vtkvmtkObjectnessMeasureImageFilter&);  // Not implemented.

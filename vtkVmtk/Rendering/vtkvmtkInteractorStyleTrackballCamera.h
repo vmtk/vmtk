@@ -34,14 +34,14 @@ public:
   static vtkvmtkInteractorStyleTrackballCamera *New();
 
   vtkTypeMacro(vtkvmtkInteractorStyleTrackballCamera,vtkInteractorStyleTrackballCamera);
-  //void PrintSelf(ostream& os, vtkIndent indent);
+  //void PrintSelf(std::ostream& os, vtkIndent indent);
 
 protected:
 
   vtkvmtkInteractorStyleTrackballCamera() {};
   ~vtkvmtkInteractorStyleTrackballCamera() {};
 
-  virtual void OnChar() VTK_OVERRIDE;
+  virtual void OnChar() override;
 
 private:
   vtkvmtkInteractorStyleTrackballCamera(const vtkvmtkInteractorStyleTrackballCamera&);  //Not implemented

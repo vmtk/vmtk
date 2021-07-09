@@ -36,7 +36,7 @@ public:
 
   vtkTypeMacro(vtkvmtkPolyDataLaplaceBeltramiStencil,vtkvmtkPolyDataManifoldStencil);
 
-  void Build() VTK_OVERRIDE;
+  void Build() override;
   void BuildBoundaryWeights(vtkIdType boundaryPointId, vtkIdType boundaryNeighborPointId, double &boundaryWeight, double &boundaryNeighborWeight);
 
 protected:

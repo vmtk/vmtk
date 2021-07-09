@@ -90,7 +90,7 @@ protected:
   vtkvmtkLaplacianSegmentationLevelSetImageFilter();
   ~vtkvmtkLaplacianSegmentationLevelSetImageFilter();
 
-  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output) VTK_OVERRIDE;
+  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output) override;
 
 private:
   vtkvmtkLaplacianSegmentationLevelSetImageFilter(const vtkvmtkLaplacianSegmentationLevelSetImageFilter&);  // Not implemented.

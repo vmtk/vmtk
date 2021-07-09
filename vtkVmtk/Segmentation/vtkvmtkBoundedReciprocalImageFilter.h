@@ -45,7 +45,7 @@ protected:
   vtkvmtkBoundedReciprocalImageFilter() {};
   ~vtkvmtkBoundedReciprocalImageFilter() {};
 
-  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output) VTK_OVERRIDE;
+  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output) override;
 
   //BTX
   //typedef itk::BoundedReciprocalImageFilter<Superclass::InputImageType,Superclass::OutputImageType> ImageFilterType;

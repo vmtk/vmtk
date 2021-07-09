@@ -85,7 +85,7 @@ protected:
   vtkvmtkFastMarchingUpwindGradientImageFilter();
   ~vtkvmtkFastMarchingUpwindGradientImageFilter();
 
-  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output) VTK_OVERRIDE;
+  virtual void SimpleExecute(vtkImageData* input, vtkImageData* output) override;
 
 private:
   vtkvmtkFastMarchingUpwindGradientImageFilter(const vtkvmtkFastMarchingUpwindGradientImageFilter&);  // Not implemented.

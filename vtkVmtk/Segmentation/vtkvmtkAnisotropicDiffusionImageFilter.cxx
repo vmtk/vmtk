@@ -76,6 +76,10 @@ int vtkvmtkAnisotropicDiffusionImageFilter::FilterScalarImage(vtkImageData* inpu
   switch( componentType )
   {
     default:
+#if ITK_VERSION_MAJOR >= 5
+      // itkGradientAnisotropicDiffusionImageFilter only supports floating-point types
+      return EXIT_FAILURE;
+#else
     case VTK_UNSIGNED_CHAR:
     {
       using PixelType = unsigned char;
@@ -173,7 +177,7 @@ int vtkvmtkAnisotropicDiffusionImageFilter::FilterScalarImage(vtkImageData* inpu
       }
       break;
     }
-
+#endif
     case VTK_FLOAT:
     {
       using PixelType = float;
