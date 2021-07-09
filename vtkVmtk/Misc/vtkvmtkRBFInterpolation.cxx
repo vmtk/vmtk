@@ -183,7 +183,7 @@ void vtkvmtkRBFInterpolation::EvaluateGradient(double x[3], double n[3])
   vtkWarningMacro("RBF gradient computation not implemented.");
 }
 
-#ifdef VTK_HAS_MTIME_TYPE
+#if defined(VTK_HAS_MTIME_TYPE) || VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
 vtkMTimeType vtkvmtkRBFInterpolation::GetMTime()
 #else
 unsigned long vtkvmtkRBFInterpolation::GetMTime()
