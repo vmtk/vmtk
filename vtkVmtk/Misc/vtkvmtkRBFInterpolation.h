@@ -74,7 +74,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkRBFInterpolation : public vtkImplicitFunction
   };
 //ETX
 
-#ifdef VTK_HAS_MTIME_TYPE
+#if defined(VTK_HAS_MTIME_TYPE) || VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
   vtkMTimeType GetMTime() override;
 #else
   unsigned long GetMTime();
