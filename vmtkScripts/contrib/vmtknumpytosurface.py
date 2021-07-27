@@ -60,10 +60,10 @@ class vmtkNumpyToSurface(pypes.pypeScript):
         self.PrintLog('converting numpy array to surface')
         for pointKey in self.ArrayDict['PointData'].keys():
 
-            if np.issubdtype(self.ArrayDict['PointData'][pointKey].dtype, float):
+            if np.issubdtype(self.ArrayDict['PointData'][pointKey].dtype, np.floating):
                 pointDataArray = vtk.vtkFloatArray()
             else:
-                for checkDt in [int, np.uint8, np.uint16, np.uint32, np.uint64]:
+                for checkDt in [np.integer, np.uint8, np.uint16, np.uint32, np.uint64]:
                     if np.issubdtype(self.ArrayDict['PointData'][pointKey].dtype, checkDt):
                         pointDataArray = vtk.vtkIntArray()
                         break
@@ -110,9 +110,9 @@ class vmtkNumpyToSurface(pypes.pypeScript):
 
             else:
 
-                if np.issubdtype(self.ArrayDict['CellData'][cellKey].dtype, float):
+                if np.issubdtype(self.ArrayDict['CellData'][cellKey].dtype, np.floating):
                     cellDataArray = vtk.vtkFloatArray()
-                if np.issubdtype(self.ArrayDict['CellData'][cellKey].dtype, int):
+                if np.issubdtype(self.ArrayDict['CellData'][cellKey].dtype, np.integer):
                     cellDataArray = vtk.vtkIntArray()
 
                 try:
