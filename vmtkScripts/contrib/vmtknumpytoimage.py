@@ -74,7 +74,7 @@ class vmtkNumpyToImage(pypes.pypeScript):
             if np.issubdtype(self.ArrayDict['PointData'][pointKey].dtype, np.floating):
                 pointDataArrayType = vtk.VTK_FLOAT
             else:
-                for checkDt in [int, np.uint8, np.uint16, np.uint32, np.uint64]:
+                for checkDt in [np.integer, np.uint8, np.uint16, np.uint32, np.uint64]:
                     if np.issubdtype(self.ArrayDict['PointData'][pointKey].dtype, checkDt):
                         pointDataArrayType = vtk.VTK_INT
                         break
