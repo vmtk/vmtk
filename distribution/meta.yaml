@@ -1,6 +1,6 @@
 ## Program: VMTK
 ## Language:  Python
-## Date:      January 30, 2018
+## Date:      January 30, 2020
 ## Version:   1.4
 
 ##   Copyright (c) Richard Izzo, Luca Antiga, All rights reserved.
@@ -24,14 +24,16 @@ source:
 build:
   number: 1
   features:
-    - vc14  # [win and (py35 or py36)]  
-  skip:
-    - True  # [win and py27]  
+    - vc14  # [win]  
   
 requirements:
   build:
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
+    # Only required because anaconda.org/vmtk/itk is underconstrained.
+    # itk 4.13 incompatible with gcc >8. Remove when upgrading itk.
+    - gcc_linux-64 <=7.3 # [linux]
+    - gxx_linux-64 <=7.3 # [linux]
     - pkgconfig              # [unix]
     - cmake 
     - git
@@ -42,10 +44,11 @@ requirements:
     - future
     - vtk {{ vtk }}
     - itk {{ itk }}
-    - numpy <=1.13
+    - numpy 
     - h5py
+    - tbb-devel
+    - llvm
     - setuptools              # [win]
-    - mesa                    # [linux]
     - joblib
 
   run:
@@ -53,25 +56,23 @@ requirements:
     - future 
     - vtk {{ vtk }}
     - itk {{ itk }}
-    - numpy <=1.13
+    - numpy 
+    - llvm
     - h5py
-    - mesa                    # [linux]
     - joblib
 
 test:
   source_files:
     - build/tests/*
   requires:
-    - pytest
+    - pytest <4
   commands:
-    - pytest ./build/tests/
+    - pytest  -vv ./build/tests/
 
 about:
   home: www.vmtk.org
   license_file: LICENSE
   summary: "vmtk - the Vascular Modeling Toolkit. See www.vmtk.org/ for details."
-
 extra:
   recipe-maintainers:
-    -rlizzo
-    -lantiga
+    - ramtingh
