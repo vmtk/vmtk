@@ -66,8 +66,9 @@ test:
     - build/tests/*
   requires:
     - pytest <4
+    - pytest-html
   commands:
-    - pytest  -vv ./build/tests/
+    - pytest  {{ environ.get('PYTEST_REPORT', '') }} -vv ./build/tests/
 
 about:
   home: www.vmtk.org

@@ -28,9 +28,10 @@
 image:
   - Ubuntu
 
-#environment:
-#  APPVEYOR_SSH_KEY: 
 environment:
+    global:
+      # HTML report location for pytest
+      PYTEST_REPORT: "--html=~/projects/vmtk/pytest_report.html --self-contained-html"
     matrix:
       - PYTHON_VERSION: "3.7"
       
@@ -43,7 +44,8 @@ platform:
 # Configuration of build
 configuration:
   - Release
-  
+
+# SSH access to build VMs - enable for debugging  
 #init:
 #  - sh: curl -sflL 'https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-ssh.sh' | bash -e - 
 install:
@@ -62,6 +64,17 @@ build: false
 test_script:
   - sh: conda build --python $PYTHON_VERSION --no-copy-test-source-files distribution/
 
+on_finish: # Upload conda package and pytest report
+   - sh: appveyor PushArtifact pytest_report.html
+   - sh: mv /home/appveyor/miniconda/conda-bld/*/vmtk*.tar.bz2 .
+   - sh: appveyor PushArtifact vmtk*.tar.bz2
+#  - sh: sleep 10m
+
+#artifacts:
+#  - path:  'vmtk*.tar.bz2'
+#    name: Conda Package
+#  - path: 'pytest_report.html'
+#    name: Pytest Report
 # environment:
   # global:
     # # SDK v7.0 MSVC Express 2008's SetEnv.cmd script will fail if the
