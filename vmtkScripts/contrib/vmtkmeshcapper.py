@@ -13,6 +13,10 @@
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
+## Note: this class was contributed by 
+##       Marco Fedele (marco.fedele@polimi.it)
+##       Politecnico di Milano
+
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import sys
 import vtk
