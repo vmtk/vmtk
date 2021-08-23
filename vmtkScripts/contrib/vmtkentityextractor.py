@@ -34,7 +34,6 @@ class vmtkEntityExtractor(pypes.pypeScript):
 
         self.Mesh = None
         self.Surface = None
-        self.Input = None
         self.EntityIds = []
         self.Invert = 0
         self.CellEntityIdsArrayName = 'CellEntityIds'
