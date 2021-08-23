@@ -18,6 +18,7 @@ set(CONTRIB_SCRIPTS_SRCS
     vmtkmeshclipcenterlines.py
     vmtkmeshinfo.py
     vmtkmeshmerge.py
+    vmtkmeshringgenerator.py
     vmtkmeshtethex.py
     vmtkmeshtetrahedralize2.py
     vmtkmeshtonumpy.py
