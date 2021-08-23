@@ -17,6 +17,7 @@ __all__ = [
     'vmtk.vmtkmeshconnector',
     'vmtk.vmtkmeshinfo',
     'vmtk.vmtkmeshmerge',
+    'vmtk.vmtkmeshringgenerator',
     'vmtk.vmtkmeshtethex',
     'vmtk.vmtkmeshtetrahedralize2',
     'vmtk.vmtkmeshtonumpy',
