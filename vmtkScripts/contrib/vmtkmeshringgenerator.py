@@ -104,7 +104,7 @@ class vmtkMeshRingGenerator(pypes.pypeScript):
         bl.ThicknessRatio = 1.0
         bl.InnerSurfaceCellEntityId = self.RingId
         bl.OuterSurfaceCellEntityId = self.RingId
-        bl.SidewallCellEntityId = min(self.InternalWallId, self.ExternalWallId)
+        bl.SidewallCellEntityId = self.InternalWallId
         bl.VolumeCellEntityId = self.VolumeId
         bl.NegateWarpVectors = self.NegateWarpVectors
         bl.Execute()
@@ -114,9 +114,9 @@ class vmtkMeshRingGenerator(pypes.pypeScript):
         tetra.Execute()
         ring = tetra.Mesh
 
-        ringOK = self.ExtractIds(ring, [min(self.InternalWallId, self.ExternalWallId)], True)
+        ringOK = self.ExtractIds(ring, [self.InternalWallId], True)
 
-        ringKO = self.ExtractIds(ring, [min(self.InternalWallId, self.ExternalWallId)])
+        ringKO = self.ExtractIds(ring, [self.InternalWallId])
 
         m2s.SetInputData(ringKO)
         m2s.Update()
@@ -127,7 +127,7 @@ class vmtkMeshRingGenerator(pypes.pypeScript):
         tagger.CellEntityIdsArrayName = self.CellEntityIdsArrayName
         tagger.Method = 'connectivity'
         tagger.PrintTags = 0
-        tagger.ConnectivityOffset = max(self.InternalWallId, self.ExternalWallId) - min(self.InternalWallId, self.ExternalWallId)
+        tagger.ConnectivityOffset = self.ExternalWallId - self.InternalWallId
         tagger.Execute()
         ringKO = tagger.Surface
 
