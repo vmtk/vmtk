@@ -58,6 +58,18 @@ class vmtkMeshRingGenerator(pypes.pypeScript):
             ])
 
 
+    def ExtractIds(self,mesh,ids,invert=False):
+        from vmtk import vmtkcontribscripts
+        extract = vmtkcontribscripts.vmtkEntityExtractor()
+        extract.Mesh = mesh
+        extract.CellEntityIdsArrayName = self.CellEntityIdsArrayName
+        extract.EntityIds = ids
+        extract.Invert = invert
+        extract.ConvertToInt = 1
+        extract.Execute()
+        return extract.Mesh
+
+
     def Execute(self):
         from vmtk import vmtkscripts
         from vmtk import vmtkcontribscripts
@@ -66,12 +78,7 @@ class vmtkMeshRingGenerator(pypes.pypeScript):
             self.PrintError('Error: Missing some input entity ids.')
 
         # 1. Extract the surface ring from the input mesh.
-        extractRing = vmtkcontribscripts.vmtkEntityExtractor()
-        extractRing.Mesh = self.Mesh
-        extractRing.CellEntityIdsArrayName = self.CellEntityIdsArrayName
-        extractRing.EntityIds = [self.RingId]
-        extractRing.Execute()
-        ring = extractRing.Mesh
+        ring = self.ExtractIds(self.Mesh, [self.RingId])
 
         # 2. Compute local or boundary normal.
         m2s = vtk.vtkGeometryFilter()
@@ -97,7 +104,7 @@ class vmtkMeshRingGenerator(pypes.pypeScript):
         bl.ThicknessRatio = 1.0
         bl.InnerSurfaceCellEntityId = self.RingId
         bl.OuterSurfaceCellEntityId = self.RingId
-        bl.SidewallCellEntityId = self.InternalWallId
+        bl.SidewallCellEntityId = min(self.InternalWallId, self.ExternalWallId)
         bl.VolumeCellEntityId = self.VolumeId
         bl.NegateWarpVectors = self.NegateWarpVectors
         bl.Execute()
@@ -107,14 +114,42 @@ class vmtkMeshRingGenerator(pypes.pypeScript):
         tetra.Execute()
         ring = tetra.Mesh
 
+        ringOK = self.ExtractIds(ring, [min(self.InternalWallId, self.ExternalWallId)], True)
+
+        ringKO = self.ExtractIds(ring, [min(self.InternalWallId, self.ExternalWallId)])
+
+        m2s.SetInputData(ringKO)
+        m2s.Update()
+        ringKO = m2s.GetOutput()
+
+        tagger = vmtkcontribscripts.vmtkSurfaceTagger()
+        tagger.Surface = ringKO
+        tagger.CellEntityIdsArrayName = self.CellEntityIdsArrayName
+        tagger.Method = 'connectivity'
+        tagger.PrintTags = 0
+        tagger.ConnectivityOffset = max(self.InternalWallId, self.ExternalWallId) - min(self.InternalWallId, self.ExternalWallId)
+        tagger.Execute()
+        ringKO = tagger.Surface
+
+        s2m.Surface = ringKO
+        s2m.Execute()
+        ringKO = s2m.Mesh
+
         # 4. Append to the original mesh.
         append = vtkvmtk.vtkvmtkAppendFilter()
         append.AddInputData(self.Mesh)
-        append.AddInputData(ring)
+        append.AddInputData(ringKO)
+        append.AddInputData(ringOK)
         append.SetMergeDuplicatePoints(1)
         append.Update()
 
-        self.Mesh = append.GetOutput()
+        listTags = vmtkcontribscripts.vmtkEntityList()
+        listTags.Mesh = append.GetOutput()
+        listTags.CellEntityIdsArrayName = self.CellEntityIdsArrayName
+        listTags.ConvertToInt = 1
+        listTags.Execute()
+
+        self.Mesh = listTags.Mesh
 
 
 
