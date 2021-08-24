@@ -38,7 +38,7 @@ class vmtkMeshCapper(pypes.pypeScript):
         self.VolumeId = [100, 200]
         self.TargetEdgeLength = 1.0
 
-        self.Method = 'centerpoint'
+        self.Method = 'simple'
         self.ConstraintFactor = 1.0
         self.NumberOfRings = 8
 
