@@ -59,16 +59,17 @@ class vmtkMeshRingGenerator(pypes.pypeScript):
             ])
 
 
-    def ExtractIds(self,mesh,ids,invert=False):
+    def ExtractIds(self,mesh,ids):
         from vmtk import vmtkcontribscripts
         extract = vmtkcontribscripts.vmtkEntityExtractor()
         extract.Mesh = mesh
         extract.CellEntityIdsArrayName = self.CellEntityIdsArrayName
         extract.EntityIds = ids
-        extract.Invert = invert
         extract.ConvertToInt = 1
         extract.Execute()
-        return extract.Mesh
+        extractedMesh = extract.Mesh
+        deletedMesh = extract.DeletedMesh
+        return extractedMesh, deletedMesh
 
 
     def Execute(self):
@@ -79,7 +80,7 @@ class vmtkMeshRingGenerator(pypes.pypeScript):
             self.PrintError('Error: Missing some input entity ids.')
 
         # 1. Extract the surface ring from the input mesh.
-        ring = self.ExtractIds(self.Mesh, [self.RingId])
+        ring, _ = self.ExtractIds(self.Mesh, [self.RingId])
 
         # 2. Compute local or boundary normal.
         m2s = vtk.vtkGeometryFilter()
@@ -115,9 +116,7 @@ class vmtkMeshRingGenerator(pypes.pypeScript):
         tetra.Execute()
         ring = tetra.Mesh
 
-        ringOK = self.ExtractIds(ring, [self.InternalWallId], True)
-
-        ringKO = self.ExtractIds(ring, [self.InternalWallId])
+        ringKO, ringOK = self.ExtractIds(ring, [self.InternalWallId])
 
         m2s.SetInputData(ringKO)
         m2s.Update()
@@ -143,7 +142,9 @@ class vmtkMeshRingGenerator(pypes.pypeScript):
             bounds = data.GetBounds()
             return math.sqrt(sum((bounds[2*i+1]-bounds[2*i])**2 for i in range(3)))
 
-        if (bnorm(self.ExtractIds(ringKO, [self.InternalWallId])) > bnorm(self.ExtractIds(ringKO, [self.ExternalWallId]))):
+        internal, external = self.ExtractIds(ringKO, [self.InternalWallId])
+
+        if bnorm(internal) > bnorm(external):
             renumbering = vmtkcontribscripts.VmtkEntityRenumber()
             renumbering.Mesh = ringKO
             renumbering.CellEntityIdsArrayName = self.CellEntityIdsArrayName
