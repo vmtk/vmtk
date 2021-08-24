@@ -39,7 +39,7 @@ class vmtkMeshRingGenerator(pypes.pypeScript):
         self.ExternalWallId = None
         self.VolumeId = 1
         self.Thickness = 1.0
-        self.NegateWarpVectors = 1
+        self.NegateWarpVectors = 0
 
         self.SetScriptName('vmtkmeshringgenerator')
         self.SetScriptDoc('generate a volumetric ring by extruding along the boundary normal a surface ring defined on the input mesh')
