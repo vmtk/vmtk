@@ -19,6 +19,7 @@
 
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import sys
+import math
 import vtk
 
 from vmtk import vtkvmtk
@@ -134,6 +135,22 @@ class vmtkMeshRingGenerator(pypes.pypeScript):
         s2m.Surface = ringKO
         s2m.Execute()
         ringKO = s2m.Mesh
+
+
+        # Check if InternalWallId has been assigned to the internal wall.
+        # If not, invert internal and external wall ids.
+        def bnorm(data):
+            bounds = data.GetBounds()
+            return math.sqrt(sum((bounds[2*i+1]-bounds[2*i])**2 for i in range(3)))
+
+        if (bnorm(self.ExtractIds(ringKO, [self.InternalWallId])) > bnorm(self.ExtractIds(ringKO, [self.ExternalWallId]))):
+            renumbering = vmtkcontribscripts.VmtkEntityRenumber()
+            renumbering.Mesh = ringKO
+            renumbering.CellEntityIdsArrayName = self.CellEntityIdsArrayName
+            renumbering.CellEntityIdRenumbering = [self.InternalWallId, self.ExternalWallId, self.ExternalWallId, self.InternalWallId]
+            renumbering.Execute()
+            ringKO = renumbering.Mesh
+
 
         # 4. Append to the original mesh.
         append = vtkvmtk.vtkvmtkAppendFilter()
