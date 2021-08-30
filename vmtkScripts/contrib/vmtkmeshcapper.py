@@ -107,7 +107,7 @@ class vmtkMeshCapper(pypes.pypeScript):
         sr.TargetEdgeLength = self.TargetEdgeLength
         sr.CellEntityIdsArrayName = self.CellEntityIdsArrayName
         sr.ExcludeEntityIds = self.IdsToCap
-        # sr.CollapseAngleThreshold = 0.05
+        sr.CollapseAngleThreshold = 0.05
         sr.CleanOutput = 1
         sr.Execute()
         cylinder = sr.Surface
