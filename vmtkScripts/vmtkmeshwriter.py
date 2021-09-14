@@ -309,7 +309,7 @@ class vmtkMeshWriter(pypes.pypeScript):
     def WriteHexMshFile(self):
         if (self.OutputFileName == ''):
             self.PrintError('Error: no OutputFileName.')
-        self.PrintLog('Writing Hex Msh file.')
+        self.PrintLog('Writing dealii/lifex .msh file.')
 
         self.Mesh.BuildLinks()
 
@@ -344,43 +344,34 @@ class vmtkMeshWriter(pypes.pypeScript):
         hexaCellIdArray = vtk.vtkIdTypeArray()
         self.Mesh.GetIdsOfCellsOfType(hexaCellType,hexaCellIdArray)
 
-        numberOfLine = lineCellIdArray.GetNumberOfTuples()
-        numberOfQuad = quadCellIdArray.GetNumberOfTuples()
-        numberOfHexa = hexaCellIdArray.GetNumberOfTuples()
+        numberOfLines = lineCellIdArray.GetNumberOfTuples()
+        numberOfQuads = quadCellIdArray.GetNumberOfTuples()
+        numberOfHexas = hexaCellIdArray.GetNumberOfTuples()
 
-        line += "%d\n" % (numberOfLine+numberOfQuad+numberOfHexa)
+        line += "%d\n" % (numberOfLines+numberOfQuads+numberOfHexas)
         f.write(line)
 
-        def writeLine(cellId,cellType,tag,cellPointIds):
-            line = '%d ' % (cellId)
-            line += cellType+' 2 %d %d ' % (tag,tag)
-            for j in range(cellPointIds.GetNumberOfIds()):
-                if j>0:
-                    line += '  '
-                line += "%d" % (cellPointIds.GetId(j)+1)
-            line += "\n"
-            f.write(line)
+        def writeCellOfType(cellType,cellTypeIdArray,idx_init):
+            idx = idx_init
+            for i in range(cellTypeIdArray.GetNumberOfTuples()):
+                cellId = cellTypeIdArray.GetValue(i)
+                cellPointIds = self.Mesh.GetCell(cellId).GetPointIds()
+                cellEntityId = cellEntityIdsArray.GetValue(cellId)
+                line = '%d ' % (idx)
+                line += cellType+' 2 %d %d ' % (cellEntityId,cellEntityId)
+                for j in range(cellPointIds.GetNumberOfIds()):
+                    if j>0:
+                        line += '  '
+                    line += "%d" % (cellPointIds.GetId(j)+1)
+                line += "\n"
+                f.write(line)
+                idx = idx+1
+            return idx
 
-        for i in range(numberOfLine):
-            lineCellId = lineCellIdArray.GetValue(i)
-            cellPointIds = self.Mesh.GetCell(lineCellId).GetPointIds()
-            cellEntityId = cellEntityIdsArray.GetValue(lineCellId)
-            idx = i+1
-            writeLine(idx,'1',cellEntityId,cellPointIds)
-
-        for i in range(numberOfQuad):
-            quadCellId = quadCellIdArray.GetValue(i)
-            cellPointIds = self.Mesh.GetCell(quadCellId).GetPointIds()
-            cellEntityId = cellEntityIdsArray.GetValue(quadCellId)
-            idx = numberOfLine+i+1
-            writeLine(idx,'3',cellEntityId,cellPointIds)
-
-        for i in range(numberOfHexa):
-            hexaCellId = hexaCellIdArray.GetValue(i)
-            cellPointIds = self.Mesh.GetCell(hexaCellId).GetPointIds()
-            cellEntityId = cellEntityIdsArray.GetValue(hexaCellId)
-            idx = numberOfLine+numberOfQuad+i+1
-            writeLine(idx,'5',cellEntityId,cellPointIds)
+        idx=1
+        idx=writeCellOfType('1',lineCellIdArray,idx)
+        idx=writeCellOfType('3',quadCellIdArray,idx)
+        idx=writeCellOfType('5',hexaCellIdArray,idx)
 
         line = "$EndElements\n"
         f.write(line)
