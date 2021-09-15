@@ -16,6 +16,7 @@ __all__ = [
     'vmtk.vmtkmeshclipcenterlines',
     'vmtk.vmtkmeshconnector',
     'vmtk.vmtkmeshinfo',
+    'vmtk.vmtkmeshinternalfacescleaner',
     'vmtk.vmtkmeshmerge',
     'vmtk.vmtkmeshringgenerator',
     'vmtk.vmtkmeshtethex',
