@@ -108,6 +108,9 @@ class vmtkEntityExtractor(pypes.pypeScript):
 
         self.CellEntityIdsArray = idList.CellEntityIdsArray
 
+        if isinstance(self.EntityIds, int):
+            self.EntityIds = [self.EntityIds]
+
         if self.Invert:
             self.OutputEntityIds = sorted(set(idList.EntityIds).difference(self.EntityIds))
         else:
