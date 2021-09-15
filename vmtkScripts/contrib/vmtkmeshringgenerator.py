@@ -92,6 +92,7 @@ class vmtkMeshRingGenerator(pypes.pypeScript):
  
         sn = vmtkscripts.vmtkSurfaceNormals()
         sn.Surface = ring
+        sn.FlipNormals = self.NegateWarpVectors
         sn.Execute()
         ring = sn.Surface
 
@@ -126,7 +127,6 @@ class vmtkMeshRingGenerator(pypes.pypeScript):
         bl.OuterSurfaceCellEntityId = self.RingId
         bl.SidewallCellEntityId = self.InternalWallId
         bl.VolumeCellEntityId = self.VolumeId
-        bl.NegateWarpVectors = self.NegateWarpVectors
         bl.Execute()
 
         tetra = vmtkscripts.vmtkMeshTetrahedralize()
