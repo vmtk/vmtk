@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
 ## Program:   VMTK
-## Module:    $RCSfile: vmtksurfacecapper.py,v $
+## Module:    $RCSfile: vmtkmeshinternalfacescleaner.py,v $
 ## Language:  Python
-## Date:      $Date: 2006/07/17 09:53:14 $
+## Date:      $Date: 2021/09/15 09:53:14 $
 ## Version:   $Revision: 1.8 $
 
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
