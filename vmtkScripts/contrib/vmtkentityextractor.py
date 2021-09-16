@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 ## Program:   VMTK
-## Module:    $RCSfile: vmtksurfaceappend.py,v $
+## Module:    $RCSfile: vmtkentityextractor.py,v $
 ## Language:  Python
 ## Date:      $Date: 2020/10/22 14:18:14 $
 ## Version:   $Revision: 1.4 $
