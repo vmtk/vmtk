@@ -26,6 +26,7 @@
 #    environment configuration    #
 #---------------------------------#
 image:
+  - Visual Studio 2017
   - Ubuntu
 
 environment:
@@ -50,6 +51,14 @@ configuration:
 #  - sh: curl -sflL 'https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-ssh.sh' | bash -e - 
 install:
   - sh: . distribution/appveyor/install.sh
+#  - cmd: call distribution/appveyor/install.bat
+  - cmd: SET PATH=C:\Miniconda37-x64;C:\Miniconda37-x64\Scripts;%PATH%
+  - cmd: conda config --set always_yes true
+  - cmd: conda install --quiet -y conda conda-build anaconda-client
+  - cmd: conda config --prepend channels conda-forge
+  - cmd: conda config --prepend channels vmtk
+  - cmd: conda info -a
+  - cmd: conda list
 # ---------------------------------#
    # build / test configuration   #
 # ---------------------------------#
@@ -63,6 +72,7 @@ build: false
 
 test_script:
   - sh: conda build --python $PYTHON_VERSION --no-copy-test-source-files distribution/
+  - cmd: C:\Miniconda37-x64\Scripts\conda build --python %PYTHON_VERSION% --no-copy-test-source-files distribution
 
 on_finish: # Upload conda package and pytest report
    - sh: . distribution/appveyor/after_test.sh
