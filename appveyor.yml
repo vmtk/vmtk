@@ -76,6 +76,9 @@ test_script:
 
 on_finish: # Upload conda package and pytest report
    - sh: . distribution/appveyor/after_test.sh
+   - cmd: appveyor PushArtifact pytest_report.html
+   - ps: Get-ChildItem C:\Miniconda37-x64\conda-bld\win-64\*.tar.bz2 | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name }
+
 
 #  - sh: sleep 10m
 
