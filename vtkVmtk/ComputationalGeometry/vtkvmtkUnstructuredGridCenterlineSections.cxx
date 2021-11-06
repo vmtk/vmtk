@@ -38,6 +38,7 @@ Version:   $Revision: 1.1 $
 #include "vtkvmtkMath.h"
 #include "vtkvmtkCenterlineSphereDistance.h"
 #include "vtkProbeFilter.h"
+#include "vtkIdTypeArray.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"

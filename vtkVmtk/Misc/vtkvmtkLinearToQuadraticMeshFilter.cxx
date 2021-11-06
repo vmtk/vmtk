@@ -34,6 +34,7 @@ Version:   $Revision: 1.6 $
 #include "vtkCellArray.h"
 #include "vtkGenericCell.h"
 #include "vtkEdgeTable.h"
+#include "vtkIdTypeArray.h"
 #include "vtkIntArray.h"
 #include "vtkMath.h"
 #include "vtkInformation.h"

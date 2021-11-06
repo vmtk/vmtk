@@ -27,6 +27,7 @@ Version:   $Revision: 1.6 $
 #include "vtkPointData.h"
 #include "vtkCellData.h"
 #include "vtkPolyLine.h"
+#include "vtkIdTypeArray.h"
 #include "vtkIntArray.h"
 #include "vtkMath.h"
 #include "vtkInformation.h"

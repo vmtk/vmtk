@@ -33,6 +33,7 @@ Version:   $Revision: 1.0 $
 #include "vtkCellData.h"
 #include "vtkPolygon.h"
 #include "vtkPolyLine.h"
+#include "vtkIdTypeArray.h"
 #include "vtkIntArray.h"
 #include "vtkMath.h"
 #include "vtkInformation.h"

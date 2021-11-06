@@ -29,6 +29,7 @@ Version:   $Revision: 1.5 $
 #include "vtkMath.h"
 #include "vtkPolyLine.h"
 #include "vtkLine.h"
+#include "vtkIdTypeArray.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
