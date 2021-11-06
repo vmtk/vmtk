@@ -32,6 +32,7 @@ Version:   $Revision: 1.6 $
 #include "vtkThinPlateSplineTransform.h"
 #include "vtkPoints.h"
 #include "vtkIdList.h"
+#include "vtkIdTypeArray.h"
 #include "vtkMath.h"
 #include "vtkTriangle.h"
 #include "vtkVersion.h"

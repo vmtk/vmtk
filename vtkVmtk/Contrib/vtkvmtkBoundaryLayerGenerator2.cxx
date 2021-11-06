@@ -33,6 +33,7 @@
 #include "vtkCellArray.h"
 #include "vtkIntArray.h"
 #include "vtkMath.h"
+#include "vtkIdTypeArray.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
@@ -162,7 +163,8 @@ int vtkvmtkBoundaryLayerGenerator2::RequestData(
     outputPoints->SetPoint(i,point);
     }
 
-  vtkIdType npts, *pts;
+  vtkIdType npts;
+  vtkIdType const *pts;
   vtkIdType *surfacePts;
 
   if (this->IncludeSurfaceCells || this->IncludeOriginalSurfaceCells)
@@ -272,7 +274,7 @@ int vtkvmtkBoundaryLayerGenerator2::RequestData(
       vtkDataArray *openProfilesScalars = openProfilesExtractor->GetOutput()->GetPointData()->GetScalars();
       
       vtkIdType npts = 0;
-      vtkIdType *pts = NULL;
+      vtkIdType const *pts = NULL;
       int profileId;
       for (profileId=0, openProfiles->InitTraversal(); openProfiles->GetNextCell(npts,pts); profileId++)
         {
@@ -305,7 +307,7 @@ int vtkvmtkBoundaryLayerGenerator2::RequestData(
    
     vtkIdType prismNPts, *prismPts;
     vtkIdType nTetraPts = 0;
-    vtkIdType *tetraPts = NULL;
+    vtkIdType const *tetraPts = NULL;
     
     for (i=0; i<numberOfInputCells; i++)
       {

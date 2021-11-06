@@ -369,7 +369,7 @@ void vtkvmtkDolfinWriter2::GetDolfinCellFaceOrder(vtkCell* cell, vtkIdList *dolf
       dolfinFaceOrder->SetNumberOfIds(4);
       for (int i=0; i<4; i++)
         {
-        int* faceArray = vtkTetra::GetFaceArray(i);
+        const vtkIdType* faceArray = vtkTetra::GetFaceArray(i);
         for (int j=0; j<4;j++)
           {
           bool inFaceArray = false;
