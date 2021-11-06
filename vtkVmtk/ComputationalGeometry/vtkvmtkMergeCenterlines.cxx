@@ -30,6 +30,7 @@ Version:   $Revision: 1.4 $
 #include "vtkCellData.h"
 #include "vtkCellArray.h"
 #include "vtkIdList.h"
+#include "vtkIdTypeArray.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
