@@ -478,7 +478,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::IsPointOnBoundary(vtkIdType pointId)
   vtkIdType* cells;
   this->Mesh->GetPointCells(pointId,ncells,cells);
   vtkIdList* cellEdgeNeighbors = vtkIdList::New();
-  for (int i=0; i<ncells; i++)
+  for (vtkIdType i=0; i<ncells; i++)
     {
     vtkIdType npts;
 #if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
