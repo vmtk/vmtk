@@ -474,7 +474,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::GetNumberOfBoundaryEdges(vtkIdType cellId)
 
 int vtkvmtkPolyDataSurfaceRemeshing::IsPointOnBoundary(vtkIdType pointId)
 {
-  unsigned short ncells;
+  vtkIdType ncells;
   vtkIdType* cells;
   this->Mesh->GetPointCells(pointId,ncells,cells);
   vtkIdList* cellEdgeNeighbors = vtkIdList::New();
@@ -1539,7 +1539,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::TestConnectivityFlipEdge(vtkIdType pt1, vtk
     return DO_NOTHING;
     }
 
-  unsigned short ncells1, ncells2, ncells3, ncells4;
+  vtkIdType ncells1, ncells2, ncells3, ncells4;
   vtkIdType* cells;
   this->Mesh->GetPointCells(pt1,ncells1,cells);
   this->Mesh->GetPointCells(pt2,ncells2,cells);
@@ -1809,7 +1809,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::TestAspectRatioCollapseEdge(vtkIdType cellI
     return DO_NOTHING;
     }
 
-  unsigned short ncells3, ncells4;
+  vtkIdType ncells3, ncells4;
   ncells3 = ncells4 = 0;
   vtkIdType *cells;
   this->Mesh->GetPointCells(pt3,ncells3,cells);
@@ -1822,7 +1822,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::TestAspectRatioCollapseEdge(vtkIdType cellI
     return DO_NOTHING;
     }
 
-  unsigned short ncells2;
+  vtkIdType ncells2;
   this->Mesh->GetPointCells(pt2,ncells2,cells);
   for (int i=0; i<ncells2; i++)
     {
