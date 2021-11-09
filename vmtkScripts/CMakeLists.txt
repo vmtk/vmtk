@@ -121,6 +121,7 @@ set(SCRIPTS_SRCS
   vmtksurfacecliploop.py
   vmtksurfaceconnectivity.py
   vmtksurfaceconnectivityselector.py
+  vmtksurfacecoords.py
   vmtksurfacecurvature.py
   vmtksurfacedecimation.py
   vmtksurfacedistance.py
