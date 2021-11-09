@@ -73,6 +73,7 @@ set(SCRIPTS_SRCS
   vmtkmeshbranchclipper.py
   vmtkmeshclipper.py
   vmtkmeshconnectivity.py
+  vmtkmeshcoords.py
   vmtkmeshcutter.py
   vmtkmeshdatareader.py
   vmtkmeshextractpointdata.py
