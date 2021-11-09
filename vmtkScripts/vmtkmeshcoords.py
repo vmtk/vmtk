@@ -26,44 +26,29 @@ from vmtk import vtkvmtk
 from vmtk import pypes
 
 
-class vmtkSurfaceCoords(pypes.pypeScript):
+class vmtkMeshCoords(pypes.pypeScript):
 
     def __init__(self):
 
         pypes.pypeScript.__init__(self)
 
-        self.Surface = None
+        self.Mesh = None
 
-        self.SetScriptName('vmtksurfacecoords')
+        self.SetScriptName('vmtkMeshcoords')
         self.SetScriptDoc('add coordinates as point data array on the surface')
         self.SetInputMembers([
-            ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
+            ['Mesh','i','vtkUnstructuredGrid',1,'','the input surface','vmtkmeshreader'],
             ])
         self.SetOutputMembers([
-            ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter']
+            ['Mesh','o','vtkUnstructuredGrid',1,'','the output surface','vmtkmeshwriter']
             ])
 
-
-    def CreateCoords(self,data):
-        coords = data.GetPoints().GetData()
-        coords.SetName('coords')
-        data.GetPointData().AddArray(coords)
-
-        names = ['coordsX', 'coordsY', 'coordsZ']
-        for j in range(3):
-            scalarCoords = vtk.vtkDoubleArray()
-            scalarCoords.SetNumberOfComponents(1)
-            scalarCoords.SetNumberOfTuples(data.GetNumberOfPoints())
-            scalarCoords.SetName(names[j])
-            for i in range(data.GetNumberOfPoints()):
-                scalarCoords.SetValue(i,coords.GetComponent(i,j))
-            data.GetPointData().AddArray(scalarCoords)
-
     def Execute(self):
-        if self.Surface == None:
+        from vmtk import vmtkscripts
+        if self.Mesh == None:
             self.PrintError('Error: No input surface.')
 
-        self.CreateCoords(self.Surface)
+        vmtkscripts.vmtkSurfaceCoords().CreateCoords(self.Mesh)
 
 
 

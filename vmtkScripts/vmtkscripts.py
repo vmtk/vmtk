@@ -70,6 +70,7 @@ __all__ = [
     'vmtk.vmtkmeshbranchclipper',
     'vmtk.vmtkmeshclipper',
     'vmtk.vmtkmeshconnectivity',
+    'vmtk.vmtkmeshcoords',
     'vmtk.vmtkmeshcutter',
     'vmtk.vmtkmeshdatareader',
     'vmtk.vmtkmeshextractpointdata',
