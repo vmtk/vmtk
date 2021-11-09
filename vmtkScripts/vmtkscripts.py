@@ -125,6 +125,7 @@ __all__ = [
     'vmtk.vmtksurfacecliploop',
     'vmtk.vmtksurfaceconnectivity',
     'vmtk.vmtksurfaceconnectivityselector',
+    'vmtk.vmtksurfacecoords',
     'vmtk.vmtksurfacecurvature',
     'vmtk.vmtksurfacedecimation',
     'vmtk.vmtksurfacedistance',
