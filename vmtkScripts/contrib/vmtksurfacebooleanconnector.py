@@ -52,6 +52,7 @@ class vmtkSurfaceBooleanConnector(pypes.pypeScript):
         self.BufferTags = [4, 5]
 
         self.SkipRemeshing = 0
+        self.SkipFinalRemeshing = 0
         self.EdgeLength = 1.0
 
         self.CellEntityIdsArrayName = 'CellEntityIds'
@@ -73,6 +74,7 @@ class vmtkSurfaceBooleanConnector(pypes.pypeScript):
             ['Buffer','buffer','float',1,'(0.0,)','the buffer width, measured from the intersection lines of the two input surfaces (if None, it is set equal to 3*Eps)'],
             ['BufferTags','buffertags','int',2,'','entity ids of the two buffer zones on the two surfaces'],
             ['SkipRemeshing','skipremeshing','bool',1,'','toggle skipping the remeshing (if true, the connection is performed between boundaries made of irregular triangles)'],
+            ['SkipFinalRemeshing','skiponlyfinalremeshing','bool',1,'','toggle skipping only the remeshing of the final connected surface'],
             ['EdgeLength','edgelength','float',1,'(0.0,)','the constant edgelength for the remeshing'],
             ['CellEntityIdsArrayName','entityidsarray','str',1,'',''],
             ['ConnectingId','connectingid','int',1,'','entity id value in the connecting surface'],
@@ -215,7 +217,10 @@ class vmtkSurfaceBooleanConnector(pypes.pypeScript):
         self.Surface = conn.OutputSurface
 
         # 7. remeshing the connection
-        if not self.SkipRemeshing:
+        if self.SkipRemeshing:
+            self.SkipFinalRemeshing = True
+
+        if not self.SkipFinalRemeshing:
             self.Surface = surfaceRemeshing(self.Surface,10,allTagsToExclude)
 
 
