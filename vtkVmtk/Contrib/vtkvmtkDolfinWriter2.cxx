@@ -363,13 +363,18 @@ void vtkvmtkDolfinWriter2::GetDolfinCellFaceOrder(vtkCell* cell, vtkIdList *dolf
     }
   
   
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
+  const vtkIdType *faceArray;
+#else
+  vtkIdType *faceArray;
+#endif
   switch(cellType)
     {
     case VTK_TETRA:
       dolfinFaceOrder->SetNumberOfIds(4);
       for (int i=0; i<4; i++)
         {
-        const vtkIdType* faceArray = vtkTetra::GetFaceArray(i);
+        faceArray = vtkTetra::GetFaceArray(i);
         for (int j=0; j<4;j++)
           {
           bool inFaceArray = false;
