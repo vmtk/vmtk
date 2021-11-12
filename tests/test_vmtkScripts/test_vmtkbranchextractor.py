@@ -47,25 +47,39 @@ def test_number_of_points(centerline_branches):
     assert centerline_branches.GetNumberOfPoints() == 417
     
 
-@pytest.mark.parametrize("expectedname,paramid", [
-    ("CenterlineIds", 0),
-    ("TractIds", 1),
-    ("Blanking", 2),
-    ("GroupIds", 3)
-])
-def test_cell_data_array_names(centerline_branches, expectedname, paramid):
-    assert centerline_branches.GetCellData().GetArrayName(paramid) == expectedname
+def test_cell_data_array_names(centerline_branches):
+    n_arrays = centerline_branches.GetCellData().GetNumberOfArrays()
+    array_names = [
+                    "CenterlineIds",
+                    "TractIds",
+                    "Blanking",
+                    "GroupIds",
+                ]
+
+    count = dict.fromkeys(array_names, 0)
+    # check file for new arrays
+    for paramid in range(n_arrays):
+        array_name = centerline_branches.GetCellData().GetArrayName(paramid)
+        count[array_name] += 1
+        assert array_name in array_names
+    # check there aren't repeats
+    for key, val in count.items():
+        assert count[key] == 1
 
 
-@pytest.mark.parametrize("expectedvalue,paramid", [
-    ([0, 0, 0, 1, 1, 1], 0),
-    ([0, 1, 2, 0, 1, 2], 1),
-    ([0, 1, 0, 0, 1, 0], 2),
-    ([0, 1, 2, 0, 1, 3], 3)
+@pytest.mark.parametrize("expectedvalue,paramname", [
+    ([0, 0, 0, 1, 1, 1], "CenterlineIds"),
+    ([0, 1, 2, 0, 1, 2], "TractIds"),
+    ([0, 1, 0, 0, 1, 0], "Blanking"),
+    ([0, 1, 2, 0, 1, 3], "GroupIds")
 ])
-def test_cell_data_array_values(centerline_branches, expectedvalue, paramid):
-    centerline_branches_wrapped = dsa.WrapDataObject(centerline_branches)
-    assert centerline_branches_wrapped.CellData.GetArray(paramid).tolist() == expectedvalue
+def test_cell_data_array_values(centerline_branches, expectedvalue, paramname):
+    n_arrays = centerline_branches.GetCellData().GetNumberOfArrays()
+    for paramid in range(n_arrays):
+        array_name = centerline_branches.GetCellData().GetArrayName(paramid)
+        if array_name == paramname:
+            centerline_branches_wrapped = dsa.WrapDataObject(centerline_branches)
+            assert centerline_branches_wrapped.CellData.GetArray(paramid).tolist() == expectedvalue
 
 
 @pytest.mark.parametrize("expectedvalue,paramid", [
