@@ -67,95 +67,95 @@ def test_number_of_cells_two_sphere(branch_sections_two_spheres):
 
 
 @pytest.mark.parametrize("branch_sections,expectedValue",[
-    (branch_sections_one_sphere, np.array([0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3])),
-    (branch_sections_two_spheres, np.array([0, 0, 0, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3]))
+    ("branch_sections_one_sphere", np.array([0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3])),
+    ("branch_sections_two_spheres", np.array([0, 0, 0, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3]))
 ])
-def test_branch_section_group_ids_correct(aorta_centerline_branches ,aorta_surface_branches,
-                                               branch_sections, expectedValue):
-    wrapped_bifur_section = dsa.WrapDataObject(branch_sections(aorta_centerline_branches ,aorta_surface_branches))
+def test_branch_section_group_ids_correct(branch_sections, expectedValue, request):
+    branch_sections = request.getfixturevalue(branch_sections)
+    wrapped_bifur_section = dsa.WrapDataObject(branch_sections)
     assert np.allclose(wrapped_bifur_section.CellData.GetArray('BranchSectionGroupIds'), expectedValue) == True
 
 
 @pytest.mark.parametrize("branch_sections,expectedValue",[
-    (branch_sections_one_sphere, np.array([ 195.53117732, 182.23256278, 186.21267186, 187.0400059,  177.20153242,
+    ("branch_sections_one_sphere", np.array([ 195.53117732, 182.23256278, 186.21267186, 187.0400059,  177.20153242,
                                             176.25756012,  85.82336158,  73.02829417,  63.50445732,  62.40968092,
                                             62.22208797,  60.62570948,  60.78477703,  60.01402702,  63.08210028,
                                             99.06819265,  80.5269763,   64.12766266,  64.57327767,  67.13289619,
                                             60.67602206,  59.98268905,  58.48300609,  58.6038296 ])),
-    (branch_sections_two_spheres, np.array([ 195.53117732, 186.21267186, 177.20153242,  85.82336158,  63.50445732,
+    ("branch_sections_two_spheres", np.array([ 195.53117732, 186.21267186, 177.20153242,  85.82336158,  63.50445732,
                                              62.22208797,  60.78477703,  63.08210028,  99.06819265,  64.12766266,
                                              67.13289619,  59.98268905,  58.6038296 ]))
 ])
-def test_branch_section_area_correct(aorta_centerline_branches ,aorta_surface_branches,
-                                     branch_sections, expectedValue):
-    wrapped_bifur_section = dsa.WrapDataObject(branch_sections(aorta_centerline_branches ,aorta_surface_branches))
+def test_branch_section_area_correct(branch_sections, expectedValue, request):
+    branch_sections = request.getfixturevalue(branch_sections)
+    wrapped_bifur_section = dsa.WrapDataObject(branch_sections)
     assert np.allclose(wrapped_bifur_section.CellData.GetArray('BranchSectionArea'), expectedValue) == True
 
 
 @pytest.mark.parametrize("branch_sections,expectedValue",[
-    (branch_sections_one_sphere, np.array([ 15.25387687, 14.25260369, 14.66768231, 15.25974257, 14.6356421,
+    ("branch_sections_one_sphere", np.array([ 15.25387687, 14.25260369, 14.66768231, 15.25974257, 14.6356421,
                                             13.64498788, 10.89010723,  9.18671219,  8.86926931,  8.74859368,
                                             8.56866816,  8.61375309,  8.58205574,  8.49087216,  8.73891524,
                                             11.33372646,  9.5789813,   8.91067727,  8.55769926,  8.87761983,
                                             8.63328033,   8.53398992,   8.28912586,   8.73934951])),
-    (branch_sections_two_spheres, np.array([ 15.25387687, 14.66768231, 14.6356421,  10.89010723,  8.86926931,
+    ("branch_sections_two_spheres", np.array([ 15.25387687, 14.66768231, 14.6356421,  10.89010723,  8.86926931,
                                             8.56866816,  8.58205574,  8.73891524, 11.33372646,  8.91067727,
                                             8.87761983,  8.53398992,  8.73934951]))
 ])
-def test_branch_section_min_size_correct(aorta_centerline_branches ,aorta_surface_branches,
-                                         branch_sections, expectedValue):
-    wrapped_bifur_section = dsa.WrapDataObject(branch_sections(aorta_centerline_branches ,aorta_surface_branches))
+def test_branch_section_min_size_correct(branch_sections, expectedValue, request):
+    branch_sections = request.getfixturevalue(branch_sections)
+    wrapped_bifur_section = dsa.WrapDataObject(branch_sections)
     assert np.allclose(wrapped_bifur_section.CellData.GetArray('BranchSectionMinSize'), expectedValue) == True
 
 
 @pytest.mark.parametrize("branch_sections,expectedValue",[
-    (branch_sections_one_sphere, np.array([ 17.08821628, 16.06283909, 16.22629607, 15.95819134, 16.01361226,
+    ("branch_sections_one_sphere", np.array([ 17.08821628, 16.06283909, 16.22629607, 15.95819134, 16.01361226,
                                             16.17715589, 11.69644525, 10.22110037,  9.35342472,  9.36595157,
                                             9.21275981,  9.20696121,  9.04795408,  9.16998689,  9.37937275,
                                             12.45697059, 10.97796263,  9.27120319,  9.39964383,  9.83837421,
                                             9.22775579,  9.13391134,  8.9179931,   8.86614888])),
-    (branch_sections_two_spheres, np.array([ 17.08821628, 16.22629607, 16.01361226, 11.69644525,  9.35342472,
+    ("branch_sections_two_spheres", np.array([ 17.08821628, 16.22629607, 16.01361226, 11.69644525,  9.35342472,
                                             9.21275981,  9.04795408,  9.37937275, 12.45697059,  9.27120319,
                                             9.83837421,  9.13391134,  8.86614888]))
 ])
-def test_branch_section_max_size_correct(aorta_centerline_branches ,aorta_surface_branches,
-                                             branch_sections, expectedValue):
-    wrapped_bifur_section = dsa.WrapDataObject(branch_sections(aorta_centerline_branches ,aorta_surface_branches))
+def test_branch_section_max_size_correct(branch_sections, expectedValue, request):
+    branch_sections = request.getfixturevalue(branch_sections)
+    wrapped_bifur_section = dsa.WrapDataObject(branch_sections)
     assert np.allclose(wrapped_bifur_section.CellData.GetArray('BranchSectionMaxSize'), expectedValue) == True
 
 
 @pytest.mark.parametrize("branch_sections,expectedValue",[
-    (branch_sections_one_sphere, np.array([ 0.89265472, 0.8873029,  0.90394519, 0.95623259, 0.91395007, 0.84347261,
+    ("branch_sections_one_sphere", np.array([ 0.89265472, 0.8873029,  0.90394519, 0.95623259, 0.91395007, 0.84347261,
                                             0.93106127, 0.89879875, 0.94823763, 0.93408487, 0.930087,   0.93556961,
                                             0.94850788, 0.92594158, 0.93171638, 0.90983007, 0.87256458, 0.96111336,
                                             0.91042804, 0.90234622, 0.93557746, 0.93431933, 0.92948332, 0.98569848])),
-    (branch_sections_two_spheres, np.array([ 0.89265472, 0.90394519, 0.91395007, 0.93106127, 0.94823763, 0.930087,
+    ("branch_sections_two_spheres", np.array([ 0.89265472, 0.90394519, 0.91395007, 0.93106127, 0.94823763, 0.930087,
                                             0.94850788, 0.93171638, 0.90983007, 0.96111336, 0.90234622, 0.93431933,
                                             0.98569848]))
 ])
-def test_branch_section_shape_correct(aorta_centerline_branches ,aorta_surface_branches,
-                                      branch_sections, expectedValue):
-    wrapped_bifur_section = dsa.WrapDataObject(branch_sections(aorta_centerline_branches ,aorta_surface_branches))
+def test_branch_section_shape_correct(branch_sections, expectedValue, request):
+    branch_sections = request.getfixturevalue(branch_sections)
+    wrapped_bifur_section = dsa.WrapDataObject(branch_sections)
     assert np.allclose(wrapped_bifur_section.CellData.GetArray('BranchSectionShape'), expectedValue) == True
 
 
 @pytest.mark.parametrize("branch_sections,expectedValue",[
-    (branch_sections_one_sphere, np.array([1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1])),
-    (branch_sections_two_spheres, np.array([1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1]))
+    ("branch_sections_one_sphere", np.array([1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1])),
+    ("branch_sections_two_spheres", np.array([1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1]))
 ])
-def test_branch_section_closed_correct(aorta_centerline_branches ,aorta_surface_branches,
-                                       branch_sections, expectedValue):
-    wrapped_bifur_section = dsa.WrapDataObject(branch_sections(aorta_centerline_branches ,aorta_surface_branches))
+def test_branch_section_closed_correct(branch_sections, expectedValue, request):
+    branch_sections = request.getfixturevalue(branch_sections)
+    wrapped_bifur_section = dsa.WrapDataObject(branch_sections)
     assert np.allclose(wrapped_bifur_section.CellData.GetArray('BranchSectionClosed'), expectedValue) == True
 
 
 @pytest.mark.parametrize("branch_sections,expectedValue",[
-    (branch_sections_one_sphere, np.array([0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5, 6, 7, 8, 0, 1, 2, 3, 4, 5, 6, 7, 8])),
-    (branch_sections_two_spheres, np.array([0, 2, 4, 0, 2, 4, 6, 8, 0, 2, 4, 6, 8]))
+    ("branch_sections_one_sphere", np.array([0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5, 6, 7, 8, 0, 1, 2, 3, 4, 5, 6, 7, 8])),
+    ("branch_sections_two_spheres", np.array([0, 2, 4, 0, 2, 4, 6, 8, 0, 2, 4, 6, 8]))
 ])
-def test_branch_section_distance_to_spheres_correct(aorta_centerline_branches ,aorta_surface_branches,
-                                                    branch_sections, expectedValue):
-    wrapped_bifur_section = dsa.WrapDataObject(branch_sections(aorta_centerline_branches ,aorta_surface_branches))
+def test_branch_section_distance_to_spheres_correct(branch_sections, expectedValue, request):
+    branch_sections = request.getfixturevalue(branch_sections)
+    wrapped_bifur_section = dsa.WrapDataObject(branch_sections)
     assert np.allclose(wrapped_bifur_section.CellData.GetArray('BranchSectionDistanceSpheres'), expectedValue) == True
 
 
