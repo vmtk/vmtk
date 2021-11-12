@@ -95,8 +95,6 @@ def test_expected_number_points_with_two_spheres(bifur_sections_two_spheres):
     assert wrapped_bifur_section.Points.shape == (280, 3)
 
 
-
-
 @pytest.mark.parametrize("bifurcation_section_type,expectedValue",[
     ("bifur_sections_one_sphere",  np.array([0, 2, 3])),
     ("bifur_sections_two_spheres",  np.array([0, 2, 3]))
