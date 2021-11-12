@@ -34,7 +34,11 @@ Version:   $Revision: 1.2 $
 #include "itkNeighborhoodAlgorithm.h"
 #include "itkZeroFluxNeumannBoundaryCondition.h"
 #include "itkOffset.h"
+#if ITK_VERSION_MAJOR >= 5
+#include "itkTotalProgressReporter.h"
+#else
 #include "itkProgressReporter.h"
+#endif
 
 namespace itk
 {
@@ -110,8 +114,12 @@ UpwindGradientMagnitudeImageFilter<TInputImage,TOutputImage>
 template< typename TInputImage, typename TOutputImage >
 void
 UpwindGradientMagnitudeImageFilter< TInputImage, TOutputImage >
+#if ITK_VERSION_MAJOR >= 5
+::DynamicThreadedGenerateData(const OutputImageRegionType& outputRegionForThread)
+#else
 ::ThreadedGenerateData(const OutputImageRegionType& outputRegionForThread,
                        ThreadIdType threadId)
+#endif
 {
   unsigned int i;
   ZeroFluxNeumannBoundaryCondition<TInputImage> nbc;
@@ -172,7 +180,11 @@ UpwindGradientMagnitudeImageFilter< TInputImage, TOutputImage >
   fit = faceList.begin();
   
   // support progress methods/callbacks
+#if ITK_VERSION_MAJOR >= 5
+  TotalProgressReporter progress(this, output->GetRequestedRegion().GetNumberOfPixels());
+#else
   ProgressReporter progress(this, threadId, outputRegionForThread.GetNumberOfPixels());
+#endif
   
   // Process non-boundary face
   nit = ConstNeighborhoodIterator<TInputImage>(radius, input, *fit);
