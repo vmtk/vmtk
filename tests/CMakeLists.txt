@@ -12,8 +12,10 @@ foreach (SCRIPT_FILE ${VMTK_TESTING_INIT_SRC})
   configure_file(${VMTK_TESTING_SOURCE_DIR}/${SCRIPT_FILE} ${VMTK_TESTING_INSTALL_LIB_DIR}/${SCRIPT_FILE} COPYONLY)
 endforeach ()
 
-execute_process(COMMAND git submodule update --init -- ${VMTK_TESTING_SOURCE_DIR}/vmtk-test-data
-                WORKING_DIRECTORY ${VMTK_TESTING_SOURCE_DIR})
+if(VMTK_INIT_TEST_DATA)
+  execute_process(COMMAND git submodule update --init -- ${VMTK_TESTING_SOURCE_DIR}/vmtk-test-data
+                  WORKING_DIRECTORY ${VMTK_TESTING_SOURCE_DIR})
+endif()
 
 if(NOT VMTK_TESTING_DATA_INSTALL_LIB_DIR)
   set(VMTK_TESTING_DATA_INSTALL_LIB_DIR ${CMAKE_BINARY_DIR}/tests)

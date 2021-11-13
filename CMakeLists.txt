@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.3)
+cmake_minimum_required(VERSION 3.15)
 
 project(VMTK)
 
@@ -27,16 +27,20 @@ if(VMTK_WITH_LIBRARY_VERSION)
      )
 endif()
 
-find_package( PythonInterp )
+
+set(Python3_ROOT_DIR "" CACHE PATH
+    "Provide Hint to Python root directory")
+
+find_package(Python3 COMPONENTS Interpreter Development)
 if (NOT VMTK_PYTHON_VERSION)
-  set(VMTK_PYTHON_VERSION "python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}" CACHE STRING "" FORCE)
+  set(VMTK_PYTHON_VERSION "python${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}" CACHE STRING "" FORCE)
 endif ()
 mark_as_advanced(VMTK_PYTHON_VERSION)
 
 if (APPLE AND VMTK_BREW_PYTHON)
   if(VMTK_BREW_PYTHON)
     option(VMTK_BREW_PYTHON "Link against Homebrew Python" ON)
-    set(PYTHON_SHEBANG ${PYTHON_EXECUTABLE})
+    set(Python3_SHEBANG ${Python3_EXECUTABLE})
   else()
     set(PYTHON_SHEBANG "/usr/bin/env python")
   endif()
@@ -100,6 +104,9 @@ option( VMTK_USE_VTK9
 
 option( VMTK_BUILD_TESTING
   "Build the VMTK testing libraries" OFF)
+
+option( VMTK_INIT_TEST_DATA
+  "Initialize the vmtk-test-data submodule" ON)
 
 if(VMTK_BUILD_TESTING)
   add_subdirectory(tests)
