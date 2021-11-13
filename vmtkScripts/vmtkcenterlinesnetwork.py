@@ -134,7 +134,7 @@ class vmtkCenterlinesNetwork(pypes.pypeScript):
 
         # randomly select one cell to delete so that there is an opening for
         # vmtkNetworkExtraction to use.
-        numCells = self.Surface.GetNumberOfCells()
+        numCells = networkSurface.GetNumberOfCells()
         cellToDelete = random.randrange(0, numCells-1)
         networkSurface.BuildLinks()
         networkSurface.DeleteCell(cellToDelete)
@@ -160,6 +160,7 @@ class vmtkCenterlinesNetwork(pypes.pypeScript):
         nodeIndexToIgnore = np.where(cellDataTopology[:,0] == 0)[0][0]
         keepCellConnectivityList = []
         pointIdxToKeep = np.array([])
+        removeCellLength = 0
         # we remove the cell, points, and point data which are associated with the
         # segment we want to ignore
         for loopIdx, cellConnectivityList in enumerate(ad['CellData']['CellPointIds']):
