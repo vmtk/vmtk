@@ -32,8 +32,6 @@ def test_features_types(aorta_image, compare_images, featureType, paramid, write
 
     assert compare_images(featurer.Image, name) == True
 
-#TODO: WHY DOES "upwind" cause abort?
-@pytest.mark.skip(reason="Causes abort")
 @pytest.mark.parametrize("featureType,paramid", [
     ("upwind", '2'),
 ])
@@ -59,7 +57,6 @@ def test_sigmoid_on_for_gradient(aorta_image, compare_images, featureType, param
 
     assert compare_images(featurer.Image, name) == True
 
-@pytest.mark.skip(reason="Causes abort")
 @pytest.mark.parametrize("featureType,paramid", [
     ("upwind", '1'),
 ])
@@ -90,8 +87,6 @@ def test_derivative_sigma_values_for_gradient(aorta_image, compare_images, deriv
     assert compare_images(featurer.Image, name) == True
 
 
-#TODO: WHY DOES "upwind" cause abort?
-@pytest.mark.skip(reason="Causes abort")
 @pytest.mark.parametrize("upwindValue,paramid", [
     (0.0, '0'),
     (0.3, '1'),
