@@ -93,16 +93,16 @@ vtkIdType vtkvmtkSimplifyVoronoiDiagram::IsBoundaryEdge(vtkCellLinks* links, vtk
 }
 
 int vtkvmtkSimplifyVoronoiDiagram::RequestData(
-  vtkInformation *vtkNotUsed(request),
-  vtkInformationVector **inputVector,
-  vtkInformationVector *outputVector)
+  vtkInformation* vtkNotUsed(request),
+  vtkInformationVector** inputVector,
+  vtkInformationVector* outputVector)
 {
-  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
-  vtkInformation *outInfo = outputVector->GetInformationObject(0);
+  vtkInformation* inInfo = inputVector[0]->GetInformationObject(0);
+  vtkInformation* outInfo = outputVector->GetInformationObject(0);
 
-  vtkPolyData *input = vtkPolyData::SafeDownCast(
+  vtkPolyData* input = vtkPolyData::SafeDownCast(
     inInfo->Get(vtkDataObject::DATA_OBJECT()));
-  vtkPolyData *output = vtkPolyData::SafeDownCast(
+  vtkPolyData* output = vtkPolyData::SafeDownCast(
     outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
   bool anyRemoved, removeCell, considerPoint;
@@ -112,13 +112,15 @@ int vtkvmtkSimplifyVoronoiDiagram::RequestData(
   vtkIdType npts, ncells;
 #if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
   const vtkIdType *pts;
+  vtkPolyData* poly = vtkPolyData::New();
+  poly->SetPoints(input->GetPoints());
 #else
   vtkIdType *pts;
 #endif
   npts = 0;
   pts = NULL;
   vtkIdType edge[2];
-  vtkCellArray *currentPolys;
+  vtkCellArray* currentPolys;
   vtkCellLinks* currentLinks;
   vtkIdType newCellId;
   vtkCellArray* inputPolys = input->GetPolys();
@@ -190,12 +192,14 @@ int vtkvmtkSimplifyVoronoiDiagram::RequestData(
 #if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
   // Reworking cell links classes for performance and consistent API
   // See https://github.com/Kitware/VTK/commit/88efc809a25130c2ab83dd89a80cea458e3bb56a
-  #pragma message "vtkvmtkSimplifyVoronoiDiagram::RequestData not functional. Must be updated based on Kitware/VTK@88efc809a"
-  if (true)
-    {
-    vtkErrorMacro(<< "vtkvmtkSimplifyVoronoiDiagram::RequestData is not functionnal when built against VTK >= 9");
-    return 0;
-    }
+  // #pragma message "vtkvmtkSimplifyVoronoiDiagram::RequestData not functional. Must be updated based on Kitware/VTK@88efc809a"
+  // if (true)
+  //   {
+  //   vtkErrorMacro(<< "vtkvmtkSimplifyVoronoiDiagram::RequestData is not functionnal when built against VTK >= 9");
+  //   return 0;
+  //   }
+  poly->SetPolys(currentPolys);
+  currentLinks->BuildLinks(poly);
 #else
   currentLinks->BuildLinks(input,currentPolys);
 #endif
@@ -290,8 +294,10 @@ int vtkvmtkSimplifyVoronoiDiagram::RequestData(
 #if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
   // Reworking cell links classes for performance and consistent API
   // See https://github.com/Kitware/VTK/commit/88efc809a25130c2ab83dd89a80cea458e3bb56a
-  #pragma message "vtkvmtkSimplifyVoronoiDiagram::RequestData not functional. Must be updated based on Kitware/VTK@88efc809a"
-  vtkErrorMacro(<< "!");
+  // #pragma message "vtkvmtkSimplifyVoronoiDiagram::RequestData not functional. Must be updated based on Kitware/VTK@88efc809a"
+  // vtkErrorMacro(<< "!");
+  poly->SetPolys(currentPolys);
+  currentLinks->BuildLinks(poly);
 #else
     currentLinks->BuildLinks(input,currentPolys);
 #endif
@@ -336,6 +342,7 @@ int vtkvmtkSimplifyVoronoiDiagram::RequestData(
     }
 
   // simply passes points and point data (eventually vtkCleanPolyData)
+  // will have less cells but same points
   output->SetPoints(input->GetPoints());
   output->GetPointData()->PassData(input->GetPointData());
 
@@ -344,6 +351,9 @@ int vtkvmtkSimplifyVoronoiDiagram::RequestData(
 
   currentLinks->Delete();
   currentPolys->Delete();
+#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
+  poly->Delete();
+#endif
   delete[] isUnremovable;
 
   return 1;
