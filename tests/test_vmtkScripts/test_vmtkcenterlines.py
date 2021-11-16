@@ -50,3 +50,19 @@ def test_profileidlist_centerlines(aorta_surface_openends, compare_centerlines):
     centerliner.Execute()
 
     assert compare_centerlines(centerliner.Centerlines, name) == True
+
+def test_profileidlist_centerlines_smooth(aorta_surface_openends, compare_centerlines):
+    # centerlines don't change but voronoi diagram does
+    # this test verifies that simplification runs without
+    # seg fault, but is not evaluated for diagram
+    # correctness.
+    name = __name__ + '_test_profileidlist_centerlines.vtp'
+    centerliner = vmtkcenterlines.vmtkCenterlines()
+    centerliner.Surface = aorta_surface_openends
+    centerliner.SeedSelectorName = 'profileidlist'
+    centerliner.SourceIds = [0]
+    centerliner.TargetIds = [1, 2]
+    centerliner.SimplifyVoronoi = True
+    centerliner.Execute()
+
+    assert compare_centerlines(centerliner.Centerlines, name) == True
