@@ -41,11 +41,10 @@ class vtkCellLinks;
 
 class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkSimplifyVoronoiDiagram : public vtkPolyDataAlgorithm
 {
-  public: 
-  vtkTypeMacro(vtkvmtkSimplifyVoronoiDiagram,vtkPolyDataAlgorithm);
-  void PrintSelf(std::ostream& os, vtkIndent indent) override;
-
+public:
   static vtkvmtkSimplifyVoronoiDiagram *New();
+  vtkTypeMacro(vtkvmtkSimplifyVoronoiDiagram, vtkPolyDataAlgorithm);
+  void PrintSelf(std::ostream& os, vtkIndent indent) override;
 
   // Set/Get id list of Voronoi diagram points to preserve.
   vtkSetObjectMacro(UnremovablePointIds,vtkIdList);
@@ -72,11 +71,11 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkSimplifyVoronoiDiagram : pub
   vtkGetMacro(OnePassOnly,int);
   vtkBooleanMacro(OnePassOnly,int);
 
-  protected:
+protected:
   vtkvmtkSimplifyVoronoiDiagram();
-  ~vtkvmtkSimplifyVoronoiDiagram();  
+  ~vtkvmtkSimplifyVoronoiDiagram() override;
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
   vtkIdType IsBoundaryEdge(vtkCellLinks* links, vtkIdType* edge);
 
   vtkIdList* UnremovablePointIds;
@@ -86,9 +85,9 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkSimplifyVoronoiDiagram : pub
   int IncludeUnremovable;
   int OnePassOnly;
 
-  private:
-  vtkvmtkSimplifyVoronoiDiagram(const vtkvmtkSimplifyVoronoiDiagram&);  // Not implemented.
-  void operator=(const vtkvmtkSimplifyVoronoiDiagram&);  // Not implemented.
+private:
+  vtkvmtkSimplifyVoronoiDiagram(const vtkvmtkSimplifyVoronoiDiagram&) = delete;
+  void operator=(const vtkvmtkSimplifyVoronoiDiagram&) = delete;
 };
 
 #endif
