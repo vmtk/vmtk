@@ -9,8 +9,8 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
@@ -29,13 +29,13 @@ class vmtkMeshBranchClipper(pypes.pypeScript):
     def __init__(self):
 
         pypes.pypeScript.__init__(self)
-        
+
         self.Mesh = None
         self.Centerlines = None
 
         self.RadiusArrayName = 'MaximumInscribedSphereRadius'
         self.CutoffRadiusFactor = 1E16
-        
+
         self.ClipValue = 0.0
 
         self.BlankingArrayName = 'Blanking'
@@ -95,10 +95,10 @@ class vmtkMeshBranchClipper(pypes.pypeScript):
             self.vmtkRenderer = vmtkrenderer.vmtkRenderer()
             self.vmtkRenderer.Initialize()
             self.OwnRenderer = 1
- 
+
         if self.Interactive:
 
-            self.vmtkRenderer.RegisterScript(self) 
+            self.vmtkRenderer.RegisterScript(self)
 
             viewer = vmtkcenterlineviewer.vmtkCenterlineViewer()
             viewer.Centerlines = self.Centerlines
@@ -110,7 +110,7 @@ class vmtkMeshBranchClipper(pypes.pypeScript):
             viewer.PringLog = self.PrintLog
             viewer.Display = 0
             viewer.Execute()
-           
+
             groupIdsString = self.InputText("Please input groupIds to clip:\n",self.GroupIdsValidator)
             self.GroupIds = [int(groupId) for groupId in groupIdsString.split()]
 
@@ -145,7 +145,7 @@ class vmtkMeshBranchClipper(pypes.pypeScript):
 
         if self.OwnRenderer:
             self.vmtkRenderer.Deallocate()
- 
+
 
 if __name__=='__main__':
 

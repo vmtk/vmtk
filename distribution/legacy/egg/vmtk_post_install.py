@@ -26,4 +26,3 @@ if __name__ == '__main__':
         #move shortcut to Desktop
         shutil.move(os.path.join(os.getcwd(),filename),os.path.join(DESKTOP_FOLDER,filename))
         file_created(os.path.join(DESKTOP_FOLDER,filename))
-

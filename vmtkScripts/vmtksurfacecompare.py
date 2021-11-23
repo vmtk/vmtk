@@ -41,11 +41,11 @@ class vmtkSurfaceCompare(pypes.pypeScript):
     def arrayCompare(self):
 
         if not self.ArrayName:
-            self.PrintError('Error: No ArrayName.') 
+            self.PrintError('Error: No ArrayName.')
 
         attributeData = None
         referenceAttributeData = None
-        calculator = vtk.vtkArrayCalculator() 
+        calculator = vtk.vtkArrayCalculator()
 
         if self.Method in ['addpointarray','projection']:
             attributeData = self.Surface.GetPointData()
@@ -62,7 +62,6 @@ class vmtkSurfaceCompare(pypes.pypeScript):
             else:
                 calculator.SetAttributeModeToUseCellData()
 
-
         if not attributeData.GetArray(self.ArrayName):
             self.PrintError('Error: Invalid ArrayName.')
         if not referenceAttributeData.GetArray(self.ArrayName):
@@ -70,15 +69,15 @@ class vmtkSurfaceCompare(pypes.pypeScript):
 
         referenceArrayName = 'Ref' + self.ArrayName
         surfacePoints = self.Surface.GetNumberOfPoints()
-        referencePoints = self.ReferenceSurface.GetNumberOfPoints() 
+        referencePoints = self.ReferenceSurface.GetNumberOfPoints()
         pointsDifference = surfacePoints - referencePoints
 
         if self.Method in ['addpointarray','addcellarray']:
             if abs(pointsDifference) > 0:
                  self.ResultLog = 'Uneven NumberOfPoints'
                  return False
-            refArray = referenceAttributeData.GetArray(self.ArrayName) 
-            refArray.SetName(referenceArrayName) 
+            refArray = referenceAttributeData.GetArray(self.ArrayName)
+            refArray.SetName(referenceArrayName)
             attributeData.AddArray(refArray)
             calculator.SetInputData(self.Surface)
         elif self.Method in ['projection']:
@@ -91,7 +90,7 @@ class vmtkSurfaceCompare(pypes.pypeScript):
 
         calculator.AddScalarVariable('a',self.ArrayName,0)
         calculator.AddScalarVariable('b',referenceArrayName,0)
-        calculator.SetFunction("a - b") 
+        calculator.SetFunction("a - b")
         calculator.SetResultArrayName('ResultArray')
         calculator.Update()
 
@@ -100,7 +99,7 @@ class vmtkSurfaceCompare(pypes.pypeScript):
         if self.Method in ['addpointarray','projection']:
             resultRange = self.ResultData.GetPointData().GetArray('ResultArray').GetRange()
         elif self.Method in ['addcellarray']:
-            resultRange = self.ResultData.GetCellData().GetArray('ResultArray').GetRange() 
+            resultRange = self.ResultData.GetCellData().GetArray('ResultArray').GetRange()
 
         self.PrintLog('Result Range: ' + str(resultRange))
 
@@ -116,14 +115,14 @@ class vmtkSurfaceCompare(pypes.pypeScript):
         distance.ReferenceSurface = self.ReferenceSurface
         distance.DistanceArrayName = 'Distance'
         distance.Execute()
-        
+
         distanceRange = distance.Surface.GetPointData().GetArray('Distance').GetRange()
 
         self.PrintLog('Distance Range: ' + str(distanceRange))
-        
+
         if max(distanceRange) < self.Tolerance:
-            return True        
- 
+            return True
+
         return False
 
     def Execute(self):
@@ -133,13 +132,14 @@ class vmtkSurfaceCompare(pypes.pypeScript):
         if not self.ReferenceSurface:
             self.PrintError('Error: No Reference Surface.')
         if not self.Method:
-            self.PrintError('Error: No method.')                 
+            self.PrintError('Error: No method.')
 
         if self.Method in ['addpointarray','addcellarray','projection']:
             self.Result = self.arrayCompare()
         elif self.Method == 'distance':
             self.Result = self.distanceCompare()
-        
+
+
 if __name__=='__main__':
     main = pypes.pypeMain()
     main.Arguments = sys.argv

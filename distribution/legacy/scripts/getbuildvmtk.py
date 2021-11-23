@@ -29,6 +29,7 @@ VERBOSE = True
 LOGFILE = True
 log_file = None
 
+
 def log(msg):
     if VERBOSE:
         print(msg)
@@ -36,35 +37,44 @@ def log(msg):
         global log_file
         if not log_file:
             log_file = open(os.path.join(WORK_DIR, 'logfile.log'), 'w+')
+
             def log_close():
                 if log_file is not None:
                     log_file.close()
             atexit.register(log_close)
         log_file.write(msg)
 
+
 def on_windows():
     return platform.system() == 'Windows'
+
 
 def on_osx():
     return platform.system() == 'Darwin'
 
+
 def on_linux():
     return platform.system() == 'Linux'
+
 
 def on_x86():
     return platform.architecture()[0] == '32bit'
 
+
 def on_x64():
     return platform.architecture()[0] == '64bit'
+
 
 def download(url, filename):
     log("Downloading %s..." % filename)
     urllib.request.urlretrieve(url, filename)
 
+
 def tarextract(filename, path='.'):
     tar = tarfile.open(filename)
     log("Extracting %s..." % filename)
     tar.extractall(path)
+
 
 def getstatusoutput(cmd):
     """Return (status, output) of executing cmd in a shell."""
@@ -77,6 +87,7 @@ def getstatusoutput(cmd):
     if sts is None: sts = 0
     if text[-1:] == '\n': text = text[:-1]
     return sts, text
+
 
 def create_do_configure(build_dir, cmd):
     """Create a do-configure(.bat) for later possible tweaking."""
@@ -91,6 +102,7 @@ def create_do_configure(build_dir, cmd):
     open(do_configure, 'w').writelines(lines)
     if not on_windows():
         os.chmod(do_configure, S_IRUSR|S_IWUSR|S_IXUSR)
+
 
 def build_cmake_project(build_dir, source_dir, options="", install=False):
     if not os.path.isdir(build_dir):
@@ -129,6 +141,7 @@ def build_cmake_project(build_dir, source_dir, options="", install=False):
             msg = "Unable to run '%s'\nError message: %s" % (cmd, output)
             raise Exception(msg)
     os.chdir(WORK_DIR)
+
 
 def build_vtk():
     filename = "VTK-7.1.1.tar.gz"
@@ -182,6 +195,7 @@ def build_vtk():
 
     build_cmake_project(VTK_BUILD_DIR, source_dir, options)
 
+
 def build_itk():
     filename = "InsightToolkit-4.10.1.tar.gz"
     url = "http://downloads.sourceforge.net/project/itk/itk/4.10/" + filename
@@ -207,6 +221,7 @@ def build_itk():
     options = ' '.join(options)
 
     build_cmake_project(ITK_BUILD_DIR, source_dir, options)
+
 
 def build_vmtk():
     source_dir = WORK_DIR # os.path.join(WORK_DIR, 'vmtk-packaging')
@@ -253,6 +268,7 @@ def build_vmtk():
 
     build_cmake_project(VMTK_BUILD_DIR, source_dir, options)
 
+
 def generate_package(generator=None):
     generator="TGZ"
     os.chdir(VMTK_BUILD_DIR)
@@ -266,10 +282,12 @@ def generate_package(generator=None):
         raise Exception(msg)
     os.chdir(WORK_DIR)
 
+
 def build_all():
     build_vtk()
     build_itk()
     build_vmtk()
+
 
 if __name__ == '__main__':
     build_all()

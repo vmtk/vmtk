@@ -23,7 +23,7 @@ def test_binarize_default_parameters(aorta_image, compare_images):
     binarizer = binarize.vmtkImageBinarize()
     binarizer.Image = aorta_image
     binarizer.Execute()
-    
+
     assert compare_images(binarizer.Image, name) == True
 
 
@@ -32,7 +32,7 @@ def test_binarize_simple_threshold(aorta_image, compare_images):
     binarizer = binarize.vmtkImageBinarize()
     binarizer.Image = aorta_image
     binarizer.Threshold = 500
-    binarizer.Execute()    
+    binarizer.Execute()
 
     assert compare_images(binarizer.Image, name) == True
 
@@ -43,7 +43,7 @@ def test_binarize_modify_lower_label(aorta_image, compare_images):
     binarizer.Image = aorta_image
     binarizer.Threshold = 500
     binarizer.LowerLabel = -1
-    binarizer.Execute()    
+    binarizer.Execute()
 
     assert compare_images(binarizer.Image, name) == True
 

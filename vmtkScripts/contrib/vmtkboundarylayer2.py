@@ -9,17 +9,17 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
-## Note: this class was contributed by 
+## Note: this class was contributed by
 ##       Tangui Morvan
 ##       Kalkulo AS
 ##       Simula Research Laboratory
 
-## Extended version of vmtkboundarylayer2 
-## 
+## Extended version of vmtkboundarylayer2
+##
 ## This version allows finer control on the surfaces to be included.
 ## If the original surface has open profiles, a surface can be extracted from them as well.
 ## The points on the open profiles may be specified with an array (OpenProfilesIdsArrayName).
@@ -43,7 +43,7 @@ class vmtkBoundaryLayer2(pypes.pypeScript):
 
         self.Mesh = None
         self.InnerSurfaceMesh = None
-        
+
         self.WarpVectorsArrayName = 'Normals'
         self.ThicknessArrayName = ''
 
@@ -58,14 +58,14 @@ class vmtkBoundaryLayer2(pypes.pypeScript):
         self.ConstantThickness = 0
         self.IncludeSurfaceCells = 1
         self.NegateWarpVectors = 0
-        
+
         self.CellEntityIdsArrayName = 'CellEntityIds'
         self.OpenProfilesIdsArrayName = ''
-        
+
         self.IncludeExtrudedOpenProfilesCells = 1
         self.IncludeExtrudedSurfaceCells = 1
         self.IncludeOriginalSurfaceCells = 1
-        
+
         self.LayerEntityId = 0
         self.SurfaceEntityId = 1
         self.OpenProfilesEntityId = 2

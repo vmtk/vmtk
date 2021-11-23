@@ -18,6 +18,7 @@ import pytest
 import vmtk.vmtkcenterlineimage as centerlineimage
 import sys
 
+
 @pytest.fixture(scope='module')
 def per_system_compare_image_name():
     name = __name__ + '_test_default_parameters_'
@@ -29,9 +30,10 @@ def per_system_compare_image_name():
         name = name + 'linux.vti'
     return name
 
+
 def test_default_parameters(aorta_surface, compare_images, per_system_compare_image_name):
     centImage = centerlineimage.vmtkCenterlineImage()
     centImage.Surface = aorta_surface
     centImage.Execute()
-    
+
     assert compare_images(centImage.Image, per_system_compare_image_name) == True

@@ -9,11 +9,11 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
-## Note: this class was contributed by 
+## Note: this class was contributed by
 ##       Tangui Morvan
 ##       Kalkulo AS
 ##       Simula Research Laboratory
@@ -185,7 +185,7 @@ class vmtkSurfaceWriter2(pypes.pypeScript):
                 self.PrintError('Error: no Surface.')
             self.Surface = self.Input
 
-        extensionFormats = {'vtp':'vtkxml', 
+        extensionFormats = {'vtp':'vtkxml',
                             'vtkxml':'vtkxml',
                             'vtk':'vtk',
                             'stl':'stl',

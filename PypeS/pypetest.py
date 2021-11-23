@@ -8,12 +8,13 @@ from vmtk import pypes
 
 pypetest = 'pypeTest'
 
+
 class pypeTest(pypes.pypeScript):
 
     def __init__(self):
 
         pypes.pypeScript.__init__(self)
-        
+
         self.TestName = None
         self.PypeTestLog = ''
         self.TestInput = None
@@ -83,6 +84,7 @@ class pypeTest(pypes.pypeScript):
             self.CompareLog = 'passed'
 
         self.PypeTestLog = "%s.%s" % (self.TestName, self.CompareLog)
+
 
 if __name__=='__main__':
     main = pypes.pypeMain()

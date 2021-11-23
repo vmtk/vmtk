@@ -17,6 +17,7 @@
 import pytest
 import vmtk.vmtksurfacemodeller as modeller
 
+
 def test_default_params(aorta_surface, compare_images):
     name = __name__ + '_test_default_params.mha'
     model = modeller.vmtkSurfaceModeller()
@@ -42,5 +43,5 @@ def test_change_sample_spacing(aorta_surface, compare_images):
     model.Surface = aorta_surface
     model.SampleSpacing = -0.5
     model.Execute()
-    
+
     assert compare_images(model.Image, name) == True

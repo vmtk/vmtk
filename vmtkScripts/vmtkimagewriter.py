@@ -9,8 +9,8 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
@@ -75,10 +75,10 @@ class vmtkImageWriter(pypes.pypeScript):
             origin = self.Image.GetOrigin()
             spacing = self.Image.GetSpacing()
             matrix = vtk.vtkMatrix4x4()
-            matrix.DeepCopy((1/spacing[0], 0, 0, - origin[0]/spacing[0], 
+            matrix.DeepCopy((1/spacing[0], 0, 0, - origin[0]/spacing[0],
                          0, 1/spacing[1], 0, - origin[1]/spacing[1],
                          0, 0, 1/spacing[2], - origin[2]/spacing[2],
-                         0, 0, 0, 1)) #LPI convention with correct origin and spacing 
+                         0, 0, 0, 1)) #LPI convention with correct origin and spacing
         else:
             if self.RasToIjkMatrixCoefficients == None:
                 self.PrintError('Error: no RasToIjkMatrixCoefficients.')
@@ -155,7 +155,7 @@ class vmtkImageWriter(pypes.pypeScript):
                 scalarRange = self.Image.GetScalarRange()
                 shiftScale.SetShift(-scalarRange[0])
                 shiftScale.SetScale(255.0/(scalarRange[1]-scalarRange[0]))
-            else: 
+            else:
                 shiftScale.SetShift(-(self.WindowLevel[1]-self.WindowLevel[0]/2.0))
                 shiftScale.SetScale(255.0/self.WindowLevel[0])
             shiftScale.SetOutputScalarTypeToUnsignedChar()
@@ -216,10 +216,10 @@ class vmtkImageWriter(pypes.pypeScript):
             origin = self.Image.GetOrigin()
             spacing = self.Image.GetSpacing()
             matrix = vtk.vtkMatrix4x4()
-            matrix.DeepCopy((1/spacing[0], 0, 0, - origin[0]/spacing[0], 
+            matrix.DeepCopy((1/spacing[0], 0, 0, - origin[0]/spacing[0],
                          0, 1/spacing[1], 0, - origin[1]/spacing[1],
                          0, 0, 1/spacing[2], - origin[2]/spacing[2],
-                         0, 0, 0, 1)) #LPI convention with correct origin and spacing 
+                         0, 0, 0, 1)) #LPI convention with correct origin and spacing
         else:
             if self.RasToIjkMatrixCoefficients == None:
                 self.PrintError('Error: no RasToIjkMatrixCoefficients.')
@@ -227,7 +227,7 @@ class vmtkImageWriter(pypes.pypeScript):
             matrix.DeepCopy(self.RasToIjkMatrixCoefficients)
         writer.SetRasToIJKMatrix(matrix)
         writer.Write()
- 
+
     def Execute(self):
 
         if self.Image == None:
@@ -235,8 +235,8 @@ class vmtkImageWriter(pypes.pypeScript):
                 self.PrintError('Error: no Image.')
             self.Image = self.Input
 
-        extensionFormats = {'vti':'vtkxml', 
-                            'vtkxml':'vtkxml', 
+        extensionFormats = {'vti':'vtkxml',
+                            'vtkxml':'vtkxml',
                             'vtk':'vtk',
                             'mhd':'meta',
                             'mha':'meta',
@@ -286,7 +286,7 @@ class vmtkImageWriter(pypes.pypeScript):
 
         if self.UseITKIO and self.Format not in ['vtkxml','vtk','tiff','png','dat', 'vtsxml']:
             self.WriteITKIO()
-        else:	
+        else:
             if (self.Format == 'vtkxml'):
                 self.WriteVTKXMLImageFile()
             elif (self.Format == 'vtk'):

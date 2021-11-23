@@ -40,6 +40,7 @@ class vividict(dict):
         value = self[key] = type(self)()
         return value
 
+
 class vmtkImageToNumpy(pypes.pypeScript):
 
     def __init__(self):

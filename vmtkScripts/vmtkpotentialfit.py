@@ -9,8 +9,8 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
@@ -26,7 +26,7 @@ class vmtkPotentialFit(pypes.pypeScript):
     def __init__(self):
 
         pypes.pypeScript.__init__(self)
-        
+
         self.Surface = None
         self.Image = None
 
@@ -48,7 +48,7 @@ class vmtkPotentialFit(pypes.pypeScript):
         self.SetScriptName('vmtkpotentialfit')
         self.SetScriptDoc('explicitly deformable model which evolves a surface to gradient magnitudes of an input image')
         self.SetInputMembers([
-            ['Surface','i','vtkPolyData',1,'','','vmtksurfacereader'], 
+            ['Surface','i','vtkPolyData',1,'','','vmtksurfacereader'],
             ['Image','image','vtkImageData',1,'','','vmtkimagereader'],
             ['NumberOfIterations','iterations','int',1,'(0,)'],
             ['NumberOfStiffnessSubIterations','stiffnesssubiterations','int',1,'(0,)'],
@@ -71,7 +71,7 @@ class vmtkPotentialFit(pypes.pypeScript):
 
         if (self.Image == None):
             self.PrintError('Error: Image not set.')
-        
+
         polyDataPotentialFit = vtkvmtk.vtkvmtkPolyDataPotentialFit()
         polyDataPotentialFit.SetInputData(self.Surface)
         polyDataPotentialFit.SetPotentialImage(self.Image)
@@ -91,8 +91,9 @@ class vmtkPotentialFit(pypes.pypeScript):
 
         self.Surface = polyDataPotentialFit.GetOutput()
 
+
 if __name__=='__main__':
-    
+
     main = pypes.pypeMain()
     main.Arguments = sys.argv
     main.Execute()

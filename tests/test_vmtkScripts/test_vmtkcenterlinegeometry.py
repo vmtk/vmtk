@@ -17,6 +17,7 @@
 import pytest
 import vmtk.vmtkcenterlinegeometry as centerlinegeometry
 
+
 def test_default_parameters(aorta_centerline, compare_centerlines):
     name = __name__ + '_test_default_parameters.vtp'
     geometry = centerlinegeometry.vmtkCenterlineGeometry()
@@ -30,7 +31,3 @@ def test_default_parameters(aorta_centerline, compare_centerlines):
     assert compare_centerlines(geometry.Centerlines, name, method='addpointarray', arrayname='FrenetTangent') == True
     assert compare_centerlines(geometry.Centerlines, name, method='addpointarray', arrayname='FrenetNormal') == True
     assert compare_centerlines(geometry.Centerlines, name, method='addpointarray', arrayname='FrenetBinormal') == True
-
-
-
-

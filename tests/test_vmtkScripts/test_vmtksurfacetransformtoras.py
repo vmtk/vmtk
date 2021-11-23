@@ -18,6 +18,7 @@ import pytest
 import os
 import vmtk.vmtksurfacetransformtoras as transformtoras
 
+
 @pytest.fixture(scope='module')
 def transform_image(input_datadir):
     import vmtk.vmtkimagereader as imagereader
@@ -60,9 +61,3 @@ def test_invert_on(transform_image, compare_surfaces):
     transform.InvertMatrix = 1
     transform.Execute()
     assert compare_surfaces(transform.Surface, name) == True
-
-
-
-
-
-    

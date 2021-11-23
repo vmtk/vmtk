@@ -18,7 +18,7 @@ import pytest
 import vmtk.vmtkcenterlineoffsetattributes as centerlineoffsetattributes
 import vmtk.vmtksurfacereader as surfacereader
 import os
-from vtk.numpy_interface import dataset_adapter as dsa 
+from vtk.numpy_interface import dataset_adapter as dsa
 import numpy as np
 
 
@@ -28,6 +28,7 @@ def reference_system(input_datadir):
     reader.InputFileName = os.path.join(input_datadir, 'aorta-centerline-referencesystem.vtp')
     reader.Execute()
     return reader.Surface
+
 
 @pytest.fixture(scope='module')
 def centerline_attribute_branched(input_datadir):
@@ -55,7 +56,7 @@ def test_compare_offset_abscissa(reference_system, centerline_attribute_branched
     assert compare_centerlines(offset.Centerlines, name, method='addpointarray', arrayname='Abscissas') == True
 
 
-def test_compare_offset_abscissa_and_normal_without_inplace_modification(reference_system, 
+def test_compare_offset_abscissa_and_normal_without_inplace_modification(reference_system,
                                                                         centerline_attribute_branched,
                                                                         compare_centerlines):
     name = __name__ + '_test_compare_offset_abscissa_and_normal_without_inplace_modification.vtp'
@@ -75,5 +76,3 @@ def test_compare_offset_abscissa_and_normal_without_inplace_modification(referen
 
     assert compare_centerlines(offset.Centerlines, name, method='addpointarray', arrayname='OffsetAbscissas') == True
     assert compare_centerlines(offset.Centerlines, name, method='addpointarray', arrayname='OffsetNormals') == True
-
-

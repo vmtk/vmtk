@@ -9,8 +9,8 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
@@ -26,7 +26,7 @@ class vmtkTetGen(pypes.pypeScript):
     def __init__(self):
 
         pypes.pypeScript.__init__(self)
-        
+
         self.Mesh = None
         self.GenerateCaps = 0
 
@@ -52,10 +52,10 @@ class vmtkTetGen(pypes.pypeScript):
         self.Verbose = 0
         self.UseSizingFunction = 0
         self.SizingFunctionArrayName = 'VolumeSizingFunction'
-        
+
         self.CellEntityIdsArrayName = 'CellEntityIds'
         self.TetrahedronVolumeArrayName = 'TetrahedronVolume'
-        
+
         self.OutputSurfaceElements = 1
         self.OutputVolumeElements = 1
 
@@ -88,7 +88,7 @@ class vmtkTetGen(pypes.pypeScript):
             ['CellEntityIdsArrayName','entityidsarray','str',1,'','name of the array where cell entity ids are stored'],
             ['TetrahedronVolumeArrayName','tetravolumearray','str',1,'','name of the array where volumes of tetrahedra are stored'],
             ['SizingFunctionArrayName','sizingfunctionarray','str',1,'','name of the array where sizing function values are stored'],
-            ['OutputSurfaceElements','surfaceelements','int',1,'','toggle output surface elements'], 
+            ['OutputSurfaceElements','surfaceelements','int',1,'','toggle output surface elements'],
             ['OutputVolumeElements','volumeelements','int',1,'','toggle output volume elements']
             ])
 
@@ -149,7 +149,6 @@ class vmtkTetGen(pypes.pypeScript):
         tetgen.Update()
 
         self.Mesh = tetgen.GetOutput()
-
 
 
 if __name__=='__main__':

@@ -18,6 +18,8 @@ import pytest
 import vmtk.vmtkimagevoiselector as voiselector
 
 #TODO: Why does this fail, but the sha method passes?
+
+
 @pytest.mark.skip(reason='This assertion fails for an unknown reason')
 def test_voi_selector(aorta_image, compare_images):
     name = __name__ + '_test_voi_selector.mha'
@@ -28,6 +30,7 @@ def test_voi_selector(aorta_image, compare_images):
     selector.Execute()
 
     assert compare_images(selector.Image, name) == True
+
 
 def test_voi_selector(aorta_image, image_to_sha):
     selector = voiselector.vmtkImageVOISelector()

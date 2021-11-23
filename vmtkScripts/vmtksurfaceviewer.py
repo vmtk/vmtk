@@ -9,8 +9,8 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
@@ -44,7 +44,7 @@ class vmtkSurfaceViewer(pypes.pypeScript):
         self.Color = [-1.0, -1.0, -1.0]
         self.LineWidth = 1
         self.Representation = 'surface'
-        self.DisplayTag = False 
+        self.DisplayTag = False
         self.RegionTagArrayName = 'RegionTagArray'
         self.NumberOfRegions = 0
         self.TagSet = []
@@ -111,7 +111,7 @@ class vmtkSurfaceViewer(pypes.pypeScript):
             self.vmtkRenderer.Initialize()
             self.OwnRenderer = 1
 
-        self.vmtkRenderer.RegisterScript(self) 
+        self.vmtkRenderer.RegisterScript(self)
 
         if self.Actor:
             self.vmtkRenderer.Renderer.RemoveActor(self.Actor)
@@ -141,7 +141,7 @@ class vmtkSurfaceViewer(pypes.pypeScript):
                     mapper.SetLookupTable(lut)
             else:
                 mapper.ScalarVisibilityOff()
-            
+
             if self.ColorMap == 'grayscale':
                 lut = mapper.GetLookupTable()
                 lut.SetNumberOfTableValues(self.NumberOfColors)
@@ -149,7 +149,7 @@ class vmtkSurfaceViewer(pypes.pypeScript):
                 lut.SetSaturationRange(0.0,0.0)
                 lut.Build()
                 mapper.SetLookupTable(lut)
-            
+
             if self.ColorMap == 'rainbow':
                 lut = mapper.GetLookupTable()
                 lut.SetHueRange(0.666667,0.0)
@@ -158,8 +158,8 @@ class vmtkSurfaceViewer(pypes.pypeScript):
                 lut.SetAlphaRange(1.0,1.0)
                 lut.SetNumberOfColors(self.NumberOfColors)
                 lut.Build()
-                mapper.SetLookupTable(lut)  
-                     
+                mapper.SetLookupTable(lut)
+
             if self.ColorMap == 'blackbody':
                lut = mapper.GetLookupTable()
                lut.SetNumberOfTableValues(self.NumberOfColors)
@@ -174,7 +174,7 @@ class vmtkSurfaceViewer(pypes.pypeScript):
                    lut.SetTableValue(ii,cc[0],cc[1],cc[2],1.0)
                lut.Build()
                mapper.SetLookupTable(lut)
-           
+
             if self.ColorMap == 'cooltowarm':
                lut = mapper.GetLookupTable()
                lut.SetNumberOfTableValues(self.NumberOfColors)
@@ -188,7 +188,7 @@ class vmtkSurfaceViewer(pypes.pypeScript):
                    lut.SetTableValue(ii,cc[0],cc[1],cc[2],1.0)
                lut.Build()
                mapper.SetLookupTable(lut)
-            
+
             self.Actor = vtk.vtkActor()
             self.Actor.SetMapper(mapper)
             if (self.Color[0] >= 0.0):
@@ -227,14 +227,13 @@ class vmtkSurfaceViewer(pypes.pypeScript):
             self.vmtkRenderer.Initialize()
             self.OwnRenderer = 1
 
-        self.vmtkRenderer.RegisterScript(self) 
+        self.vmtkRenderer.RegisterScript(self)
 
         if self.Actor:
             self.vmtkRenderer.Renderer.RemoveActor(self.Actor)
 
         if self.ScalarBarActor:
             self.vmtkRenderer.Renderer.RemoveActor(self.ScalarBarActor)
-
 
         if self.Surface.GetPointData().GetArray(self.RegionTagArrayName) == None and self.Surface.GetCellData().GetArray(self.RegionTagArrayName) == None:
             self.PrintError('Error: no regiontagarray with name specified')
@@ -274,13 +273,13 @@ class vmtkSurfaceViewer(pypes.pypeScript):
             labelPoints = vtk.vtkPoints()
             labelPoints.SetNumberOfPoints(len(self.TagSet))
             point = [0.0,0.0,0.0]
-            
+
             cellCenters = vtk.vtkCellCenters()
             cellCenters.SetInputData(self.Surface)
             cellCenters.Update()
-            
+
             regionTagArrayCenters = cellCenters.GetOutput().GetPointData().GetArray(self.RegionTagArrayName)
-            
+
             for j in range (cellCenters.GetOutput().GetNumberOfPoints()):
                 item = regionTagArrayCenters.GetTuple1(j)
                 if item in tagSetCopy:
@@ -355,7 +354,8 @@ class vmtkSurfaceViewer(pypes.pypeScript):
             self.BuildView()
         else:
             self.BuildViewWithTag()
-        
+
+
 if __name__=='__main__':
     main = pypes.pypeMain()
     main.Arguments = sys.argv

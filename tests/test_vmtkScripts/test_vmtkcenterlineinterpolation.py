@@ -27,6 +27,7 @@ def test_default_params_MaximumInscribedSphereRadius(aorta_centerline, compare_c
 
     assert compare_centerlines(interpolator.Centerlines, name) == True
 
+
 def test_default_params_EdgeArray(aorta_centerline, compare_centerlines):
     name = __name__ + "_test_default_params_EdgeArray.vtp"
     interpolator = centerlineinterpolation.vmtkCenterlineInterpolation()
@@ -35,6 +36,7 @@ def test_default_params_EdgeArray(aorta_centerline, compare_centerlines):
     interpolator.Execute()
 
     assert compare_centerlines(interpolator.Centerlines, name) == True
+
 
 def test_default_params_EdgePCoordArray(aorta_centerline, compare_centerlines):
     name = __name__ + "_test_default_params_EdgePCoordArray.vtp"

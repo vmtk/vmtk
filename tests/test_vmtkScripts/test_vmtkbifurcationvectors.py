@@ -18,7 +18,7 @@ import pytest
 import vmtk.vmtkbifurcationvectors as bifurcationvectors
 import vmtk.vmtksurfacereader as surfacereader
 import os
-from vtk.numpy_interface import dataset_adapter as dsa 
+from vtk.numpy_interface import dataset_adapter as dsa
 import numpy as np
 
 
@@ -28,6 +28,7 @@ def reference_system(input_datadir):
     reader.InputFileName = os.path.join(input_datadir, 'aorta-centerline-referencesystem.vtp')
     reader.Execute()
     return reader.Surface
+
 
 @pytest.fixture(scope='module')
 def bifurcation_vectors(reference_system, aorta_centerline_branches):

@@ -9,11 +9,11 @@
 ##   Copyright (c) Richard Izzo, Luca Antiga. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
-## This algorithm is based off the paper 
+## This algorithm is based off the paper
 ##     Flux driven medial curve extraction
 ##     Mellado X., Larrabide I., Hernandez M., Frangi A.
 ##     Pompeu Fabra University, University of Zaragoza
@@ -32,12 +32,13 @@ from vmtk import vmtkrenderer
 from vmtk import vmtksurfacetobinaryimage, vmtksurfacecapper
 from vmtk import pypes
 
+
 class vmtkCenterlineImage(pypes.pypeScript):
 
     def __init__(self):
 
         pypes.pypeScript.__init__(self)
-        
+
         self.Surface = None
         self.Image = None
 
@@ -61,7 +62,7 @@ class vmtkCenterlineImage(pypes.pypeScript):
         if self.Surface == None:
             self.PrintError('Error: No Input Surface.')
 
-        # Step 0: Check if the surface has any unfilled holes in it. if it does, cap them. 
+        # Step 0: Check if the surface has any unfilled holes in it. if it does, cap them.
         fedges = vtk.vtkFeatureEdges()
         fedges.BoundaryEdgesOn()
         fedges.FeatureEdgesOff()
@@ -70,7 +71,7 @@ class vmtkCenterlineImage(pypes.pypeScript):
         fedges.Update()
 
         ofedges = fedges.GetOutput()
-        # if the following is not == 0, then the surface contains unfilled holes. 
+        # if the following is not == 0, then the surface contains unfilled holes.
         numEdges = ofedges.GetNumberOfPoints()
         if numEdges >= 1:
             self.PrintLog('Capping unclosed holes in surface.')
@@ -82,7 +83,7 @@ class vmtkCenterlineImage(pypes.pypeScript):
             self.Surface = tempcapper.Surface
 
         # Step 1: Convert the input surface into an image mask of unsigned char type and spacing = PolyDataToImageDataSpacing
-        #         Where voxels lying inside the surface are set to 255 and voxels outside the image are set to value 0. 
+        #         Where voxels lying inside the surface are set to 255 and voxels outside the image are set to value 0.
 
         # since we are creating a new image container from nothing, calculate the origin, extent, and dimensions for the
         # vtkImageDataObject from the surface parameters.

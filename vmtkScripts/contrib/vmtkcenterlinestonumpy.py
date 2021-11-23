@@ -39,6 +39,7 @@ class vividict(dict):
         value = self[key] = type(self)()
         return value
 
+
 class vmtkCenterlinesToNumpy(pypes.pypeScript):
 
     def __init__(self):
@@ -105,6 +106,7 @@ class vmtkCenterlinesToNumpy(pypes.pypeScript):
             cellPointIdsList.append(cellArray)
 
         self.ArrayDict['CellData']['CellPointIds'] = cellPointIdsList
+
 
 if __name__=='__main__':
     main = pypes.pypeMain()

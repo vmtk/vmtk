@@ -9,8 +9,8 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
@@ -25,7 +25,7 @@ from vmtk import pypes
 class SectionProperties:
 
     def __init__(self):
-        
+
         self.Radius = 0.0
         self.Normal = [1.0, 0.0, 0.0]
         self.Origin = [0.0, 0.0, 0.0]
@@ -75,7 +75,7 @@ class SectionProperties:
         for i in range(1,numberOfIds):
             currentPoint = [0.0,0.0,0.0]
             self.NormalizationTransform.TransformPoint(self.Mesh.GetPoint(self.SectionBoundaryPointIds.GetId(i)),currentPoint)
-            
+
             currentVector = [currentPoint[0] - self.Origin[0], currentPoint[1] - self.Origin[1], currentPoint[2] - self.Origin[2]]
             vtk.vtkMath.Normalize(currentVector)
             absDot = abs(vtk.vtkMath.Dot(vector1,currentVector))
@@ -103,7 +103,7 @@ class SectionProperties:
         for i in range(cell.GetNumberOfPoints()):
             currentPoint = [0.0,0.0,0.0]
             self.NormalizationTransform.TransformPoint(cell.GetPoints().GetPoint(i),currentPoint)
-            
+
             currentVector = [point[0] - currentPoint[0], point[1] - currentPoint[1], point[2] - currentPoint[2]]
             absDot = abs(vtk.vtkMath.Dot(self.Normal,currentVector))
             if (absDot>maxAbsDot):
@@ -128,7 +128,7 @@ class SectionProperties:
 
         if (self.FlipOutwardNormal == 1):
             self.FlipNormal()
-    
+
 
 class vmtkTetrInGenerator(pypes.pypeScript):
 
@@ -169,7 +169,7 @@ class vmtkTetrInGenerator(pypes.pypeScript):
 
         self.WriteWNodeSection = 1
         self.WriteWElemSection = 1
-        
+
 ##             ['NormalizationEntity','normalizationentity','str',1],
 ##             ['InletEntities','inletentities','str',-1],
 ##             ['OutletEntity','outletentity','str',1],
@@ -200,7 +200,6 @@ class vmtkTetrInGenerator(pypes.pypeScript):
             ['WriteWElemSection','welemsection','bool',1,'','append $welem section to .in file for subsequent wall shear stress computation']
             ])
         self.SetOutputMembers([])
-
 
     def ComputeBarycenter(self,pointIds):
         barycenter = [0.0, 0.0, 0.0]
@@ -270,14 +269,13 @@ class vmtkTetrInGenerator(pypes.pypeScript):
                 sectionBoundaryPointIds.InsertNextId(i)
 
         self.SortBoundaryPoints(sectionBoundaryPointIds)
-        
+
         return sectionBoundaryPointIds
-    
 
     def GenerateTetrInFile(self):
 
         self.PrintLog('Generating Tetr .in file.')
-        
+
         f=open(self.OutputFileName, 'w')
 
         line = '$title' + '\n'
@@ -369,7 +367,7 @@ class vmtkTetrInGenerator(pypes.pypeScript):
 
         line = '\n'
         f.write(line)
-            
+
         line = '$elem' + '\n'
         f.write(line)
         quadratidTetraCellType = 24
@@ -422,7 +420,7 @@ class vmtkTetrInGenerator(pypes.pypeScript):
                     continue
                 line = str(i+1) + '\n'
                 f.write(line)
-            
+
             sectionBoundaryPointIds = self.GetSectionBoundaryPointIds(inletEntity)
             sectionProperties = SectionProperties()
             sectionProperties.Mesh = self.Mesh
@@ -525,7 +523,7 @@ class vmtkTetrInGenerator(pypes.pypeScript):
                     line = str(count+1) + ' ' + str(i+1) + ' ' + str(normal[0]) + ' ' + str(normal[1]) + ' ' + str(normal[2]) + '\n'
                     f.write(line)
                     count += 1
-                
+
             if (self.WriteWElemSection == 1):
                 line = '\n'
                 f.write(line)
@@ -560,7 +558,6 @@ class vmtkTetrInGenerator(pypes.pypeScript):
                         line += str(wallPointIdsMap.GetId(int(dataArray.GetComponent(i,j)))+1) + ' '
                     line += '\n'
                     f.write(line)
-                        
 
         if (self.HistoryEntity != ''):
             line = '\n'
@@ -583,13 +580,11 @@ class vmtkTetrInGenerator(pypes.pypeScript):
 
         self.WriteTimeSteps(f)
 
-  
     def GenerateTimeStepsFile(self):
 
         self.PrintLog('Generating $time section.')
         f=open(self.OutputFileName, 'w')
         self.WriteTimeSteps(f)
-
 
     def WriteTimeSteps(self,f):
 
@@ -612,13 +607,12 @@ class vmtkTetrInGenerator(pypes.pypeScript):
                 line = str(time) + ' ' + dumpFlag + ' ' + str(nsub) + '\n'
                 f.write(line)
 
-
     def BuildPointEntityArray(self,entityId,pointEntityArray):
-        
+
         cellEntityArray = self.Mesh.GetCellData().GetArray(self.CellEntityIdsArrayName)
         pointEntityArray.SetNumberOfTuples(self.Mesh.GetNumberOfPoints())
         pointEntityArray.FillComponent(0,0.0)
-        
+
         for i in range(self.Mesh.GetNumberOfCells()):
             cellEntityId = int(cellEntityArray.GetComponent(i,0))
             if cellEntityId != entityId:
@@ -626,7 +620,6 @@ class vmtkTetrInGenerator(pypes.pypeScript):
             cell = self.Mesh.GetCell(i)
             for j in range(cell.GetNumberOfPoints()):
                 pointEntityArray.SetComponent(cell.GetPointId(j),0,1)
-
 
     def Execute(self):
 
@@ -639,7 +632,7 @@ class vmtkTetrInGenerator(pypes.pypeScript):
 
         if self.Mesh == None:
             self.PrintError('Error: no Mesh.')
-        
+
         self.NormalizationTransform = vtk.vtkTransform()
 
         if self.UseCellDefinedEntities == 1:
@@ -679,7 +672,7 @@ class vmtkTetrInGenerator(pypes.pypeScript):
                 self.Mesh.GetPointData().AddArray(pointEntityArray)
 
         self.GenerateTetrInFile()
-        
+
 
 if __name__=='__main__':
     main = pypes.pypeMain()

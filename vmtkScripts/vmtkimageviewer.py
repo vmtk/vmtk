@@ -9,8 +9,8 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
@@ -73,7 +73,7 @@ class vmtkImageViewer(pypes.pypeScript):
             self.vmtkRenderer.Initialize()
             self.OwnRenderer = 1
 
-        self.vmtkRenderer.RegisterScript(self) 
+        self.vmtkRenderer.RegisterScript(self)
 
         if (self.ArrayName != ''):
             self.Image.GetPointData().SetActiveScalars(self.ArrayName)
@@ -90,7 +90,7 @@ class vmtkImageViewer(pypes.pypeScript):
 
         if self.PlaneWidgetZ == None:
             self.PlaneWidgetZ = vtkvmtk.vtkvmtkImagePlaneWidget()
-            
+
         self.Picker.SetTolerance(0.005)
 
         self.PlaneWidgetX.SetResliceInterpolateToLinear()
@@ -174,9 +174,10 @@ class vmtkImageViewer(pypes.pypeScript):
 
         if (self.Image == None) & (self.Display == 1):
             self.PrintError('Error: no Image.')
- 
+
         self.BuildView()
-       
+
+
 if __name__=='__main__':
     main = pypes.pypeMain()
     main.Arguments = sys.argv

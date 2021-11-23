@@ -7,34 +7,37 @@ import sys
 import math
 from vmtk import vtkvmtk
 
+
 def ReadPolyData(filename):
    reader = vtk.vtkXMLPolyDataReader()
    reader.SetFileName(filename)
    reader.Update()
    return reader.GetOutput()
 
+
 def WritePolyData(input,filename):
    writer = vtk.vtkXMLPolyDataWriter()
    writer.SetFileName(filename)
    writer.SetInputData(input)
    writer.Write()
-  
+
+
 def ExtractCylindricInterpolationVoronoiDiagram(cellId,pointId,cylinderRadius,voronoi,centerlines):
    isInside = 0
 
    if (cellId == 0):
-      cylinderTop = centerlines.GetPoint(pointId) 
+      cylinderTop = centerlines.GetPoint(pointId)
       cylinderCenter = centerlines.GetPoint(pointId-interpolationHalfSize)
-      cylinderBottom = centerlines.GetPoint(pointId-interpolationHalfSize*2) 
+      cylinderBottom = centerlines.GetPoint(pointId-interpolationHalfSize*2)
    else:
-      cylinderTop = centerlines.GetPoint(pointId) 
+      cylinderTop = centerlines.GetPoint(pointId)
       cylinderCenter = centerlines.GetPoint(pointId+interpolationHalfSize)
-      cylinderBottom = centerlines.GetPoint(pointId+interpolationHalfSize*2) 
+      cylinderBottom = centerlines.GetPoint(pointId+interpolationHalfSize*2)
 
    interpolationDataset = vtk.vtkPolyData()
    interpolationDatasetPoints = vtk.vtkPoints()
    interpolationDatasetCellArray = vtk.vtkCellArray()
-          
+
    maskArray = vtk.vtkIntArray()
    maskArray.SetNumberOfComponents(1)
    maskArray.SetNumberOfTuples(voronoi.GetNumberOfPoints())
@@ -72,6 +75,7 @@ def ExtractCylindricInterpolationVoronoiDiagram(cellId,pointId,cylinderRadius,vo
 
    return interpolationDataset
 
+
 def IsPointInsideInterpolationCylinder(x,t,c,b,r):
   halfheigth = math.sqrt(vtk.vtkMath.Distance2BetweenPoints(b,t))/2.0
 
@@ -87,12 +91,12 @@ def IsPointInsideInterpolationCylinder(x,t,c,b,r):
   tb[2] = t[2]-b[2]
 
   xcnorm = vtk.vtkMath.Norm(xc)
-  vtk.vtkMath.Normalize(xc)  
-  vtk.vtkMath.Normalize(tb)  
+  vtk.vtkMath.Normalize(xc)
+  vtk.vtkMath.Normalize(tb)
 
   alpha = math.acos(vtk.vtkMath.Dot(xc,tb))
 
-  parallelxc = xcnorm*math.cos(alpha) 
+  parallelxc = xcnorm*math.cos(alpha)
   perpendicularxc =  xcnorm*math.sin(alpha)
 
   thetamin = math.atan(r/halfheigth)
@@ -104,7 +108,7 @@ def IsPointInsideInterpolationCylinder(x,t,c,b,r):
   else:
     if (abs(parallelxc)<=halfheigth): inside = 1
 
-  return inside   
+  return inside
 
 
 def ComputeNumberOfMaskedPoints(dataArray):
@@ -113,6 +117,7 @@ def ComputeNumberOfMaskedPoints(dataArray):
       value = dataArray.GetTuple1(i)
       if (value ==1): numberOfPoints +=1
    return numberOfPoints
+
 
 def VoronoiDiagramInterpolation(interpolationcellid,id0,id1,voronoiDataset0,voronoiDataset1,centerlines,direction):
     print('Interpolating cells ',id0,id1)
@@ -162,13 +167,13 @@ def VoronoiDiagramInterpolation(interpolationcellid,id0,id1,voronoiDataset0,voro
 
        closestPointId = centerlinePointLocator.FindClosestPoint(voronoiPoint)
        closestPoint = cellLine.GetPoint(closestPointId)
-    
+
        voronoiVector = [0.0,0.0,0.0]
        voronoiVector[0] = voronoiPoint[0] - closestPoint[0]
        voronoiVector[1] = voronoiPoint[1] - closestPoint[1]
        voronoiVector[2] = voronoiPoint[2] - closestPoint[2]
        voronoiVectorNorm = vtk.vtkMath.Norm(voronoiVector)
-    
+
        rotationAngle = ComputeVoronoiVectorToCenterlineAngle(closestPointId,voronoiVector,cellLine)
 
        PTPoints = vtk.vtkPoints()
@@ -177,7 +182,7 @@ def VoronoiDiagramInterpolation(interpolationcellid,id0,id1,voronoiDataset0,voro
           localnormal = [0.0,0.0,0.0]
           newVoronoiVector = [0.0,0.0,0.0]
           newVoronoiPoint = [0.0,0.0,0.0]
-           
+
           transform = vtk.vtkTransform()
 
           point0 = [0.0,0.0,0.0]
@@ -185,13 +190,13 @@ def VoronoiDiagramInterpolation(interpolationcellid,id0,id1,voronoiDataset0,voro
 
           if (j<numberOfCenterlinesPoints-1):
              point1 = [0.0,0.0,0.0]
-             cellLine.GetPoint(j+1,point1)   
-             localtangent[0] += point1[0] - point0[0]  
-             localtangent[1] += point1[1] - point0[1]  
-             localtangent[2] += point1[2] - point0[2]  
+             cellLine.GetPoint(j+1,point1)
+             localtangent[0] += point1[0] - point0[0]
+             localtangent[1] += point1[1] - point0[1]
+             localtangent[2] += point1[2] - point0[2]
           if (j>0):
              point2 = [0.0,0.0,0.0]
-             cellLine.GetPoint(j-1,point2) 
+             cellLine.GetPoint(j-1,point2)
              localtangent[0] += point0[0] - point2[0]
              localtangent[1] += point0[1] - point2[1]
              localtangent[2] += point0[2] - point2[2]
@@ -213,14 +218,14 @@ def VoronoiDiagramInterpolation(interpolationcellid,id0,id1,voronoiDataset0,voro
           newVoronoiPoint[2] = point0[2] + voronoiVectorNorm*newVoronoiVector[2]
 
           PTPoints.InsertNextPoint(newVoronoiPoint)
-       numberOfPTPoints = PTPoints.GetNumberOfPoints() 
+       numberOfPTPoints = PTPoints.GetNumberOfPoints()
 
        lastPTPoint = PTPoints.GetPoint(PTPoints.GetNumberOfPoints()-1)
-       
+
        voronoiPointLocator = vtk.vtkPointLocator()
        voronoiPointLocator.SetDataSet(voronoiDataset1)
        voronoiPointLocator.BuildLocator()
-     
+
        arrivalVoronoiPointId = voronoiPointLocator.FindClosestPoint(lastPTPoint)
        arrivalVoronoiPoint = voronoiDataset1.GetPoint(arrivalVoronoiPointId)
        arrivalVoronoiPointRadius = voronoiDataset1.GetPointData().GetArray(radiusArrayName).GetTuple1(arrivalVoronoiPointId)
@@ -228,14 +233,14 @@ def VoronoiDiagramInterpolation(interpolationcellid,id0,id1,voronoiDataset0,voro
        arrivalCenterlinePointLocator = vtk.vtkPointLocator()
        arrivalCenterlinePointLocator.SetDataSet(cellLine)
        arrivalCenterlinePointLocator.BuildLocator()
-      
-       arrivalCenterlineClosestPointId = arrivalCenterlinePointLocator.FindClosestPoint(arrivalVoronoiPoint) 
+
+       arrivalCenterlineClosestPointId = arrivalCenterlinePointLocator.FindClosestPoint(arrivalVoronoiPoint)
        arrivalCenterlineClosestPoint = cellLine.GetPoint(arrivalCenterlineClosestPointId)
-      
+
        arrivalVoronoiVector = [0.0,0.0,0.0]
-       arrivalVoronoiVector[0] = arrivalVoronoiPoint[0] - arrivalCenterlineClosestPoint[0]  
-       arrivalVoronoiVector[1] = arrivalVoronoiPoint[1] - arrivalCenterlineClosestPoint[1]  
-       arrivalVoronoiVector[2] = arrivalVoronoiPoint[2] - arrivalCenterlineClosestPoint[2]  
+       arrivalVoronoiVector[0] = arrivalVoronoiPoint[0] - arrivalCenterlineClosestPoint[0]
+       arrivalVoronoiVector[1] = arrivalVoronoiPoint[1] - arrivalCenterlineClosestPoint[1]
+       arrivalVoronoiVector[2] = arrivalVoronoiPoint[2] - arrivalCenterlineClosestPoint[2]
        arrivalVoronoiVectorNorm = vtk.vtkMath.Norm(arrivalVoronoiVector)
 
        radiusArray = ComputeSpline(voronoiPointRadius,arrivalVoronoiPointRadius,numberOfPTPoints)
@@ -245,29 +250,29 @@ def VoronoiDiagramInterpolation(interpolationcellid,id0,id1,voronoiDataset0,voro
           pointsToGap = gapStartId - closestPointId
        else:
           pointsToGap = closestPointId - gapStartId
-          
+
        pointId = pointsToGap
        for k in range(gapStartId,endSavingInterval,step):
           ptpoint = PTPoints.GetPoint(pointsToGap)
           clpoint = cellLine.GetPoint(k)
-    
+
           vector = [0.0,0.0,0.0]
           vector[0] = ptpoint[0] - clpoint[0]
           vector[1] = ptpoint[1] - clpoint[1]
           vector[2] = ptpoint[2] - clpoint[2]
           vtk.vtkMath.Normalize(vector)
-          
+
           norm = vectorNormArray.GetTuple1(pointsToGap)
 
           newvector = [0.0,0.0,0.0]
           newvector[0] = norm*vector[0]
           newvector[1] = norm*vector[1]
           newvector[2] = norm*vector[2]
-          
+
           newpoint = [0.0,0.0,0.0]
-          newpoint[0] = clpoint[0] + newvector[0] 
-          newpoint[1] = clpoint[1] + newvector[1] 
-          newpoint[2] = clpoint[2] + newvector[2] 
+          newpoint[0] = clpoint[0] + newvector[0]
+          newpoint[1] = clpoint[1] + newvector[1]
+          newpoint[2] = clpoint[2] + newvector[2]
 
           finalNewVoronoiPoints.InsertNextPoint(newpoint)
           cellArray.InsertNextCell(1)
@@ -275,8 +280,9 @@ def VoronoiDiagramInterpolation(interpolationcellid,id0,id1,voronoiDataset0,voro
           finalRadiusArray.SetTuple1(count,radiusArray.GetTuple1(pointsToGap))
           pointsToGap +=1
           count +=1
-       
+
     return finalNewVoronoiPoints,finalRadiusArray
+
 
 def ExtractLine(cellid,centerlines):
    cell = vtk.vtkGenericCell()
@@ -299,14 +305,15 @@ def ExtractLine(cellid,centerlines):
    ptnArray.FillComponent(2,0.0)
 
    for i in range(numberOfPoints):
-      cellArray.InsertCellPoint(i)   
+      cellArray.InsertCellPoint(i)
       normal = centerlines.GetPointData().GetArray(parallelTransportNormalsArrayName).GetTuple3(cell.GetPointId(i))
       ptnArray.SetTuple3(i,normal[0],normal[1],normal[2])
-       
+
    line.SetPoints(linePoints)
-   line.SetLines(cellArray) 
+   line.SetLines(cellArray)
    line.GetPointData().AddArray(ptnArray)
    return line
+
 
 def ComputeVoronoiVectorToCenterlineAngle(pointId,vector,centerline):
     point0 = [0.0,0.0,0.0]
@@ -329,8 +336,9 @@ def ComputeVoronoiVectorToCenterlineAngle(pointId,vector,centerline):
     alpha = ComputeAngleBetweenVectors(ptnnormal,tangent,vector)
     return alpha
 
+
 def ComputeAngleBetweenVectors(normal,tangent,vector):
-    #compute the tangent component orthogonal to normal 
+    #compute the tangent component orthogonal to normal
     otangent = [0.0,0.0,0.0]
     normalDot = vtk.vtkMath.Dot(tangent,normal)
     otangent[0] = tangent[0] - normalDot*normal[0]
@@ -346,20 +354,21 @@ def ComputeAngleBetweenVectors(normal,tangent,vector):
     ovector[1] = vector[1] - vectorDot*otangent[1]
     ovector[2] = vector[2] - vectorDot*otangent[2]
     vtk.vtkMath.Normalize(ovector)
- 
+
     theta = vtkvmtk.vtkvmtkMath.AngleBetweenNormals(normal,ovector)
     theta = vtk.vtkMath.DegreesFromRadians(theta)
-   
+
     cross = [0.0,0.0,0.0]
     vtk.vtkMath.Cross(ovector,normal,cross)
     tangentDot = vtk.vtkMath.Dot(otangent,cross)
     if (tangentDot<0.0): theta = -1.0*theta
     angle = -theta
-    return angle 
+    return angle
+
 
 def ComputeSpline(startValue,endValue,numberOfPoints):
    averageValue = (startValue + endValue)/2.0
-   averageId = int(numberOfPoints/2) 
+   averageId = int(numberOfPoints/2)
 
    splineArray = vtk.vtkDoubleArray()
    splineArray.SetNumberOfComponents(1)
@@ -370,12 +379,13 @@ def ComputeSpline(startValue,endValue,numberOfPoints):
    spline.AddPoint(float(0),startValue)
    spline.AddPoint(float(averageId),averageValue)
    spline.AddPoint(float(numberOfPoints),endValue)
-   spline.Compute()   
+   spline.Compute()
 
    for i in range(numberOfPoints):
       splineArray.SetTuple1(i,spline.Evaluate(float(i)))
 
-   return splineArray 
+   return splineArray
+
 
 def InsertNewVoronoiPoints(oldDataset,newPoints,newArray):
    numberOfDatasetPoints = oldDataset.GetNumberOfPoints()
@@ -386,9 +396,9 @@ def InsertNewVoronoiPoints(oldDataset,newPoints,newArray):
    radiusArray = vtk.vtkDoubleArray()
    radiusArray.SetNumberOfComponents(1)
    radiusArray.SetNumberOfTuples(numberOfNewVoronoiPoints)
-   radiusArray.SetName(radiusArrayName) 
+   radiusArray.SetName(radiusArrayName)
    radiusArray.FillComponent(0,0.0)
-   cellArray = vtk.vtkCellArray()  
+   cellArray = vtk.vtkCellArray()
    points = vtk.vtkPoints()
 
    for i in range(numberOfDatasetPoints):
@@ -420,17 +430,17 @@ def InsertNewVoronoiPoints(oldDataset,newPoints,newArray):
 # -----------------------------------------------------------------------------------------
 
 
-## Program:	clipvoronoidiagram.py	
+## Program:	clipvoronoidiagram.py
 ## Language:	Python
 ## Date:	2012/02/27
 ## Version:	1.0
-## Application: Cerebral Aneurysms - Parent Vessel Reconstruction 
+## Application: Cerebral Aneurysms - Parent Vessel Reconstruction
 ## Author:	Marina Piccinelli
 
-## Description:	Given the parallel transport normal system defined on the interpolated 
+## Description:	Given the parallel transport normal system defined on the interpolated
 ##		centerlines computes the trajectory of Voronoi Diagram points from one end
 ##		to the other of the empty area in the clipped Voronoi Diagram. Saves a new
-##		complete Voronoi Diagram and recalculates the model surface by merging of 
+##		complete Voronoi Diagram and recalculates the model surface by merging of
 ##		maximal inscribed spheres. Recommended use of smoothed clipped Voronoi
 ##		Diagram.
 
@@ -527,8 +537,6 @@ modeller.Update()
 marchingCube = vtk.vtkMarchingCubes()
 marchingCube.SetInputData(modeller.GetOutput())
 marchingCube.SetValue(0,0.0)
-marchingCube.Update()  
+marchingCube.Update()
 envelope = marchingCube.GetOutput()
 WritePolyData(envelope,surfaceFilename)
-
-

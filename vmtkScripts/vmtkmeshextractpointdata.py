@@ -9,11 +9,11 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
-## Note: this class was contributed by 
+## Note: this class was contributed by
 ##       Simone Manini
 ##       Orobix Srl
 
@@ -39,7 +39,7 @@ class vmtkMeshExtractPointData(pypes.pypeScript):
         self.SetScriptName('vmtkmeshextractpointdata')
         self.SetScriptDoc('extract the magnitude value of an array for a point id')
         self.SetInputMembers([
-            ['Mesh','i','vtkUnstructuredGrid',1,'','the input mesh','vmtkmeshreader'],    
+            ['Mesh','i','vtkUnstructuredGrid',1,'','the input mesh','vmtkmeshreader'],
             ['PointId','pointid','int',1,'','the id of the cell'],
             ['ComponentsArrayNames','components','str',-1,'',''],
             ['ArrayName','array','str',1,'',''],
@@ -51,13 +51,13 @@ class vmtkMeshExtractPointData(pypes.pypeScript):
 
         if (self.Mesh == None):
             self.PrintError('Error: no Mesh.')
-            
+
         if (self.PointId == None):
             self.PrintError('Error: no PointId.')
-        
+
         if (self.ArrayName == None):
             self.PrintError('Error: no ArrayName.')
-            
+
         vectorFromComponents = vmtkmeshvectorfromcomponents.vmtkMeshVectorFromComponents()
         vectorFromComponents.Mesh = self.Mesh
         vectorFromComponents.VectorArrayName = self.ArrayName
@@ -66,16 +66,17 @@ class vmtkMeshExtractPointData(pypes.pypeScript):
         vectorFromComponents.Execute()
         dataArray = self.Mesh.GetPointData().GetArray(self.ArrayName)
         dataValue = vtk.vtkMath.Norm((dataArray.GetTuple(self.PointId)[0],dataArray.GetTuple(self.PointId)[1],dataArray.GetTuple(self.PointId)[2]))
-        
+
         self.PrintLog('')
-        
+
         logLine = 'PointId: %d\n' % self.PointId
         logLine += '  Array: %s\n' % self.ArrayName
         logLine += ' Components[x,y,z]: %s,%s,%s\n' % (dataArray.GetTuple(self.PointId)[0],dataArray.GetTuple(self.PointId)[1],dataArray.GetTuple(self.PointId)[2])
         logLine += '  Magnitude: %f\n' % dataValue
-        
+
         self.PrintLog(logLine)
-        
+
+
 if __name__=='__main__':
     main = pypes.pypeMain()
     main.Arguments = sys.argv

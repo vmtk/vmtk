@@ -18,6 +18,7 @@ import pytest
 import vmtk.vmtksurfaceconnectivity as connectivity
 import os
 
+
 @pytest.fixture(scope='module')
 def aorta_surface_two_segments(input_datadir):
     import vmtk.vmtksurfacereader as surfacereader

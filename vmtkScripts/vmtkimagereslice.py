@@ -9,11 +9,11 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
-## Note: this class was improved by 
+## Note: this class was improved by
 ##       Hugo Gratama van Andel
 ##       Academic Medical Centre - University of Amsterdam
 ##       Dept. Biomedical Engineering  & Physics
@@ -30,7 +30,7 @@ class vmtkImageReslice(pypes.pypeScript):
     def __init__(self):
 
         pypes.pypeScript.__init__(self)
-        
+
         self.Image = None
         self.ReferenceImage = None
 
@@ -112,7 +112,7 @@ class vmtkImageReslice(pypes.pypeScript):
             resliceFilter.TransformInputSamplingOn()
         else:
             resliceFilter.TransformInputSamplingOff()
- 
+
         if not self.Matrix4x4:
             if self.MatrixCoefficients != []:
                 self.PrintLog('Setting up transform matrix using specified coefficients')
@@ -123,7 +123,7 @@ class vmtkImageReslice(pypes.pypeScript):
                 transform = vtk.vtkTransform()
                 transform.RotateX(self.Rotation[0])
                 transform.RotateY(self.Rotation[1])
-                transform.RotateZ(self.Rotation[2])                       
+                transform.RotateZ(self.Rotation[2])
                 transform.Translate(self.Translation[0], self.Translation[1], self.Translation[2])
                 transform.Scale(self.Scaling[0], self.Scaling[1], self.Scaling[2])
                 self.Matrix4x4 = vtk.vtkMatrix4x4()
@@ -131,7 +131,7 @@ class vmtkImageReslice(pypes.pypeScript):
 
         if self.InvertMatrix and self.Matrix4x4:
             self.Matrix4x4.Invert()
-       
+
         if self.Matrix4x4:
             transform = vtk.vtkMatrixToLinearTransform()
             transform.SetInput(self.Matrix4x4)

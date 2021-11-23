@@ -17,6 +17,7 @@
 import pytest
 import vmtk.vmtksurfacesmoothing as smoothing
 
+
 def test_taubin(aorta_surface, compare_surfaces):
     name = __name__ + '_test_taubin.vtp'
     smoother = smoothing.vmtkSurfaceSmoothing()

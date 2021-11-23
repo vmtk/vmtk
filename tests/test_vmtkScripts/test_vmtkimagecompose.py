@@ -17,6 +17,7 @@
 import pytest
 import vmtk.vmtkimagecompose as comp
 
+
 def test_multiply_images(aorta_image, compare_images):
     name = __name__ + '_test_multiply_images.mha'
     composer = comp.vmtkImageCompose()

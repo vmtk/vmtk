@@ -9,8 +9,8 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
@@ -29,7 +29,7 @@ class vmtkCenterlineOffsetAttributes(pypes.pypeScript):
     def __init__(self):
 
         pypes.pypeScript.__init__(self)
-        
+
         self.Centerlines = None
         self.ReferenceSystems = None
 
@@ -98,10 +98,10 @@ class vmtkCenterlineOffsetAttributes(pypes.pypeScript):
             self.vmtkRenderer = vmtkrenderer.vmtkRenderer()
             self.vmtkRenderer.Initialize()
             self.OwnRenderer = 1
- 
+
         if self.Interactive:
 
-            self.vmtkRenderer.RegisterScript(self) 
+            self.vmtkRenderer.RegisterScript(self)
 
             viewer = vmtkcenterlineviewer.vmtkCenterlineViewer()
             viewer.Centerlines = self.Centerlines
@@ -113,7 +113,7 @@ class vmtkCenterlineOffsetAttributes(pypes.pypeScript):
             viewer.PringLog = self.PrintLog
             viewer.Display = 0
             viewer.Execute()
-            
+
             groupIdString = self.InputText("Please input the reference groupId:\n",self.GroupIdValidator)
             self.ReferenceGroupId = int(groupIdString)
 
@@ -134,7 +134,7 @@ class vmtkCenterlineOffsetAttributes(pypes.pypeScript):
         offsetFilter.SetReferenceSystemsGroupIdsArrayName(self.GroupIdsArrayName)
         offsetFilter.SetReferenceGroupId(self.ReferenceGroupId)
         offsetFilter.Update()
-        
+
         self.Centerlines = offsetFilter.GetOutput()
 
         if self.ReferenceGroupId == -1:
@@ -142,7 +142,7 @@ class vmtkCenterlineOffsetAttributes(pypes.pypeScript):
 
         if self.OwnRenderer:
             self.vmtkRenderer.Deallocate()
- 
+
 
 if __name__=='__main__':
 

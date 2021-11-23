@@ -9,8 +9,8 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
 
@@ -18,6 +18,7 @@ from __future__ import print_function, absolute_import # NEED TO STAY AS TOP IMP
 import sys
 import os
 import os.path
+
 
 class pypeBatch(object):
 
@@ -38,7 +39,7 @@ class pypeBatch(object):
         for i in range(indent):
             indentation = indentation + indentUnit
         print(indentation + logMessage)
-        
+
     def PrintError(self,logMessage):
         print(logMessage)
 
@@ -84,7 +85,7 @@ class pypeBatch(object):
         exec ('scriptObjectClassName =  '+moduleName+'.'+moduleName)
         moduleScriptObjectClassName = moduleName+'.'+scriptObjectClassName
         scriptObject = 0
-        
+
         fileNames = os.listdir(self.Directory)
 
         for fileName in fileNames:
@@ -101,6 +102,7 @@ class pypeBatch(object):
                 scriptString += arg + ' '
             self.PrintLog('Executing ' + scriptString)
             scriptObject.Execute()
+
 
 if __name__=='__main__':
     batch = pypeBatch()

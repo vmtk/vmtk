@@ -9,11 +9,11 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
-## Note: this class was contributed by 
+## Note: this class was contributed by
 ##       Hugo Gratama van Andel
 ##       Academic Medical Centre - University of Amsterdam
 ##       Dept. Biomedical Engineering  & Physics
@@ -63,7 +63,7 @@ class vmtkImageCurvedMPR(pypes.pypeScript):
 
         if self.Centerlines == None:
             self.PrintError('Error: No input centerlines.')
-   
+
         curvedMPRImageFilter = vtkvmtk.vtkvmtkCurvedMPRImageFilter()
         curvedMPRImageFilter.SetInputData(self.Image)
         curvedMPRImageFilter.SetCenterline(self.Centerlines)
@@ -76,10 +76,9 @@ class vmtkImageCurvedMPR(pypes.pypeScript):
 
         self.Image = curvedMPRImageFilter.GetOutput()
 
-        
+
 if __name__=='__main__':
 
     main = pypes.pypeMain()
     main.Arguments = sys.argv
     main.Execute()
-

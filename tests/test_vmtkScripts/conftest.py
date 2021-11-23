@@ -35,7 +35,6 @@ import vmtk.vmtkmeshwriter as meshwriter
 import vmtk.vmtkmeshcompare as meshcompare
 
 
-
 @pytest.fixture(scope='module')
 def input_datadir():
     '''
@@ -55,7 +54,7 @@ def input_datadir():
                         os.path.dirname(
                             os.path.realpath(__file__))))),
             'vmtk-test-data', 'input')
-        if not os.path.isdir(datadir): 
+        if not os.path.isdir(datadir):
             raise ValueError('the vmtk-test-data repository cannot be found at the same level as vmtk. expected it to be at', datadir)
     return datadir
 
@@ -106,7 +105,7 @@ def write_image():
                             os.path.dirname(
                                 os.path.realpath(__file__))))),
                 'vmtk-test-data', 'imagereference')
-            if not os.path.isdir(datadir): 
+            if not os.path.isdir(datadir):
                 raise ValueError('the vmtk-test-data repository cannot be found at the same level as vmtk. expected it to be at', datadir)
         writer.OutputFileName = os.path.join(datadir, filename)
         writer.Execute()
@@ -132,7 +131,7 @@ def compare_images():
                             os.path.dirname(
                                 os.path.realpath(__file__))))),
                 'vmtk-test-data', 'imagereference')
-            if not os.path.isdir(datadir): 
+            if not os.path.isdir(datadir):
                 raise ValueError('the vmtk-test-data repository cannot be found at the same level as vmtk. expected it to be at', datadir)
         reader.InputFileName = os.path.join(datadir, reference_file)
         reader.Execute()
@@ -168,6 +167,7 @@ def aorta_surface2(input_datadir):
     reader.Execute()
     return reader.Surface
 
+
 @pytest.fixture(scope='module')
 def aorta_surface_openends(input_datadir):
     reader = surfacereader.vmtkSurfaceReader()
@@ -175,12 +175,14 @@ def aorta_surface_openends(input_datadir):
     reader.Execute()
     return reader.Surface
 
+
 @pytest.fixture(scope='module')
 def aorta_surface_branches(input_datadir):
     reader = surfacereader.vmtkSurfaceReader()
     reader.InputFileName = os.path.join(input_datadir, 'aorta-surface-branch-split.vtp')
     reader.Execute()
     return reader.Surface
+
 
 @pytest.fixture(scope='module')
 def aorta_surface_reference(input_datadir):
@@ -219,7 +221,7 @@ def write_surface():
                             os.path.dirname(
                                 os.path.realpath(__file__))))),
                 'vmtk-test-data', 'surfacereference')
-            if not os.path.isdir(datadir): 
+            if not os.path.isdir(datadir):
                 raise ValueError('the vmtk-test-data repository cannot be found at the same level as vmtk. expected it to be at', datadir)
         writer.OutputFileName = os.path.join(datadir, filename)
         writer.Execute()
@@ -245,7 +247,7 @@ def compare_surfaces():
                             os.path.dirname(
                                 os.path.realpath(__file__))))),
                 'vmtk-test-data', 'surfacereference')
-            if not os.path.isdir(datadir): 
+            if not os.path.isdir(datadir):
                 raise ValueError('the vmtk-test-data repository cannot be found at the same level as vmtk. expected it to be at', datadir)
         reader.InputFileName = os.path.join(datadir, reference_file)
         reader.Execute()
@@ -273,12 +275,14 @@ def aorta_centerline(input_datadir):
     reader.Execute()
     return reader.Surface
 
+
 @pytest.fixture(scope='module')
 def aorta_centerline_branches(input_datadir):
     reader = surfacereader.vmtkSurfaceReader()
     reader.InputFileName = os.path.join(input_datadir, 'aorta-centerline-branches.vtp')
     reader.Execute()
     return reader.Surface
+
 
 @pytest.fixture(scope='module')
 def write_centerline():
@@ -299,7 +303,7 @@ def write_centerline():
                             os.path.dirname(
                                 os.path.realpath(__file__))))),
                 'vmtk-test-data', 'centerlinereference')
-            if not os.path.isdir(datadir): 
+            if not os.path.isdir(datadir):
                 raise ValueError('the vmtk-test-data repository cannot be found at the same level as vmtk. expected it to be at', datadir)
         writer.OutputFileName = os.path.join(datadir, filename)
         writer.Execute()
@@ -325,7 +329,7 @@ def compare_centerlines():
                             os.path.dirname(
                                 os.path.realpath(__file__))))),
                 'vmtk-test-data', 'centerlinereference')
-            if not os.path.isdir(datadir): 
+            if not os.path.isdir(datadir):
                 raise ValueError('the vmtk-test-data repository cannot be found at the same level as vmtk. expected it to be at', datadir)
         reader.InputFileName = os.path.join(datadir, reference_file)
         reader.Execute()
@@ -353,6 +357,7 @@ def aorta_mesh(input_datadir):
     reader.Execute()
     return reader.Mesh
 
+
 @pytest.fixture(scope='module')
 def write_mesh():
     def make_write_mesh(mesh, filename):
@@ -374,7 +379,7 @@ def write_mesh():
                                 os.path.dirname(
                                     os.path.realpath(__file__))))),
                     'vmtk-test-data/meshreference')
-                if not os.path.isdir(datadir): 
+                if not os.path.isdir(datadir):
                     raise ValueError('the vmtk-test-data repository cannot be found at the same level as vmtk. expected it to be at', datadir)
         writer.OutputFileName = os.path.join(datadir, filename)
         writer.Execute()
@@ -402,7 +407,7 @@ def compare_meshes():
                                 os.path.dirname(
                                     os.path.realpath(__file__))))),
                     'vmtk-test-data/meshreference')
-                if not os.path.isdir(datadir): 
+                if not os.path.isdir(datadir):
                     raise ValueError('the vmtk-test-data repository cannot be found at the same level as vmtk. expected it to be at', datadir)
         reader.InputFileName = os.path.join(datadir, reference_file)
         reader.Execute()

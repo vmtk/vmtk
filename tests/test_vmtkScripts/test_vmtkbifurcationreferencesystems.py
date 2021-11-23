@@ -16,8 +16,9 @@
 
 import pytest
 import vmtk.vmtkbifurcationreferencesystems as bifurcationreferencesystems
-from vtk.numpy_interface import dataset_adapter as dsa 
+from vtk.numpy_interface import dataset_adapter as dsa
 import numpy as np
+
 
 @pytest.fixture(scope='module')
 def bifurcation_reference_system(aorta_centerline_branches):

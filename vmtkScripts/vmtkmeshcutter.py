@@ -9,8 +9,8 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
@@ -37,7 +37,7 @@ class vmtkMeshCutter(pypes.pypeScript):
         self.PlaneWidget = None
         self.ObserverId = -1
         self.Opacity = 0.05
-        
+
         self.SetScriptName('vmtkmeshcutter')
         self.SetScriptDoc('slicing a mesh with a plane')
         self.SetInputMembers([
@@ -49,7 +49,7 @@ class vmtkMeshCutter(pypes.pypeScript):
         self.SetOutputMembers([
             ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter']
             ])
-        
+
     def CutMesh(self):
         cutPlane = vtk.vtkPlane()
         self.PlaneWidget.GetPlane(cutPlane)
@@ -60,13 +60,13 @@ class vmtkMeshCutter(pypes.pypeScript):
         mapper.SetInputConnection(self.MeshCutFilter.GetOutputPort())
         self.Actor.SetMapper(mapper)
         self.vmtkRenderer.Renderer.AddActor(self.Actor)
-  
+
     def StartPlaneCallback(self,widget,event_string):
         pass
-       
+
     def EndPlaneCallback(self,widget,event_string):
         self.CutMesh()
-        
+
     def BuildView(self):
 
         if not self.vmtkRenderer:
@@ -74,10 +74,10 @@ class vmtkMeshCutter(pypes.pypeScript):
             self.vmtkRenderer.Initialize()
             self.OwnRenderer = 1
 
-        self.vmtkRenderer.RegisterScript(self) 
+        self.vmtkRenderer.RegisterScript(self)
 
         self.PlaneWidget = vtk.vtkImplicitPlaneWidget()
-        
+
         if self.Actor != None:
             self.vmtkRenderer.Renderer.RemoveActor(self.Actor)
 
@@ -90,19 +90,18 @@ class vmtkMeshCutter(pypes.pypeScript):
             self.MeshCutFilter.SetCutFunction(cutPlane)
             self.MeshCutFilter.Update()
             self.Surface = self.MeshCutFilter.GetOutput()
- 
+
             self.PlaneWidget.AddObserver("StartInteractionEvent",self.StartPlaneCallback)
             self.PlaneWidget.AddObserver("EndInteractionEvent",self.EndPlaneCallback)
 
             mapper = vtk.vtkDataSetMapper()
             mapper.SetInputData(self.Mesh)
-            
+
             self.Actor = vtk.vtkActor()
             self.Actor.SetMapper(mapper)
             self.vmtkRenderer.Renderer.AddActor(self.Actor)
             self.Actor.GetProperty().SetOpacity(self.Opacity)
-            
-         
+
         self.PlaneWidget.SetInteractor(self.vmtkRenderer.RenderWindowInteractor)
         self.PlaneWidget.SetPlaceFactor(1.25)
         self.PlaneWidget.DrawPlaneOn()
@@ -111,7 +110,7 @@ class vmtkMeshCutter(pypes.pypeScript):
         self.PlaneWidget.PlaceWidget()
         self.PlaneWidget.SetOrigin(self.Actor.GetCenter())
         self.PlaneWidget.On()
-        
+
         if (self.Display == 1):
             self.vmtkRenderer.Render()
 
@@ -124,7 +123,8 @@ class vmtkMeshCutter(pypes.pypeScript):
             self.PrintError('Error: no Mesh.')
 
         self.BuildView()
-        
+
+
 if __name__=='__main__':
     main = pypes.pypeMain()
     main.Arguments = sys.argv

@@ -9,8 +9,8 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
 
@@ -18,6 +18,7 @@ from __future__ import print_function, absolute_import # NEED TO STAY AS TOP IMP
 import sys
 import os.path
 from vmtk import pypes
+
 
 class PypeWrapper(object):
 
@@ -73,8 +74,8 @@ class PypeWrapper(object):
         self.XMLDescription += ind + '<title>%s</title>\n' % (self.PypeTitle)
         self.XMLDescription += ind + '<description>%s</description>\n' % (self.PypeDescription)
         self.XMLDescription += ind + '<contributor>%s</contributor>\n' % (self.Contributor)
-      
-        self.AllExposedMembers = [] 
+
+        self.AllExposedMembers = []
         for scriptNameAndArguments in self.ScriptList:
             self.XMLDescription += ind + '<parameters>\n'
             scriptName = scriptNameAndArguments[0]
@@ -197,30 +198,30 @@ class PypeWrapper(object):
         for position in sortedExposedMembersOrder:
             allOrderedExposedMemberNames.append(self.AllExposedMembers[exposedMembersOrder.index(position)].ExposedName)
 
-        moduleFile.write('arguments = sys.argv[:]\n') 
+        moduleFile.write('arguments = sys.argv[:]\n')
         moduleFile.write('\n')
 
         for exposedMember in self.AllExposedMembers:
             if exposedMember.MemberType is 'bool':
-                moduleFile.write('%s = "0"\n' % exposedMember.ExposedName) 
+                moduleFile.write('%s = "0"\n' % exposedMember.ExposedName)
                 moduleFile.write('if "--%s" in arguments:\n' % (exposedMember.ExposedName))
                 moduleFile.write(self.Indentation+'%s = "1"\n' % (exposedMember.ExposedName))
-                moduleFile.write(self.Indentation+'arguments.remove("--%s")\n' % exposedMember.ExposedName) 
+                moduleFile.write(self.Indentation+'arguments.remove("--%s")\n' % exposedMember.ExposedName)
                 moduleFile.write('%s = " ".join(%s.split(","))\n' % (exposedMember.ExposedName, exposedMember.ExposedName))
                 moduleFile.write('\n')
             else:
-                moduleFile.write('%s = ""\n' % exposedMember.ExposedName) 
+                moduleFile.write('%s = ""\n' % exposedMember.ExposedName)
                 moduleFile.write('while "--%s" in arguments:\n' % (exposedMember.ExposedName))
                 moduleFile.write(self.Indentation+'index = arguments.index("--%s")\n' % (exposedMember.ExposedName))
                 moduleFile.write(self.Indentation+'if index != len(arguments)-1 and "--" not in arguments[index+1]:\n')
-                moduleFile.write(2*self.Indentation+'if %s:\n' % exposedMember.ExposedName) 
-                moduleFile.write(3*self.Indentation+'%s += ","\n' % exposedMember.ExposedName) 
-                moduleFile.write(2*self.Indentation+'%s += arguments[index+1]\n' % exposedMember.ExposedName) 
-                moduleFile.write(2*self.Indentation+'arguments.remove(arguments[index+1])\n') 
-                moduleFile.write(self.Indentation+'arguments.remove("--%s")\n' % exposedMember.ExposedName) 
+                moduleFile.write(2*self.Indentation+'if %s:\n' % exposedMember.ExposedName)
+                moduleFile.write(3*self.Indentation+'%s += ","\n' % exposedMember.ExposedName)
+                moduleFile.write(2*self.Indentation+'%s += arguments[index+1]\n' % exposedMember.ExposedName)
+                moduleFile.write(2*self.Indentation+'arguments.remove(arguments[index+1])\n')
+                moduleFile.write(self.Indentation+'arguments.remove("--%s")\n' % exposedMember.ExposedName)
                 moduleFile.write('%s = " ".join(%s.split(","))\n' % (exposedMember.ExposedName, exposedMember.ExposedName))
                 moduleFile.write('\n')
- 
+
         moduleFile.write('pipe = "%s" %% (%s)\n' % (' '.join(substModulePipeArguments),','.join(allOrderedExposedMemberNames)))
 
         moduleFile.write('\n')
@@ -236,4 +237,3 @@ if __name__=='__main__':
     pipeLumper.Arguments = sys.argv
     pipeLumper.ParseArguments()
     pipeLumper.Execute()
-

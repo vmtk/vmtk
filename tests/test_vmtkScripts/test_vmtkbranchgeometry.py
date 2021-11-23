@@ -16,8 +16,9 @@
 
 import pytest
 import vmtk.vmtkbranchgeometry as branchgeometry
-from vtk.numpy_interface import dataset_adapter as dsa 
+from vtk.numpy_interface import dataset_adapter as dsa
 import numpy as np
+
 
 @pytest.fixture(scope='module')
 def branch_geometry(aorta_centerline_branches):
@@ -29,6 +30,7 @@ def branch_geometry(aorta_centerline_branches):
     geometry.Execute()
 
     return geometry.GeometryData
+
 
 @pytest.mark.parametrize("expectedKey",[
     ('Length'),

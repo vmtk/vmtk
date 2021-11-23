@@ -9,8 +9,8 @@
 ##   Copyright (c) Richard Izzo, Luca Antiga. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
@@ -23,6 +23,7 @@ from vmtk import vmtkimageviewer
 from vmtk import pypes
 import xml.etree.ElementTree as ET
 import os
+
 
 class vmtkImageVolumeViewer(pypes.pypeScript):
 
@@ -81,7 +82,6 @@ class vmtkImageVolumeViewer(pypes.pypeScript):
             ['Ambient','ambient','float',1,'','']
             ])
 
-
     def BuildVTKPiecewiseFunction(self, pointsList):
         '''Assign values to a newly created vtkPiecewiseFunction
 
@@ -100,7 +100,6 @@ class vmtkImageVolumeViewer(pypes.pypeScript):
             piecewiseFunction.AddPoint(xValue, yValue)
         return piecewiseFunction
 
-
     def BuildVTKColorTransferFunction(self, pointsList):
         '''Assign values to a newly created vtkColorTransferFunction
 
@@ -118,7 +117,6 @@ class vmtkImageVolumeViewer(pypes.pypeScript):
             colorTransferFunction.AddRGBPoint(xValue, RVal, GVal, BVal)
         return colorTransferFunction
 
-    
     def SetPresetVolumeProperty(self):
         '''Create the transfer functions and set volume properties in a vtkVolumeProperty object'''
 
@@ -127,7 +125,7 @@ class vmtkImageVolumeViewer(pypes.pypeScript):
         presetRoot = presetElementTree.getroot()
         volProperties = presetRoot.findall('VolumeProperty[@name="' + self.Preset + '"]') # should return a list with only one element
         volPropertiesDict = volProperties[0].attrib
-        
+
         def _chunks(l, n):
             """Yield successive n-sized chunks from l."""
             PY3 = sys.version_info[0] == 3
@@ -235,7 +233,6 @@ class vmtkImageVolumeViewer(pypes.pypeScript):
         self.SetPresetVolumeProperty()
         self.Volume.SetProperty(self.VolumeProperty)
         self.vmtkRenderer.RenderWindow.Render()
-        
 
     def BuildView(self):
 
@@ -247,7 +244,7 @@ class vmtkImageVolumeViewer(pypes.pypeScript):
             self.vmtkRenderer.Initialize()
             self.OwnRenderer = 1
 
-        self.vmtkRenderer.RegisterScript(self) 
+        self.vmtkRenderer.RegisterScript(self)
 
         if (self.ArrayName != ''):
             self.Image.GetPointData().SetActiveScalars(self.ArrayName)
@@ -258,7 +255,7 @@ class vmtkImageVolumeViewer(pypes.pypeScript):
             string_types = basestring,
         if not isinstance(self.VolumeRenderingMethod, string_types):
             self.PrintError('Specified Rendering Method is not of required "string" type')
-            
+
         # create volume mapper and apply requested volume rendering method
         volumeMapper = vtk.vtkSmartVolumeMapper()
         if self.VolumeRenderingMethod.lower() == 'default':
@@ -273,8 +270,7 @@ class vmtkImageVolumeViewer(pypes.pypeScript):
             self.PrintError('Specified Rendering Method: ' + self.VolumeRenderingMethod + ' not supported. Please choose from ["default", "gpu", "ospray", "raycast"]')
         volumeMapper.SetInputData(self.Image)
         volumeMapper.SetBlendModeToComposite()
-        
-        
+
         # create the volume from the mapper (defining image data and render mode) with the defined properties
         # this is the last pipeline step applied. self.Volume just needs to now be added to the Renderer
         self.SetPresetVolumeProperty()
@@ -323,5 +319,5 @@ class vmtkImageVolumeViewer(pypes.pypeScript):
 
         if (self.Image == None) & (self.Display == 1):
             self.PrintError('Error: no Image.')
- 
+
         self.BuildView()

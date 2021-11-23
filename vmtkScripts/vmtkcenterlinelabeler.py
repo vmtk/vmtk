@@ -9,8 +9,8 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
@@ -24,13 +24,12 @@ from vmtk import pypes
 from vmtk import vmtkcenterlineviewer
 
 
-
 class vmtkCenterlineLabeler(pypes.pypeScript):
 
     def __init__(self):
 
         pypes.pypeScript.__init__(self)
-        
+
         self.Centerlines = None
         self.GroupIdsArrayName = 'GroupIds'
         self.LabelIdsArrayName = 'LabelIds'
@@ -67,17 +66,17 @@ class vmtkCenterlineLabeler(pypes.pypeScript):
 
         if not self.Centerlines:
             self.PrintError('Error: No input centerlines.')
- 
+
         if not self.GroupIdsArrayName:
             self.PrintError('Error: GroupIdsArrayName not specified.')
-     
+
         if not self.vmtkRenderer:
             self.vmtkRenderer = vmtkrenderer.vmtkRenderer()
             self.vmtkRenderer.Initialize()
             self.OwnRenderer = 1
 
         self.vmtkRenderer.RegisterScript(self)
-        
+
         groupIdsArray = self.Centerlines.GetCellData().GetArray(self.GroupIdsArrayName)
         groupIds = []
         for i in range(groupIdsArray.GetNumberOfTuples()):
@@ -87,11 +86,11 @@ class vmtkCenterlineLabeler(pypes.pypeScript):
         for groupId in groupIds:
             if groupId not in uniqueGroupIds:
                 uniqueGroupIds.append(groupId)
- 
+
         labelMap = {}
-        
+
         if not self.Labeling:
-        
+
             viewer = vmtkcenterlineviewer.vmtkCenterlineViewer()
             viewer.Centerlines = self.Centerlines
             viewer.CellDataArrayName = self.GroupIdsArrayName
@@ -103,7 +102,7 @@ class vmtkCenterlineLabeler(pypes.pypeScript):
             #viewer.PrintError = self.PrintError
             #viewer.PringLog = self.PrintLog
             viewer.Execute()
-           
+
             ok = False
             while not ok:
                 labelString = self.InputText("Please input labels for the following groupIds:\n%s\n" % " ".join([str(groupId) for groupId in uniqueGroupIds]),self.LabelValidator)
@@ -115,7 +114,7 @@ class vmtkCenterlineLabeler(pypes.pypeScript):
                 labelMap[groupId] = labels[uniqueGroupIds.index(groupId)]
 
         else:
- 
+
             if len(self.Labeling) != 2 * len(uniqueGroupIds):
                 self.PrintError('Error: incorrect labeling specified')
 
@@ -125,27 +124,26 @@ class vmtkCenterlineLabeler(pypes.pypeScript):
                 if not groupId in uniqueGroupIds:
                     self.PrintError('Error: groupId %d does not exist' % groupId)
                 labelMap[groupId] = labelId
- 
+
         labelIdsArray = vtk.vtkIntArray()
         labelIdsArray.SetName(self.LabelIdsArrayName)
         labelIdsArray.SetNumberOfComponents(1)
         labelIdsArray.SetNumberOfTuples(self.Centerlines.GetNumberOfCells())
 
         groupIdsArray = self.Centerlines.GetCellData().GetArray(self.GroupIdsArrayName)
-        
+
         for i in range(groupIdsArray.GetNumberOfTuples()):
             groupId = int(groupIdsArray.GetComponent(i,0))
             labelIdsArray.SetComponent(i,0,labelMap[groupId])
-        
+
         self.Centerlines.GetCellData().AddArray(labelIdsArray)
 
         if self.OwnRenderer:
             self.vmtkRenderer.Deallocate()
-        
+
 
 if __name__=='__main__':
 
     main = pypes.pypeMain()
     main.Arguments = sys.argv
     main.Execute()
-

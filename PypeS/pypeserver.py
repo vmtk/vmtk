@@ -6,8 +6,8 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
 
@@ -17,16 +17,18 @@ import vtk
 import time
 import traceback
 
+
 class OutputStream(object):
 
     def __init__(self,textList):
         self.textList = textList
-  
+
     def write(self, text):
         self.textList.append(text)
-      
+
     def flush(self):
         pass
+
 
 def RunPypeProcess(arguments, inputStream=None, outputStream=None, logOn=True):
     pipe = pypes.Pype()
@@ -43,7 +45,7 @@ def RunPypeProcess(arguments, inputStream=None, outputStream=None, logOn=True):
         pipe.Arguments = arguments
     try:
         pipe.ParseArguments()
-        pipe.Execute() 
+        pipe.Execute()
     except BaseException as e:
         print(traceback.format_exc())
     del pipe
@@ -83,4 +85,3 @@ def PypeServer(queue, output, error, returnIfEmptyQueue=False):
         except KeyboardInterrupt as e:
             print("Connection closed")
             break
-

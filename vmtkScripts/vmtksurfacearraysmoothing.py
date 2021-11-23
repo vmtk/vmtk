@@ -7,11 +7,11 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
-## Note: this class was contributed by 
+## Note: this class was contributed by
 ##       Elena Faggiano (elena.faggiano@gmail.com)
 ##       Politecnico di Milano
 
@@ -23,7 +23,6 @@ import math
 
 
 class vmtkSurfaceArraySmoothing(pypes.pypeScript):
-
 
     def __init__(self):
 
@@ -127,6 +126,7 @@ class vmtkSurfaceArraySmoothing(pypes.pypeScript):
             self.PrintError ('Error: wrong connexity')
 
         self.Surface = surface
+
 
 if __name__ == '__main__':
     main = pypes.pypeMain()

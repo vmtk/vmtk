@@ -18,8 +18,9 @@ import pytest
 import os
 import vmtk.vmtkbranchmetrics as branchmetrics
 import vmtk.vmtksurfacereader as surfacereader
-from vtk.numpy_interface import dataset_adapter as dsa 
+from vtk.numpy_interface import dataset_adapter as dsa
 import numpy as np
+
 
 @pytest.fixture(scope='module')
 def name():

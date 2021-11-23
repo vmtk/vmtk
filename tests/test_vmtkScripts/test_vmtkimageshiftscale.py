@@ -55,7 +55,7 @@ def test_shift_value_negative(aorta_image, compare_images):
     shifter.Image = aorta_image
     shifter.Shift = -2.5
     shifter.Execute()
-    
+
     assert compare_images(shifter.Image, name) == True
 
 
@@ -65,7 +65,7 @@ def test_scale_value_positive(aorta_image, compare_images):
     shifter.Image = aorta_image
     shifter.Scale = 3.4
     shifter.Execute()
-    
+
     assert compare_images(shifter.Image, name) == True
 
 
@@ -75,7 +75,7 @@ def test_scale_value_negative(aorta_image, compare_images):
     shifter.Image = aorta_image
     shifter.Scale = -2.1
     shifter.Execute()
-    
+
     assert compare_images(shifter.Image, name) == True
 
 

@@ -9,11 +9,11 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
-## Note: this class was contributed by 
+## Note: this class was contributed by
 ##       Tangui Morvan
 ##       Kalkulo AS
 ##       Simula Research Laboratory
@@ -53,7 +53,7 @@ class vmtkMeshClipCenterlines(pypes.pypeScript):
         self.InsideOut = 1
         #Type of polyball : 0 global, 1 local
         self.PolyBallType = 0
-        
+
         self.CellEntityIdsArrayName = 'CellEntityIds'
         #Id of the first wall (mesh surface)
         self.WallCellEntityId = 1
@@ -61,14 +61,14 @@ class vmtkMeshClipCenterlines(pypes.pypeScript):
         self.IncludeSurfaceCells = 1
         #Tolerance used for reporjecting the cellentityid array
         self.Tolerance = -1.
-        
+
         self.Centerlines = None
         self.RadiusArrayName = 'MaximumInscribedSphereRadius'
         self.RadiusArray = None
 
         self.MeshActor = None
         self.CenterlinesActor = None
-        
+
         #Spheres used to drive the radius array interpolation
         self.SpheresActor = None
         self.Spheres = vtk.vtkPolyData()
@@ -76,7 +76,7 @@ class vmtkMeshClipCenterlines(pypes.pypeScript):
         self.SpheresRadii = None
         self.CurrentSphereId = -1
         self.SphereWidget = None
-        
+
         #Used to display the interpolated spheres
         self.InterpolatedGlyphs = None
         self.InterpolatedSpheresActor = None
@@ -111,7 +111,7 @@ class vmtkMeshClipCenterlines(pypes.pypeScript):
         spherePoints = vtk.vtkPoints()
         self.Spheres.SetPoints(spherePoints)
         self.Spheres.GetPointData().Initialize()
-        self.SpheresIndices.Initialize() 
+        self.SpheresIndices.Initialize()
         self.SpheresRadii = vtk.vtkDoubleArray()
         self.SpheresRadii.SetName("SpheresRadii")
         self.Spheres.GetPointData().SetScalars(self.SpheresRadii)
@@ -123,14 +123,14 @@ class vmtkMeshClipCenterlines(pypes.pypeScript):
         self.InterpolatedGlyphs.SetScaleFactor(0.)
         #reset the polyball
         self.PolyBall = None
-        
+
     def PlaceSphere(self):
         if self.CurrentSphereId == -1:
             return
         self.SphereWidget.SetCenter(self.Spheres.GetPoint(self.CurrentSphereId))
         self.SphereWidget.SetRadius(self.Spheres.GetPointData().GetScalars().GetValue(self.CurrentSphereId))
         self.SphereWidget.On()
-        
+
     def SphereCallback(self,widget,event_string):
         if self.CurrentSphereId == -1:
             return
@@ -175,11 +175,11 @@ class vmtkMeshClipCenterlines(pypes.pypeScript):
         #Build a surface for displaying the polyball
         if self.PolyBall == None:
             return
-        
+
         #Sample the polyball
         sampler = vtk.vtkSampleFunction()
         sampler.SetImplicitFunction(self.PolyBall)
-        
+
         #Set the bounds to be slightly larger than those of the mesh
         meshBounds = self.Mesh.GetBounds()
         meshCenter = self.Mesh.GetCenter()
@@ -188,18 +188,18 @@ class vmtkMeshClipCenterlines(pypes.pypeScript):
             length = 1.2*(meshBounds[2*i+1] - meshCenter[i])
             polyBallBounds[2*i] = meshCenter[i] - length
             polyBallBounds[2*i+1] = meshCenter[i] + length
-        
+
         sampler.SetModelBounds(polyBallBounds)
         sampler.SetSampleDimensions(self.PolyBallResolution)
         sampler.ComputeNormalsOff()
         sampler.Update()
-        
+
         #Extract the isosurface at 0
         contour = vtk.vtkContourFilter()
         contour.SetInputConnection(sampler.GetOutputPort())
         contour.SetValue(0,0.)
         contour.Update()
-        
+
         #Set the new model as the mapper input
         self.PolyBallActor.GetMapper().SetInputConnection(contour.GetOutputPort())
         #self.PolyBallActor.VisibilityOn()
@@ -210,18 +210,18 @@ class vmtkMeshClipCenterlines(pypes.pypeScript):
             self.PreviewMesh = self.Mesh
             self.ClippedMesh = None
             return
-        
+
         self.BuildPolyBall()
-        
+
         #Update the polyball model if necessary
         if self.PolyBallActor.GetVisibility():
             self.BuildPolyBallSurface()
-        
+
         self.Clipper.SetClipFunction(self.PolyBall)
         self.Clipper.Update()
         self.PreviewMesh = self.Clipper.GetOutput()
         self.ClippedMesh = self.Clipper.GetClippedOutput()
-      
+
     #Clip the mesh using vtkvmtkClipDataSetLine
     #def ClipMeshLine(self):
         ##if we have no values simply return the original mesh
@@ -229,20 +229,20 @@ class vmtkMeshClipCenterlines(pypes.pypeScript):
             #self.PreviewMesh = self.Mesh
             #self.ClippedMesh = None
             #return
-        
+
         #self.BuildPolyBall()
-        
+
         ##Update the polyball model if necessary
         #if self.PolyBallActor.GetVisibility():
             #self.BuildPolyBallSurface()
-            
+
         #lineIntersector = vtkvmtk.vtkvmtkPolyBallLineIntersector()
         #lineIntersector.SetImplicitFunction(self.PolyBall)
         #self.LineClipper.SetLineIntersector(lineIntersector)
         #self.LineClipper.Update()
         #self.PreviewMesh = self.LineClipper.GetOutput()
         #self.ClippedMesh = self.LineClipper.GetClippedOutput()
-    
+
     #Recreate the surface cells on the clipped and project the cell entity ids
     def CreateSurfaceCells(self,inMesh):
         #Remove the surface cells from the mesh
@@ -251,13 +251,13 @@ class vmtkMeshClipCenterlines(pypes.pypeScript):
         cellDimFilter.ThresholdByUpper(3)
         cellDimFilter.Update()
         volumetricMesh = cellDimFilter.GetOutput()
-        
+
         #Get new surface cells
         geomFilter = vtk.vtkGeometryFilter()
         geomFilter.SetInputConnection(cellDimFilter.GetOutputPort())
         geomFilter.Update()
         newSurfaceCells = geomFilter.GetOutput()
-        
+
         #If the celEntityIdArray exist, project the original entity ids
         cellEntityIdsArray = newSurfaceCells.GetCellData().GetArray(self.CellEntityIdsArrayName)
         if (cellEntityIdsArray != None):
@@ -265,18 +265,18 @@ class vmtkMeshClipCenterlines(pypes.pypeScript):
             surfaceCellsToSurface = vmtkscripts.vmtkMeshToSurface()
             surfaceCellsToSurface.Mesh = newSurfaceCells
             surfaceCellsToSurface.Execute()
-        
+
             #Get the original surface cells
             meshThreshold = vtk.vtkThreshold()
             meshThreshold.SetInputData(self.Mesh)
             meshThreshold.ThresholdByUpper(self.WallCellEntityId+0.5)
             meshThreshold.SetInputArrayToProcess(0,0,0,1,self.CellEntityIdsArrayName)
             meshThreshold.Update()
-            
+
             meshToSurface = vmtkscripts.vmtkMeshToSurface()
             meshToSurface.Mesh = meshThreshold.GetOutput()
             meshToSurface.Execute()
-            
+
             #Project the entity ids form the old surface cells to the new surface cells
             #TODO: This is hackish(need for a tolerance), find a beeter way
             projector = vtkvmtk.vtkvmtkSurfaceProjectCellArray()
@@ -286,21 +286,20 @@ class vmtkMeshClipCenterlines(pypes.pypeScript):
             projector.SetDefaultValue(self.WallCellEntityId)
             projector.SetDistanceTolerance(self.Tolerance)
             projector.Update()
-            
+
             #Convert the surface cells back to unstructured grid
             surfaceToMesh = vmtkscripts.vmtkSurfaceToMesh()
             surfaceToMesh.Surface = projector.GetOutput()
             surfaceToMesh.Execute()
-            
+
             newSurfaceCells = surfaceToMesh.Mesh
-    
-    
+
         #append the new surface cells to the volumetric elements
         appendFilter = vtkvmtk.vtkvmtkAppendFilter()
         appendFilter.AddInput(volumetricMesh)
         appendFilter.AddInput(newSurfaceCells)
         appendFilter.Update()
-        
+
         return appendFilter.GetOutput()
 
     def LCallback(self,obj):
@@ -467,7 +466,7 @@ class vmtkMeshClipCenterlines(pypes.pypeScript):
             self.BuildPolyBallSurface()
             self.PolyBallActor.VisibilityOn()
             self.vmtkRenderer.RenderWindow.Render()
-    
+
     def MeshVisalizationCallback(self, obj):
         #Switch between transparent/opaque mesh for better visualisation
         if self.MeshActor.GetProperty().GetOpacity() == 0.25:
@@ -488,7 +487,6 @@ class vmtkMeshClipCenterlines(pypes.pypeScript):
 
     def PolyballTypeCallback(self, obj):
         self.PolyBallType = (self.PolyBallType + 1)%2
-
 
     def Display(self):
 
@@ -523,7 +521,7 @@ class vmtkMeshClipCenterlines(pypes.pypeScript):
 
         #Save the centerlines
         previousCenterlines = self.Centerlines
-        
+
         cleaner = vtk.vtkCleanPolyData()
         cleaner.SetInputData(self.Centerlines)
         cleaner.Update()
@@ -604,32 +602,30 @@ class vmtkMeshClipCenterlines(pypes.pypeScript):
         self.PolyBallActor.VisibilityOff()
         self.vmtkRenderer.Renderer.AddActor(self.PolyBallActor)
 
-        
         self.SphereWidget = vtk.vtkSphereWidget()
         self.SphereWidget.TranslationOff()
         self.SphereWidget.SetInteractor(self.vmtkRenderer.RenderWindowInteractor)
         self.SphereWidget.AddObserver("InteractionEvent", self.SphereCallback)
-                
+
         self.Clipper = vtk.vtkClipDataSet()
         self.Clipper.SetInputData(self.Mesh)
         self.Clipper.SetInsideOut(self.InsideOut)
         self.Clipper.GenerateClippedOutputOn()
-        
+
         #self.LineClipper = vtkvmtk.vtkvmtkClipDataSetLine()
         #self.LineClipper.SetInputData(self.Mesh)
         #self.LineClipper.SetInsideOut(self.InsideOut)
         #self.LineClipper.GenerateClippedOutputOn()
-        
+
         self.InitializeSpheres()
-        
+
         self.PreviewMesh = self.Mesh
-        
+
         self.Display()
-        
+
         self.PolyBallActor.VisibilityOff()
         self.ClipMesh()
-        
-        
+
         if self.ClippedMesh == None:
             #return an empty mesh
             self.ClippedMesh = vtk.vtkUnstructuredGrid()
@@ -637,14 +633,15 @@ class vmtkMeshClipCenterlines(pypes.pypeScript):
             #Create the surface cells
             self.PreviewMesh = self.CreateSurfaceCells(self.PreviewMesh)
             self.ClippedMesh = self.CreateSurfaceCells(self.ClippedMesh)
-        
+
         self.Mesh = self.PreviewMesh
-        
+
         if self.OwnRenderer:
             self.vmtkRenderer.Deallocate()
 
         #Restore the centerlines
         self.Centerlines = previousCenterlines
+
 
 if __name__=='__main__':
     main = pypes.pypeMain()

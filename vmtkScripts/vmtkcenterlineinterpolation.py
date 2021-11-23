@@ -9,8 +9,8 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
@@ -25,7 +25,7 @@ class vmtkCenterlineInterpolation(pypes.pypeScript):
     def __init__(self):
 
         pypes.pypeScript.__init__(self)
-        
+
         self.Centerlines = None
         self.MaskArrayName = None
         self.Threshold = 0.0
@@ -97,14 +97,14 @@ class vmtkCenterlineInterpolation(pypes.pypeScript):
                 previousPoint = point
 
             for j in range(cell.GetNumberOfPoints()):
-                
+
                 pointId = cell.GetPointId(j)
 
                 if not self.IsMasked(maskArray.GetTuple1(pointId)):
                     continue
 
                 abscissa = abscissaArray.GetValue(pointId)
-  
+
                 point = [xSpline.Evaluate(abscissa), ySpline.Evaluate(abscissa), zSpline.Evaluate(abscissa)]
                 self.Centerlines.SetPoint(pointId,point)
 
@@ -114,7 +114,6 @@ class vmtkCenterlineInterpolation(pypes.pypeScript):
                         continue
                     value = aSplines[k].Evaluate(abscissa)
                     array.SetTuple1(pointId,value)
-
 
 
 if __name__=='__main__':

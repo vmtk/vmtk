@@ -26,8 +26,8 @@ import vmtk.vmtksurfacesubdivision as surfacesubdivision
     ('butterfly', 2, 103000, 206000, '4'),
     ('loop', 2, 103000, 206000, '5'),
 ])
-def test_subdivision_methods_and_iterations(aorta_surface, compare_surfaces, 
-                                            method, numsubdivisions, paramid, 
+def test_subdivision_methods_and_iterations(aorta_surface, compare_surfaces,
+                                            method, numsubdivisions, paramid,
                                             expected_points, expected_cells):
     name = __name__ + '_test_subdivision_methods_and_iterations_' + paramid + '.vtp'
     subdivider = surfacesubdivision.vmtkSurfaceSubdivision()

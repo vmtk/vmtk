@@ -9,8 +9,8 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
@@ -26,7 +26,7 @@ class vmtkSurfaceReferenceSystemTransform(pypes.pypeScript):
     def __init__(self):
 
         pypes.pypeScript.__init__(self)
-        
+
         self.Surface = None
         self.ReferenceSystems = None
 
@@ -76,7 +76,6 @@ class vmtkSurfaceReferenceSystemTransform(pypes.pypeScript):
         angle = 2.0 * math.atan2(differenceNorm,sumNorm)
         return angle
 
-
     def Execute(self):
 
         if self.Surface == None:
@@ -89,7 +88,7 @@ class vmtkSurfaceReferenceSystemTransform(pypes.pypeScript):
         referenceSystemsNormal2Array = self.ReferenceSystems.GetPointData().GetArray(self.ReferenceSystemsNormal2ArrayName)
 
         referenceSystemPointId = 0
-        
+
         if self.ReferenceSystemId != -1:
             referenceSystemsIdArray = self.ReferenceSystems.GetPointData().GetArray(self.ReferenceSystemsIdArrayName)
             for i in range(self.ReferenceSystems.GetNumberOfPoints()):
@@ -104,9 +103,9 @@ class vmtkSurfaceReferenceSystemTransform(pypes.pypeScript):
 
         transform = vtk.vtkTransform()
         transform.PostMultiply()
-    
+
         translation = [0.0, 0.0, 0.0]
-        translation[0] = self.ReferenceOrigin[0] - currentOrigin[0] 
+        translation[0] = self.ReferenceOrigin[0] - currentOrigin[0]
         translation[1] = self.ReferenceOrigin[1] - currentOrigin[1]
         translation[2] = self.ReferenceOrigin[2] - currentOrigin[2]
 

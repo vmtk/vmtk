@@ -9,8 +9,8 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
@@ -108,15 +108,15 @@ class vmtkImageInitialization(pypes.pypeScript):
         return 1
 
     def ThresholdInput(self,queryString):
-       
+
         thresholdString = self.InputText(queryString,self.ThresholdValidator)
-      
+
         threshold = None
         if thresholdString != 'n':
             threshold = float(thresholdString)
-       
+
         return threshold
-       
+
     def IsosurfaceInitialize(self):
 
         self.PrintLog('Isosurface initialization.')
@@ -124,7 +124,7 @@ class vmtkImageInitialization(pypes.pypeScript):
         if self.Interactive:
             queryString = "Please input isosurface level (\'n\' for none): "
             self.IsoSurfaceValue = self.ThresholdInput(queryString)
-        
+
         imageMathematics = vtk.vtkImageMathematics()
         imageMathematics.SetInputData(self.Image)
         imageMathematics.SetConstantK(-1.0)
@@ -171,9 +171,9 @@ class vmtkImageInitialization(pypes.pypeScript):
             threshold.SetInValue(-1.0)
             threshold.SetOutValue(1.0)
             threshold.Update()
-        
+
             thresholdedImage = threshold.GetOutput()
- 
+
         self.InitialLevelSets = vtk.vtkImageData()
         self.InitialLevelSets.DeepCopy(thresholdedImage)
 
@@ -194,7 +194,7 @@ class vmtkImageInitialization(pypes.pypeScript):
 
             queryString = 'Please place source seeds'
             sourceSeeds = self.SeedInput(queryString,0)
-            
+
             queryString = 'Please place target seeds'
             targetSeeds = self.SeedInput(queryString,0)
 
@@ -227,7 +227,7 @@ class vmtkImageInitialization(pypes.pypeScript):
             threshold.ReplaceOutOn()
             threshold.SetOutValue(scalarRange[0] - scalarRange[1])
             threshold.Update()
-        
+
             scalarRange = threshold.GetOutput().GetScalarRange()
 
             thresholdedImage = threshold.GetOutput()
@@ -242,7 +242,7 @@ class vmtkImageInitialization(pypes.pypeScript):
         shiftScale.SetScale(scale)
         shiftScale.SetOutputScalarTypeToFloat()
         shiftScale.Update()
-        
+
         speedImage = shiftScale.GetOutput()
 
         fastMarching = vtkvmtk.vtkvmtkFastMarchingUpwindGradientImageFilter()
@@ -309,7 +309,7 @@ class vmtkImageInitialization(pypes.pypeScript):
             threshold.ReplaceOutOn()
             threshold.SetOutValue(scalarRange[0] - scalarRange[1])
             threshold.Update()
-        
+
             scalarRange = threshold.GetOutput().GetScalarRange()
 
             thresholdedImage = threshold.GetOutput()
@@ -324,7 +324,7 @@ class vmtkImageInitialization(pypes.pypeScript):
         shiftScale.SetScale(scale)
         shiftScale.SetOutputScalarTypeToFloat()
         shiftScale.Update()
-        
+
         speedImage = shiftScale.GetOutput()
 
         collidingFronts = vtkvmtk.vtkvmtkCollidingFrontsImageFilter()
@@ -344,7 +344,7 @@ class vmtkImageInitialization(pypes.pypeScript):
         self.InitialLevelSets = vtk.vtkImageData()
         self.InitialLevelSets.DeepCopy(subtract.GetOutput())
 
-        self.IsoSurfaceValue = 0.0 
+        self.IsoSurfaceValue = 0.0
 
     def SeedInitialize(self):
 
@@ -361,7 +361,7 @@ class vmtkImageInitialization(pypes.pypeScript):
                 seedIds.InsertNextId(self.Image.ComputePointId([self.SourcePoints[3*i+0],self.SourcePoints[3*i+1],self.SourcePoints[3*i+2]]))
             for i in range(len(self.TargetPoints)//3):
                 seedIds.InsertNextId(self.Image.ComputePointId([self.TargetPoints[3*i+0],self.TargetPoints[3*i+1],self.TargetPoints[3*i+2]]))
-        
+
         self.InitialLevelSets = vtk.vtkImageData()
         self.InitialLevelSets.DeepCopy(self.Image)
 
@@ -384,8 +384,8 @@ class vmtkImageInitialization(pypes.pypeScript):
         self.IsoSurfaceValue = 0.0
 
     def DisplayLevelSetSurface(self,levelSets):
-     
-        value = 0.0 
+
+        value = 0.0
         marchingCubes = vtk.vtkMarchingCubes()
         marchingCubes.SetInputData(levelSets)
         marchingCubes.SetValue(0,value)
@@ -394,7 +394,7 @@ class vmtkImageInitialization(pypes.pypeScript):
         self.Surface = marchingCubes.GetOutput()
 
         self.OutputText('Displaying.\n')
-  
+
         self.SurfaceViewer.Surface = marchingCubes.GetOutput()
         self.SurfaceViewer.Display = 0
         self.SurfaceViewer.Opacity = 0.5
@@ -454,9 +454,9 @@ class vmtkImageInitialization(pypes.pypeScript):
                 self.vmtkRenderer.Initialize()
                 self.OwnRenderer = 1
 
-            self.vmtkRenderer.RegisterScript(self) 
- 
-            if not self.ImageSeeder: 
+            self.vmtkRenderer.RegisterScript(self)
+
+            if not self.ImageSeeder:
                 self.ImageSeeder = vmtkscripts.vmtkImageSeeder()
                 self.ImageSeeder.vmtkRenderer = self.vmtkRenderer
                 self.ImageSeeder.Image = self.Image
@@ -464,11 +464,11 @@ class vmtkImageInitialization(pypes.pypeScript):
                 self.ImageSeeder.Execute()
                 ##self.ImageSeeder.Display = 1
                 self.ImageSeeder.BuildView()
-  
+
             if not self.SurfaceViewer:
                 self.SurfaceViewer = vmtkscripts.vmtkSurfaceViewer()
                 self.SurfaceViewer.vmtkRenderer = self.vmtkRenderer
-  
+
             initializationMethods = {
                                 '0': self.CollidingFrontsInitialize,
                                 '1': self.FastMarchingInitialize,
@@ -476,7 +476,7 @@ class vmtkImageInitialization(pypes.pypeScript):
                                 '3': self.IsosurfaceInitialize,
                                 '4': self.SeedInitialize
                                 }
-  
+
             endInitialization = False
             while not endInitialization:
                 queryString = 'Please choose initialization type: \n 0: colliding fronts;\n 1: fast marching;\n 2: threshold;\n 3: isosurface;\n 4: seed\n '

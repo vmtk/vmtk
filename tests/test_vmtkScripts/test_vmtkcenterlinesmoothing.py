@@ -16,8 +16,9 @@
 
 import pytest
 import vmtk.vmtkcenterlinesmoothing as centerlinesmoothing
-from vtk.numpy_interface import dataset_adapter as dsa 
+from vtk.numpy_interface import dataset_adapter as dsa
 import numpy as np
+
 
 def test_default_params(aorta_centerline, compare_centerlines):
     name = __name__ + '_test_default_params.vtp'
@@ -26,6 +27,7 @@ def test_default_params(aorta_centerline, compare_centerlines):
     smoother.Execute()
 
     assert compare_centerlines(smoother.Centerlines, name) == True
+
 
 @pytest.mark.parametrize("iterations,factor,paramid",[
     (100, 0.2, '0'),

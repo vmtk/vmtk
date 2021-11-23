@@ -9,8 +9,8 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
@@ -26,7 +26,7 @@ class vmtkDistanceToCenterlines(pypes.pypeScript):
     def __init__(self):
 
         pypes.pypeScript.__init__(self)
-        
+
         self.Surface = None
         self.Centerlines = None
         self.UseRadiusInformation = 0
@@ -36,7 +36,7 @@ class vmtkDistanceToCenterlines(pypes.pypeScript):
         self.ProjectPointArrays = 0
         self.DistanceToCenterlinesArrayName = 'DistanceToCenterlines'
         self.RadiusArrayName = 'MaximumInscribedSphereRadius'
-        
+
         self.SetScriptName('vmtkdistancetocenterlines')
         self.SetScriptDoc('calculate the minimum euclidian from surface points to a centerline')
         self.SetInputMembers([
@@ -73,8 +73,8 @@ class vmtkDistanceToCenterlines(pypes.pypeScript):
             distanceToCenterlinesFilter.SetProjectPointArrays(self.ProjectPointArrays)
             distanceToCenterlinesFilter.SetDistanceToCenterlinesArrayName(self.DistanceToCenterlinesArrayName)
             distanceToCenterlinesFilter.SetCenterlineRadiusArrayName(self.RadiusArrayName)
-            distanceToCenterlinesFilter.Update()    
-            
+            distanceToCenterlinesFilter.Update()
+
             surface = distanceToCenterlinesFilter.GetOutput()
             centerlineArray = surface.GetPointData().GetArray(self.DistanceToCenterlinesArrayName)
             radiusArray = surface.GetPointData().GetArray(self.RadiusArrayName)
@@ -86,10 +86,10 @@ class vmtkDistanceToCenterlines(pypes.pypeScript):
                     centerlineArray.SetTuple1(i,1.4 * radius)
                 elif centerlineval < 0.9 * radius:
                     centerlineArray.SetTuple1(i,radius)
-                
+
             self.Surface = surface
-            
-        else:    
+
+        else:
             distanceToCenterlinesFilter = vtkvmtk.vtkvmtkPolyDataDistanceToCenterlines()
             distanceToCenterlinesFilter.SetInputData(self.Surface)
             distanceToCenterlinesFilter.SetCenterlines(self.Centerlines)
@@ -100,9 +100,8 @@ class vmtkDistanceToCenterlines(pypes.pypeScript):
             distanceToCenterlinesFilter.SetDistanceToCenterlinesArrayName(self.DistanceToCenterlinesArrayName)
             distanceToCenterlinesFilter.SetCenterlineRadiusArrayName(self.RadiusArrayName)
             distanceToCenterlinesFilter.Update()
-    
-            self.Surface = distanceToCenterlinesFilter.GetOutput()
 
+            self.Surface = distanceToCenterlinesFilter.GetOutput()
 
 
 if __name__=='__main__':

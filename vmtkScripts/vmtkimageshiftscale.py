@@ -9,11 +9,11 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
-## Note: this class was contributed by 
+## Note: this class was contributed by
 ##       Hugo Gratama van Andel
 ##       Academic Medical Centre - University of Amsterdam
 ##       Dept. Biomedical Engineering  & Physics
@@ -40,7 +40,7 @@ class vmtkImageShiftScale(pypes.pypeScript):
         self.MapRanges = 0
         self.InputRange = [0.0,0.0]
         self.OutputRange = [0.0,0.0]
-         
+
         self.ClampOverflowOn = 1
 
         self.SetScriptName('vmtkimageshiftscale')
@@ -115,9 +115,9 @@ class vmtkImageShiftScale(pypes.pypeScript):
             shiftScale2.Update()
             self.Image = shiftScale2.GetOutput()
 
+
 if __name__=='__main__':
 
     main = pypes.pypeMain()
     main.Arguments = sys.argv
     main.Execute()
-

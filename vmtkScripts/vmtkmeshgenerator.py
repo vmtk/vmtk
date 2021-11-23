@@ -225,7 +225,7 @@ class vmtkMeshGenerator(pypes.pypeScript):
             surfaceToMesh2 = vmtkscripts.vmtkSurfaceToMesh()
             surfaceToMesh2.Surface = sizingFunction.GetOutput()
             surfaceToMesh2.Execute()
-            
+
             self.PrintLog("Generating volume mesh")
             tetgen = vmtkscripts.vmtkTetGen()
             tetgen.Mesh = surfaceToMesh2.Mesh
@@ -356,6 +356,7 @@ class vmtkMeshGenerator(pypes.pypeScript):
             self.Mesh = tetrahedralize.GetOutput()
 
         self.RemeshedSurface = remeshedSurface
+
 
 if __name__=='__main__':
 

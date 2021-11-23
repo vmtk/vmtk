@@ -78,6 +78,7 @@ def test_sato_enhancement_with_varied_params(aorta_image, compare_images,
 
     assert compare_images(enhancer.Image, name) == True
 
+
 @pytest.mark.skip(reason='failing on linux for unknown reason')
 @pytest.mark.parametrize("alpha,beta,gamma,c,timestep,epsilon,wstrength,\
                          sensitivity,numiterations,numdiffusioniterations,paramid", [

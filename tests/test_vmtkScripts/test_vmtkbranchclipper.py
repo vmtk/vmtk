@@ -16,8 +16,9 @@
 
 import pytest
 import vmtk.vmtkbranchclipper as branchclipper
-from vtk.numpy_interface import dataset_adapter as dsa 
+from vtk.numpy_interface import dataset_adapter as dsa
 import numpy as np
+
 
 def test_clip_returns_3_groups(aorta_centerline_branches, aorta_surface):
     clipper = branchclipper.vmtkBranchClipper()
@@ -42,7 +43,7 @@ def test_clip_returns_3_groups(aorta_centerline_branches, aorta_surface):
     ([2, 3], '23'),
     ([0, 2, 3], '023')
 ])
-def test_clip_groupids_surface_returns_as_expected(aorta_centerline_branches, aorta_surface, 
+def test_clip_groupids_surface_returns_as_expected(aorta_centerline_branches, aorta_surface,
                                                   groupids, paramid, compare_surfaces):
     name = __name__ + '_test_clip_group_' + paramid + '_surface_returns_as_expected.vtp'
     clipper = branchclipper.vmtkBranchClipper()
@@ -62,7 +63,7 @@ def test_clip_groupids_surface_returns_as_expected(aorta_centerline_branches, ao
     ([2], '2'),
     ([3], '3')
 ])
-def test_clip_groupids_with_insideout_surface_returns_as_expected(aorta_centerline_branches, aorta_surface, 
+def test_clip_groupids_with_insideout_surface_returns_as_expected(aorta_centerline_branches, aorta_surface,
                                                                  groupids, paramid, compare_surfaces):
     name = __name__ + '_test_clip_groupids_' + paramid + '_with_insideout_surface_returns_as_expected.vtp'
     clipper = branchclipper.vmtkBranchClipper()

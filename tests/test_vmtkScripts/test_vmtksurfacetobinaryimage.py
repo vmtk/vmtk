@@ -17,6 +17,7 @@
 import pytest
 import vmtk.vmtksurfacetobinaryimage as surfacetobinaryimage
 
+
 @pytest.mark.parametrize("insidevalue,outsidevalue,paramid", [
     (1, 0 ,'0'),
     (255, 0, '1'),
@@ -31,7 +32,7 @@ def test_set_inside_outside_values(aorta_surface, compare_images,
     surfToImage.InsideValue = insidevalue
     surfToImage.OutsideValue = outsidevalue
     surfToImage.Execute()
-    
+
     assert compare_images(surfToImage.Image, name) == True
 
 
@@ -41,5 +42,5 @@ def test_change_spacing(aorta_surface, compare_images):
     surfToImage.Surface = aorta_surface
     surfToImage.PolyDataToImageDataSpacing = [0.4, 0.4, 0.4]
     surfToImage.Execute()
-    
+
     assert compare_images(surfToImage.Image, name) == True

@@ -9,8 +9,8 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
 ##   Developed with support from the EC FP7/2007-2013: ARCH, Project n. 224390
@@ -33,7 +33,7 @@ class vmtkNetworkEditor(pypes.pypeScript):
     def __init__(self):
 
         pypes.pypeScript.__init__(self)
-        
+
         self.Network = None
         self.RadiusArrayName = 'Radius'
         self.LabelsArrayName = 'Labels'
@@ -166,7 +166,7 @@ class vmtkNetworkEditor(pypes.pypeScript):
         #    if key == 'Shift_L' or key == 'Shift_R':
         #        if self.PickMode == 'network':
         #            self.SetPickMode('image')
-    
+
     def CheckMenu(self):
         self.vmtkRenderer.RemoveKeyBinding('space')
         self.vmtkRenderer.RemoveKeyBinding('c')
@@ -244,7 +244,7 @@ class vmtkNetworkEditor(pypes.pypeScript):
         self.TogglePlaneWidget(self.PlaneWidgetX)
         self.TogglePlaneWidget(self.PlaneWidgetY)
         self.TogglePlaneWidget(self.PlaneWidgetZ)
-        self.InputInfo('Ctrl + left click to add seeds.')	
+        self.InputInfo('Ctrl + left click to add seeds.')
 
     def CancelCallback(self, obj):
         self.InitializeActiveSegment()
@@ -366,7 +366,7 @@ class vmtkNetworkEditor(pypes.pypeScript):
         cell1PointIds = vtk.vtkIdList()
         cell1PointIds.DeepCopy(cell1ToMerge.GetPointIds())
         numberOfCell1Points = cell1PointIds.GetNumberOfIds()
-        reverse = [False,False] 
+        reverse = [False,False]
         if cell0PointIds.GetId(numberOfCell0Points-1) == cell1PointIds.GetId(0):
             reverse = [False,False]
         elif cell0PointIds.GetId(numberOfCell0Points-1) == cell1PointIds.GetId(numberOfCell1Points-1):
@@ -662,7 +662,7 @@ class vmtkNetworkEditor(pypes.pypeScript):
         segment.DeepCopy(activeTubes.Centerline)
 
     def Execute(self):
- 
+
         if not self.Network:
             self.Network = vtk.vtkPolyData()
             networkPoints = vtk.vtkPoints()
@@ -672,14 +672,14 @@ class vmtkNetworkEditor(pypes.pypeScript):
             self.Network.SetPoints(networkPoints)
             self.Network.SetLines(networkLines)
             self.Network.GetPointData().AddArray(radiusArray)
-        
+
         if not self.vmtkRenderer:
             self.vmtkRenderer = vmtkrenderer.vmtkRenderer()
             self.vmtkRenderer.Initialize()
             self.OwnRenderer = 1
 
         self.vmtkRenderer.ExitAfterTextInputMode = False
-        self.vmtkRenderer.RegisterScript(self) 
+        self.vmtkRenderer.RegisterScript(self)
 
         if self.Image and (not self.PlaneWidgetX or not self.PlaneWidgetY or not self.PlaneWidgetZ):
             imageViewer = vmtkimageviewer.vmtkImageViewer()
@@ -701,7 +701,7 @@ class vmtkNetworkEditor(pypes.pypeScript):
             imageFeatures.FeatureImageType = 'vtkgradient'
             imageFeatures.Execute()
             self.FeatureImage = imageFeatures.FeatureImage
- 
+
         self.NetworkRadiusArray = self.Network.GetPointData().GetArray(self.RadiusArrayName)
 
         self.Network.GetPointData().SetActiveScalars(self.RadiusArrayName)
@@ -846,7 +846,7 @@ class vmtkNetworkEditor(pypes.pypeScript):
         labeledMapper.GetLabelTextProperty().BoldOff()
         labeledMapper.GetLabelTextProperty().ItalicOff()
         labeledMapper.GetLabelTextProperty().ShadowOff()
-        
+
         self.LabelsActor = vtk.vtkActor2D()
         self.LabelsActor.SetMapper(labeledMapper)
         self.LabelsActor.VisibilityOff()
@@ -885,10 +885,9 @@ class vmtkNetworkEditor(pypes.pypeScript):
         if self.OwnRenderer:
             self.vmtkRenderer.Deallocate()
 
-      
+
 if __name__=='__main__':
 
     main = pypes.pypeMain()
     main.Arguments = sys.argv
     main.Execute()
-

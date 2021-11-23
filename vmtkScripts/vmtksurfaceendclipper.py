@@ -27,7 +27,6 @@ from vmtk import vmtkrenderer
 from vmtk import pypes
 
 
-
 ## TODO: make SeedSelector a separate pype script to be used in other contexts
 class vmtkSeedSelector(object):
 
@@ -60,6 +59,7 @@ class vmtkSeedSelector(object):
 
     def Execute(self):
         pass
+
 
 class vmtkPickPointSeedSelector(vmtkSeedSelector):
 

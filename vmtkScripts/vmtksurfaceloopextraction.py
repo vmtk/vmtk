@@ -7,11 +7,11 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
-## Note: this class was contributed by 
+## Note: this class was contributed by
 ##       Elena Faggiano (elena.faggiano@gmail.com)
 ##       Politecnico di Milano
 
@@ -22,9 +22,7 @@ from vmtk import vmtkrenderer
 from vmtk import pypes
 
 
-
 class vmtkSurfaceLoopExtraction(pypes.pypeScript):
-
 
     def __init__(self):
 
@@ -78,7 +76,6 @@ class vmtkSurfaceLoopExtraction(pypes.pypeScript):
         self.Loop = polycontour
         self.InputInfo("loop generated. Press q to quit \n")
 
-
     def DeleteContourCallback(self, obj):
         self.ContourWidget.Initialize()
 
@@ -101,7 +98,7 @@ class vmtkSurfaceLoopExtraction(pypes.pypeScript):
             self.vmtkRenderer.Initialize()
             self.OwnRenderer = 1
 
-        self.vmtkRenderer.RegisterScript(self) 
+        self.vmtkRenderer.RegisterScript(self)
 
         triangleFilter = vtk.vtkTriangleFilter()
         triangleFilter.SetInputData(self.Surface)
@@ -138,9 +135,7 @@ class vmtkSurfaceLoopExtraction(pypes.pypeScript):
         self.vmtkRenderer.AddKeyBinding('d','Delete contour',self.DeleteContourCallback)
         self.vmtkRenderer.AddKeyBinding('i','Start/stop contour drawing',self.InteractCallback)
 
-
         self.Display()
-
 
         if self.OwnRenderer:
             self.vmtkRenderer.Deallocate()

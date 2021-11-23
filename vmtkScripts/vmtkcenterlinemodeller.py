@@ -9,8 +9,8 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
@@ -25,12 +25,12 @@ class vmtkCenterlineModeller(pypes.pypeScript):
     def __init__(self):
 
         pypes.pypeScript.__init__(self)
-        
+
         self.Centerlines = None
         self.ReferenceImage = None
         self.RadiusArrayName = None
         self.Image = None
-        self.ModelBounds = None 
+        self.ModelBounds = None
         self.SampleDimensions = [64,64,64]
         self.NegateFunction = 0
 
@@ -69,7 +69,6 @@ class vmtkCenterlineModeller(pypes.pypeScript):
         modeller.Update()
 
         self.Image = modeller.GetOutput()
-        
 
 
 if __name__=='__main__':

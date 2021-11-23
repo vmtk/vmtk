@@ -9,8 +9,8 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
@@ -26,7 +26,7 @@ class vmtkImageReader(pypes.pypeScript):
     def __init__(self):
 
         pypes.pypeScript.__init__(self)
-        
+
         self.Format = ''
         self.GuessFormat = 1
         self.UseITKIO = 1
@@ -206,8 +206,8 @@ class vmtkImageReader(pypes.pypeScript):
             matrix.GetElement(3,0), matrix.GetElement(3,1), matrix.GetElement(3,2), matrix.GetElement(3,3)]
 
         matrix.Invert()
-        origin = [matrix.GetElement(0,3), matrix.GetElement(1,3), matrix.GetElement(2,3)] 
-        translationToOrigin = [-origin[0], -origin[1], -origin[2]] 
+        origin = [matrix.GetElement(0,3), matrix.GetElement(1,3), matrix.GetElement(2,3)]
+        translationToOrigin = [-origin[0], -origin[1], -origin[2]]
 
         for i in range(3):
             direction = [matrix.GetElement(0,i), matrix.GetElement(1,i), matrix.GetElement(2,i)]
@@ -218,7 +218,7 @@ class vmtkImageReader(pypes.pypeScript):
         matrix.SetElement(0,3,0.0)
         matrix.SetElement(1,3,0.0)
         matrix.SetElement(2,3,0.0)
- 
+
         transform = vtk.vtkTransform()
         transform.PostMultiply()
         transform.Translate(translationToOrigin)
@@ -232,11 +232,10 @@ class vmtkImageReader(pypes.pypeScript):
             matrix.GetElement(2,0), matrix.GetElement(2,1), matrix.GetElement(2,2), matrix.GetElement(2,3),
             matrix.GetElement(3,0), matrix.GetElement(3,1), matrix.GetElement(3,2), matrix.GetElement(3,3)]
 
-
     def Execute(self):
 
-        extensionFormats = {'vti':'vtkxml', 
-                            'vtkxml':'vtkxml', 
+        extensionFormats = {'vti':'vtkxml',
+                            'vtkxml':'vtkxml',
                             'vtk':'vtk',
                             'dcm':'dicom',
                             'raw':'raw',
@@ -263,7 +262,7 @@ class vmtkImageReader(pypes.pypeScript):
                     self.Format = extensionFormats[extension]
 
         if self.UseITKIO and self.InputFileName and self.Format not in ['vtkxml','vtk','raw']:
-            self.ReadITKIO()    
+            self.ReadITKIO()
         else:
             if self.Format == 'vtkxml':
                 self.ReadVTKXMLImageFile()
@@ -312,8 +311,8 @@ class vmtkImageReader(pypes.pypeScript):
 
         self.Output = self.Image
 
+
 if __name__=='__main__':
     main = pypes.pypeMain()
     main.Arguments = sys.argv
     main.Execute()
-

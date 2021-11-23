@@ -17,6 +17,7 @@
 import pytest
 import vmtk.vmtksurfaceappend as surfaceappend
 
+
 def test_append_defaults(aorta_surface, aorta_surface2, compare_surfaces):
     name = __name__ + '_test_append_defaults.vtp'
     appender = surfaceappend.vmtkSurfaceAppend()

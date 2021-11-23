@@ -7,17 +7,20 @@ import sys
 import math
 from vmtk import vtkvmtk
 
+
 def ReadPolyData(filename):
    reader = vtk.vtkXMLPolyDataReader()
    reader.SetFileName(filename)
    reader.Update()
    return reader.GetOutput()
 
+
 def WritePolyData(input,filename):
    writer = vtk.vtkXMLPolyDataWriter()
    writer.SetInputData(input)
    writer.SetFileName(filename)
    writer.Write()
+
 
 def MaskVoronoiDiagram(voronoi,centerlines):
    numberOfCenterlinesPatches = centerlines.GetNumberOfCells()
@@ -29,11 +32,12 @@ def MaskVoronoiDiagram(voronoi,centerlines):
    maskArray.FillComponent(0,0)
 
    for i in range(numberOfCenterlinesPatches):
-     tangent,center,centerMISR = ComputePatchEndPointParameters(i,centerlines) 
+     tangent,center,centerMISR = ComputePatchEndPointParameters(i,centerlines)
      MaskWithPatch(i,tangent,center,centerMISR,maskArray,centerlines,voronoi)
      maskedPoints = ComputeNumberOfMaskedPoints(maskArray)
 
    return maskArray
+
 
 def ComputePatchEndPointParameters(id,centerlines):
    point0 = [0.0,0.0,0.0]
@@ -48,7 +52,7 @@ def ComputePatchEndPointParameters(id,centerlines):
      point0 = cell.GetPoints().GetPoint(cell.GetNumberOfPoints()-1)
      point1 = cell.GetPoints().GetPoint(cell.GetNumberOfPoints()-2)
      radius0 = centerlines.GetPointData().GetArray(radiusArrayName).GetTuple1(cell.GetPointId(cell.GetNumberOfPoints()-1))
-   
+
      tan[0] = point1[0]-point0[0]
      tan[1] = point1[1]-point0[1]
      tan[2] = point1[2]-point0[2]
@@ -57,13 +61,14 @@ def ComputePatchEndPointParameters(id,centerlines):
      point0 = cell.GetPoints().GetPoint(0)
      point1 = cell.GetPoints().GetPoint(1)
      radius0 = centerlines.GetPointData().GetArray(radiusArrayName).GetTuple1(cell.GetPointId(0))
-   
+
      tan[0] = point1[0]-point0[0]
      tan[1] = point1[1]-point0[1]
      tan[2] = point1[2]-point0[2]
      vtk.vtkMath.Normalize(tan)
-   return tan, point0, radius0 
-     
+   return tan, point0, radius0
+
+
 def MaskWithPatch(id,t,c,r,maskArray,centerlines,voronoi):
    patch = ExtractPatch(id,centerlines)
 
@@ -83,13 +88,14 @@ def MaskWithPatch(id,t,c,r,maskArray,centerlines,voronoi):
       voronoiVector[0] = point[0]-c[0]
       voronoiVector[1] = point[1]-c[1]
       voronoiVector[2] = point[2]-c[2]
-      voronoiVectorDot = vtk.vtkMath.Dot(voronoiVector,t)   
+      voronoiVectorDot = vtk.vtkMath.Dot(voronoiVector,t)
 
       tubevalue = tubeFunction.EvaluateFunction(point)
       spherevalue = lastSphere.EvaluateFunction(point)
       if (spherevalue<0.0) & (voronoiVectorDot<0.0): continue
       elif (tubevalue<=0.0):
          maskArray.SetTuple1(i,1)
+
 
 def ExtractPatch(id,centerlines):
    cell = vtk.vtkGenericCell()
@@ -109,21 +115,23 @@ def ExtractPatch(id,centerlines):
    radiusArray.FillComponent(0,0.0)
 
    for i in range(numberOfPoints):
-      cellArray.InsertCellPoint(i)   
+      cellArray.InsertCellPoint(i)
       radius = centerlines.GetPointData().GetArray(radiusArrayName).GetTuple1(cell.GetPointId(i))
       radiusArray.SetTuple1(i,radius)
-       
+
    line.SetPoints(linePoints)
-   line.SetLines(cellArray) 
+   line.SetLines(cellArray)
    line.GetPointData().AddArray(radiusArray)
    return line
+
 
 def ComputeNumberOfMaskedPoints(dataArray):
    numberOfPoints = 0
    for i  in range(dataArray.GetNumberOfTuples()):
       value = dataArray.GetTuple1(i)
       if (value ==1): numberOfPoints +=1
-   return numberOfPoints   
+   return numberOfPoints
+
 
 def ExtractMaskedVoronoiPoints(voronoi,maskArray):
    numberOfPoints = ComputeNumberOfMaskedPoints(maskArray)
@@ -142,7 +150,7 @@ def ExtractMaskedVoronoiPoints(voronoi,maskArray):
    for i in range(voronoi.GetNumberOfPoints()):
       point = [0.0,0.0,0.0]
       voronoi.GetPoint(i,point)
-      pointRadius = voronoi.GetPointData().GetArray(radiusArrayName).GetTuple1(i) 
+      pointRadius = voronoi.GetPointData().GetArray(radiusArrayName).GetTuple1(i)
       value = maskArray.GetTuple1(i)
       if (value ==1):
         maskedPoints.InsertNextPoint(point)
@@ -156,6 +164,7 @@ def ExtractMaskedVoronoiPoints(voronoi,maskArray):
    maskedVoronoi.GetPointData().AddArray(radiusArray)
    return maskedVoronoi
 
+
 def SmoothClippedVoronoiDiagram(voronoi,centerlines):
    numberOfPoints = voronoi.GetNumberOfPoints()
    numberOfCenterlinesPoints = centerlines.GetNumberOfPoints()
@@ -168,7 +177,7 @@ def SmoothClippedVoronoiDiagram(voronoi,centerlines):
    for i in range(numberOfCenterlinesPoints):
      localRadius = centerlines.GetPointData().GetArray(radiusArrayName).GetTuple1(i)
 
-     threshold = localRadius*(1.0 - smoothingFactor) 
+     threshold = localRadius*(1.0 - smoothingFactor)
 
      sphere = vtk.vtkSphere()
      sphere.SetRadius(localRadius)
@@ -180,14 +189,14 @@ def SmoothClippedVoronoiDiagram(voronoi,centerlines):
      localMaskArray.FillComponent(0,0)
 
      for j in range(numberOfPoints):
-        value = sphere.EvaluateFunction(voronoi.GetPoint(j))    
+        value = sphere.EvaluateFunction(voronoi.GetPoint(j))
         if (value <= 0.0):
-           localMaskArray.SetTuple1(j,1) 
+           localMaskArray.SetTuple1(j,1)
 
      for j in range(numberOfPoints):
        value = localMaskArray.GetTuple1(j)
        if (value==1):
-          r = voronoi.GetPointData().GetArray(radiusArrayName).GetTuple1(j) 
+          r = voronoi.GetPointData().GetArray(radiusArrayName).GetTuple1(j)
           if (r>threshold):
              maskArray.SetTuple1(j,1)
 
@@ -209,10 +218,10 @@ def SmoothClippedVoronoiDiagram(voronoi,centerlines):
       value = maskArray.GetTuple1(i)
       if (value==1):
          radius = voronoi.GetPointData().GetArray(radiusArrayName).GetTuple1(i)
-      
+
          points.InsertNextPoint(voronoi.GetPoint(i))
          cellArray.InsertNextCell(1)
-         cellArray.InsertCellPoint(count) 
+         cellArray.InsertCellPoint(count)
          radiusArray.SetTuple1(count,radius)
          count +=1
 
@@ -225,17 +234,17 @@ def SmoothClippedVoronoiDiagram(voronoi,centerlines):
 # -----------------------------------------------------------------------------------------
 
 
-## Program:	clipvoronoidiagram.py	
+## Program:	clipvoronoidiagram.py
 ## Language:	Python
 ## Date:	2012/02/27
 ## Version:	1.0
-## Application: Cerebral Aneurysms - Parent Vessel Reconstruction 
+## Application: Cerebral Aneurysms - Parent Vessel Reconstruction
 ## Author:	Marina Piccinelli
 
-## Description:	Keeps the Voronoi Diagram points around to the "patched" centerlines and 
+## Description:	Keeps the Voronoi Diagram points around to the "patched" centerlines and
 ##		removes all the rest. If smoothing option is selected (default and
-##		recommended) provides a smoothed version of Voronoi Diagram; points from  
-##		the Voronoi Diagram are removed depending on the value of the maximum 
+##		recommended) provides a smoothed version of Voronoi Diagram; points from
+##		the Voronoi Diagram are removed depending on the value of the maximum
 ##		inscribed sphere radius.
 
 # -----------------------------------------------------------------------------------------
@@ -245,7 +254,7 @@ def SmoothClippedVoronoiDiagram(voronoi,centerlines):
 radiusArrayName = 'MaximumInscribedSphereRadius'
 
 #OPTIONS TO SET
-smoothVoronoiDiagram = 1	# recommended; perform smoothing of the Voronoi Diagram to 
+smoothVoronoiDiagram = 1	# recommended; perform smoothing of the Voronoi Diagram to
 ##				remove smaller maximal spheres
 smoothingFactor = 0.25 		# usually set to  0.25; the bigger the smoothing factor the
 ##				smaller the number of removed spheres.
@@ -281,4 +290,3 @@ if (smoothVoronoiDiagram==1):
    print('Smoothing Voronoi Diagram')
    smoothVoronoiDiagram = SmoothClippedVoronoiDiagram(clippedVoronoiDiagram,patchCenterlines)
    WritePolyData(smoothVoronoiDiagram,smoothVoronoiDiagramFilename)
-

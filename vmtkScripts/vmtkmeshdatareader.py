@@ -9,8 +9,8 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
@@ -35,9 +35,9 @@ class vmtkMeshDataReader(pypes.pypeScript):
         self.DataFileDirectory = '.'
         self.DataFilePrefix = ''
         self.DataFileType = 'tetr.vel'
-        
+
         self.DataFileName = ''
-        
+
         self.ArrayNamePrefix = ''
 
         self.Compressed = 1
@@ -72,7 +72,7 @@ class vmtkMeshDataReader(pypes.pypeScript):
             ])
 
     def ReadTetrInDimensionalParameters(self):
-        
+
         tetrinf=open(self.TetrInFileName, 'r')
         tetrinline = ''
         while tetrinline.strip() != '$radius':
@@ -151,7 +151,7 @@ class vmtkMeshDataReader(pypes.pypeScript):
         outputArray.SetName(arrayname)
         outputArray.SetNumberOfComponents(3)
         outputArray.SetNumberOfTuples(numberOfTuples)
-        velocityUnNormalizationFactor = self.ReD / (2.0 * self.Radius) * self.Viscosity / self.Density 
+        velocityUnNormalizationFactor = self.ReD / (2.0 * self.Radius) * self.Viscosity / self.Density
         for i in range(numberOfTuples):
             line = f.readline()
             splitline = line.split(' ')
@@ -185,7 +185,7 @@ class vmtkMeshDataReader(pypes.pypeScript):
         outputArray.SetName(arrayname)
         outputArray.SetNumberOfComponents(3)
         outputArray.SetNumberOfTuples(numberOfTuples)
-        velocityUnNormalizationFactor = self.ReD / (2.0 * self.Radius) * self.Viscosity / self.Density 
+        velocityUnNormalizationFactor = self.ReD / (2.0 * self.Radius) * self.Viscosity / self.Density
         for i in range(numberOfTuples):
             line = lines[i+lineoffset]
             splitline = line.split(' ')
@@ -343,7 +343,6 @@ class vmtkMeshDataReader(pypes.pypeScript):
                 self.ReadPointDataFile(filename)
             else:
                 self.PrintError('Unsupported DataFileType.')
-
 
 
 if __name__=='__main__':

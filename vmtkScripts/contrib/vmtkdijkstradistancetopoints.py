@@ -9,11 +9,11 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
-## Note: this class was contributed by 
+## Note: this class was contributed by
 ##       Tangui Morvan
 ##       Kalkulo AS
 ##       Simula Research Laboratory
@@ -30,13 +30,12 @@ from vmtk import vmtkrenderer
 from vmtk import pypes
 
 
-
 class vmtkDijkstraDistanceToPoints(pypes.pypeScript):
 
     def __init__(self):
 
         pypes.pypeScript.__init__(self)
-        
+
         self.Surface = None
         self.DijkstraDistanceToPointsArrayName = 'DijkstraDistanceToPoints'
         self.DistanceOffset = 0.
@@ -74,7 +73,7 @@ class vmtkDijkstraDistanceToPoints(pypes.pypeScript):
         self.SetOutputMembers([
             ['Surface','o','vtkPolyData',1,'','','vmtksurfacewriter']
             ])
-    
+
     def DistanceParametersValidator(self,text):
         if not text:
             return 1
@@ -87,8 +86,7 @@ class vmtkDijkstraDistanceToPoints(pypes.pypeScript):
         except ValueError:
             return 0
         return 1
-        
-        
+
     def ComputeDistances(self):
         dijkstraFilter = vtkvmtk.vtkvmtkPolyDataDijkstraDistanceToPoints()
         dijkstraFilter.SetInputData(self.Surface)
@@ -100,7 +98,7 @@ class vmtkDijkstraDistanceToPoints(pypes.pypeScript):
         dijkstraFilter.SetDijkstraDistanceToPointsArrayName(self.DijkstraDistanceToPointsArrayName)
         dijkstraFilter.Update()
         return dijkstraFilter.GetOutput()
-    
+
     def InitializeSeeds(self):
         if (self.InteractionMode==0):
             self.SeedIds.Initialize()
@@ -114,7 +112,7 @@ class vmtkDijkstraDistanceToPoints(pypes.pypeScript):
             self.ExamineSpheres.GetPointData().Initialize()
             sphereRadii = vtk.vtkDoubleArray()
             self.ExamineSpheres.GetPointData().SetScalars(sphereRadii)
-        
+
     def UndoCallback(self, obj):
         self.InitializeSeeds()
         self.SeedPoints.Modified()
@@ -210,9 +208,8 @@ class vmtkDijkstraDistanceToPoints(pypes.pypeScript):
             self.vmtkRenderer = vmtkrenderer.vmtkRenderer()
             self.vmtkRenderer.Initialize()
             self.OwnRenderer = 1
-          
 
-        self.vmtkRenderer.RegisterScript(self) 
+        self.vmtkRenderer.RegisterScript(self)
 
         glyphs = vtk.vtkGlyph3D()
         glyphSource = vtk.vtkSphereSource()
@@ -230,7 +227,7 @@ class vmtkDijkstraDistanceToPoints(pypes.pypeScript):
         self.PointActor.GetProperty().SetOpacity(self.Opacity)
         self.PointActor.PickableOff()
         self.vmtkRenderer.Renderer.AddActor(self.PointActor)
-        
+
         examineGlyphs = vtk.vtkGlyph3D()
         examineGlyphSource = vtk.vtkSphereSource()
         examineGlyphSource.SetRadius(1)
@@ -255,7 +252,7 @@ class vmtkDijkstraDistanceToPoints(pypes.pypeScript):
         self.vmtkRenderer.AddKeyBinding('w','Examine mode.',self.ExamineCallback)
         self.vmtkRenderer.AddKeyBinding('d','Display Distance.',self.DisplayDistanceCallback)
         self.vmtkRenderer.AddKeyBinding('a','Add.',self.AddCallback)
-        
+
         self.SurfaceMapper = vtk.vtkPolyDataMapper()
         self.SurfaceMapper.SetInputData(self.Surface)
         self.SurfaceMapper.SetScalarVisibility(self.DisplayArray)
@@ -263,7 +260,7 @@ class vmtkDijkstraDistanceToPoints(pypes.pypeScript):
         surfaceActor.SetMapper(self.SurfaceMapper)
         surfaceActor.GetProperty().SetOpacity(self.Opacity)
         self.vmtkRenderer.Renderer.AddActor(surfaceActor)
-        
+
         self.ScalarBarActor = vtk.vtkScalarBarActor()
         self.ScalarBarActor.SetLookupTable(self.SurfaceMapper.GetLookupTable())
         self.ScalarBarActor.GetLabelTextProperty().ItalicOff()
@@ -273,14 +270,14 @@ class vmtkDijkstraDistanceToPoints(pypes.pypeScript):
         self.ScalarBarActor.SetTitle('distances')
         self.ScalarBarActor.VisibilityOff()
         self.vmtkRenderer.Renderer.AddActor(self.ScalarBarActor)
-        
+
         self.ExamineText = vtk.vtkTextActor()
         self.ExamineText.SetInput("Examine Mode")
         self.ExamineText.GetPositionCoordinate().SetCoordinateSystemToNormalizedViewport()
         self.ExamineText.SetPosition(0.05,0.95)
         self.ExamineText.VisibilityOff()
         self.vmtkRenderer.Renderer.AddActor2D(self.ExamineText)
-        
+
         self.InputInfo('Please position the mouse and press space to add points, \'u\' to undo\n')
 
         any = 0
@@ -288,11 +285,12 @@ class vmtkDijkstraDistanceToPoints(pypes.pypeScript):
             self.InitializeSeeds()
             self.vmtkRenderer.Render()
             any = self.SeedIds.GetNumberOfIds()
- 
+
         self.Surface = self.ComputeDistances()
 
         if self.OwnRenderer:
             self.vmtkRenderer.Deallocate()
+
 
 if __name__=='__main__':
 
