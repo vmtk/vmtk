@@ -9,11 +9,11 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
-## Note: this class was contributed by 
+## Note: this class was contributed by
 ##       Tangui Morvan
 ##       Kalkulo AS
 ##       Simula Research Laboratory
@@ -36,16 +36,16 @@ class vmtkMeshAddExternalLayer(pypes.pypeScript):
         pypes.pypeScript.__init__(self)
 
         self.Mesh = None
-        
+
         self.CellEntityIdsArrayName = 'CellEntityIds'
-        
+
         #Id of the first wall (mesh surface)
         self.SurfaceCellEntityId = 1
-        #Id of the first openprofile in the walls 
+        #Id of the first openprofile in the walls
         self.InletOutletCellEntityId = 2
         #Id of the surface cells to extrude
         self.ExtrudeCellEntityId = 1
-        
+
         self.ThicknessArrayName = ''
 
         self.Thickness = 1.0
@@ -104,11 +104,11 @@ class vmtkMeshAddExternalLayer(pypes.pypeScript):
         wallThreshold.ThresholdByUpper(self.SurfaceCellEntityId-0.5)
         wallThreshold.SetInputArrayToProcess(0,0,0,1,self.CellEntityIdsArrayName)
         wallThreshold.Update()
-                                
+
         meshToSurface = vmtkscripts.vmtkMeshToSurface()
         meshToSurface.Mesh = wallThreshold.GetOutput()
         meshToSurface.Execute()
-                
+
         #Compute the normals for this surface, orientation should be right because the surface is closed
         #TODO: Add option for cell normals in vmtksurfacenormals
         normalsFilter = vtk.vtkPolyDataNormals()
@@ -120,37 +120,35 @@ class vmtkMeshAddExternalLayer(pypes.pypeScript):
         normalsFilter.ComputePointNormalsOff()
         normalsFilter.ComputeCellNormalsOn()
         normalsFilter.Update()
-        
+
         surfaceToMesh = vmtkscripts.vmtkSurfaceToMesh()
         surfaceToMesh.Surface = normalsFilter.GetOutput()
         surfaceToMesh.Execute()
-        
+
         #Save the current normals
         wallWithBoundariesMesh = surfaceToMesh.Mesh
         savedNormals = vtk.vtkDoubleArray()
         savedNormals.DeepCopy(wallWithBoundariesMesh.GetCellData().GetNormals())
         savedNormals.SetName('SavedNormals')
         wallWithBoundariesMesh.GetCellData().AddArray(savedNormals)
-        
+
         #cut off the boundaries and other surfaces
         extrudeThresholdLower = vtk.vtkThreshold()
         extrudeThresholdLower.SetInputData(wallWithBoundariesMesh)
         extrudeThresholdLower.ThresholdByLower(self.ExtrudeCellEntityId+0.5)
         extrudeThresholdLower.SetInputArrayToProcess(0,0,0,1,self.CellEntityIdsArrayName)
         extrudeThresholdLower.Update()
-        
+
         extrudeThresholdUpper = vtk.vtkThreshold()
         extrudeThresholdUpper.SetInputConnection(extrudeThresholdLower.GetOutputPort())
         extrudeThresholdUpper.ThresholdByUpper(self.ExtrudeCellEntityId-0.5)
         extrudeThresholdUpper.SetInputArrayToProcess(0,0,0,1,self.CellEntityIdsArrayName)
         extrudeThresholdUpper.Update()
-        
-                
+
         meshToSurface = vmtkscripts.vmtkMeshToSurface()
         meshToSurface.Mesh = extrudeThresholdUpper.GetOutput()
         meshToSurface.Execute()
-        
-                
+
         #Compute cell normals without boundaries
         normalsFilter = vtk.vtkPolyDataNormals()
         normalsFilter.SetInputData(meshToSurface.Surface)
@@ -161,14 +159,14 @@ class vmtkMeshAddExternalLayer(pypes.pypeScript):
         normalsFilter.ComputePointNormalsOn()
         normalsFilter.ComputeCellNormalsOn()
         normalsFilter.Update()
-        
+
         wallWithoutBoundariesSurface = normalsFilter.GetOutput()
-        
+
         normals = wallWithoutBoundariesSurface.GetCellData().GetNormals()
         savedNormals = wallWithoutBoundariesSurface.GetCellData().GetArray('SavedNormals')
-                
+
         math = vtk.vtkMath()
-        
+
         #If the normal are inverted, recompute the normals with flipping on
         if normals.GetNumberOfTuples() > 0 and math.Dot(normals.GetTuple3(0),savedNormals.GetTuple3(0)) < 0:
             normalsFilter = vtk.vtkPolyDataNormals()
@@ -181,15 +179,14 @@ class vmtkMeshAddExternalLayer(pypes.pypeScript):
             normalsFilter.ComputeCellNormalsOn()
             normalsFilter.Update()
             wallWithoutBoundariesSurface = normalsFilter.GetOutput()
-        
+
         wallWithoutBoundariesSurface.GetPointData().GetNormals().SetName('Normals')
-        
+
         wallWithoutBoundariesSurface.GetCellData().RemoveArray('SavedNormals')
-        
+
         surfaceToMesh = vmtkscripts.vmtkSurfaceToMesh()
         surfaceToMesh.Surface = wallWithoutBoundariesSurface
         surfaceToMesh.Execute()
-
 
         #Offset to apply to the array
         wallOffset = 0
@@ -197,7 +194,7 @@ class vmtkMeshAddExternalLayer(pypes.pypeScript):
             wallOffset += 1
         if self.IncludeSurfaceCells or self.IncludeExtrudedSurfaceCells:
             wallOffset+=1
-        
+
         boundaryLayer = vmtkscripts.vmtkBoundaryLayer2()
         boundaryLayer.Mesh = surfaceToMesh.Mesh
         boundaryLayer.WarpVectorsArrayName = 'Normals'
@@ -219,10 +216,9 @@ class vmtkMeshAddExternalLayer(pypes.pypeScript):
         if cellEntityIdsArray != None:
             #Append the new surface ids
             idRange = cellEntityIdsArray.GetRange()
-            boundaryLayer.OpenProfilesEntityId = idRange[1] + wallOffset + 2 
+            boundaryLayer.OpenProfilesEntityId = idRange[1] + wallOffset + 2
         boundaryLayer.Execute()
-        
-        
+
         if cellEntityIdsArray != None:
             #offset the previous cellentityids to make room for the new ones
             arrayCalculator = vtk.vtkArrayCalculator()
@@ -235,17 +231,16 @@ class vmtkMeshAddExternalLayer(pypes.pypeScript):
             arrayCalculator.SetFunction("if( entityid > " + str(self.InletOutletCellEntityId-1) +", entityid + " + str(wallOffset) + ", entityid)")
             arrayCalculator.SetResultArrayName('CalculatorResult')
             arrayCalculator.Update()
-            
+
             #This need to be copied in order to be of the right type (int)
             cellEntityIdsArray.DeepCopy(arrayCalculator.GetOutput().GetCellData().GetArray('CalculatorResult'))
-            
+
             arrayCalculator.SetFunction("if( entityid > " + str(self.SurfaceCellEntityId-1) +", entityid + 1, entityid)")
             arrayCalculator.Update()
-            
+
             ##This need to be copied in order to be of the right type (int)
             cellEntityIdsArray.DeepCopy(arrayCalculator.GetOutput().GetCellData().GetArray('CalculatorResult'))
-                
-        
+
         appendFilter = vtkvmtk.vtkvmtkAppendFilter()
         appendFilter.AddInput(self.Mesh)
         appendFilter.AddInput(boundaryLayer.Mesh)

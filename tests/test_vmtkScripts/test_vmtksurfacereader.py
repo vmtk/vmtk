@@ -32,6 +32,7 @@ def test_read_vtp_surface(input_datadir):
 
     assert sha1(conv.ArrayDict['Points']).hexdigest() == '2d589cf877f713cf805d7be952fa5bdb2f2ef0ee'
 
+
 def test_read_stl_surface(input_datadir):
     reader = r.vmtkSurfaceReader()
     reader.InputFileName = os.path.join(input_datadir, 'fixture.stl')
@@ -42,4 +43,3 @@ def test_read_stl_surface(input_datadir):
     conv.Execute()
 
     assert sha1(conv.ArrayDict['Points']).hexdigest() == 'a3b3c7608de5a7a9fecf9f7280f9fc65565e7ded'
-

@@ -10,4 +10,3 @@ if os.name == 'posix':
     from .libvtkvmtkContribPython import *
 else:
     from .vtkvmtkContribPython import *
-    

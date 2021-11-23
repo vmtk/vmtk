@@ -128,6 +128,7 @@ class VmtkSurfaceExtractAnnularWalls(pypes.pypeScript):
         self.InnerSurface = subsurfaces[self.InnerRegionId]
         self.OuterSurface = subsurfaces[self.OuterRegionId]
 
+
 if __name__ == '__main__':
     main = pypes.pypeMain()
     main.Arguments = sys.argv

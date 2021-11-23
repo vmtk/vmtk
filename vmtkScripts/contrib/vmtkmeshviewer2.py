@@ -9,17 +9,17 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
-## Note: this class was contributed by 
+## Note: this class was contributed by
 ##       Tangui Morvan
 ##       Kalkulo AS
 ##       Simula Research Laboratory
 
 ## This class is a slightly modified version of vmtkmeshviewer
-## which allows for per-cell array visualization, mesh clipping 
+## which allows for per-cell array visualization, mesh clipping
 ## and thresholding based on array values.
 
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
@@ -53,8 +53,7 @@ class vmtkMeshViewer2(pypes.pypeScript):
         self.DoThreshold = False
         self.ThresholdedMesh = None
         self.InitialMesh = None
-        
-        
+
         self.PlaneWidget = None
         self.InteractiveClip = False
         self.ClipExtract = False
@@ -93,7 +92,7 @@ class vmtkMeshViewer2(pypes.pypeScript):
         meshClipFilter.SetClipFunction(clipPlane)
         meshClipFilter.Update()
         return meshClipFilter.GetOutput()
-        
+
     def ExtractMesh(self):
         meshExtractFilter = vtk.vtkExtractGeometry()
         meshExtractFilter.SetInputData(self.Mesh)
@@ -103,7 +102,7 @@ class vmtkMeshViewer2(pypes.pypeScript):
         meshExtractFilter.SetImplicitFunction(clipPlane)
         meshExtractFilter.Update()
         return meshExtractFilter.GetOutput()
-        
+
     def ThresholdMesh(self):
         thresholder = vtk.vtkThreshold()
         thresholder.SetInputData(self.InitialMesh)
@@ -114,14 +113,13 @@ class vmtkMeshViewer2(pypes.pypeScript):
         thresholder.SetInputArrayToProcess(0,0,0,1,self.ArrayName)
         thresholder.Update()
         self.Mesh = thresholder.GetOutput()
-          
 
     def PlaneCallback(self,widget,event_string):
         if self.ClipExtract:
             self.Actor.GetMapper().SetInputData(self.ExtractMesh())
         else:
             self.Actor.GetMapper().SetInputData(self.ClipMesh())
-    
+
     def InteractCallback(self,obj):
         if self.BoxWidget.GetEnabled() == 1:
             self.BoxWidget.SetEnabled(0)
@@ -198,7 +196,6 @@ class vmtkMeshViewer2(pypes.pypeScript):
             else:
                 self.Actor.GetMapper().SetInputData(self.Mesh)
             self.vmtkRenderer.RenderWindow.Render()
-          
 
     def BuildView(self):
 
@@ -237,8 +234,7 @@ class vmtkMeshViewer2(pypes.pypeScript):
                     lut.SetValueRange(0.0,1.0)
                     lut.SetSaturationRange(0.0,0.0)
                     mapper.SetLookupTable(lut)
-                
-            
+
             self.Actor = vtk.vtkActor()
             self.Actor.SetMapper(mapper)
             if (self.Color[0] >= 0.0):
@@ -274,13 +270,12 @@ class vmtkMeshViewer2(pypes.pypeScript):
         self.PlaneWidget.PlaceWidget()
         #Work around bug/strange behaviour in vtk
         self.PlaneWidget.SetOrigin(self.Actor.GetCenter())
-          
-        
+
         if (self.Display == 1):
             self.vmtkRenderer.Render()
 
         self.Mesh = self.InitialMesh
-        
+
         if self.OwnRenderer:
             self.vmtkRenderer.Deallocate()
 
@@ -290,7 +285,8 @@ class vmtkMeshViewer2(pypes.pypeScript):
             self.PrintError('Error: no Mesh.')
 
         self.BuildView()
-        
+
+
 if __name__=='__main__':
     main = pypes.pypeMain()
     main.Arguments = sys.argv

@@ -9,8 +9,8 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
@@ -26,7 +26,7 @@ class vmtkMeshPolyBallEvaluation(pypes.pypeScript):
     def __init__(self):
 
         pypes.pypeScript.__init__(self)
-        
+
         self.Mesh = None
         self.PolyBall = None
         self.RadiusArrayName = None
@@ -66,7 +66,7 @@ class vmtkMeshPolyBallEvaluation(pypes.pypeScript):
             polyball = vtkvmtk.vtkvmtkPolyBallLine()
         polyball.SetInputData(self.PolyBall)
         polyball.SetPolyBallRadiusArrayName(self.RadiusArrayName)
- 
+
         for i in range(self.Mesh.GetNumberOfPoints()):
             point = self.Mesh.GetPoint(i)
             value = polyball.EvaluateFunction(point)
@@ -80,4 +80,3 @@ if __name__=='__main__':
     main = pypes.pypeMain()
     main.Arguments = sys.argv
     main.Execute()
-

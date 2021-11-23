@@ -9,8 +9,8 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
@@ -27,7 +27,7 @@ class vmtkNonManifoldSurfaceChecker(object):
     def __init__(self):
 
         self.Surface = 0
-        
+
         self.NumberOfNonManifoldEdges = 0
         self.Report = 0
         self.NonManifoldEdgePointIds = vtk.vtkIdList()
@@ -43,7 +43,7 @@ class vmtkNonManifoldSurfaceChecker(object):
         self.NonManifoldEdgesFound = 0
         self.Report = ''
         self.NonManifoldEdgePointIds.Initialize()
-        
+
         neighborhoods = vtkvmtk.vtkvmtkNeighborhoods()
         neighborhoods.SetNeighborhoodTypeToPolyDataManifoldNeighborhood()
         neighborhoods.SetDataSet(self.Surface)
@@ -60,20 +60,20 @@ class vmtkNonManifoldSurfaceChecker(object):
         for i in range(neighborhoods.GetNumberOfNeighborhoods()):
 
             neighborhood = neighborhoods.GetNeighborhood(i)
-            
+
             for j in range(neighborhood.GetNumberOfPoints()):
-                
+
                 neighborId = neighborhood.GetPointId(j)
-                
+
                 if (i<neighborId):
-                    
+
                     neighborCellIds.Initialize()
                     self.Surface.GetCellEdgeNeighbors(-1,i,neighborId,neighborCellIds)
-                    
+
                     if (neighborCellIds.GetNumberOfIds()>2):
 
                         numberOfNonManifoldEdges = numberOfNonManifoldEdges + 1
-                        
+
                         self.Report = self.Report +  "Non-manifold edge found" + str(i) + ' ' + str(neighborId) + '.\n'
 
                         self.NonManifoldEdgePointIds.InsertNextId(i)
@@ -85,13 +85,13 @@ class vmtkDelaunayVoronoi(pypes.pypeScript):
     def __init__(self):
 
         pypes.pypeScript.__init__(self)
-        
+
         self.Surface = None
         self.FlipNormals = 0
         self.CapDisplacement = 0.0
         self.RadiusArrayName = 'MaximumInscribedSphereRadius'
         self.CheckNonManifold = 0
-        
+
         self.RemoveSubresolutionTetrahedra = 0
         self.SubresolutionFactor = 1.0
 
@@ -135,7 +135,7 @@ class vmtkDelaunayVoronoi(pypes.pypeScript):
 
         if self.Surface == None:
             self.PrintError('Error: No input surface.')
-        
+
         if self.CheckNonManifold:
             self.PrintLog('NonManifold check.')
             nonManifoldChecker = vmtkNonManifoldSurfaceChecker()
@@ -175,7 +175,7 @@ class vmtkDelaunayVoronoi(pypes.pypeScript):
         surfaceNormals.ComputePointNormalsOn()
         surfaceNormals.ConsistencyOn()
         surfaceNormals.Update()
-        
+
         inputSurface = surfaceNormals.GetOutput()
 
         if self.UseTetGen:
@@ -245,4 +245,3 @@ if __name__=='__main__':
     main = pypes.pypeMain()
     main.Arguments = sys.argv
     main.Execute()
-

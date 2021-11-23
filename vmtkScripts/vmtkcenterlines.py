@@ -9,8 +9,8 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
@@ -20,7 +20,6 @@ import sys
 from vmtk import vtkvmtk
 from vmtk import vmtkrenderer
 from vmtk import pypes
-
 
 
 ## TODO: make SeedSelector a separate pype script to be used in other contexts
@@ -39,6 +38,7 @@ class vmtkSeedSelector(object):
 
     def SetSurface(self,surface):
         self._Surface = surface
+
     def GetSurface(self):
         return self._Surface
 
@@ -60,7 +60,7 @@ class vmtkIdListSeedSelector(vmtkSeedSelector):
         self.TargetIds = None
 
     def Execute(self):
-    
+
         if not self._Surface:
             self.PrintError('vmtkIdListSeedSelector Error: Surface not set.')
             return
@@ -97,7 +97,7 @@ class vmtkPointListSeedSelector(vmtkSeedSelector):
         self.TargetPoints = None
 
     def Execute(self):
-    
+
         if not self._Surface:
             self.PrintError('vmtkPointListSeedSelector Error: Surface not set.')
             return
@@ -195,7 +195,7 @@ class vmtkPickPointSeedSelector(vmtkSeedSelector):
             self.vmtkRenderer.Initialize()
             self.OwnRenderer = 1
 
-        self.vmtkRenderer.RegisterScript(self.Script) 
+        self.vmtkRenderer.RegisterScript(self.Script)
 
         glyphs = vtk.vtkGlyph3D()
         glyphSource = vtk.vtkSphereSource()
@@ -252,9 +252,10 @@ class vmtkOpenProfilesSeedSelector(vmtkSeedSelector):
         self.vmtkRenderer = None
         self.OwnRenderer = 0
         self.Script = None
-        
+
     def SetSeedIds(self,seedIds):
         self._SeedIds = seedIds
+
     def GetSeedIds(self):
         return self._SeedIds
 
@@ -263,7 +264,7 @@ class vmtkOpenProfilesSeedSelector(vmtkSeedSelector):
         if (self._Surface == None):
             self.PrintError('vmtkOpenProfilesSeedSelector Error: Surface not set.')
             return
-        
+
         if (self._SeedIds == None):
             self.PrintError('vmtkOpenProfilesSeedSelector Error: SeedIds not set.')
             return
@@ -276,7 +277,7 @@ class vmtkOpenProfilesSeedSelector(vmtkSeedSelector):
             self.vmtkRenderer.Initialize()
             self.OwnRenderer = 1
 
-        self.vmtkRenderer.RegisterScript(self.Script) 
+        self.vmtkRenderer.RegisterScript(self.Script)
 
         seedPoints = vtk.vtkPoints()
         for i in range(self._SeedIds.GetNumberOfIds()):
@@ -301,7 +302,7 @@ class vmtkOpenProfilesSeedSelector(vmtkSeedSelector):
         self.vmtkRenderer.Renderer.AddActor(surfaceActor)
 
         self.vmtkRenderer.Render()
-        
+
         seedIdString = self.InputText("Please input list of inlet profile ids: ")
         separator = ' '
         if seedIdString.find(',') != -1:
@@ -322,7 +323,7 @@ class vmtkOpenProfilesSeedSelector(vmtkSeedSelector):
             seedIdList = seedIdString.split(separator)
             for seedIdString in seedIdList:
                 self._TargetSeedIds.InsertNextId(int(seedIdString.strip()))
-        
+
         if self.OwnRenderer:
             self.vmtkRenderer.Deallocate()
 
@@ -331,6 +332,7 @@ class vmtkCarotidProfilesSeedSelector(vmtkSeedSelector):
 
     def SetSeedIds(self,seedIds):
         self._SeedIds = seedIds
+
     def GetSeedIds(self):
         return self._SeedIds
 
@@ -339,7 +341,7 @@ class vmtkCarotidProfilesSeedSelector(vmtkSeedSelector):
         if (self._Surface == None):
             self.PrintError('vmtkCarotidProfilesSeedSelector Error: Surface not set.')
             return
-        
+
         if (self._SeedIds == None):
             self.PrintError('vmtkCarotidProfilesSeedSelector Error: SeedIds not set.')
             return
@@ -374,7 +376,7 @@ class vmtkNonManifoldSurfaceChecker(object):
     def __init__(self):
 
         self.Surface = 0
-        
+
         self.NumberOfNonManifoldEdges = 0
         self.Report = 0
         self.NonManifoldEdgePointIds = vtk.vtkIdList()
@@ -390,7 +392,7 @@ class vmtkNonManifoldSurfaceChecker(object):
         self.NonManifoldEdgesFound = 0
         self.Report = ''
         self.NonManifoldEdgePointIds.Initialize()
-        
+
         neighborhoods = vtkvmtk.vtkvmtkNeighborhoods()
         neighborhoods.SetNeighborhoodTypeToPolyDataManifoldNeighborhood()
         neighborhoods.SetDataSet(self.Surface)
@@ -407,20 +409,20 @@ class vmtkNonManifoldSurfaceChecker(object):
         for i in range(neighborhoods.GetNumberOfNeighborhoods()):
 
             neighborhood = neighborhoods.GetNeighborhood(i)
-            
+
             for j in range(neighborhood.GetNumberOfPoints()):
-                
+
                 neighborId = neighborhood.GetPointId(j)
-                
+
                 if (i<neighborId):
-                    
+
                     neighborCellIds.Initialize()
                     self.Surface.GetCellEdgeNeighbors(-1,i,neighborId,neighborCellIds)
-                    
+
                     if (neighborCellIds.GetNumberOfIds()>2):
 
                         numberOfNonManifoldEdges = numberOfNonManifoldEdges + 1
-                        
+
                         self.Report = self.Report +  "Non-manifold edge found" + str(i) + ' ' + str(neighborId) + '.\n'
 
                         self.NonManifoldEdgePointIds.InsertNextId(i)
@@ -432,7 +434,7 @@ class vmtkCenterlines(pypes.pypeScript):
     def __init__(self):
 
         pypes.pypeScript.__init__(self)
-        
+
         self.Surface = None
         self.Centerlines = None
         self.SeedSelector = None
@@ -443,7 +445,7 @@ class vmtkCenterlines(pypes.pypeScript):
         self.CostFunction = '1/R'
         self.AppendEndPoints = 0
         self.CheckNonManifold = 0
-        
+
         self.Resampling = 0
         self.ResamplingStepLength = 1.0
         self.SimplifyVoronoi = 0
@@ -508,7 +510,7 @@ class vmtkCenterlines(pypes.pypeScript):
             ['DelaunayTessellation','delaunaytessellation','vtkUnstructuredGrid',1,'','','vmtkmeshwriter'],
             ['VoronoiDiagram','voronoidiagram','vtkPolyData',1,'','','vmtksurfacewriter'],
             ['PoleIds','poleids','vtkIdList',1]])
-    
+
     def PrintProgress(self,obj,event):
         self.OutputProgress(obj.GetProgress(),10)
 
@@ -516,7 +518,7 @@ class vmtkCenterlines(pypes.pypeScript):
 
         if self.Surface == None:
             self.PrintError('Error: No input surface.')
-        
+
         if self.CheckNonManifold:
             self.PrintLog('NonManifold check.')
             nonManifoldChecker = vmtkNonManifoldSurfaceChecker()
@@ -685,4 +687,3 @@ if __name__=='__main__':
     main = pypes.pypeMain()
     main.Arguments = sys.argv
     main.Execute()
-

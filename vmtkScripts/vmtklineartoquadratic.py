@@ -9,8 +9,8 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
@@ -26,7 +26,7 @@ class vmtkLinearToQuadratic(pypes.pypeScript):
     def __init__(self):
 
         pypes.pypeScript.__init__(self)
-        
+
         self.Mesh = None
         self.Surface = None
         self.Mode = 'volume'
@@ -71,7 +71,7 @@ class vmtkLinearToQuadratic(pypes.pypeScript):
             if self.Surface and self.CapSurface:
                 capper = vtkvmtk.vtkvmtkSimpleCapPolyData()
                 capper.SetInputData(self.Surface)
-                capper.SetCellEntityIdsArrayName('foo') 
+                capper.SetCellEntityIdsArrayName('foo')
                 capper.Update()
                 surface = capper.GetOutput()
             linearToQuadraticFilter = vtkvmtk.vtkvmtkLinearToQuadraticMeshFilter()

@@ -28,6 +28,7 @@ try:
 except ImportError:
     raise ImportError('Unable to Import vmtknumpyreader module, numpy is not installed')
 
+
 class vmtkNumpyReader(pypes.pypeScript):
 
     def __init__(self):
@@ -51,7 +52,6 @@ class vmtkNumpyReader(pypes.pypeScript):
         self.SetOutputMembers([
             ['ArrayDict','o','dict',1,'','the output dictionary']
         ])
-
 
     def ReadPickleFile(self):
         self.PrintLog('Reading Pickle File')
@@ -118,6 +118,7 @@ class vmtkNumpyReader(pypes.pypeScript):
             self.PrintError('Error: unsupported format '+ self.Format + '.')
 
         self.Output = self.ArrayDict
+
 
 if __name__=='__main__':
     main = pypes.pypeMain()

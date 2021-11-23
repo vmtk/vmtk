@@ -9,8 +9,8 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
@@ -29,7 +29,7 @@ class vmtkBoundaryLayer(pypes.pypeScript):
 
         self.Mesh = None
         self.InnerSurfaceMesh = None
-        
+
         self.WarpVectorsArrayName = 'Normals'
         self.ThicknessArrayName = ''
         self.CellEntityIdsArrayName = 'CellEntityIds'
@@ -115,10 +115,9 @@ class vmtkBoundaryLayer(pypes.pypeScript):
         boundaryLayerGenerator.SetSidewallCellEntityId(self.SidewallCellEntityId)
         boundaryLayerGenerator.SetVolumeCellEntityId(self.VolumeCellEntityId)
         boundaryLayerGenerator.Update()
-        
+
         self.Mesh = boundaryLayerGenerator.GetOutput()
         self.InnerSurfaceMesh = boundaryLayerGenerator.GetInnerSurface()
-
 
 
 if __name__=='__main__':

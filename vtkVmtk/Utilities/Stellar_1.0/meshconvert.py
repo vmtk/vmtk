@@ -59,13 +59,15 @@ Usage:
              seen from vertex 1. If you curl the fingers of your right hand to follow the 
              vertices 2, 3, 4, then your thumb points toward vertex 1.
 '''
+
+
 class Usage(Exception):
     def __init__(self, msg):
         self.msg = msg
 
 
 def main(argv=None):
-    # functions for reading 
+    # functions for reading
     readDict = {}
     readDict['.node'] = readNodeEle
     readDict['.mesh'] = readMesh
@@ -73,7 +75,7 @@ def main(argv=None):
     readDict['.tet'] = readTet
     readDict['.surf'] = readSurfTets
     readDict['.off'] = ReadOFFTets
-    
+
     # functions for writing
     writeDict = {}
     writeDict['.node'] = writeNodeEle
@@ -81,12 +83,12 @@ def main(argv=None):
     writeDict['.obj'] = writeOBJTets
     writeDict['.off'] = writeOFFTets
     writeDict['.surf'] = writeSurfTets
-    
+
     if argv is None:
         argv = sys.argv
-        
+
     doscale = False
-    
+
     # if they invoke with arguments, parse them
     if len(argv) > 1:
         try:
@@ -94,7 +96,7 @@ def main(argv=None):
                 opts, args = getopt.getopt(argv[1:], "hs:", ["help",])
             except getopt.error as msg:
                 raise Usage(msg)
-            
+
             # option processing
             for option, value in opts:
                 if option == "-s":
@@ -110,23 +112,23 @@ def main(argv=None):
     else:
         print(help_message)
         return 1
-    
+
     if len(argv) < 3:
         print("Not enough arguments. For help, use --help.")
-    
+
     # determine the input and output formats, and check that they make sense
     inFileName = argv[-2]
     outFileName = argv[-1]
     inFileNameBase, inType = os.path.splitext(inFileName)
     outFileNameBase, outType = os.path.splitext(outFileName)
-    
+
     if inType not in readDict.keys():
         print("Don't know how to read input format '%s'; invoke with --help for a list of supported formats." % (inType))
         return 2
     if outType not in writeDict.keys():
         print("Don't know how to write output format '%s'; invoke with --help for a list of supported formats." % (outType))
         return 2
-    
+
     # read the input mesh
     points, tets, boundFaces = readDict[inType](inFileNameBase)
     if doscale:
@@ -141,7 +143,7 @@ def main(argv=None):
 ####
 def readTet(meshFileName):
     """Read .tet format... I don't actually remember who uses this"""
-    
+
     # append .mesh to file stem
     meshFileName += '.tet'
 
@@ -176,7 +178,7 @@ def readTet(meshFileName):
             temp = tet[0]
             tets[tetNum][0] = tet[1]
             tets[tetNum][1] = temp
-    
+
     # this function doesn't attempt to recover boundary faces
     boundFaces = []
 
@@ -184,9 +186,10 @@ def readTet(meshFileName):
 
     return points, tets, boundFaces
 
+
 def readMesh(meshFileName):
     """Read .mesh files, as output by NETGEN"""
-    
+
     # append .mesh to file stem
     meshFileName += '.mesh'
 
@@ -240,9 +243,10 @@ def readMesh(meshFileName):
 
     return points, tets, boundFaces
 
+
 def readVmesh(meshFileName):
     """Read in .vmesh file... again, I can't recall who uses this format"""
-    
+
     # append .vmesh to file stem
     meshFileName += '.vmesh'
 
@@ -308,11 +312,12 @@ def readVmesh(meshFileName):
 
     return points, tets, boundFaces
 
+
 def readNodeEle(filename, computeTopo=True):
     """Read a tetrahedral mesh in .node/.ele format, Jonathan Shewchuk's format.
        The .node file specifies the vertex locations and the .ele format specfies
        the tetrahedra. The .node file might start with an index of one or zero."""
-    
+
     points, startFromZero = ReadNode(filename)
     tets = ReadEle(filename, startFromZero)
 
@@ -334,7 +339,7 @@ def readNodeEle(filename, computeTopo=True):
             temp = tet[0]
             tets[tetNum][0] = tet[1]
             tets[tetNum][1] = temp
-            
+
     # build face topology information
     if computeTopo:
         faces, boundFaces, face2tet = GetFaceTopo(tets)
@@ -342,6 +347,7 @@ def readNodeEle(filename, computeTopo=True):
         boundFaces = None
 
     return points, tets, boundFaces
+
 
 def GetFaceTopo(tets):
     """Recover topological information about faces"""
@@ -374,13 +380,12 @@ def GetFaceTopo(tets):
                         uFaceDict[tuple(sortedFaces[tetNum*4+1])],
                         uFaceDict[tuple(sortedFaces[tetNum*4+2])],
                         uFaceDict[tuple(sortedFaces[tetNum*4+3])]])
-                        
-    
+
     # build the face -> tet mapping by finding the one or two tets
     # that contain each face in the unique face list
     face2tet = []
     for face in uniqueFaces:
-        face2tet.append([-1, -1])     
+        face2tet.append([-1, -1])
 
     for tetNum, tetfaces in enumerate(tet2face):
         for face in tetfaces:
@@ -427,12 +432,14 @@ def GetFaceTopo(tets):
 
     return uniqueFaces, boundaryFaces, face2tet
 
+
 def readSurfTets(fileName):
     """A stub function to read surface faces from a .surf file,
        as output by NETGEN, as though it is a tet format"""
     points, tris = readSurf(fileName)
 
     return points, None, tris
+
 
 def readSurf(fileName):
     """read .surf file format, containing the surface faces of a tet mesh
@@ -502,12 +509,15 @@ def ReadOFF(fileName):
 
     return points, tris
 
+
 def ReadOFFTets(fileName):
     """docstring for ReadOFFTet"""
     points, tris = ReadOFF(fileName)
     return points, None, tris
 
 # read in a .node file (JRS' Pyramid format)
+
+
 def ReadNode(fileName):
     inFileName = fileName + '.node'
 
@@ -545,6 +555,8 @@ def ReadNode(fileName):
     return points, startFromZero
 
 # read tets from a .ele file (pyramid format)
+
+
 def ReadEle(fileName, startFromZero=True):
     inFileName = fileName + '.ele'
 
@@ -642,6 +654,7 @@ def writeMesh(points, tets, boundFaces, outFileName):
         face = [x + 1 for x in face]
         outfile.write(" 1 " + ' '.join(map(str,face)) + '\n')
 
+
 def writeNode(points, outFileName):
     if outFileName.find('.node') == -1:
         outFileName += '.node'
@@ -657,6 +670,7 @@ def writeNode(points, outFileName):
 
     outfile.close()
 
+
 def writeEle(tets, outFileName):
     outFileName += '.ele'
     outfile = open(outFileName, 'w')
@@ -671,6 +685,7 @@ def writeEle(tets, outFileName):
 
     outfile.close()
 
+
 def writeNodeEle(points, tets, boundFaces, outFileName):
     writeNode(points, outFileName)
     writeEle(tets, outFileName)
@@ -680,6 +695,7 @@ def writeOBJTets(points, tets, tris, outFileName):
     """docstring for writOBJTets"""
     writeOBJ(points, tris, outFileName)
     pass
+
 
 def writeOBJ(verts, tris, outFileName):
     """write out an OBJ file from a list of vertices and triangles"""
@@ -694,12 +710,15 @@ def writeOBJ(verts, tris, outFileName):
 
     outfile.close()
 
+
 def writeSurfTets(points, tets, tris, outFileName):
     """docstring for writOBJTets"""
     writeSurf(points, tris, outFileName)
     pass
 
 # surf surface mesh format
+
+
 def writeSurf(verts, tris, outFileName):
     """write out an surf file from a list of vertices and triangles"""
     outFileName += '.surf'
@@ -720,12 +739,15 @@ def writeSurf(verts, tris, outFileName):
 
     outfile.close()
 
+
 def writeOFFTets(points, tets, tris, outFileName):
     """docstring for writOBJTets"""
     writeOFF(points, tris, outFileName)
     pass
 
 # OFF surface mesh format
+
+
 def writeOFF(verts, tris, outFileName):
     """write out an OFF file from a list of vertices and triangles"""
     outFileName += '.off'
@@ -756,12 +778,14 @@ def vadd(v1, v2):
         v3.append(v1[i] + v2[i])
     return v3
 
+
 def vsub(v1, v2):
     v3 = []
     # assumes vectors are of equal length
     for i in range(0,len(v1)):
         v3.append(v1[i] - v2[i])
-    return v3 
+    return v3
+
 
 def vlength(v):
     length = 0
@@ -769,19 +793,24 @@ def vlength(v):
         length += ele * ele
     return math.sqrt(length)
 
+
 def vscale(scale, v):
     return [x * scale for x in v]
+
 
 def vnorm(v):
     length = vlength(v)
     vscale(1/length,v)
     return v
 
+
 def vaddscalar(scalar, v):
     return [x + scalar for x in v]
 
+
 def vsubscalar(scalar, v):
     return [x - scalar for x in v]
+
 
 def orient3d(a,b,c,d):
     """Compute the orientation of 4 points in 3D"""
@@ -800,6 +829,8 @@ def orient3d(a,b,c,d):
     return det
 
 # return all the unique items in a list
+
+
 def unique(s):
     """Return a list of the elements in s, but without duplicates.
 
@@ -867,6 +898,7 @@ def unique(s):
         if x not in u:
             u.append(x)
     return u
+
 
 if __name__ == "__main__":
     sys.exit(main())

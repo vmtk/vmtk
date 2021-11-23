@@ -17,6 +17,7 @@
 import pytest
 import vmtk.vmtkmarchingcubes as marchingcubes
 
+
 @pytest.fixture()
 def level_set_image(input_datadir):
     import vmtk.vmtkimagereader as reader

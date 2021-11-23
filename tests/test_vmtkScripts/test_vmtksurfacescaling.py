@@ -17,6 +17,7 @@
 import pytest
 import vmtk.vmtksurfacescaling as scaling
 
+
 def test_isotropic_scale(aorta_surface, compare_surfaces):
     name = __name__ + '_test_isotropic_scale.vtp'
     scaler = scaling.vmtkSurfaceScaling()
@@ -46,5 +47,3 @@ def test_xyz_scale_factors(aorta_surface, compare_surfaces, xfactor,
     scaler.Execute()
 
     assert compare_surfaces(scaler.Surface, name, tolerance=1.0) == True
-
-

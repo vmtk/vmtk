@@ -145,7 +145,6 @@ class vmtkMeshMergeTimesteps(pypes.pypeScript):
                     tauz.SetName(tauz_name+str(step))
                     self.Mesh.GetPointData().AddArray(tauz)
 
-
                 if self.VelocityVector:
 
                   j = 0
@@ -158,7 +157,6 @@ class vmtkMeshMergeTimesteps(pypes.pypeScript):
 
                   w_component = vtk.vtkDoubleArray()
                   w_component.SetNumberOfComponents(1)
-
 
                   while j < mesh.GetPointData().GetArray(self.VelocityVectorArrayName).GetNumberOfTuples():
 
@@ -204,6 +202,7 @@ class vmtkMeshMergeTimesteps(pypes.pypeScript):
 
         field.AddArray(timesteps)
         self.Mesh.SetFieldData(field)
+
 
 if __name__=='__main__':
     main = pypes.pypeMain()

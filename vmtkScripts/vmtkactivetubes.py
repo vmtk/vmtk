@@ -9,8 +9,8 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
 ##   Developed with support from the EC FP7/2007-2013: ARCH, Project n. 224390
@@ -29,7 +29,7 @@ class vmtkActiveTubes(pypes.pypeScript):
     def __init__(self):
 
         pypes.pypeScript.__init__(self)
-        
+
         self.Centerline = None
         self.Image = None
 
@@ -47,7 +47,7 @@ class vmtkActiveTubes(pypes.pypeScript):
         self.SetScriptName('vmtkactivetubes')
         self.SetScriptDoc('experimental method for generating centerlines from an image.')
         self.SetInputMembers([
-            ['Centerline','i','vtkPolyData',1,'','','vmtksurfacereader'], 
+            ['Centerline','i','vtkPolyData',1,'','','vmtksurfacereader'],
             ['Image','image','vtkImageData',1,'','','vmtkimagereader'],
             ['RadiusArrayName','radiusarray','str',1,''],
             ['NumberOfIterations','iterations','int',1,'(0,)'],
@@ -61,10 +61,10 @@ class vmtkActiveTubes(pypes.pypeScript):
             )
         self.SetOutputMembers([
             ['Centerline','o','vtkPolyData',1,'','','vmtksurfacewriter']
-            ]) 
+            ])
 
     def Execute(self):
- 
+
         if self.Image == None:
             self.PrintError('Error: Image not set.')
 
@@ -83,10 +83,10 @@ class vmtkActiveTubes(pypes.pypeScript):
         activeTubes.Update()
 
         self.Centerline = activeTubes.GetOutput()
-      
+
+
 if __name__=='__main__':
 
     main = pypes.pypeMain()
     main.Arguments = sys.argv
     main.Execute()
-

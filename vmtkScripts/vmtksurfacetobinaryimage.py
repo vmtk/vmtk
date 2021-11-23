@@ -9,8 +9,8 @@
 ##   Copyright (c) Richard Izzo, Luca Antiga. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
@@ -24,12 +24,13 @@ from vmtk import vtkvmtk
 from vmtk import vmtkrenderer
 from vmtk import pypes
 
+
 class vmtkSurfaceToBinaryImage(pypes.pypeScript):
 
     def __init__(self):
 
         pypes.pypeScript.__init__(self)
-        
+
         self.Surface = None
         self.Image = None
 
@@ -57,7 +58,7 @@ class vmtkSurfaceToBinaryImage(pypes.pypeScript):
             self.PrintError('Error: Cannot assign InsideValue of image to value greater than 255')
 
         # Step 1: Convert the input surface into an image mask of unsigned char type and spacing = PolyDataToImageDataSpacing
-        #         Where voxels lying inside the surface are set to 255 and voxels outside the image are set to value 0. 
+        #         Where voxels lying inside the surface are set to 255 and voxels outside the image are set to value 0.
 
         # since we are creating a new image container from nothing, calculate the origin, extent, and dimensions for the
         # vtkImageDataObject from the surface parameters.
@@ -76,7 +77,7 @@ class vmtkSurfaceToBinaryImage(pypes.pypeScript):
 
         whiteImage = vtk.vtkImageData()
         whiteImage.SetSpacing(self.PolyDataToImageDataSpacing[0],
-                              self.PolyDataToImageDataSpacing[1], 
+                              self.PolyDataToImageDataSpacing[1],
                               self.PolyDataToImageDataSpacing[2])
         whiteImage.SetDimensions(dim[0], dim[1], dim[2])
         whiteImage.SetExtent(extent[0], extent[1],
@@ -89,22 +90,22 @@ class vmtkSurfaceToBinaryImage(pypes.pypeScript):
         npFillImagePoints = np.zeros(whiteImage.GetNumberOfPoints(), dtype=np.uint8)
         npFillImagePoints[:] = self.InsideValue
         # it is much faster to use the vtk data set adaptor functions to fill the point data tupples that it is to
-        # loop over each index and set values individually. 
+        # loop over each index and set values individually.
         pointDataArray = dsa.numpyTovtkDataArray(npFillImagePoints, name='ImageScalars', array_type=vtk.VTK_UNSIGNED_CHAR)
         whiteImage.GetPointData().SetActiveScalars('ImageScalars')
         whiteImage.GetPointData().SetScalars(pointDataArray)
 
-        # The vtkPolyDataToImageStencil class will convert polydata into an image stencil, masking an image. 
+        # The vtkPolyDataToImageStencil class will convert polydata into an image stencil, masking an image.
         # The polydata can either be a closed surface mesh or a series of polyline contours (one contour per slice).
         polyDataToImageStencilFilter = vtk.vtkPolyDataToImageStencil()
         polyDataToImageStencilFilter.SetInputData(self.Surface)
-        polyDataToImageStencilFilter.SetOutputSpacing(self.PolyDataToImageDataSpacing[0], 
-                                                      self.PolyDataToImageDataSpacing[1], 
+        polyDataToImageStencilFilter.SetOutputSpacing(self.PolyDataToImageDataSpacing[0],
+                                                      self.PolyDataToImageDataSpacing[1],
                                                       self.PolyDataToImageDataSpacing[2])
         polyDataToImageStencilFilter.SetOutputOrigin(origin[0], origin[1], origin[2])
         polyDataToImageStencilFilter.Update()
 
-        # vtkImageStencil combines to images together by using a "cookie-cutter" operation. 
+        # vtkImageStencil combines to images together by using a "cookie-cutter" operation.
         imageStencil = vtk.vtkImageStencil()
         imageStencil.SetInputData(whiteImage)
         imageStencil.SetStencilConnection(polyDataToImageStencilFilter.GetOutputPort())

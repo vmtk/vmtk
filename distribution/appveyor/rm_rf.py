@@ -20,9 +20,11 @@ import sys
 import stat
 import shutil
 
+
 def remove_readonly(func, path, excinfo):
     os.chmod(path, stat.S_IWRITE)
     func(path)
+
 
 def main():
     print(sys.executable)
@@ -31,6 +33,7 @@ def main():
     except Exception as e:
         print("Error")
         print(e)
+
 
 if __name__ == '__main__':
     main()

@@ -18,6 +18,7 @@ import pytest
 import vmtk.vmtkimagevolumeviewer as volumeviewer
 import copy
 
+
 @pytest.fixture(scope='module')
 def expected_results_dict(input_datadir):
     from json import load
@@ -25,6 +26,7 @@ def expected_results_dict(input_datadir):
     with open(os.path.join(input_datadir, 'vmtkimagevolumeviewer_testresults.json'), 'r') as f:
         resultDict = load(f)
     return resultDict
+
 
 @pytest.mark.parametrize('preset', [
     ("CT-AAA"), ("CT-AAA2"), ("CT-Bone"),
@@ -57,7 +59,7 @@ def test_volume_viewer_preset_values(aorta_image, preset, expected_results_dict)
     colorTransferFunctionSamplePointLarge = colorTransferFunctionPointMax - (colorTransferFunctionRangeWidth * 0.1)
     colorTransferFunctionColorAtSamplePointSmall = view.ColorTransferFunction.GetColor(colorTransferFunctionSamplePointSmall)
     colorTransferFunctionColorAtSamplePointLarge = view.ColorTransferFunction.GetColor(colorTransferFunctionSamplePointLarge)
-    
+
     opacityTransferFunctionPointMin = view.OpacityTransferFunction.GetRange()[0]
     opacityTransferFunctionPointMax = view.OpacityTransferFunction.GetRange()[1]
     opacityTransferFunctionRangeWidth = opacityTransferFunctionPointMax - opacityTransferFunctionPointMin
@@ -75,7 +77,7 @@ def test_volume_viewer_preset_values(aorta_image, preset, expected_results_dict)
     gradientOpacityTransferFunctionColorAtSamplePointLarge = view.GradientOpacityTransferFunction.GetValue(gradientOpacityTransferFunctionSamplePointLarge)
 
     resultsDict = copy.deepcopy(expected_results_dict[preset])
-    
+
     assert interpolationType == resultsDict["InterpolationType"]
     assert shade == resultsDict["Shade"]
     assert specularPower == resultsDict["SpecularPower"]

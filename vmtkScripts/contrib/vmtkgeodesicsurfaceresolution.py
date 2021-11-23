@@ -9,11 +9,11 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
-## Note: this class was contributed by 
+## Note: this class was contributed by
 ##       Tangui Morvan
 ##       Kalkulo AS
 ##       Simula Research Laboratory
@@ -31,13 +31,12 @@ from vmtk import vmtkrenderer
 from vmtk import pypes
 
 
-
 class vmtkGeodesicSurfaceResolution(pypes.pypeScript):
 
     def __init__(self):
 
         pypes.pypeScript.__init__(self)
-        
+
         self.Surface = None
         self.ResolutionArrayName = 'ResolutionArray'
         self.RBFType = 'biharmonic'
@@ -47,7 +46,7 @@ class vmtkGeodesicSurfaceResolution(pypes.pypeScript):
         self.OwnRenderer = 0
         self.DisplayArray = False
         self.SurfaceMapper = None
-        self.CurrentSphereId = -1        
+        self.CurrentSphereId = -1
         self.SphereWidget = None
         self.Opacity = 1.
         self.SpheresActor = None
@@ -57,7 +56,7 @@ class vmtkGeodesicSurfaceResolution(pypes.pypeScript):
         self.ExamineSpheres = vtk.vtkPolyData()
         self.ExamineSpheresActor = None
         self.ExamineText = None
-        
+
         self.SetScriptName('vtksurfaceresolution')
         self.SetScriptDoc('This allows the user to specify a edge-length array to be used to specify resolution for surface remeshing \
                            The array is produced by RBF interpolation of values specified by the user by positioning spheres. This \
@@ -72,8 +71,7 @@ class vmtkGeodesicSurfaceResolution(pypes.pypeScript):
         self.SetOutputMembers([
             ['Surface','o','vtkPolyData',1,'','','vmtksurfacewriter']
             ])
-    
-    
+
     def ComputeArray(self):
         rbf = vtkvmtk.vtkvmtkPolyDataGeodesicRBFInterpolation()
         rbf.SetSeedIds(self.SphereIds)
@@ -89,8 +87,7 @@ class vmtkGeodesicSurfaceResolution(pypes.pypeScript):
         rbf.SetInterpolatedArrayName(self.ResolutionArrayName)
         rbf.Update()
         return rbf.GetOutput()
-      
-    
+
     def InitializeSpheres(self):
         if (self.InteractionMode==0):
             self.SphereIds.Initialize()
@@ -109,14 +106,12 @@ class vmtkGeodesicSurfaceResolution(pypes.pypeScript):
             self.ExamineSpheres.GetPointData().Initialize()
             sphereRadii = vtk.vtkDoubleArray()
             self.ExamineSpheres.GetPointData().SetScalars(sphereRadii)
-        
-    
+
     def PlaceSphere(self):
         if self.CurrentSphereId == -1:
             return
         self.SphereWidget.SetCenter(self.Spheres.GetPoint(self.CurrentSphereId))
         self.SphereWidget.SetRadius(self.Spheres.GetPointData().GetScalars().GetValue(self.CurrentSphereId))
-
 
     def SphereCallback(self,widget,event_string):
         if self.CurrentSphereId == -1:
@@ -126,8 +121,7 @@ class vmtkGeodesicSurfaceResolution(pypes.pypeScript):
             self.SphereWidget.SetRadius(minRadius)
         self.Spheres.GetPointData().GetScalars().SetValue(self.CurrentSphereId,self.SphereWidget.GetRadius())
         self.Spheres.Modified()
-    
-    
+
     def UndoCallback(self, obj):
         self.InitializeSpheres()
         self.Spheres.Modified()
@@ -157,13 +151,12 @@ class vmtkGeodesicSurfaceResolution(pypes.pypeScript):
             self.CurrentSphereId = (self.CurrentSphereId + 1) % self.Spheres.GetNumberOfPoints();
             self.PlaceSphere()
             self.vmtkRenderer.RenderWindow.Render()
-    
+
     def PreviousSphereCallback(self, obj):
         if self.CurrentSphereId != -1:
             self.CurrentSphereId = (self.CurrentSphereId - 1) % self.Spheres.GetNumberOfPoints();
             self.PlaceSphere()
             self.vmtkRenderer.RenderWindow.Render()
-        
 
     def DisplayCallback(self, obj):
         self.DisplayArray = not self.DisplayArray
@@ -203,7 +196,6 @@ class vmtkGeodesicSurfaceResolution(pypes.pypeScript):
             self.SphereWidget.On()
         self.vmtkRenderer.RenderWindow.Render()
 
- 
     def PickCallback(self, obj):
         picker = vtk.vtkCellPicker()
         picker.SetTolerance(1E-4 * self.Surface.GetLength())
@@ -242,7 +234,6 @@ class vmtkGeodesicSurfaceResolution(pypes.pypeScript):
             self.ExamineSpheres.Modified()
         self.vmtkRenderer.RenderWindow.Render()
 
-
     def Execute(self):
 
         if self.Surface == None:
@@ -252,7 +243,7 @@ class vmtkGeodesicSurfaceResolution(pypes.pypeScript):
           self.vmtkRenderer = vmtkrenderer.vmtkRenderer()
           self.vmtkRenderer.Initialize()
           self.OwnRenderer = 1
-          
+
         self.vmtkRenderer.RegisterScript(self)
 
         glyphs = vtk.vtkGlyph3D()
@@ -271,7 +262,7 @@ class vmtkGeodesicSurfaceResolution(pypes.pypeScript):
         self.SpheresActor.GetProperty().SetOpacity(self.Opacity)
         self.SpheresActor.PickableOff()
         self.vmtkRenderer.Renderer.AddActor(self.SpheresActor)
-        
+
         examineGlyphs = vtk.vtkGlyph3D()
         examineGlyphSource = vtk.vtkSphereSource()
         examineGlyphSource.SetRadius(1)
@@ -300,7 +291,7 @@ class vmtkGeodesicSurfaceResolution(pypes.pypeScript):
         self.vmtkRenderer.AddKeyBinding('d','Display ',self.DisplayCallback)
         self.vmtkRenderer.AddKeyBinding('w','Switch beetween examien and interact mode ',self.ExmienModeCallback)
         self.vmtkRenderer.AddKeyBinding('space','Pick sphere',self.PickCallback)
-        
+
         self.SurfaceMapper = vtk.vtkPolyDataMapper()
         self.SurfaceMapper.SetInputData(self.Surface)
         self.SurfaceMapper.SetScalarVisibility(self.DisplayArray)
@@ -308,7 +299,7 @@ class vmtkGeodesicSurfaceResolution(pypes.pypeScript):
         surfaceActor.SetMapper(self.SurfaceMapper)
         surfaceActor.GetProperty().SetOpacity(self.Opacity)
         self.vmtkRenderer.Renderer.AddActor(surfaceActor)
-        
+
         self.ScalarBarActor = vtk.vtkScalarBarActor()
         self.ScalarBarActor.SetLookupTable(self.SurfaceMapper.GetLookupTable())
         self.ScalarBarActor.GetLabelTextProperty().ItalicOff()
@@ -318,32 +309,32 @@ class vmtkGeodesicSurfaceResolution(pypes.pypeScript):
         self.ScalarBarActor.SetTitle('distances')
         self.ScalarBarActor.VisibilityOff()
         self.vmtkRenderer.Renderer.AddActor(self.ScalarBarActor)
-        
-        
+
         self.SphereWidget = vtk.vtkSphereWidget()
         self.SphereWidget.TranslationOff()
         self.SphereWidget.SetInteractor(self.vmtkRenderer.RenderWindowInteractor)
         self.SphereWidget.AddObserver("InteractionEvent", self.SphereCallback)
-        
+
         self.ExamineText = vtk.vtkTextActor()
         self.ExamineText.SetInput("Examine Mode")
         self.ExamineText.GetPositionCoordinate().SetCoordinateSystemToNormalizedViewport()
         self.ExamineText.SetPosition(0.05,0.95)
         self.ExamineText.VisibilityOff()
         self.vmtkRenderer.Renderer.AddActor2D(self.ExamineText)
-        
+
         self.InputInfo('Please position the mouse and press space to add spheres, \'u\' to undo\n')
-        
+
         any = 0
         while any == 0:
             self.InitializeSpheres()
             self.vmtkRenderer.Render()
             any = (self.Spheres.GetNumberOfPoints()>1)
-        
+
         self.Surface = self.ComputeArray()
 
         if self.OwnRenderer:
             self.vmtkRenderer.Deallocate()
+
 
 if __name__=='__main__':
 

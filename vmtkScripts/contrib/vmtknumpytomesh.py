@@ -50,7 +50,6 @@ class vmtkNumpyToMesh(pypes.pypeScript):
         self.SetOutputMembers([
             ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh','vmtkmeshwriter']])
 
-
     def _ConvertListToFlatCellsArray(self, cellPointIdsList):
         '''convert a list of numpy arrays defining each cell into a flat array defining cells. 
         
@@ -71,7 +70,7 @@ class vmtkNumpyToMesh(pypes.pypeScript):
             - cellLocations: flat array of size = nCells. each element in the array defines starts a new cell 
                             (a location of npointCellFoo) in the cells array
         '''
-        
+
         cellArrayList = []
         cellLocationsList = [np.array([0])]
         cellIndex = 0
@@ -80,16 +79,15 @@ class vmtkNumpyToMesh(pypes.pypeScript):
             numPointsInArray = cellPointIdArray.size
             cellArray = np.concatenate((np.array([numPointsInArray]), cellPointIdArray))
             cellArrayList.append(cellArray)
-            
+
             cellIndex += cellArray.size
             cellLocationsList.append(np.array([cellIndex]))
-        
+
         cellLocations = np.concatenate(cellLocationsList[:-1])
         cells = np.concatenate(cellArrayList)
 
         return cells, cellLocations
 
-    
     def Execute(self):
 
         gridData = vtk.vtkUnstructuredGrid()
@@ -99,11 +97,11 @@ class vmtkNumpyToMesh(pypes.pypeScript):
 
         if self.FlattenListOfCells:
             cellPointIds, cellLocations = self._ConvertListToFlatCellsArray(self.ArrayDict['Cells']['CellPointIds'])
-            gridData.SetCells(self.ArrayDict['Cells']['CellTypes'], 
+            gridData.SetCells(self.ArrayDict['Cells']['CellTypes'],
                               cellLocations, cellPointIds)
 
         else:
-            gridData.SetCells(self.ArrayDict['Cells']['CellTypes'], 
+            gridData.SetCells(self.ArrayDict['Cells']['CellTypes'],
                             self.ArrayDict['Cells']['CellLocations'],
                             self.ArrayDict['Cells']['CellPointIds'])
 
@@ -117,9 +115,8 @@ class vmtkNumpyToMesh(pypes.pypeScript):
 
         self.Mesh = gridData.VTKObject
 
+
 if __name__=='__main__':
     main = pypes.pypeMain()
     main.Arguments = sys.argv
     main.Execute()
-
-        

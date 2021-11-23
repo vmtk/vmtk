@@ -17,6 +17,7 @@
 import pytest
 import vmtk.vmtkcenterlineresampling as centerlineresampling
 
+
 def test_default_params(aorta_centerline, compare_centerlines):
     name = __name__ + '_test_default_params.vtp'
     resampler = centerlineresampling.vmtkCenterlineResampling()

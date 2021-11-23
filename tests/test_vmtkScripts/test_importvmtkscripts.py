@@ -18,6 +18,7 @@ import pytest
 import unittest
 import os
 
+
 @pytest.fixture(scope='function')
 def vmtk_scripts():
     allscripts =  [
@@ -191,9 +192,9 @@ def vmtk_scripts():
         'vmtk.vmtkthreshold' ]
     return allscripts
 
+
 def test_import_vmtkScripts(vmtk_scripts):
     import importlib
     print(vmtk_scripts)
     for name in vmtk_scripts:
         assert importlib.import_module(name)
-

@@ -28,6 +28,7 @@ try:
 except ImportError:
     raise ImportError('Unable to Import vmtknumpytosurface module, numpy is not installed')
 
+
 class vmtkNumpyToSurface(pypes.pypeScript):
 
     def __init__(self):
@@ -38,7 +39,7 @@ class vmtkNumpyToSurface(pypes.pypeScript):
 
         self.SetScriptName('vmtkNumpyToSurface')
         self.SetScriptDoc('Takes a nested python dictionary containing numpy arrays specifying vertex '
-                          'points, associated scalar data, and cell data specifying triangle connectivity' 
+                          'points, associated scalar data, and cell data specifying triangle connectivity'
                           'and returns a VTK triangulated surface vtkPolyData file')
         self.SetInputMembers([
             ['ArrayDict','i','dict',1,'','the input array dictionary','vmtknumpyreader']])
@@ -136,6 +137,7 @@ class vmtkNumpyToSurface(pypes.pypeScript):
                     polyData.GetCellData().SetVectors(cellDataArray)
 
         self.Surface = polyData
+
 
 if __name__=='__main__':
     main = pypes.pypeMain()

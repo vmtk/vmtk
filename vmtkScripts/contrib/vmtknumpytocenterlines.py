@@ -29,6 +29,7 @@ try:
 except ImportError:
     raise ImportError('Unable to Import vmtknumpytosurface module, numpy is not installed')
 
+
 class vmtkNumpyToCenterlines(pypes.pypeScript):
     def __init__(self):
 

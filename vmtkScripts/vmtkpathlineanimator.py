@@ -9,11 +9,11 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
-## Note: this class was contributed by 
+## Note: this class was contributed by
 ##       Simone Manini
 ##       Orobix Srl
 
@@ -39,7 +39,7 @@ class vmtkPathLineAnimator(pypes.pypeScript):
         self.OwnRenderer = 0
         self.ArrayName = "Velocity"
         self.Pattern = "frame_%04d.png"
-        self.ImagesDirectory = os.getenv("HOME") 
+        self.ImagesDirectory = os.getenv("HOME")
         self.MinTime = 0.0
         self.MaxTime = 1.0
         self.Legend = 0
@@ -52,12 +52,12 @@ class vmtkPathLineAnimator(pypes.pypeScript):
         self.ArrayUnit = 'cm/s'
         self.PointSize = 6
         self.LineWidth = 2
-        self.Method = 'particles' 
+        self.Method = 'particles'
         self.Traces = None
 
         self.SetScriptName('vmtkpathlineanimator')
         self.SetScriptDoc('Particle or streaklines animation')
-        
+
         self.SetInputMembers([
             ['InputTraces','i','vtkPolyData',1,'','traces', 'vmtksurfacereader'],
             ['vmtkRenderer','renderer','vmtkRenderer',1,'','external renderer'],
@@ -81,10 +81,10 @@ class vmtkPathLineAnimator(pypes.pypeScript):
         self.SetOutputMembers([
             ])
 
-    def Screenshot(self, surfaceViewer, timestep):        
-        
+    def Screenshot(self, surfaceViewer, timestep):
+
         fileName = self.Pattern%timestep
-        homeDir = self.ImagesDirectory	
+        homeDir = self.ImagesDirectory
         windowToImage = vtk.vtkWindowToImageFilter()
         windowToImage.SetInput(surfaceViewer.vmtkRenderer.RenderWindow)
         windowToImage.SetMagnification(surfaceViewer.vmtkRenderer.ScreenshotMagnification)
@@ -96,18 +96,18 @@ class vmtkPathLineAnimator(pypes.pypeScript):
         writer.Write()
 
     def Execute(self):
-            
+
         if (self.InputTraces == None):
             self.PrintError('Error: no Traces.')
-        
+
         if (self.TimeStep == None):
             self.PrintError('Error: no TimeStep.')
-        
+
         if not self.vmtkRenderer:
             self.vmtkRenderer = vmtkrenderer.vmtkRenderer()
             self.vmtkRenderer.Initialize()
             self.OwnRenderer = 1
-        
+
         surfaceViewer = vmtksurfaceviewer.vmtkSurfaceViewer()
         surfaceViewer.vmtkRenderer = self.vmtkRenderer
         surfaceViewer.Surface = self.InputTraces
@@ -115,7 +115,7 @@ class vmtkPathLineAnimator(pypes.pypeScript):
         surfaceViewer.ColorMap = self.ColorMap
         surfaceViewer.NumberOfColors = self.NumberOfColors
         surfaceViewer.Execute()
-        
+
         if self.ColorMap == 'grayscale':
             lut = surfaceViewer.Actor.GetMapper().GetLookupTable()
             lut.SetNumberOfTableValues(self.NumberOfColors)
@@ -123,7 +123,7 @@ class vmtkPathLineAnimator(pypes.pypeScript):
             lut.SetSaturationRange(0.0,0.0)
             lut.Build()
             surfaceViewer.Actor.GetMapper().SetLookupTable(lut)
-            
+
         if self.ColorMap == 'rainbow':
             lut = surfaceViewer.Actor.GetMapper().GetLookupTable()
             lut.SetHueRange(0.666667,0.0)
@@ -132,9 +132,9 @@ class vmtkPathLineAnimator(pypes.pypeScript):
             lut.SetAlphaRange(1.0,1.0)
             lut.SetNumberOfColors(self.NumberOfColors)
             lut.Build()
-            surfaceViewer.Actor.GetMapper().SetLookupTable(lut)  
-         
-        if self.ColorMap == 'blackbody': 
+            surfaceViewer.Actor.GetMapper().SetLookupTable(lut)
+
+        if self.ColorMap == 'blackbody':
            lut = surfaceViewer.Actor.GetMapper().GetLookupTable()
            lut.SetNumberOfTableValues(self.NumberOfColors)
            colorTransferFunction = vtk.vtkColorTransferFunction()
@@ -162,7 +162,7 @@ class vmtkPathLineAnimator(pypes.pypeScript):
                lut.SetTableValue(ii,cc[0],cc[1],cc[2],1.0)
            lut.Build()
            surfaceViewer.Actor.GetMapper().SetLookupTable(lut)
-        
+
         if (self.Legend == 1):
             self.ScalarBarActor = vtk.vtkScalarBarActor()
             self.ScalarBarActor.SetLookupTable(surfaceViewer.Actor.GetMapper().GetLookupTable())
@@ -175,18 +175,18 @@ class vmtkPathLineAnimator(pypes.pypeScript):
             self.ScalarBarActor.SetTitle(self.ArrayName+" ["+self.ArrayUnit+"]")
             self.ScalarBarActor.SetLabelFormat('%.2f')
             self.vmtkRenderer.Renderer.AddActor(self.ScalarBarActor)
-       
+
         self.Traces = vtk.vtkPolyData()
-        self.Traces.DeepCopy(self.InputTraces) 
+        self.Traces.DeepCopy(self.InputTraces)
         self.Traces.GetPointData().SetActiveScalars("IntegrationTime")
         timeRange = self.Traces.GetPointData().GetScalars().GetRange(0)
         currentCycle = 0
         minTime = self.MinTime
-        currentTime = self.TimeStep 
+        currentTime = self.TimeStep
         maxTime = self.MaxTime
         if (self.ArrayMax == None and self.ArrayName == "Velocity"):
             self.ArrayMax = round(self.Traces.GetPointData().GetArray('Speed').GetRange()[1],0)
-        
+
         if self.Method == 'particles':
             particleTime = minTime
             imageNumber = 0
@@ -201,21 +201,21 @@ class vmtkPathLineAnimator(pypes.pypeScript):
                     else:
                         contour.SetValue(i,time)
                     i+=1
-                
+
                 contour.Update()
                 surfaceViewer.vmtkRenderer = self.vmtkRenderer
                 surfaceViewer.Actor.GetProperty().SetPointSize(self.PointSize)
                 vtk.vtkPolyDataMapper.SafeDownCast(surfaceViewer.Actor.GetMapper()).SetInputConnection(contour.GetOutputPort())
-                
-                surfaceViewer.Actor.GetMapper().GetLookupTable().SetVectorModeToMagnitude() 
-                surfaceViewer.Actor.GetMapper().SetScalarModeToUsePointFieldData() 
-                surfaceViewer.Actor.GetMapper().SelectColorArray(self.ArrayName) 
-                surfaceViewer.Actor.GetMapper().SetScalarRange([0.0,self.ArrayMax]) 
-                        
+
+                surfaceViewer.Actor.GetMapper().GetLookupTable().SetVectorModeToMagnitude()
+                surfaceViewer.Actor.GetMapper().SetScalarModeToUsePointFieldData()
+                surfaceViewer.Actor.GetMapper().SelectColorArray(self.ArrayName)
+                surfaceViewer.Actor.GetMapper().SetScalarRange([0.0,self.ArrayMax])
+
                 surfaceViewer.vmtkRenderer.RenderWindow.Render()
                 if self.WithScreenshots:
                     self.Screenshot(surfaceViewer,imageNumber)
-                
+
                 particleTime+=self.TimeStep
                 currentTime+=self.TimeStep
                 imageNumber+=1
@@ -241,25 +241,26 @@ class vmtkPathLineAnimator(pypes.pypeScript):
                 clip1.SetValue(time)
                 clip2.SetValue(time - streakLineTimeLength)
                 clip2.Update()
-            
+
                 surfaceViewer.Actor.GetProperty().SetLineWidth(self.LineWidth)
                 vtk.vtkPolyDataMapper.SafeDownCast(surfaceViewer.Actor.GetMapper()).SetInputConnection(clip2.GetOutputPort())
-                
-                surfaceViewer.Actor.GetMapper().GetLookupTable().SetVectorModeToMagnitude() 
-                surfaceViewer.Actor.GetMapper().SetScalarModeToUsePointFieldData() 
-                surfaceViewer.Actor.GetMapper().SelectColorArray(self.ArrayName) 
-                surfaceViewer.Actor.GetMapper().SetScalarRange([0.0,self.ArrayMax]) 
-                
+
+                surfaceViewer.Actor.GetMapper().GetLookupTable().SetVectorModeToMagnitude()
+                surfaceViewer.Actor.GetMapper().SetScalarModeToUsePointFieldData()
+                surfaceViewer.Actor.GetMapper().SelectColorArray(self.ArrayName)
+                surfaceViewer.Actor.GetMapper().SetScalarRange([0.0,self.ArrayMax])
+
                 surfaceViewer.vmtkRenderer = self.vmtkRenderer
                 surfaceViewer.vmtkRenderer.RenderWindow.Render()
                 if self.WithScreenshots:
                     self.Screenshot(surfaceViewer,imageNumber)
-                
+
                 particleTime+=self.TimeStep
                 currentTime+=self.TimeStep
                 imageNumber+=1
         else:
             self.PrintError('Error: pathlineanimator  method not supported.')
+
 
 if __name__=='__main__':
     main = pypes.pypeMain()

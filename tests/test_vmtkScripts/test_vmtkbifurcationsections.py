@@ -16,8 +16,9 @@
 
 import pytest
 import vmtk.vmtkbifurcationsections as bifurcationsections
-from vtk.numpy_interface import dataset_adapter as dsa 
+from vtk.numpy_interface import dataset_adapter as dsa
 import numpy as np
+
 
 @pytest.fixture(scope='module')
 def bifur_sections_one_sphere(aorta_centerline_branches ,aorta_surface_branches):
@@ -31,7 +32,7 @@ def bifur_sections_one_sphere(aorta_centerline_branches ,aorta_surface_branches)
     sections.TractIdsArrayName = 'TractIds'
     sections.BlankingArrayName = 'Blanking'
     sections.Execute()
-    
+
     return sections.BifurcationSections
 
 
@@ -47,7 +48,7 @@ def bifur_sections_two_spheres(aorta_centerline_branches ,aorta_surface_branches
     sections.TractIdsArrayName = 'TractIds'
     sections.BlankingArrayName = 'Blanking'
     sections.Execute()
-    
+
     return sections.BifurcationSections
 
 
@@ -95,7 +96,7 @@ def test_expected_number_points_with_two_spheres(bifur_sections_two_spheres):
 ])
 def test_bifurcation_section_group_ids_correct(aorta_centerline_branches ,aorta_surface_branches,
                                                bifurcation_sections, expectedValue):
-    wrapped_bifur_section = dsa.WrapDataObject(bifurcation_sections(aorta_centerline_branches ,aorta_surface_branches)) 
+    wrapped_bifur_section = dsa.WrapDataObject(bifurcation_sections(aorta_centerline_branches ,aorta_surface_branches))
     assert np.allclose(wrapped_bifur_section.CellData.GetArray('BifurcationSectionGroupIds'), expectedValue) == True
 
 
@@ -105,7 +106,7 @@ def test_bifurcation_section_group_ids_correct(aorta_centerline_branches ,aorta_
 ])
 def test_bifurcation_section_bifurcation_group_ids_correct(aorta_centerline_branches ,aorta_surface_branches,
                                                           bifurcation_sections, expectedValue):
-    wrapped_bifur_section = dsa.WrapDataObject(bifurcation_sections(aorta_centerline_branches ,aorta_surface_branches)) 
+    wrapped_bifur_section = dsa.WrapDataObject(bifurcation_sections(aorta_centerline_branches ,aorta_surface_branches))
     assert np.allclose(wrapped_bifur_section.CellData.GetArray('BifurcationSectionBifurcationGroupIds'), expectedValue) == True
 
 
@@ -119,7 +120,7 @@ def test_bifurcation_section_bifurcation_group_ids_correct(aorta_centerline_bran
 ])
 def test_bifurcation_section_point_correct(aorta_centerline_branches ,aorta_surface_branches,
                                            bifurcation_sections, expectedValue):
-    wrapped_bifur_section = dsa.WrapDataObject(bifurcation_sections(aorta_centerline_branches ,aorta_surface_branches)) 
+    wrapped_bifur_section = dsa.WrapDataObject(bifurcation_sections(aorta_centerline_branches ,aorta_surface_branches))
     assert np.allclose(wrapped_bifur_section.CellData.GetArray('BifurcationSectionPoint'), expectedValue) == True
 
 
@@ -133,7 +134,7 @@ def test_bifurcation_section_point_correct(aorta_centerline_branches ,aorta_surf
 ])
 def test_bifurcation_section_normal_correct(aorta_centerline_branches ,aorta_surface_branches,
                                            bifurcation_sections, expectedValue):
-    wrapped_bifur_section = dsa.WrapDataObject(bifurcation_sections(aorta_centerline_branches ,aorta_surface_branches)) 
+    wrapped_bifur_section = dsa.WrapDataObject(bifurcation_sections(aorta_centerline_branches ,aorta_surface_branches))
     assert np.allclose(wrapped_bifur_section.CellData.GetArray('BifurcationSectionNormal'), expectedValue) == True
 
 
@@ -143,7 +144,7 @@ def test_bifurcation_section_normal_correct(aorta_centerline_branches ,aorta_sur
 ])
 def test_bifurcation_section_area_correct(aorta_centerline_branches ,aorta_surface_branches,
                                           bifurcation_sections, expectedValue):
-    wrapped_bifur_section = dsa.WrapDataObject(bifurcation_sections(aorta_centerline_branches ,aorta_surface_branches)) 
+    wrapped_bifur_section = dsa.WrapDataObject(bifurcation_sections(aorta_centerline_branches ,aorta_surface_branches))
     assert np.allclose(wrapped_bifur_section.CellData.GetArray('BifurcationSectionArea'), expectedValue) == True
 
 
@@ -153,7 +154,7 @@ def test_bifurcation_section_area_correct(aorta_centerline_branches ,aorta_surfa
 ])
 def test_bifurcation_section_min_size_correct(aorta_centerline_branches ,aorta_surface_branches,
                                              bifurcation_sections, expectedValue):
-    wrapped_bifur_section = dsa.WrapDataObject(bifurcation_sections(aorta_centerline_branches ,aorta_surface_branches)) 
+    wrapped_bifur_section = dsa.WrapDataObject(bifurcation_sections(aorta_centerline_branches ,aorta_surface_branches))
     assert np.allclose(wrapped_bifur_section.CellData.GetArray('BifurcationSectionMinSize'), expectedValue) == True
 
 
@@ -163,7 +164,7 @@ def test_bifurcation_section_min_size_correct(aorta_centerline_branches ,aorta_s
 ])
 def test_bifurcation_section_max_size_correct(aorta_centerline_branches ,aorta_surface_branches,
                                              bifurcation_sections, expectedValue):
-    wrapped_bifur_section = dsa.WrapDataObject(bifurcation_sections(aorta_centerline_branches ,aorta_surface_branches)) 
+    wrapped_bifur_section = dsa.WrapDataObject(bifurcation_sections(aorta_centerline_branches ,aorta_surface_branches))
     assert np.allclose(wrapped_bifur_section.CellData.GetArray('BifurcationSectionMaxSize'), expectedValue) == True
 
 
@@ -173,7 +174,7 @@ def test_bifurcation_section_max_size_correct(aorta_centerline_branches ,aorta_s
 ])
 def test_bifurcation_section_shape_correct(aorta_centerline_branches ,aorta_surface_branches,
                                            bifurcation_sections, expectedValue):
-    wrapped_bifur_section = dsa.WrapDataObject(bifurcation_sections(aorta_centerline_branches ,aorta_surface_branches)) 
+    wrapped_bifur_section = dsa.WrapDataObject(bifurcation_sections(aorta_centerline_branches ,aorta_surface_branches))
     assert np.allclose(wrapped_bifur_section.CellData.GetArray('BifurcationSectionShape'), expectedValue) == True
 
 
@@ -183,7 +184,7 @@ def test_bifurcation_section_shape_correct(aorta_centerline_branches ,aorta_surf
 ])
 def test_bifurcation_section_closed_correct(aorta_centerline_branches ,aorta_surface_branches,
                                            bifurcation_sections, expectedValue):
-    wrapped_bifur_section = dsa.WrapDataObject(bifurcation_sections(aorta_centerline_branches ,aorta_surface_branches)) 
+    wrapped_bifur_section = dsa.WrapDataObject(bifurcation_sections(aorta_centerline_branches ,aorta_surface_branches))
     assert np.allclose(wrapped_bifur_section.CellData.GetArray('BifurcationSectionClosed'), expectedValue) == True
 
 
@@ -193,10 +194,9 @@ def test_bifurcation_section_closed_correct(aorta_centerline_branches ,aorta_sur
 ])
 def test_bifurcation_section_orientation_correct(aorta_centerline_branches ,aorta_surface_branches,
                                                  bifurcation_sections, expectedValue):
-    wrapped_bifur_section = dsa.WrapDataObject(bifurcation_sections(aorta_centerline_branches ,aorta_surface_branches)) 
+    wrapped_bifur_section = dsa.WrapDataObject(bifurcation_sections(aorta_centerline_branches ,aorta_surface_branches))
     assert np.allclose(wrapped_bifur_section.CellData.GetArray('BifurcationSectionOrientation'), expectedValue) == True
 
-    
 
 @pytest.mark.parametrize("bifurcation_sections,expectedValue",[
     (bifur_sections_one_sphere, np.array([1, 1, 1])),
@@ -204,7 +204,7 @@ def test_bifurcation_section_orientation_correct(aorta_centerline_branches ,aort
 ])
 def test_bifurcation_section_distance_to_spheres_correct(aorta_centerline_branches ,aorta_surface_branches,
                                                  bifurcation_sections, expectedValue):
-    wrapped_bifur_section = dsa.WrapDataObject(bifurcation_sections(aorta_centerline_branches ,aorta_surface_branches)) 
+    wrapped_bifur_section = dsa.WrapDataObject(bifurcation_sections(aorta_centerline_branches ,aorta_surface_branches))
     assert np.allclose(wrapped_bifur_section.CellData.GetArray('BifurcationSectionDistanceSpheres'), expectedValue) == True
 
 
@@ -218,7 +218,7 @@ def test_number_of_points_per_cell(bifur_sections_one_sphere, expectedvalue, par
     numberOfPoints = bcx.GetNumberOfPoints()
 
     assert numberOfPoints == expectedvalue
-    
+
 
 @pytest.mark.parametrize("expectedvalue,paramid", [
     (0, 0),
@@ -249,11 +249,11 @@ def test_cell_data_pointId_end_indices(bifur_sections_one_sphere, expectedvalue,
     (124, 80, np.array([ 225.22320557,  128.92987061,   19.44786835]), np.array([ 225.25431824,  128.94456482,   19.42810059]), 1),
     (204, 90, np.array([ 221.40382385,  128.67816162,   22.39156914]), np.array([ 221.80430603,  128.64775085,   24.46484756]), 2)
 ])
-def test_cell_data_point_start_and_end_xyz_locations(bifur_sections_one_sphere, pointidstart, numberofpoints, 
+def test_cell_data_point_start_and_end_xyz_locations(bifur_sections_one_sphere, pointidstart, numberofpoints,
                                                      expectedlocationstart, expectedlocationend, paramid):
     bcx = bifur_sections_one_sphere.GetCell(paramid)
     bw = dsa.WrapDataObject(bifur_sections_one_sphere)
-    
+
     pointIdEnd = bcx.GetPointId(numberofpoints - 1)
     pointLocationEnd = bw.Points[pointIdEnd]
     pointLocationStart = bw.Points[pointidstart]

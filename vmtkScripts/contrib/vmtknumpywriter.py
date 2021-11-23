@@ -30,6 +30,7 @@ try:
 except ImportError:
     raise ImportError('Unable to Import vmtknumpytosurface module, numpy is not installed')
 
+
 class vmtkNumpyWriter(pypes.pypeScript):
 
     def __init__(self):
@@ -91,7 +92,7 @@ class vmtkNumpyWriter(pypes.pypeScript):
                 elif isinstance(item, list):
                     for index, element in enumerate(item):
                         if not isinstance(index, str):
-                            index = str(index) 
+                            index = str(index)
                         if self.Compression == 1:
                             h5file.create_dataset(path + key + '/' + index, data=element, compression='gzip',
                                                   compression_opts=self.CompressionLevel)

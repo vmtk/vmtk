@@ -9,8 +9,8 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
@@ -26,7 +26,7 @@ class vmtkRBFInterpolation(pypes.pypeScript):
     def __init__(self):
 
         pypes.pypeScript.__init__(self)
-        
+
         self.Seeds = None
         self.RBFType = 'biharmonic'
 
@@ -79,7 +79,7 @@ class vmtkRBFInterpolation(pypes.pypeScript):
         else:
             dimensions = self.Dimensions
             modelBounds = self.Bounds
-        
+
         sampleFunction = vtk.vtkSampleFunction()
         sampleFunction.SetImplicitFunction(rbf)
         sampleFunction.SetOutputScalarTypeToDouble()
@@ -88,13 +88,12 @@ class vmtkRBFInterpolation(pypes.pypeScript):
         sampleFunction.CappingOff()
         sampleFunction.ComputeNormalsOff()
         sampleFunction.Update()
-        
-        self.Image = sampleFunction.GetOutput() 
-        
+
+        self.Image = sampleFunction.GetOutput()
+
 
 if __name__=='__main__':
 
     main = pypes.pypeMain()
     main.Arguments = sys.argv
     main.Execute()
-

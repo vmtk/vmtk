@@ -66,6 +66,7 @@ class vmtkThreshold(pypes.pypeScript):
             gf.Update()
             self.Surface = gf.GetOutput()
 
+
 if __name__ == '__main__':
     main = pypes.pypeMain()
     main.Arguments = sys.argv

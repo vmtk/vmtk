@@ -18,6 +18,7 @@ import pytest
 import vmtk.vmtkcenterlinesnetwork as centerlinesnetwork
 import vtk
 
+
 def test_centerline_extraction_surface_with_no_hole(aorta_surface):
     clnetwork = centerlinesnetwork.vmtkCenterlinesNetwork()
     clnetwork.Surface = aorta_surface

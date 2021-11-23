@@ -33,5 +33,5 @@ def test_change_size_factor(aorta_surface, compare_surfaces):
     remover.Surface = aorta_surface
     remover.SizeFactor = 0.15
     remover.Execute()
-    
+
     assert compare_surfaces(remover.Surface, name) == True

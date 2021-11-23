@@ -9,8 +9,8 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
@@ -22,6 +22,7 @@ from vmtk import vtkvmtk
 from vmtk import vmtkrenderer
 from vmtk import pypes
 
+
 class vmtkImageVOIPainter(pypes.pypeScript):
 
     def __init__(self):
@@ -30,7 +31,7 @@ class vmtkImageVOIPainter(pypes.pypeScript):
 
         self.CubeSource = vtk.vtkCubeSource()
         self.CubeActor = vtk.vtkActor()
-        
+
         self.BoxActive = 0
         self.BoxBounds = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
         self.PaintValue = 0.0
@@ -209,13 +210,13 @@ class vmtkImageVOIPainter(pypes.pypeScript):
             self.PrintError('Error: no Image.')
 
         if self.Interactive == 1:
-            
+
             if not self.vmtkRenderer:
                 self.vmtkRenderer = vmtkrenderer.vmtkRenderer()
                 self.vmtkRenderer.Initialize()
                 self.OwnRenderer = 1
 
-            self.vmtkRenderer.RegisterScript(self)                 
+            self.vmtkRenderer.RegisterScript(self)
 
             self.PlaneWidgetX = vtkvmtk.vtkvmtkImagePlaneWidget()
             self.PlaneWidgetX.SetInteractor(self.vmtkRenderer.RenderWindowInteractor)

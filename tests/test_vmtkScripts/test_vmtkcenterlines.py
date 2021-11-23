@@ -18,6 +18,7 @@ import pytest
 import vmtk.vmtkcenterlines as vmtkcenterlines
 import vmtk.vmtkcenterlineviewer as viewer
 
+
 def test_idlist_centerlines(aorta_surface, compare_centerlines):
     name = __name__ + '_test_idlist_centerlines.vtp'
     centerliner = vmtkcenterlines.vmtkCenterlines()

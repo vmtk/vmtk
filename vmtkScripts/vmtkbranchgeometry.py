@@ -9,8 +9,8 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
@@ -20,12 +20,13 @@ import sys
 
 from vmtk import pypes
 
+
 class vmtkBranchGeometry(pypes.pypeScript):
 
     def __init__(self):
 
         pypes.pypeScript.__init__(self)
-        
+
         self.Centerlines = None
         self.GeometryData = None
 
@@ -87,7 +88,6 @@ class vmtkBranchGeometry(pypes.pypeScript):
 
         self.GeometryData = centerlineBranchGeometry.GetOutput()
 
-        
 
 if __name__=='__main__':
 

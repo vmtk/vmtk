@@ -17,12 +17,14 @@
 import pytest
 import vmtk.vmtkmeshtonumpy as meshtonumpy
 
+
 @pytest.fixture(scope='module')
 def mesh_arraydict(aorta_mesh):
     converter = meshtonumpy.vmtkMeshToNumpy()
     converter.Mesh = aorta_mesh
     converter.Execute()
     return converter.ArrayDict
+
 
 @pytest.fixture(scope='module')
 def mesh_arraydict_nocell_strings(aorta_mesh):

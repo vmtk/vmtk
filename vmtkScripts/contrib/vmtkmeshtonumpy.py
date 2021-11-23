@@ -32,6 +32,8 @@ except ImportError:
     raise ImportError('Unable to Import vmtkmeshtonumpy module, numpy is not installed')
 
 # convenience class for nested dictionaries
+
+
 class vividict(dict):
     def __missing__(self, key):
         value = self[key] = type(self)()
@@ -59,7 +61,6 @@ class vmtkMeshToNumpy(pypes.pypeScript):
         self.SetOutputMembers([
             ['ArrayDict','o','dict',1,'','the output dictionary','vmtknumpywriter']])
 
-
     def _ConvertFlatCellsArrayToList(self, cells, cellLocations):
         '''convert a flat array defining cells into a list of numpy arrays which each define a cell
         
@@ -81,11 +82,11 @@ class vmtkMeshToNumpy(pypes.pypeScript):
         '''
 
         splitArrays = np.split(cells, cellLocations[1:]) # start first split after end of Cell1, at nPointsCell2
-        
+
         cellPointIdsList = []
         for subArray in splitArrays:
             cellPointIdsList.append(subArray[1:]) # get rid of npointsCell(foo), only keep cellPointIds
-        
+
         return cellPointIdsList
 
     def Execute(self):
@@ -95,7 +96,7 @@ class vmtkMeshToNumpy(pypes.pypeScript):
 
         wrappedData = dsa.WrapDataObject(self.Mesh)
 
-        # (npoints, 3) array of xyz coordinates. values in Cells index to the 
+        # (npoints, 3) array of xyz coordinates. values in Cells index to the
         # rows of this array (Cells.max() = Points.shape[0] - 1)
         points = np.array(wrappedData.Points)
         self.ArrayDict['Points'] = points
@@ -106,18 +107,18 @@ class vmtkMeshToNumpy(pypes.pypeScript):
             self.ArrayDict['Cells']['CellPointIds'] = cellPointIdsList
 
         else:
-            # flat list of locations which index the beginning of a cell in the 
+            # flat list of locations which index the beginning of a cell in the
             # Cell array (same size as CellTypes and CellEntityIds)
             cellLocations = np.array(wrappedData.CellLocations)
             self.ArrayDict['Cells']['CellLocations'] = cellLocations
 
-            # flat array which defines the npoints/cell and indexes of rows 
+            # flat array which defines the npoints/cell and indexes of rows
             # in Points array which define each cell's XYZ locations
             cells = np.array(wrappedData.Cells)
             self.ArrayDict['Cells']['CellPointIds'] = cells
 
         # flat array of shape == cellEntityIds == cellLocations which defines
-        # the intiger descriptor of the VTK_CELL_TYPE for each cell in cells 
+        # the intiger descriptor of the VTK_CELL_TYPE for each cell in cells
         cellTypes = np.array(wrappedData.CellTypes)
         self.ArrayDict['Cells']['CellTypes'] = cellTypes
 
@@ -127,7 +128,7 @@ class vmtkMeshToNumpy(pypes.pypeScript):
             for cellType in uniqueCellTypes:
                 typeDict[vtk.vtkCellTypes.GetClassNameFromTypeId(cellType)] = np.array([cellType])
             self.ArrayDict['Cells']['CellTypesAsStrings'] = typeDict
-            
+
         for cellDataKey in wrappedData.CellData.keys():
             cellData = wrappedData.CellData.GetArray(cellDataKey)
             self.ArrayDict['CellData'][cellDataKey] = cellData
@@ -135,7 +136,8 @@ class vmtkMeshToNumpy(pypes.pypeScript):
         for pointDataKey in wrappedData.PointData.keys():
             pointData = wrappedData.PointData.GetArray(pointDataKey)
             self.ArrayDict['PointData'][pointDataKey] = pointData
-    
+
+
 if __name__=='__main__':
     main = pypes.pypeMain()
     main.Arguments = sys.argv

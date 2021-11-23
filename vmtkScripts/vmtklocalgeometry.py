@@ -9,8 +9,8 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
@@ -26,16 +26,16 @@ class vmtkLocalGeometry(pypes.pypeScript):
     def __init__(self):
 
         pypes.pypeScript.__init__(self)
-        
+
         self.Surface = None
         self.Centerlines = None
         self.VoronoiDiagram = None
         self.PoleIds = None
-        
+
         self.EdgeArrayName = 'EdgeArray'
 
         self.VoronoiGeodesicDistanceArrayName = 'VoronoiGeodesicDistance'
-        
+
         self.VoronoiPoleCenterlineVectorsArrayName = 'VoronoiPoleCenterlineVectors'
         self.VoronoiCellIdsArrayName = 'VoronoiCellIds'
         self.VoronoiPCoordsArrayName = 'VoronoiPCoords'
@@ -57,7 +57,7 @@ class vmtkLocalGeometry(pypes.pypeScript):
         self.CenterlineVectorsArrayName = 'CenterlineVectors'
         self.CellIdsArrayName = 'CellIdsArray'
         self.PCoordsArrayName = 'PCoordsArray'
-        
+
         self.SetScriptName('vmtklocalgeometry')
         self.SetScriptDoc('compute local geometric properties of a surface')
         self.SetInputMembers([
@@ -142,7 +142,7 @@ class vmtkLocalGeometry(pypes.pypeScript):
             voronoi = voronoiShooter.GetOutput()
 
         surfaceLocalGeometry = vtkvmtk.vtkvmtkPolyDataLocalGeometry()
-        
+
         surfaceLocalGeometry.SetInputData(self.Surface)
         surfaceLocalGeometry.SetVoronoiDiagram(voronoi)
         surfaceLocalGeometry.SetVoronoiGeodesicDistanceArrayName(self.VoronoiGeodesicDistanceArrayName)
@@ -151,7 +151,7 @@ class vmtkLocalGeometry(pypes.pypeScript):
         surfaceLocalGeometry.SetVoronoiPoleCenterlineVectorsArrayName(self.VoronoiPoleCenterlineVectorsArrayName)
         surfaceLocalGeometry.SetVoronoiCellIdsArrayName(self.VoronoiCellIdsArrayName)
         surfaceLocalGeometry.SetVoronoiPCoordsArrayName(self.VoronoiPCoordsArrayName)
-        
+
         surfaceLocalGeometry.SetComputePoleVectors(self.ComputePoleVectors)
         surfaceLocalGeometry.SetComputeGeodesicDistance(self.ComputeGeodesicDistance)
         surfaceLocalGeometry.SetComputeNormalizedTangencyDeviation(self.ComputeNormalizedTangencyDeviation)
@@ -173,7 +173,6 @@ class vmtkLocalGeometry(pypes.pypeScript):
         surfaceLocalGeometry.Update()
 
         self.Surface = surfaceLocalGeometry.GetOutput()
-
 
 
 if __name__=='__main__':

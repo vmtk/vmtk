@@ -9,8 +9,8 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
@@ -48,7 +48,7 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
         self.PropagationScaling = 0.0
         self.CurvatureScaling = 0.0
         self.AdvectionScaling = 1.0
-        
+
         self.IsoSurfaceValue = 0.0
         self.MaximumRMSError = 1E-20
         self.DerivativeSigma = 0.0
@@ -60,12 +60,12 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
 
         self.LevelSetsType = 'geodesic'
         self.FeatureImageType = 'gradient'
-        
+
         self.UpwindFactor = 1.0
 
         self.FWHMRadius = [1.0, 1.0, 1.0]
         self.FWHMBackgroundValue = 0.0
-        
+
         self.EdgeWeight = 0.0
         self.SmoothingIterations = 5
         self.SmoothingTimeStep = 0.1
@@ -117,15 +117,15 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
         return 1
 
     def ThresholdInput(self,queryString):
-       
+
         thresholdString = self.InputText(queryString,self.ThresholdValidator)
-      
+
         threshold = None
         if thresholdString != 'n':
             threshold = float(thresholdString)
-       
+
         return threshold
-       
+
     def PrintProgress(self,obj,event):
         self.OutputProgress(obj.GetProgress(),10)
 
@@ -191,7 +191,7 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
         levelSets.Update()
 
         self.EndProgress()
-  
+
         self.LevelSetsOutput = vtk.vtkImageData()
         self.LevelSetsOutput.DeepCopy(levelSets.GetOutput())
 
@@ -208,7 +208,7 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
             self.LevelSets = minFilter.GetOutput()
 
     def DisplayLevelSetSurface(self,levelSets,value=0.0):
-      
+
         marchingCubes = vtk.vtkMarchingCubes()
         marchingCubes.SetInputData(levelSets)
         marchingCubes.SetValue(0,value)
@@ -285,8 +285,8 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
             self.vmtkRenderer = vmtkscripts.vmtkRenderer()
             self.vmtkRenderer.Initialize()
             self.OwnRenderer = 1
- 
-        self.vmtkRenderer.RegisterScript(self)  
+
+        self.vmtkRenderer.RegisterScript(self)
 
         self.ImageSeeder = vmtkscripts.vmtkImageSeeder()
         self.ImageSeeder.vmtkRenderer = self.vmtkRenderer
@@ -296,13 +296,13 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
         self.ImageSeeder.Execute()
         ##self.ImageSeeder.Display = 1
         self.ImageSeeder.BuildView()
- 
+
         self.SurfaceViewer = vmtkscripts.vmtkSurfaceViewer()
         self.SurfaceViewer.vmtkRenderer = self.vmtkRenderer
-  
+
         if self.LevelSets != None:
             self.DisplayLevelSetSurface(self.LevelSets,0.0)
-  
+
         self.vmtkImageInitialization = vmtkscripts.vmtkImageInitialization()
         #self.vmtkImageInitialization.Image = self.Image
         self.vmtkImageInitialization.Image = self.InitializationImage
@@ -311,10 +311,10 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
         self.vmtkImageInitialization.SurfaceViewer = self.SurfaceViewer
         self.vmtkImageInitialization.NegateImage = self.NegateForInitialization
         self.vmtkImageInitialization.OwnRenderer = 0
- 
+
         endSegmentation = 0
         while (endSegmentation == 0):
-  
+
             if self.InitialLevelSets == None:
                 self.vmtkImageInitialization.Execute()
                 self.LevelSetsInput = self.vmtkImageInitialization.InitialLevelSets
@@ -326,13 +326,13 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
                 self.LevelSetsInput = self.InitialLevelSets
                 self.InitialLevelSets = None
                 self.DisplayLevelSetSurface(self.LevelSetsInput,self.IsoSurfaceValue)
-  
+
             endEvolution = False
             while not endEvolution:
-  
+
                 queryString = 'Please input parameters (type return to accept current values, \'e\' to end, \'q\' to quit):\nNumberOfIterations('+str(self.NumberOfIterations)+') [PropagationScaling('+str(self.PropagationScaling)+') CurvatureScaling('+str(self.CurvatureScaling)+') AdvectionScaling('+str(self.AdvectionScaling)+')]: '
                 inputString = self.InputText(queryString,self.EvolutionParametersValidator)
-  
+
                 if inputString == 'q':
                     return
                 elif inputString == 'e':
@@ -349,30 +349,30 @@ class vmtkLevelSetSegmentation(pypes.pypeScript):
                     else:
                         self.PrintLog('Wrong number of parameters.')
                         continue
-  
+
                 if endEvolution:
                     break
-  
+
                 self.LevelSetEvolution()
                 self.DisplayLevelSetSurface(self.LevelSetsOutput)
-  
+
                 queryString = 'Accept result? (y/n): '
                 inputString = self.InputText(queryString,self.YesNoValidator)
                 if inputString == 'y':
                     endEvolution = True
                 elif inputString == 'n':
                     endEvolution = False
-  
+
             queryString = 'Merge branch? (y/n): '
             inputString = self.InputText(queryString,self.YesNoValidator)
             if inputString == 'y':
                 self.MergeLevelSet()
             elif inputString == 'n':
                 pass
- 
-            if self.LevelSets != None: 
+
+            if self.LevelSets != None:
                 self.DisplayLevelSetSurface(self.LevelSets)
-  
+
             queryString = 'Segment another branch? (y/n): '
             inputString = self.InputText(queryString,self.YesNoValidator)
             if inputString == 'y':

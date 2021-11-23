@@ -9,11 +9,11 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
-## Note: this class was contributed by 
+## Note: this class was contributed by
 ##       Simone Manini
 ##       Orobix Srl
 
@@ -56,7 +56,7 @@ class vmtkParticleTracer(pypes.pypeScript):
         self.Component2Prefix = "w_"
         self.SetScriptName('vmtkparticletracer')
         self.SetScriptDoc('Generate streamlines')
-        
+
         self.SetInputMembers([
             ['Mesh','i','vtkUnstructuredGrid',1,'','the input mesh','vmtkmeshreader'],
             ['Source','s','vtkPolyData',1,'','source points', 'vmtksurfacereader'],
@@ -88,10 +88,10 @@ class vmtkParticleTracer(pypes.pypeScript):
 
         if (self.Mesh == None):
             self.PrintError('Error: no Mesh.')
-        
+
         if (self.Source == None):
             self.PrintError('Error: no Source surface.')
-        
+
         if (self.FirstTimeStep == None or self.LastTimeStep == None or self.IntervalTimeStep == None):
             timesteps = self.Mesh.GetFieldData().GetArray("timesteps")
             if (timesteps == None):
@@ -105,22 +105,22 @@ class vmtkParticleTracer(pypes.pypeScript):
         else:
             indexList = list(range(self.FirstTimeStep,self.LastTimeStep+1,self.IntervalTimeStep))
             firstTimeStep = self.FirstTimeStep
-        
+
         indexColumn = vtk.vtkIntArray()
         indexColumn.SetName("index")
         timeColumn = vtk.vtkDoubleArray()
         timeColumn.SetName("time")
-        
+
         time = 0
         timeStepsTable = vtk.vtkTable()
         timeStepsTable.AddColumn(indexColumn)
         timeStepsTable.AddColumn(timeColumn)
-        
+
         for index in indexList:
             time+=(1./(len(indexList)-1))
             indexColumn.InsertNextValue(index)
             timeColumn.InsertNextValue(time)
-        
+
         u = self.Source.GetPointData().GetArray("u")
         if u:
             v = self.Source.GetPointData().GetArray("v")
@@ -129,7 +129,7 @@ class vmtkParticleTracer(pypes.pypeScript):
             u = self.Source.GetPointData().GetArray("u_"+str(firstTimeStep))
             v = self.Source.GetPointData().GetArray("v_"+str(firstTimeStep))
             w = self.Source.GetPointData().GetArray("w_"+str(firstTimeStep))
-        
+
         speed = vtk.vtkFloatArray()
         speed.SetNumberOfComponents(u.GetNumberOfComponents())
         speed.SetNumberOfTuples(u.GetNumberOfTuples())
@@ -138,16 +138,16 @@ class vmtkParticleTracer(pypes.pypeScript):
         while i<u.GetNumberOfTuples():
             speed.InsertTuple1(i, vtk.vtkMath.Norm((u.GetTuple(i)[0],v.GetTuple(i)[0],w.GetTuple(i)[0])))
             i+=1
-    
+
         self.Source.GetPointData().AddArray(speed)
-        
+
         if self.Subdivide:
             sd = vtk.vtkLinearSubdivisionFilter()
             sd.SetInputData(self.Source)
             sd.SetNumberOfSubdivisions(1)
             sd.Update()
             self.Source = sd.GetOutput()
-            
+
         self.Source.GetPointData().SetActiveScalars('speed')
         cp = vtk.vtkClipPolyData()
         cp.SetInputData(self.Source)
@@ -155,7 +155,7 @@ class vmtkParticleTracer(pypes.pypeScript):
         cp.SetValue(self.MinSpeed)
         cp.Update()
         self.Source = cp.GetOutput()
-        
+
         tracer = vtkvmtk.vtkvmtkStaticTemporalStreamTracer()
         tracer.SetInputData(self.Mesh)
         tracer.SetIntegratorTypeToRungeKutta45()
@@ -182,6 +182,7 @@ class vmtkParticleTracer(pypes.pypeScript):
         tracer.Update()
 
         self.Traces = tracer.GetOutput()
+
 
 if __name__=='__main__':
     main = pypes.pypeMain()

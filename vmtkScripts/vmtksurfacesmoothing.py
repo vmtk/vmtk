@@ -9,8 +9,8 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
@@ -20,13 +20,12 @@ import sys
 from vmtk import pypes
 
 
-
 class vmtkSurfaceSmoothing(pypes.pypeScript):
 
     def __init__(self):
 
         pypes.pypeScript.__init__(self)
-        
+
         self.Surface = None
 
         self.NumberOfIterations = 1
@@ -34,8 +33,8 @@ class vmtkSurfaceSmoothing(pypes.pypeScript):
         self.RelaxationFactor = 0.01
         self.BoundarySmoothing = 1
         self.NormalizeCoordinates = 1
-       
-        self.Method = 'taubin' 
+
+        self.Method = 'taubin'
 
         self.SetScriptName('vmtksurfacesmoothing')
         self.SetScriptDoc('smooth a surface using Taubin\'s algorithm')
@@ -84,7 +83,6 @@ class vmtkSurfaceSmoothing(pypes.pypeScript):
         normals.Execute()
 
         self.Surface = normals.Surface
-
 
 
 if __name__=='__main__':

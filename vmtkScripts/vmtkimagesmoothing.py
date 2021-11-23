@@ -9,8 +9,8 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
@@ -26,7 +26,7 @@ class vmtkImageSmoothing(pypes.pypeScript):
     def __init__(self):
 
         pypes.pypeScript.__init__(self)
-        
+
         self.Image = None
 
         self.Method = 'gauss'
@@ -35,10 +35,10 @@ class vmtkImageSmoothing(pypes.pypeScript):
         self.Dimensionality = 3
         self.EnhancedImage = None
 
-        # This is the default value from Slicer 3 which assums pixel spacing = 1.0: (PixelSpacing)/2^{N+1}->1.0/2^{3+1} 
+        # This is the default value from Slicer 3 which assums pixel spacing = 1.0: (PixelSpacing)/2^{N+1}->1.0/2^{3+1}
         # If AutoCalculateTimeStep is enabled, this will be overwritten with the value calculated with the actual image
         # pixel spacing and number of dimensions.
-        self.TimeStep = 0.0625 
+        self.TimeStep = 0.0625
         self.AutoCalculateTimeStep = 1
         self.Conductance = 1.0
         self.NumberOfIterations = 5
@@ -82,7 +82,6 @@ class vmtkImageSmoothing(pypes.pypeScript):
             minspacing = min(self.Image.GetSpacing())
             #multiply by .995 to make sure its under stability threshold
             self.TimeStep = (minspacing / (2.0 ** (self.Image.GetDataDimension() + 1))) * 0.9995
-
 
         grad = vtkvmtk.vtkvmtkAnisotropicDiffusionImageFilter()
         grad.SetInputData(self.Image)

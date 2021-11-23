@@ -9,8 +9,8 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
@@ -27,7 +27,7 @@ class vmtkFlowExtensions(pypes.pypeScript):
     def __init__(self):
 
         pypes.pypeScript.__init__(self)
-        
+
         self.Surface = None
         self.Centerlines = None
 
@@ -102,7 +102,7 @@ class vmtkFlowExtensions(pypes.pypeScript):
                 self.vmtkRenderer.Initialize()
                 self.OwnRenderer = 1
 
-            self.vmtkRenderer.RegisterScript(self)  
+            self.vmtkRenderer.RegisterScript(self)
 
             boundaryExtractor = vtkvmtk.vtkvmtkPolyDataBoundaryExtractor()
             boundaryExtractor.SetInputData(self.Surface)
@@ -121,23 +121,23 @@ class vmtkFlowExtensions(pypes.pypeScript):
             labelsMapper.SetLabelModeToLabelIds()
             labelsActor = vtk.vtkActor2D()
             labelsActor.SetMapper(labelsMapper)
-    
+
             self.vmtkRenderer.Renderer.AddActor(labelsActor)
-    
+
             surfaceMapper = vtk.vtkPolyDataMapper()
             surfaceMapper.SetInputData(self.Surface)
             surfaceMapper.ScalarVisibilityOff()
             surfaceActor = vtk.vtkActor()
             surfaceActor.SetMapper(surfaceMapper)
             surfaceActor.GetProperty().SetOpacity(0.25)
-    
+
             self.vmtkRenderer.Renderer.AddActor(surfaceActor)
-    
+
             #self.vmtkRenderer.Render()
-    
+
             #self.vmtkRenderer.Renderer.RemoveActor(labelsActor)
             #self.vmtkRenderer.Renderer.RemoveActor(surfaceActor)
-            
+
             ok = False
             while not ok:
                 if(self.Exclude):
@@ -184,7 +184,6 @@ class vmtkFlowExtensions(pypes.pypeScript):
         flowExtensionsFilter.Update()
 
         self.Surface = flowExtensionsFilter.GetOutput()
-
 
 
 if __name__=='__main__':

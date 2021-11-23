@@ -9,11 +9,11 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
-## Note: this class was improved by 
+## Note: this class was improved by
 ##       Hugo Gratama van Andel
 ##       Academic Medical Centre - University of Amsterdam
 ##       Dept. Biomedical Engineering  & Physics
@@ -72,7 +72,7 @@ class vmtkMeshTransform(pypes.pypeScript):
                 transform = vtk.vtkTransform()
                 transform.RotateX(self.Rotation[0])
                 transform.RotateY(self.Rotation[1])
-                transform.RotateZ(self.Rotation[2])                       
+                transform.RotateZ(self.Rotation[2])
                 transform.Translate(self.Translation[0], self.Translation[1], self.Translation[2])
                 transform.Scale(self.Scaling[0], self.Scaling[1], self.Scaling[2])
                 self.Matrix4x4.DeepCopy(transform.GetMatrix())

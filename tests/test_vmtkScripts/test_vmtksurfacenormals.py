@@ -17,6 +17,7 @@
 import pytest
 import vmtk.vmtksurfacenormals as normals
 
+
 def test_default_params(aorta_surface, compare_surfaces):
     name = __name__ + '_test_default_params.vtp'
     normer = normals.vmtkSurfaceNormals()

@@ -12,6 +12,7 @@ import traceback
 
 pypetestrunner = 'PypeTestRunner'
 
+
 class PypeTestCase(unittest.TestCase):
     def __init__(self,line,lineno):
         unittest.TestCase.__init__(self)
@@ -33,6 +34,7 @@ class PypeTestCase(unittest.TestCase):
         splitLog = self.Log.split('.')
         self.Result = splitLog[1]
         self.assertEqual(self.Result,'passed')
+
 
 class PypeTestResult(unittest.TestResult):
     def appendLogLine(self,logline):
@@ -66,12 +68,13 @@ class PypeTestResult(unittest.TestResult):
     def addSuccess(self,test):
         self.testLog['result'] = 'passed'
 
+
 class PypeTestRunner(pypes.pypeScript):
 
     def __init__(self):
 
         pypes.pypeScript.__init__(self)
-        
+
         self.SuiteName = None
         self.TestSuiteFileName = None
         self.LogFileName = ''
@@ -115,7 +118,7 @@ class PypeTestRunner(pypes.pypeScript):
                     editedError += line
                 xmlCaseError = xmlCase.appendChild(xmlDocument.createElement('CaseError'))
                 errorText = xmlDocument.createTextNode(editedError)
-                xmlCaseError.appendChild(errorText) 
+                xmlCaseError.appendChild(errorText)
                 del case['error']
             xmlCasePype = xmlCase.appendChild(xmlDocument.createElement('CasePype'))
             xmlCasePype.appendChild(xmlDocument.createTextNode(case['pype']))
@@ -141,7 +144,7 @@ class PypeTestRunner(pypes.pypeScript):
         if not self.SuiteName:
             self.PrintError('Error: No test name.')
 
-        extensionFormats = {'txt':'text', 
+        extensionFormats = {'txt':'text',
                             'xml':'xml'}
 
         self.Suite = unittest.TestSuite()
@@ -157,8 +160,8 @@ class PypeTestRunner(pypes.pypeScript):
 
         self.Result = PypeTestResult()
         self.Suite.run(self.Result)
-        if self.Result.wasSuccessful(): 
-            self.Success = 'SUCCESS' 
+        if self.Result.wasSuccessful():
+            self.Success = 'SUCCESS'
 
         self.TestSuiteLog += '\nID NAME RESULT'
         for case in self.Result.ResultList:
@@ -191,6 +194,7 @@ class PypeTestRunner(pypes.pypeScript):
                 self.WriteXMLLogFile()
             else:
                 self.PrintError('Error: unsupported format '+ self.Format + '.')
+
 
 if __name__=='__main__':
     main = pypes.pypeMain()

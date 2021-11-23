@@ -9,8 +9,8 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
@@ -27,7 +27,7 @@ class vmtkCenterlineViewer(pypes.pypeScript):
     def __init__(self):
 
         pypes.pypeScript.__init__(self)
-        
+
         self.Centerlines = None
         self.PointDataArrayName = ''
         self.CellDataArrayName = ''
@@ -52,17 +52,17 @@ class vmtkCenterlineViewer(pypes.pypeScript):
             ['Centerlines','o','vtkPolyData',1,'','the output centerlines','vmtksurfacewriter']])
 
     def Execute(self):
- 
+
         if not self.Centerlines:
             self.PrintError('Error: No input centerlines.')
             return
-        
+
         if not self.vmtkRenderer:
             self.vmtkRenderer = vmtkrenderer.vmtkRenderer()
             self.vmtkRenderer.Initialize()
             self.OwnRenderer = 1
 
-        self.vmtkRenderer.RegisterScript(self) 
+        self.vmtkRenderer.RegisterScript(self)
 
         if self.CellDataArrayName:
             cellCenters = vtk.vtkCellCenters()
@@ -90,7 +90,7 @@ class vmtkCenterlineViewer(pypes.pypeScript):
             centerlineMapper.SetScalarRange(self.Centerlines.GetPointData().GetScalars().GetRange(0))
         else:
             centerlineMapper.ScalarVisibilityOff()
-        
+
         if self.ColorMap == 'grayscale':
             lut = centerlineMapper.GetLookupTable()
             lut.SetNumberOfTableValues(self.NumberOfColors)
@@ -98,7 +98,7 @@ class vmtkCenterlineViewer(pypes.pypeScript):
             lut.SetSaturationRange(0.0,0.0)
             lut.Build()
             centerlineMapper.SetLookupTable(lut)
-        
+
         if self.ColorMap == 'rainbow':
             lut = centerlineMapper.GetLookupTable()
             lut.SetHueRange(0.666667,0.0)
@@ -108,7 +108,7 @@ class vmtkCenterlineViewer(pypes.pypeScript):
             lut.SetNumberOfColors(self.NumberOfColors)
             lut.Build()
             centerlineMapper.SetLookupTable(lut)
-           
+
         if self.ColorMap == 'blackbody':
             lut = centerlineMapper.GetLookupTable()
             lut.SetNumberOfTableValues(self.NumberOfColors)
@@ -122,8 +122,8 @@ class vmtkCenterlineViewer(pypes.pypeScript):
                 cc = colorTransferFunction.GetColor(ss)
                 lut.SetTableValue(ii,cc[0],cc[1],cc[2],1.0)
             lut.Build()
-            centerlineMapper.SetLookupTable(lut)  
-                   
+            centerlineMapper.SetLookupTable(lut)
+
         if self.ColorMap == 'cooltowarm':
             lut = centerlineMapper.GetLookupTable()
             lut.SetNumberOfTableValues(self.NumberOfColors)
@@ -137,7 +137,7 @@ class vmtkCenterlineViewer(pypes.pypeScript):
                 lut.SetTableValue(ii,cc[0],cc[1],cc[2],1.0)
             lut.Build()
             centerlineMapper.SetLookupTable(lut)
-        
+
         centerlineActor = vtk.vtkActor()
         centerlineActor.SetMapper(centerlineMapper)
         self.vmtkRenderer.Renderer.AddActor(centerlineActor)
@@ -161,16 +161,15 @@ class vmtkCenterlineViewer(pypes.pypeScript):
 
 #        if self.CellDataArrayName:
 #            self.vmtkRenderer.Renderer.RemoveActor(labelsActor)
-# 
+#
 #        if self.Legend and centerlineActor:
 #            self.vmtkRenderer.Renderer.RemoveActor(scalarBarActor)
-#           
+#
 #        self.vmtkRenderer.Renderer.RemoveActor(centerlineActor)
-       
+
 
 if __name__=='__main__':
 
     main = pypes.pypeMain()
     main.Arguments = sys.argv
     main.Execute()
-

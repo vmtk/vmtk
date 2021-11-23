@@ -18,6 +18,7 @@ import pytest
 import sys
 from vmtk import pype
 
+
 def test_init():
     pipe = pype.Pype()
     assert pipe.ScriptName == 'pype'
@@ -68,4 +69,3 @@ def test_parse_arguments_two_functions_with_text():
     pipe.Arguments = ['vmtkimagereader', '-ifile', 'test.vtp', '--pipe', 'vmtkimageviewer', '-ofile', 'test.vti']
     pipe.ParseArguments()
     assert pipe.ScriptList == [['vmtkimagereader', ['-ifile', 'test.vtp']], ['vmtkimageviewer', ['-ofile', 'test.vti']]]
-

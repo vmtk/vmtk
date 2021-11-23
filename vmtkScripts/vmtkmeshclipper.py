@@ -9,8 +9,8 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
@@ -97,7 +97,7 @@ class vmtkMeshClipper(pypes.pypeScript):
         self.Clipper.SetInputData(self.Mesh)
         self.Clipper.GenerateClippedOutputOn()
         self.Clipper.SetInsideOut(self.InsideOut)
-        
+
         if self.Interactive:
 
             self.Planes = vtk.vtkPlanes()
@@ -115,7 +115,7 @@ class vmtkMeshClipper(pypes.pypeScript):
                 self.vmtkRenderer.Initialize()
                 self.OwnRenderer = 1
 
-            self.vmtkRenderer.RegisterScript(self) 
+            self.vmtkRenderer.RegisterScript(self)
 
             mapper = vtk.vtkDataSetMapper()
             mapper.SetInputData(self.Mesh)
@@ -153,7 +153,6 @@ class vmtkMeshClipper(pypes.pypeScript):
             self.Mesh = self.Clipper.GetOutput()
             self.Surface = self.Cutter.GetOutput()
             self.ClippedMesh = self.Clipper.GetClippedOutput()
-        
 
 
 if __name__=='__main__':

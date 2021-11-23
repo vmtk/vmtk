@@ -9,8 +9,8 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
@@ -26,10 +26,10 @@ class vmtkImageFeatures(pypes.pypeScript):
     def __init__(self):
 
         pypes.pypeScript.__init__(self)
-        
+
         self.Image = None
         self.FeatureImage = None
-  
+
         self.Dimensionality = 3
 
         self.DerivativeSigma = 0.0
@@ -55,7 +55,7 @@ class vmtkImageFeatures(pypes.pypeScript):
         self.SetOutputMembers([
             ['Image','o','vtkImageData',1,'','the output image','vmtkimagewriter']
             ])
-    
+
     def BuildVTKGradientBasedFeatureImage(self):
 
         cast = vtk.vtkImageCast()
@@ -85,7 +85,7 @@ class vmtkImageFeatures(pypes.pypeScript):
         self.FeatureImage.DeepCopy(imageInvert.GetOutput())
 
     def BuildFWHMBasedFeatureImage(self):
-        
+
         cast = vtk.vtkImageCast()
         cast.SetInputData(self.Image)
         cast.SetOutputScalarTypeToFloat()
@@ -101,12 +101,12 @@ class vmtkImageFeatures(pypes.pypeScript):
         self.FeatureImage.DeepCopy(fwhmFeatureImageFilter.GetOutput())
 
     def BuildUpwindGradientBasedFeatureImage(self):
- 
+
         cast = vtk.vtkImageCast()
         cast.SetInputData(self.Image)
         cast.SetOutputScalarTypeToFloat()
         cast.Update()
-       
+
         gradientMagnitude = vtkvmtk.vtkvmtkUpwindGradientMagnitudeImageFilter()
         gradientMagnitude.SetInputConnection(cast.GetOutputPort())
         gradientMagnitude.SetUpwindFactor(self.UpwindFactor)
@@ -132,10 +132,10 @@ class vmtkImageFeatures(pypes.pypeScript):
             boundedReciprocal.SetInputConnection(gradientMagnitude.GetOutputPort())
             boundedReciprocal.Update()
             featureImage = boundedReciprocal.GetOutput()
- 
+
         self.FeatureImage = vtk.vtkImageData()
         self.FeatureImage.DeepCopy(featureImage)
-  
+
     def BuildGradientBasedFeatureImage(self):
 
         cast = vtk.vtkImageCast()

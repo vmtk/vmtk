@@ -121,6 +121,7 @@ class VmtkSurfaceExtractInnerCylinder(pypes.pypeScript):
 
         assert self.InnerRegionId in region_ids
 
+
 if __name__ == '__main__':
     main = pypes.pypeMain()
     main.Arguments = sys.argv

@@ -16,8 +16,9 @@
 
 import pytest
 import vmtk.vmtkbranchsections as branchsections
-from vtk.numpy_interface import dataset_adapter as dsa 
+from vtk.numpy_interface import dataset_adapter as dsa
 import numpy as np
+
 
 @pytest.fixture(scope='module')
 def branch_sections_one_sphere(aorta_centerline_branches ,aorta_surface_branches):
@@ -58,6 +59,7 @@ def test_number_of_cells_one_sphere(branch_sections_one_sphere):
 
     assert numberOfCells == 24
 
+
 def test_number_of_cells_two_sphere(branch_sections_two_spheres):
     numberOfCells = branch_sections_two_spheres.GetNumberOfCells()
 
@@ -70,7 +72,7 @@ def test_number_of_cells_two_sphere(branch_sections_two_spheres):
 ])
 def test_branch_section_group_ids_correct(aorta_centerline_branches ,aorta_surface_branches,
                                                branch_sections, expectedValue):
-    wrapped_bifur_section = dsa.WrapDataObject(branch_sections(aorta_centerline_branches ,aorta_surface_branches)) 
+    wrapped_bifur_section = dsa.WrapDataObject(branch_sections(aorta_centerline_branches ,aorta_surface_branches))
     assert np.allclose(wrapped_bifur_section.CellData.GetArray('BranchSectionGroupIds'), expectedValue) == True
 
 
@@ -86,7 +88,7 @@ def test_branch_section_group_ids_correct(aorta_centerline_branches ,aorta_surfa
 ])
 def test_branch_section_area_correct(aorta_centerline_branches ,aorta_surface_branches,
                                      branch_sections, expectedValue):
-    wrapped_bifur_section = dsa.WrapDataObject(branch_sections(aorta_centerline_branches ,aorta_surface_branches)) 
+    wrapped_bifur_section = dsa.WrapDataObject(branch_sections(aorta_centerline_branches ,aorta_surface_branches))
     assert np.allclose(wrapped_bifur_section.CellData.GetArray('BranchSectionArea'), expectedValue) == True
 
 
@@ -102,7 +104,7 @@ def test_branch_section_area_correct(aorta_centerline_branches ,aorta_surface_br
 ])
 def test_branch_section_min_size_correct(aorta_centerline_branches ,aorta_surface_branches,
                                          branch_sections, expectedValue):
-    wrapped_bifur_section = dsa.WrapDataObject(branch_sections(aorta_centerline_branches ,aorta_surface_branches)) 
+    wrapped_bifur_section = dsa.WrapDataObject(branch_sections(aorta_centerline_branches ,aorta_surface_branches))
     assert np.allclose(wrapped_bifur_section.CellData.GetArray('BranchSectionMinSize'), expectedValue) == True
 
 
@@ -118,7 +120,7 @@ def test_branch_section_min_size_correct(aorta_centerline_branches ,aorta_surfac
 ])
 def test_branch_section_max_size_correct(aorta_centerline_branches ,aorta_surface_branches,
                                              branch_sections, expectedValue):
-    wrapped_bifur_section = dsa.WrapDataObject(branch_sections(aorta_centerline_branches ,aorta_surface_branches)) 
+    wrapped_bifur_section = dsa.WrapDataObject(branch_sections(aorta_centerline_branches ,aorta_surface_branches))
     assert np.allclose(wrapped_bifur_section.CellData.GetArray('BranchSectionMaxSize'), expectedValue) == True
 
 
@@ -133,7 +135,7 @@ def test_branch_section_max_size_correct(aorta_centerline_branches ,aorta_surfac
 ])
 def test_branch_section_shape_correct(aorta_centerline_branches ,aorta_surface_branches,
                                       branch_sections, expectedValue):
-    wrapped_bifur_section = dsa.WrapDataObject(branch_sections(aorta_centerline_branches ,aorta_surface_branches)) 
+    wrapped_bifur_section = dsa.WrapDataObject(branch_sections(aorta_centerline_branches ,aorta_surface_branches))
     assert np.allclose(wrapped_bifur_section.CellData.GetArray('BranchSectionShape'), expectedValue) == True
 
 
@@ -143,10 +145,9 @@ def test_branch_section_shape_correct(aorta_centerline_branches ,aorta_surface_b
 ])
 def test_branch_section_closed_correct(aorta_centerline_branches ,aorta_surface_branches,
                                        branch_sections, expectedValue):
-    wrapped_bifur_section = dsa.WrapDataObject(branch_sections(aorta_centerline_branches ,aorta_surface_branches)) 
+    wrapped_bifur_section = dsa.WrapDataObject(branch_sections(aorta_centerline_branches ,aorta_surface_branches))
     assert np.allclose(wrapped_bifur_section.CellData.GetArray('BranchSectionClosed'), expectedValue) == True
 
-    
 
 @pytest.mark.parametrize("branch_sections,expectedValue",[
     (branch_sections_one_sphere, np.array([0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5, 6, 7, 8, 0, 1, 2, 3, 4, 5, 6, 7, 8])),
@@ -154,8 +155,9 @@ def test_branch_section_closed_correct(aorta_centerline_branches ,aorta_surface_
 ])
 def test_branch_section_distance_to_spheres_correct(aorta_centerline_branches ,aorta_surface_branches,
                                                     branch_sections, expectedValue):
-    wrapped_bifur_section = dsa.WrapDataObject(branch_sections(aorta_centerline_branches ,aorta_surface_branches)) 
+    wrapped_bifur_section = dsa.WrapDataObject(branch_sections(aorta_centerline_branches ,aorta_surface_branches))
     assert np.allclose(wrapped_bifur_section.CellData.GetArray('BranchSectionDistanceSpheres'), expectedValue) == True
+
 
 @pytest.mark.parametrize("expectedvalue,paramid",[
     (0, 0),
@@ -293,11 +295,11 @@ def test_cell_data_pointId_end_indices_two_spheres(branch_sections_two_spheres, 
     (1916, 70, np.array([211.8160858154297, 104.5389404296875, 25.843137741088867]), np.array([212.57681274414062, 104.47166442871094, 26.245433807373047]), 22),
     (1986, 79, np.array([210.0582733154297, 101.82815551757812, 26.50916290283203]), np.array([210.67491149902344, 101.69086456298828, 26.563392639160156]), 23)
 ])
-def test_cell_data_point_start_and_end_xyz_locations_one_sphere(branch_sections_one_sphere, pointidstart, numberofpoints, 
+def test_cell_data_point_start_and_end_xyz_locations_one_sphere(branch_sections_one_sphere, pointidstart, numberofpoints,
                                                                 expectedlocationstart, expectedlocationend, paramid):
     bcx = branch_sections_one_sphere.GetCell(paramid)
     bw = dsa.WrapDataObject(branch_sections_one_sphere)
-    
+
     pointIdEnd = bcx.GetPointId(numberofpoints - 1)
     pointLocationEnd = bw.Points[pointIdEnd]
     pointLocationStart = bw.Points[pointidstart]
@@ -321,11 +323,11 @@ def test_cell_data_point_start_and_end_xyz_locations_one_sphere(branch_sections_
     (954, 78, np.array([210.9371795654297, 108.91300201416016, 24.94631004333496]), np.array([211.59010314941406, 108.7583999633789, 24.869142532348633]), 11),
     (1032, 79, np.array([210.0582733154297, 101.82815551757812, 26.50916290283203]), np.array([210.67491149902344, 101.69086456298828, 26.563392639160156]), 12),
 ])
-def test_cell_data_point_start_and_end_xyz_locations_two_spheres(branch_sections_two_spheres, pointidstart, numberofpoints, 
+def test_cell_data_point_start_and_end_xyz_locations_two_spheres(branch_sections_two_spheres, pointidstart, numberofpoints,
                                                                 expectedlocationstart, expectedlocationend, paramid):
     bcx = branch_sections_two_spheres.GetCell(paramid)
     bw = dsa.WrapDataObject(branch_sections_two_spheres)
-    
+
     pointIdEnd = bcx.GetPointId(numberofpoints - 1)
     pointLocationEnd = bw.Points[pointIdEnd]
     pointLocationStart = bw.Points[pointidstart]

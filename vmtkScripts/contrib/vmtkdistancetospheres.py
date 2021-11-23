@@ -9,11 +9,11 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
-## Note: this class was contributed by 
+## Note: this class was contributed by
 ##       Tangui Morvan
 ##       Kalkulo AS
 ##       Simula Research Laboratory
@@ -29,13 +29,12 @@ from vmtk import vmtkrenderer
 from vmtk import pypes
 
 
-
 class vmtkDistanceToSpheres(pypes.pypeScript):
 
     def __init__(self):
 
         pypes.pypeScript.__init__(self)
-        
+
         self.Surface = None
         self.DistanceToSpheresArrayName = 'DistanceToSpheres'
         self.DistanceOffset = 0.
@@ -47,7 +46,7 @@ class vmtkDistanceToSpheres(pypes.pypeScript):
         self.OwnRenderer = 0
         self.DisplayArray = False
         self.SurfaceMapper = None
-        self.CurrentSphereId = -1        
+        self.CurrentSphereId = -1
         self.SphereWidget = None
         self.Opacity = 1.
         self.SpheresActor = None
@@ -58,7 +57,7 @@ class vmtkDistanceToSpheres(pypes.pypeScript):
         self.ExamineSpheresActor = None
         self.ExamineText = None
         self.ParametersChanged = False
-        
+
         self.SetScriptName('vmtkdistancetospheres')
         self.SetScriptDoc('This computes the euclidean from a set of user-selected spheres to a surface')
         self.SetInputMembers([
@@ -74,7 +73,7 @@ class vmtkDistanceToSpheres(pypes.pypeScript):
         self.SetOutputMembers([
             ['Surface','o','vtkPolyData',1,'','','vmtksurfacewriter']
             ])
-    
+
     def DistanceParametersValidator(self,text):
         if not text:
             return 1
@@ -87,8 +86,7 @@ class vmtkDistanceToSpheres(pypes.pypeScript):
         except ValueError:
             return 0
         return 1
-    
-    
+
     def ComputeDistances(self):
         distanceToSpheresFilter = vtkvmtk.vtkvmtkPolyDataDistanceToSpheres()
         distanceToSpheresFilter.SetInputData(self.Surface)
@@ -100,8 +98,7 @@ class vmtkDistanceToSpheres(pypes.pypeScript):
         distanceToSpheresFilter.SetDistanceToSpheresArrayName(self.DistanceToSpheresArrayName)
         distanceToSpheresFilter.Update()
         return distanceToSpheresFilter.GetOutput()
-      
-    
+
     def InitializeSpheres(self):
         if (self.InteractionMode==0):
             self.Spheres.Initialize()
@@ -119,14 +116,12 @@ class vmtkDistanceToSpheres(pypes.pypeScript):
             self.ExamineSpheres.GetPointData().Initialize()
             sphereRadii = vtk.vtkDoubleArray()
             self.ExamineSpheres.GetPointData().SetScalars(sphereRadii)
-        
-    
+
     def PlaceSphere(self):
         if self.CurrentSphereId == -1:
             return
         self.SphereWidget.SetCenter(self.Spheres.GetPoint(self.CurrentSphereId))
         self.SphereWidget.SetRadius(self.Spheres.GetPointData().GetScalars().GetValue(self.CurrentSphereId))
-
 
     def SphereCallback(self,widget,event_string):
         if self.CurrentSphereId == -1:
@@ -137,7 +132,7 @@ class vmtkDistanceToSpheres(pypes.pypeScript):
         self.Spheres.GetPoints().SetPoint(self.CurrentSphereId,self.SphereWidget.GetCenter())
         self.Spheres.GetPointData().GetScalars().SetValue(self.CurrentSphereId,self.SphereWidget.GetRadius())
         self.Spheres.Modified()
-    
+
     def UndoCallback(self,obj):
         self.InitializeSpheres()
         self.Spheres.Modified()
@@ -178,7 +173,6 @@ class vmtkDistanceToSpheres(pypes.pypeScript):
                 self.ExamineSpheres.GetPointData().GetScalars().InsertNextValue(length)
                 self.ExamineSpheres.Modified()
         self.vmtkRenderer.RenderWindow.Render()
-
 
     def IncreaseSphereRadiusCallback(self,obj):
         if self.CurrentSphereId != -1:
@@ -271,7 +265,7 @@ class vmtkDistanceToSpheres(pypes.pypeScript):
           self.vmtkRenderer = vmtkrenderer.vmtkRenderer()
           self.vmtkRenderer.Initialize()
           self.OwnRenderer = 1
-          self.vmtkRenderer.RegisterScript(self)  
+          self.vmtkRenderer.RegisterScript(self)
         glyphs = vtk.vtkGlyph3D()
         glyphSource = vtk.vtkSphereSource()
         glyphSource.SetRadius(1)
@@ -288,7 +282,7 @@ class vmtkDistanceToSpheres(pypes.pypeScript):
         self.SpheresActor.GetProperty().SetOpacity(self.Opacity)
         self.SpheresActor.PickableOff()
         self.vmtkRenderer.Renderer.AddActor(self.SpheresActor)
-        
+
         examineGlyphs = vtk.vtkGlyph3D()
         examineGlyphSource = vtk.vtkSphereSource()
         examineGlyphSource.SetRadius(1)
@@ -316,9 +310,9 @@ class vmtkDistanceToSpheres(pypes.pypeScript):
         self.vmtkRenderer.AddKeyBinding('d','Show distances graph.',self.DistancesCallback)
         self.vmtkRenderer.AddKeyBinding('a','Change parameters.',self.ParametersCallback)
         self.vmtkRenderer.AddKeyBinding('w','Switch modes.',self.SwitchModeCallback)
-              
+
         #self.vmtkRenderer.RenderWindowInteractor.AddObserver("KeyPressEvent", self.KeyPressed)
-        
+
         self.SurfaceMapper = vtk.vtkPolyDataMapper()
         self.SurfaceMapper.SetInputData(self.Surface)
         self.SurfaceMapper.SetScalarVisibility(self.DisplayArray)
@@ -326,7 +320,7 @@ class vmtkDistanceToSpheres(pypes.pypeScript):
         surfaceActor.SetMapper(self.SurfaceMapper)
         surfaceActor.GetProperty().SetOpacity(self.Opacity)
         self.vmtkRenderer.Renderer.AddActor(surfaceActor)
-        
+
         self.ScalarBarActor = vtk.vtkScalarBarActor()
         self.ScalarBarActor.SetLookupTable(self.SurfaceMapper.GetLookupTable())
         self.ScalarBarActor.GetLabelTextProperty().ItalicOff()
@@ -336,22 +330,20 @@ class vmtkDistanceToSpheres(pypes.pypeScript):
         self.ScalarBarActor.SetTitle('distances')
         self.ScalarBarActor.VisibilityOff()
         self.vmtkRenderer.Renderer.AddActor(self.ScalarBarActor)
-        
-        
+
         self.SphereWidget = vtk.vtkSphereWidget()
         self.SphereWidget.SetInteractor(self.vmtkRenderer.RenderWindowInteractor)
         self.SphereWidget.AddObserver("InteractionEvent", self.SphereCallback)
-        
+
         self.ExamineText = vtk.vtkTextActor()
         self.ExamineText.SetInput("Examine Mode")
         self.ExamineText.GetPositionCoordinate().SetCoordinateSystemToNormalizedViewport()
         self.ExamineText.SetPosition(0.05,0.95)
         self.ExamineText.VisibilityOff()
         self.vmtkRenderer.Renderer.AddActor2D(self.ExamineText)
-        
+
         self.InputInfo('Please position the mouse and press space to add spheres, \'u\' to undo\n')
-        
-        
+
         any = 0
         while any == 0 or self.ParametersChanged:
             self.ParametersChanged = False
@@ -359,11 +351,12 @@ class vmtkDistanceToSpheres(pypes.pypeScript):
                 self.InitializeSpheres()
             self.vmtkRenderer.Render()
             any = self.Spheres.GetNumberOfPoints()
-        
+
         self.Surface = self.ComputeDistances()
 
         if self.OwnRenderer:
             self.vmtkRenderer.Deallocate()
+
 
 if __name__=='__main__':
 

@@ -9,8 +9,8 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
@@ -19,6 +19,7 @@ import string
 import os.path
 import importlib
 from inspect import isclass
+
 
 class pypeMember(object):
 
@@ -37,7 +38,7 @@ class pypeMember(object):
         self.ExplicitPipe = ''
         self.AutoPipe = 1
         self.Pushed = 0
-   
+
     def IsInRange(self,value):
         if not self.MemberRange:
             return
@@ -64,7 +65,7 @@ class pypeMember(object):
             parsedMemberRange = [eval(entry) for entry in self.MemberRange[1:-1].split(',')]
             return parsedMemberRange
         return []
- 
+
     def GetRangeValues(self):
         if not self.MemberRange:
             return []
@@ -99,6 +100,7 @@ class pypeMember(object):
                     representation += ' and '
                 representation += '<= ' + str(values[1])
             return representation
+
 
 class pypeScript(object):
     '''the base class for every high-level script.
@@ -160,7 +162,7 @@ class pypeScript(object):
         self.LogOn = 1
 
         self.Progress = 0
-                              
+
     def PrintLog(self,logMessage,indent=0):
         if not self.LogOn:
             return
@@ -176,7 +178,7 @@ class pypeScript(object):
           self.Exit()
         else:
           raise RuntimeError(errorMessage)
-    
+
     def Exit(self):
         sys.exit()
 
@@ -191,17 +193,17 @@ class pypeScript(object):
         self.OutputStream.write('Progress: '+str(int(100 * self.Progress))+'%')
         self.OutputStream.flush()
         self.InputInfo('Progress: '+str(int(100 * self.Progress))+'%')
- 
+
     def EndProgress(self):
         self.OutputStream.write('\n')
- 
+
     def InputInfo(self,prompt=''):
         self.OutputText(prompt)
         try:
             self.InputStream.prompt(prompt,info=True)
         except:
             pass
- 
+
     def InputText(self,prompt='',validator=None):
         self.OutputText(prompt)
         try:
@@ -226,7 +228,7 @@ class pypeScript(object):
     def PrintMembers(self,members):
         for memberEntry in members:
             memberName  = memberEntry.MemberName
-            memberType = memberEntry.MemberType       
+            memberType = memberEntry.MemberType
             memberPipe = memberEntry.MemberPipe
             memberValue = self.__getattribute__(memberName)
 ##            if memberPipe:
@@ -239,7 +241,7 @@ class pypeScript(object):
                 self.__getattribute__("PrintLog")(memberName+' = '+memberType,1)
             else:
                 self.__getattribute__("PrintLog")(memberName+' = '+str(memberValue),1)
-                           
+
     def PrintInputMembers(self):
         self.PrintLog("Input " + self.ScriptName + " members:")
         self.PrintMembers(self.InputMembers)
@@ -526,13 +528,13 @@ class pypeScript(object):
             explicitPipe = 0
 
             specifiedOptions = [arg for arg in self.Arguments if (arg[0] == '-') and (arg[1] in string.ascii_letters + '-')]
-            
+
             pushedOption = option + '@'
             if pushedOption in specifiedOptions:
                 memberEntry.Pushed = 1
                 specifiedOptions[specifiedOptions.index(pushedOption)] = option
                 self.Arguments[self.Arguments.index(pushedOption)] = option
-            
+
             if option in specifiedOptions:
                 if memberLength == 0:
                     activated = 1
@@ -548,7 +550,7 @@ class pypeScript(object):
                         memberEntry.ExplicitPipe = value[1:]
                         if value[1:] == '':
                             memberEntry.ExplicitPipe = 'None'
-                    else: 
+                    else:
                         if memberType in self.BuiltinOptionTypes:
                             exec('castValue = '+memberType+'(\''+value+'\')', globals())
                             memberValues.append(castValue)
@@ -675,6 +677,7 @@ class pypeScript(object):
     def Deallocate(self):
         pass
 
+
 class pypeMain(object):
 
     def __init__(self):
@@ -686,4 +689,3 @@ class pypeMain(object):
         pipe.Arguments = self.Arguments
         pipe.ParseArguments()
         pipe.Execute()
-

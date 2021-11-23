@@ -9,8 +9,8 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
 ## Note: full tensor WSR computation was contributed by
@@ -71,7 +71,6 @@ class vmtkMeshWallShearRate(pypes.pypeScript):
         wallShearRateFilter.Update()
 
         self.Surface = wallShearRateFilter.GetOutput()
-
 
 
 if __name__=='__main__':

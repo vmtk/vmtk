@@ -45,7 +45,7 @@ class vmtkImageCompare(pypes.pypeScript):
 
         if max([abs(d) for d in rangeDiff]) < self.Tolerance:
             return True
- 
+
         return False
 
     def subtractionCompare(self):
@@ -59,7 +59,7 @@ class vmtkImageCompare(pypes.pypeScript):
         if abs(imagePoints - referencePoints) > 0 :
             self.ResultLog = 'Uneven NumberOfPoints'
             return False
-            
+
         imageScalarType = self.Image.GetScalarType()
         referenceScalarType = self.ReferenceImage.GetScalarType()
         if imageScalarType != referenceScalarType:
@@ -67,18 +67,18 @@ class vmtkImageCompare(pypes.pypeScript):
                 the same type. Please cast images to the same type.')
 
         imageMath = vtk.vtkImageMathematics()
-        imageMath.SetInput1Data(self.Image) 
-        imageMath.SetInput2Data(self.ReferenceImage) 
+        imageMath.SetInput1Data(self.Image)
+        imageMath.SetInput2Data(self.ReferenceImage)
         imageMath.SetOperationToSubtract()
         imageMath.Update()
         differenceImage = imageMath.GetOutput()
         differenceRange = differenceImage.GetPointData().GetScalars().GetRange()
 
         self.InputInfo('Difference Range: ' + str(differenceRange))
- 
+
         if max([abs(d) for d in differenceRange]) < self.Tolerance:
             return True
-        
+
         return False
 
     def Execute(self):
@@ -88,13 +88,14 @@ class vmtkImageCompare(pypes.pypeScript):
         if not self.ReferenceImage:
             self.PrintError('Error: No reference image.')
         if not self.Method:
-            self.PrintError('Error: No method.')        
-        
+            self.PrintError('Error: No method.')
+
         if (self.Method == 'subtraction'):
             self.Result = self.subtractionCompare()
         elif (self.Method == 'range'):
             self.Result = self.rangeCompare()
-        
+
+
 if __name__=='__main__':
     main = pypes.pypeMain()
     main.Arguments = sys.argv

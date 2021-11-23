@@ -9,8 +9,8 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
 ##   Developed with support from the EC FP7/2007-2013: ARCH, Project n. 224390
@@ -149,7 +149,7 @@ class vmtkNetworkWriter(pypes.pypeScript):
             else:
                xmlEdge.setAttribute('side','arterial')
                xmlEdge.setAttribute('name','edge%d' % i)
-            
+
             #xmlEdgeClassification = xmlEdge.appendChild(xmlDocument.createElement('edge_classification'))
             #if labelsArray:
             #    label = labelsArray.GetValue(edgeCellIds[i])
@@ -212,7 +212,7 @@ class vmtkNetworkWriter(pypes.pypeScript):
                 self.PrintError('Error: no Network.')
             self.Network = self.Input
 
-        extensionFormats = {'vtp':'vtkxml', 
+        extensionFormats = {'vtp':'vtkxml',
                             'vtkxml':'vtkxml',
                             'xml':'arch'}
 

@@ -66,6 +66,7 @@ class vmtkMeshMerge(pypes.pypeScript):
 
         self.Mesh = merger.GetOutput()
 
+
 if __name__ == '__main__':
     main = pypes.pypeMain()
     main.Arguments = sys.argv

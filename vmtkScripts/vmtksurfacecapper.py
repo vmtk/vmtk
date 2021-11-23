@@ -194,7 +194,6 @@ class vmtkSurfaceCapper(pypes.pypeScript):
         self.Surface = normals.GetOutput()
 
 
-
 if __name__=='__main__':
 
     main = pypes.pypeMain()

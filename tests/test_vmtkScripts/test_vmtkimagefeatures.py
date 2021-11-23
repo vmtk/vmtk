@@ -80,5 +80,3 @@ def test_upwind_factor_values_for_upwind(aorta_image, compare_images, upwindValu
     assert compare_images(featurer.Image, name) == True
 
 #TODO: Add test for dimensionality
-
-

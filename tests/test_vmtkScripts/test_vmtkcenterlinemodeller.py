@@ -17,6 +17,7 @@
 import pytest
 import vmtk.vmtkcenterlinemodeller as centerlinemodeller
 
+
 def test_default_params(aorta_centerline, compare_images):
     name = __name__ + '_test_default_params.vti'
     modeller = centerlinemodeller.vmtkCenterlineModeller()
@@ -47,5 +48,3 @@ def test_negate_function(aorta_centerline, compare_images):
     modeller.Execute()
 
     assert compare_images(modeller.Image, name) == True
-
-

@@ -9,8 +9,8 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
@@ -27,7 +27,7 @@ class vmtkMeshBoundaryInspector(pypes.pypeScript):
     def __init__(self):
 
         pypes.pypeScript.__init__(self)
-        
+
         self.Mesh = None
 
         self.CellEntityIdsArrayName = 'CellEntityIds'
@@ -53,21 +53,21 @@ class vmtkMeshBoundaryInspector(pypes.pypeScript):
             ])
 
     def Execute(self):
- 
+
         if not self.Mesh:
             self.PrintError('Error: No input mesh.')
             return
- 
+
         if not self.CellEntityIdsArrayName:
             self.PrintError('Error: No input CellEntityIdsArrayName.')
             return
- 
+
         if not self.vmtkRenderer:
             self.vmtkRenderer = vmtkrenderer.vmtkRenderer()
             self.vmtkRenderer.Initialize()
             self.OwnRenderer = 1
 
-        self.vmtkRenderer.RegisterScript(self) 
+        self.vmtkRenderer.RegisterScript(self)
 
         threshold = vtk.vtkThreshold()
         threshold.SetInputData(self.Mesh)
@@ -166,4 +166,3 @@ if __name__=='__main__':
     main = pypes.pypeMain()
     main.Arguments = sys.argv
     main.Execute()
-

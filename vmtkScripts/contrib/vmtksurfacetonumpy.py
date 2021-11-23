@@ -39,6 +39,7 @@ class vividict(dict):
         value = self[key] = type(self)()
         return value
 
+
 class vmtkSurfaceToNumpy(pypes.pypeScript):
 
     def __init__(self):
@@ -86,7 +87,6 @@ class vmtkSurfaceToNumpy(pypes.pypeScript):
             for cellKey in surfWrapper.CellData.keys():
                 self.PrintLog(cellKey)
                 self.ArrayDict['CellData'][cellKey] = np.array(surfWrapper.CellData.GetArray(cellKey))
-
 
         self.PrintLog('converting points')
         self.ArrayDict['Points'] = np.array(surfWrapper.Points)

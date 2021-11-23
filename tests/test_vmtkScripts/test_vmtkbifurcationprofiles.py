@@ -16,8 +16,9 @@
 
 import pytest
 import vmtk.vmtkbifurcationprofiles as bifurcationprofiles
-from vtk.numpy_interface import dataset_adapter as dsa 
+from vtk.numpy_interface import dataset_adapter as dsa
 import numpy as np
+
 
 @pytest.fixture(scope='module')
 def bifur_profiles(aorta_centerline_branches ,aorta_surface_branches):
@@ -99,7 +100,7 @@ def test_number_of_points_per_cell(bifur_profiles, expectedvalue, paramid):
     numberOfPoints = bcx.GetNumberOfPoints()
 
     assert numberOfPoints == expectedvalue
-    
+
 
 @pytest.mark.parametrize("expectedvalue,paramid", [
     (0, 0),
@@ -130,11 +131,11 @@ def test_cell_data_pointId_end_indices(bifur_profiles, expectedvalue, numberofpo
     (132, 106, np.array([ 222.36294556, 136.11395264,  17.92448616]), np.array([ 222.40290833, 136.13102722,  17.91927338]), 1),
     (238, 120, np.array([ 221.05075073, 132.63262939,  19.5011692 ]), np.array([ 221.05207825, 132.61680603,  19.50825119]), 2)
 ])
-def test_cell_data_point_start_and_end_xyz_locations(bifur_profiles, pointidstart, numberofpoints, 
+def test_cell_data_point_start_and_end_xyz_locations(bifur_profiles, pointidstart, numberofpoints,
                                                      expectedlocationstart, expectedlocationend, paramid):
     bcx = bifur_profiles.GetCell(paramid)
     bw = dsa.WrapDataObject(bifur_profiles)
-    
+
     pointIdEnd = bcx.GetPointId(numberofpoints - 1)
     pointLocationEnd = bw.Points[pointIdEnd]
     pointLocationStart = bw.Points[pointidstart]

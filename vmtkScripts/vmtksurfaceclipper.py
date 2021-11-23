@@ -9,8 +9,8 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
@@ -19,6 +19,7 @@ import sys
 
 from vmtk import vmtkrenderer
 from vmtk import pypes
+
 
 class vmtkSurfaceClipper(pypes.pypeScript):
 
@@ -109,14 +110,14 @@ class vmtkSurfaceClipper(pypes.pypeScript):
         self.Clipper.SetInputData(self.Surface)
         self.Clipper.GenerateClippedOutputOn()
         self.Clipper.SetInsideOut(self.InsideOut)
- 
+
         if self.Interactive:
 
             if self.WidgetType == "box":
                 self.ClipFunction = vtk.vtkPlanes()
             elif self.WidgetType == "sphere":
                 self.ClipFunction = vtk.vtkSphere()
-       
+
             self.Clipper.SetClipFunction(self.ClipFunction)
 
             self.Cutter = vtk.vtkCutter()
@@ -131,7 +132,7 @@ class vmtkSurfaceClipper(pypes.pypeScript):
                 self.vmtkRenderer.Initialize()
                 self.OwnRenderer = 1
 
-            self.vmtkRenderer.RegisterScript(self) 
+            self.vmtkRenderer.RegisterScript(self)
 
             mapper = vtk.vtkPolyDataMapper()
             mapper.SetInputData(self.Surface)
@@ -155,7 +156,7 @@ class vmtkSurfaceClipper(pypes.pypeScript):
                 self.ClipWidget.SetThetaResolution(20)
 
             self.ClipWidget.SetInteractor(self.vmtkRenderer.RenderWindowInteractor)
-            
+
             self.vmtkRenderer.AddKeyBinding('space','Clip.',self.ClipCallback)
             self.vmtkRenderer.AddKeyBinding('i','Interact.',self.InteractCallback)
             self.Display()
@@ -204,7 +205,6 @@ class vmtkSurfaceClipper(pypes.pypeScript):
             stripper.SetInputConnection(cleaner.GetOutputPort())
             stripper.Update()
             self.CutLines = stripper.GetOutput()
-
 
 
 if __name__=='__main__':

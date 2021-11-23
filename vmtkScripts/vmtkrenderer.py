@@ -9,8 +9,8 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
@@ -21,7 +21,6 @@ import math
 
 from vmtk import pypes
 from vmtk import vtkvmtk
-
 
 
 class vmtkRendererInputStream(object):
@@ -79,7 +78,7 @@ class vmtkRenderer(pypes.pypeScript):
         self.Position = [0.001, 0.05]
 
         self.KeyBindings = {}
- 
+
         self.ScreenshotMagnification = 4
 
         self.UseRendererInputStream = True
@@ -114,8 +113,8 @@ class vmtkRenderer(pypes.pypeScript):
         '''
         tempRenderWindow = vtk.vtkRenderWindow()
         userScreenWidth, userScreenHeight = tempRenderWindow.GetScreenSize()
-        
-        baseScreenWidth = 3360 # Number of pixels across the width of the calibration monitor 
+
+        baseScreenWidth = 3360 # Number of pixels across the width of the calibration monitor
         baseScreenHeight = 2100 # Number of pixels across the heigh of the calibration monitor
         baseFontSize = 24 # Font size appropriate for the calibration monitor of size baseScreenWidth x baseScreenHeight
 
@@ -123,7 +122,7 @@ class vmtkRenderer(pypes.pypeScript):
 
         scaledFontSize = math.ceil(userScreenWidth / baseFontScalePerPixelWidth)
 
-        # make sure that the font size won't be set too low or high for low/high screen resolutions. 
+        # make sure that the font size won't be set too low or high for low/high screen resolutions.
         if scaledFontSize < 8:
             scaledFontSize = 8
 
@@ -131,7 +130,6 @@ class vmtkRenderer(pypes.pypeScript):
             scaledFontSize = 50
 
         return scaledFontSize
-
 
     def ResetCameraCallback(self,obj):
         self.Renderer.ResetCamera()
@@ -225,7 +223,7 @@ class vmtkRenderer(pypes.pypeScript):
         self.KeyBindings[key] = {'text': text, 'callback': callback, 'group': group}
 
     def RemoveKeyBinding(self, key):
-        if key in self.KeyBindings:   
+        if key in self.KeyBindings:
             del self.KeyBindings[key]
 
     def PromptAsync(self, queryText, callback):
@@ -242,7 +240,7 @@ class vmtkRenderer(pypes.pypeScript):
         self.UpdateTextInput()
         self.TextInputMode = 1
         self.Render(interactive)
-    
+
     def ExitTextInputMode(self):
         self.Renderer.RemoveActor(self.TextInputActor)
         self.Renderer.AddActor(self.TextActor)
@@ -265,7 +263,7 @@ class vmtkRenderer(pypes.pypeScript):
         #textActorInputsStd = ['%s: %s' % (key, self.KeyBindingsStd[key]['text']) for key in sortedKeysStd]
         #self.TextActorStd.SetInput('\n'.join(textActorInputsStd))
         #self.Renderer.AddActor(self.TextActorStd)
-    
+
         groups = list(set([self.KeyBindings[el]['group'] for el in self.KeyBindings]))
         groups.sort(reverse=True)
 
@@ -290,7 +288,7 @@ class vmtkRenderer(pypes.pypeScript):
         #else:
         #    self.TextActorOpmode.SetInput('.')
         #    self.Renderer.AddActor(self.TextActorOpmode)
- 
+
         self.RenderWindow.Render()
 
         if interactive:
@@ -348,8 +346,7 @@ class vmtkRenderer(pypes.pypeScript):
             self.TextInputActor.GetPositionCoordinate().SetCoordinateSystemToNormalizedViewport()
             self.TextInputActor.GetPosition2Coordinate().SetCoordinateSystemToNormalizedViewport()
             self.TextInputActor.SetPosition(self.InputPosition)
-            
- 
+
         if self.UseRendererInputStream:
             self.InputStream = vmtkRendererInputStream(self)
 
@@ -371,7 +368,8 @@ class vmtkRenderer(pypes.pypeScript):
         self.RenderWindowInteractor = None
         self.RenderWindow = None
         self.Renderer = None
-   
+
+
 if __name__=='__main__':
     main = pypes.pypeMain()
     main.Arguments = sys.argv

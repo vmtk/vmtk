@@ -9,8 +9,8 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
@@ -31,7 +31,7 @@ class vmtkImageVOISelector(pypes.pypeScript):
 
         self.CubeSource = vtk.vtkCubeSource()
         self.CubeActor = vtk.vtkActor()
-        
+
         self.BoxActive = 0
         self.BoxBounds = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
@@ -193,7 +193,7 @@ class vmtkImageVOISelector(pypes.pypeScript):
         self.CroppedImage.DeepCopy(self.Image)
 
         if self.Interactive == 1:
-            
+
             if not self.vmtkRenderer:
                 self.vmtkRenderer = vmtkrenderer.vmtkRenderer()
                 self.vmtkRenderer.Initialize()
@@ -224,6 +224,7 @@ class vmtkImageVOISelector(pypes.pypeScript):
             self.vmtkRenderer.Deallocate()
 
         self.Image = self.CroppedImage
+
 
 if __name__=='__main__':
     main = pypes.pypeMain()

@@ -9,8 +9,8 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
@@ -26,7 +26,7 @@ class vmtkMeshProjection(pypes.pypeScript):
     def __init__(self):
 
         pypes.pypeScript.__init__(self)
-        
+
         self.ReferenceMesh = None
         self.Mesh = None
         self.Tolerance = 1E-8
@@ -57,6 +57,7 @@ class vmtkMeshProjection(pypes.pypeScript):
         meshProjection.SetTolerance(self.Tolerance)
         meshProjection.Update()
         self.Mesh = meshProjection.GetOutput()
+
 
 if __name__=='__main__':
     main = pypes.pypeMain()

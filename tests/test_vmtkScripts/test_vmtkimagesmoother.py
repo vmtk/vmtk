@@ -28,6 +28,8 @@ def test_default_smoothing(aorta_image, compare_images):
     assert compare_images(smoother.Image, name) == True
 
 # with default gauss smoothing
+
+
 def test_smoothing_high_standard_deviation(aorta_image, compare_images):
     name = __name__ + '_test_smoothing_high_standard_deviation.mha'
     smoother = imagesmoothing.vmtkImageSmoothing()
@@ -38,6 +40,8 @@ def test_smoothing_high_standard_deviation(aorta_image, compare_images):
     assert compare_images(smoother.Image, name) == True
 
 # with default gauss smoothing
+
+
 def test_lower_radius_factor(aorta_image, compare_images):
     name = __name__ + '_test_lower_radius_factor.mha'
     smoother = imagesmoothing.vmtkImageSmoothing()
@@ -66,14 +70,14 @@ def test_anisotropic_smoothing_default_params(aorta_image, compare_images, write
     (0.0625, 1, 1.0, 3, '3'),
     (0.0625, 1, 2.0, 6, '4'),
 ])
-def test_anisotropic_smoother_varied_params(aorta_image, compare_images, 
-                                            TimeStep, AutoCalculateTimeStep, Conductance, 
+def test_anisotropic_smoother_varied_params(aorta_image, compare_images,
+                                            TimeStep, AutoCalculateTimeStep, Conductance,
                                             NumberOfIterations, paramid, write_image):
     name = __name__ + '_test_anisotropic_smoother_varied_params_' + paramid + '.mha'
     smoother = imagesmoothing.vmtkImageSmoothing()
     smoother.Image = aorta_image
     smoother.Method = 'anisotropic'
-    smoother.TimeStep = TimeStep 
+    smoother.TimeStep = TimeStep
     smoother.AutoCalculateTimeStep = AutoCalculateTimeStep
     smoother.Conductance = Conductance
     smoother.NumberOfIterations = NumberOfIterations

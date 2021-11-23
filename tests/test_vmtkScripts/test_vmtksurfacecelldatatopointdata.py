@@ -16,8 +16,9 @@
 
 import pytest
 import vmtk.vmtksurfacecelldatatopointdata as celltopoint
-from vtk.numpy_interface import dataset_adapter as dsa 
+from vtk.numpy_interface import dataset_adapter as dsa
 import numpy as np
+
 
 @pytest.fixture(scope='module')
 def centerline_pointdata(aorta_centerline_branches):

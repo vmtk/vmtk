@@ -9,11 +9,11 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
-## Note: this class was contributed by 
+## Note: this class was contributed by
 ##       Tangui Morvan
 ##       Kalkulo AS
 ##       Simula Research Laboratory
@@ -204,7 +204,7 @@ class vmtkMeshWriter2(pypes.pypeScript):
         line += "%d\n" % numberOfTetras
         f.write(line)
         for i in range(numberOfTetras):
-            tetraCellId = tetraCellIdArray.GetValue(i) 
+            tetraCellId = tetraCellIdArray.GetValue(i)
             cellPointIds = self.Mesh.GetCell(tetraCellId).GetPointIds()
             line = ''
             for j in range(cellPointIds.GetNumberOfIds()):
@@ -307,8 +307,8 @@ class vmtkMeshWriter2(pypes.pypeScript):
                 self.PrintError('Error: no Mesh.')
             self.Mesh = self.Input
 
-        extensionFormats = {'vtu':'vtkxml', 
-                            'vtkxml':'vtkxml', 
+        extensionFormats = {'vtu':'vtkxml',
+                            'vtkxml':'vtkxml',
                             'vtk':'vtk',
                             'xda':'xda',
                             'FDNEUT':'fdneut',
