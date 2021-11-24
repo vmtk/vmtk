@@ -92,6 +92,9 @@ option( VMTK_USE_SUPERBUILD
 #option( VMTK_USE_VTK8
 #  "Compile vmtk against VTK 8. OFF is VTK 7.1" ON )
 
+option( VMTK_USE_ITK5
+  "Compile vmtk against ITK 5. OFF is ITK 4.13" ON )
+
 option( VMTK_USE_VTK9
   "Compile vmtk against VTK 9. OFF is VTK 8" ON )
 

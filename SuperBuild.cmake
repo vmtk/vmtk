@@ -56,13 +56,33 @@ endif()
 ##
 if( NOT USE_SYSTEM_ITK )
 
+
+  set(ITK_GIT_REPOSITORY "${GIT_PROTOCOL}://github.com/Kitware/ITK.git")
+  if (VMTK_USE_ITK5)
+    set(ITK_GIT_TAG "v5.2.1")
+    set( ITK_VERSION 5.2 )
+    list(APPEND ITK_EXTERNAL_PROJECT_OPTIONAL_CMAKE_ARGS
+      -DITK_LEGACY_REMOVE:BOOL=OFF   #<-- Allow LEGACY ITKv4 features for now.
+      -DITK_LEGACY_SILENT:BOOL=OFF   #<-- Use of legacy code will produce compiler warnings
+      -DModule_ITKDeprecated:BOOL=ON #<-- Needed for ITKv5 now. (itkMultiThreader.h and MutexLock backwards compatibility.)
+      -DModule_ITKReview:BOOL=OFF
+      )
+  else ()
+    set(ITK_GIT_TAG "v4.13.3")
+    set( ITK_VERSION 4.13 )
+    set(ITK_EXTERNAL_PROJECT_OPTIONAL_CMAKE_ARGS
+      -DITK_LEGACY_REMOVE:BOOL=ON
+      -DModule_ITKDeprecated:BOOL=OFF
+      -DModule_ITKReview:BOOL=ON
+      )
+  endif ()
   ##
   ## ITK
   ##
   set( proj ITK )
   ExternalProject_Add( ${proj}
     GIT_REPOSITORY "${GIT_PROTOCOL}://github.com/Kitware/ITK.git"
-    GIT_TAG "release-4.13"
+    GIT_TAG ${ITK_GIT_TAG}
     SOURCE_DIR "${CMAKE_BINARY_DIR}/ITK"
     BINARY_DIR ITK-Build
     CMAKE_GENERATOR ${gen}
@@ -84,11 +104,11 @@ if( NOT USE_SYSTEM_ITK )
       #-DBUILD_SHARED_LIBS:BOOL=OFF
       -DBUILD_EXAMPLES:BOOL=OFF
       -DBUILD_TESTING:BOOL=OFF
-      -DModule_ITKReview:BOOL=ON
       -DCMAKE_BUILD_WITH_INSTALL_RPATH=OFF
       -DCMAKE_MACOSX_RPATH=ON
       -DCMAKE_INSTALL_RPATH=${SUPERBUILD_INSTALL_PREFIX}/lib;@rpath
       -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=TRUE
+      ${ITK_EXTERNAL_PROJECT_OPTIONAL_CMAKE_ARGS}
     INSTALL_DIR "${SUPERBUILD_INSTALL_PREFIX}/ITK"
     )
   set( ITK_DIR "${base}/ITK-Build" )
