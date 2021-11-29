@@ -102,6 +102,8 @@ option( VMTK_BUILD_TESTING
   "Build the VMTK testing libraries" OFF)
 
 if(VMTK_BUILD_TESTING)
+  option( VMTK_INIT_TEST_DATA
+    "Initialize the vmtk-test-data submodule" ON)
   add_subdirectory(tests)
 endif()
 
