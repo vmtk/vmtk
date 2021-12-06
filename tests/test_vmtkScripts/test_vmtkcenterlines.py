@@ -52,6 +52,7 @@ def test_profileidlist_centerlines(aorta_surface_openends, compare_centerlines):
 
     assert compare_centerlines(centerliner.Centerlines, name) == True
 
+
 def test_profileidlist_centerlines_smooth(aorta_surface_openends, compare_centerlines):
     # centerlines don't change but voronoi diagram does
     # this test verifies that simplification runs without

@@ -32,6 +32,7 @@ def test_features_types(aorta_image, compare_images, featureType, paramid, write
 
     assert compare_images(featurer.Image, name) == True
 
+
 @pytest.mark.parametrize("featureType,paramid", [
     ("upwind", '2'),
 ])
@@ -43,6 +44,7 @@ def test_features_types_upwind(aorta_image, compare_images, featureType, paramid
     featurer.Execute()
 
     assert compare_images(featurer.Image, name) == True
+
 
 @pytest.mark.parametrize("featureType,paramid", [
     ("gradient", '0'),
@@ -56,6 +58,7 @@ def test_sigmoid_on_for_gradient(aorta_image, compare_images, featureType, param
     featurer.Execute()
 
     assert compare_images(featurer.Image, name) == True
+
 
 @pytest.mark.parametrize("featureType,paramid", [
     ("upwind", '1'),
