@@ -38,7 +38,7 @@ class vmtkSurfaceWriter(pypes.pypeScript):
         self.SetScriptDoc('write surface to disk')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
-            ['Format','f','str',1,'["vtkxml","vtk","stl","ply","pointdata","tecplot"]','file format'],
+            ['Format','f','str',1,'["vtkxml","vtk","stl","ply","pointdata","tecplot", "wavefront"]','file format'],
             ['GuessFormat','guessformat','bool',1,'','guess file format from extension'],
             ['CellData','celldata','bool',1,'','write CellData when using pointdata format'],
             ['Mode','mode','str',1,'["ascii","binary"]','write files in ASCII or binary mode'],
@@ -190,6 +190,15 @@ class vmtkSurfaceWriter(pypes.pypeScript):
             line = line + '\n'
             f.write(line)
 
+    def WriteOBJSurfaceFile(self):
+        if (self.OutputFileName == ''):
+            self.PrintError('Error: no OutputFileName.')
+        self.PrintLog('Writing wavefront obj surface file.')
+        writer = vtk.vtkOBJWriter()
+        writer.SetInputData(self.Surface)
+        writer.SetFileName(self.OutputFileName)
+        writer.Write()
+
     def Execute(self):
 
         if self.Surface == None:
@@ -203,7 +212,8 @@ class vmtkSurfaceWriter(pypes.pypeScript):
                             'stl':'stl',
                             'ply':'ply',
                             'tec':'tecplot',
-                            'dat':'pointdata'}
+                            'dat':'pointdata',
+                            'obj':'wavefront'}
 
         if self.OutputFileName == 'BROWSER':
             import tkinter.filedialog
@@ -216,7 +226,7 @@ class vmtkSurfaceWriter(pypes.pypeScript):
 
         if self.GuessFormat and self.OutputFileName and not self.Format:
             import os.path
-            extension = os.path.splitext(self.OutputFileName)[1]
+            extension = os.path.splitext(self.OutputFileName)[1].lower()
             if extension:
                 extension = extension[1:]
                 if extension in list(extensionFormats.keys()):
@@ -234,6 +244,11 @@ class vmtkSurfaceWriter(pypes.pypeScript):
             self.WritePointDataSurfaceFile()
         elif (self.Format == 'tecplot'):
             self.WriteTecplotSurfaceFile()
+        elif (self.Format == 'wavefront'):
+            if(vtk.vtkVersion.GetVTKMajorVersion() < 9):
+                self.PrintError("Error: the VTK version installed doesn't support writing this format: " +
+                                vtk.vtkVersion.GetVTKSourceVersion() + '.')
+            self.WriteOBJSurfaceFile()
         else:
             self.PrintError('Error: unsupported format '+ self.Format + '.')
 
