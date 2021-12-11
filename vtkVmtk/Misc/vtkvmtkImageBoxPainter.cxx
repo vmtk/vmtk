@@ -27,6 +27,7 @@
 #include "vtkInformation.h"
 #include "vtkStreamingDemandDrivenPipeline.h"
 #endif
+#include <cmath>
 
 vtkStandardNewMacro(vtkvmtkImageBoxPainter);
 
@@ -97,12 +98,12 @@ void vtkvmtkImageBoxPainter::SimpleExecute(vtkImageData* input,
 
   if (this->BoxDefinition == vtkvmtkImageBoxPainter::USE_BOUNDS)
     {
-    this->BoxExtent[0] = (vtkIdType) ceil(this->BoxBounds[0] / spacing[0]);
-    this->BoxExtent[1] = (vtkIdType) floor(this->BoxBounds[1] / spacing[0]);
-    this->BoxExtent[2] = (vtkIdType) ceil(this->BoxBounds[2] / spacing[1]);
-    this->BoxExtent[3] = (vtkIdType) floor(this->BoxBounds[3] / spacing[1]);
-    this->BoxExtent[4] = (vtkIdType) ceil(this->BoxBounds[4] / spacing[2]);
-    this->BoxExtent[5] = (vtkIdType) floor(this->BoxBounds[5] / spacing[2]);
+    this->BoxExtent[0] = (vtkIdType) std::ceil(this->BoxBounds[0] / spacing[0]);
+    this->BoxExtent[1] = (vtkIdType) std::floor(this->BoxBounds[1] / spacing[0]);
+    this->BoxExtent[2] = (vtkIdType) std::ceil(this->BoxBounds[2] / spacing[1]);
+    this->BoxExtent[3] = (vtkIdType) std::floor(this->BoxBounds[3] / spacing[1]);
+    this->BoxExtent[4] = (vtkIdType) std::ceil(this->BoxBounds[4] / spacing[2]);
+    this->BoxExtent[5] = (vtkIdType) std::floor(this->BoxBounds[5] / spacing[2]);
     }
 
   int extent[6];

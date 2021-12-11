@@ -24,6 +24,7 @@
 #include "vtkvmtkDoubleVector.h"
 #include "vtkvmtkConstants.h"
 #include "vtkObjectFactory.h"
+#include <cmath>
 
 
 vtkStandardNewMacro(vtkvmtkDoubleVector);
@@ -114,7 +115,7 @@ double vtkvmtkDoubleVector::ComputeNorm()
       value = this->Array[i];
       norm +=  value * value;
       }
-    norm = sqrt(norm);
+    norm = std::sqrt(norm);
     }
   else if (this->NormType==VTK_VMTK_LINF_NORM)
     {
