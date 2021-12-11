@@ -43,11 +43,11 @@ public:
   vtkSetStringMacro(BoundaryDataArrayName);
   vtkGetStringMacro(BoundaryDataArrayName);
 
+  int ReadMeshSimple(VTK_FILEPATH const std::string& fname, vtkDataObject* output) override;
+
 protected:
   vtkvmtkXdaReader();
   ~vtkvmtkXdaReader();
-
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   static void GetLibmeshConnectivity(int cellType, vtkIdList* libmeshConnectivity);
 
