@@ -22,6 +22,7 @@
 #include "vtkvmtkStencil.h"
 #include "vtkvmtkConstants.h"
 #include "vtkObjectFactory.h"
+#include <cmath>
 
 
 
@@ -83,7 +84,7 @@ void vtkvmtkStencil::ScaleWeights(double factor)
     return;
     }
 
-  if (fabs(factor)<VTK_VMTK_DOUBLE_TOL)
+  if (std::fabs(factor)<VTK_VMTK_DOUBLE_TOL)
     {
     for (j=0; j<this->NumberOfComponents*this->NPoints; j++)
       {
@@ -95,7 +96,7 @@ void vtkvmtkStencil::ScaleWeights(double factor)
       }
     return;
     }
-  else if (fabs(factor)>VTK_VMTK_LARGE_DOUBLE)
+  else if (std::fabs(factor)>VTK_VMTK_LARGE_DOUBLE)
     {
     for (j=0; j<this->NumberOfComponents*this->NPoints; j++)
       {
@@ -111,7 +112,7 @@ void vtkvmtkStencil::ScaleWeights(double factor)
   for (j=0; j<this->NumberOfComponents*this->NPoints; j++)
     {
     this->Weights[j] *= factor;
-    if (fabs(this->Weights[j])<VTK_VMTK_DOUBLE_TOL)
+    if (std::fabs(this->Weights[j])<VTK_VMTK_DOUBLE_TOL)
       {
       this->Weights[j] = 0.0;
       }
@@ -120,7 +121,7 @@ void vtkvmtkStencil::ScaleWeights(double factor)
   for (j=0; j<this->NumberOfComponents; j++)
     {
     this->CenterWeight[j] *= factor;
-    if (fabs(this->CenterWeight[j])<VTK_VMTK_DOUBLE_TOL)
+    if (std::fabs(this->CenterWeight[j])<VTK_VMTK_DOUBLE_TOL)
       {
       this->CenterWeight[j] = 0.0;
       }

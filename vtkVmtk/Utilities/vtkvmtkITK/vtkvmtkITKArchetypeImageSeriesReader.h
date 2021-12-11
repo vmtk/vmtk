@@ -30,6 +30,7 @@ class vtkMatrix4x4;
 #include <algorithm>
 #include <string>
 #include <vector>
+#include <cmath>
 
 /// \brief Read a series of files that have a common naming convention.
 ///
@@ -462,7 +463,7 @@ public:
           b += this->DiffusionGradientOrientation[k][n] * this->DiffusionGradientOrientation[k][n];
           c += this->DiffusionGradientOrientation[k][n] * dgo[n];
           }
-        c = fabs(c)/sqrt(a*b);
+        c = std::fabs(c)/std::sqrt(a*b);
 
         if ( c > 0.99999 )
           {
@@ -483,12 +484,12 @@ public:
   int ExistImageOrientationPatient( float * directionCosine )
     {
       /// input has to have six elements
-      float a = sqrt( directionCosine[0]*directionCosine[0] + directionCosine[1]*directionCosine[1] + directionCosine[2]*directionCosine[2] );
+      float a = std::sqrt( directionCosine[0]*directionCosine[0] + directionCosine[1]*directionCosine[1] + directionCosine[2]*directionCosine[2] );
       for (int k = 0; k < 3; k++)
         {
         directionCosine[k] /= a;
         }
-      a = sqrt( directionCosine[3]*directionCosine[3] + directionCosine[4]*directionCosine[4] + directionCosine[5]*directionCosine[5] );
+      a = std::sqrt( directionCosine[3]*directionCosine[3] + directionCosine[4]*directionCosine[4] + directionCosine[5]*directionCosine[5] );
       for (int k = 3; k < 6; k++)
         {
         directionCosine[k] /= a;
@@ -497,14 +498,14 @@ public:
       for (unsigned int k = 0; k < GetNumberOfImageOrientationPatient(); k++)
         {
         std::vector<float> aVec = ImageOrientationPatient[k];
-        a = sqrt( aVec[0]*aVec[0] + aVec[1]*aVec[1] + aVec[2]*aVec[2] );
+        a = std::sqrt( aVec[0]*aVec[0] + aVec[1]*aVec[1] + aVec[2]*aVec[2] );
         float b = (directionCosine[0]*aVec[0] + directionCosine[1]*aVec[1] + directionCosine[2]*aVec[2])/a;
         if ( b < 0.99999 )
           {
           continue;
           }
 
-        a = sqrt( aVec[3]*aVec[3] + aVec[4]*aVec[4] + aVec[5]*aVec[5] );
+        a = std::sqrt( aVec[3]*aVec[3] + aVec[4]*aVec[4] + aVec[5]*aVec[5] );
         b = (directionCosine[3]*aVec[3] + directionCosine[4]*aVec[4] + directionCosine[5]*aVec[5])/a;
         if ( b > 0.99999 )
           {
@@ -531,7 +532,7 @@ public:
           b += this->ImagePositionPatient[k][n] * this->ImagePositionPatient[k][n];
           c += this->ImagePositionPatient[k][n] * ipp[n];
           }
-        c = fabs(c)/sqrt(a*b);
+        c = std::fabs(c)/std::sqrt(a*b);
         if ( c > 0.99999 )
           {
           return k;
@@ -690,7 +691,7 @@ public:
         return k;
         }
       std::vector< float > aVector(3);
-      float aMag = sqrt(a[0]*a[0]+a[1]*a[1]+a[2]*a[2]);
+      float aMag = std::sqrt(a[0]*a[0]+a[1]*a[1]+a[2]*a[2]);
       for (k = 0; k < 3; k++)
         {
         aVector[k] = a[k]/aMag;
@@ -732,8 +733,8 @@ public:
         return k;
         }
       std::vector< float > aVector(6);
-      float aMag = sqrt(a[0]*a[0]+a[1]*a[1]+a[2]*a[2]);
-      float bMag = sqrt(a[3]*a[3]+a[4]*a[4]+a[5]*a[5]);
+      float aMag = std::sqrt(a[0]*a[0]+a[1]*a[1]+a[2]*a[2]);
+      float bMag = std::sqrt(a[3]*a[3]+a[4]*a[4]+a[5]*a[5]);
       for (k = 0; k < 3; k++)
         {
         aVector[k] = a[k]/aMag;
