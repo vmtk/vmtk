@@ -49,6 +49,8 @@ class VTK_VMTK_IO_EXPORT vtkvmtkFDNEUTReader : public vtkUnstructuredGridReader
   vtkGetMacro(VolumeElementsOnly,int);
   vtkBooleanMacro(VolumeElementsOnly,int);
 
+  int ReadMeshSimple(VTK_FILEPATH const std::string& fname, vtkDataObject* output) override;
+
   //BTX
   enum
   {
@@ -64,8 +66,6 @@ class VTK_VMTK_IO_EXPORT vtkvmtkFDNEUTReader : public vtkUnstructuredGridReader
   protected:
   vtkvmtkFDNEUTReader();
   ~vtkvmtkFDNEUTReader();
-
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   static void OneToZeroOffset(int npts, int* pts)
   { for (int i=0; i<npts; i++) --pts[i]; }

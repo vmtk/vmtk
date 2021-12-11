@@ -42,11 +42,11 @@ public:
   vtkSetStringMacro(BoundaryDataArrayName);
   vtkGetStringMacro(BoundaryDataArrayName);
 
+  int ReadMeshSimple(VTK_FILEPATH const std::string& fname, vtkDataObject* output) override;
+
 protected:
   vtkvmtkTetGenReader();
   ~vtkvmtkTetGenReader();
-
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
 //BTX
   void Tokenize(const std::string& str, std::vector<std::string>& tokens, const std::string& delimiters);
