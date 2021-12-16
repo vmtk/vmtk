@@ -32,10 +32,11 @@ requirements:
     - {{ compiler('cxx') }}
     # Only required because anaconda.org/vmtk/itk is underconstrained.
     # itk 4.13 incompatible with gcc >8. Remove when upgrading itk.
-    - gcc_linux-64 <=7.3 # [linux]
-    - gxx_linux-64 <=7.3 # [linux]
+#    - gcc_linux-64 <=7.3 # [linux]
+#    - gxx_linux-64 <=7.3 # [linux]
     - pkgconfig              # [unix]
     - cmake 
+    - boost 1.74 # [linux]
     - git
     - ninja
     - setuptools             # [win] 
@@ -44,6 +45,8 @@ requirements:
     - future
     - vtk {{ vtk }}
     - itk {{ itk }}
+    - libitk {{ itk }}
+    - libitk-devel {{ itk }}
     - numpy 
     - h5py
     - tbb-devel
@@ -56,6 +59,8 @@ requirements:
     - future 
     - vtk {{ vtk }}
     - itk {{ itk }}
+    - libitk {{ itk }}
+    - libitk-devel {{ itk }}
     - numpy 
     - llvm
     - h5py
@@ -65,7 +70,7 @@ test:
   source_files:
     - build/tests/*
   requires:
-    - pytest <4
+    - pytest
     - pytest-html
   commands:
     - pytest  {{ environ.get('PYTEST_REPORT', '') }} -vv ./build/tests/
