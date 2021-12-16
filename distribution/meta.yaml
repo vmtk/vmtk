@@ -37,12 +37,12 @@ requirements:
     - pkgconfig              # [unix]
     - cmake 
     - boost 1.74 # [linux]
+#    - python {{ python }}
     - git
     - ninja
     - setuptools             # [win] 
   host:
     - python {{ python }}
-    - future
     - vtk {{ vtk }}
     - itk {{ itk }}
     - libitk {{ itk }}
