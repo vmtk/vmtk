@@ -26,8 +26,9 @@
 #    environment configuration    #
 #---------------------------------#
 image:
+  - Ubuntu2004
   - Visual Studio 2017
-  - Ubuntu
+
 
 environment:
     global:
@@ -38,6 +39,10 @@ environment:
       
       - PYTHON_VERSION: "3.6"
       
+matrix:
+  allow_failures:
+    - image: Visual Studio 2017
+
       
 platform: 
   - x64
