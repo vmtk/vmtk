@@ -26,6 +26,7 @@ set(vtkvmtkITK_SRCS
     vtkvmtkITKArchetypeImageSeriesReader.cxx
     vtkvmtkITKArchetypeImageSeriesScalarReader.cxx
     vtkvmtkITKImageWriter.cxx
+    vtkvmtkITKVersion.cxx
 )
 
 set(VTK_VMTK_ITK_EXTRA_INCLUDES
