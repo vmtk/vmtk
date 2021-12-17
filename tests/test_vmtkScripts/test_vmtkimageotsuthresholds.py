@@ -16,16 +16,16 @@
 
 import pytest
 import vmtk.vmtkimageotsuthresholds as otsu
-import vtk
+from vmtk.vtkvmtk import vtkvmtkITKVersion
 
 
-@pytest.mark.skipif(vtk.vtkVersion.GetVTKMajorVersion() > 8, reason="requires vtk 8 or lower")
+@pytest.mark.skipif(vtkvmtkITKVersion.GetITKMajorVersion() > 4, reason="requires itk 4 or lower")
 @pytest.mark.parametrize("thresholds,paramid", [
     (1, '0'),
     (2, '1'),
     (3, '2'),
 ])
-def test_otsu_image_multiple_thresholds_vtk8(aorta_image, compare_images, thresholds, paramid):
+def test_otsu_image_multiple_thresholds_itk4(aorta_image, compare_images, thresholds, paramid):
     name = __name__ + '_test_otsu_image_multiple_thresholds_' + paramid + '.mha'
     otsuer = otsu.vmtkImageOtsuThresholds()
     otsuer.Image = aorta_image
@@ -35,8 +35,8 @@ def test_otsu_image_multiple_thresholds_vtk8(aorta_image, compare_images, thresh
     assert compare_images(otsuer.Image, name) == True
 
 
-@pytest.mark.skipif(vtk.vtkVersion.GetVTKMajorVersion() > 8, reason="requires vtk 8 or lower")
-def test_otsu_image_256_histogram_bins_vtk8(aorta_image, compare_images):
+@pytest.mark.skipif(vtkvmtkITKVersion.GetITKMajorVersion() > 4, reason="requires itk 4 or lower")
+def test_otsu_image_256_histogram_bins_itk4(aorta_image, compare_images):
     name = __name__ + '_test_otsu_image_256_histogram_bins.mha'
     otsuer = otsu.vmtkImageOtsuThresholds()
     otsuer.Image = aorta_image
@@ -46,14 +46,14 @@ def test_otsu_image_256_histogram_bins_vtk8(aorta_image, compare_images):
     assert compare_images(otsuer.Image, name) == True
 
 
-@pytest.mark.skipif(vtk.vtkVersion.GetVTKMajorVersion() < 9, reason="requires vtk 9 or higher")
+@pytest.mark.skipif(vtkvmtkITKVersion.GetITKMajorVersion() < 5, reason="requires itk 5 or higher")
 @pytest.mark.parametrize("thresholds,paramid", [
     (1, '0'),
     (2, '1'),
     (3, '2'),
 ])
-def test_otsu_image_multiple_thresholds_vtk9(aorta_image, compare_images, thresholds, paramid):
-    name = __name__ + '_test_otsu_image_multiple_thresholds_' + paramid + '_vtk9.mha'
+def test_otsu_image_multiple_thresholds_itk5(aorta_image, compare_images, thresholds, paramid):
+    name = __name__ + '_test_otsu_image_multiple_thresholds_' + paramid + '_itk5.mha'
     otsuer = otsu.vmtkImageOtsuThresholds()
     otsuer.Image = aorta_image
     otsuer.NumberOfThresholds = thresholds
@@ -62,9 +62,9 @@ def test_otsu_image_multiple_thresholds_vtk9(aorta_image, compare_images, thresh
     assert compare_images(otsuer.Image, name) == True
 
 
-@pytest.mark.skipif(vtk.vtkVersion.GetVTKMajorVersion() < 9, reason="requires vtk 9 or higher")
-def test_otsu_image_256_histogram_bins_vtk9(aorta_image, compare_images):
-    name = __name__ + '_test_otsu_image_256_histogram_bins_vtk9.mha'
+@pytest.mark.skipif(vtkvmtkITKVersion.GetITKMajorVersion() < 5, reason="requires itk 5 or higher")
+def test_otsu_image_256_histogram_bins_itk5(aorta_image, compare_images):
+    name = __name__ + '_test_otsu_image_256_histogram_bins_itk5.mha'
     otsuer = otsu.vmtkImageOtsuThresholds()
     otsuer.Image = aorta_image
     otsuer.NumberOfHistogramBins = 256

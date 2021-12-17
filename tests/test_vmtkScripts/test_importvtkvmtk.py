@@ -226,6 +226,7 @@ def test_import_vtkvmtk(vmtk_vtkvmtk_attributes):
         assert hasattr(vtkvmtk, name)
         # assert importlib.__import__(name)
 
+
 def test_itk_version():
     from vmtk.vtkvmtk import vtkvmtkITKVersion
     print(vtkvmtkITKVersion.GetITKVersion())

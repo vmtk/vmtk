@@ -30,7 +30,7 @@ Version:   $Revision: 1.5 $
 
 class VTK_VMTK_ITK_EXPORT vtkvmtkITKVersion : public vtkObject
 {
-  public:
+public:
   static vtkvmtkITKVersion* New();
   vtkTypeMacro(vtkvmtkITKVersion, vtkObject);
   void PrintSelf(std::ostream& os, vtkIndent indent) override;
