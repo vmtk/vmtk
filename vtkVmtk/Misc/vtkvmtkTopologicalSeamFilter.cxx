@@ -182,6 +182,7 @@ int vtkvmtkTopologicalSeamFilter::RequestData(vtkInformation *vtkNotUsed(request
     seamQueue.pop();
     double point0Value = sourceArray->GetTuple1(point0Id);
     visitedArray->SetValue(point0Id,1);
+    seamArray->SetValue(point0Id,point0Value);
     input->GetPointCells(point0Id,ncells,cells);
     for (vtkIdType i=0; i<ncells; i++)
     {
