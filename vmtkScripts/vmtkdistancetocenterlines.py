@@ -48,7 +48,9 @@ class vmtkDistanceToCenterlines(pypes.pypeScript):
             ['UseCombinedDistance','combined','bool',1,'','combines local radius with maximum inscribed sphere radius'],
             ['ProjectPointArrays','projectarrays','bool',1],
             ['DistanceToCenterlinesArrayName','distancetocenterlinesarray','str',1],
-            ['RadiusArrayName','radiusarray','str',1]
+            ['RadiusArrayName','radiusarray','str',1],
+            ['UseRadiusThreshold','useradiusthreshold','bool',0],
+            ['RadiusThreshold','radiusthreshold','float',1,'(0.0,)','set radius threshold']
             ])
         self.SetOutputMembers([
             ['Surface','o','vtkPolyData',1,'','','vmtksurfacewriter']
@@ -101,7 +103,20 @@ class vmtkDistanceToCenterlines(pypes.pypeScript):
             distanceToCenterlinesFilter.SetCenterlineRadiusArrayName(self.RadiusArrayName)
             distanceToCenterlinesFilter.Update()
 
-            self.Surface = distanceToCenterlinesFilter.GetOutput()
+            surface = distanceToCenterlinesFilter.GetOutput()
+
+            if (self.UseRadiusThreshold):
+
+                centerlineArray = surface.GetPointData().GetArray(self.DistanceToCenterlinesArrayName)
+                radiusArray = surface.GetPointData().GetArray(self.RadiusArrayName)
+
+                for i in range (surface.GetNumberOfPoints()):
+                    centerlineval = centerlineArray.GetComponent(i,0)
+                    if (centerlineval > self.RadiusThreshold):
+                        centerlineArray.SetTuple1(i, self.RadiusThreshold)
+
+            self.Surface = surface
+
 
 
 if __name__=='__main__':
