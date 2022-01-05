@@ -52,6 +52,7 @@ vtkvmtkFDNEUTReader::~vtkvmtkFDNEUTReader()
     }
 }
 
+#if (VTK_MAJOR_VERSION >= 9 && VTK_MINOR_VERSION >= 1)
 int vtkvmtkFDNEUTReader::ReadMeshSimple(const std::string& fname,
                                        vtkDataObject* doOutput)
 {
@@ -75,6 +76,35 @@ int vtkvmtkFDNEUTReader::ReadMeshSimple(const std::string& fname,
     return 1;
   }
 
+#else
+int vtkvmtkFDNEUTReader::RequestData(
+  vtkInformation *request,
+  vtkInformationVector **inputVector,
+  vtkInformationVector *outputVector)
+{
+  vtkInformation *outInfo = outputVector->GetInformationObject(0);
+  vtkUnstructuredGrid *output = vtkUnstructuredGrid::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
+
+  if (outInfo->Get(vtkStreamingDemandDrivenPipeline::UPDATE_PIECE_NUMBER()) > 0)
+  {
+    return 1;
+  }
+
+  if (!this->GetFileName())
+  {
+    vtkErrorMacro(<<"FileName not set.");
+    return 1;
+  }
+        
+  FILE* FDNEUTFile;
+  FDNEUTFile = fopen(this->GetFileName(),"r");
+
+  if (!FDNEUTFile)
+  {
+    vtkErrorMacro(<<"Could not open file.");
+    return 1;
+  }
+#endif
   char buffer[1024];
   int ret;
   do
