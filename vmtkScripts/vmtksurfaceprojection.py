@@ -44,7 +44,6 @@ class vmtkSurfaceProjection(pypes.pypeScript):
             ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter']
             ])
 
-
     def ClosestPointProjection(self,idata,rdata):
         refPointData = rdata.GetPointData()
         refCellData = rdata.GetCellData()
@@ -123,7 +122,6 @@ class vmtkSurfaceProjection(pypes.pypeScript):
 
         return idata
 
-
     def Execute(self):
 
         if self.Surface == None:
@@ -155,7 +153,6 @@ class vmtkSurfaceProjection(pypes.pypeScript):
         elif self.Method == 'closestpoint':
             self.PrintLog('Computing closest point projection ...')
             self.Surface = self.ClosestPointProjection(self.Surface,self.ReferenceSurface)
-
 
 
 if __name__=='__main__':

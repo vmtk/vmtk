@@ -9,11 +9,11 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
-## Note: this class was contributed by 
+## Note: this class was contributed by
 ##       Marco Fedele (marco.fedele@polimi.it)
 ##       Politecnico di Milano
 
@@ -32,7 +32,6 @@ class vmtkSurfaceConnector(pypes.pypeScript):
     def __init__(self):
 
         pypes.pypeScript.__init__(self)
-
 
         self.Surface = None
         self.Surface2 = None
@@ -70,8 +69,6 @@ class vmtkSurfaceConnector(pypes.pypeScript):
             ['Actor','oactor','vtkActor',1,'','the output actor']
             ])
 
-
-
     def SetSurfaceRepresentation(self, representation):
         if representation == 'surface':
             self.Actor.GetProperty().SetRepresentationToSurface()
@@ -84,7 +81,6 @@ class vmtkSurfaceConnector(pypes.pypeScript):
             self.Actor.GetProperty().EdgeVisibilityOff()
         self.Representation = representation
 
-
     def RepresentationCallback(self, obj):
         if not self.Actor:
             return
@@ -96,7 +92,6 @@ class vmtkSurfaceConnector(pypes.pypeScript):
             representation = 'surface'
         self.SetSurfaceRepresentation(representation)
         self.vmtkRenderer.RenderWindow.Render()
-
 
     def ViewSurface(self,polydata,color,opacity=1.0,representation=None,linewidth=1):
         if representation==None:
@@ -116,7 +111,6 @@ class vmtkSurfaceConnector(pypes.pypeScript):
         self.vmtkRenderer.AddKeyBinding('w','Change surface representation.',self.RepresentationCallback)
         self.vmtkRenderer.Render()
 
-
     def ViewTriangle(self,triangle,color):
         trianglePolydata = vtk.vtkPolyData()
         triangleCell = vtk.vtkCellArray()
@@ -124,7 +118,6 @@ class vmtkSurfaceConnector(pypes.pypeScript):
         trianglePolydata.SetPoints(self.OutputSurface.GetPoints())
         trianglePolydata.SetPolys(triangleCell)
         self.ViewSurface(trianglePolydata,color)
-
 
     def LabelValidator(self,text):
         import string
@@ -136,7 +129,6 @@ class vmtkSurfaceConnector(pypes.pypeScript):
             if char not in string.digits + " ":
                 return 0
         return 1
-
 
     def InteractiveRingExtraction(self,surface):
 
@@ -203,7 +195,6 @@ class vmtkSurfaceConnector(pypes.pypeScript):
             labelsActor = vtk.vtkActor2D()
             labelsActor.SetMapper(labelsMapper)
 
-
             self.vmtkRenderer.Renderer.AddActor(labelsActor)
 
             surfaceMapper = vtk.vtkPolyDataMapper()
@@ -242,10 +233,9 @@ class vmtkSurfaceConnector(pypes.pypeScript):
             #self.vmtkRenderer.Renderer.RemoveActor(surfaceActor)
 
             return boundaries, boundaryIds, True
-        
+
         boundaryIds.InsertNextId(0)
         return boundaries, boundaryIds, False
-
 
     def InitializeRingsFromSurfaces(self):
         [boundaries,boundaryIds,self.SurfaceIsRendered] = self.InteractiveRingExtraction(self.Surface)
@@ -293,8 +283,6 @@ class vmtkSurfaceConnector(pypes.pypeScript):
             cleaner.Execute()
             self.OutputSurface = cleaner.Surface
 
-
-
     def Execute(self):
 
         if self.Surface:
@@ -336,7 +324,7 @@ class vmtkSurfaceConnector(pypes.pypeScript):
                 self.vmtkRenderer = vmtkrenderer.vmtkRenderer()
                 self.vmtkRenderer.Initialize()
                 self.OwnRenderer = 1
-            self.vmtkRenderer.RegisterScript(self) 
+            self.vmtkRenderer.RegisterScript(self)
             if self.Actor:
                 self.vmtkRenderer.Renderer.RemoveActor(self.Actor)
 
@@ -425,8 +413,6 @@ class vmtkSurfaceConnector(pypes.pypeScript):
 
         self.OutputSurface.BuildLinks()
         self.MergeSurfacesAndEntityIdsArray()
-
-
 
 
 if __name__=='__main__':

@@ -50,8 +50,6 @@ class vmtkMeshInternalFacesCleaner(pypes.pypeScript):
             ['CellEntityIdsArrayName','entityidsarray','str',1,'','name of the array where the id of the caps are stored']
             ])
 
-
-
     def Execute(self):
         from vmtk import vmtkscripts
         from vmtk import vmtkcontribscripts
@@ -64,7 +62,6 @@ class vmtkMeshInternalFacesCleaner(pypes.pypeScript):
             cellEntityIdsArray.SetNumberOfTuples(self.Mesh.GetNumberOfCells())
             cellEntityIdsArray.FillComponent(0,1)
             self.Mesh.GetCellData().AddArray(cellEntityIdsArray)
-
 
         triaCellType = vtk.vtkTriangle().GetCellType()
         quadCellType = vtk.vtkQuad().GetCellType()
@@ -90,7 +87,6 @@ class vmtkMeshInternalFacesCleaner(pypes.pypeScript):
             if countCleanedCells>0:
                 print("\tNumber of cleaned cells: ",countCleanedCells)
 
-
         tagsInternalCells(triaCellIdArray)
         tagsInternalCells(quadCellIdArray)
 
@@ -103,8 +99,6 @@ class vmtkMeshInternalFacesCleaner(pypes.pypeScript):
         extract.Execute()
         self.Mesh = extract.Mesh
         self.CleanedCells = extract.DeletedMesh
-
-
 
 
 if __name__=='__main__':

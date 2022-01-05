@@ -9,11 +9,11 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
-## Note: this class was contributed by 
+## Note: this class was contributed by
 ##       Marco Fedele (marco.fedele@polimi.it)
 ##       Politecnico di Milano
 
@@ -23,6 +23,7 @@ import sys
 import numpy as np
 
 from vmtk import pypes
+
 
 class vmtkMeshTetHex(pypes.pypeScript):
 
@@ -86,7 +87,6 @@ class vmtkMeshTetHex(pypes.pypeScript):
             line.GetPointIds().SetId(0,id0)
             line.GetPointIds().SetId(1,id1)
             self.Mesh.InsertNextCell(line.GetCellType(),line.GetPointIds())
-
 
         self.PrintLog("    Generation of the hexahedral mesh:")
         # initialize toolbar
@@ -178,7 +178,6 @@ class vmtkMeshTetHex(pypes.pypeScript):
                 sys.stdout.write("-")
                 sys.stdout.flush()
 
-
         triType = 5 # Triangles
         triIdArray = vtk.vtkIdTypeArray()
         inputMesh.GetIdsOfCellsOfType(triType,triIdArray) # extract all the tetra cell
@@ -186,7 +185,7 @@ class vmtkMeshTetHex(pypes.pypeScript):
 
         for i in range(numberOfTris):
 
-            triId = triIdArray.GetValue(i) 
+            triId = triIdArray.GetValue(i)
             tri = inputMesh.GetCell(triId)
             if inputCellEntityIdsArray != None:
                 triEntityId = inputCellEntityIdsArray.GetValue(triId)
@@ -226,7 +225,6 @@ class vmtkMeshTetHex(pypes.pypeScript):
                 sys.stdout.write("-")
                 sys.stdout.flush()
 
-
         def SplitLine(inputMesh,cellCounterShift=0):
             lineType = 3 # Lines
             lineIdArray = vtk.vtkIdTypeArray()
@@ -235,7 +233,7 @@ class vmtkMeshTetHex(pypes.pypeScript):
 
             for i in range(numberOfLines):
 
-                lineId = lineIdArray.GetValue(i) 
+                lineId = lineIdArray.GetValue(i)
                 line = inputMesh.GetCell(lineId)
                 if inputCellEntityIdsArray != None:
                     lineEntityId = inputCellEntityIdsArray.GetValue(lineId)
@@ -310,7 +308,7 @@ class vmtkMeshTetHex(pypes.pypeScript):
 
             for i in range(numberOfQuads):
 
-                quadId = quadIdArray.GetValue(i) 
+                quadId = quadIdArray.GetValue(i)
                 quad = inputMesh.GetCell(quadId)
                 if inputCellEntityIdsArray != None:
                     quadEntityId = inputCellEntityIdsArray.GetValue(quadId)
@@ -365,4 +363,3 @@ if __name__=='__main__':
     main = pypes.pypeMain()
     main.Arguments = sys.argv
     main.Execute()
-

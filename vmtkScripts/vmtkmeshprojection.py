@@ -48,7 +48,6 @@ class vmtkMeshProjection(pypes.pypeScript):
             ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh','vmtkmeshwriter']
             ])
 
-
     def ExtractLinesSurfaceVolume(self,mesh):
 
         # only linear elements
@@ -61,7 +60,7 @@ class vmtkMeshProjection(pypes.pypeScript):
         cellTypeArray.SetNumberOfTuples(mesh.GetNumberOfCells())
         cellTypeArray.FillComponent(0,0)
         mesh.GetCellData().AddArray(cellTypeArray)
-        
+
         for i in range(mesh.GetNumberOfCells()):
             if mesh.GetCell(i).GetCellType() in volumeTypes:
                 cellTypeArray.SetComponent(i,0,3)
@@ -89,7 +88,6 @@ class vmtkMeshProjection(pypes.pypeScript):
 
         return lines,surface,volume
 
-
     def Execute(self):
 
         if self.Mesh == None:
@@ -98,7 +96,7 @@ class vmtkMeshProjection(pypes.pypeScript):
         if self.ReferenceMesh == None:
             self.PrintError('Error: No ReferenceMesh.')
 
-        if len(self.ActiveArrays) != 0:        
+        if len(self.ActiveArrays) != 0:
             passArray = vtk.vtkPassArrays()
             passArray.SetInputData(self.ReferenceMesh)
 
@@ -122,7 +120,7 @@ class vmtkMeshProjection(pypes.pypeScript):
 
             self.PrintLog('Computing closest point projection ...')
             cpProj = vmtkscripts.vmtkSurfaceProjection()
-            
+
             if self.LineSurfaceVolume:
                 lin,sur,vol = self.ExtractLinesSurfaceVolume(self.Mesh)
                 rlin,rsur,rvol = self.ExtractLinesSurfaceVolume(self.ReferenceMesh)
@@ -145,7 +143,6 @@ class vmtkMeshProjection(pypes.pypeScript):
                 self.Mesh = af.GetOutput()
             else:
                 cpProj.ClosestPointProjection(self.Mesh,self.ReferenceMesh)
-
 
 
 if __name__=='__main__':

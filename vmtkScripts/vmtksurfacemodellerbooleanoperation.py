@@ -9,11 +9,11 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENCE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
-## Note: this class was contributed by 
+## Note: this class was contributed by
 ##       Marco Fedele (marco.fedele@polimi.it)
 ##       Politecnico di Milano
 
@@ -32,7 +32,7 @@ class vmtkSurfaceModellerBooleanOperation(pypes.pypeScript):
     def __init__(self):
 
         pypes.pypeScript.__init__(self)
-        
+
         self.Surface = None
         self.Surface2 = None
         self.Operation = 'union'
@@ -157,7 +157,6 @@ class vmtkSurfaceModellerBooleanOperation(pypes.pypeScript):
             negate.SetOperationToMultiplyByK()
             negate.Update()
             self.Image = negate.GetOutput()
-
 
 
 if __name__=='__main__':

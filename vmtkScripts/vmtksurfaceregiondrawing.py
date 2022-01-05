@@ -236,8 +236,6 @@ class vmtkSurfaceRegionDrawing(pypes.pypeScript):
         #self.vmtkRenderer.AddKeyBinding('i','Start interaction',self.InteractCallback)
         self.vmtkRenderer.Render()
 
-
-
         if self.OwnRenderer:
             self.vmtkRenderer.Deallocate()
 

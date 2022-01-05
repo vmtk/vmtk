@@ -285,7 +285,7 @@ class vmtkMeshReader(pypes.pypeScript):
         f=open(self.InputFileName,'r')
         self.Mesh = vtk.vtkUnstructuredGrid()
         self.MeshPoints = vtk.vtkPoints()
-        
+
         def readTillString(myStrings):
             line = f.readline()
             string = []
@@ -368,10 +368,9 @@ class vmtkMeshReader(pypes.pypeScript):
         self.Mesh.SetPoints(self.MeshPoints)
         self.Mesh.Allocate(numberOfPoints*4,1000)
 
-
         cellEntityIdArray = vtk.vtkIntArray()
         cellEntityIdArray.SetName(self.CellEntityIdsArrayName)
-        
+
         line = readTillString(['Tetrahedra','Hexahedra','Triangles','Quadrilaterals'])
         if line.split()[0] in ['Tetrahedra','Hexahedra']:
             addTetra(cellEntityIdArray)

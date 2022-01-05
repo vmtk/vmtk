@@ -23,6 +23,7 @@ import sys
 
 from vmtk import pypes
 
+
 class vmtkMeshInfo(pypes.pypeScript):
 
     def __init__(self):
@@ -41,7 +42,6 @@ class vmtkMeshInfo(pypes.pypeScript):
         self.SetOutputMembers([
             ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh','vmtkmeshwriter']
             ])
-
 
     def Execute(self):
 

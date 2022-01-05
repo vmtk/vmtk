@@ -13,7 +13,7 @@
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
-## Note: this class was contributed by 
+## Note: this class was contributed by
 ##       Marco Fedele (marco.fedele@polimi.it)
 ##       Politecnico di Milano
 
@@ -63,7 +63,6 @@ class vmtkMeshCapper(pypes.pypeScript):
             ['CellEntityIdsArrayName','entityidsarray','str',1,'','name of the array where the id of the caps are stored']
             ])
 
-
     def Execute(self):
         from vmtk import vmtkscripts
         from vmtk import vmtkcontribscripts
@@ -98,7 +97,6 @@ class vmtkMeshCapper(pypes.pypeScript):
         renumbering.CellEntityIdRenumbering = [self.CapsIds[0]+1, self.CapsIds[1]]
         renumbering.Execute()
         cylinder = renumbering.Surface
-
 
         # 3. Remesh the surface of the cylinder only on the caps.
         sr = vmtkscripts.vmtkSurfaceRemeshing()
@@ -143,7 +141,6 @@ class vmtkMeshCapper(pypes.pypeScript):
         append.SetMergeDuplicatePoints(1)
         append.Update()
         self.Mesh = append.GetOutput()
-
 
 
 if __name__=='__main__':

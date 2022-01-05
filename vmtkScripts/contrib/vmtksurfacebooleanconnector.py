@@ -9,11 +9,11 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
-## Note: this class was contributed by 
+## Note: this class was contributed by
 ##       Marco Fedele (marco.fedele@polimi.it)
 ##       Politecnico di Milano
 
@@ -33,7 +33,6 @@ class vmtkSurfaceBooleanConnector(pypes.pypeScript):
 
         pypes.pypeScript.__init__(self)
 
-
         self.Surface = None
         self.Surface2 = None
 
@@ -41,7 +40,6 @@ class vmtkSurfaceBooleanConnector(pypes.pypeScript):
         self.Rings2 = None
 
         self.Operation = 'union'
-
 
         self.Eps = 1.0
         self.ThresholdOnFirst = 1
@@ -59,7 +57,6 @@ class vmtkSurfaceBooleanConnector(pypes.pypeScript):
         self.ConnectingId = 2
         # self.OverwriteIds = 1
         self.CleanOutput = 1
-
 
         self.SetScriptName('vmtksurfacebooleanconnector')
         self.SetScriptDoc('perform boolean operations between surfaces automatically remeshing the connection region')
@@ -85,8 +82,6 @@ class vmtkSurfaceBooleanConnector(pypes.pypeScript):
             ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter'],
             ])
 
-
-
     def Execute(self):
         from vmtk import vmtkscripts
         from vmtk import vmtkcontribscripts
@@ -103,7 +98,7 @@ class vmtkSurfaceBooleanConnector(pypes.pypeScript):
             return sd.Surface
 
         self.Surface = implicitDistance(self.Surface,self.Surface2)
-        self.Surface2 = implicitDistance(self.Surface2,self.Surface) 
+        self.Surface2 = implicitDistance(self.Surface2,self.Surface)
 
         # 2. clip both surfaces at the zero level,
         #    keeping the positive or negative part depending on the
@@ -205,7 +200,6 @@ class vmtkSurfaceBooleanConnector(pypes.pypeScript):
             self.Surface = surfaceRemeshing(self.Surface,5,tagsToExclude)
             self.Surface2 = surfaceRemeshing(self.Surface2,5,tagsToExclude2)
 
-
         # 6. connecting
         conn = vmtkcontribscripts.vmtkSurfaceConnector()
         conn.Surface = self.Surface
@@ -222,7 +216,6 @@ class vmtkSurfaceBooleanConnector(pypes.pypeScript):
 
         if not self.SkipFinalRemeshing:
             self.Surface = surfaceRemeshing(self.Surface,10,allTagsToExclude)
-
 
 
 if __name__=='__main__':

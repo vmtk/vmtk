@@ -9,11 +9,11 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
-## Note: this class was contributed by 
+## Note: this class was contributed by
 ##       Marco Fedele (marco.fedele@polimi.it)
 ##       Politecnico di Milano
 
@@ -22,6 +22,7 @@ import vtk
 import sys
 
 from vmtk import pypes
+
 
 class vmtkMeshWarpByVector(pypes.pypeScript):
 
@@ -46,12 +47,9 @@ class vmtkMeshWarpByVector(pypes.pypeScript):
             ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh','vmtkmeshwriter']
             ])
 
-
-
     def Execute(self):
         if self.Mesh == None:
             self.PrintError('Error: no Mesh.')
-
 
         from vmtk import vmtkscripts
 
@@ -62,11 +60,7 @@ class vmtkMeshWarpByVector(pypes.pypeScript):
         self.Mesh = warper.Input
 
 
-
-
 if __name__=='__main__':
     main = pypes.pypeMain()
     main.Arguments = sys.argv
     main.Execute()
-
-

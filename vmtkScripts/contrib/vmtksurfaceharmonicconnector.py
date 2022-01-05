@@ -9,11 +9,11 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENCE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
-## Note: this class was contributed by 
+## Note: this class was contributed by
 ##       Marco Fedele (marco.fedele@polimi.it)
 ##       Politecnico di Milano
 
@@ -26,6 +26,7 @@ from vmtk import pypes
 
 
 vmtksurfaceharmoniconnector = 'vmtkSurfaceHarmonicConnector'
+
 
 class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
 
@@ -68,8 +69,6 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
         self.Display = 0
         self.vmtkRenderer = None
 
-
-
         self.SetScriptName('vmtksurfaceharmonicconnector')
         self.SetScriptDoc('connect to a reference surface harmonically deforming the input surface onto the reference one; note that the deformation depends on the distance between two selected boundary rings of the two surfaces; thus, the surfaces must be open surfaces; if a surface have more than a boundary ring, an interactive interface allows to select the rings to be connected')
         self.SetInputMembers([
@@ -99,7 +98,6 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
             ['RingsForBCs','obcs','vtkPolyData',1,'','the rings containing the array used for BCs of the Laplace-Beltrami equation','vmtksurfacewriter']
             ])
 
-
     def SurfaceProjection(self,isurface,rsurface):
         from vmtk import vmtkscripts
         proj = vmtkscripts.vmtkSurfaceProjection()
@@ -107,7 +105,6 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
         proj.ReferenceSurface = rsurface
         proj.Execute()
         return proj.Surface
-
 
     def Execute(self):
         from vmtk import vtkvmtk
@@ -150,7 +147,6 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
                 transform.Surface = self.Valve
                 transform.Execute()
                 self.Valve = transform.Surface
-
 
         # 2. Compute distance from Ring to ReferenceRing
         distance = vmtkscripts.vmtkSurfaceDistance()
@@ -220,7 +216,6 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
             harmonicValveSolver.Execute()
             self.Valve = harmonicValveSolver.Surface
 
-
         # 4. Warp by vector the surface
         warper = vmtkscripts.vmtkSurfaceWarpByVector()
         warper.Surface = self.Surface
@@ -284,8 +279,6 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
 
             if self.ProjectionFromInput:
                 self.Surface = self.SurfaceProjection(self.Surface,self.DeformedSurface)
-
-
 
 
 if __name__=='__main__':

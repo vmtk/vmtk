@@ -51,7 +51,6 @@ class vmtkMeshCoords(pypes.pypeScript):
         vmtkscripts.vmtkSurfaceCoords().CreateCoords(self.Mesh)
 
 
-
 if __name__=='__main__':
 
     main = pypes.pypeMain()

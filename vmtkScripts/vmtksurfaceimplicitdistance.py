@@ -9,11 +9,11 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENCE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
-## Note: this class was contributed by 
+## Note: this class was contributed by
 ##       Marco Fedele (marco.fedele@polimi.it)
 ##       Politecnico di Milano
 
@@ -25,7 +25,6 @@ import numpy as np
 
 from vmtk import vtkvmtk
 from vmtk import pypes
-
 
 
 class vmtkSurfaceImplicitDistance(pypes.pypeScript):
@@ -64,7 +63,6 @@ class vmtkSurfaceImplicitDistance(pypes.pypeScript):
         self.SetOutputMembers([
             ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter']
             ])
-
 
     def Update(self):
         self.PrintLog('Computing Implicit Distance...')
@@ -121,7 +119,6 @@ class vmtkSurfaceImplicitDistance(pypes.pypeScript):
                     if np.absolute(value) > self.DistanceThreshold:
                         value = np.sign(value) * self.DistanceThreshold
             self.Array.SetComponent( i, 0, value )
-
 
     def Execute(self):
 

@@ -9,11 +9,11 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENCE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
-## Note: this class was contributed by 
+## Note: this class was contributed by
 ##       Marco Fedele (marco.fedele@polimi.it)
 ##       Politecnico di Milano
 
@@ -26,6 +26,7 @@ from vmtk import pypes
 
 
 vmtksurfaceharmonicextension = 'vmtkSurfaceHarmonicExtension'
+
 
 class vmtkSurfaceHarmonicExtension(pypes.pypeScript):
 
@@ -54,7 +55,6 @@ class vmtkSurfaceHarmonicExtension(pypes.pypeScript):
         self.Display = 0
         self.vmtkRenderer = None
 
-
         self.SetScriptName('vmtksurfaceharmonicextension')
         self.SetScriptDoc('extend point data arrays harmonically on a surface; the extension takes effect on a subset of the input surface selected using  entity ids; the output array remains the same of the input one outside the extension domain and the values of this array at the boundary rings of the excluded domain are used as Dirichlet BCs for the harmonic extension')
         self.SetInputMembers([
@@ -75,8 +75,7 @@ class vmtkSurfaceHarmonicExtension(pypes.pypeScript):
             ['Valve','ovalve','vtkPolyData',1,'','the optional additional surface (e.g. a valve)','vmtksurfacewriter']
             ])
 
-
-    def Execute(self): 
+    def Execute(self):
         from vmtk import vtkvmtk
         from vmtk import vmtkscripts
         from vmtk import vmtkcontribscripts
@@ -152,7 +151,6 @@ class vmtkSurfaceHarmonicExtension(pypes.pypeScript):
             harmonicSolver.Execute()
             self.Surface = harmonicSolver.Surface
 
-
         if self.Valve != None:
 
             print("\n\n\nsolving for valve\n\n\n")
@@ -200,7 +198,6 @@ class vmtkSurfaceHarmonicExtension(pypes.pypeScript):
                 harmonicSolver.vmtkRenderer = self.vmtkRenderer
                 harmonicSolver.Execute()
                 self.Valve = harmonicSolver.Surface
-
 
 
 if __name__=='__main__':
