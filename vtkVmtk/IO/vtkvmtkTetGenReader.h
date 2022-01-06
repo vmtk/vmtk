@@ -42,18 +42,11 @@ public:
   vtkSetStringMacro(BoundaryDataArrayName);
   vtkGetStringMacro(BoundaryDataArrayName);
 
-#if (VTK_MAJOR_VERSION >= 9 && VTK_MINOR_VERSION >= 1)
-    int ReadMeshSimple(VTK_FILEPATH const std::string& fname, vtkDataObject* output) override;
-#endif
+  int ReadMeshSimple(VTK_FILEPATH const std::string& fname, vtkDataObject* output) override;
+
 protected:
   vtkvmtkTetGenReader();
   ~vtkvmtkTetGenReader();
-
-#if (VTK_MAJOR_VERSION >= 9 && VTK_MINOR_VERSION >= 1)
-
-#else
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
-#endif
 
 //BTX
   void Tokenize(const std::string& str, std::vector<std::string>& tokens, const std::string& delimiters);

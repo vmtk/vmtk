@@ -72,7 +72,6 @@ void vtkvmtkTetGenReader::Tokenize(const std::string& str, std::vector<std::stri
     }
 }
 
-#if (VTK_MAJOR_VERSION >= 9 && VTK_MINOR_VERSION >= 1)
 int vtkvmtkTetGenReader::ReadMeshSimple(const std::string& fname,
                                        vtkDataObject* doOutput)
 {
@@ -92,32 +91,6 @@ int vtkvmtkTetGenReader::ReadMeshSimple(const std::string& fname,
 
   std::string eleFileName = fname;
   eleFileName += ".ele";
-#else
-int vtkvmtkTetGenReader::RequestData(
-  vtkInformation *request,
-  vtkInformationVector **inputVector,
-  vtkInformationVector *outputVector)
-{
-  vtkInformation *outInfo = outputVector->GetInformationObject(0);
-  vtkUnstructuredGrid *output = vtkUnstructuredGrid::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
-
-  if (outInfo->Get(vtkStreamingDemandDrivenPipeline::UPDATE_PIECE_NUMBER()) > 0)
-  {
-    return 1;
-  }
-
-  if (!this->GetFileName())
-  {
-    vtkErrorMacro(<<"FileName not set.");
-    return 1;
-  }
-
-  std::string nodeFileName = this->GetFileName();
-  nodeFileName += ".node";
-
-  std::string eleFileName = this->GetFileName();
-  eleFileName += ".ele";
-#endif
 
   std::ifstream nodeStream(nodeFileName.c_str());
   std::ifstream eleStream(eleFileName.c_str());
