@@ -76,11 +76,7 @@ int vtkvmtkStreamlineClusteringFilter::RequestData(
   int numberOfClusters = 4;
 
   vtkSplineFilter* splineFilter = vtkSplineFilter::New();
-#if (VTK_MAJOR_VERSION <= 5)
-  splineFilter->SetInput(input);
-#else
   splineFilter->SetInputData(input);
-#endif
   splineFilter->SetSubdivideToLength();
   splineFilter->SetLength(resampleLength);
   splineFilter->Update();

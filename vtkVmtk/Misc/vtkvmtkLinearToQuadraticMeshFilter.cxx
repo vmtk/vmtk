@@ -428,7 +428,6 @@ int vtkvmtkLinearToQuadraticMeshFilter::RequestData(
 
     vtkIdType newCellId;
 
-#if VTK_MAJOR_VERSION > 5 || (VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION > 0)
     if (this->UseBiquadraticWedge)
       {
       newCellId = output->InsertNextCell(VTK_BIQUADRATIC_QUADRATIC_WEDGE, 18, pts);
@@ -437,9 +436,6 @@ int vtkvmtkLinearToQuadraticMeshFilter::RequestData(
       {
       newCellId = output->InsertNextCell(VTK_QUADRATIC_WEDGE, 15, pts);
       }
-#else
-    newCellId = output->InsertNextCell(VTK_QUADRATIC_WEDGE, 15, pts);
-#endif
 
     inputToOutputCellIds->SetId(cellId,newCellId);
     outputCellData->CopyData(inputCellData,cellId,newCellId);

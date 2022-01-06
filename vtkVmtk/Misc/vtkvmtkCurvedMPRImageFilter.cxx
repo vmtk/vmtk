@@ -96,16 +96,6 @@ int vtkvmtkCurvedMPRImageFilter::RequestInformation (
       {
       int outputExtent[6] = {0,-1,0,-1,0,-1};
       outputImage->SetExtent(outputExtent);
-#if (VTK_MAJOR_VERSION <= 5)
-      outputImage->SetWholeExtent(outputExtent);
-      outputImage->SetUpdateExtent(outputExtent);
-      outputImage->AllocateScalars();
-#elif (VTK_MAJOR_VERSION < 7)
-      this->UpdateInformation();
-      vtkStreamingDemandDrivenPipeline::SetUpdateExtent(outInfo, outputExtent);
-      this->Update();
-      outputImage->AllocateScalars(outInfo);
-#else
       if (this->GetOutputInformation(0))
         {
         this->GetOutputInformation(0)->Set(
@@ -114,7 +104,6 @@ int vtkvmtkCurvedMPRImageFilter::RequestInformation (
           vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT()), 6);
         }
       outputImage->AllocateScalars(outInfo);
-#endif
 
       }
     if ( inputImage == NULL)
@@ -158,12 +147,7 @@ int vtkvmtkCurvedMPRImageFilter::RequestInformation (
 
   int inDataExtent[6];
   double inDataOrigin[3];
-#if (VTK_MAJOR_VERSION <= 5)
-  inputImage->GetWholeExtent(inDataExtent);
-#else
   inInfoImage->Get(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), inDataExtent);
-#endif
-
 
   inputImage->GetSpacing(this->OutputSpacing);
   inputImage->GetOrigin(inDataOrigin);
@@ -238,16 +222,6 @@ int vtkvmtkCurvedMPRImageFilter::RequestData(
       {
       int outputExtent[6] = {0,-1,0,-1,0,-1};
       outputImage->SetExtent(outputExtent);
-#if (VTK_MAJOR_VERSION <= 5)
-      outputImage->SetWholeExtent(outputExtent);
-      outputImage->SetUpdateExtent(outputExtent);
-      outputImage->AllocateScalars();
-#elif (VTK_MAJOR_VERSION < 7)
-      this->UpdateInformation();
-      vtkStreamingDemandDrivenPipeline::SetUpdateExtent(outInfo, outputExtent);
-      this->Update();
-      outputImage->AllocateScalars(outInfo);
-#else
       if (this->GetOutputInformation(0))
         {
         this->GetOutputInformation(0)->Set(
@@ -256,7 +230,6 @@ int vtkvmtkCurvedMPRImageFilter::RequestData(
           vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT()), 6);
         }
       outputImage->AllocateScalars(outInfo);
-#endif
       }
    
     }
@@ -317,42 +290,23 @@ int vtkvmtkCurvedMPRImageFilter::RequestData(
   vtkPoints* linePoints = line->GetPoints(); 
 
   int outExtent[6];
-#if (VTK_MAJOR_VERSION <= 5)
-  outputImage->GetUpdateExtent(outExtent);
-#else
   outInfo->Get(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), outExtent);
-#endif
 
   outputImage->SetExtent(outExtent);
-#if (VTK_MAJOR_VERSION <= 5)
-  outputImage->SetWholeExtent(outExtent);
-  outputImage->SetUpdateExtent(outExtent);
-  outputImage->AllocateScalars();
-#elif (VTK_MAJOR_VERSION < 7)
-  this->UpdateInformation();
-  vtkStreamingDemandDrivenPipeline::SetUpdateExtent(outInfo, outExtent);
-  this->Update();  
-  outputImage->AllocateScalars(outInfo);
-#else
-if (this->GetOutputInformation(0))
-  {
-  this->GetOutputInformation(0)->Set(
-    vtkStreamingDemandDrivenPipeline::UPDATE_EXTENT(),
-    this->GetOutputInformation(0)->Get(
-    vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT()), 6);
-  }
-#endif
+  if (this->GetOutputInformation(0))
+    {
+    this->GetOutputInformation(0)->Set(
+      vtkStreamingDemandDrivenPipeline::UPDATE_EXTENT(),
+      this->GetOutputInformation(0)->Get(
+      vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT()), 6);
+    }
 
   vtkDataArray* frenetTangentArray = this->Centerline->GetPointData()->GetArray(this->FrenetTangentArrayName); 
   vtkDataArray* parallelTransportNormalsArray = this->Centerline->GetPointData()->GetArray(this->ParallelTransportNormalsArrayName); 
  
   //start computing
   int inExtent[6];
-#if (VTK_MAJOR_VERSION <= 5)
-  inputImage->GetWholeExtent(inExtent);
-#else
   inInfoImage->Get(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), inExtent);
-#endif
 
   // if the input extent is empty then exit
   if (inExtent[1] < inExtent[0] ||
@@ -364,11 +318,7 @@ if (this->GetOutputInformation(0))
 
   vtkImageReslice* reslice = vtkImageReslice::New();
   reslice->SetOutputDimensionality(2);
-#if (VTK_MAJOR_VERSION <= 5)
-  reslice->SetInput(inputImage);
-#else
   reslice->SetInputData(inputImage);
-#endif
   reslice->SetInterpolationModeToCubic();
   //turn off transformation of the input spacin, origin and extent, so we can define what we want
   reslice->TransformInputSamplingOff();

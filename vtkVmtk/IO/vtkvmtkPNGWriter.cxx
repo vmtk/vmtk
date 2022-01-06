@@ -26,10 +26,8 @@ Version:   $Revision: 1.6 $
 #include "vtkErrorCode.h"
 #include "vtkObjectFactory.h"
 #include "vtkVersion.h"
-#if (VTK_MAJOR_VERSION > 5)
 #include "vtkInformation.h"
 #include "vtkStreamingDemandDrivenPipeline.h"
-#endif
 
 #include <math.h>
 
@@ -141,14 +139,9 @@ void vtkvmtkPNGWriter::Write()
 
   // Fill in image information.
   int *wExtent;
-#if (VTK_MAJOR_VERSION <= 5)
-  this->GetInput()->UpdateInformation();
-  wExtent = this->GetInput()->GetWholeExtent();
-#else
   this->UpdateInformation();
   vtkInformation *inInfoImage = this->GetInputPortInformation(0);
   inInfoImage->Get(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), wExtent);
-#endif
 
   this->FileNumber = wExtent[4];
   this->MinimumFileNumber = this->MaximumFileNumber = this->FileNumber;
@@ -163,9 +156,6 @@ void vtkvmtkPNGWriter::Write()
                             wExtent[2], wExtent[3],
                             this->FileNumber,
                             this->FileNumber};
-#if (VTK_MAJOR_VERSION <= 5)
-    this->GetInput()->SetUpdateExtent(updatedExtent);
-#endif
     // determine the name
     if (this->GetFileName())
       {
@@ -183,25 +173,15 @@ void vtkvmtkPNGWriter::Write()
         sprintf(this->InternalFileName, this->GetFilePattern(), this->FileNumber);
         }
       }
-#if (VTK_MAJOR_VERSION <= 5)
-    this->GetInput()->UpdateData();
-#endif
     
     if (!this->FlipImage)
       {
-#if (VTK_MAJOR_VERSION <= 5)
-      this->WriteSlice(this->GetInput());
-#else
       this->WriteSlice(this->GetInput(), updatedExtent);
-#endif
       }
     else
       {
       vtkImageData* flippedInput = vtkImageData::New();
       flippedInput->DeepCopy(this->GetInput());
-#if (VTK_MAJOR_VERSION <= 5)
-      flippedInput->SetUpdateExtent(updatedExtent);
-#endif
       vtkDataArray* inputArray = this->GetInput()->GetPointData()->GetScalars();
       vtkDataArray* flippedInputArray = flippedInput->GetPointData()->GetScalars();
       for (int i=0; i<wExtent[3]-wExtent[2]+1; i++)
@@ -211,11 +191,7 @@ void vtkvmtkPNGWriter::Write()
           flippedInputArray->SetTuple((wExtent[3]-wExtent[2]-i)*(wExtent[1]-wExtent[0]+1)+j,inputArray->GetTuple(i*(wExtent[1]-wExtent[0]+1)+j));
           }
         }
-#if (VTK_MAJOR_VERSION <= 5)
-      this->WriteSlice(flippedInput);
-#else
       this->WriteSlice(flippedInput, updatedExtent);
-#endif
       flippedInput->Delete();
       }
 

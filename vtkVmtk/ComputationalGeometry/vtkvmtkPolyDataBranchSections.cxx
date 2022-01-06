@@ -509,22 +509,14 @@ void vtkvmtkPolyDataBranchSections::ExtractCylinderSection(vtkPolyData* cylinder
   plane->SetNormal(normal);
 
   vtkCutter* cutter = vtkCutter::New();
-#if (VTK_MAJOR_VERSION <= 5)
-  cutter->SetInput(cylinder);
-#else
   cutter->SetInputData(cylinder);
-#endif
   cutter->SetCutFunction(plane);
   cutter->GenerateCutScalarsOn();
   cutter->SetValue(0,0.0);
   cutter->Update();
 
   vtkCleanPolyData* cleaner = vtkCleanPolyData::New();
-#if (VTK_MAJOR_VERSION <= 5)
-  cleaner->SetInput(cutter->GetOutput());
-#else
   cleaner->SetInputConnection(cutter->GetOutputPort());
-#endif
   cleaner->Update();
 
   if (cleaner->GetOutput()->GetNumberOfPoints() == 0)
@@ -533,19 +525,12 @@ void vtkvmtkPolyDataBranchSections::ExtractCylinderSection(vtkPolyData* cylinder
     }
 
   vtkPolyDataConnectivityFilter* connectivityFilter = vtkPolyDataConnectivityFilter::New();
-#if (VTK_MAJOR_VERSION <= 5)
-  connectivityFilter->SetInput(cleaner->GetOutput());
-#else
   connectivityFilter->SetInputConnection(cleaner->GetOutputPort());
-#endif
   connectivityFilter->SetExtractionModeToClosestPointRegion();
   connectivityFilter->SetClosestPoint(origin);
   connectivityFilter->Update();
 
   section->DeepCopy(connectivityFilter->GetOutput());
-#if (VTK_MAJOR_VERSION <= 5)
-  section->Update();
-#endif
 
   // TODO: manually reconstruct single cell line from connectivity output
 
@@ -563,13 +548,8 @@ void vtkvmtkPolyDataBranchSections::ExtractCylinderSection(vtkPolyData* cylinder
 
   vtkIdType* cells;
   vtkIdType npts;
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
   const vtkIdType *pts;
   vtkIdType ncells;
-#else
-  vtkIdType *pts;
-  unsigned short ncells;
-#endif
 
   int numberOfSingleCellPoints = 0;
   vtkIdType firstPointId = -1;
@@ -650,9 +630,6 @@ void vtkvmtkPolyDataBranchSections::ExtractCylinderSection(vtkPolyData* cylinder
   section->GetPolys()->Reset();
 
   section->GetPolys()->InsertNextCell(polygonPointIds);
-#if (VTK_MAJOR_VERSION <= 5)
-  section->Update();
-#endif
 
   cutter->Delete();
   connectivityFilter->Delete();

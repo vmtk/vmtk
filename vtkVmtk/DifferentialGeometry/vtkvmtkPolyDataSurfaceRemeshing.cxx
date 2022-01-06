@@ -192,11 +192,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::RequestData(
     }
 
   vtkPolyDataNormals* normals = vtkPolyDataNormals::New();
-#if (VTK_MAJOR_VERSION <= 5)
-  normals->SetInput(input);
-#else
   normals->SetInputData(input);
-#endif
   normals->ComputePointNormalsOff();
   normals->ComputeCellNormalsOn();
   normals->AutoOrientNormalsOn();
@@ -269,11 +265,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::RequestData(
     }
 
   vtkvmtkPolyDataBoundaryExtractor* boundaryExtractor = vtkvmtkPolyDataBoundaryExtractor::New();
-#if (VTK_MAJOR_VERSION <= 5)
-  boundaryExtractor->SetInput(input);
-#else
   boundaryExtractor->SetInputData(input);
-#endif
   boundaryExtractor->Update();
 
   this->InputBoundary = vtkPolyData::New();
@@ -399,11 +391,7 @@ void vtkvmtkPolyDataSurfaceRemeshing::BuildEntityBoundary(vtkPolyData* input, vt
   vtkIdList* cellIds = vtkIdList::New();
   vtkIdType numberOfCells = input->GetNumberOfCells();
   vtkIdType npts;
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
   const vtkIdType *pts;
-#else
-  vtkIdType *pts;
-#endif
   for (int i=0; i<numberOfCells; i++)
     {
     if (input->GetCellType(i) != VTK_TRIANGLE)
@@ -451,11 +439,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::GetNumberOfBoundaryEdges(vtkIdType cellId)
   int numberOfBoundaryEdges = 0;
   vtkIdList* cellEdgeNeighbors = vtkIdList::New();
   vtkIdType npts;
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
   const vtkIdType *pts;
-#else
-  vtkIdType *pts;
-#endif
   this->Mesh->GetCellPoints(cellId,npts,pts);
   for (int j=0; j<npts; j++)
     {
@@ -474,22 +458,14 @@ int vtkvmtkPolyDataSurfaceRemeshing::GetNumberOfBoundaryEdges(vtkIdType cellId)
 
 int vtkvmtkPolyDataSurfaceRemeshing::IsPointOnBoundary(vtkIdType pointId)
 {
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
   vtkIdType ncells;
-#else
-  unsigned short ncells;
-#endif
   vtkIdType* cells;
   this->Mesh->GetPointCells(pointId,ncells,cells);
   vtkIdList* cellEdgeNeighbors = vtkIdList::New();
   for (vtkIdType i=0; i<ncells; i++)
     {
     vtkIdType npts;
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
     const vtkIdType *pts;
-#else
-    vtkIdType *pts;
-#endif
     this->Mesh->GetCellPoints(cells[i],npts,pts);
     for (int j=0; j<npts; j++)
       {
@@ -524,11 +500,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::EdgeFlipConnectivityOptimizationIteration()
       continue;
       }
     vtkIdType npts;
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
     const vtkIdType *pts;
-#else
-    vtkIdType *pts;
-#endif
     this->Mesh->GetCellPoints(i,npts,pts);
     vtkIdType tripts[3];
     tripts[0] = pts[0];
@@ -560,11 +532,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::EdgeFlipIteration()
       continue;
       }
     vtkIdType npts;
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
     const vtkIdType *pts;
-#else
-    vtkIdType *pts;
-#endif
     this->Mesh->GetCellPoints(i,npts,pts);
     vtkIdType tripts[3];
     tripts[0] = pts[0];
@@ -1035,11 +1003,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::GetEdgeCellsAndOppositeEdge(vtkIdType pt1, 
   else if (numberOfNeighborTriangles == 1)
     {
     vtkIdType npts;
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
     const vtkIdType *pts;
-#else
-    vtkIdType *pts;
-#endif
     this->Mesh->GetCellPoints(cell1,npts,pts);
     for (int i=0; i<3; i++)
       {
@@ -1060,11 +1024,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::GetEdgeCellsAndOppositeEdge(vtkIdType pt1, 
   vtkIdType pt4tmp = -1;
   bool reverse = false;
   vtkIdType npts;
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
   const vtkIdType *pts;
-#else
-  vtkIdType *pts;
-#endif
   this->Mesh->GetCellPoints(cell1,npts,pts);
   for (int i=0; i<3; i++)
     {
@@ -1129,11 +1089,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::SplitTriangle(vtkIdType cellId)
     }
 
   vtkIdType npts;
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
   const vtkIdType *pts;
-#else
-  vtkIdType *pts;
-#endif
   this->Mesh->GetCellPoints(cellId,npts,pts);
   vtkIdType pt1 = pts[0];
   vtkIdType pt2 = pts[1];
@@ -1543,11 +1499,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::TestConnectivityFlipEdge(vtkIdType pt1, vtk
     return DO_NOTHING;
     }
 
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
   vtkIdType ncells1, ncells2, ncells3, ncells4;
-#else
-  unsigned short ncells1, ncells2, ncells3, ncells4;
-#endif
   vtkIdType* cells;
   this->Mesh->GetPointCells(pt1,ncells1,cells);
   this->Mesh->GetPointCells(pt2,ncells2,cells);
@@ -1652,11 +1604,7 @@ double vtkvmtkPolyDataSurfaceRemeshing::ComputeTriangleTargetArea(vtkIdType cell
   else if (this->ElementSizeMode == TARGET_AREA_ARRAY)
     {
     vtkIdType npts;
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
     const vtkIdType *pts;
-#else
-    vtkIdType *pts;
-#endif
     this->Mesh->GetCellPoints(cellId,npts,pts);
     double point1[3], point2[3], point3[3];
     this->Mesh->GetPoint(pts[0],point1);
@@ -1697,11 +1645,7 @@ double vtkvmtkPolyDataSurfaceRemeshing::ComputeTriangleTargetArea(vtkIdType cell
 int vtkvmtkPolyDataSurfaceRemeshing::TestTriangleSplit(vtkIdType cellId)
 {
   vtkIdType npts;
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
   const vtkIdType *pts;
-#else
-  vtkIdType *pts;
-#endif
   this->Mesh->GetCellPoints(cellId,npts,pts);
 
   vtkIdType tri[3];
@@ -1734,11 +1678,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::TestAspectRatioCollapseEdge(vtkIdType cellI
   pt2 = -1;
   
   vtkIdType npts;
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
   const vtkIdType *pts;
-#else
-  vtkIdType *pts;
-#endif
   this->Mesh->GetCellPoints(cellId,npts,pts);
 
   vtkIdType tri[3];
@@ -1817,11 +1757,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::TestAspectRatioCollapseEdge(vtkIdType cellI
     return DO_NOTHING;
     }
 
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
   vtkIdType ncells3, ncells4;
-#else
-  unsigned short ncells3, ncells4;
-#endif
   ncells3 = ncells4 = 0;
   vtkIdType *cells;
   this->Mesh->GetPointCells(pt3,ncells3,cells);
@@ -1834,11 +1770,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::TestAspectRatioCollapseEdge(vtkIdType cellI
     return DO_NOTHING;
     }
 
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
   vtkIdType ncells2;
-#else
-  unsigned short ncells2;
-#endif
   this->Mesh->GetPointCells(pt2,ncells2,cells);
   for (int i=0; i<ncells2; i++)
     {
@@ -1890,11 +1822,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::TestAreaSplitEdge(vtkIdType cellId, vtkIdTy
   pt2 = -1;
 
   vtkIdType npts;
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
   const vtkIdType *pts;
-#else
-  vtkIdType *pts;
-#endif
   this->Mesh->GetCellPoints(cellId,npts,pts);
 
   vtkIdType tri[3];

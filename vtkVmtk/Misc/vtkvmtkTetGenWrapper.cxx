@@ -338,11 +338,7 @@ int vtkvmtkTetGenWrapper::RequestData(
     for (i=0; i<numberOfFacets; i++)
       {
       vtkIdType npts;
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
       const vtkIdType *pts;
-#else
-      vtkIdType *pts;
-#endif
       input->GetCellPoints(facetCellIds->GetId(i),npts,pts);
       in_tetgenio.facetlist[i].numberofpolygons = 1;
       in_tetgenio.facetlist[i].polygonlist = new tetgenio::polygon[in_tetgenio.facetlist[i].numberofpolygons];
@@ -403,11 +399,7 @@ int vtkvmtkTetGenWrapper::RequestData(
     for (i=0; i<numberOfTetras; i++)
       {
       vtkIdType npts;
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
       const vtkIdType *pts;
-#else
-      vtkIdType *pts;
-#endif
       input->GetCellPoints(tetraCellIds->GetId(i),npts,pts);
       for (int j=0; j<npts; j++)
         {

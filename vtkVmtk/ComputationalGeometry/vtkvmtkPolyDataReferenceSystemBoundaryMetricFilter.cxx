@@ -274,11 +274,7 @@ int vtkvmtkPolyDataReferenceSystemBoundaryMetricFilter::RequestData(
     vtkvmtkPolyDataBranchUtilities::ExtractGroup(input,this->GroupIdsArrayName,groupId,false,cylinder);
             
     vtkvmtkPolyDataBoundaryExtractor* boundaryExtractor = vtkvmtkPolyDataBoundaryExtractor::New();   
-#if (VTK_MAJOR_VERSION <= 5)
-    boundaryExtractor->SetInput(cylinder);
-#else
     boundaryExtractor->SetInputData(cylinder);
-#endif
     boundaryExtractor->Update();
 
     int numberOfBoundaries = boundaryExtractor->GetOutput()->GetNumberOfCells();

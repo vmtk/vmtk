@@ -115,11 +115,7 @@ int vtkvmtkPolyDataNormalPlaneEstimator::RequestData(
   }
 
   vtkIdType npts, *cells;
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
   vtkIdType ncells;
-#else
-  unsigned short ncells;
-#endif
 
   input->GetPointCells(this->OriginPointId,ncells,cells);
 

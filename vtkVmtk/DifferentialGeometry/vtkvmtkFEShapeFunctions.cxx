@@ -35,9 +35,7 @@
 #include "vtkWedge.h"
 #include "vtkQuadraticWedge.h"
 #include "vtkVersion.h"
-#if VTK_MAJOR_VERSION > 5 || (VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION > 0)
 #include "vtkBiQuadraticQuadraticWedge.h"
-#endif
 #include "vtkTetra.h"
 #include "vtkQuadraticTetra.h"
 #include "vtkPoints.h"
@@ -251,11 +249,6 @@ void vtkvmtkFEShapeFunctions::GetInterpolationFunctions(vtkCell* cell, double* p
     case VTK_QUADRATIC_QUAD:
       vtkQuadraticQuad::SafeDownCast(cell)->InterpolationFunctions(pcoords,sf);
       break;
-#if VTK_MAJOR_VERSION < 7
-    case VTK_BIQUADRATIC_QUAD:
-      vtkBiQuadraticQuad::SafeDownCast(cell)->InterpolationFunctions(pcoords,sf);
-      break;
-#endif
     case VTK_TRIANGLE:
       vtkTriangle::SafeDownCast(cell)->InterpolationFunctions(pcoords,sf);
       break;
@@ -277,11 +270,9 @@ void vtkvmtkFEShapeFunctions::GetInterpolationFunctions(vtkCell* cell, double* p
     case VTK_QUADRATIC_WEDGE:
       vtkQuadraticWedge::SafeDownCast(cell)->InterpolationFunctions(pcoords,sf);
       break;
-#if VTK_MAJOR_VERSION > 5 || (VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION > 0)
     case VTK_BIQUADRATIC_QUADRATIC_WEDGE:
       vtkBiQuadraticQuadraticWedge::SafeDownCast(cell)->InterpolationFunctions(pcoords,sf);
       break;
-#endif
     case VTK_TETRA:
       vtkTetra::SafeDownCast(cell)->InterpolationFunctions(pcoords,sf);
       break;
@@ -304,11 +295,6 @@ void vtkvmtkFEShapeFunctions::GetInterpolationDerivs(vtkCell* cell, double* pcoo
     case VTK_QUADRATIC_QUAD:
       vtkQuadraticQuad::SafeDownCast(cell)->InterpolationDerivs(pcoords,derivs);
       break;
-#if VTK_MAJOR_VERSION < 7
-    case VTK_BIQUADRATIC_QUAD:
-      vtkBiQuadraticQuad::SafeDownCast(cell)->InterpolationDerivs(pcoords,derivs);
-      break;
-#endif
     case VTK_TRIANGLE:
       vtkTriangle::SafeDownCast(cell)->InterpolationDerivs(pcoords,derivs);
       break;
@@ -330,21 +316,11 @@ void vtkvmtkFEShapeFunctions::GetInterpolationDerivs(vtkCell* cell, double* pcoo
     case VTK_QUADRATIC_WEDGE:
       vtkQuadraticWedge::SafeDownCast(cell)->InterpolationDerivs(pcoords,derivs);
       break;
-#if VTK_MAJOR_VERSION > 5 || (VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION > 0)
     case VTK_BIQUADRATIC_QUADRATIC_WEDGE:
       vtkBiQuadraticQuadraticWedge::SafeDownCast(cell)->InterpolationDerivs(pcoords,derivs);
       break;
-#endif
     case VTK_TETRA:
-#if (VTK_MAJOR_VERSION <= 5)
-#if VTK_MAJOR_VERSION > 5 || (VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION > 0)
-      vtkTetra::SafeDownCast(cell)->InterpolationDerivs(pcoords,derivs);
-#else
-      vtkTetra::SafeDownCast(cell)->InterpolationDerivs(derivs);
-#endif
-#else
       vtkTetra::SafeDownCast(cell)->InterpolateDerivs(pcoords,derivs);
-#endif
       break;
     case VTK_QUADRATIC_TETRA:
       vtkQuadraticTetra::SafeDownCast(cell)->InterpolationDerivs(pcoords,derivs);

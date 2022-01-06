@@ -196,6 +196,9 @@ endif()
 ## VMTK - Normal Build
 ##
 set( proj VMTK )
+if( NOT VMTK_USE_VTK9 )
+  message(FATAL_ERROR "This version of VMTK only supports VTK9")
+endif() 
 ExternalProject_Add( ${proj}
   DOWNLOAD_COMMAND ""
   SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}"

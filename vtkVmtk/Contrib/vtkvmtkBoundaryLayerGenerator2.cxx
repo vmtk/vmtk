@@ -164,11 +164,7 @@ int vtkvmtkBoundaryLayerGenerator2::RequestData(
     }
 
   vtkIdType npts;
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
-    const vtkIdType *pts;
-#else
-    vtkIdType *pts;
-#endif
+  const vtkIdType *pts;
 
   vtkIdType *surfacePts;
 
@@ -257,21 +253,13 @@ int vtkvmtkBoundaryLayerGenerator2::RequestData(
       
       //First convert the unstructured grid to poly data
       vtkGeometryFilter *meshToSurface = vtkGeometryFilter::New();
-#if (VTK_MAJOR_VERSION <= 5)
-      meshToSurface->SetInput(input);
-#else
       meshToSurface->SetInputData(input);
-#endif
       meshToSurface->MergingOff();
       meshToSurface->Update();
       
       //Extract the open profiles
       vtkvmtkPolyDataBoundaryExtractor *openProfilesExtractor = vtkvmtkPolyDataBoundaryExtractor::New();
-#if (VTK_MAJOR_VERSION <= 5)
-      openProfilesExtractor->SetInput(meshToSurface->GetOutput());
-#else
       openProfilesExtractor->SetInputData(meshToSurface->GetOutput());
-#endif
       openProfilesExtractor->Update();
               
       //Update the openProfilesIdsArray
@@ -279,11 +267,7 @@ int vtkvmtkBoundaryLayerGenerator2::RequestData(
       vtkDataArray *openProfilesScalars = openProfilesExtractor->GetOutput()->GetPointData()->GetScalars();
       
       vtkIdType npts = 0;
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
       const vtkIdType *pts = NULL;
-#else
-      vtkIdType *pts = NULL;
-#endif
       int profileId;
       for (profileId=0, openProfiles->InitTraversal(); openProfiles->GetNextCell(npts,pts); profileId++)
         {
@@ -316,12 +300,8 @@ int vtkvmtkBoundaryLayerGenerator2::RequestData(
    
     vtkIdType prismNPts, *prismPts;
     vtkIdType nTetraPts = 0;
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
     const vtkIdType *tetraPts = NULL;
-#else
-    vtkIdType *tetraPts = NULL;
-#endif
-    
+
     for (i=0; i<numberOfInputCells; i++)
       {
       input->GetCellPoints(i,npts,pts);

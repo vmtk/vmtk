@@ -152,9 +152,7 @@ void vtkvmtkGaussQuadrature::Initialize(vtkIdType cellType)
     }
     case VTK_WEDGE:
     case VTK_QUADRATIC_WEDGE:
-#if VTK_MAJOR_VERSION > 5 || (VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION > 0)
     case VTK_BIQUADRATIC_QUADRATIC_WEDGE:
-#endif
     {
       vtkvmtkGaussQuadrature* q1D = vtkvmtkGaussQuadrature::New();
       q1D->SetOrder(this->Order);

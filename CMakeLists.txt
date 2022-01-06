@@ -92,6 +92,10 @@ option( VMTK_USE_ITK5
 option( VMTK_USE_VTK9
   "Compile vmtk against VTK 9. OFF is VTK 8" ON )
 
+if( NOT VMTK_USE_VTK9 )
+  message(FATAL_ERROR "This version of VMTK only supports VTK9")
+endif()
+
 option( VMTK_BUILD_TESTING
   "Build the VMTK testing libraries" OFF)
 

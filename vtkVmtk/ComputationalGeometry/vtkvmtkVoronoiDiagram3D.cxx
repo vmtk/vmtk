@@ -64,11 +64,7 @@ void vtkvmtkVoronoiDiagram3D::ExtractUniqueEdges(vtkUnstructuredGrid* input, vtk
   vtkIdType i, j, k;
   vtkIdType edgePts[2];
   vtkIdType npts;
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
   const vtkIdType *pts;
-#else
-  vtkIdType *pts;
-#endif
   vtkIntArray* visited;
   vtkIdList* pointCells;
   vtkIdList* insertedLoopPoints;
@@ -114,11 +110,7 @@ void vtkvmtkVoronoiDiagram3D::BuildVoronoiPolys(vtkUnstructuredGrid* input, vtkC
 {
   bool boundaryTetra;
   vtkIdType npts;
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
   const vtkIdType *pts;
-#else
-  vtkIdType *pts;
-#endif
   pts = NULL;
   vtkIdType neighborTetraId;
   vtkIdType i, k, h;

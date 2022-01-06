@@ -148,13 +148,8 @@ void ITKWriteVTKImage(vtkvmtkITKImageWriter *self, vtkImageData *inputImage, cha
 
 
   // set pipeline for the image
-#if (VTK_MAJOR_VERSION <= 5)
-  vtkFlip->SetInput( inputImage );
-  vtkExporter->SetInput ( inputImage );
-#else
   vtkFlip->SetInputData( inputImage );
   vtkExporter->SetInputData ( inputImage );
-#endif
   vtkFlip->SetFilteredAxis(1);
   vtkFlip->FlipAboutOriginOn();
 
@@ -328,14 +323,6 @@ void vtkvmtkITKImageWriter::Write()
     return;
     }
 
-#if (VTK_MAJOR_VERSION <= 5)
-  inputImage->UpdateInformation();
-  inputImage->SetUpdateExtent(inputImage->GetWholeExtent());
-#elif (VTK_MAJOR_VERSION < 7)
-  this->UpdateInformation();
-  this->SetUpdateExtent(this->GetOutputInformation(0)->Get(
-                        vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT()));
-#else
   if (this->GetOutputInformation(0))
     {
     this->GetOutputInformation(0)->Set(
@@ -343,7 +330,6 @@ void vtkvmtkITKImageWriter::Write()
     this->GetOutputInformation(0)->Get(
       vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT()), 6);
     }
-#endif
 
   int inputDataType =
     pointData->GetScalars() ? pointData->GetScalars()->GetDataType() :
@@ -498,25 +484,14 @@ void vtkvmtkITKImageWriter::Write()
         outImage->SetDimensions(inputImage->GetDimensions());
         outImage->SetOrigin(0, 0, 0);
         outImage->SetSpacing(1, 1, 1);
-#if (VTK_MAJOR_VERSION <= 5)
-        outImage->SetWholeExtent(inputImage->GetWholeExtent());
-        outImage->SetNumberOfScalarComponents(6);
-        outImage->SetScalarTypeToFloat();
-        outImage->AllocateScalars();
-#else
         outImage->AllocateScalars(VTK_FLOAT, 6);
-#endif
         vtkFloatArray* out = vtkFloatArray::SafeDownCast(outImage->GetPointData()->GetScalars());
         vtkFloatArray* in = vtkFloatArray::SafeDownCast(inputImage->GetPointData()->GetTensors());
         float inValue[9];
         float outValue[6];
         for(int i=0; i<out->GetNumberOfTuples(); i++)
           {
-#if VTK_MAJOR_VERSION >= 8  || (VTK_MAJOR_VERSION >= 7 && VTK_MINOR_VERSION >= 1)
           in->GetTypedTuple(i, inValue);
-#else
-          in->GetTupleValue(i, inValue);
-#endif
           //ITK expect tensors saved in upper-triangular format
           outValue[0] = inValue[0];
           outValue[1] = inValue[1];

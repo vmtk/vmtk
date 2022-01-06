@@ -72,11 +72,7 @@ double vtkvmtkPolyBallLine::EvaluateFunction(double x[3])
 {
   vtkIdType i, k;
   vtkIdType npts;
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
   const vtkIdType *pts;
-#else
-  vtkIdType *pts;
-#endif
   double polyballFunctionValue, minPolyBallFunctionValue;
   double point0[3], point1[3];
   double radius0, radius1;
@@ -121,9 +117,6 @@ double vtkvmtkPolyBallLine::EvaluateFunction(double x[3])
     }
 
   this->Input->BuildCells();
-#if (VTK_MAJOR_VERSION <= 5)
-  this->Input->Update();
-#endif
 
   minPolyBallFunctionValue = VTK_VMTK_LARGE_DOUBLE;
 

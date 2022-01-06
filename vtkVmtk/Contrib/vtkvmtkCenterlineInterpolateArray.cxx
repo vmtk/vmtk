@@ -138,11 +138,7 @@ int vtkvmtkCenterlineInterpolateArray::RequestData(
     
   //Compute abscissas for the centerlines
   vtkvmtkCenterlineAttributesFilter *attribFilter = vtkvmtkCenterlineAttributesFilter::New();
-#if (VTK_MAJOR_VERSION <= 5)
-  attribFilter->SetInput(input);
-#else
   attribFilter->SetInputData(input);
-#endif
   attribFilter->SetAbscissasArrayName("Abscissa");
   attribFilter->SetParallelTransportNormalsArrayName("ParallelTransportNormals");
   attribFilter->Update();

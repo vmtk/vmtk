@@ -125,11 +125,7 @@ int vtkvmtkTopologicalSeamFilter::RequestData(vtkInformation *vtkNotUsed(request
   double minDist = VTK_VMTK_LARGE_DOUBLE;
 
   vtkIdType npts;
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
   const vtkIdType *pts;
-#else
-  vtkIdType *pts;
-#endif
   // get the point that is closest to the implicit plane
   for (vtkIdType i=0; i<numberOfCells; i++)
   {
@@ -170,11 +166,7 @@ int vtkvmtkTopologicalSeamFilter::RequestData(vtkInformation *vtkNotUsed(request
   std::queue<vtkIdType> rightQueue;
 
   vtkIdType *cells;
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
   vtkIdType ncells;
-#else
-  unsigned short ncells;
-#endif
 
   while (!seamQueue.empty())
   {

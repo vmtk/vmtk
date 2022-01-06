@@ -37,14 +37,7 @@
 
 #include "vtkvmtkConstants.h"
 
-#if (VTK_MAJOR_VERSION > 5)
 #include "vtkDijkstraGraphGeodesicPath.h"
-#else
-#if (VTK_MAJOR_VERSION == 5) && (VTK_MINOR_VERSION >= 2)
-#include "vtkDijkstraGraphGeodesicPath.h"
-#endif
-#endif
-
 
 vtkStandardNewMacro(vtkvmtkPolyDataDijkstraDistanceToPoints);
 
@@ -80,11 +73,6 @@ int vtkvmtkPolyDataDijkstraDistanceToPoints::RequestData(
   vtkInformationVector **inputVector,
   vtkInformationVector *outputVector)
 {
-#if (VTK_MAJOR_VERSION<5) || ((VTK_MAJOR_VERSION == 5) && (VTK_MINOR_VERSION != 2) && (VTK_MINOR_VERSION<5))
-  vtkErrorMacro(<<"You must have vtk == 5.2 or vtk >= 5.5 to use this feature");
-    return 1;
-#else
-
   vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
   vtkInformation *outInfo = outputVector->GetInformationObject(0);
 
@@ -128,11 +116,7 @@ int vtkvmtkPolyDataDijkstraDistanceToPoints::RequestData(
   int numberOfSeeds = this->SeedIds->GetNumberOfIds();
   
   vtkDijkstraGraphGeodesicPath *dijkstraAlgo = vtkDijkstraGraphGeodesicPath::New();
-#if (VTK_MAJOR_VERSION <= 5)
-  dijkstraAlgo->SetInput(input);
-#else
   dijkstraAlgo->SetInputData(input);
-#endif
   dijkstraAlgo->StopWhenEndReachedOff();
   dijkstraAlgo->UseScalarWeightsOff();
   
@@ -158,5 +142,4 @@ int vtkvmtkPolyDataDijkstraDistanceToPoints::RequestData(
   if (createArray) distanceToPointsArray->Delete();
 
   return 1;
-#endif
 }

@@ -50,11 +50,7 @@ vtkvmtkPolyDataScissors::~vtkvmtkPolyDataScissors()
 int vtkvmtkPolyDataScissors::IsEdgeInCell(vtkPolyData *input, vtkIdType edgePointId0, vtkIdType edgePointId1, vtkIdType cellId)
 {
   vtkIdType npts;
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
   const vtkIdType *pts;
-#else
-  vtkIdType *pts;
-#endif
   vtkIdType i;
 
   input->GetCellPoints(cellId,npts,pts);
@@ -76,13 +72,8 @@ int vtkvmtkPolyDataScissors::GetCellsOnSameSide(vtkPolyData* input, vtkIdType ta
   vtkIdType *cells;
   vtkIdType previousCellId;
   vtkIdType npts;
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
   const vtkIdType *pts;
   vtkIdType ncells;
-#else
-  vtkIdType *pts;
-  unsigned short ncells;
-#endif
   vtkIdType edge[2];
   bool done;
 
@@ -177,11 +168,7 @@ int vtkvmtkPolyDataScissors::RequestData(
   vtkIdType numberOfLines, numberOfLinePoints, numberOfInputPoints;
   vtkIdType cellId, previousCellToEdit;
   vtkIdType npts;
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
   const vtkIdType *pts;
-#else
-  vtkIdType *pts;
-#endif
   vtkDataArray *cutLinePointIdsArray;
   vtkCell *polyLine;
   vtkPoints *newPoints;

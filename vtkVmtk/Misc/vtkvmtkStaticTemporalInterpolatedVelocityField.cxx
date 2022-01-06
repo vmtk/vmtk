@@ -62,31 +62,6 @@ vtkvmtkStaticTemporalInterpolatedVelocityField::~vtkvmtkStaticTemporalInterpolat
   this->SetTimeStepsTable(NULL);
 }
 
-#if (VTK_MAJOR_VERSION <= 5)
-void vtkvmtkStaticTemporalInterpolatedVelocityField::AddDataSet( vtkDataSet * dataset )
-{
-  if ( !dataset )
-    {
-    return;
-    }
-
-  // insert the dataset (do NOT register the dataset to 'this')
-  this->DataSets->push_back( dataset );
-
-  int size = dataset->GetMaxCellSize();
-  if ( size > this->WeightsSize )
-    {
-    this->WeightsSize = size;
-    if ( this->Weights )
-      {
-      delete[] this->Weights;
-      this->Weights = NULL;
-      }
-    this->Weights = new double[size]; 
-    }
-}
-#endif
-
 void vtkvmtkStaticTemporalInterpolatedVelocityField::SetLastCellId( vtkIdType c, int dataindex )
 {
   this->LastCellId  = c; 
@@ -172,51 +147,6 @@ void vtkvmtkStaticTemporalInterpolatedVelocityField::BuildArrayName(char* prefix
 {
   sprintf(name,"%s%d",prefix,index);
 }
-
-#if (VTK_MAJOR_VERSION <= 5)
-int vtkvmtkStaticTemporalInterpolatedVelocityField::FunctionValues( double * x, double * f )
-{
-  vtkDataSet * ds;
-  if(!this->LastDataSet && !this->DataSets->empty())
-    {
-    ds = ( *this->DataSets )[0];
-    this->LastDataSet      = ds;
-    this->LastDataSetIndex = 0;
-    }
-  else
-    {
-    ds = this->LastDataSet;
-    }
- 
-  int retVal = this->FunctionValues( ds, x, f );
-  
-  if ( !retVal )
-    {
-    for( this->LastDataSetIndex = 0; 
-         this->LastDataSetIndex < static_cast<int>( this->DataSets->size() );
-         this->LastDataSetIndex ++ )
-      {
-      ds = this->DataSets->operator[]( this->LastDataSetIndex );
-      if( ds && ds != this->LastDataSet )
-        {
-        this->ClearLastCellId();
-        retVal = this->FunctionValues( ds, x, f );
-        if ( retVal ) 
-          {
-          this->LastDataSet = ds;
-          return retVal;
-          }
-        }
-      }
-    this->LastCellId  = -1;
-    this->LastDataSetIndex = 0;
-    this->LastDataSet = (*this->DataSets)[0];
-    return 0;
-    }
-    
-  return retVal;
-}
-#endif
 
 int vtkvmtkStaticTemporalInterpolatedVelocityField::FunctionValues( vtkDataSet * dataset, double * x, double * f )
 {
@@ -429,10 +359,6 @@ int vtkvmtkStaticTemporalInterpolatedVelocityField::FunctionValues( vtkDataSet *
 
 void vtkvmtkStaticTemporalInterpolatedVelocityField::CopyParameters( vtkAbstractInterpolatedVelocityField * from )
 {
-#if (VTK_MAJOR_VERSION <= 5)
-  this->Superclass::CopyParameters(from);
-#endif
-
   if (from->IsA("vtkvmtkStaticTemporalInterpolatedVelocityField"))
     {
     vtkvmtkStaticTemporalInterpolatedVelocityField* fromCast = vtkvmtkStaticTemporalInterpolatedVelocityField::SafeDownCast(from);

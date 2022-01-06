@@ -363,11 +363,7 @@ void vtkvmtkDolfinWriter2::GetDolfinCellFaceOrder(vtkCell* cell, vtkIdList *dolf
     }
   
   
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
   const vtkIdType *faceArray;
-#else
-  int *faceArray;
-#endif
   switch(cellType)
     {
     case VTK_TETRA:

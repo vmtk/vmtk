@@ -98,11 +98,7 @@ int vtkvmtkMeshWallShearRate::RequestData(
   char gradientArrayName[] = "VelocityGradient";
 
   vtkvmtkUnstructuredGridGradientFilter* gradientFilter = vtkvmtkUnstructuredGridGradientFilter::New();
-#if (VTK_MAJOR_VERSION <= 5)
-  gradientFilter->SetInput(input);
-#else
   gradientFilter->SetInputData(input);
-#endif
   gradientFilter->SetInputArrayName(this->VelocityArrayName);
   gradientFilter->SetGradientArrayName(gradientArrayName);
   gradientFilter->SetQuadratureOrder(this->QuadratureOrder);
@@ -111,19 +107,11 @@ int vtkvmtkMeshWallShearRate::RequestData(
   gradientFilter->Update();
 
   vtkGeometryFilter* geometryFilter = vtkGeometryFilter::New();
-#if (VTK_MAJOR_VERSION <= 5)
-  geometryFilter->SetInput(gradientFilter->GetOutput());
-#else
   geometryFilter->SetInputConnection(gradientFilter->GetOutputPort());
-#endif
   geometryFilter->Update();
 
   vtkPolyDataNormals* normalsFilter = vtkPolyDataNormals::New();
-#if (VTK_MAJOR_VERSION <= 5)
-  normalsFilter->SetInput(geometryFilter->GetOutput());
-#else
   normalsFilter->SetInputConnection(geometryFilter->GetOutputPort());
-#endif
   normalsFilter->AutoOrientNormalsOn();
   normalsFilter->ConsistencyOn();
   normalsFilter->SplittingOff();

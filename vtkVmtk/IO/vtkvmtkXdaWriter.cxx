@@ -136,11 +136,7 @@ void vtkvmtkXdaWriter::WriteData()
   blockVtkCellTypes[quadraticTetraType] = VTK_QUADRATIC_TETRA;
   blockVtkCellTypes[quadraticHexahedronType] = VTK_QUADRATIC_HEXAHEDRON;
   blockVtkCellTypes[quadraticWedgeType] = VTK_QUADRATIC_WEDGE;
-#if VTK_MAJOR_VERSION > 5 || (VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION > 0)
   blockVtkCellTypes[biquadraticWedgeType] = VTK_BIQUADRATIC_QUADRATIC_WEDGE;
-#else
-  blockVtkCellTypes[biquadraticWedgeType] = VTK_EMPTY_CELL;
-#endif
   blockVtkCellTypes[quadraticPyramidType] = VTK_QUADRATIC_PYRAMID;
 
   int numberOfVolumeCells = 0;
@@ -171,14 +167,9 @@ void vtkvmtkXdaWriter::WriteData()
       case VTK_QUADRATIC_WEDGE:
         ++numberOfElementsInBlock[quadraticWedgeType];
         break;
-#if VTK_MAJOR_VERSION > 5 || (VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION > 0)
       case VTK_BIQUADRATIC_QUADRATIC_WEDGE:
         ++numberOfElementsInBlock[biquadraticWedgeType];
         break;
-#else
-        vtkWarningMacro(<<"Biquadratic quadratic wedge not supported by the installed VTK version. Skipping element.");
-        continue;
-#endif
       case VTK_QUADRATIC_PYRAMID:
         vtkWarningMacro(<<"Quadratic pyramid not currently supported in libmesh. Skipping element.");
         continue;
@@ -474,7 +465,6 @@ void vtkvmtkXdaWriter::GetLibmeshConnectivity(int cellType, vtkIdList* libmeshCo
       libmeshConnectivity->SetId(13,10);
       libmeshConnectivity->SetId(14,9);
       break;
-#if VTK_MAJOR_VERSION > 5 || (VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION > 0)
     case VTK_BIQUADRATIC_QUADRATIC_WEDGE:
       libmeshConnectivity->SetNumberOfIds(18);
       libmeshConnectivity->SetId(0,0);
@@ -496,7 +486,6 @@ void vtkvmtkXdaWriter::GetLibmeshConnectivity(int cellType, vtkIdList* libmeshCo
       libmeshConnectivity->SetId(16,16);
       libmeshConnectivity->SetId(17,15);
       break;
-#endif
     default:
       cerr<<"Element type not currently supported in libmesh. Skipping element."<<endl;
       break;
@@ -558,9 +547,7 @@ void vtkvmtkXdaWriter::GetLibmeshFaceOrder(int cellType, vtkIdList* libmeshFaceO
       libmeshFaceOrder->SetId(5,5);
       break;
     case VTK_QUADRATIC_WEDGE:
-#if VTK_MAJOR_VERSION > 5 || (VTK_MAJOR_VERSION == 5 && VTK_MINOR_VERSION > 0)
     case VTK_BIQUADRATIC_QUADRATIC_WEDGE:
-#endif
       libmeshFaceOrder->SetNumberOfIds(5);
       libmeshFaceOrder->SetId(0,0);
       libmeshFaceOrder->SetId(1,4);

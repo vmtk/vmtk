@@ -110,13 +110,9 @@ int vtkvmtkSimplifyVoronoiDiagram::RequestData(
   vtkIdType i, j, id;
   vtkIdType n;
   vtkIdType npts, ncells;
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
   const vtkIdType *pts;
   vtkPolyData* poly = vtkPolyData::New();
   poly->SetPoints(input->GetPoints());
-#else
-  vtkIdType *pts;
-#endif
   npts = 0;
   pts = NULL;
   vtkIdType edge[2];
@@ -189,7 +185,7 @@ int vtkvmtkSimplifyVoronoiDiagram::RequestData(
   currentPolys->DeepCopy(inputPolys);
 
   currentLinks->Allocate(input->GetNumberOfPoints());
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
+
   // Reworking cell links classes for performance and consistent API
   // See https://github.com/Kitware/VTK/commit/88efc809a25130c2ab83dd89a80cea458e3bb56a
   // #pragma message "vtkvmtkSimplifyVoronoiDiagram::RequestData not functional. Must be updated based on Kitware/VTK@88efc809a"
@@ -200,9 +196,6 @@ int vtkvmtkSimplifyVoronoiDiagram::RequestData(
   //   }
   poly->SetPolys(currentPolys);
   currentLinks->BuildLinks(poly);
-#else
-  currentLinks->BuildLinks(input,currentPolys);
-#endif
 
   anyRemoved = true;
   while (anyRemoved)
@@ -291,16 +284,13 @@ int vtkvmtkSimplifyVoronoiDiagram::RequestData(
     currentLinks->Delete();
     currentLinks = vtkCellLinks::New();
     currentLinks->Allocate(input->GetNumberOfPoints());
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
-  // Reworking cell links classes for performance and consistent API
-  // See https://github.com/Kitware/VTK/commit/88efc809a25130c2ab83dd89a80cea458e3bb56a
-  // #pragma message "vtkvmtkSimplifyVoronoiDiagram::RequestData not functional. Must be updated based on Kitware/VTK@88efc809a"
-  // vtkErrorMacro(<< "!");
-  poly->SetPolys(currentPolys);
-  currentLinks->BuildLinks(poly);
-#else
-    currentLinks->BuildLinks(input,currentPolys);
-#endif
+
+    // Reworking cell links classes for performance and consistent API
+    // See https://github.com/Kitware/VTK/commit/88efc809a25130c2ab83dd89a80cea458e3bb56a
+    // #pragma message "vtkvmtkSimplifyVoronoiDiagram::RequestData not functional. Must be updated based on Kitware/VTK@88efc809a"
+    // vtkErrorMacro(<< "!");
+    poly->SetPolys(currentPolys);
+    currentLinks->BuildLinks(poly);
 
     newPolys->Delete();
     newCell->Delete();
@@ -351,10 +341,7 @@ int vtkvmtkSimplifyVoronoiDiagram::RequestData(
 
   currentLinks->Delete();
   currentPolys->Delete();
-#if VTK_MAJOR_VERSION >= 9 || (VTK_MAJOR_VERSION >= 8 && VTK_MINOR_VERSION >= 90)
   poly->Delete();
-#endif
-  delete[] isUnremovable;
 
   return 1;
 }

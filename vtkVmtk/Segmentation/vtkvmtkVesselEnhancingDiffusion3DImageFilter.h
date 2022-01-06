@@ -155,16 +155,6 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkVesselEnhancingDiffusion3DImageFilter 
       scales.push_back(this->ComputeSigmaValue(i));
       }
     this->GetImageFilterPointer()->SetScales(scales);
-#if (VTK_MAJOR_VERSION <= 5) 
-    if (this->GetOutput(0))
-      {
-        this->GetOutput(0)->Update();
-        if ( this->GetOutput(0)->GetSource() )
-          {
-            //          this->SetErrorCode( this->GetOutput(0)->GetSource()->GetErrorCode() );
-          }
-      }
-#endif
   }
 
 //BTX

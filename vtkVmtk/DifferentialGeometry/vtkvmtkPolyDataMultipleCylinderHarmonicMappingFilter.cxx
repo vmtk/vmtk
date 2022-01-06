@@ -109,11 +109,7 @@ int vtkvmtkPolyDataMultipleCylinderHarmonicMappingFilter::RequestData(
     vtkvmtkPolyDataBranchUtilities::ExtractGroup(input,this->GroupIdsArrayName,groupId,false,cylinder);
   
     vtkvmtkPolyDataCylinderHarmonicMappingFilter* mappingFilter = vtkvmtkPolyDataCylinderHarmonicMappingFilter::New();
-#if (VTK_MAJOR_VERSION <= 5)
-    mappingFilter->SetInput(cylinder);
-#else
     mappingFilter->SetInputData(cylinder);
-#endif
     mappingFilter->SetHarmonicMappingArrayName(this->HarmonicMappingArrayName);
     mappingFilter->Update();
 
