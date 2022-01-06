@@ -4,7 +4,7 @@ project(VMTK)
 
 # vmtk versions number
 set(VMTK_VERSION_MAJOR 1)
-set(VMTK_VERSION_MINOR 4)
+set(VMTK_VERSION_MINOR 5)
 set(VMTK_VERSION_PATCH 0)
 set(VMTK_VERSION
     "${VMTK_VERSION_MAJOR}.${VMTK_VERSION_MINOR}.${VMTK_VERSION_PATCH}")
@@ -85,12 +85,6 @@ endif()
 # Superbuild setup
 option( VMTK_USE_SUPERBUILD
   "Build VMTK and the projects it depends on via SuperBuild.cmake." ON )
-
-# option( VMTK_USE_VTK7
-#  "Compile vmtk against VTK 7. OFF is VTK 6.3." ON )
-
-#option( VMTK_USE_VTK8
-#  "Compile vmtk against VTK 8. OFF is VTK 7.1" ON )
 
 option( VMTK_USE_ITK5
   "Compile vmtk against ITK 5. OFF is ITK 4.13" ON )

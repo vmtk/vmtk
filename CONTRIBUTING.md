@@ -25,7 +25,8 @@ VMTK is now based on SuperBuild, a CMake feature that allows to automatically do
 
 | `VMTK` | `VTK`      | `ITK`       |
 |--------|------------|-------------|
-| 1.4    | 8.2, 9.1   | 4.13, 5.2   |
+| 1.4    | ~8.2, ~9.1 | ~4.13, ~5.2 |
+| 1.5    | >=9.1      | >=5.2       |
 
 ### Requirements
 
@@ -33,7 +34,7 @@ vmtk is cross-platform and will compile and work on Linux, Mac OSX and Windows.
 
 In order to successfully build vmtk, the following software has to be installed in your system:
 - [Git](www.git-scm.org) (>= 1.6)
-- [Python](www.python.org) (2.7, 3.5+)
+- [Python](www.python.org) (3.6+)
 - [CMake](www.cmake.org) (>=3.3)
 - A C++ 11 compliant C++ compiler (see below for platform specific details)
 
