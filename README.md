@@ -262,3 +262,8 @@ Funding
 ==============
 
 Development of VMTK is supported by [Orobix Srl.](http://www.orobix.com/)
+
+Contact
+==============
+
+If you have any questions or comments [contact the VMTK community](http://www.vmtk.org/community).

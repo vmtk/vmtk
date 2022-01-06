@@ -21,13 +21,17 @@ See vmtk [open issues](https://github.com/vmtk/vmtk/issues/) or [create new](htt
 
 ## Building
 
-VMTK is now based on SuperBuild, a CMake feature that allows to automatically download and compile dependencies (in our case VTK and ITK). This makes the whole process a lot easier than it was up until version 0.9. 
+VMTK is now based on SuperBuild, a CMake feature that allows to automatically download and compile dependencies (in our case VTK and ITK). Supported versions of library dependencies:
+
+| `VMTK` | `VTK`      | `ITK`       |
+|--------|------------|-------------|
+| 1.4    | 8.2, 9.1   | 4.13, 5.2   |
 
 ### Requirements
 
-vmtk is cross-platform and will compile and work on Linux, Mac OSX and Windows. Most of the development is performed under Linux and Mac OSX, but feel free to update us on eventual issues on Windows.
+vmtk is cross-platform and will compile and work on Linux, Mac OSX and Windows.
 
-In order to successfully compile and use vmtk, the following software has to be installed in your system:
+In order to successfully build vmtk, the following software has to be installed in your system:
 - [Git](www.git-scm.org) (>= 1.6)
 - [Python](www.python.org) (2.7, 3.5+)
 - [CMake](www.cmake.org) (>=3.3)
@@ -59,7 +63,7 @@ VMTK only support MacOSX 10.9+. Please ensure that XCode (with xcode command lin
 
 #### Windows Requirements
 
-Visual Studios 2015+ is required on the system. VMTK no longer supports python 2.7 on windows builds.Please be sure to set "Release" flag instead of the default "Debug" flag in Visual Studio. 
+Visual Studios 2015+ is required on the system. VMTK no longer supports python 2.7 on windows builds. Please be sure to set "Release" flag instead of the default "Debug" flag in Visual Studio. 
 
 In addition make sure that you choose the Visual Studio amd64 version during cmake configuration in order to build for an x64 system.  
 
@@ -131,4 +135,4 @@ The [VMTK C++ class documentation](http://www.vmtk.org/doc/html/index.html) is g
 
 ## Questions? Concerns?
 
-If you have any questions about the contributing process, or just want to learn more about the library, feel free to reach out to us on the mailing list or the issue tracker. We'd love to chat!
+If you have any questions about the contributing process, or just want to learn more about the library, [feel free to reach out to us](http://www.vmtk.org/community).
