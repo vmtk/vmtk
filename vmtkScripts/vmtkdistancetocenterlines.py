@@ -118,7 +118,6 @@ class vmtkDistanceToCenterlines(pypes.pypeScript):
             self.Surface = surface
 
 
-
 if __name__=='__main__':
 
     main = pypes.pypeMain()
