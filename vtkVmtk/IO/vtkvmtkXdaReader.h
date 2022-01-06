@@ -33,6 +33,12 @@ Version:   $Revision: 1.3 $
 class vtkCell;
 class vtkIdList;
 
+// VTK_FILEPATH hint was introduced in VTK_VERSION_CHECK(9,1,0)
+// (https://github.com/Kitware/VTK/commit/c30ddf9a6caedd65ae316080b0efd1833983844e)
+#ifndef VTK_FILEPATH
+#define VTK_FILEPATH
+#endif
+
 class VTK_VMTK_IO_EXPORT vtkvmtkXdaReader : public vtkUnstructuredGridReader
 {
 public:
