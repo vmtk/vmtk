@@ -11,19 +11,24 @@ set(CONTRIB_SCRIPTS_SRCS
     vmtkentityrenumber.py
     vmtkgeodesicsurfaceresolution.py
     vmtkimagetonumpy.py
+    vmtkmeshappend.py
     vmtkmeshaddexternallayer.py
     vmtkmeshcapper.py
     vmtkmeshconnector.py
     vmtkmeshconnectorfsi.py
+    vmtkmeshcoords.py
     vmtkmeshclipcenterlines.py
+    vmtkmeshimplicitdistance.py
     vmtkmeshinfo.py
     vmtkmeshinternalfacescleaner.py
     vmtkmeshmerge.py
+    vmtkmeshrefinement.py
     vmtkmeshringgenerator.py
     vmtkmeshtethex.py
     vmtkmeshtetrahedralize2.py
     vmtkmeshtonumpy.py
     vmtkmeshviewer2.py
+    vmtkmeshwarpbyvector.py
     vmtkmeshwriter2.py
     vmtknumpyreader.py
     vmtknumpytocenterlines.py
@@ -32,12 +37,15 @@ set(CONTRIB_SCRIPTS_SRCS
     vmtknumpytosurface.py
     vmtknumpywriter.py
     vmtksurfacebooleanconnector.py
+    vmtksurfacecoords.py
     vmtksurfaceconnector.py
+    vmtksurfaceedgelengtharray.py
     vmtksurfacefeatureedges.py
     vmtksurfaceharmonicconnector.py
     vmtksurfaceharmonicextension.py
     vmtksurfaceharmonicsections.py
     vmtksurfaceharmonicsolver.py
+    vmtksurfaceimplicitdistance.py
     vmtksurfaceremeshingramp.py
     vmtksurfaceresolution.py
     vmtksurfacetagger.py
@@ -46,6 +54,10 @@ set(CONTRIB_SCRIPTS_SRCS
     vmtksurfacewriter2.py
     vmtksurfaceextractannularwalls.py
     vmtksurfaceextractinnercylinder.py
+    vmtksurfacemodeller2.py
+    vmtksurfacemodellerbooleanoperation.py
+    vmtksurfacethickness.py
+    vmtksurfacewarpbyvector.py
     vmtkthreshold.py
     vmtkpeterresurface.py
     vmtkpetergeneratesurface.py
