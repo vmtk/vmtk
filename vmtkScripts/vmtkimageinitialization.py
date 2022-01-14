@@ -457,7 +457,7 @@ class vmtkImageInitialization(pypes.pypeScript):
             collidingFronts = vtkvmtk.vtkvmtkCollidingFrontsImageFilter()
             collidingFronts.SetInputData(speedImage)
             collidingFronts.SetSeeds1(seedIds1)
-            collidingFronts.SetSeeds2(seedIds2)              
+            collidingFronts.SetSeeds2(seedIds2)
             collidingFronts.ApplyConnectivityOn()
             collidingFronts.StopOnTargetsOn()
             collidingFronts.Update()
@@ -485,12 +485,11 @@ class vmtkImageInitialization(pypes.pypeScript):
                 combine.Update()
                 combined = vtk.vtkImageData()
                 combined.DeepCopy(combine.GetOutput())
-                
 
         self.InitialLevelSets = vtk.vtkImageData()
         self.InitialLevelSets.DeepCopy(combined)
 
-        self.IsoSurfaceValue = 0.0 
+        self.IsoSurfaceValue = 0.0
 
     def SeedInitialize(self):
 

@@ -9,11 +9,11 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENCE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
-## Note: this class was contributed by 
+## Note: this class was contributed by
 ##       Marco Fedele (marco.fedele@polimi.it)
 ##       Politecnico di Milano
 
@@ -29,6 +29,7 @@ from vmtk import pypes
 
 vmtksurfaceharmonicsolver = 'vmtkSurfaceHarmonicSolver'
 
+
 class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
 
     def __init__(self):
@@ -39,7 +40,7 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
         self.ExcludeSurface = None
         self.IncludeSurface = None
         self.SurfaceForBCs = None
-        
+
         self.Boundaries = None
         self.InputRings = None
         self.DirichletBoundaries = None
@@ -67,7 +68,6 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
         self.vmtkRenderer = None
         self.OwnRenderer = 0
 
-
         self.SetScriptName('vmtksurfaceharmonicsolver')
         self.SetScriptDoc('solve a Laplace-Beltrami equation on a surface; boundary conditions can be set either interactively choosing a constant value at each boundary ring or through input rings where an array with the boundary values is defined; the equation can be solved both for a scalar or a vectorial field')
         self.SetInputMembers([
@@ -91,7 +91,6 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
 
             ])
 
-
     def SurfaceThreshold(self,surface,low,high,arrayName=None,cellData=True):
         from vmtk import vmtkcontribscripts
         if arrayName==None:
@@ -105,7 +104,6 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
         th.Execute()
         surf = th.Surface
         return surf
-
 
     def SurfaceAppend(self,surface1,surface2):
         from vmtk import vmtkscripts
@@ -124,7 +122,6 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
             tr.Execute()
             surf = tr.Surface
         return surf
-
 
     def ExtractDomain(self,surface,excludeIds):
         if excludeIds!=[]:
@@ -167,7 +164,6 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
 
         return [includeSurface,excludeSurface]
 
-
     def ExtractBoundaries(self,surface):
         extractBoundaries = vtk.vtkFeatureEdges()
         extractBoundaries.BoundaryEdgesOn()
@@ -180,7 +176,6 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
         extractBoundaries.Update()
         return extractBoundaries.GetOutput()
 
-        
     def DefineDirichletBCs(self,boundaries,domain):
         dirichletBoundaries = None
 
@@ -211,7 +206,6 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
 
         return dirichletBoundaries
 
-
     def AddInputRingsBCs(self,dirichletBoundaries):
         inputRingsBCsArray = self.InputRings.GetPointData().GetArray(self.InputRingsBCsArrayName)
         inputRingsBCsArray.SetName('DirichletBCs')
@@ -226,7 +220,6 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
 
         return self.SurfaceAppend(self.InputRings,dirichletBoundaries)
 
-
     def LabelValidator(self,text):
         import string
         if text=='':
@@ -240,7 +233,6 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
             if char not in allowedChars:
                 return 0
         return 1
-
 
     def AddInteractiveBCs(self,boundaries,domain,dirichletBoundaries):
 
@@ -273,7 +265,7 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
 
         self.vmtkRenderer.RegisterScript(self)
 
-        # render numbers at each boundary ring 
+        # render numbers at each boundary ring
         seedPoints = vtk.vtkPoints()
         for i in range(numberOfRings):
             barycenter = [0.0, 0.0, 0.0]
@@ -362,14 +354,12 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
         self.vmtkRenderer.Renderer.RemoveActor(labelsActor)
         self.vmtkRenderer.Renderer.RemoveActor(surfaceActor)
 
-        
         # self.vmtkRenderer.Render()
 
         if self.OwnRenderer and not self.Display:
             self.vmtkRenderer.Deallocate()
 
         return dirichletBoundaries
-
 
     def SolveHarmonicProblem(self,domainSurface,dirichletBoundaries):
 
@@ -389,7 +379,7 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
 
         for k in range(numberOfComponents):
             print("Solving Laplace-Beltrami equation for component ",k)
-            
+
             boundaryIds = vtk.vtkIdList()
             boundaryValues = vtk.vtkDoubleArray()
             boundaryValues.SetNumberOfComponents(1)
@@ -424,7 +414,6 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
 
         return domainSurface
 
-
     def ExtendSolutionOnExcludedDomain(self,excludedDomain):
 
         if self.VectorialEq:
@@ -452,7 +441,6 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
         excludedDomain.GetPointData().AddArray(solutionArray)
 
         return excludedDomain
-
 
     def DisplayDirichletBCs(self,domain,dirichletBoundaries):
         from vmtk import vmtkscripts
@@ -505,7 +493,6 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
         self.vmtkRenderer.Renderer.RemoveActor(surfaceViewer.Actor)
         self.vmtkRenderer.Renderer.RemoveActor(surfaceViewer.ScalarBarActor)
 
-
     def DisplaySolution(self,surface,dirichletBoundaries):
         from vmtk import vmtkscripts
 
@@ -534,7 +521,7 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
             ringArrayToDisplay += 'Mag'
             surfaceArrayLegend = '|'+surfaceArrayLegend+'|'
 
-        scalarRange = list(surface.GetPointData().GetArray(surfaceArrayToDisplay).GetRange(0))    
+        scalarRange = list(surface.GetPointData().GetArray(surfaceArrayToDisplay).GetRange(0))
 
         surfaceViewer = vmtkscripts.vmtkSurfaceViewer()
         surfaceViewer.Surface = surface
@@ -560,7 +547,6 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
 
         if self.OwnRenderer:
             self.vmtkRenderer.Deallocate()
-
 
     def Execute(self):
 
@@ -588,7 +574,6 @@ class vmtkSurfaceHarmonicSolver(pypes.pypeScript):
 
         if self.Display:
             self.DisplaySolution(self.Surface,self.DirichletBoundaries)
-
 
 
 if __name__=='__main__':

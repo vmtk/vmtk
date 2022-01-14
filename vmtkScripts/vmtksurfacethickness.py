@@ -9,11 +9,11 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
-## Note: this class was contributed by 
+## Note: this class was contributed by
 ##       Marco Fedele (marco.fedele@polimi.it)
 ##       Politecnico di Milano
 
@@ -23,6 +23,7 @@ import sys
 
 from vmtk import vmtkrenderer
 from vmtk import pypes
+
 
 class vmtkSurfaceThickness(pypes.pypeScript):
 
@@ -53,7 +54,6 @@ class vmtkSurfaceThickness(pypes.pypeScript):
             ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter'],
             ['CellEntityIdsArray','oentityidsarray','vtkIntArray',1,'','the output entity ids array']
             ])
-
 
     def Execute(self):
         from vmtk import vmtkscripts
@@ -134,7 +134,6 @@ class vmtkSurfaceThickness(pypes.pypeScript):
         surfaceCopy = surfaceProjection.Surface
 
         self.Surface.GetPointData().AddArray(surfaceCopy.GetPointData().GetArray(self.ThicknessArrayName))
-
 
 
 if __name__=='__main__':

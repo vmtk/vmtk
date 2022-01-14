@@ -48,8 +48,6 @@ class vmtkMeshAppend(pypes.pypeScript):
             ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh','vmtkmeshwriter']
             ])
 
-
-
     def Execute(self):
         from vmtk import vmtkscripts
 
@@ -66,7 +64,6 @@ class vmtkMeshAppend(pypes.pypeScript):
         append.Update()
 
         self.Mesh = append.GetOutput()
-
 
 
 if __name__=='__main__':

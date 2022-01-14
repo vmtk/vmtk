@@ -13,7 +13,7 @@
 ##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
-## Note: this class was contributed by 
+## Note: this class was contributed by
 ##       Marco Fedele (marco.fedele@polimi.it)
 ##       Politecnico di Milano
 
@@ -60,7 +60,6 @@ class vmtkMeshRingGenerator(pypes.pypeScript):
             ['CellEntityIdsArrayName','entityidsarray','str',1,'','name of the array where the id of the caps are stored']
             ])
 
-
     def ExtractIds(self,mesh,ids):
         from vmtk import vmtkcontribscripts
         extract = vmtkcontribscripts.vmtkEntityExtractor()
@@ -72,7 +71,6 @@ class vmtkMeshRingGenerator(pypes.pypeScript):
         extractedMesh = extract.Mesh
         deletedMesh = extract.DeletedMesh
         return extractedMesh, deletedMesh
-
 
     def Execute(self):
         from vmtk import vmtkscripts
@@ -89,7 +87,7 @@ class vmtkMeshRingGenerator(pypes.pypeScript):
         m2s.SetInputData(ring)
         m2s.Update()
         ring = m2s.GetOutput()
- 
+
         sn = vmtkscripts.vmtkSurfaceNormals()
         sn.Surface = ring
         sn.FlipNormals = self.NegateWarpVectors
@@ -153,9 +151,9 @@ class vmtkMeshRingGenerator(pypes.pypeScript):
         s2m.Execute()
         ringKO = s2m.Mesh
 
-
         # Check if InternalWallId has been assigned to the internal wall.
         # If not, invert internal and external wall ids.
+
         def bnorm(data):
             bounds = data.GetBounds()
             return math.sqrt(sum((bounds[2*i+1]-bounds[2*i])**2 for i in range(3)))
@@ -169,7 +167,6 @@ class vmtkMeshRingGenerator(pypes.pypeScript):
             renumbering.CellEntityIdRenumbering = [self.InternalWallId, self.ExternalWallId, self.ExternalWallId, self.InternalWallId]
             renumbering.Execute()
             ringKO = renumbering.Mesh
-
 
         # 4. Append to the original mesh.
         append = vtkvmtk.vtkvmtkAppendFilter()
@@ -186,8 +183,6 @@ class vmtkMeshRingGenerator(pypes.pypeScript):
         listTags.Execute()
 
         self.Mesh = listTags.Mesh
-
-
 
 
 if __name__=='__main__':

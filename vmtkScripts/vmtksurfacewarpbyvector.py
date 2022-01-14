@@ -9,11 +9,11 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
-## Note: this class was contributed by 
+## Note: this class was contributed by
 ##       Marco Fedele (marco.fedele@polimi.it)
 ##       Politecnico di Milano
 
@@ -22,6 +22,7 @@ import vtk
 import sys
 
 from vmtk import pypes
+
 
 class vmtkSurfaceWarpByVector(pypes.pypeScript):
 
@@ -60,7 +61,6 @@ class vmtkSurfaceWarpByVector(pypes.pypeScript):
 
         self.Input = warper.GetOutput()
 
-
     def Execute(self):
         if self.Surface == None:
             self.PrintError('Error: no Surface.')
@@ -70,11 +70,7 @@ class vmtkSurfaceWarpByVector(pypes.pypeScript):
         self.Surface = self.Input
 
 
-
-
 if __name__=='__main__':
     main = pypes.pypeMain()
     main.Arguments = sys.argv
     main.Execute()
-
-

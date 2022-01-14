@@ -9,11 +9,11 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENCE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
-## Note: this class was contributed by 
+## Note: this class was contributed by
 ##       Marco Fedele (marco.fedele@polimi.it)
 ##       Politecnico di Milano
 
@@ -24,7 +24,6 @@ import sys
 
 from vmtk import vtkvmtk
 from vmtk import pypes
-
 
 
 class vmtkMeshImplicitDistance(pypes.pypeScript):
@@ -63,8 +62,6 @@ class vmtkMeshImplicitDistance(pypes.pypeScript):
         self.SetOutputMembers([
             ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh','vmtkmeshwriter']
             ])
-
-
 
     def Execute(self):
         if self.Mesh == None:

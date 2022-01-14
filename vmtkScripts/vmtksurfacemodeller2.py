@@ -9,11 +9,11 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENCE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
-## Note: this class was contributed by 
+## Note: this class was contributed by
 ##       Marco Fedele (marco.fedele@polimi.it)
 ##       Politecnico di Milano
 
@@ -32,7 +32,7 @@ class vmtkSurfaceModeller2(pypes.pypeScript):
     def __init__(self):
 
         pypes.pypeScript.__init__(self)
-        
+
         self.Surface = None
         self.Image = None
         self.Spacing = None
@@ -95,8 +95,6 @@ class vmtkSurfaceModeller2(pypes.pypeScript):
             self.Bounds[4] = self.Bounds[4] - self.ImageVoxelExpansion * self.Spacing[2] * self.ExpansionDirections[4]
             self.Bounds[5] = self.Bounds[5] + self.ImageVoxelExpansion * self.Spacing[2] * self.ExpansionDirections[5]
 
-
-
         # creating the image
         self.Image = vtk.vtkImageData()
         self.Image.SetOrigin( self.Bounds[0], self.Bounds[2], self.Bounds[4] )
@@ -148,7 +146,6 @@ class vmtkSurfaceModeller2(pypes.pypeScript):
             negate.SetOperationToMultiplyByK()
             negate.Update()
             self.Image = negate.GetOutput()
-
 
 
 if __name__=='__main__':

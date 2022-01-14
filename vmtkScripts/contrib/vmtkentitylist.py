@@ -9,11 +9,11 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
-## Note: this class was contributed by 
+## Note: this class was contributed by
 ##       Marco Fedele (marco.fedele@polimi.it)
 ##       Politecnico di Milano
 
@@ -44,7 +44,6 @@ class vmtkEntityList(pypes.pypeScript):
         self.SurfaceEntityIds = []
         self.LineEntityIds = []
 
-
         self.SetScriptName('vmtkentitylist')
         self.SetScriptDoc('list all the entity ids of an input mesh or surface')
         self.SetInputMembers([
@@ -61,7 +60,6 @@ class vmtkEntityList(pypes.pypeScript):
             ['SurfaceEntityIds','surfaceids','int',-1,'','the list of ids of the 2D elements (e.g. triangles, quads)'],
             ['LineEntityIds','lineids','int',-1,'','the list of ids of the 1D elements (e.g. lines)'],
             ])
-
 
     def Execute(self):
 
@@ -118,9 +116,7 @@ class vmtkEntityList(pypes.pypeScript):
         self.LineEntityIds = toIntList(sorted(self.LineEntityIds))
 
 
-
 if __name__ == '__main__':
     main = pypes.pypeMain()
     main.Arguments = sys.argv
     main.Execute()
-

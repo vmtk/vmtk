@@ -43,7 +43,6 @@ class vmtkSurfaceCoords(pypes.pypeScript):
             ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter']
             ])
 
-
     def CreateCoords(self,data):
         coords = data.GetPoints().GetData()
         coords.SetName('coords')
@@ -64,7 +63,6 @@ class vmtkSurfaceCoords(pypes.pypeScript):
             self.PrintError('Error: No input surface.')
 
         self.CreateCoords(self.Surface)
-
 
 
 if __name__=='__main__':

@@ -9,11 +9,11 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
-## Note: this class was contributed by 
+## Note: this class was contributed by
 ##       Marco Fedele (marco.fedele@polimi.it)
 ##       Politecnico di Milano
 
@@ -23,6 +23,7 @@ import sys
 
 from vmtk import vmtkrenderer
 from vmtk import pypes
+
 
 class vmtkSurfaceEdgeLengthArray(pypes.pypeScript):
 
@@ -56,7 +57,6 @@ class vmtkSurfaceEdgeLengthArray(pypes.pypeScript):
         self.TagsSet = set()
         self.SurfaceViewer = None
 
-
         self.SetScriptName('vmtksurfaceedgelengtharray')
         self.SetScriptDoc('given a scalar array f, compute the edge length array as max( minsize, min( alpha*f^beta, maxsize ) )')
         self.SetInputMembers([
@@ -83,8 +83,6 @@ class vmtkSurfaceEdgeLengthArray(pypes.pypeScript):
             ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter'],
             ['CellEntityIdsArray','oentityidsarray','vtkIntArray',1,'','the output entity ids array']
             ])
-
-
 
     def LabelValidator(self,text):
         import string
@@ -147,10 +145,9 @@ class vmtkSurfaceEdgeLengthArray(pypes.pypeScript):
         if self.SurfaceViewer.LabelsActor:
             self.vmtkRenderer.Renderer.RemoveActor(self.SurfaceViewer.LabelsActor)
 
-
     def InteractiveEdgeLengthArray(self):
         from vmtk import vmtkscripts
-        
+
         self.CellEntityIdsArray = self.Surface.GetCellData().GetArray(self.CellEntityIdsArrayName)
 
         if self.CellEntityIdsArray == None:
@@ -297,8 +294,6 @@ class vmtkSurfaceEdgeLengthArray(pypes.pypeScript):
             if string in ['', 'N', 'n']:
                 yes = False
 
-
-
     def CleanSurface(self,surface):
         cleaner = vtk.vtkCleanPolyData()
         cleaner.SetInputData(surface)
@@ -308,8 +303,6 @@ class vmtkSurfaceEdgeLengthArray(pypes.pypeScript):
         triangleFilter.Update()
         surface = triangleFilter.GetOutput()
         return surface
-
-
 
     def EdgeLengthArrayWriter(self,surface):
         outputArray = surface.GetPointData().GetArray(self.OutputArrayName)
@@ -323,7 +316,6 @@ class vmtkSurfaceEdgeLengthArray(pypes.pypeScript):
             outputArray.FillComponent(0,self.Constant)
         else:
             self.PrintError("Method unknown (available: function, constant)")
-
 
     def EdgeLengthArraySmoother(self):
         from vmtk import vmtkscripts
@@ -347,8 +339,6 @@ class vmtkSurfaceEdgeLengthArray(pypes.pypeScript):
 
         if self.Interactive:
             self.ViewEdgeLength(self.OutputArrayName+"Smooth")
-
-
 
     def Execute(self):
         if self.Surface == None:
@@ -376,9 +366,6 @@ class vmtkSurfaceEdgeLengthArray(pypes.pypeScript):
 
         if self.Smoothing:
             self.EdgeLengthArraySmoother()
-            
-
-
 
 
 if __name__=='__main__':

@@ -268,7 +268,6 @@ class vmtkMeshWriter(pypes.pypeScript):
 
         f.close()
 
-
     def WriteDolfinMeshFile(self):
         if (self.OutputFileName == ''):
             self.PrintError('Error: no OutputFileName.')

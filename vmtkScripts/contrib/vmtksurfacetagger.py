@@ -9,11 +9,11 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
-## Note: this class was contributed by 
+## Note: this class was contributed by
 ##       Marco Fedele (marco.fedele@polimi.it)
 ##       Politecnico di Milano
 
@@ -24,6 +24,7 @@ import math
 
 from vmtk import vmtkrenderer
 from vmtk import pypes
+
 
 class vmtkSurfaceTagger(pypes.pypeScript):
 
@@ -80,16 +81,12 @@ class vmtkSurfaceTagger(pypes.pypeScript):
             ['CellEntityIdsArray','oentityidsarray','vtkIntArray',1,'','the output entity ids array']
             ])
 
-
-
     def CleanSurface(self):
         cleaner = vtk.vtkCleanPolyData()
         cleaner.SetInputData(self.Surface)
         cleaner.Update()
         self.Surface = cleaner.GetOutput()
         self.CellEntityIdsArray = self.Surface.GetCellData().GetArray(self.CellEntityIdsArrayName)
-
-
 
     def ClipArrayTagger(self,onlyRing=False):
 
@@ -132,8 +129,6 @@ class vmtkSurfaceTagger(pypes.pypeScript):
             self.Surface = mergeSurface.GetOutput()
             self.CellEntityIdsArray = self.Surface.GetCellData().GetArray(self.CellEntityIdsArrayName)
 
-
-
     def ArrayTagger(self,surface=None,arrayName=None,insideTag=None,rangeValues=[]):
         if surface == None:
             surface = self.Surface
@@ -154,7 +149,6 @@ class vmtkSurfaceTagger(pypes.pypeScript):
             if cellArray.GetValue(i) > rangeValues[0] and cellArray.GetValue(i) < rangeValues[1]:
                 cellEntityIdsArray.SetValue(i,insideTag)
         return surface
-
 
     def CleanPreciseRingDistance(self,ring):
         from vmtk import vmtkscripts
@@ -181,7 +175,6 @@ class vmtkSurfaceTagger(pypes.pypeScript):
                     if item in lastThreeCellIdLists[0]:
                         return True
             return False
-
 
         nP = ring.GetNumberOfPoints()
         nC = ring.GetNumberOfCells()
@@ -284,7 +277,7 @@ class vmtkSurfaceTagger(pypes.pypeScript):
             line.GetPointIds().SetId(0,lastInsertedId)
             line.GetPointIds().SetId(1,firstInsertedId)
             lines.InsertNextCell(line)
-                    
+
             print('\ncleaned points: ',countCleanedPoints,'/',nP,'\n')
 
             outputRing.SetPoints(points)
@@ -298,7 +291,6 @@ class vmtkSurfaceTagger(pypes.pypeScript):
         # FIRST AND LAST POINTS NOT YET CHECKED
 
         return outputRing
-
 
     def HarmonicTagger(self):
         from vmtk import vmtkscripts
@@ -334,7 +326,6 @@ class vmtkSurfaceTagger(pypes.pypeScript):
             featureEdges.Update()
             zigZagRing = featureEdges.GetOutput()
             return zigZagRing
-
 
         tags = set()
         for i in range(self.Surface.GetNumberOfCells()):
@@ -383,7 +374,7 @@ class vmtkSurfaceTagger(pypes.pypeScript):
         pointLocator = vtk.vtkPointLocator()
         pointLocator.SetDataSet(self.Surface)
         pointLocator.BuildLocator()
-        
+
         for k in range(3):
             print("Harmonic extension of component ",k)
             boundaryIds = vtk.vtkIdList()
@@ -435,8 +426,6 @@ class vmtkSurfaceTagger(pypes.pypeScript):
 
         self.Surface = warper.GetOutput()
 
-
-
     def ConnectivityTagger(self):
 
         self.CleanSurface()
@@ -483,8 +472,6 @@ class vmtkSurfaceTagger(pypes.pypeScript):
         self.Surface = mergeTags.GetOutput()
         self.CellEntityIdsArray = self.Surface.GetCellData().GetArray(self.CellEntityIdsArrayName)
 
-
-
     def DrawingTagger(self):
         from vmtk import vmtkscripts
 
@@ -499,8 +486,6 @@ class vmtkSurfaceTagger(pypes.pypeScript):
         drawer.ComputeDisance = 0
         drawer.Execute()
         self.Surface = drawer.Surface
-
-
 
     def Execute(self):
 
@@ -560,7 +545,6 @@ class vmtkSurfaceTagger(pypes.pypeScript):
         #     triangleFilter.SetInputData(self.Surface)
         #     triangleFilter.Update()
         #     self.Surface = triangleFilter.GetOutput()
-
 
 
 if __name__=='__main__':

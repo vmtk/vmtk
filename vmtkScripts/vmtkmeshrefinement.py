@@ -9,11 +9,11 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENCE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
-## Note: this class was contributed by 
+## Note: this class was contributed by
 ##       Marco Fedele (marco.fedele@polimi.it)
 ##       Politecnico di Milano
 
@@ -26,6 +26,7 @@ from vmtk import vtkvmtk
 from vmtk import pypes
 
 vmtkmeshrefinement = 'vmtkMeshRefinement'
+
 
 class vmtkMeshRefinement(pypes.pypeScript):
     def __init__(self):
@@ -43,9 +44,9 @@ class vmtkMeshRefinement(pypes.pypeScript):
         self.SizeMin = 0.01
         self.Alpha = 0.1
         self.Beta = 1.0
-        
+
         self.InterfaceSurface = None
-        
+
         self.SetScriptName('vmtkmeshrefinement')
         self.SetScriptDoc('refine a tetra mesh near the level zero of an array (e.g. a distance from a surface)')
         self.SetInputMembers([
@@ -127,7 +128,6 @@ class vmtkMeshRefinement(pypes.pypeScript):
         meshProj.Execute()
 
         self.Mesh = meshProj.Mesh
-
 
 
 if __name__=='__main__':

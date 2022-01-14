@@ -9,11 +9,11 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENSE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
-## Note: this class was contributed by 
+## Note: this class was contributed by
 ##       Marco Fedele (marco.fedele@polimi.it)
 ##       Politecnico di Milano
 
@@ -61,7 +61,6 @@ class vmtkEntityExtractor(pypes.pypeScript):
             ['OutputEntityIds','oids','int',-1,'','the list of ids of the output surface/mesh'],
             ])
 
-
     def Threshold(self,idValue):
         from vmtk import vmtkcontribscripts
         th = vmtkcontribscripts.vmtkThreshold()
@@ -73,7 +72,6 @@ class vmtkEntityExtractor(pypes.pypeScript):
         th.HighThreshold = idValue
         th.Execute()
         return th.Surface or th.Mesh
-
 
     def SurfaceAppend(self,surface1,surface2):
         from vmtk import vmtkscripts
@@ -131,7 +129,7 @@ class vmtkEntityExtractor(pypes.pypeScript):
                 delete.AddInputData(self.Threshold(item))
         extract.Update()
         delete.Update()
-        
+
         if self.Surface:
             cleaner = vtk.vtkCleanPolyData()
             cleaner.SetInputConnection(extract.GetOutputPort())
@@ -148,9 +146,7 @@ class vmtkEntityExtractor(pypes.pypeScript):
             self.DeletedMesh = delete.GetOutput()
 
 
-
 if __name__ == '__main__':
     main = pypes.pypeMain()
     main.Arguments = sys.argv
     main.Execute()
-

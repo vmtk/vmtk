@@ -226,6 +226,8 @@ class vmtkImageReslice(pypes.pypeScript):
             transform = vtk.vtkMatrixToLinearTransform()
             transform.SetInput(self.Matrix4x4)
             resliceFilter.SetResliceTransform(transform)
+
+            # just to print them at the end of the script
             for i in range(4):
                 for j in range(4):
                     self.MatrixCoefficients.append(self.Matrix4x4.GetElement(i,j))

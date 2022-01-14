@@ -9,11 +9,11 @@
 ##   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
 ##   See LICENCE file for details.
 
-##      This software is distributed WITHOUT ANY WARRANTY; without even 
-##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+##      This software is distributed WITHOUT ANY WARRANTY; without even
+##      the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 ##      PURPOSE.  See the above copyright notices for more information.
 
-## Note: this class was contributed by 
+## Note: this class was contributed by
 ##       Elena Faggiano (elena.faggiano@gmail.com)
 ##       Politecnico di Milano
 
@@ -28,6 +28,7 @@ from vmtk import pypes
 
 
 vmtksurfaceharmonicsections = 'vmtkSurfaceHarmonicSections'
+
 
 class vmtkSurfaceHarmonicSections(pypes.pypeScript):
 
@@ -64,7 +65,6 @@ class vmtkSurfaceHarmonicSections(pypes.pypeScript):
             ['SurfaceSectionsPoints','o3','vtkPolyData',1,'','the output surface','vmtksurfacewriter'],
             ])
 
-
     def WriteTXTFileForEachSection(self,path,polydata,i):
         #Scrivo in una cartella apposita le coordinate dei punti della sezione i-esima
         #Mi sposto nella cartella apposita
@@ -81,13 +81,12 @@ class vmtkSurfaceHarmonicSections(pypes.pypeScript):
 
         return
 
-
-    def Execute(self): 
+    def Execute(self):
         from vmtk import vmtkscripts
         from vmtk import vtkvmtk
 
         if (self.Surface == None):
-            self.PrintError('Error: no Surface.') 
+            self.PrintError('Error: no Surface.')
 
         surface = vtk.vtkPolyData()
         surface = self.Surface
@@ -116,7 +115,7 @@ class vmtkSurfaceHarmonicSections(pypes.pypeScript):
 
         temperature = vtk.vtkDoubleArray()
         temperature.SetNumberOfComponents(1)
-        
+
         #create on a new surface the Array boundaries (= 1 on boundary nodes, =0 otherwise
         Boundary = vtk.vtkDoubleArray()
         Boundary.SetName("boundaries")
@@ -126,10 +125,10 @@ class vmtkSurfaceHarmonicSections(pypes.pypeScript):
 
         for i in range(surface_out.GetNumberOfPoints()):
             Boundary.SetTuple1(i,0.0)
-        
+
         Lines = vtk.vtkCellArray()
         Points = vtk.vtkPoints()
-        
+
         numOfCells = boundaries.GetNumberOfCells()
         print ("number of boundaries", numOfCells)
 
@@ -176,7 +175,6 @@ class vmtkSurfaceHarmonicSections(pypes.pypeScript):
                     Boundary.SetTuple1(idb,1) # 1 on boundary, 0 otherwise
                     temperature.InsertNextTuple1(bc[i])
 
-
         print ("\nboundaries identified and temperature assigned\n")
 
         #perform harmonic mapping using temperature as boundary condition
@@ -216,7 +214,7 @@ class vmtkSurfaceHarmonicSections(pypes.pypeScript):
             stripper = vtk.vtkStripper()
             stripper.SetInputData(Polygon)
             stripper.Update()
-            
+
             #Spline interpolation of the boundary 1 with a number of points specified by the user
             splineFilter = vtk.vtkSplineFilter()
             splineFilter.SetInputData(stripper.GetOutput())
@@ -236,7 +234,6 @@ class vmtkSurfaceHarmonicSections(pypes.pypeScript):
                 ptIdsp = point_locator.FindClosestPoint(pointsp)
                 SourceIdList.InsertNextId(ptIdsp)
 
-
             #Perform steepest gradient descent from boundaries with temperature 1 downward to temperature zero, along diffused temperature values
             #The source are points sampled bby the spline
             LineTracer = vtkvmtk.vtkvmtkSteepestDescentLineTracer()
@@ -250,7 +247,6 @@ class vmtkSurfaceHarmonicSections(pypes.pypeScript):
             #LineTracer.SetTargets(TargetIdList)
             LineTracer.Update()
             print ("\nsteepest gradient descent performed\n")
-
 
             tracer = vtk.vtkPolyData()
             tracer = LineTracer.GetOutput()
@@ -306,9 +302,10 @@ class vmtkSurfaceHarmonicSections(pypes.pypeScript):
 
             print ("\nSections generated")
             print ("total number of points", appendFilter.GetOutput().GetNumberOfCells() )
-        
+
             self.SurfaceTracer = tracer
             self.SurfaceSectionsPoints = appendFilter.GetOutput()
+
 
 if __name__=='__main__':
     main = pypes.pypeMain()
