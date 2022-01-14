@@ -44,11 +44,11 @@ class vmtkMeshCoords(pypes.pypeScript):
             ])
 
     def Execute(self):
-        from vmtk import vmtkscripts
+        from vmtk import vmtkcontribscripts
         if self.Mesh == None:
             self.PrintError('Error: No input surface.')
 
-        vmtkscripts.vmtkSurfaceCoords().CreateCoords(self.Mesh)
+        vmtkcontribscripts.vmtkSurfaceCoords().CreateCoords(self.Mesh)
 
 
 if __name__=='__main__':

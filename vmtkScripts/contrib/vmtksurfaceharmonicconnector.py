@@ -217,7 +217,7 @@ class vmtkSurfaceHarmonicConnector(pypes.pypeScript):
             self.Valve = harmonicValveSolver.Surface
 
         # 4. Warp by vector the surface
-        warper = vmtkscripts.vmtkSurfaceWarpByVector()
+        warper = vmtkcontribscripts.vmtkSurfaceWarpByVector()
         warper.Surface = self.Surface
         warper.WarpArrayName = 'WarpVector'
         warper.Execute()

@@ -51,9 +51,9 @@ class vmtkMeshWarpByVector(pypes.pypeScript):
         if self.Mesh == None:
             self.PrintError('Error: no Mesh.')
 
-        from vmtk import vmtkscripts
+        from vmtk import vmtkcontribscripts
 
-        warper = vmtkscripts.vmtkSurfaceWarpByVector()
+        warper = vmtkcontribscripts.vmtkSurfaceWarpByVector()
         warper.Input = self.Mesh
         warper.WarpArrayName = self.WarpArrayName
         warper.Update()

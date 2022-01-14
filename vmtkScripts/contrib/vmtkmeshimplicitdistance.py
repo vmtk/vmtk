@@ -70,9 +70,9 @@ class vmtkMeshImplicitDistance(pypes.pypeScript):
         if self.ReferenceSurface == None:
             self.PrintError('Error: No ReferenceSurface.')
 
-        from vmtk import vmtkscripts
+        from vmtk import vmtkcontribscripts
 
-        implicitDistance = vmtkscripts.vmtkSurfaceImplicitDistance()
+        implicitDistance = vmtkcontribscripts.vmtkSurfaceImplicitDistance()
         implicitDistance.Input = self.Mesh
         implicitDistance.ReferenceSurface = self.ReferenceSurface
         implicitDistance.ArrayName = self.ArrayName
