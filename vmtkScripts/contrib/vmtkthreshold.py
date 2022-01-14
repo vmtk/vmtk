@@ -59,7 +59,9 @@ class vmtkThreshold(pypes.pypeScript):
             th.SetInputArrayToProcess(0, 0, 0, 1, self.ArrayName)
         else:
             th.SetInputArrayToProcess(0, 0, 0, 0, self.ArrayName)
-        th.ThresholdBetween(self.LowThreshold, self.HighThreshold)
+        th.SetLowerThreshold(self.LowThreshold)
+        th.SetUpperThreshold(self.HighThreshold)
+        th.SetThresholdFunction(vtk.vtkThreshold.THRESHOLD_BETWEEN)
         th.Update()
 
         if self.Mesh != None:

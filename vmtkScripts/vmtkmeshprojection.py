@@ -73,7 +73,9 @@ class vmtkMeshProjection(pypes.pypeScript):
             th = vtk.vtkThreshold()
             th.SetInputData(mesh)
             th.SetInputArrayToProcess(0, 0, 0, 1, 'tmpCellTypeArray')
-            th.ThresholdBetween(value,value)
+            th.SetLowerThreshold(value)
+            th.SetUpperThreshold(value)
+            th.SetThresholdFunction(vtk.vtkThreshold.THRESHOLD_BETWEEN)
             th.Update()
             return th.GetOutput()
 

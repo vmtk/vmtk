@@ -164,7 +164,9 @@ class vmtkSurfaceConnector(pypes.pypeScript):
         for i in range(numberOfRings):
             th = vtk.vtkThreshold()
             th.SetInputData(rings)
-            th.ThresholdBetween(ringIds[i]-0.5,ringIds[i]+0.5)
+            th.SetLowerThreshold(ringIds[i]-0.5)
+            th.SetUpperThreshold(ringIds[i]+0.5)
+            th.SetThresholdFunction(vtk.vtkThreshold.THRESHOLD_BETWEEN)
             th.Update()
             gf = vtk.vtkGeometryFilter()
             gf.SetInputConnection(th.GetOutputPort())

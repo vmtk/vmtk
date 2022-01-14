@@ -72,7 +72,9 @@ class vmtkSurfaceThickness(pypes.pypeScript):
             appendFilter = vtk.vtkAppendPolyData()
             wallParts = []
             for i,item in enumerate(ids):
-                th.ThresholdBetween(item-0.5,item+0.5)
+                th.SetLowerThreshold(item-0.5)
+                th.SetUpperThreshold(item+0.5)
+                th.SetThresholdFunction(vtk.vtkThreshold.THRESHOLD_BETWEEN)
                 th.Update()
                 gf = vtk.vtkGeometryFilter()
                 gf.SetInputConnection(th.GetOutputPort())
