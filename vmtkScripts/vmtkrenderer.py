@@ -98,10 +98,10 @@ class vmtkRenderer(pypes.pypeScript):
             ['vmtkRenderer','o','vmtkRenderer',1,'','the renderer']])
 
     def _GetScreenFontSize(self):
-        '''Returns an integer representing font size appropriatly scaled for the users screen resolution
+        '''Returns an integer representing font size appropriately scaled for the users screen resolution
 
         This function is designed to be called from the self.Initialize() method. It creates a temporary render window
-        and returns an intiger for which the text font size should be set to, given the user's current screen resolution.
+        and returns an integer for which the text font size should be set to, given the user's current screen resolution.
         Minimum output size is set to 8, maximum to 50, for readability purposes.  
 
         Arguments:
@@ -109,9 +109,9 @@ class vmtkRenderer(pypes.pypeScript):
                 - None (no positional or keyword arguments)
 
             Output:
-                - fontSize (int): font size appropriatly scaled for the users screen
+                - fontSize (int): font size appropriately scaled for the users screen
         '''
-        tempRenderWindow = vtk.vtkRenderWindow()
+        tempRenderWindow = vtk.vtkGenericOpenGLRenderWindow()
         userScreenWidth, userScreenHeight = tempRenderWindow.GetScreenSize()
 
         baseScreenWidth = 3360 # Number of pixels across the width of the calibration monitor
