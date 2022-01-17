@@ -35,13 +35,13 @@ environment:
       # HTML report location for pytest
       PYTEST_REPORT: "--html=$APPVEYOR_BUILD_FOLDER/pytest_report.html --self-contained-html"
     matrix:
-      - PYTHON_VERSION: "3.7"
+      - PYTHON_VERSION: "3.8"
       
-      - PYTHON_VERSION: "3.6"
+      - PYTHON_VERSION: "3.7"
       
 matrix:
   allow_failures:
-    - image: Visual Studio 2017
+    - PYTHON_VERSION: "3.8"
 
       
 platform: 
