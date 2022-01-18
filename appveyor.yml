@@ -35,15 +35,21 @@ environment:
       # HTML report location for pytest
       PYTEST_REPORT: "--html=$APPVEYOR_BUILD_FOLDER/pytest_report.html --self-contained-html"
     matrix:
+      - PYTHON_VERSION: "3.10"
+      
+      - PYTHON_VERSION: "3.9"
+      
       - PYTHON_VERSION: "3.8"
       
       - PYTHON_VERSION: "3.7"
-      
-matrix:
-  allow_failures:
-    - PYTHON_VERSION: "3.8"
-
-      
+for:
+-
+  matrix:
+    only:
+      - PYTHON_VERSION: "3.10"
+      - PYTHON_VERSION: "3.9"
+  only_commits:
+    message: "/.*\\[ci all\\].*/"
 platform: 
   - x64
 
