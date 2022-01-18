@@ -31,6 +31,7 @@ cmake .. -LAH -G "Ninja" ^
     -DCMAKE_BUILD_TYPE:STRING="Release" ^
 	-DPython3_FIND_STRATEGY=LOCATION ^
     -DPython3_ROOT_DIR="%PREFIX%" ^
+	-DPYTHON_EXECUTABLE:FILEPATH="%PYTHON%" ^
     -DUSE_SYSTEM_VTK:BOOL=ON ^
     -DUSE_SYSTEM_ITK:BOOL=ON ^
     -DCMAKE_INSTALL_PREFIX=%LIBRARY_PREFIX% ^
@@ -45,6 +46,7 @@ cmake .. -LAH -G "Ninja" ^
     -DVMTK_MINIMAL_INSTALL:BOOL=OFF ^
     -DVTK_VMTK_WRAP_PYTHON:BOOL=ON ^
 	-DVTK_PYTHON_VERSION:STRING="%PYTHON_MAJOR_VERSION%" ^
+	-DVMTK_PYTHON_VERSION="python%PY_VER:~0,1%.%PY_VER:~2,1%"^
     -DGIT_PROTOCOL_HTTPS:BOOL=ON ^
     -DVMTK_MODULE_INSTALL_LIB_DIR:FILEPATH="%PREFIX%/Lib/site-packages/vmtk" ^
     -DVMTK_SCRIPTS_ENABLED:BOOL=ON ^
@@ -53,7 +55,8 @@ cmake .. -LAH -G "Ninja" ^
     -DVTK_VMTK_WRAPPED_MODULE_INSTALL_LIB_DIR:FILEPATH="%PREFIX%/Lib/site-packages/vmtk" ^
     -DVTK_VMTK_INSTALL_LIB_DIR:FILEPATH="%LIBRARY_LIB%" ^
     -DVTK_VMTK_INSTALL_BIN_DIR:FILEPATH="%LIBRARY_BIN%" ^
-    -DVMTK_SCRIPTS_INSTALL_LIB_DIR:FILEPATH="%PREFIX%/Lib/site-packages/vmtk" ^
+    -DVTK_VMTK_MODULE_INSTALL_LIB_DIR:FILEPATH="%PREFIX%/Lib/site-packages/vmtk" ^
+	-DVMTK_SCRIPTS_INSTALL_LIB_DIR:FILEPATH="%PREFIX%/Lib/site-packages/vmtk" ^
     -DVMTK_SCRIPTS_INSTALL_BIN_DIR:FILEPATH="%LIBRARY_BIN%" ^
     -DVMTK_CONTRIB_SCRIPTS_INSTALL_LIB_DIR:FILEPATH="%PREFIX%/Lib/site-packages/vmtk" ^
     -DVMTK_CONTRIB_SCRIPTS_INSTALL_BIN_DIR:FILEPATH="%LIBRARY_BIN%" ^
@@ -67,9 +70,9 @@ if errorlevel 1 exit 1
 ninja install
 if errorlevel 1 exit 1
 
+:: This hack should no longer be necessary after setting VTK_VMTK_MODULE_INSTALL_LIB_DIR correctly
+:: kept just in case useful in the future
 :: Hack to move to vtkvmtk.py script to the correct location
-set MOVE_FROM=%LIBRARY_LIB%\python%PY_VER:~0,1%.%PY_VER:~2,1%\site-packages\vmtk\vtkvmtk.py
-
-move %MOVE_FROM% %PREFIX%\Lib\site-packages\vmtk\vtkvmtk.py
-if exist "%LIBRARY_LIB%\python%PY_VER:~0,1%.%PY_VER:~2,1%" rmdir /s /q "%LIBRARY_LIB%\python%PY_VER:~0,1%.%PY_VER:~2,1%"
-
+:: set MOVE_FROM=%LIBRARY_LIB%\python%PY_VER:~0,1%.%PY_VER:~2,1%\site-packages\vmtk\vtkvmtk.py
+:: move %MOVE_FROM% %PREFIX%\Lib\site-packages\vmtk\vtkvmtk.py
+:: if exist "%LIBRARY_LIB%\python%PY_VER:~0,1%.%PY_VER:~2,1%" rmdir /s /q "%LIBRARY_LIB%\python%PY_VER:~0,1%.%PY_VER:~2,1%"
