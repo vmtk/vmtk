@@ -91,7 +91,7 @@ class vmtkSurfaceBooleanConnector(pypes.pypeScript):
 
         # 1. compute signed distances
         def implicitDistance(surface,rsurface):
-            sd = vmtkscripts.vmtkSurfaceImplicitDistance()
+            sd = vmtkcontribscripts.vmtkSurfaceImplicitDistance()
             sd.Surface = surface
             sd.ReferenceSurface = rsurface
             sd.Execute()
