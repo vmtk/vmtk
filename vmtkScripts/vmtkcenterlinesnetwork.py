@@ -88,7 +88,8 @@ class vmtkCenterlinesNetwork(pypes.pypeScript):
         self.DelaunayTessellation = None
         self.VoronoiDiagram = None
         self.PoleIds = None
-
+        self.RandomSeed = None
+        
         self.vmtkRenderer = None
         self.OwnRenderer = 0
 
@@ -107,7 +108,8 @@ class vmtkCenterlinesNetwork(pypes.pypeScript):
             ['CostFunctionArrayName','costfunctionarray','str',1],
             ['DelaunayTessellation','delaunaytessellation','vtkUnstructuredGrid',1,'','','vmtkmeshwriter'],
             ['VoronoiDiagram','voronoidiagram','vtkPolyData',1,'','','vmtksurfacewriter'],
-            ['PoleIds','poleids','vtkIdList',1]])
+            ['PoleIds','poleids','vtkIdList',1],
+            ['RandomSeed','randomseed','int',1])
 
     def Execute(self):
         if self.Surface == None:
@@ -137,7 +139,10 @@ class vmtkCenterlinesNetwork(pypes.pypeScript):
         # randomly select one cell to delete so that there is an opening for
         # vmtkNetworkExtraction to use.
         numCells = networkSurface.GetNumberOfCells()
-        cellToDelete = random.randrange(0, numCells-1)
+        random_generator = random.Random()
+        if self.RandomSeed is not None:
+            random_generator.seed(self.RandomSeed)
+        cellToDelete = random_generator.randrange(0, numCells-1)
         networkSurface.BuildLinks()
         networkSurface.DeleteCell(cellToDelete)
         networkSurface.RemoveDeletedCells()
