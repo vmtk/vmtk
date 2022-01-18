@@ -39,7 +39,6 @@ requirements:
   host:
     - python {{ python }}
     - vtk {{ vtk }}
-    - itk {{ itk }}
     - libitk {{ itk }}
     - libitk-devel {{ itk }}
     - numpy 
@@ -53,9 +52,7 @@ requirements:
     - python {{ python }}
     - future 
     - vtk {{ vtk }}
-    - itk {{ itk }}
     - libitk {{ itk }}
-    - libitk-devel {{ itk }}
     - numpy 
     - llvm
     - h5py
