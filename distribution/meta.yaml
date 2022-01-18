@@ -41,7 +41,7 @@ requirements:
     - vtk {{ vtk }}
     - libitk {{ itk }}
     - libitk-devel {{ itk }}
-    - numpy 
+    - numpy >=1.20
     - h5py
     - tbb-devel
     - llvm
