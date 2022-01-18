@@ -16,11 +16,12 @@
 
 import pytest
 import vmtk.vmtkcenterlinesnetwork as centerlinesnetwork
-
+import random
 
 def test_centerline_extraction_surface_with_no_hole(aorta_surface):
     clnetwork = centerlinesnetwork.vmtkCenterlinesNetwork()
     clnetwork.Surface = aorta_surface
+    random.seed(42)
     clnetwork.Execute()
     centerlines = clnetwork.Centerlines
     assert (centerlines.GetNumberOfPoints() > 100) == True
