@@ -109,7 +109,7 @@ class vmtkCenterlinesNetwork(pypes.pypeScript):
             ['DelaunayTessellation','delaunaytessellation','vtkUnstructuredGrid',1,'','','vmtkmeshwriter'],
             ['VoronoiDiagram','voronoidiagram','vtkPolyData',1,'','','vmtksurfacewriter'],
             ['PoleIds','poleids','vtkIdList',1],
-            ['RandomSeed','randomseed','int',1])
+            ['RandomSeed','randomseed','int',1]])
 
     def Execute(self):
         if self.Surface == None:
