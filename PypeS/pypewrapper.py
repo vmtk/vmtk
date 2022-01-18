@@ -202,7 +202,7 @@ class PypeWrapper(object):
         moduleFile.write('\n')
 
         for exposedMember in self.AllExposedMembers:
-            if exposedMember.MemberType is 'bool':
+            if exposedMember.MemberType == 'bool':
                 moduleFile.write('%s = "0"\n' % exposedMember.ExposedName)
                 moduleFile.write('if "--%s" in arguments:\n' % (exposedMember.ExposedName))
                 moduleFile.write(self.Indentation+'%s = "1"\n' % (exposedMember.ExposedName))

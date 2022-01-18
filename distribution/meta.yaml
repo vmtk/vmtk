@@ -16,7 +16,7 @@
 
 package:
   name: "vmtk"
-  version: "1.4.0"
+  version: "1.5.0"
 
 source:
     path: ../
@@ -30,14 +30,9 @@ requirements:
   build:
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
-    # Only required because anaconda.org/vmtk/itk is underconstrained.
-    # itk 4.13 incompatible with gcc >8. Remove when upgrading itk.
-#    - gcc_linux-64 <=7.3 # [linux]
-#    - gxx_linux-64 <=7.3 # [linux]
     - pkgconfig              # [unix]
     - cmake 
     - boost 1.74 # [linux]
-#    - python {{ python }}
     - git
     - ninja
     - setuptools             # [win] 

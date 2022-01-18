@@ -1,3 +1,8 @@
+if [ ! "$APPVEYOR" = true ] ; then
+    echo 'This script is only intended for appveyor images. You have to manually remove this check.'
+	echo 'DO NOT RUN OUTSIDE OF A DISPOSABLE VM.'
+	exit 1
+fi
 sudo apt update -yqq
 sudo apt install -y libxext-dev libgl1-mesa-dev xvfb
 export DISPLAY=:99.0

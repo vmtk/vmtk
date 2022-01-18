@@ -99,7 +99,7 @@ class vmtkPeterGenerateSurface(pypes.pypeScript):
             self.PrintError('Error: invalid input')
 
     # Main method
-    def Execute(self)
+    def Execute(self):
         # Error handling
         if self.Image == None:
             self.PrintError('Error: no image was supplied')

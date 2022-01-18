@@ -181,7 +181,7 @@ class vmtkCenterlinesNetwork(pypes.pypeScript):
             else:
                 rescaledCellConnectivity = np.subtract(cellConnectivityList, removeCellLength, where=cellConnectivityList >= removeCellLength)
                 keepCellConnectivityList.append(rescaledCellConnectivity)
-                pointIdxToKeep = np.concatenate((pointIdxToKeep, cellConnectivityList)).astype(np.int)
+                pointIdxToKeep = np.concatenate((pointIdxToKeep, cellConnectivityList)).astype(int)
         newPoints = ad['Points'][pointIdxToKeep]
         newRadius = ad['PointData']['Radius'][pointIdxToKeep]
 

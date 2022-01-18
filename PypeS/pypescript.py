@@ -554,7 +554,7 @@ class pypeScript(object):
                         if memberType in self.BuiltinOptionTypes:
                             exec('castValue = '+memberType+'(\''+value+'\')', globals())
                             memberValues.append(castValue)
-                        elif memberType is 'bool':
+                        elif memberType == 'bool':
                             exec('castValue = int(\''+value+'\')', globals())
                             memberValues.append(castValue)
                         else:
@@ -579,7 +579,7 @@ class pypeScript(object):
                     setattr(self,memberName,memberValues)
                     memberEntry.MemberValue = memberValues
 
-            if memberType is 'bool':
+            if memberType == 'bool':
                 if [value for value in memberValues if value not in [0,1]]:
                     self.PrintError(self.GetUsageString() + '\n' + 'Error for option '+option+': should be either 0 or 1' + '\n')
                     return 0

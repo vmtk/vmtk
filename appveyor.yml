@@ -27,7 +27,7 @@
 #---------------------------------#
 image:
   - Ubuntu2004
-  - Visual Studio 2017
+  - Visual Studio 2019
 
 
 environment:
