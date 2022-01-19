@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 ## Program:   VMTK
-## Module:    $RCSfile: vmtksurfacecapper.py,v $
+## Module:    $RCSfile: vmtkmeshcapper.py,v $
 ## Language:  Python
 ## Date:      $Date: 2006/07/17 09:53:14 $
 ## Version:   $Revision: 1.8 $
