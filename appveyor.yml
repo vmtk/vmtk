@@ -26,19 +26,30 @@
 #    environment configuration    #
 #---------------------------------#
 image:
-  - Visual Studio 2017
-  - Ubuntu
+  - Ubuntu2004
+  - Visual Studio 2019
+
 
 environment:
     global:
       # HTML report location for pytest
       PYTEST_REPORT: "--html=$APPVEYOR_BUILD_FOLDER/pytest_report.html --self-contained-html"
     matrix:
+      - PYTHON_VERSION: "3.10"
+      
+      - PYTHON_VERSION: "3.9"
+      
+      - PYTHON_VERSION: "3.8"
+      
       - PYTHON_VERSION: "3.7"
-      
-      - PYTHON_VERSION: "3.6"
-      
-      
+for:
+-
+  matrix:
+    only:
+      - PYTHON_VERSION: "3.8"
+      - PYTHON_VERSION: "3.7"
+  only_commits:
+    message: "/.*\\[ci all\\].*/"
 platform: 
   - x64
 

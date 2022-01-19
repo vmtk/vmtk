@@ -109,7 +109,7 @@ class vmtkCenterlinesNetwork(pypes.pypeScript):
             ['DelaunayTessellation','delaunaytessellation','vtkUnstructuredGrid',1,'','','vmtkmeshwriter'],
             ['VoronoiDiagram','voronoidiagram','vtkPolyData',1,'','','vmtksurfacewriter'],
             ['PoleIds','poleids','vtkIdList',1],
-            ['RandomSeed','randomseed','int',1])
+            ['RandomSeed','randomseed','int',1]])
 
     def Execute(self):
         if self.Surface == None:
@@ -181,7 +181,7 @@ class vmtkCenterlinesNetwork(pypes.pypeScript):
             else:
                 rescaledCellConnectivity = np.subtract(cellConnectivityList, removeCellLength, where=cellConnectivityList >= removeCellLength)
                 keepCellConnectivityList.append(rescaledCellConnectivity)
-                pointIdxToKeep = np.concatenate((pointIdxToKeep, cellConnectivityList)).astype(np.int)
+                pointIdxToKeep = np.concatenate((pointIdxToKeep, cellConnectivityList)).astype(int)
         newPoints = ad['Points'][pointIdxToKeep]
         newRadius = ad['PointData']['Radius'][pointIdxToKeep]
 

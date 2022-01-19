@@ -81,10 +81,25 @@ if( USE_SYSTEM_VTK )
   endif()
 endif()
 
-#-----------------------------------------------------------------------------
 # Superbuild setup
 option( VMTK_USE_SUPERBUILD
   "Build VMTK and the projects it depends on via SuperBuild.cmake." ON )
+
+# Git setup
+if (VMTK_USE_SUPERBUILD OR VMTK_BUILD_TESTING)
+  if( NOT GIT_EXECUTABLE )
+    find_package( Git REQUIRED )
+  endif()
+
+  option( GIT_PROTOCOL_HTTPS
+    "Use HTTPS for git access (useful if behind a firewall)" OFF )
+  if( GIT_PROTOCOL_HTTPS )
+    set( GIT_PROTOCOL "https" CACHE STRING "Https protocol for file transfer" FORCE )
+  else()
+    set( GIT_PROTOCOL "git" CACHE STRING "Git protocol for file transfer" FORCE )
+  endif()
+  mark_as_advanced( GIT_PROTOCOL )
+endif()
 
 option( VMTK_USE_ITK5
   "Compile vmtk against ITK 5. OFF is ITK 4.13" ON )
@@ -113,20 +128,6 @@ if(BUILD_VMTK_DOCUMENTATION)
 endif()
 
 if( VMTK_USE_SUPERBUILD )
-
-  if( NOT GIT_EXECUTABLE )
-    find_package( Git REQUIRED )
-  endif()
-
-  option( GIT_PROTOCOL_HTTPS
-    "Use HTTPS for git access (useful if behind a firewall)" OFF )
-  if( GIT_PROTOCOL_HTTPS )
-    set( GIT_PROTOCOL "https" CACHE STRING "Https protocol for file transfer" FORCE )
-  else()
-    set( GIT_PROTOCOL "git" CACHE STRING "Git protocol for file transfer" FORCE )
-  endif()
-  mark_as_advanced( GIT_PROTOCOL )
-
   if( VMTK_BUNJEE_BUILD )
     set ( VTK_VMTK_WRAP_PYTHON OFF CACHE BOOL "" FORCE )
     set ( VMTK_CONTRIB_SCRIPTS OFF CACHE BOOL "" FORCE )

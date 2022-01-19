@@ -330,7 +330,7 @@ AnisotropicDiffusionVesselEnhancementImageFilter<TInputImage, TOutputImage, TVes
   DenseFDThreadStruct str;
   str.Filter = this;
   str.TimeStep = dt;
-  this->GetMultiThreader()->SetNumberOfThreads(this->GetNumberOfThreads());
+  this->GetMultiThreader()->SetNumberOfWorkUnits(this->GetNumberOfThreads());
   this->GetMultiThreader()->SetSingleMethod(this->ApplyUpdateThreaderCallback,
                                             &str);
   // Multithread the execution
@@ -338,7 +338,7 @@ AnisotropicDiffusionVesselEnhancementImageFilter<TInputImage, TOutputImage, TVes
 }
 
 template<class TInputImage, class TOutputImage, class TVesselnessFilter>
-ITK_THREAD_RETURN_TYPE
+itk::ITK_THREAD_RETURN_TYPE
 AnisotropicDiffusionVesselEnhancementImageFilter<TInputImage, TOutputImage, TVesselnessFilter>
 ::ApplyUpdateThreaderCallback( void * arg )
 {
@@ -346,10 +346,10 @@ AnisotropicDiffusionVesselEnhancementImageFilter<TInputImage, TOutputImage, TVes
   ThreadIdType threadId;
   int total, threadCount;
 
-  threadId = ((MultiThreader::ThreadInfoStruct *)(arg))->ThreadID;
-  threadCount = ((MultiThreader::ThreadInfoStruct *)(arg))->NumberOfThreads;
+  threadId = ((PlatformMultiThreader::ThreadInfoStruct *)(arg))->ThreadID;
+  threadCount = ((PlatformMultiThreader::ThreadInfoStruct *)(arg))->NumberOfThreads;
 
-  str = (DenseFDThreadStruct *)(((MultiThreader::ThreadInfoStruct *)(arg))->UserData);
+  str = (DenseFDThreadStruct *)(((PlatformMultiThreader::ThreadInfoStruct *)(arg))->UserData);
 
   // Execute the actual method with appropriate output region
   // first find out how many pieces extent can be split into.
@@ -389,7 +389,7 @@ AnisotropicDiffusionVesselEnhancementImageFilter<TInputImage, TOutputImage, TVes
   str.Filter = this;
   str.TimeStep = NumericTraits<TimeStepType>::Zero;  // Not used during the
   // calculate change step.
-  this->GetMultiThreader()->SetNumberOfThreads(this->GetNumberOfThreads());
+  this->GetMultiThreader()->SetNumberOfWorkUnits(this->GetNumberOfThreads());
   this->GetMultiThreader()->SetSingleMethod(this->CalculateChangeThreaderCallback,
                                             &str);
 
@@ -414,7 +414,7 @@ AnisotropicDiffusionVesselEnhancementImageFilter<TInputImage, TOutputImage, TVes
 }
 
 template <class TInputImage, class TOutputImage, class TVesselnessFilter>
-ITK_THREAD_RETURN_TYPE
+itk::ITK_THREAD_RETURN_TYPE
 AnisotropicDiffusionVesselEnhancementImageFilter<TInputImage, TOutputImage, TVesselnessFilter>
 ::CalculateChangeThreaderCallback( void * arg )
 {
@@ -422,10 +422,10 @@ AnisotropicDiffusionVesselEnhancementImageFilter<TInputImage, TOutputImage, TVes
   ThreadIdType threadId;
   int total, threadCount;
 
-  threadId = ((MultiThreader::ThreadInfoStruct *)(arg))->ThreadID;
-  threadCount = ((MultiThreader::ThreadInfoStruct *)(arg))->NumberOfThreads;
+  threadId = ((PlatformMultiThreader::ThreadInfoStruct *)(arg))->ThreadID;
+  threadCount = ((PlatformMultiThreader::ThreadInfoStruct *)(arg))->NumberOfThreads;
 
-  str = (DenseFDThreadStruct *)(((MultiThreader::ThreadInfoStruct *)(arg))->UserData);
+  str = (DenseFDThreadStruct *)(((PlatformMultiThreader::ThreadInfoStruct *)(arg))->UserData);
 
   // Execute the actual method with appropriate output region
   // first find out how many pieces extent can be split into.

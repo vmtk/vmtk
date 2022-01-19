@@ -16,7 +16,7 @@
 
 package:
   name: "vmtk"
-  version: "1.4.0"
+  version: "1.5.0"
 
 source:
     path: ../
@@ -30,21 +30,18 @@ requirements:
   build:
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
-    # Only required because anaconda.org/vmtk/itk is underconstrained.
-    # itk 4.13 incompatible with gcc >8. Remove when upgrading itk.
-    - gcc_linux-64 <=7.3 # [linux]
-    - gxx_linux-64 <=7.3 # [linux]
     - pkgconfig              # [unix]
     - cmake 
+    - boost 1.74 # [linux]
     - git
     - ninja
     - setuptools             # [win] 
   host:
     - python {{ python }}
-    - future
     - vtk {{ vtk }}
-    - itk {{ itk }}
-    - numpy 
+    - libitk {{ itk }}
+    - libitk-devel {{ itk }}
+    - numpy >=1.20
     - h5py
     - tbb-devel
     - llvm
@@ -55,7 +52,7 @@ requirements:
     - python {{ python }}
     - future 
     - vtk {{ vtk }}
-    - itk {{ itk }}
+    - libitk {{ itk }}
     - numpy 
     - llvm
     - h5py
@@ -65,7 +62,7 @@ test:
   source_files:
     - build/tests/*
   requires:
-    - pytest <4
+    - pytest
     - pytest-html
   commands:
     - pytest  {{ environ.get('PYTEST_REPORT', '') }} -vv ./build/tests/
