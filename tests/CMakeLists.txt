@@ -12,7 +12,7 @@ foreach (SCRIPT_FILE ${VMTK_TESTING_INIT_SRC})
   configure_file(${VMTK_TESTING_SOURCE_DIR}/${SCRIPT_FILE} ${VMTK_TESTING_INSTALL_LIB_DIR}/${SCRIPT_FILE} COPYONLY)
 endforeach ()
 
-if (VMTK_TEST_SUBMODULE)
+if (VMTK_TEST_DATA_SOURCE MATCHES "git-submodule")
   # Check if submodule is clean
   execute_process(
     COMMAND ${GIT_EXECUTABLE} status --porcelain ${VMTK_TESTING_SOURCE_DIR}/vmtk-test-data
