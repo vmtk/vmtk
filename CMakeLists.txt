@@ -85,8 +85,11 @@ endif()
 option( VMTK_USE_SUPERBUILD
   "Build VMTK and the projects it depends on via SuperBuild.cmake." ON )
 
+option( VMTK_TEST_SUBMODULE
+  "Check and update VMTK Test data repository" ON )
+
 # Git setup
-if (VMTK_USE_SUPERBUILD OR VMTK_BUILD_TESTING)
+if (VMTK_USE_SUPERBUILD OR VMTK_TEST_SUBMODULE)
   if( NOT GIT_EXECUTABLE )
     find_package( Git REQUIRED )
   endif()
