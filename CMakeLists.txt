@@ -85,8 +85,8 @@ endif()
 option( VMTK_USE_SUPERBUILD
   "Build VMTK and the projects it depends on via SuperBuild.cmake." ON )
 
-set(VMTK_TEST_DATA_SOURCE "git-submodule" CACHE STRING "How to download test data (none, git-submodule)" FORCE)
-set_property(CACHE VMTK_TEST_DATA_SOURCE PROPERTY STRINGS none git-submodule)
+set(VMTK_TEST_DATA_SOURCE "git-submodule" CACHE STRING "git-submodule initializes the vmtk-test-data repository. in-place assumes test data is already available." FORCE)
+set_property(CACHE VMTK_TEST_DATA_SOURCE PROPERTY STRINGS in-place git-submodule)
 
 # Git setup
 if (VMTK_USE_SUPERBUILD OR VMTK_TEST_DATA_SOURCE MATCHES "git-submodule")
