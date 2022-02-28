@@ -227,7 +227,13 @@ private:
     AnisotropicDiffusionVesselEnhancementImageFilter *Filter;
     TimeStepType TimeStep;
     std::vector< TimeStepType > TimeStepList;
+#if ITK_VERSION_MAJOR > 5 || (ITK_VERSION_MAJOR == 5 && ITK_VERSION_MINOR >= 3)
+    // ResolveTimeStep argument type was changed to uint_8_t in ITK-5.3.
+    // https://github.com/InsightSoftwareConsortium/ITK/commit/b66133ab53369bdf265348c0c31cfa6451b53934
+    std::vector< uint8_t > ValidTimeStepList;
+#else
     std::vector< bool > ValidTimeStepList;
+#endif
   };
 
   //struct DenseFDThreadStruct
