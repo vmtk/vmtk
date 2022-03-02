@@ -1,5 +1,20 @@
 set(VTK_VMTK_MISC_TARGET_LINK_LIBRARIES vtkvmtkComputationalGeometry vtkvmtkDifferentialGeometry)
 
+# Linking of try_compile fails due to some obscure reason.
+# Since for us here is enough to test compilation, we disable linking
+# instead of spending time with trying to resolve the linking issue.
+set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
+try_compile(_VTK_HAS_VTKINTERVALINFORMATION
+  "${CMAKE_CURRENT_BINARY_DIR}/CMakeTmp"
+  SOURCES "${CMAKE_CURRENT_LIST_DIR}/vtkvmtkTestIntervalInformation.cxx"
+  LINK_LIBRARIES ${VTK_LIBRARIES}
+  OUTPUT_VARIABLE _VTK_HAS_VTKINTERVALINFORMATION_OUTPUT)
+mark_as_advanced(_VTK_HAS_VTKINTERVALINFORMATION)
+
+if (NOT _VTK_HAS_VTKINTERVALINFORMATION)
+  add_definitions (-DVMTK_USE_LEGACY_INTERVAL_INFORMATION)
+endif()
+
 set( VTK_VMTK_MISC_COMPONENTS
   ${VTK_COMPONENT_PREFIX}FiltersFlowPaths
   ${VTK_COMPONENT_PREFIX}FiltersGeometry
