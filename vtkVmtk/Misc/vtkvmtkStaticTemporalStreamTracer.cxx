@@ -37,6 +37,12 @@ PURPOSE.  See the above copyright notice for more information.
 vtkStandardNewMacro(vtkvmtkStaticTemporalStreamTracer);
 vtkCxxSetObjectMacro(vtkvmtkStaticTemporalStreamTracer, TimeStepsTable, vtkTable);
 
+#if VMTK_USE_LEGACY_INTERVAL_INFORMATION
+  #define vmtkIntervalInformation IntervalInformation
+#else
+  #define vmtkIntervalInformation vtkIntervalInformation
+#endif
+
 vtkvmtkStaticTemporalStreamTracer::vtkvmtkStaticTemporalStreamTracer()
 {
   this->SeedTime = 0.0;
@@ -464,10 +470,10 @@ void vtkvmtkStaticTemporalStreamTracer::Integrate(vtkDataSet *input0,
     // We will always pass an arc-length step size to the integrator.
     // If the user specifies a step size in cell length unit, we will
     // have to convert it to arc length.
-    IntervalInformation stepSize;  // either positive or negative
+    vmtkIntervalInformation stepSize;  // either positive or negative
     stepSize.Unit  = LENGTH_UNIT;
     stepSize.Interval = 0;
-    IntervalInformation aStep; // always positive
+    vmtkIntervalInformation aStep; // always positive
     aStep.Unit = LENGTH_UNIT;
     double step, minStep=0, maxStep=0;
     double stepTaken, accumTime=startTime;
@@ -566,11 +572,19 @@ void vtkvmtkStaticTemporalStreamTracer::Integrate(vtkDataSet *input0,
         aStep.Interval = this->MaximumPropagation - propagation;
         if ( stepSize.Interval >= 0 )
           {
+#if VMTK_USE_LEGACY_INTERVAL_INFORMATION
           stepSize.Interval = this->ConvertToLength( aStep, cellLength );
+#else
+          stepSize.Interval = vtkIntervalInformation::ConvertToLength(aStep, cellLength);
+#endif
           }
         else
           {
-          stepSize.Interval = this->ConvertToLength( aStep, cellLength ) * ( -1.0 );
+#if VMTK_USE_LEGACY_INTERVAL_INFORMATION
+          stepSize.Interval = this->ConvertToLength(aStep, cellLength) * (-1.0);
+#else
+          stepSize.Interval = vtkIntervalInformation::ConvertToLength(aStep, cellLength) * (-1.0);
+#endif
           }
         maxStep = stepSize.Interval;
         }
