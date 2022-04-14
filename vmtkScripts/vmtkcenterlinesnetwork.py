@@ -38,16 +38,25 @@ def _compute_centerlines_network(surfaceAddress, delaunayAddress, voronoiAddress
         cell (np.array): the cellID connectivity list
         points (np.array): the x,y,z coordinates of points identified in the cell argument
     '''
-    cellStartIdx = cell[0]
-    cellEndIdx = cell[-1]
-    cellStartPoint = points[cellStartIdx].tolist()
-    cellEndPoint = points[cellEndIdx].tolist()
 
     surface = vtk.vtkPolyData(surfaceAddress)
     delaunay = vtk.vtkUnstructuredGrid(delaunayAddress)
     voronoi = vtk.vtkPolyData(voronoiAddress)
     poleIds = vtk.vtkIdList(poleIdsAddress)
 
+    cl = _compute_centerline_branch(surface, delaunay, voronoi, poleIds, cell, points)
+
+    clConvert = vmtkcenterlinestonumpy.vmtkCenterlinesToNumpy()
+    clConvert.Centerlines = cl
+    clConvert.LogOn = 0
+    clConvert.Execute()
+    return clConvert.ArrayDict
+
+def _compute_centerline_branch(surface, delaunay, voronoi, poleIds, cell, points):
+    cellStartIdx = cell[0]
+    cellEndIdx = cell[-1]
+    cellStartPoint = points[cellStartIdx].tolist()
+    cellEndPoint = points[cellEndIdx].tolist()
     cl = vmtkcenterlines.vmtkCenterlines()
     cl.Surface = surface
     cl.DelaunayTessellation = delaunay
@@ -61,14 +70,8 @@ def _compute_centerlines_network(surfaceAddress, delaunayAddress, voronoiAddress
     cl.TargetPoints = cellEndPoint
     cl.LogOn = 0
     cl.Execute()
-
-    clConvert = vmtkcenterlinestonumpy.vmtkCenterlinesToNumpy()
-    clConvert.Centerlines = cl.Centerlines
-    clConvert.LogOn = 0
-    clConvert.Execute()
-    return clConvert.ArrayDict
-
-
+    return cl.Centerlines
+    
 class vmtkCenterlinesNetwork(pypes.pypeScript):
 
     def __init__(self):
@@ -90,6 +93,17 @@ class vmtkCenterlinesNetwork(pypes.pypeScript):
         self.PoleIds = None
         self.RandomSeed = None
         
+        
+        # When using Joblib Under Windows, it is important to protect the main loop of code to avoid recursive spawning
+        # of subprocesses. Since we cannot guarantee no code will run outside of “if __name__ == ‘__main__’” blocks
+        # (only imports and definitions), we don't use joblib on windows.
+        if (sys.platform == 'win32') or (sys.platform == 'win64') or (sys.platform == 'cygwin'):
+            self.PrintLog('Centerlines extraction on windows computer will execute serially.')
+            self.PrintLog('To speed up execution, please run vmtk on unix-like operating system and enable joblib')
+            self.UseJoblib = False
+        else:
+            self.UseJoblib = True
+        
         self.vmtkRenderer = None
         self.OwnRenderer = 0
 
@@ -109,7 +123,8 @@ class vmtkCenterlinesNetwork(pypes.pypeScript):
             ['DelaunayTessellation','delaunaytessellation','vtkUnstructuredGrid',1,'','','vmtkmeshwriter'],
             ['VoronoiDiagram','voronoidiagram','vtkPolyData',1,'','','vmtksurfacewriter'],
             ['PoleIds','poleids','vtkIdList',1],
-            ['RandomSeed','randomseed','int',1]])
+            ['RandomSeed','randomseed','int',1],
+            ['UseJoblib','usejoblib','bool',1]])
 
     def Execute(self):
         if self.Surface == None:
@@ -193,47 +208,46 @@ class vmtkCenterlinesNetwork(pypes.pypeScript):
         self.VoronoiDiagram = tessalation.VoronoiDiagram
         self.PoleIds = tessalation.PoleIds
 
-        # vtk objects cannot be serialized in python. Instead of converting the inputs to numpy arrays and having
-        # to reconstruct the vtk object each time the loop executes (a slow process), we can just pass in the
-        # memory address of the data objects as a string, and use the vtk python bindings to create a python name
-        # referring to the data residing at that memory address. This works because joblib executes each loop
-        # iteration in a fork of the original process, providing access to the original memory space.
-        # However, the process does not work for return arguments, since the original process will not have access to
-        # the memory space of the fork. To return results we use the vmtkCenterlinesToNumpy converter.
-        networkSurfaceMemoryAddress = networkSurface.__this__
-        delaunayMemoryAddress = tessalation.DelaunayTessellation.__this__
-        voronoiMemoryAddress = tessalation.VoronoiDiagram.__this__
-        poleIdsMemoryAddress = tessalation.PoleIds.__this__
 
-        # When using Joblib Under Windows, it is important to protect the main loop of code to avoid recursive spawning
-        # of subprocesses. Since we cannot guarantee no code will run outside of “if __name__ == ‘__main__’” blocks
-        # (only imports and definitions), we make Joblib execute each loop iteration serially on windows.
-        # On unix-like os's (linux, Mac) we execute each loop iteration independently on as many cores as the system has.
-        if (sys.platform == 'win32') or (sys.platform == 'win64') or (sys.platform == 'cygwin'):
-            self.PrintLog('Centerlines extraction on windows computer will execute serially.')
-            self.PrintLog('To speed up execution, please run vmtk on unix-like operating system')
-            numParallelJobs = 1
-        else:
-            numParallelJobs = -1
-
-        self.PrintLog('Computing Centerlines ...')
-        # note about the verbose function: while Joblib can print a progress bar output (set verbose = 20),
-        # it does not implement a callback function as of version 0.11, so we cannot report progress to the user
-        # if we are redirecting standard out with the self.PrintLog method.
-        outlist = Parallel(n_jobs=numParallelJobs, backend='multiprocessing', verbose=0)(
-            delayed(_compute_centerlines_network)(networkSurfaceMemoryAddress,
-                                          delaunayMemoryAddress,
-                                          voronoiMemoryAddress,
-                                          poleIdsMemoryAddress,
-                                          cell,
-                                          newPoints) for cell in keepCellConnectivityList)
         out = []
-        for item in outlist:
-            npConvert = vmtknumpytocenterlines.vmtkNumpyToCenterlines()
-            npConvert.ArrayDict = item
-            npConvert.LogOn = 0
-            npConvert.Execute()
-            out.append(npConvert.Centerlines)
+        self.PrintLog('Computing Centerlines ...')
+        if self.UseJoblib:
+            # vtk objects cannot be serialized in python. Instead of converting the inputs to numpy arrays and having
+            # to reconstruct the vtk object each time the loop executes (a slow process), we can just pass in the
+            # memory address of the data objects as a string, and use the vtk python bindings to create a python name
+            # referring to the data residing at that memory address. This works because joblib executes each loop
+            # iteration in a fork of the original process, providing access to the original memory space.
+            # However, the process does not work for return arguments, since the original process will not have access to
+            # the memory space of the fork. To return results we use the vmtkCenterlinesToNumpy converter.
+            networkSurfaceMemoryAddress = networkSurface.__this__
+            delaunayMemoryAddress = tessalation.DelaunayTessellation.__this__
+            voronoiMemoryAddress = tessalation.VoronoiDiagram.__this__
+            poleIdsMemoryAddress = tessalation.PoleIds.__this__
+            numParallelJobs = -1
+            
+            
+            # note about the verbose function: while Joblib can print a progress bar output (set verbose = 20),
+            # it does not implement a callback function as of version 0.11, so we cannot report progress to the user
+            # if we are redirecting standard out with the self.PrintLog method.
+            outlist = Parallel(n_jobs=numParallelJobs, backend='multiprocessing', verbose=0)(
+                delayed(_compute_centerlines_network)(networkSurfaceMemoryAddress,
+                                              delaunayMemoryAddress,
+                                              voronoiMemoryAddress,
+                                              poleIdsMemoryAddress,
+                                              cell,
+                                              newPoints) for cell in keepCellConnectivityList)
+            for item in outlist:
+                npConvert = vmtknumpytocenterlines.vmtkNumpyToCenterlines()
+                npConvert.ArrayDict = item
+                npConvert.LogOn = 0
+                npConvert.Execute()
+                out.append(npConvert.Centerlines)
+        else:
+            for cell in keepCellConnectivityList:
+                    cl = _compute_centerline_branch(networkSurface, tessalation.DelaunayTessellation, tessalation.VoronoiDiagram,
+                                                    tessalation.PoleIds, cell, newPoints)
+                    out.append(cl)
+                    
 
         # Append each segment's polydata into a single polydata object
         centerlineAppender = vtk.vtkAppendPolyData()
