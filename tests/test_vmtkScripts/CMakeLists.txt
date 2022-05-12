@@ -2,6 +2,7 @@ set(TEST_VMTKSCRIPTS_SRCS
     conftest.py
     test_importvmtkscripts.py
     test_importvtkvmtk.py
+    test_pypescripts.py
     test_vmtkbifurcationprofiles.py
     test_vmtkbifurcationreferencesystems.py
     test_vmtkbifurcationsections.py
