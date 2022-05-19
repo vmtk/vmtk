@@ -57,7 +57,7 @@ endif()
 if( NOT USE_SYSTEM_ITK )
 
 
-  set(ITK_GIT_REPOSITORY "${GIT_PROTOCOL}://github.com/Kitware/ITK.git")
+  set(ITK_GIT_REPOSITORY "https://github.com/Kitware/ITK.git")
   if (VMTK_USE_ITK5)
     set(ITK_GIT_TAG "v5.2.1")
     set( ITK_VERSION 5.2 )
@@ -81,7 +81,7 @@ if( NOT USE_SYSTEM_ITK )
   ##
   set( proj ITK )
   ExternalProject_Add( ${proj}
-    GIT_REPOSITORY "${GIT_PROTOCOL}://github.com/Kitware/ITK.git"
+    GIT_REPOSITORY "https://github.com/Kitware/ITK.git"
     GIT_TAG ${ITK_GIT_TAG}
     SOURCE_DIR "${CMAKE_BINARY_DIR}/ITK"
     BINARY_DIR ITK-Build
@@ -122,7 +122,7 @@ endif()
 ##
 if( NOT USE_SYSTEM_VTK )
 
-  set(VTK_GIT_REPOSITORY "${GIT_PROTOCOL}://github.com/Kitware/VTK.git")
+  set(VTK_GIT_REPOSITORY "https://github.com/Kitware/VTK.git")
   if (VMTK_USE_VTK9)
     set(VTK_GIT_TAG "v9.1.0")
     set( VTK_VERSION 9.0 )
@@ -198,12 +198,12 @@ endif()
 set( proj VMTK )
 if( NOT VMTK_USE_VTK9 )
   message(FATAL_ERROR "This version of VMTK only supports VTK9")
-endif() 
+endif()
 ExternalProject_Add( ${proj}
   DOWNLOAD_COMMAND ""
   SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}"
   BINARY_DIR VMTK-Build
-  BUILD_ALWAYS 1 # always run this step. do not generate stamp file 
+  BUILD_ALWAYS 1 # always run this step. do not generate stamp file
   CMAKE_GENERATOR ${gen}
   USES_TERMINAL_CONFIGURE 1
   USES_TERMINAL_BUILD 1
