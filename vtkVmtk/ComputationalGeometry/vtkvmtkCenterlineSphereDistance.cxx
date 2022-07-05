@@ -198,7 +198,8 @@ void vtkvmtkCenterlineSphereDistance::FindTouchingSphereCenter(vtkPolyData* cent
   double subCenter0[3], subCenter1[3], subRadius0, subRadius1;
   segmentLength = vtkMath::Distance2BetweenPoints(center0,center1);
   stepSize = 1E-6 * (radius0 + radius1) / 2.0;
-  numberOfSteps = (int)ceil(segmentLength / stepSize);
+  const double maxNumberOfSteps = 1e5;
+  numberOfSteps = (int)ceil(std::min(segmentLength / stepSize, maxNumberOfSteps));
   stepSize = segmentLength / numberOfSteps;
   pcoordStepSize = 1.0 / (double)numberOfSteps;
 
