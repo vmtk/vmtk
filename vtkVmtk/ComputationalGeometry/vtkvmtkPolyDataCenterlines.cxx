@@ -233,8 +233,18 @@ int vtkvmtkPolyDataCenterlines::RequestData(
 
     vtkvmtkInternalTetrahedraExtractor* internalTetrahedraExtractor = vtkvmtkInternalTetrahedraExtractor::New();
     internalTetrahedraExtractor->SetInputConnection(delaunayTessellator->GetOutputPort());
+    if (!surfaceNormals
+      || !surfaceNormals->GetOutput()
+      || !surfaceNormals->GetOutput()->GetPointData()
+      || !surfaceNormals->GetOutput()->GetPointData()->GetNormals()
+      || !surfaceNormals->GetOutput()->GetPointData()->GetNormals()->GetName())
+    {
+      vtkErrorMacro(<< "Centerline extraction failed: could not compute surface normals");
+      return 1;
+    }
+
     internalTetrahedraExtractor->SetOutwardNormalsArrayName(surfaceNormals->GetOutput()->GetPointData()->GetNormals()->GetName());
-    
+
     if (this->CapCenterIds)
     {
       internalTetrahedraExtractor->UseCapsOn();
