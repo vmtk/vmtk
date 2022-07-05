@@ -294,6 +294,22 @@ void vtkvmtkSteepestDescentLineTracer::Backtrace(vtkPolyData* input, vtkIdType s
 	++numIterations;
     }
 
+  if (numIterations == 0)
+    {
+    // If no points can be added then we would end up with a line cell
+    // with a single point, which would make VTK9 crash.
+    // Until VTK is fixed (https://gitlab.kitware.com/vtk/vtk/-/merge_requests/9341)
+    // this change can be used to avoid the crash; once VTK fix is merged then this
+    // modification may be removed.
+    // Add the current point again to have a valid cell.
+    pointId = newPoints->InsertNextPoint(currentPoint);
+    lineIds->InsertNextId(pointId);
+    newScalars->InsertTuple1(pointId, currentRadius);
+    this->Edges->InsertComponent(pointId, 0, currentEdge[0]);
+    this->Edges->InsertComponent(pointId, 1, currentEdge[1]);
+    this->EdgeParCoords->InsertValue(pointId, currentS);
+    }
+
   newLines->InsertNextCell(lineIds);
 
   neighborCells->Delete();
