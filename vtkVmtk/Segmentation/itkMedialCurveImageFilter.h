@@ -121,7 +121,7 @@ class ITK_EXPORT MedialCurveImageFilter:
 				InputPixelType GetValue() {return pixelValue;};
 		};
 
-		struct Greater:public std::binary_function<Pixel, Pixel, bool>
+		struct Greater
 		{
 			public:
 				bool operator()(const Pixel &p1, const Pixel &p2)  const
