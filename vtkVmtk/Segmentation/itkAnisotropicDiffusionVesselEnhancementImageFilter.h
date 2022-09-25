@@ -228,9 +228,12 @@ private:
     TimeStepType TimeStep;
     std::vector< TimeStepType > TimeStepList;
 #if ITK_VERSION_MAJOR > 5 || (ITK_VERSION_MAJOR == 5 && ITK_VERSION_MINOR >= 3)
-    // ResolveTimeStep argument type was changed to uint_8_t in ITK-5.3.
+    // ResolveTimeStep argument type was changed to uint_8_t in a ITK-5.3 release candidate:
     // https://github.com/InsightSoftwareConsortium/ITK/commit/b66133ab53369bdf265348c0c31cfa6451b53934
-    std::vector< uint8_t > ValidTimeStepList;
+    // Then, ResolveTimeStep argument type was changed to itk::Boolean in a subsequent ITK-5.3 release candidate:
+    // https://github.com/InsightSoftwareConsortium/ITK/commit/bc9ba8540f96c0fa4e9100b25b05eb812074a64e
+    // Therefore, this is the correct implementation for the latest ITK-5.3 version:
+    std::vector< itk::Boolean > ValidTimeStepList;
 #else
     std::vector< bool > ValidTimeStepList;
 #endif
