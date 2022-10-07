@@ -36,7 +36,9 @@ class vmtkDistanceToCenterlines(pypes.pypeScript):
         self.ProjectPointArrays = 0
         self.DistanceToCenterlinesArrayName = 'DistanceToCenterlines'
         self.RadiusArrayName = 'MaximumInscribedSphereRadius'
-
+        self.UseRadiusThreshold = False
+        self.RadiusThreshold = 1.0
+        
         self.SetScriptName('vmtkdistancetocenterlines')
         self.SetScriptDoc('calculate the minimum euclidian from surface points to a centerline')
         self.SetInputMembers([
