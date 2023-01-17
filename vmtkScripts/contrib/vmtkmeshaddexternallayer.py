@@ -195,7 +195,7 @@ class vmtkMeshAddExternalLayer(pypes.pypeScript):
         if self.IncludeSurfaceCells or self.IncludeExtrudedSurfaceCells:
             wallOffset+=1
 
-        boundaryLayer = vmtkscripts.vmtkBoundaryLayer2()
+        boundaryLayer = vmtkscripts.vmtkBoundaryLayer()
         boundaryLayer.Mesh = surfaceToMesh.Mesh
         boundaryLayer.WarpVectorsArrayName = 'Normals'
         boundaryLayer.NegateWarpVectors = False
@@ -232,9 +232,6 @@ class vmtkMeshAddExternalLayer(pypes.pypeScript):
             arrayCalculator.SetResultArrayName('CalculatorResult')
             arrayCalculator.Update()
 
-            #This need to be copied in order to be of the right type (int)
-            cellEntityIdsArray.DeepCopy(arrayCalculator.GetOutput().GetCellData().GetArray('CalculatorResult'))
-
             arrayCalculator.SetFunction("if( entityid > " + str(self.SurfaceCellEntityId-1) +", entityid + 1, entityid)")
             arrayCalculator.Update()
 
@@ -242,8 +239,8 @@ class vmtkMeshAddExternalLayer(pypes.pypeScript):
             cellEntityIdsArray.DeepCopy(arrayCalculator.GetOutput().GetCellData().GetArray('CalculatorResult'))
 
         appendFilter = vtkvmtk.vtkvmtkAppendFilter()
-        appendFilter.AddInput(self.Mesh)
-        appendFilter.AddInput(boundaryLayer.Mesh)
+        appendFilter.AddInputData(self.Mesh)
+        appendFilter.AddInputData(boundaryLayer.Mesh)
         appendFilter.Update()
 
         self.Mesh = appendFilter.GetOutput()
