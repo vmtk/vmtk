@@ -340,7 +340,7 @@ void vtkvmtkXdaWriter::WriteData()
         vtkIdList* matchingPointIds = vtkIdList::New();
         matchingPointIds->DeepCopy(face->GetPointIds());
 
-        matchingPointIds->IntersectWith(*faceCellPoints);
+        matchingPointIds->IntersectWith(faceCellPoints);
         
         int numberOfNonMatching = face->GetNumberOfPoints() - matchingPointIds->GetNumberOfIds();
 

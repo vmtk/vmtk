@@ -402,7 +402,7 @@ int vtkvmtkBoundaryLayerGenerator2::RequestData(
                   {
                   tetraPtsList->InsertNextId(tetraPts[l]);
                   }
-                tetraPtsList->IntersectWith(*openProfilePts);
+                tetraPtsList->IntersectWith(openProfilePts);
                 //If this tetrahedra has a face on the extruded open profile, include it
                 if (tetraPtsList->GetNumberOfIds() == 3)
                   {

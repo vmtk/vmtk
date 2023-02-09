@@ -74,7 +74,7 @@ vtkIdType vtkvmtkPolyDataLineEmbedder::GetCellId(vtkPolyData* input, vtkIdList* 
       }
     else
       {
-      cellIds->IntersectWith(*neighborCellIds);
+      cellIds->IntersectWith(neighborCellIds);
       }
     }  
 

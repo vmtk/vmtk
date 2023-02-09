@@ -55,8 +55,8 @@ set (VTK_VMTK_MISC_SRCS
   vtkvmtkRBFInterpolation.cxx
   vtkvmtkSimpleCapPolyData.cxx
   vtkvmtkSmoothCapPolyData.cxx
-  vtkvmtkStaticTemporalInterpolatedVelocityField.cxx
-  vtkvmtkStaticTemporalStreamTracer.cxx
+  # vtkvmtkStaticTemporalInterpolatedVelocityField.cxx
+  # vtkvmtkStaticTemporalStreamTracer.cxx
   vtkvmtkStreamlineClusteringFilter.cxx
   vtkvmtkStreamlineOsculatingCentersFilter.cxx
   vtkvmtkStreamlineToParticlesFilter.cxx
