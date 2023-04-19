@@ -264,7 +264,7 @@ class vmtkMeshWriter(pypes.pypeScript):
             xml = file.read()
             file.close()
             import gzip
-            gzfile = gzip.open(self.OutputFileName,'w')
+            gzfile = gzip.open(self.OutputFileName,'wt')
             gzfile.write(xml)
             gzfile.close()
 
