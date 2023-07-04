@@ -35,7 +35,7 @@ include (${VMTK_SOURCE_DIR}/CMake/CMakeOptions.cmake)
 configure_file(
   ${VTK_VMTK_SOURCE_DIR}/vtkvmtkConfigure.h.in
   ${VTK_VMTK_BINARY_DIR}/vtkvmtkConfigure.h
-  )                                                                                                  
+  )
 
 if(APPLE)
   set(CMAKE_SHARED_LINKER_FLAGS "-Wl,-dylib_file,/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib")
@@ -44,7 +44,13 @@ endif()
 
 option(VTK_VMTK_BUILD_TETGEN "Build TetGen and TetGen wrapper. Check TetGen license before you activate this." ON)
 
-option(VTK_VMTK_BUILD_STREAMTRACER "Build static temporal stream tracer." ON)
+set(_VTK_VMTK_BUILD_STREAMTRACER_DEFAULT ON)
+if(${VTK_VERSION} VERSION_GREATER_EQUAL "9.2")
+  # Interpolated velocity fields were completely reworked in VTK-9.2
+  # and VMTK is now incompatible.
+  set(_VTK_VMTK_BUILD_STREAMTRACER_DEFAULT OFF)
+endif()
+option(VTK_VMTK_BUILD_STREAMTRACER "Build static temporal stream tracer." _VTK_VMTK_BUILD_STREAMTRACER_DEFAULT)
 
 if (VTK_USE_COCOA)
   option(VTK_VMTK_USE_COCOA "Build the Cocoa vmtk classes." ON)

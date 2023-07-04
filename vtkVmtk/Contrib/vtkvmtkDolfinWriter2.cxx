@@ -201,7 +201,7 @@ void vtkvmtkDolfinWriter2::WriteData()
           vtkCell* face = cell->GetFace(k);
           vtkIdList* matchingPointIds = vtkIdList::New();
           matchingPointIds->DeepCopy(face->GetPointIds());
-          matchingPointIds->IntersectWith(*faceCellPoints);
+          matchingPointIds->IntersectWith(faceCellPoints);
           int numberOfNonMatching = face->GetNumberOfPoints() - matchingPointIds->GetNumberOfIds();
           matchingPointIds->Delete();
 
