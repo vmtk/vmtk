@@ -37,6 +37,7 @@ set(CONTRIB_SCRIPTS_SRCS
     vmtksurfaceharmonicsolver.py
     vmtksurfaceextractannularwalls.py
     vmtksurfaceextractinnercylinder.py
+    vmtksurfaceremeshingramp.py
     vmtksurfaceresolution.py
     vmtksurfacetagger.py
     vmtksurfacethickening.py

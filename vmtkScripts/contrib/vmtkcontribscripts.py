@@ -37,6 +37,7 @@ __all__ = [
     'vmtk.vmtksurfaceharmonicsolver',
     'vmtk.vmtksurfaceextractannularwalls',
     'vmtk.vmtksurfaceextractinnercylinder',
+    'vmtk.vmtksurfaceremeshingramp',
     'vmtk.vmtksurfaceresolution',
     'vmtk.vmtksurfacetagger',
     'vmtk.vmtksurfacethickening',
