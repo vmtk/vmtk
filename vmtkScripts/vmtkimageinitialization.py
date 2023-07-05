@@ -55,6 +55,8 @@ class vmtkImageInitialization(pypes.pypeScript):
 
         self.IsoSurfaceValue = 0.0
 
+        self.MultiSeedsCollidingFronts = 0
+
         self.ImageSeeder = None
         self.SurfaceViewer = None
 
@@ -70,6 +72,7 @@ class vmtkImageInitialization(pypes.pypeScript):
             ['UpperThreshold','upperthreshold','float',1,'','the value of the upper threshold to use for threshold, collidingfronts and fastmarching'],
             ['LowerThreshold','lowerthreshold','float',1,'','the value of the upper threshold to use for threshold, collidingfronts and fastmarching'],
             ['IsoSurfaceValue','isosurface','float',1,'','the isosurface value to adopt as the level set surface'],
+            ['MultiSeedsCollidingFronts','multiseeds','bool',1,'','toggle multiple source/target seeds for collidingfronts method (interactive only)'],
             ['vmtkRenderer','renderer','vmtkRenderer',1]
             ])
         self.SetOutputMembers([
@@ -291,11 +294,20 @@ class vmtkImageInitialization(pypes.pypeScript):
             queryString = "Please input upper threshold (\'n\' for none): "
             self.UpperThreshold = self.ThresholdInput(queryString)
 
-            queryString = 'Please place two seeds'
-            seeds = self.SeedInput(queryString,2)
-
-            seedIds1.InsertNextId(self.Image.FindPoint(seeds.GetPoint(0)))
-            seedIds2.InsertNextId(self.Image.FindPoint(seeds.GetPoint(1)))
+            if self.MultiSeedsCollidingFronts:
+                queryString = 'Please place source seeds'
+                sourceSeeds = self.SeedInput(queryString,0)
+                queryString = 'Please place target seeds'
+                targetSeeds = self.SeedInput(queryString,0)
+                for i in range(sourceSeeds.GetNumberOfPoints()):
+                    seedIds1.InsertNextId(self.Image.FindPoint(sourceSeeds.GetPoint(i)))
+                for i in range(targetSeeds.GetNumberOfPoints()):
+                    seedIds2.InsertNextId(self.Image.FindPoint(targetSeeds.GetPoint(i)))
+            else:
+                queryString = 'Please place two seeds'
+                seeds = self.SeedInput(queryString,2)
+                seedIds1.InsertNextId(self.Image.FindPoint(seeds.GetPoint(0)))
+                seedIds2.InsertNextId(self.Image.FindPoint(seeds.GetPoint(1)))
 
         else:
             seedIds1.InsertNextId(self.Image.ComputePointId([self.SourcePoints[0],self.SourcePoints[1],self.SourcePoints[2]]))
@@ -336,22 +348,26 @@ class vmtkImageInitialization(pypes.pypeScript):
 
         speedImage = shiftScale.GetOutput()
 
-        collidingFronts = vtkvmtk.vtkvmtkCollidingFrontsImageFilter()
-        collidingFronts.SetInputData(speedImage)
-        collidingFronts.SetSeeds1(seedIds1)
-        collidingFronts.SetSeeds2(seedIds2)
-        collidingFronts.ApplyConnectivityOn()
-        collidingFronts.StopOnTargetsOn()
-        collidingFronts.Update()
+        seedId1 = vtk.vtkIdList()
+        seedId2 = vtk.vtkIdList()
+        self.InitialLevelSets = None
+        tmpLevelSets = None
 
-        subtract = vtk.vtkImageMathematics()
-        subtract.SetInputConnection(collidingFronts.GetOutputPort())
-        subtract.SetOperationToAddConstant()
-        subtract.SetConstantC(-10.0 * collidingFronts.GetNegativeEpsilon())
-        subtract.Update()
+        self.PrintLog('Colliding fronts execution between '+str(seedIds1.GetNumberOfIds())+' source points and '+str(seedIds2.GetNumberOfIds())+ ' target points')
+        for i in range(seedIds1.GetNumberOfIds()):
+            for j in range(seedIds2.GetNumberOfIds()):
+                seedId1.Reset()
+                seedId2.Reset()
+                seedId1.InsertNextId(seedIds1.GetId(i))
+                seedId2.InsertNextId(seedIds2.GetId(j))
 
-        self.InitialLevelSets = vtk.vtkImageData()
-        self.InitialLevelSets.DeepCopy(subtract.GetOutput())
+                collidingFronts = vtkvmtk.vtkvmtkCollidingFrontsImageFilter()
+                collidingFronts.SetInputData(speedImage)
+                collidingFronts.SetSeeds1(seedId1)
+                collidingFronts.SetSeeds2(seedId2)
+                collidingFronts.ApplyConnectivityOn()
+                collidingFronts.StopOnTargetsOn()
+                collidingFronts.Update()
 
         self.IsoSurfaceValue = 0.0
 
@@ -451,7 +467,7 @@ class vmtkImageInitialization(pypes.pypeScript):
         self.InitialLevelSets = vtk.vtkImageData()
         self.InitialLevelSets.DeepCopy(combined)
 
-        self.IsoSurfaceValue = 0.0 
+        self.IsoSurfaceValue = 0.0
 
     def SeedInitialize(self):
 
