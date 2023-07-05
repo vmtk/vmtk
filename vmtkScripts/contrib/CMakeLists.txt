@@ -12,8 +12,10 @@ set(CONTRIB_SCRIPTS_SRCS
     vmtkgeodesicsurfaceresolution.py
     vmtkimagetonumpy.py
     vmtkmeshaddexternallayer.py
-    vmtkmeshconnector.py
+    vmtkmeshcapper.py
     vmtkmeshclipcenterlines.py
+    vmtkmeshconnector.py
+    vmtkmeshconnectorfsi.py
     vmtkmeshinfo.py
     vmtkmeshinternalfacescleaner.py
     vmtkmeshmerge.py
@@ -37,6 +39,7 @@ set(CONTRIB_SCRIPTS_SRCS
     vmtksurfaceharmonicsolver.py
     vmtksurfaceextractannularwalls.py
     vmtksurfaceextractinnercylinder.py
+    vmtksurfaceremeshingramp.py
     vmtksurfaceresolution.py
     vmtksurfacetagger.py
     vmtksurfacethickening.py
@@ -48,7 +51,7 @@ set(CONTRIB_SCRIPTS_SRCS
     vmtkpetergeneratesurface.py
     vmtkpetersurfaceclipper.py
   )
-  
+
 set(CONTRIB_MODULE_SRCS
   vmtkcontribscripts.py
   )
@@ -83,4 +86,3 @@ install(PROGRAMS ${CONTRIB_STRIPPED_SCRIPTS_SRCS}
   COMPONENT RuntimeExecutables)
 
 endif ()
-
