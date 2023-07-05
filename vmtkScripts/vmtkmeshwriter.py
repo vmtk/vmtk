@@ -284,9 +284,6 @@ class vmtkMeshWriter(pypes.pypeScript):
             writer.SetStoreCellMarkers(self.WriteRegionMarkers)
         writer.Write()
         if self.Compressed:
-            file = open(self.OutputFileName,'r')
-            xml = file.read()
-            file.close()
             import gzip
             gzfile = gzip.open(self.OutputFileName,'wt')
             gzfile.write(xml)
