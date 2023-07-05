@@ -6,6 +6,9 @@ set(CONTRIB_SCRIPTS_SRCS
     vmtkdijkstradistancetopoints.py
     vmtkdistancetospheres.py
     vmtkendpointsections.py
+    vmtkentityextractor.py
+    vmtkentitylist.py
+    vmtkentityrenumber.py
     vmtkgeodesicsurfaceresolution.py
     vmtkimagetonumpy.py
     vmtkmeshaddexternallayer.py
@@ -13,6 +16,7 @@ set(CONTRIB_SCRIPTS_SRCS
     vmtkmeshclipcenterlines.py
     vmtkmeshinfo.py
     vmtkmeshinternalfacescleaner.py
+    vmtkmeshmerge.py
     vmtkmeshtethex.py
     vmtkmeshtetrahedralize2.py
     vmtkmeshtonumpy.py
@@ -31,20 +35,18 @@ set(CONTRIB_SCRIPTS_SRCS
     vmtksurfaceharmonicextension.py
     vmtksurfaceharmonicsections.py
     vmtksurfaceharmonicsolver.py
+    vmtksurfaceextractannularwalls.py
+    vmtksurfaceextractinnercylinder.py
     vmtksurfaceresolution.py
     vmtksurfacetagger.py
     vmtksurfacethickening.py
     vmtksurfacetonumpy.py
     vmtksurfacewriter2.py
-    vmtksurfaceextractannularwalls.py
-    vmtksurfaceextractinnercylinder.py
     vmtkthreshold.py
     vmtkarraythreshold.py
-    vmtkmeshmerge.py
-    vmtkentityrenumber.py
     vmtkpeterresurface.py
     vmtkpetergeneratesurface.py
-    vmtkpetersurfaceclipper.py 
+    vmtkpetersurfaceclipper.py
   )
   
 set(CONTRIB_MODULE_SRCS
