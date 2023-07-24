@@ -582,7 +582,9 @@ double vtkvmtkCenterlineGeometry::ComputeLineTorsion(vtkPoints* linePoints, vtkD
     xppp[1] /= norm0 + norm1;
     xppp[2] /= norm0 + norm1;
 
-    double torsion = vtkMath::Dot(xpxppcross,xppp) / pow(vtkMath::Norm(xpxppcross),2.0);
+    double xpxppcrossNorm = vtkMath::Norm(xpxppcross);
+    double torsion = (xpxppcrossNorm > 0 ? vtkMath::Dot(xpxppcross, xppp) / pow(xpxppcrossNorm, 2.0) : 0);
+
     torsionArray->SetComponent(j,0,torsion);
     double weight = (norm0 + norm1) / 2.0;
     averageTorsion += torsion * weight;
