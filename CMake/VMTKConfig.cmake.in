@@ -30,3 +30,10 @@ set(VMTK_LIBRARY_DIRS "@VMTK_BINARY_DIR@/bin")
 set(VMTK_USE_FILE
   "@VMTK_BINARY_DIR@/VMTKUse.cmake"
 )
+
+set(ITK_DIR @ITK_DIR@)
+find_package(ITK REQUIRED)
+include(${ITK_USE_FILE})
+
+set(VTK_DIR @VTK_DIR@)
+find_package(VTK REQUIRED)
