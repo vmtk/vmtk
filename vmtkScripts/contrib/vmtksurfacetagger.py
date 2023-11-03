@@ -488,9 +488,14 @@ class vmtkSurfaceTagger(pypes.pypeScript):
 
 
     def DrawingTagger(self):
-        from vmtk import vmtkscripts
+        from vmtk import vmtkcontribscripts
 
-        drawer = vmtkscripts.vmtkSurfaceRegionDrawing()
+        # vmtkSurfaceRegionDrawing only writes a single distance/binary
+        # point-data scalar field; tagging needs a cell-data CellEntityIds
+        # array with configurable smallest/largest region selection and
+        # outside-value overwrite behavior, so a dedicated variant is used
+        # here instead of the general-purpose script.
+        drawer = vmtkcontribscripts.vmtkSurfaceRegionDrawingTagger()
         drawer.Surface = self.Surface
         drawer.InsideValue = self.InsideTag
         drawer.OutsideValue = self.OutsideTag

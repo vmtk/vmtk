@@ -146,6 +146,13 @@ class vmtkSurfaceRegionDrawing(pypes.pypeScript):
 
         self.ContourWidget = vtk.vtkContourWidget()
         self.ContourWidget.SetInteractor(self.vmtkRenderer.RenderWindowInteractor)
+        # vtkContourWidget has its own built-in keypress activation handling,
+        # which fights with vmtkRenderer's custom 'i' key binding below (both
+        # react to the same keypress, so the widget gets enabled then
+        # immediately disabled again). Disabling VTK's own handler lets our
+        # InteractCallback toggle work correctly instead of needing to be
+        # disabled, as vmtksurfaceloopextraction.py does for the same widget.
+        self.ContourWidget.KeyPressActivationOff()
 
         rep = vtk.vtkOrientedGlyphContourRepresentation.SafeDownCast(self.ContourWidget.GetRepresentation())
         rep.GetLinesProperty().SetColor(1, 0.2, 0)
