@@ -486,9 +486,9 @@ class vmtkSurfaceTagger(pypes.pypeScript):
 
 
     def DrawingTagger(self):
-        from vmtk import vmtkscripts
+        from vmtk import vmtkcontribscripts
 
-        drawer = vmtkscripts.vmtkSurfaceRegionDrawing()
+        drawer = vmtkcontribscripts.vmtkSurfaceRegionDrawingTagger()
         drawer.Surface = self.Surface
         drawer.InsideValue = self.InsideTag
         drawer.OutsideValue = self.OutsideTag
