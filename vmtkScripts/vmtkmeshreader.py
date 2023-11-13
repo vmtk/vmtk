@@ -41,17 +41,17 @@ class vmtkMeshReader(pypes.pypeScript):
         self.SetScriptName('vmtkmeshreader')
         self.SetScriptDoc('read a mesh and stores it in a vtkUnstructuredGrid object')
         self.SetInputMembers([
-            ['Format','f','str',1,'["vtkxml", "vtkxmlp", "vtk","fdneut","ngneut","tecplot","tetgen","gambit"]','file format (fdneut - FIDAP neutral format, ngneut - Netgen neutral format)'],
+            ['Format','f','str',1,'["vtkxml", "vtkxmlp", "vtk","fdneut","ngneut","tecplot","tetgen","gambit","lifev"]','file format (fdneut - FIDAP neutral format, ngneut - Netgen neutral format)'],
             ['GuessFormat','guessformat','bool',1,'','guess file format from extension'],
             ['Mesh','i','vtkUnstructuredGrid',1,'','the input mesh'],
             ['InputFileName','ifile','str',1,'','input file name'],
             ['GhostNodes','ghostnodes','bool',1,'','store all nodes for 9-noded quads, 7-noded triangles, 27-noded hexahedra, 18-noded wedges; otherwise, store them as 8-noded quads, 6-noded triangles, 20-noded hexahedra, 15-noded wedges - fdneut only'],
             ['VolumeElementsOnly','volumeelementsonly','bool',1,'','only read volume elements - fdneut and ngneut'],
-            ['CellEntityIdsArrayName','entityidsarray','str',1,'','name of the array where entity ids have to be stored - ngneut and tetgen']
+            ['CellEntityIdsArrayName','entityidsarray','str',1,'','name of the array where entity ids have to be stored - ngneut, tetgen and lifev']
             ])
         self.SetOutputMembers([
             ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh','vmtkmeshwriter'],
-            ['CellEntityIdsArrayName','entityidsarray','str',1,'','name of the array where entity ids have been stored - ngneut and tetgen']
+            ['CellEntityIdsArrayName','entityidsarray','str',1,'','name of the array where entity ids have been stored - ngneut, tetgen and lifev']
             ])
 
     def ReadTetGenMeshFile(self):
@@ -278,6 +278,115 @@ class vmtkMeshReader(pypes.pypeScript):
         self.Mesh.SetCells(10,cells)
         self.Mesh.Update()
 
+    def ReadLifeVMeshFile(self):
+        if (self.InputFileName == ''):
+            self.PrintError('Error: no InputFileName.')
+        self.PrintLog('Reading LifeV mesh file.')
+        f=open(self.InputFileName,'r')
+        self.Mesh = vtk.vtkUnstructuredGrid()
+        self.MeshPoints = vtk.vtkPoints()
+        
+        def readTillString(myStrings):
+            line = f.readline()
+            string = []
+            if line != '\n':
+                string = line.split()[0]
+            while string not in myStrings:
+                line = f.readline()
+                string = line
+                if string != '\n':
+                    string = string.split()[0]
+            return line
+
+        def addTetra(cellEntityIdArray):
+            line = f.readline() # line after Tetra
+            numberOfVolumeCells = int(line)
+            for i in range(numberOfVolumeCells):
+                line = f.readline()
+                splitLine = line.strip().split()
+                cellType = -1
+                numberOfCellPoints = len(splitLine)-1
+                pointIds = vtk.vtkIdList()
+                if numberOfCellPoints == 4:
+                    cellType = 10
+                    # pointIds.InsertNextId(int(splitLine[0])-1)
+                    # pointIds.InsertNextId(int(splitLine[1])-1)
+                    # pointIds.InsertNextId(int(splitLine[2])-1)
+                    # pointIds.InsertNextId(int(splitLine[3])-1)
+                    pointIds.InsertNextId(int(splitLine[1])-1)
+                    pointIds.InsertNextId(int(splitLine[2])-1)
+                    pointIds.InsertNextId(int(splitLine[3])-1)
+                    pointIds.InsertNextId(int(splitLine[0])-1)
+                elif numberOfCellPoints == 8:
+                    cellType = 12
+                    self.PrintError('Error: hexahedra not supported yet.')
+                # entityId = int(splitLine[-1])
+                # check with mesh writer why volume element are fixed to 1, instead of cellentityids value (usually equal to 0)
+                entityId = max(int(splitLine[-1])-1,0)
+
+                cellEntityIdArray.InsertNextValue(entityId)
+                self.Mesh.InsertNextCell(cellType,pointIds)
+
+        def addTriangles(cellEntityIdArray):
+            line = f.readline() # line after Triangles
+            numberOfSurfaceCells = int(line)
+            for i in range(numberOfSurfaceCells):
+                line = f.readline()
+                splitLine = line.strip().split()
+                cellType = -1
+                numberOfCellPoints = len(splitLine)-1
+                pointIds = vtk.vtkIdList()
+                if numberOfCellPoints == 3:
+                    cellType = 5
+                elif numberOfCellPoints == 4:
+                    cellType = 9
+                for j in range(numberOfCellPoints):
+                    pointIds.InsertNextId(int(splitLine[j])-1)
+                entityId = int(splitLine[-1])
+                cellEntityIdArray.InsertNextValue(entityId)
+                self.Mesh.InsertNextCell(cellType,pointIds)
+
+        line = readTillString(['Dimension'])
+        if len(line.split())>1:
+            dim = line.split()[1]
+        else:
+            line = f.readline() # line after Dimension
+            dim = line.split()[0]
+        if dim != '3':
+            self.PrintError('Error: only 3D mesh reader available.')
+
+        readTillString(['Vertices'])
+        line = f.readline() # line after Vertices
+        numberOfPoints = int(line)
+
+        self.MeshPoints.SetNumberOfPoints(numberOfPoints)
+        for i in range(numberOfPoints):
+            line = f.readline()
+            splitLine = line.strip().split()
+            point = [float(splitLine[0]),float(splitLine[1]),float(splitLine[2])]
+            self.MeshPoints.SetPoint(i,point)
+        self.Mesh.SetPoints(self.MeshPoints)
+        self.Mesh.Allocate(numberOfPoints*4,1000)
+
+
+        cellEntityIdArray = vtk.vtkIntArray()
+        cellEntityIdArray.SetName(self.CellEntityIdsArrayName)
+        
+        line = readTillString(['Tetrahedra','Hexahedra','Triangles','Quadrilaterals'])
+        if line.split()[0] in ['Tetrahedra','Hexahedra']:
+            addTetra(cellEntityIdArray)
+        elif self.VolumeElementsOnly == 0 and line.split()[0] in ['Triangles','Quadrilaterals']:
+            addTriangles(cellEntityIdArray)
+
+        line = readTillString(['Tetrahedra','Hexahedra','Triangles','Quadrilaterals'])
+        if line.split()[0] in ['Tetrahedra','Hexahedra']:
+            addTetra(cellEntityIdArray)
+        elif self.VolumeElementsOnly == 0 and line.split()[0] in ['Triangles','Quadrilaterals']:
+            addTriangles(cellEntityIdArray)
+
+        self.Mesh.Squeeze()
+        self.Mesh.GetCellData().AddArray(cellEntityIdArray)
+
     def Execute(self):
 
         extensionFormats = {'vtu':'vtkxml',
@@ -290,7 +399,8 @@ class vmtkMeshReader(pypes.pypeScript):
                             'gneu':'gambit',
                             'tec':'tecplot',
                             'node':'tetgen',
-                            'ele':'tetgen'}
+                            'ele':'tetgen',
+                            'mesh':'lifev'}
 
         if self.InputFileName == 'BROWSER':
             import tkinter.filedialog
@@ -327,6 +437,8 @@ class vmtkMeshReader(pypes.pypeScript):
             self.ReadTecplotMeshFile()
         elif (self.Format == 'tetgen'):
             self.ReadTetGenMeshFile()
+        elif (self.Format == 'lifev'):
+            self.ReadLifeVMeshFile()
         else:
             self.PrintError('Error: unsupported format '+ self.Format + '.')
 

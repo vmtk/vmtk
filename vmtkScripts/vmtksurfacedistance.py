@@ -34,6 +34,7 @@ class vmtkSurfaceDistance(pypes.pypeScript):
         self.SignedDistanceArrayName = ''
 
         self.FlipNormals = 0
+        self.UseExistingNormals = 0
 
         self.SetScriptName('vmtksurfacedistance')
         self.SetScriptDoc('compute the pointwise minimum distance of the input surface from a reference surface')
@@ -43,7 +44,8 @@ class vmtkSurfaceDistance(pypes.pypeScript):
             ['DistanceArrayName','distancearray','str',1,'','name of the array where the distance of the input surface to the reference surface has to be stored'],
             ['DistanceVectorsArrayName','distancevectorsarray','str',1,'','name of the array where the distance vectors of the input surface to the reference surface has to be stored'],
             ['SignedDistanceArrayName','signeddistancearray','str',1,'','name of the array where the signed distance of the input surface to the reference surface is stored; distance is positive if distance vector and normal to the reference surface have negative dot product, i.e. if the input surface is outer with respect to the reference surface'],
-            ['FlipNormals','flipnormals','bool',1,'','flip normals to the reference surface after computing them']
+            ['FlipNormals','flipnormals','bool',1,'','flip normals to the reference surface after computing them'],
+            ['UseExistingNormals','useexistingnormals','bool',1,'','use already existing normals on the reference surface (an array named "Normals" must exists on it)'],
             ])
         self.SetOutputMembers([
             ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter']
@@ -58,12 +60,16 @@ class vmtkSurfaceDistance(pypes.pypeScript):
             self.PrintError('Error: No ReferenceSurface.')
 
         if self.SignedDistanceArrayName != '':
-            normalsFilter = vtk.vtkPolyDataNormals()
-            normalsFilter.SetInputData(self.ReferenceSurface)
-            normalsFilter.AutoOrientNormalsOn()
-            normalsFilter.SetFlipNormals(self.FlipNormals)
-            normalsFilter.Update()
-            self.ReferenceSurface.GetPointData().SetNormals(normalsFilter.GetOutput().GetPointData().GetNormals())
+            if self.UseExistingNormals:
+                normalsArray = self.ReferenceSurface.GetPointData().GetArray('Normals')
+                self.ReferenceSurface.GetPointData().SetNormals(normalsArray)
+            else:
+                normalsFilter = vtk.vtkPolyDataNormals()
+                normalsFilter.SetInputData(self.ReferenceSurface)
+                normalsFilter.AutoOrientNormalsOn()
+                normalsFilter.SetFlipNormals(self.FlipNormals)
+                normalsFilter.Update()
+                self.ReferenceSurface.GetPointData().SetNormals(normalsFilter.GetOutput().GetPointData().GetNormals())
 
         if self.DistanceArrayName != '' or self.DistanceVectorsArrayName != '' or self.SignedDistanceArrayName != '':
             self.PrintLog('Computing distance.')
