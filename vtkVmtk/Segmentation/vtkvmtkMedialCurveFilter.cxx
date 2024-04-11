@@ -84,10 +84,15 @@ void vtkvmtkMedialCurveFilter::SimpleExecute(vtkImageData* input, vtkImageData* 
 	gaussianFilterY->SetDirection(1);
 	gaussianFilterZ->SetDirection(2);
 
+#if (ITK_VERSION_MAJOR >= 5)
+	gaussianFilterX->SetOrder(itk::RecursiveGaussianImageFilterEnums::GaussianOrder::ZeroOrder);
+	gaussianFilterY->SetOrder(itk::RecursiveGaussianImageFilterEnums::GaussianOrder::ZeroOrder);
+	gaussianFilterZ->SetOrder(itk::RecursiveGaussianImageFilterEnums::GaussianOrder::ZeroOrder);
+#else
 	gaussianFilterX->SetOrder(RecursiveGaussianFilterType::ZeroOrder);
 	gaussianFilterY->SetOrder(RecursiveGaussianFilterType::ZeroOrder);
 	gaussianFilterZ->SetOrder(RecursiveGaussianFilterType::ZeroOrder);
-
+#endif
 	gaussianFilterX->SetNormalizeAcrossScale(false);
 	gaussianFilterY->SetNormalizeAcrossScale(false);
 	gaussianFilterZ->SetNormalizeAcrossScale(false);
