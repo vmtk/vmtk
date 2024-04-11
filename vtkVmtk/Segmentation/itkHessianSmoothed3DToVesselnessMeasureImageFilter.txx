@@ -42,8 +42,13 @@ HessianSmoothed3DToVesselnessMeasureImageFilter< TPixel >
 
   m_SymmetricEigenValueFilter = EigenAnalysisFilterType::New();
   m_SymmetricEigenValueFilter->SetDimension( ImageDimension );
+#if (ITK_VERSION_MAJOR >=5)
+  m_SymmetricEigenValueFilter->OrderEigenValuesBy(
+      itk::SymmetricEigenAnalysisEnums::EigenValueOrder::OrderByValue );
+#else
   m_SymmetricEigenValueFilter->OrderEigenValuesBy( 
       EigenAnalysisFilterType::FunctorType::OrderByValue );
+#endif
 
   // By default, *do not* scale the vesselness measure by the largest
   // eigen value

@@ -1,7 +1,7 @@
 #
 # Build the documentation
 #
-include (${CMAKE_ROOT}/Modules/Documentation.cmake OPTIONAL)
+# Deprecated by CMake policy CMP0106: include (${CMAKE_ROOT}/Modules/Documentation.cmake OPTIONAL)
                                                                                                                
 if (BUILD_DOCUMENTATION)
                                                                                                                

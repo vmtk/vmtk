@@ -85,8 +85,12 @@ void vtkvmtkFastMarchingUpwindGradientImageFilter::SimpleExecute(vtkImageData* i
     {
     // TODO: here we get the point. We should get the cell center instead.
     ImageType::PointType seedPoint(input->GetPoint(this->Seeds->GetId(i)));
+#if (ITK_VERSION_MAJOR >= 5)
+    FastMarchingFilterType::NodeType::IndexType seedIndex = inImage->TransformPhysicalPointToIndex(seedPoint);
+#else
     FastMarchingFilterType::NodeType::IndexType seedIndex;
     inImage->TransformPhysicalPointToIndex(seedPoint,seedIndex);
+#endif
     FastMarchingFilterType::PixelType seedValue = itk::NumericTraits<FastMarchingFilterType::PixelType>::Zero;
     FastMarchingFilterType::NodeType seed;
     seed.SetValue(seedValue);
@@ -100,8 +104,12 @@ void vtkvmtkFastMarchingUpwindGradientImageFilter::SimpleExecute(vtkImageData* i
     {
     // TODO: here we get the point. We should get the cell center instead.
     ImageType::PointType seedPoint(input->GetPoint(this->Targets->GetId(i)));
+#if (ITK_VERSION_MAJOR >= 5)
+    FastMarchingFilterType::NodeType::IndexType seedIndex = inImage->TransformPhysicalPointToIndex(seedPoint);
+#else
     FastMarchingFilterType::NodeType::IndexType seedIndex;
     inImage->TransformPhysicalPointToIndex(seedPoint,seedIndex);
+#endif
     FastMarchingFilterType::PixelType seedValue = itk::NumericTraits<FastMarchingFilterType::PixelType>::Zero;
     FastMarchingFilterType::NodeType seed;
     seed.SetValue(seedValue);
