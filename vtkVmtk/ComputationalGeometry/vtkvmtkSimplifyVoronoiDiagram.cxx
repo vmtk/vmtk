@@ -196,7 +196,7 @@ int vtkvmtkSimplifyVoronoiDiagram::RequestData(
   //   }
   poly->SetPolys(currentPolys);
   
-#if (VTK_MAJOR_VERSION >= 9 && VTK_MINOR_VERSION >= 0 && VTK_BUILD_VERSION >= 20221108)
+#if (VTK_MAJOR_VERSION >= 9 && VTK_MINOR_VERSION >= 0) // && VTK_BUILD_VERSION >= 20221108)
   currentLinks->SetDataSet(poly);
   currentLinks->BuildLinks();
 #else
@@ -296,7 +296,7 @@ int vtkvmtkSimplifyVoronoiDiagram::RequestData(
     // #pragma message "vtkvmtkSimplifyVoronoiDiagram::RequestData not functional. Must be updated based on Kitware/VTK@88efc809a"
     // vtkErrorMacro(<< "!");
     poly->SetPolys(currentPolys);
-#if (VTK_MAJOR_VERSION >= 9 && VTK_MINOR_VERSION >= 0 && VTK_BUILD_VERSION >= 20221108)
+#if (VTK_MAJOR_VERSION >= 9 && VTK_MINOR_VERSION >= 0) // && VTK_BUILD_VERSION >= 20221108)
     currentLinks->SetDataSet(poly);
     currentLinks->BuildLinks();
 #else

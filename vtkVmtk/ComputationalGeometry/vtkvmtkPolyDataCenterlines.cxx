@@ -287,14 +287,26 @@ int vtkvmtkPolyDataCenterlines::RequestData(
     voronoiDiagramFilter->Delete();
   }
 
-  vtkArrayCalculator* voronoiCostFunctionCalculator = vtkArrayCalculator::New();
-  voronoiCostFunctionCalculator->SetInputData(this->VoronoiDiagram);
+  #if defined(__EMSCRIPTEN__)
+    vtkNew<vtkDoubleArray> array;
+    array->SetName(this->CostFunctionArrayName);
+    auto outputArray = dynamic_cast<vtkDoubleArray *>(
+        this->VoronoiDiagram->GetPointData()->GetArray(this->RadiusArrayName));
 
-  voronoiCostFunctionCalculator->SetAttributeTypeToPointData();
-  voronoiCostFunctionCalculator->AddScalarVariable("R",this->RadiusArrayName,0);
-  voronoiCostFunctionCalculator->SetFunction(this->CostFunction);
-  voronoiCostFunctionCalculator->SetResultArrayName(this->CostFunctionArrayName);
-  voronoiCostFunctionCalculator->Update();
+    for (int i = 0; i < outputArray->GetNumberOfTuples(); i++)
+    {
+      array->InsertNextValue(1 / outputArray->GetValue(i));
+    }
+    this->VoronoiDiagram->GetPointData()->AddArray(array);
+  #else 
+    vtkArrayCalculator *voronoiCostFunctionCalculator = vtkArrayCalculator::New();
+    voronoiCostFunctionCalculator->SetInputData(this->VoronoiDiagram);
+    voronoiCostFunctionCalculator->SetAttributeTypeToPointData();
+    voronoiCostFunctionCalculator->AddScalarVariable("R", this->RadiusArrayName, 0);
+    voronoiCostFunctionCalculator->SetFunction(this->CostFunction);
+    voronoiCostFunctionCalculator->SetResultArrayName(this->CostFunctionArrayName);
+    voronoiCostFunctionCalculator->Update();
+  #endif
 
   vtkIdList* voronoiSourceSeedIds = vtkIdList::New();
   vtkIdList* voronoiTargetSeedIds = vtkIdList::New();
@@ -327,7 +339,11 @@ int vtkvmtkPolyDataCenterlines::RequestData(
   }
 
   vtkvmtkNonManifoldFastMarching* voronoiFastMarching = vtkvmtkNonManifoldFastMarching::New();
-  voronoiFastMarching->SetInputConnection(voronoiCostFunctionCalculator->GetOutputPort());
+  #if defined(__EMSCRIPTEN__)
+     voronoiFastMarching->SetInputData(this->VoronoiDiagram); 
+  #else
+     voronoiFastMarching->SetInputConnection(voronoiCostFunctionCalculator->GetOutputPort());
+  #endif
   voronoiFastMarching->SetCostFunctionArrayName(this->CostFunctionArrayName);
   voronoiFastMarching->SetSolutionArrayName(this->EikonalSolutionArrayName);
   if (this->StopFastMarchingOnReachingTarget == 1)
@@ -396,7 +412,9 @@ int vtkvmtkPolyDataCenterlines::RequestData(
   this->ReverseCenterlines();
 
   surfaceNormals->Delete();
+  #if !defined(__EMSCRIPTEN__)
   voronoiCostFunctionCalculator->Delete();
+  #endif
   voronoiSeeds->Delete();
   voronoiSourceSeedIds->Delete();
   voronoiTargetSeedIds->Delete();
