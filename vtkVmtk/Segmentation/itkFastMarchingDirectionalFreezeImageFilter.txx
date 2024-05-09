@@ -194,7 +194,7 @@ FastMarchingDirectionalFreezeImageFilter<TLevelSet,TSpeedImage>
     if(! (neighIndex[j] > lastIndex[j] ||
           neighIndex[j] < startIndex[j]) )
       {
-      if ( this->GetLabelImage()->GetPixel( neighIndex ) == Superclass::AlivePoint )
+      if ( this->GetLabelImage()->GetPixel( neighIndex ) == itk::FastMarchingImageFilterEnums::Label::AlivePoint )
         {
         dx_backward = centerPixel - output->GetPixel( neighIndex );
         }
@@ -206,7 +206,7 @@ FastMarchingDirectionalFreezeImageFilter<TLevelSet,TSpeedImage>
     if(! (neighIndex[j] > lastIndex[j] ||
           neighIndex[j] < startIndex[j]) )
       {
-      if ( this->GetLabelImage()->GetPixel( neighIndex ) == Superclass::AlivePoint )
+      if ( this->GetLabelImage()->GetPixel( neighIndex ) == itk::FastMarchingImageFilterEnums::Label::AlivePoint )
         {
         dx_forward = output->GetPixel( neighIndex ) - centerPixel;
         }
