@@ -380,10 +380,16 @@ AnisotropicDiffusionVesselEnhancementImageFilter<TInputImage, TOutputImage, TVes
     str->Filter->ThreadedApplyUpdate(str->TimeStep, splitRegion, splitRegionDiffusionImage, threadId);
     }
 
+// Under the single-threaded Emscripten/WebAssembly configuration the thread
+// callback return type is void, so no value may be returned. All native builds
+// (including Windows/MSVC, which uses Win32 threads rather than pthreads) must
+// return a value.
+#if !defined(__EMSCRIPTEN__)
 #if ITK_VERSION_MAJOR >= 5
   return itk::ITK_THREAD_RETURN_DEFAULT_VALUE;
 #else
   return ITK_THREAD_RETURN_VALUE;
+#endif
 #endif
 }
 
@@ -478,10 +484,16 @@ AnisotropicDiffusionVesselEnhancementImageFilter<TInputImage, TOutputImage, TVes
     str->ValidTimeStepList[threadId] = true;
     }
 
+// Under the single-threaded Emscripten/WebAssembly configuration the thread
+// callback return type is void, so no value may be returned. All native builds
+// (including Windows/MSVC, which uses Win32 threads rather than pthreads) must
+// return a value.
+#if !defined(__EMSCRIPTEN__)
 #if ITK_VERSION_MAJOR >= 5
   return itk::ITK_THREAD_RETURN_DEFAULT_VALUE;
 #else
   return ITK_THREAD_RETURN_VALUE;
+#endif
 #endif
 }
 
