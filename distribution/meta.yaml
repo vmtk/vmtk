@@ -32,7 +32,7 @@ requirements:
     - {{ compiler('cxx') }}
     - pkgconfig              # [unix]
     - cmake 
-    - boost 1.74 # [linux]
+    - boost 1.78 # [linux]
     - git
     - ninja
     - setuptools             # [win] 
