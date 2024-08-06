@@ -41,8 +41,6 @@ Version:   $Revision: 1.11 $
 #include "vtkVersion.h"
 
 
-vtkStandardNewMacro(vtkvmtkCenterlineSplittingAndGroupingFilter);
-
 vtkvmtkCenterlineSplittingAndGroupingFilter::vtkvmtkCenterlineSplittingAndGroupingFilter()
 {
   this->RadiusArrayName = NULL;
