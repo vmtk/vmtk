@@ -96,6 +96,10 @@ function(vmtk_build_library)
     endforeach()
     message(STATUS "-----------------------------------------------")
 
+    set(PYTHON_LIBRARY ${_Python3_LIBRARY_RELEASE})
+    set(PYTHON_INCLUDE_DIR ${_Python3_INCLUDE_DIR})
+    set(PYTHON_EXECUTABLE ${_Python3_EXECUTABLE})
+
     vtkMacroKitPythonWrap(
       KIT_NAME ${lib_name}
       KIT_SRCS ${VMTK_LIB_SRCS}
