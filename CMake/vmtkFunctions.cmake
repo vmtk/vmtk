@@ -87,6 +87,15 @@ function(vmtk_build_library)
       set(VTK_VMTK_WRAPPED_MODULE_INSTALL_LIB_DIR ${VTK_VMTK_MODULE_INSTALL_LIB_DIR})
     endif()
 
+    find_package (Python COMPONENTS Interpreter Development)
+    message(STATUS "VARIABLES AFTER FIND_PACKAGE(Python):")
+    get_cmake_property(_variableNames VARIABLES)
+    list (SORT _variableNames)
+    foreach (_variableName ${_variableNames})
+      message(STATUS "${_variableName}=${${_variableName}}")
+    endforeach()
+    message(STATUS "-----------------------------------------------")
+
     vtkMacroKitPythonWrap(
       KIT_NAME ${lib_name}
       KIT_SRCS ${VMTK_LIB_SRCS}
