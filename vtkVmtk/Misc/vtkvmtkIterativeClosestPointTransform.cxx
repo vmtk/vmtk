@@ -204,16 +204,15 @@ void vtkvmtkIterativeClosestPointTransform::InternalUpdate()
     this->LandmarkTransform->SetTargetLandmarks(closestp);
     this->LandmarkTransform->Update();
 
-    // Concatenate (can't use this->Concatenate directly)
-    
-    accumulate->Concatenate(this->LandmarkTransform->GetMatrix());
-  
     this->NumberOfIterations++;
     vtkDebugMacro(<< "Iteration: " << this->NumberOfIterations);
-    if (this->NumberOfIterations >= this->MaximumNumberOfIterations) 
+    if (this->NumberOfIterations > this->MaximumNumberOfIterations)
       {
       break;
       }
+
+    // Concatenate (can't use this->Concatenate directly)
+    accumulate->Concatenate(this->LandmarkTransform->GetMatrix());
 
     // Move mesh and compute mean distance if needed
 

@@ -51,7 +51,7 @@ class vmtkICPRegistration(pypes.pypeScript):
             ['FarThreshold','farthreshold','float',1,'','threshold distance beyond which points are discarded during optimization'],
             ['FlipNormals','flipnormals','bool',1,'','flip normals to the reference surface after computing them'],
             ['MaximumNumberOfLandmarks','landmarks','int',1,'','maximum number of landmarks sampled from the two surfaces for evaluation of the registration metric'],
-            ['MaximumNumberOfIterations','iterations','int',1,'','maximum number of iterations for the optimization problems'],
+            ['MaximumNumberOfIterations','iterations','int',1,'','maximum number of iterations for the optimization problems (if 0, perform just the centroids matching)'],
             ['MaximumMeanDistance','maxmeandistance','float',1,'','convergence threshold based on the maximum mean distance between the two surfaces']
             ])
         self.SetOutputMembers([

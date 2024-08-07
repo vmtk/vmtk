@@ -52,6 +52,7 @@ class vmtkSurfaceRemeshing(pypes.pypeScript):
         self.Relaxation = 0.5
         self.PreserveBoundaryEdges = 0
         self.ExcludeEntityIds = []
+        self.CleanOutput = 0
 
         self.SetScriptName('vmtksurfaceremeshing')
         self.SetScriptDoc('remesh a surface using quality triangles')
@@ -77,7 +78,8 @@ class vmtkSurfaceRemeshing(pypes.pypeScript):
             ['CollapseAngleThreshold','collapseangle','float',1,'(0.0,)'],
             ['Relaxation','relaxation','float',1,'(0.5,)'],
             ['ExcludeEntityIds','exclude','int',-1,''],
-            ['PreserveBoundaryEdges','preserveboundary','bool',1]
+            ['PreserveBoundaryEdges','preserveboundary','bool',1],
+            ['CleanOutput','cleanoutput','bool',1,'','toggle cleaning the unused points']
             ])
         self.SetOutputMembers([
             ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter']
@@ -145,6 +147,12 @@ class vmtkSurfaceRemeshing(pypes.pypeScript):
         surfaceRemeshing.Update()
 
         self.Surface = surfaceRemeshing.GetOutput()
+
+        if self.CleanOutput == 1:
+            cleaner = vtk.vtkCleanPolyData()
+            cleaner.SetInputConnection(surfaceRemeshing.GetOutputPort())
+            cleaner.Update()
+            self.Surface = cleaner.GetOutput()
 
 
 if __name__=='__main__':

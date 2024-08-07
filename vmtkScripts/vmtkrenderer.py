@@ -255,7 +255,7 @@ class vmtkRenderer(pypes.pypeScript):
     def Render(self,interactive=1):
 
         if interactive:
-            self.RenderWindowInteractor.Initialize()
+            self.RenderWindowInteractor.ReInitialize()
         self.RenderWindow.SetWindowName("vmtk - the Vascular Modeling Toolkit")
 
         #sortedKeysStd = self.KeyBindingsStd.keys()
