@@ -45,7 +45,7 @@ class vmtkMeshWriter(pypes.pypeScript):
         self.SetInputMembers([
             ['Mesh','i','vtkUnstructuredGrid',1,'','the input mesh','vmtkmeshreader'],
             ['Format','f','str',1,
-             '["vtkxml","vtk","xda","fdneut","tecplot","lifev","dolfin","fluent","tetgen","pointdata"]',
+             '["vtkxml","vtk","xda","fdneut","tecplot","lifev","dolfin","fluent","tetgen","pointdata","dealii","lifex"]',
              'file format (xda - libmesh ASCII format, fdneut - FIDAP neutral format)'],
             ['GuessFormat','guessformat','bool',1,'','guess file format from extension'],
             ['Compressed','compressed','bool',1,'','output gz compressed file (dolfin only)'],
@@ -178,8 +178,9 @@ class vmtkMeshWriter(pypes.pypeScript):
         cellEntityIdsArray = vtk.vtkIntArray()
         cellEntityIdsArray.DeepCopy(self.Mesh.GetCellData().GetArray(self.CellEntityIdsArrayName))
 
-        tetraCellType = 10
-        triangleCellType = 5
+        lineCellType = vtk.vtkLine().GetCellType()
+        triangleCellType = vtk.vtkTriangle().GetCellType()
+        tetraCellType = vtk.vtkTetra().GetCellType()
 
         f=open(self.OutputFileName, 'w')
         line = "MeshVersionFormatted 1\n\n"
@@ -245,6 +246,29 @@ class vmtkMeshWriter(pypes.pypeScript):
             line += '  %d\n' % cellEntityId
             f.write(line)
 
+        lineCellIdArray = vtk.vtkIdTypeArray()
+        self.Mesh.GetIdsOfCellsOfType(lineCellType,lineCellIdArray)
+        numberOfLines = lineCellIdArray.GetNumberOfTuples()
+
+        if numberOfLines>0:
+            line += "Edges\n"
+            line += "%d\n" % numberOfLines
+            f.write(line)
+            for i in range(numberOfLines):
+                lineCellId = lineCellIdArray.GetValue(i)
+                cellPointIds = self.Mesh.GetCell(lineCellId).GetPointIds()
+                line = ''
+                for j in range(cellPointIds.GetNumberOfIds()):
+                    if j>0:
+                        line += '  '
+                    line += "%d" % (cellPointIds.GetId(j)+1)
+                cellEntityId = cellEntityIdsArray.GetValue(lineCellId)
+                line += '  %d\n' % cellEntityId
+                f.write(line)
+
+        f.close()
+
+
     def WriteDolfinMeshFile(self):
         if (self.OutputFileName == ''):
             self.PrintError('Error: no OutputFileName.')
@@ -260,9 +284,6 @@ class vmtkMeshWriter(pypes.pypeScript):
             writer.SetStoreCellMarkers(self.WriteRegionMarkers)
         writer.Write()
         if self.Compressed:
-            file = open(self.OutputFileName,'r')
-            xml = file.read()
-            file.close()
             import gzip
             gzfile = gzip.open(self.OutputFileName,'wt')
             gzfile.write(xml)
@@ -281,6 +302,88 @@ class vmtkMeshWriter(pypes.pypeScript):
             writer.SetBoundaryDataArrayName(self.CellEntityIdsArrayName)
 #            writer.SetBoundaryDataIdOffset(self.CellEntityIdsOffset)
         writer.Write()
+
+    def WriteDealiiMshFile(self):
+        if (self.OutputFileName == ''):
+            self.PrintError('Error: no OutputFileName.')
+        self.PrintLog('Writing dealii/lifex .msh file.')
+
+        self.Mesh.BuildLinks()
+
+        cellEntityIdsArray = vtk.vtkIntArray()
+        cellEntityIdsArray.DeepCopy(self.Mesh.GetCellData().GetArray(self.CellEntityIdsArrayName))
+
+        lineCellType = vtk.vtkLine().GetCellType()
+        triaCellType = vtk.vtkTriangle().GetCellType()
+        quadCellType = vtk.vtkQuad().GetCellType()
+        tetraCellType = vtk.vtkTetra().GetCellType()
+        hexaCellType = vtk.vtkHexahedron().GetCellType()
+
+        f=open(self.OutputFileName, 'w')
+        line =  "$MeshFormat\n"
+        line += "2.2 0 8\n"
+        line += "$EndMeshFormat\n"
+        line += "$Nodes\n"
+        line += "%d\n" % self.Mesh.GetNumberOfPoints()
+        f.write(line)
+        for i in range(self.Mesh.GetNumberOfPoints()):
+            point = self.Mesh.GetPoint(i)
+            line = "%d %f %f %f \n" % (i+1, point[0], point[1], point[2])
+            f.write(line)
+
+        line = "$EndNodes\n"
+        line += "$Elements\n"
+
+        lineCellIdArray = vtk.vtkIdTypeArray()
+        self.Mesh.GetIdsOfCellsOfType(lineCellType,lineCellIdArray)
+
+        triaCellIdArray = vtk.vtkIdTypeArray()
+        self.Mesh.GetIdsOfCellsOfType(triaCellType,triaCellIdArray)
+
+        quadCellIdArray = vtk.vtkIdTypeArray()
+        self.Mesh.GetIdsOfCellsOfType(quadCellType,quadCellIdArray)
+
+        tetraCellIdArray = vtk.vtkIdTypeArray()
+        self.Mesh.GetIdsOfCellsOfType(tetraCellType,tetraCellIdArray)
+
+        hexaCellIdArray = vtk.vtkIdTypeArray()
+        self.Mesh.GetIdsOfCellsOfType(hexaCellType,hexaCellIdArray)
+
+        numberOfLines = lineCellIdArray.GetNumberOfTuples()
+        numberOfTrias = triaCellIdArray.GetNumberOfTuples()
+        numberOfQuads = quadCellIdArray.GetNumberOfTuples()
+        numberOfTetras = tetraCellIdArray.GetNumberOfTuples()
+        numberOfHexas = hexaCellIdArray.GetNumberOfTuples()
+
+        line += "%d\n" % (numberOfLines+numberOfTrias+numberOfQuads+numberOfTetras+numberOfHexas)
+        f.write(line)
+
+        def writeCellOfType(cellType,cellTypeIdArray,idx_init):
+            idx = idx_init
+            for i in range(cellTypeIdArray.GetNumberOfTuples()):
+                cellId = cellTypeIdArray.GetValue(i)
+                cellPointIds = self.Mesh.GetCell(cellId).GetPointIds()
+                cellEntityId = cellEntityIdsArray.GetValue(cellId)
+                line = '%d ' % (idx)
+                line += cellType+' 2 %d %d ' % (cellEntityId,cellEntityId)
+                for j in range(cellPointIds.GetNumberOfIds()):
+                    if j>0:
+                        line += '  '
+                    line += "%d" % (cellPointIds.GetId(j)+1)
+                line += "\n"
+                f.write(line)
+                idx = idx+1
+            return idx
+
+        idx=1
+        idx=writeCellOfType('1',lineCellIdArray,idx)
+        idx=writeCellOfType('2',triaCellIdArray,idx)
+        idx=writeCellOfType('3',quadCellIdArray,idx)
+        idx=writeCellOfType('4',tetraCellIdArray,idx)
+        idx=writeCellOfType('5',hexaCellIdArray,idx)
+
+        line = "$EndElements\n"
+        f.write(line)
 
     def WritePointDataMeshFile(self):
         if (self.OutputFileName == ''):
@@ -326,13 +429,15 @@ class vmtkMeshWriter(pypes.pypeScript):
                             'vtk':'vtk',
                             'xda':'xda',
                             'FDNEUT':'fdneut',
-                            'lifev':'lifev',
+                            'mesh':'lifev',
                             'xml':'dolfin',
                             'msh':'fluent',
                             'tec':'tecplot',
                             'node':'tetgen',
                             'ele':'tetgen',
-                            'dat':'pointdata'}
+                            'dat':'pointdata',
+                            'dealii':'dealii',
+                            'lifex':'lifex'}
 
         if self.OutputFileName == 'BROWSER':
             import tkinter.filedialog
@@ -371,6 +476,8 @@ class vmtkMeshWriter(pypes.pypeScript):
             self.WriteTetGenMeshFile()
         elif (self.Format == 'pointdata'):
             self.WritePointDataMeshFile()
+        elif (self.Format == 'dealii' or self.Format == 'lifex'):
+            self.WriteDealiiMshFile()
         else:
             self.PrintError('Error: unsupported format '+ self.Format + '.')
 

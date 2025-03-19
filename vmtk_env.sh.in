@@ -5,3 +5,8 @@ VMTKHOME=${VMTK_INSTALL_DIR_NATIVE}
 export PATH=$VMTKHOME/bin:$PATH
 export PYTHONPATH=$VMTKHOME/lib/${VMTK_PYTHON_VERSION}/site-packages:$PYTHONPATH
 
+# to use software rendering in wsl instead of hardware rendering
+if grep -qi microsoft /proc/version; then
+    export LIBGL_ALWAYS_SOFTWARE=1
+fi
+

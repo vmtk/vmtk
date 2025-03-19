@@ -29,6 +29,9 @@ class vmtkMeshProjection(pypes.pypeScript):
 
         self.ReferenceMesh = None
         self.Mesh = None
+        self.Method = 'linear'
+        self.ActiveArrays = []
+        self.LineSurfaceVolume = 0
         self.Tolerance = 1E-8
 
         self.SetScriptName('vmtkmeshprojection')
@@ -36,11 +39,56 @@ class vmtkMeshProjection(pypes.pypeScript):
         self.SetInputMembers([
             ['Mesh','i','vtkUnstructuredGrid',1,'','the input mesh','vmtkmeshreader'],
             ['ReferenceMesh','r','vtkUnstructuredGrid',1,'','the reference mesh','vmtkmeshreader'],
-            ['Tolerance','tolerance','double',1,'(0.0,)','locator tolerance']
+            ['Method','method','str',1,'["linear","closestpoint"]',"'linear': a linear interpolation/projection is performed on the points of the input surface (only works with point data arrays); 'closestpoint': in each cell/point of the input surface the value of the closest cell/point is projected (usefull to project discrete arrays like entityids)"],
+            ['ActiveArrays','activearrays','str',-1,'','list of the point-data arrays to project (if empty, all the arrays are projected)'],
+            ['Tolerance','tolerance','double',1,'(0.0,)','locator tolerance (linear method only)'],
+            ['LineSurfaceVolume','linesurfacevolume','bool',1,'','(closestpoint method only) toggle performing a line-to-line, surface-to-surface, volume-to-volume projection, usefull for entityids']
             ])
         self.SetOutputMembers([
             ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh','vmtkmeshwriter']
             ])
+
+
+    def ExtractLinesSurfaceVolume(self,mesh):
+
+        # only linear elements
+        volumeTypes = (vtk.VTK_TETRA,vtk.VTK_VOXEL,vtk.VTK_HEXAHEDRON,vtk.VTK_WEDGE,vtk.VTK_PYRAMID,vtk.VTK_PENTAGONAL_PRISM,vtk.VTK_HEXAGONAL_PRISM)
+        surfaceTypes = (vtk.VTK_TRIANGLE,vtk.VTK_TRIANGLE_STRIP,vtk.VTK_POLYGON,vtk.VTK_PIXEL,vtk.VTK_QUAD)
+        lineTypes = (vtk.VTK_LINE,vtk.VTK_POLY_LINE)
+
+        cellTypeArray = vtk.vtkIntArray()
+        cellTypeArray.SetName('tmpCellTypeArray')
+        cellTypeArray.SetNumberOfTuples(mesh.GetNumberOfCells())
+        cellTypeArray.FillComponent(0,0)
+        mesh.GetCellData().AddArray(cellTypeArray)
+        
+        for i in range(mesh.GetNumberOfCells()):
+            if mesh.GetCell(i).GetCellType() in volumeTypes:
+                cellTypeArray.SetComponent(i,0,3)
+            elif mesh.GetCell(i).GetCellType() in surfaceTypes:
+                cellTypeArray.SetComponent(i,0,2)
+            elif mesh.GetCell(i).GetCellType() in lineTypes:
+                cellTypeArray.SetComponent(i,0,1)
+
+        def threshold(value):
+            th = vtk.vtkThreshold()
+            th.SetInputData(mesh)
+            th.SetInputArrayToProcess(0, 0, 0, 1, 'tmpCellTypeArray')
+            th.ThresholdBetween(value,value)
+            th.Update()
+            return th.GetOutput()
+
+        volume = threshold(3)
+        volume.GetCellData().RemoveArray('tmpCellTypeArray')
+
+        surface = threshold(2)
+        surface.GetCellData().RemoveArray('tmpCellTypeArray')
+
+        lines = threshold(1)
+        lines.GetCellData().RemoveArray('tmpCellTypeArray')
+
+        return lines,surface,volume
+
 
     def Execute(self):
 
@@ -50,13 +98,54 @@ class vmtkMeshProjection(pypes.pypeScript):
         if self.ReferenceMesh == None:
             self.PrintError('Error: No ReferenceMesh.')
 
-        self.PrintLog('Computing projection.')
-        meshProjection = vtkvmtk.vtkvmtkMeshProjection()
-        meshProjection.SetInputData(self.Mesh)
-        meshProjection.SetReferenceMesh(self.ReferenceMesh)
-        meshProjection.SetTolerance(self.Tolerance)
-        meshProjection.Update()
-        self.Mesh = meshProjection.GetOutput()
+        if len(self.ActiveArrays) != 0:        
+            passArray = vtk.vtkPassArrays()
+            passArray.SetInputData(self.ReferenceMesh)
+
+            for name in self.ActiveArrays:
+                passArray.AddPointDataArray(name)
+
+            passArray.Update()
+            self.ReferenceMesh = passArray.GetOutput()
+
+        if self.Method == 'linear':
+            self.PrintLog('Computing linear projection ...')
+            meshProjection = vtkvmtk.vtkvmtkMeshProjection()
+            meshProjection.SetInputData(self.Mesh)
+            meshProjection.SetReferenceMesh(self.ReferenceMesh)
+            meshProjection.SetTolerance(self.Tolerance)
+            meshProjection.Update()
+            self.Mesh = meshProjection.GetOutput()
+
+        elif self.Method == 'closestpoint':
+            from vmtk import vmtkscripts
+
+            self.PrintLog('Computing closest point projection ...')
+            cpProj = vmtkscripts.vmtkSurfaceProjection()
+            
+            if self.LineSurfaceVolume:
+                lin,sur,vol = self.ExtractLinesSurfaceVolume(self.Mesh)
+                rlin,rsur,rvol = self.ExtractLinesSurfaceVolume(self.ReferenceMesh)
+
+                if lin.GetNumberOfCells()>0 and rlin.GetNumberOfCells()>0:
+                    lin = cpProj.ClosestPointProjection(lin,rlin)
+                    self.PrintLog('\tprojecting lines-to-lines ...')
+                if sur.GetNumberOfCells()>0 and rsur.GetNumberOfCells()>0:
+                    self.PrintLog('\tprojecting surface-to-surface ...')
+                    sur = cpProj.ClosestPointProjection(sur,rsur)
+                if vol.GetNumberOfCells()>0 and rvol.GetNumberOfCells()>0:
+                    self.PrintLog('\tprojecting volume-to-volume ...')
+                    vol = cpProj.ClosestPointProjection(vol,rvol)
+
+                af = vtkvmtk.vtkvmtkAppendFilter()
+                af.AddInputData(lin)
+                af.AddInputData(sur)
+                af.AddInputData(vol)
+                af.Update()
+                self.Mesh = af.GetOutput()
+            else:
+                cpProj.ClosestPointProjection(self.Mesh,self.ReferenceMesh)
+
 
 
 if __name__=='__main__':

@@ -146,6 +146,7 @@ class vmtkSurfaceRegionDrawing(pypes.pypeScript):
 
         self.ContourWidget = vtk.vtkContourWidget()
         self.ContourWidget.SetInteractor(self.vmtkRenderer.RenderWindowInteractor)
+        self.ContourWidget.KeyPressActivationOff()
 
         rep = vtk.vtkOrientedGlyphContourRepresentation.SafeDownCast(self.ContourWidget.GetRepresentation())
         rep.GetLinesProperty().SetColor(1, 0.2, 0)
