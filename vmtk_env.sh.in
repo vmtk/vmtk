@@ -5,3 +5,15 @@ VMTKHOME=${VMTK_INSTALL_DIR_NATIVE}
 export PATH=$VMTKHOME/bin:$PATH
 export PYTHONPATH=$VMTKHOME/lib/${VMTK_PYTHON_VERSION}/site-packages:$PYTHONPATH
 
+# Detect WSL: /proc/version only exists on Linux, and WSL kernels mention
+# "microsoft" in it; the -f check keeps this a silent no-op (no stderr error)
+# on platforms without /proc/version, e.g. macOS.
+if [ -f /proc/version ] && grep -qi microsoft /proc/version; then
+    # Use software rendering in WSL instead of hardware rendering, since GPU
+    # passthrough often breaks VTK/OpenGL rendering there. Only default it if
+    # unset, so a value the user already exported (e.g. =0 to force hardware
+    # rendering) is not overwritten.
+    : ${LIBGL_ALWAYS_SOFTWARE:=1}
+    export LIBGL_ALWAYS_SOFTWARE
+fi
+
