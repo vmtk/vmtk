@@ -649,7 +649,7 @@ double vtkvmtkPolyDataBranchSections::ComputeBranchSectionArea(vtkPolyData* bran
 
   vtkIdList* trianglePointIds = vtkIdList::New();
 
-  sectionPolygon->Triangulate(trianglePointIds);
+  sectionPolygon->EarCutTriangulation(trianglePointIds);
 
   int numberOfTriangles = trianglePointIds->GetNumberOfIds() / 3;
 
