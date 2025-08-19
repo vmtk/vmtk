@@ -1,9 +1,8 @@
-# Download vtkAddon CMake modules to support VTK python wrapping
-set(vtkAddon_version "8b5c4b2336a4d2d2aaafe87db3642b5302ddcaa5")
+set(vtkAddon_version "b1fa5034077fc04b10457fe25004c65af6091a37")
 
-set(vtkMacroKitPythonWrap.cmake_expected_hash "4470613601f97d36221a7af072731475d06f03d4eb19f550d230bc468264088b")
-set(vtkWrapHierarchy.cmake_expected_hash "ca3ea938ae7eb7c94da8a99d1c45556de5c0562ab91f7b2a5c5640e50f005a88")
-set(vtkWrapPython.cmake_expected_hash "4bdd1adcd02b7db393c32ae902f208389fb80141584e5b68f7668dd379f62134")
+set(vtkMacroKitPythonWrap.cmake_expected_hash "745545e34962908dedbd82f6927a57798feb03f993e7f843462d7b44d06156a4")
+set(vtkWrapHierarchy.cmake_expected_hash "c9343c54675e8bbde8ceaedf99a3226546b5f7d4cf7d5dac3e33db9093b536f2")
+set(vtkWrapPython.cmake_expected_hash "c81e1554f9d41f6333ac8a123ceb75996bda825f7454efbda1b8b2c5fff9b1ea")
 set(vtkWrapperInit.data.in_expected_hash "3e840679603eb4a0d425c1244828729cb271f33a081c5ac2e0547aa747bbec5d")
 
 foreach(filename IN ITEMS
