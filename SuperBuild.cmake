@@ -28,7 +28,7 @@ set( gen "${CMAKE_GENERATOR}" )
 
 if( VTK_VMTK_WRAP_PYTHON )
 
-find_package( PythonInterp )
+find_package(Python3 COMPONENTS Interpreter)
 
 if (APPLE AND VMTK_BREW_PYTHON)
   execute_process(
@@ -38,7 +38,7 @@ if (APPLE AND VMTK_BREW_PYTHON)
   set(PYTHON_INCLUDE_DIR ${PYTHON_PREFIX}/Headers CACHE PATH "")
   set(PYTHON_LIBRARY ${PYTHON_PREFIX}/Python CACHE FILEPATH "")
 else ()
-  find_package( PythonLibs )
+  find_package(Python3 COMPONENTS Development)
 endif ()
 
 if (WIN32)
