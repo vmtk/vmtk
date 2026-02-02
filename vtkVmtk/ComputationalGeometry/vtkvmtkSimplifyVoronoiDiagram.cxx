@@ -350,6 +350,8 @@ int vtkvmtkSimplifyVoronoiDiagram::RequestData(
   // WARNING: cell data are thrown away in the current version
   output->SetPolys(currentPolys);
 
+  delete[] isUnremovable;
+
   currentLinks->Delete();
   currentPolys->Delete();
   poly->Delete();
