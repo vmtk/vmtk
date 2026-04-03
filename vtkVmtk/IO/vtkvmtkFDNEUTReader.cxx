@@ -33,6 +33,7 @@ Version:   $Revision: 1.8 $
 #include "vtkStreamingDemandDrivenPipeline.h"
 #include "vtkvmtkConstants.h"
 
+#include <iostream>
 
 vtkStandardNewMacro(vtkvmtkFDNEUTReader);
 
@@ -457,7 +458,7 @@ int vtkvmtkFDNEUTReader::ReadMeshSimple(const std::string& fname,
         }
       else
         {
-        cout<<"foo"<<endl;
+        std::cout<<"foo"<<endl;
         }
       }
 #if 0

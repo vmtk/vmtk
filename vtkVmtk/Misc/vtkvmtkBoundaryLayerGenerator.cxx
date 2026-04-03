@@ -36,6 +36,7 @@ Version:   $Revision: 1.7 $
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 
+#include <iostream>
 
 vtkStandardNewMacro(vtkvmtkBoundaryLayerGenerator);
 
