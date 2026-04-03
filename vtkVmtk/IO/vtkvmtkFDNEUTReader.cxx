@@ -33,6 +33,7 @@ Version:   $Revision: 1.8 $
 #include "vtkStreamingDemandDrivenPipeline.h"
 #include "vtkvmtkConstants.h"
 
+#include <iostream>
 
 vtkStandardNewMacro(vtkvmtkFDNEUTReader);
 

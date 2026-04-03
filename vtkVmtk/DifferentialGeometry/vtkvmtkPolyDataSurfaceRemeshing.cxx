@@ -36,6 +36,7 @@
 #include "vtkObjectFactory.h"
 #include "vtkVersion.h"
 
+#include <iostream>
 
 vtkStandardNewMacro(vtkvmtkPolyDataSurfaceRemeshing);
 
@@ -311,7 +312,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::RequestData(
   int relocationSuccess = RELOCATE_SUCCESS;
   for (int n=0; n<this->NumberOfIterations; n++)
     {
-    cout<<"Iteration "<<n+1<<"/"<<this->NumberOfIterations<<endl;
+    std::cout<<"Iteration "<<n+1<<"/"<<this->NumberOfIterations<<endl;
     this->EdgeCollapseIteration();
     this->EdgeFlipIteration();
     this->EdgeSplitIteration();
@@ -329,7 +330,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::RequestData(
       }
     }
 
-  cout<<"Final mesh improvement"<<endl;
+  std::cout<<"Final mesh improvement"<<endl;
   bool projectToSurface = false;
   for (int i=0; i<this->NumberOfIterations; i++)
     {
@@ -1128,7 +1129,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::SplitTriangle(vtkIdType cellId)
   vtkIdType cell2 = this->Mesh->InsertNextLinkedCell(VTK_TRIANGLE,3,tri);
   this->CellEntityIdsArray->InsertValue(cell2,cellEntityId);
 
-  //cout<<cell1<<" "<<cell2<<" "<<numberOfCells<<endl;
+  //std::cout<<cell1<<" "<<cell2<<" "<<numberOfCells<<endl;
 
   return SUCCESS;
 }
@@ -1668,7 +1669,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::TestTriangleSplit(vtkIdType cellId)
     return DO_NOTHING;
     }
 
-  //cout<<cellId<<" "<<area<<" "<<targetArea<<endl;
+  //std::cout<<cellId<<" "<<area<<" "<<targetArea<<endl;
   return DO_CHANGE;
 }
 

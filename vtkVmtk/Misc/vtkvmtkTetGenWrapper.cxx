@@ -33,6 +33,7 @@ Version:   $Revision: 1.8 $
 #include "vtkObjectFactory.h"
 #include "tetgen.h"
 
+#include <iostream>
 
 vtkStandardNewMacro(vtkvmtkTetGenWrapper);
 
@@ -423,7 +424,7 @@ int vtkvmtkTetGenWrapper::RequestData(
 
   char tetgenOptions[512];
   strcpy(tetgenOptions,tetgenOptionString.c_str());
-  cout<<"TetGen command line options: "<<tetgenOptions<<endl;
+  std::cout<<"TetGen command line options: "<<tetgenOptions<<endl;
   try
     {
     tetrahedralize(tetgenOptions,&in_tetgenio,&out_tetgenio);

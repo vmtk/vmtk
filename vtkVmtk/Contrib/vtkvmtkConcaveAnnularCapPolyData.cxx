@@ -42,6 +42,7 @@ Version:   $Revision: 1.0 $
 #include "vtkSmartPointer.h"
 #include "vtkVersion.h"
 
+#include <iostream>
 #include <limits>
 
 

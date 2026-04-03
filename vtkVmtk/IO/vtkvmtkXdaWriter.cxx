@@ -31,6 +31,7 @@ Version:   $Revision: 1.6 $
 #include "vtkvmtkConstants.h"
 #include <iostream>
 
+#include <iostream>
 
 vtkStandardNewMacro(vtkvmtkXdaWriter);
 

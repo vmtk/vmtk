@@ -32,6 +32,7 @@
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 #include "vtkIOStream.h"
+#include <iostream>
 #include "vtkFloatArray.h"
 #include "vtkDoubleArray.h"
 
@@ -202,24 +203,24 @@ int vtkvmtkPolyDataGeodesicRBFInterpolation::RequestData(
       }
     } 
 
-  cout << "A " << endl;
+  std::cout << "A " << std::endl;
   for (int i=0;i<numberOfSeeds;i++) {
     for (int j=0;j<numberOfSeeds;j++) {
-      cout << A[i][j] << " ";
+      std::cout << A[i][j] << " ";
     }
-    cout << endl;
+    std::cout << std::endl;
   }
-  
-  cout << "b " << endl;
+
+  std::cout << "b " << std::endl;
   for (int i=0;i<numberOfSeeds;i++) {
-    cout << x[i] << endl;
+    std::cout << x[i] << std::endl;
   }
 
   int ret = vtkMath::SolveLinearSystem(A,x,numberOfSeeds);
-  
-  cout << "x " << endl;
+
+  std::cout << "x " << std::endl;
   for (int i=0;i<numberOfSeeds;i++) {
-    cout << x[i] << endl;
+    std::cout << x[i] << std::endl;
   }
   
   if (!ret)

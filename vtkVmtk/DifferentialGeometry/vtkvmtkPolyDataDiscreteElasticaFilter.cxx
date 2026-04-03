@@ -30,6 +30,7 @@
 #include "vtkObjectFactory.h"
 #include "vtkVersion.h"
 
+#include <iostream>
 
 vtkStandardNewMacro(vtkvmtkPolyDataDiscreteElasticaFilter);
 
@@ -165,7 +166,7 @@ int vtkvmtkPolyDataDiscreteElasticaFilter::RequestData(
         }
 
 //      f = laplaceBeltramiH;
-//      cout<<laplaceBeltramiH<<" "<<meanCurvature<<" "<<gaussianCurvature<<" "<<f<<endl;
+//      std::cout<<laplaceBeltramiH<<" "<<meanCurvature<<" "<<gaussianCurvature<<" "<<f<<endl;
 //      f = - meanCurvature;
 
       deltaT = minTriangleArea*minTriangleArea / 1.0;
@@ -178,7 +179,7 @@ int vtkvmtkPolyDataDiscreteElasticaFilter::RequestData(
       newPoints->SetPoint(i,newPoint);
       }
 
-    cout<<deltaT<<endl;      
+    std::cout<<deltaT<<endl;      
 
     surface->GetPoints()->DeepCopy(newPoints);
     }
@@ -328,7 +329,7 @@ int vtkvmtkPolyDataDiscreteElasticaFilter::RequestData(
       newPoints->SetPoint(i,newPoint);
       }
 
-    cout<<deltaT<<endl;      
+    std::cout<<deltaT<<endl;      
 
     surface->GetPoints()->DeepCopy(newPoints);
     }
@@ -535,7 +536,7 @@ int vtkvmtkPolyDataDiscreteElasticaFilter::RequestData(
         }
 
 //      f = - meanCurvature;
-//      cout<<laplaceBeltramiH<<" "<<meanCurvature<<" "<<gaussianCurvature<<" "<<f<<endl;
+//      std::cout<<laplaceBeltramiH<<" "<<meanCurvature<<" "<<gaussianCurvature<<" "<<f<<endl;
 
       deltaT = minTriangleArea*minTriangleArea / 10.0;
 
@@ -546,7 +547,7 @@ int vtkvmtkPolyDataDiscreteElasticaFilter::RequestData(
       newPoints->SetPoint(i,newPoint);
       }
 
-    cout<<deltaT<<endl;      
+    std::cout<<deltaT<<endl;      
 
     surface->GetPoints()->DeepCopy(newPoints);
     }

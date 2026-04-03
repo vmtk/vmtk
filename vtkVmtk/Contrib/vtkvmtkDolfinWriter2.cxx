@@ -36,6 +36,7 @@ Version:   $$
 #include "vtkSortDataArray.h"
 #include "vtkTetra.h"
 #include "vtkvmtkConstants.h"
+#include <iostream>
 
 
 vtkStandardNewMacro(vtkvmtkDolfinWriter2);
@@ -295,7 +296,7 @@ void vtkvmtkDolfinWriter2::GetDolfinConnectivity(int cellType, vtkIdList* dolfin
       dolfinConnectivity->SetId(3,3);
       break;
     default:
-      cerr<<"Element type not currently supported in dolfin. Skipping element for connectivity."<<endl;
+      std::cerr<<"Element type not currently supported in dolfin. Skipping element for connectivity."<<std::endl;
       break;
     }
 }
@@ -314,7 +315,7 @@ void vtkvmtkDolfinWriter2::GetDolfinFaceOrder(int cellType, vtkIdList* dolfinFac
       dolfinFaceOrder->SetId(3,3);
       break;
     default:
-      cerr<<"Element type not currently supported in dolfin. Skipping element for face ordering."<<endl;
+      std::cerr<<"Element type not currently supported in dolfin. Skipping element for face ordering."<<std::endl;
       break;
     }
 }
@@ -340,7 +341,7 @@ void vtkvmtkDolfinWriter2::GetDolfinCellConnectivity(vtkCell* cell, vtkIdList* d
       vtkSortDataArray::Sort(pointIds,dolfinConnectivity);
       break;
     default:
-      cerr<<"Element type not currently supported in dolfin. Skipping element for connectivity."<<endl;
+      std::cerr<<"Element type not currently supported in dolfin. Skipping element for connectivity."<<std::endl;
       break;
     }
   pointIds->Delete();
@@ -390,7 +391,7 @@ void vtkvmtkDolfinWriter2::GetDolfinCellFaceOrder(vtkCell* cell, vtkIdList *dolf
         }
       break;
     default:
-      cerr<<"Element type not currently supported in dolfin. Skipping element for face ordering."<<endl;
+      std::cerr<<"Element type not currently supported in dolfin. Skipping element for face ordering."<<std::endl;
       break;
     }
     
