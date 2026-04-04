@@ -168,7 +168,7 @@ int vtkvmtkUnstructuredGridGradientFilter::RequestData(
         assembler->SetDirection(j);
         std::cout<<"Assembling system"<<endl;
         assembler->Build();
-       std:: cout<<"Done"<<endl;
+       std::cout<<"Done"<<endl;
           
         vtkvmtkLinearSystem* linearSystem = vtkvmtkLinearSystem::New();
         linearSystem->SetA(sparseMatrix);
