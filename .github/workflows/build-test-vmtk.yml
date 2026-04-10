@@ -7,70 +7,157 @@ on:
     branches: [ main, master ]
 
 jobs:
-  build-test:
-    name: Build and Test (${{ matrix.os }})
+  build-vtk:
+    name: Build VTK (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
     env:
       VTK_VERSION: "9.6.0"
       BUILD_TYPE: Release
     steps:
+      - name: Install dependencies (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y g++ libglu1-mesa-dev libxmu-dev libxi-dev
+
+      - name: Install CMake
+        uses: lukka/get-cmake@latest
+
+      - name: Cache VTK build
+        id: cache-vtk
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ github.workspace }}/vtk-build
+            ${{ github.workspace }}/vtk-install
+          key: ${{ runner.os }}-${{ runner.arch }}-vtk-${{ env.VTK_VERSION }}
+
+      - name: Download and build VTK
+        if: steps.cache-vtk.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
+          WORKSPACE=$(echo "$GITHUB_WORKSPACE" | tr '\\' '/')
+          git clone --branch v${{ env.VTK_VERSION }} https://github.com/Kitware/VTK.git vtk-src
+          cmake -S vtk-src -B vtk-build -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DCMAKE_INSTALL_PREFIX="${WORKSPACE}/vtk-install"
+          cmake --build vtk-build --config ${{ env.BUILD_TYPE }} --target install --parallel 2
+
+  build-itk:
+    name: Build ITK (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    env:
+      ITK_VERSION: "5.4.5"
+      BUILD_TYPE: Release
+    steps:
+      - name: Install dependencies (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y g++
+
+      - name: Install CMake
+        uses: lukka/get-cmake@latest
+
+      - name: Cache ITK build
+        id: cache-itk
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ github.workspace }}/itk-build
+            ${{ github.workspace }}/itk-install
+          key: ${{ runner.os }}-${{ runner.arch }}-itk-${{ env.ITK_VERSION }}
+
+      - name: Download and build ITK
+        if: steps.cache-itk.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
+          WORKSPACE=$(echo "$GITHUB_WORKSPACE" | tr '\\' '/')
+          git clone --branch v${{ env.ITK_VERSION }} https://github.com/InsightSoftwareConsortium/ITK.git itk-src
+          cmake -S itk-src -B itk-build -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DCMAKE_INSTALL_PREFIX="${WORKSPACE}/itk-install" -DBUILD_TESTING=OFF
+          cmake --build itk-build --config ${{ env.BUILD_TYPE }} --target install --parallel 2
+
+  build-test:
+    name: Build and Test VMTK (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    needs: [build-vtk, build-itk]
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    env:
+      VTK_VERSION: "9.6.0"
+      ITK_VERSION: "5.4.5"
+      BUILD_TYPE: Release
+    steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Install dependencies (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y g++ libglu1-mesa-dev libxmu-dev libxi-dev
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
 
-      - name: Install dependencies (Linux)
-        if: runner.os == 'Linux'
+      - name: Print system Python version
         run: |
-          sudo apt-get update
-          sudo apt-get install -y cmake g++ libglu1-mesa-dev libxmu-dev libxi-dev
+          python3 --version
+          which python3
 
-      - name: Install dependencies (macOS)
-        if: runner.os == 'macOS'
-        run: |
-          brew update
-          brew install cmake
+      - name: Restore VTK build
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ github.workspace }}/vtk-build
+            ${{ github.workspace }}/vtk-install
+          key: ${{ runner.os }}-${{ runner.arch }}-vtk-${{ env.VTK_VERSION }}
+          fail-on-cache-miss: true
 
-      - name: Install dependencies (Windows)
-        if: runner.os == 'Windows'
-        run: |
-          choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System' --yes
-
-      - name: Download and extract VTK SDK (Linux)
-        if: runner.os == 'Linux'
-        run: |
-          wget https://github.com/Kitware/VTK/releases/download/v${{ env.VTK_VERSION }}/VTK-${{ env.VTK_VERSION }}-Linux.tar.gz -O vtk.tar.gz
-          mkdir -p vtk-sdk
-          tar -xzf vtk.tar.gz -C vtk-sdk --strip-components=1
-
-      - name: Download and extract VTK SDK (macOS)
-        if: runner.os == 'macOS'
-        run: |
-          curl -L https://github.com/Kitware/VTK/releases/download/v${{ env.VTK_VERSION }}/VTK-${{ env.VTK_VERSION }}-macOS.tar.gz -o vtk.tar.gz
-          mkdir -p vtk-sdk
-          tar -xzf vtk.tar.gz -C vtk-sdk --strip-components=1
-
-      - name: Download and extract VTK SDK (Windows)
-        if: runner.os == 'Windows'
-        run: |
-          curl -L -o vtk.zip https://github.com/Kitware/VTK/releases/download/v${{ env.VTK_VERSION }}/VTK-${{ env.VTK_VERSION }}-Windows.zip
-          mkdir vtk-sdk
-          tar -xf vtk.zip -C vtk-sdk --strip-components=1
+      - name: Restore ITK build
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ github.workspace }}/itk-build
+            ${{ github.workspace }}/itk-install
+          key: ${{ runner.os }}-${{ runner.arch }}-itk-${{ env.ITK_VERSION }}
+          fail-on-cache-miss: true
 
       - name: Configure VMTK
+        shell: bash
         run: |
-          cmake -S . -B build -DVTK_DIR=${{ github.workspace }}/vtk-sdk/lib/cmake/vtk-${{ env.VTK_VERSION }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
+          # VTK and ITK install their cmake configs to lib/cmake/vtk-<major>.<minor>/ and
+          # lib/cmake/ITK-<major>.<minor>/, both omitting the patch version
+          VTK_VERSION_SHORT=$(echo "$VTK_VERSION" | cut -d. -f1,2)
+          ITK_VERSION_SHORT=$(echo "$ITK_VERSION" | cut -d. -f1,2)
+          # Convert workspace path to forward slashes (required on Windows where
+          # ${{ github.workspace }} uses backslashes that bash treats as escape chars)
+          WORKSPACE=$(echo "$GITHUB_WORKSPACE" | tr '\\' '/')
+          cmake -S . -B build \
+            -DUSE_SYSTEM_ITK=ON \
+            -DUSE_SYSTEM_VTK=ON \
+            -DVTK_DIR="${WORKSPACE}/vtk-install/lib/cmake/vtk-${VTK_VERSION_SHORT}" \
+            -DITK_DIR="${WORKSPACE}/itk-install/lib/cmake/ITK-${ITK_VERSION_SHORT}" \
+            -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} \
+            -DVTK_VMTK_WRAP_PYTHON=OFF \
+            -DVTK_WRAP_PYTHON=OFF
 
       - name: Build VMTK
+        shell: bash
         run: |
           cmake --build build --config ${{ env.BUILD_TYPE }} --parallel 2
 
       - name: Run tests
+        shell: bash
         run: |
           ctest --test-dir build --output-on-failure

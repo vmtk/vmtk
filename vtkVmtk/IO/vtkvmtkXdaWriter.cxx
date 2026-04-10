@@ -29,6 +29,7 @@ Version:   $Revision: 1.6 $
 #include "vtkIdTypeArray.h"
 #include "vtkObjectFactory.h"
 #include "vtkvmtkConstants.h"
+#include <iostream>
 
 
 vtkStandardNewMacro(vtkvmtkXdaWriter);
@@ -487,7 +488,7 @@ void vtkvmtkXdaWriter::GetLibmeshConnectivity(int cellType, vtkIdList* libmeshCo
       libmeshConnectivity->SetId(17,15);
       break;
     default:
-      cerr<<"Element type not currently supported in libmesh. Skipping element."<<endl;
+      std::cerr<<"Element type not currently supported in libmesh. Skipping element."<<std::endl;
       break;
     }
 }
@@ -556,7 +557,7 @@ void vtkvmtkXdaWriter::GetLibmeshFaceOrder(int cellType, vtkIdList* libmeshFaceO
       libmeshFaceOrder->SetId(4,1);
       break;
     default:
-      cerr<<"Element type not currently supported in libmesh. Skipping element."<<endl;
+      std::cerr<<"Element type not currently supported in libmesh. Skipping element."<<std::endl;
       break;
     }
 }

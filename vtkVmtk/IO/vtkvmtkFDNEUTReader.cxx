@@ -455,10 +455,6 @@ int vtkvmtkFDNEUTReader::ReadMeshSimple(const std::string& fname,
         singleEntityArray->InsertNextValue(entityCounter);
         delete[] cellPoints;
         }
-      else
-        {
-        cout<<"foo"<<endl;
-        }
       }
 #if 0
     entityArray->Delete();
