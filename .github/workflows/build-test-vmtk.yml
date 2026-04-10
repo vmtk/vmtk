@@ -42,25 +42,30 @@ jobs:
         run: |
           choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System' --yes
 
-      - name: Cache VTK build
-        id: cache-vtk
-        uses: actions/cache@v4
-        with:
-          path: |
-            ${{ github.workspace }}/vtk-build
-            ${{ github.workspace }}/vtk-install
-          key: ${{ runner.os }}-vtk-${{ env.VTK_VERSION }}
-
-      - name: Download and build VTK
-        if: steps.cache-vtk.outputs.cache-hit != 'true'
+      - name: Download and extract VTK SDK (Linux)
+        if: runner.os == 'Linux'
         run: |
-          git clone --branch v${{ env.VTK_VERSION }} https://github.com/Kitware/VTK.git vtk-src
-          cmake -S vtk-src -B vtk-build -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/vtk-install
-          cmake --build vtk-build --config ${{ env.BUILD_TYPE }} --target install --parallel 2
+          wget https://github.com/Kitware/VTK/releases/download/v${{ env.VTK_VERSION }}/VTK-${{ env.VTK_VERSION }}-Linux.tar.gz -O vtk.tar.gz
+          mkdir -p vtk-sdk
+          tar -xzf vtk.tar.gz -C vtk-sdk --strip-components=1
+
+      - name: Download and extract VTK SDK (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          curl -L https://github.com/Kitware/VTK/releases/download/v${{ env.VTK_VERSION }}/VTK-${{ env.VTK_VERSION }}-macOS.tar.gz -o vtk.tar.gz
+          mkdir -p vtk-sdk
+          tar -xzf vtk.tar.gz -C vtk-sdk --strip-components=1
+
+      - name: Download and extract VTK SDK (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          curl -L -o vtk.zip https://github.com/Kitware/VTK/releases/download/v${{ env.VTK_VERSION }}/VTK-${{ env.VTK_VERSION }}-Windows.zip
+          mkdir vtk-sdk
+          tar -xf vtk.zip -C vtk-sdk --strip-components=1
 
       - name: Configure VMTK
         run: |
-          cmake -S . -B build -DVTK_DIR=${{ github.workspace }}/vtk-install/lib/cmake/vtk-${{ env.VTK_VERSION }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
+          cmake -S . -B build -DVTK_DIR=${{ github.workspace }}/vtk-sdk/lib/cmake/vtk-${{ env.VTK_VERSION }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
 
       - name: Build VMTK
         run: |
