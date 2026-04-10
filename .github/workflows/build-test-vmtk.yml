@@ -1,0 +1,71 @@
+name: Build and Test VMTK with VTK 9.6
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build-test:
+    name: Build and Test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    env:
+      VTK_VERSION: "9.6.0"
+      BUILD_TYPE: Release
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake g++ libglu1-mesa-dev libxmu-dev libxi-dev
+
+      - name: Install dependencies (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          brew update
+          brew install cmake
+
+      - name: Install dependencies (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System' --yes
+
+      - name: Cache VTK build
+        id: cache-vtk
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ github.workspace }}/vtk-build
+            ${{ github.workspace }}/vtk-install
+          key: ${{ runner.os }}-vtk-${{ env.VTK_VERSION }}
+
+      - name: Download and build VTK
+        if: steps.cache-vtk.outputs.cache-hit != 'true'
+        run: |
+          git clone --branch v${{ env.VTK_VERSION }} https://github.com/Kitware/VTK.git vtk-src
+          cmake -S vtk-src -B vtk-build -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}/vtk-install
+          cmake --build vtk-build --config ${{ env.BUILD_TYPE }} --target install --parallel 2
+
+      - name: Configure VMTK
+        run: |
+          cmake -S . -B build -DVTK_DIR=${{ github.workspace }}/vtk-install/lib/cmake/vtk-${{ env.VTK_VERSION }} -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
+
+      - name: Build VMTK
+        run: |
+          cmake --build build --config ${{ env.BUILD_TYPE }} --parallel 2
+
+      - name: Run tests
+        run: |
+          ctest --test-dir build --output-on-failure
