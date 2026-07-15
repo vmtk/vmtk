@@ -1,10 +1,6 @@
 /*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit
-  Module:    $RCSfile: itkHessianSmoothed3DToVesselnessMeasureImageFilter.h,v $
-  Language:  C++
-  Date:      $Date: 2007/06/12 22:59:15 $
-  Version:   $Revision: 1.5 $
 
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
@@ -23,7 +19,8 @@
 namespace itk
 {
 /** \class HessianSmoothed3DToVesselnessMeasureImageFilter
- * \brief A filter to enhance 3D vascular structures 
+ * \brief Implements a filter to enhance 3D vascular structures.
+ * \ingroup Segmentation
  * 
  * The vesselness measure is based on the analysis of the the Hessian 
  * eigen system. The vesseleness function is a smoothed (continuous) 

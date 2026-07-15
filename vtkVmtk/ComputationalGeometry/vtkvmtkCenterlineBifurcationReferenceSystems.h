@@ -1,10 +1,6 @@
 /*=========================================================================
 
 Program:   VMTK
-Module:    $RCSfile: vtkvmtkCenterlineBifurcationReferenceSystems.h,v $
-Language:  C++
-Date:      $Date: 2006/04/06 16:46:43 $
-Version:   $Revision: 1.5 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -18,9 +14,22 @@ Version:   $Revision: 1.5 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkCenterlineBifurcationReferenceSystems - Generates a normal and upnormal reference system for each bifurcation point of a split centerline. 
-// .SECTION Description
-// The "normal" vector is the normal to the bifurcation plane (which is the best fit plane in relation to bifurcation reference points). The upnormal vector is normal to the "normal" vector pointing downstream from the parent artery. 
+/**
+ * @class   vtkvmtkCenterlineBifurcationReferenceSystems
+ * @brief   Generates a normal and upnormal reference system for each bifurcation point of a split centerline.
+ * @ingroup ComputationalGeometry
+ *
+ * The "normal" vector is the normal to the bifurcation plane (which is the best fit plane in relation to bifurcation reference points). The upnormal vector is normal to the "normal" vector pointing downstream from the parent artery.
+ *
+ * Takes as input centerlines that have already been split into branches (see
+ * vtkvmtkCenterlineSplittingAndGroupingFilter), and outputs a vtkPolyData of vertex points, one per
+ * bifurcation, with the reference system arrays as point data. This is the filter behind the
+ * vmtkbifurcationreferencesystems pype script; its output is consumed by
+ * vtkvmtkCenterlineBifurcationVectors to characterize branch angles at each bifurcation.
+ *
+ * @sa
+ * vtkvmtkCenterlineSplittingAndGroupingFilter, vtkvmtkCenterlineBifurcationVectors
+ */
 
 #ifndef __vtkvmtkCenterlineBifurcationReferenceSystems_h
 #define __vtkvmtkCenterlineBifurcationReferenceSystems_h
@@ -41,20 +50,57 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkCenterlineBifurcationReferen
 
   static vtkvmtkCenterlineBifurcationReferenceSystems* New();
 
+  ///@{
+  /**
+   * Set/Get the name of the point data array of the input centerlines holding the maximum inscribed
+   * sphere radius at each point. Required input.
+   * Commonly named "MaximumInscribedSphereRadius".
+   */
   vtkSetStringMacro(RadiusArrayName);
   vtkGetStringMacro(RadiusArrayName);
+  ///@}
 
+  ///@{
+  /**
+   * Set/Get the name of the cell data array of the input centerlines holding the branch group id of
+   * each cell. Required input; see vtkvmtkCenterlineSplittingAndGroupingFilter.
+   * Commonly named "GroupIds".
+   */
   vtkSetStringMacro(GroupIdsArrayName);
   vtkGetStringMacro(GroupIdsArrayName);
+  ///@}
 
+  ///@{
+  /**
+   * Set/Get the name of the cell data array of the input centerlines holding, for each cell, whether
+   * it is a "blanked" (redundant, overlapping) tract introduced by splitting -- blanked cells are
+   * excluded when identifying the branches meeting at each bifurcation.
+   * Commonly named "Blanking".
+   */
   vtkSetStringMacro(BlankingArrayName);
   vtkGetStringMacro(BlankingArrayName);
+  ///@}
 
+  ///@{
+  /**
+   * Set/Get the name of the 3-component point data array of the output reference systems where the
+   * bifurcation plane normal is stored for each bifurcation.
+   * Commonly named "Normal".
+   */
   vtkSetStringMacro(NormalArrayName);
   vtkGetStringMacro(NormalArrayName);
+  ///@}
 
+  ///@{
+  /**
+   * Set/Get the name of the 3-component point data array of the output reference systems where the
+   * "upnormal" (perpendicular to Normal, pointing downstream from the parent branch) is stored for
+   * each bifurcation.
+   * Commonly named "UpNormal".
+   */
   vtkSetStringMacro(UpNormalArrayName);
   vtkGetStringMacro(UpNormalArrayName);
+  ///@}
 
   protected:
   vtkvmtkCenterlineBifurcationReferenceSystems();

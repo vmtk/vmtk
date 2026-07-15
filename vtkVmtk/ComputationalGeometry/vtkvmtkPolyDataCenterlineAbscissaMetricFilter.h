@@ -1,10 +1,6 @@
 /*=========================================================================
 
   Program:   VMTK
-  Module:    $RCSfile: vtkvmtkPolyDataCenterlineAbscissaMetricFilter.h,v $
-  Language:  C++
-  Date:      $Date: 2006/04/06 16:46:43 $
-  Version:   $Revision: 1.3 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -18,9 +14,21 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkPolyDataCenterlineAbscissaMetricFilter - Project the abscissa metric of the nearest centerline point to every point of a surface.  
-// .SECTION Description
-// Briefly, each segment of a vascular network is topologically equivalent to a cylinder and can consequently be mapped onto a rectangular parametric space that allows both easier investigations and comparisons between different models and datasets. The parameterization is performed longitudinally by means of the curvilinear abscissa computed over the model centerlines and circumferentially, by the angular position of each point on the surface mesh with respect to the centerlines.
+/**
+ * @class   vtkvmtkPolyDataCenterlineAbscissaMetricFilter
+ * @brief   Project the abscissa metric of the nearest centerline point to every point of a surface.
+ * @ingroup ComputationalGeometry
+ *
+ * Briefly, each segment of a vascular network is topologically equivalent to a cylinder and can consequently be mapped onto a rectangular parametric space that allows both easier investigations and comparisons between different models and datasets. The parameterization is performed longitudinally by means of the curvilinear abscissa computed over the model centerlines and circumferentially, by the angular position of each point on the surface mesh with respect to the centerlines.
+ *
+ * Requires Centerlines to already carry an abscissa point data array (see
+ * vtkvmtkCenterlineAttributesFilter). This is the "longitudinal" half of the vmtkbranchmetrics pype
+ * script.
+ *
+ * @sa
+ * vtkvmtkPolyDataCenterlineMetricFilter, vtkvmtkPolyDataCenterlineAngularMetricFilter,
+ * vtkvmtkCenterlineAttributesFilter
+ */
 
 #ifndef __vtkvmtkPolyDataCenterlineAbscissaMetricFilter_h
 #define __vtkvmtkPolyDataCenterlineAbscissaMetricFilter_h
@@ -37,8 +45,16 @@ public:
   static vtkvmtkPolyDataCenterlineAbscissaMetricFilter* New();
   vtkTypeMacro(vtkvmtkPolyDataCenterlineAbscissaMetricFilter,vtkvmtkPolyDataCenterlineMetricFilter);
 
+  ///@{
+  /**
+   * Set/Get the name of the point data array of Centerlines holding the (precomputed) centerline
+   * abscissa to be projected onto the surface. Required input; see
+   * vtkvmtkCenterlineAttributesFilter.
+   * Commonly named "Abscissas".
+   */
   vtkSetStringMacro(AbscissasArrayName);
   vtkGetStringMacro(AbscissasArrayName);
+  ///@}
 
 protected:
   vtkvmtkPolyDataCenterlineAbscissaMetricFilter();

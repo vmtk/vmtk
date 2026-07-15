@@ -1,10 +1,6 @@
 /*=========================================================================
 
   Program:   VMTK
-  Module:    $RCSfile: vtkvmtkEmptyStencil.h,v $
-  Language:  C++
-  Date:      $Date: 2006/04/06 16:46:43 $
-  Version:   $Revision: 1.3 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -18,9 +14,20 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkEmptyStencil - create a stencil but do not apply a weighting to the neighborhoods of the data set.
-// .SECTION Description
-// ..
+/**
+ * @class   vtkvmtkEmptyStencil
+ * @brief   Create a stencil that does not apply any weighting to the neighborhoods of the data set.
+ * @ingroup DifferentialGeometry
+ *
+ * vtkvmtkEmptyStencil is the trivial vtkvmtkStencil implementation: Build() frees any existing
+ * point ids, weights, and center weight and leaves the stencil with zero points (unless
+ * ReallocateOnBuild is off and the stencil was already built, in which case Build() is a no-op). It
+ * is used as a placeholder item type (VTK_VMTK_EMPTY_STENCIL) for points that should not have real
+ * finite-difference/finite-element weights computed.
+ *
+ * @sa
+ * vtkvmtkStencil, vtkvmtkEmptyNeighborhood
+ */
 
 #ifndef __vtkvmtkEmptyStencil_h
 #define __vtkvmtkEmptyStencil_h
@@ -37,10 +44,14 @@ public:
   static vtkvmtkEmptyStencil* New();
   vtkTypeMacro(vtkvmtkEmptyStencil,vtkvmtkStencil);
 
-  // Description:
-  // Build the stencil.
+  /**
+   * Build the stencil.
+   */
   void Build() override;
 
+  /**
+   * Get the item type identifier, VTK_VMTK_EMPTY_STENCIL.
+   */
   virtual vtkIdType GetItemType() override {return VTK_VMTK_EMPTY_STENCIL;};
 
 protected:

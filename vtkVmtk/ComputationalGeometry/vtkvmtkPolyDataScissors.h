@@ -1,10 +1,6 @@
 /*=========================================================================
 
 Program:   VMTK
-Module:    $RCSfile: vtkvmtkPolyDataScissors.h,v $
-Language:  C++
-Date:      $Date: 2006/04/06 16:46:43 $
-Version:   $Revision: 1.4 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -18,9 +14,17 @@ Version:   $Revision: 1.4 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkPolyDataScissors - not implemented, try to cut a surface along a line. 
-// .SECTION Description
-// ...
+/**
+ * @class   vtkvmtkPolyDataScissors
+ * @brief   Not implemented / experimental. Cuts a surface open along a polyline that follows existing mesh edges, duplicating points so the two sides of the cut become topologically disconnected.
+ * @ingroup ComputationalGeometry
+ *
+ * For each internal segment of CutLine (a polyline whose points map to input surface points through
+ * CutLinePointIdsArrayName), this class attempts to duplicate the corresponding input point and
+ * reassign it, on one side of the cut, to the cells lying on that side, so that the surface can be
+ * opened up along the line (as with a pair of scissors). This is not part of any released pype script
+ * and should be considered experimental/unfinished.
+ */
 
 #ifndef __vtkvmtkPolyDataScissors_h
 #define __vtkvmtkPolyDataScissors_h
@@ -38,11 +42,24 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataScissors : public vt
   
   static vtkvmtkPolyDataScissors *New();
 
+  ///@{
+  /**
+   * Set/Get the poly data holding the line (polyline cells) along which the input surface should be
+   * cut open. Every point of CutLine must lie on an edge of the input mesh and carry, in
+   * CutLinePointIdsArrayName, the id of the corresponding input surface point.
+   */
   vtkSetObjectMacro(CutLine,vtkPolyData);
   vtkGetObjectMacro(CutLine,vtkPolyData);
+  ///@}
 
+  ///@{
+  /**
+   * Set/Get the name of the point data array on CutLine giving, for each cut line point, the id of
+   * the corresponding point on the input surface. Required input.
+   */
   vtkSetStringMacro(CutLinePointIdsArrayName);
   vtkGetStringMacro(CutLinePointIdsArrayName);
+  ///@}
   
   protected:
   vtkvmtkPolyDataScissors();

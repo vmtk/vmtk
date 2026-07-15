@@ -1,10 +1,6 @@
 /*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit
-  Module:    $RCSfile: itkAnisotropicDiffusionVesselEnhancementFunction.h,v $
-  Language:  C++
-  Date:      $Date: 2007/06/12 20:59:44 $
-  Version:   $Revision: 1.10 $
 
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
@@ -25,8 +21,9 @@ namespace itk {
 
 /** \class AnisotropicDiffusionVesselEnhancementFunction
  * \brief This class is a function object that is used
- * to create a solver filter for vessel enhancment diffuion equation 
+ * to create a solver filter for vessel enhancement diffusion equation
  * developed by Manniesing et al.
+ * \ingroup Segmentation
  *
  * \par References
  *  Manniesing, R, Viergever, MA, & Niessen, WJ (2006). Vessel Enhancing 

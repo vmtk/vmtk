@@ -1,10 +1,6 @@
 /*=========================================================================
 
 Program:   VMTK
-Module:    $RCSfile: vtkvmtkSimplifyVoronoiDiagram.h,v $
-Language:  C++
-Date:      $Date: 2006/04/06 16:46:43 $
-Version:   $Revision: 1.4 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -18,11 +14,16 @@ Version:   $Revision: 1.4 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkSimplifyVoronoiDiagram - Remove non essential Voronoi polygon points (little spikes).
-// .SECTION Description
-// This class identifies and removes Voronoi polygon points if they are used by one cell and they are not poles. This helps to get rid of noisy Voronoi diagram parts induced by non smooth surface point distribution. This operation has no effect on the accuracy of the computation of centerlines and of surface related quantities.
-// .SECTION See Also
-// vtkVoronoiDiagram3D
+/**
+ * @class   vtkvmtkSimplifyVoronoiDiagram
+ * @brief   Remove non essential Voronoi polygon points (little spikes).
+ * @ingroup ComputationalGeometry
+ *
+ * This class identifies and removes Voronoi polygon points if they are used by one cell and they are not poles. This helps to get rid of noisy Voronoi diagram parts induced by non smooth surface point distribution. This operation has no effect on the accuracy of the computation of centerlines and of surface related quantities.
+ *
+ * @sa
+ * vtkVoronoiDiagram3D
+ */
 
 #ifndef __vtkvmtkSimplifyVoronoiDiagram_h
 #define __vtkvmtkSimplifyVoronoiDiagram_h
@@ -46,30 +47,58 @@ public:
   vtkTypeMacro(vtkvmtkSimplifyVoronoiDiagram, vtkPolyDataAlgorithm);
   void PrintSelf(std::ostream& os, vtkIndent indent) override;
 
-  // Set/Get id list of Voronoi diagram points to preserve.
+  ///@{
+  /**
+   * Set/Get the ids of Voronoi diagram points that must never be removed, regardless of whether they
+   * would otherwise qualify for removal (used when Simplification is VTK_VMTK_REMOVE_BOUNDARY_POINTS,
+   * typically to protect the Voronoi poles). If IncludeUnremovable is off, cells referencing only
+   * points not in this list may still be entirely removed.
+   */
   vtkSetObjectMacro(UnremovablePointIds,vtkIdList);
   vtkGetObjectMacro(UnremovablePointIds,vtkIdList);
+  ///@}
 
-  // Set/Get id list of Voronoi diagram cells to preserve.
+  ///@{
+  /**
+   * Set/Get the ids of Voronoi diagram cells that must never be removed, regardless of whether they
+   * would otherwise qualify for removal (used when Simplification is VTK_VMTK_REMOVE_BOUNDARY_CELLS).
+   */
   vtkSetObjectMacro(UnremovableCellIds,vtkIdList);
   vtkGetObjectMacro(UnremovableCellIds,vtkIdList);
+  ///@}
 
-  // Description:
-  // Set/Get type of simplification.
+  ///@{
+  /**
+   * Set/Get type of simplification.
+   */
   vtkSetMacro(Simplification,int);
   vtkGetMacro(Simplification,int);
   void SetSimplificationToRemoveBoundaryPoints() {
   this->SetSimplification(VTK_VMTK_REMOVE_BOUNDARY_POINTS);};
   void SetSimplificationToRemoveBoundaryCells() {
   this->SetSimplification(VTK_VMTK_REMOVE_BOUNDARY_CELLS);};
+  ///@}
 
+  ///@{
+  /**
+   * Toggle whether points/cells listed in UnremovablePointIds/UnremovableCellIds (and the cells built
+   * from them) are kept in the output (on) or dropped entirely once simplification has otherwise
+   * converged (off). Only relevant when at least one such id was supplied. Default: on.
+   */
   vtkSetMacro(IncludeUnremovable,int);
   vtkGetMacro(IncludeUnremovable,int);
   vtkBooleanMacro(IncludeUnremovable,int);
+  ///@}
 
+  ///@{
+  /**
+   * Toggle limiting the simplification to a single pass over the Voronoi diagram cells, instead of
+   * iterating until no more points/cells qualify for removal. Default: off (iterate to convergence).
+   */
   vtkSetMacro(OnePassOnly,int);
   vtkGetMacro(OnePassOnly,int);
   vtkBooleanMacro(OnePassOnly,int);
+  ///@}
 
 protected:
   vtkvmtkSimplifyVoronoiDiagram();

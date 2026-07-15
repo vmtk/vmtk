@@ -1,10 +1,6 @@
 /*=========================================================================
 
 Program:   VMTK
-Module:    $RCSfile: vtkvmtkStreamlineClusteringFilter.h,v $
-Language:  C++
-Date:      $Date: 2006/07/17 09:53:14 $
-Version:   $Revision: 1.5 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -18,9 +14,17 @@ Version:   $Revision: 1.5 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkStreamlineClusteringFilter - Cluster streamlines based on Mahalanobis distance metric and K-Means clustering.
-// .SECTION Description
-// This class clusters streamlines.
+/**
+ * @class   vtkvmtkStreamlineClusteringFilter
+ * @brief   Cluster streamlines based on Mahalanobis distance metric and K-Means clustering.
+ * @ingroup Misc
+ *
+ * Groups the input polyline cells (streamlines, e.g. as produced by particle tracing on a CFD
+ * velocity field) into clusters of similar trajectories using K-Means clustering with a
+ * Mahalanobis distance metric between resampled streamline point sequences. The output is a copy
+ * of the input with an added cell data array identifying each streamline's cluster; the
+ * representative center streamline of each cluster is available via GetClusterCenters().
+ */
 
 #ifndef __vtkvmtkStreamlineClusteringFilter_h
 #define __vtkvmtkStreamlineClusteringFilter_h
@@ -37,6 +41,10 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkStreamlineClusteringFilter : public vtkPolyDat
 
   static vtkvmtkStreamlineClusteringFilter *New();
   
+  /**
+   * Get the representative center streamline of each cluster, one polyline cell per cluster, with
+   * the cluster id stored in a "Label" cell data array. Valid only after Update() has been called.
+   */
   vtkGetObjectMacro(ClusterCenters,vtkPolyData);
 
   protected:

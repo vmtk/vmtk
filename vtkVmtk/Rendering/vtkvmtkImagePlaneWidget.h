@@ -1,10 +1,6 @@
 /*=========================================================================
 
 Program:   VMTK 
-Module:    vtkvmtkImagePlaneWidget
-Language:  C++
-Date:      $Date: 2006/07/17 09:52:56 $
-Version:   $Revision: 1.1 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -18,9 +14,18 @@ Version:   $Revision: 1.1 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkImagePlaneWidget - generates an interactive widget used to browse through image data
-// .SECTION Description
-// ...
+/**
+ * @class   vtkvmtkImagePlaneWidget
+ * @brief   Generates an interactive widget used to browse through image data.
+ * @ingroup Rendering
+ *
+ * vtkvmtkImagePlaneWidget specializes vtkImagePlaneWidget, overriding its
+ * event-processing callback so that image slices can be stepped through
+ * (and the widget's cursor-driven controls modified) using Shift/Control
+ * qualified interactions in addition to the base class behavior. It is
+ * used by vmtk's interactive rendering windows to let the user scroll
+ * through an image plane while a surface or centerline is displayed.
+ */
 
 #ifndef __vtkvmtkImagePlaneWidget_h
 #define __vtkvmtkImagePlaneWidget_h

@@ -2,10 +2,31 @@
 // Hugo Gratama van Andel
 // Academic Medical Centre - University of Amsterdam
 // Dept. Biomedical Engineering  & Physics
-// .NAME vtkvmtkCurvedMPRImageFilter - creates a multiplanar reconstruction of an image along a centerline path.
-// .SECTION Description
-// ...
-
+/**
+ * @class   vtkvmtkCurvedMPRImageFilter
+ * @brief   Creates a multiplanar reconstruction of an image along a centerline path.
+ * @ingroup Misc
+ *
+ * This filter resamples an input image into a stack of 2D slices perpendicular to a centerline
+ * path, producing a "curved" multiplanar reconstruction (MPR) volume in which the out-of-plane
+ * (z) axis follows the centerline instead of a straight line. For each point of the first
+ * line/polyline cell found in Centerline, a reslicing plane is built from the local Frenet tangent
+ * (FrenetTangentArrayName, defining the through-plane direction) and a parallel-transported normal
+ * (ParallelTransportNormalsArrayName, defining the in-plane "up" direction, with their cross
+ * product giving the remaining in-plane axis); vtkImageReslice is then used to cubic-interpolate
+ * one square slice of InplaneOutputSize pixels and InplaneOutputSpacing spacing, centered on the
+ * centerline point, using ReslicingBackgroundLevel for samples that fall outside the input image.
+ * The resulting slices are stacked, one per centerline point, into the output image, whose
+ * out-of-plane spacing is the distance between the first two centerline points.
+ *
+ * This is the filter behind the vmtkimagecurvedmpr pype script, used to "straighten" a tortuous
+ * vessel image along its centerline (e.g. the FrenetTangent/ParallelTransportNormals arrays
+ * produced by vtkvmtkCenterlineAttributesFilter) for inspection or measurement without the
+ * foreshortening/obliquity of a single straight reformat.
+ *
+ * @sa
+ * vtkvmtkCenterlineAttributesFilter
+ */
 
 #ifndef __vtkvmtkCurvedMPRImageFilter_h
 #define __vtkvmtkCurvedMPRImageFilter_h
@@ -34,51 +55,80 @@ public:
 
   void PrintSelf(std::ostream& os, vtkIndent indent) override;
 
-  // Description: 
-  // Set/Get the centerline along which the MPR should be made
+  ///@{
+  /**
+   * Set/Get the centerline along which the MPR should be made
+   */
   vtkSetObjectMacro(Centerline,vtkPolyData);
   vtkGetObjectMacro(Centerline,vtkPolyData);
+  ///@}
  
-  // Description: 
-  // Set/Get the Inplane Output Spacing
+  ///@{
+  /**
+   * Set/Get the Inplane Output Spacing
+   */
   vtkSetVector2Macro(InplaneOutputSpacing,double);
   vtkGetVector2Macro(InplaneOutputSpacing,double);
+  ///@}
   
-  // Description:
-  // Set/Get the Inplane Output Size
+  ///@{
+  /**
+   * Set/Get the Inplane Output Size
+   */
   vtkSetVector2Macro(InplaneOutputSize,int);
   vtkGetVector2Macro(InplaneOutputSize,int);
+  ///@}
       
-  // Description:
-  // Set/Get the Back Ground Level of the Resliced Data
+  ///@{
+  /**
+   * Set/Get the Back Ground Level of the Resliced Data
+   */
   vtkSetMacro(ReslicingBackgroundLevel,double);
   vtkGetMacro(ReslicingBackgroundLevel,double);
+  ///@}
  
-   // Description:
-  // Set/Get the name of the FrenetTangentArray
+   ///@{
+   /**
+    * Set/Get the name of the FrenetTangentArray
+    * Commonly named "FrenetTangent".
+    */
   vtkSetStringMacro(FrenetTangentArrayName);
   vtkGetStringMacro(FrenetTangentArrayName); 
+   ///@}
 
-   // Description:
-  // Set/Get the name of the TransportNormalsArray
+   ///@{
+   /**
+    * Set/Get the name of the TransportNormalsArray
+    * Commonly named "ParallelTransportNormals".
+    */
   vtkSetStringMacro(ParallelTransportNormalsArrayName);
   vtkGetStringMacro(ParallelTransportNormalsArrayName); 
+   ///@}
 
-   // Description:
-  // Get the new OutputExtent, the inplane output extent is set by SetInplaneOutputSize, 
-  // the out-of-plane extent is defined by the number of centerline-points
+   ///@{
+   /**
+    * Get the new OutputExtent, the inplane output extent is set by SetInplaneOutputSize, the
+    * out-of-plane extent is defined by the number of centerline-points
+    */
   vtkGetVectorMacro(OutputExtent,int,6);
+   ///@}
 
-   // Description:
-  // Get the output origin. The point (0,0,0) is situated in the middle of the first MPR image 
-  // (at the place of the centerline)The Output Origin is defined by 
-  // the InplaneOutputSpacing and the InplaneOutputSize
+   ///@{
+   /**
+    * Get the output origin. The point (0,0,0) is situated in the middle of the first MPR image (at the
+    * place of the centerline)The Output Origin is defined by the InplaneOutputSpacing and the
+    * InplaneOutputSize
+    */
   vtkGetVectorMacro(OutputOrigin,double,3);
+   ///@}
 
-   // Description:
-  // Get the output spacing, the inplane output spacing is set by SetInplaneOutputSpacing, 
-  // the out-of-plane spacing is defined by the distance between the first two centerline-points
+   ///@{
+   /**
+    * Get the output spacing, the inplane output spacing is set by SetInplaneOutputSpacing, the
+    * out-of-plane spacing is defined by the distance between the first two centerline-points
+    */
   vtkGetVectorMacro(OutputSpacing,double,3);
+   ///@}
 
  protected:
   vtkvmtkCurvedMPRImageFilter();
@@ -87,8 +137,11 @@ public:
   template<class T>
   void FillSlice(T* outReslicePtr, T* outputImagePtr, int* resliceUpdateExtent, int* outExtent, vtkIdType* outputInc, int slice);
 //ETX
-  // Description:
-  // This method is called by the superclass and sets the update extent of the input image to the wholeextent 
+  ///@{
+  /**
+   * This method is called by the superclass and sets the update extent of the input image to the
+   * wholeextent
+   */
   virtual int RequestUpdateExtent (vtkInformation *, 
                                    vtkInformationVector **, 
                                    vtkInformationVector *) override;
@@ -102,6 +155,7 @@ public:
   virtual int RequestInformation  (vtkInformation * vtkNotUsed(request),
                                   vtkInformationVector **inputVector,
                                   vtkInformationVector *outputVector) override;
+  ///@}
 
   vtkPolyData * Centerline;
   double InplaneOutputSpacing[2];

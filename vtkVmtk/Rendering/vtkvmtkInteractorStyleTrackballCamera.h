@@ -1,10 +1,6 @@
 /*=========================================================================
 
 Program:   VMTK 
-Module:    vtkvmtkInteractorStyleTrackballCamera
-Language:  C++
-Date:      $Date: 2006/07/17 09:52:56 $
-Version:   $Revision: 1.1 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -18,9 +14,18 @@ Version:   $Revision: 1.1 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkInteractorStyleTrackballCamera - use the trackball camera style for 3d user ineteraction
-// .SECTION Description
-// ...
+/**
+ * @class   vtkvmtkInteractorStyleTrackballCamera
+ * @brief   Use the trackball camera style for 3D user interaction.
+ * @ingroup Rendering
+ *
+ * vtkvmtkInteractorStyleTrackballCamera specializes
+ * vtkInteractorStyleTrackballCamera, overriding OnChar() with a no-op so
+ * that none of VTK's default keyboard-character shortcuts (e.g. toggling
+ * wireframe mode, resetting the camera, picking) fire. vmtk's rendering
+ * windows use this to reserve the keyboard exclusively for their own
+ * key bindings while still keeping trackball-style mouse camera control.
+ */
 
 #ifndef __vtkvmtkInteractorStyleTrackballCamera_h
 #define __vtkvmtkInteractorStyleTrackballCamera_h

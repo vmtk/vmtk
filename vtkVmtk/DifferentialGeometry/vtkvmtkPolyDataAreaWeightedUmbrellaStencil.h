@@ -1,10 +1,6 @@
 /*=========================================================================
 
   Program:   VMTK
-  Module:    $RCSfile: vtkvmtkPolyDataAreaWeightedUmbrellaStencil.h,v $
-  Language:  C++
-  Date:      $Date: 2006/04/06 16:46:44 $
-  Version:   $Revision: 1.2 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -18,9 +14,22 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkPolyDataAreaWeightedUmbrellaStencil - Apply umbrella (laplacian) weighting to the neighborhood connections of a surface.
-// .SECTION Description
-// ..
+/**
+ * @class   vtkvmtkPolyDataAreaWeightedUmbrellaStencil
+ * @brief   Apply umbrella (laplacian) weighting to the neighborhood connections of a surface.
+ * @ingroup DifferentialGeometry
+ *
+ * vtkvmtkPolyDataAreaWeightedUmbrellaStencil builds, for each mesh point, a discrete Laplacian
+ * (umbrella-operator) stencil over its one-ring neighborhood, in which every neighbor initially
+ * receives an equal weight (1/N) and is then re-weighted by the area of the two triangles
+ * incident to the edge connecting it to the center point (see vtkvmtkMath::TriangleArea), summed
+ * into CenterWeight/Area, and finally scaled by ScaleWithArea and sign-flipped so it approximates
+ * the surface Laplace operator. It is one of the stencil types selectable through vtkvmtkStencils
+ * and vtkvmtkPolyDataMeanCurvature (VTK_VMTK_AREA_WEIGHTED_UMBRELLA_STENCIL) for mesh smoothing and
+ * curvature estimation.
+ *
+ * @sa vtkvmtkPolyDataManifoldStencil, vtkvmtkStencils, vtkvmtkPolyDataMeanCurvature
+ */
 
 #ifndef __vtkvmtkPolyDataAreaWeightedUmbrellaStencil_h
 #define __vtkvmtkPolyDataAreaWeightedUmbrellaStencil_h

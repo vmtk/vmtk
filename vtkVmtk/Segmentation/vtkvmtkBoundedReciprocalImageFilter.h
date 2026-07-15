@@ -1,10 +1,6 @@
 /*=========================================================================
 
 Program:   VMTK 
-Module:    $RCSfile: vtkvmtkBoundedReciprocalImageFilter.h,v $
-Language:  C++
-Date:      $Date: 2006/04/06 16:48:25 $
-Version:   $Revision: 1.3 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -23,10 +19,20 @@ Version:   $Revision: 1.3 $
 
 =========================================================================*/
 
-// .NAME vtkvmtkBoundedReciprocalImageFilter - Wrapper class around itk::BoundedReciprocalImageFilter
-// .SECTION Description
-// vtkvmtkBoundedReciprocalImageFilter
-
+/**
+ * @class   vtkvmtkBoundedReciprocalImageFilter
+ * @brief   Wraps itk::BoundedReciprocalImageFilter.
+ * @ingroup Segmentation
+ *
+ * vtkvmtkBoundedReciprocalImageFilter applies the pointwise mapping 1 / (1 + x) to every pixel of
+ * the (internally float-cast) input image, producing an output bounded in (0, 1]: large input values
+ * (e.g. high gradient magnitude) map to values near 0, while small input values map to values near 1.
+ * It takes no parameters. This is one of the ways the vmtkimagefeatures pype script turns a gradient
+ * magnitude image into a feature/speed image suitable for level-set segmentation, where low speed
+ * near vessel edges (high gradient) helps stop front propagation.
+ *
+ * @sa vtkvmtkSigmoidImageFilter, vtkvmtkGradientMagnitudeImageFilter
+ */
 
 #ifndef __vtkvmtkBoundedReciprocalImageFilter_h
 #define __vtkvmtkBoundedReciprocalImageFilter_h

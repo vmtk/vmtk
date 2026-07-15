@@ -1,10 +1,6 @@
 /*=========================================================================
 
 Program:   VMTK
-Module:    $RCSfile: vtkvmtkSurfaceDistance.h,v $
-Language:  C++
-Date:      $Date: 2006/04/06 16:47:48 $
-Version:   $Revision: 1.4 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -18,9 +14,13 @@ Version:   $Revision: 1.4 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkSurfaceDistance - calculate the euclidian distance of one surface from another
-// .SECTION Description
-// .
+/**
+ * @class   vtkvmtkSurfaceDistance
+ * @brief   Calculate the Euclidean distance of one surface from another.
+ * @ingroup Misc
+ *
+ * .
+ */
 
 #ifndef __vtkvmtkSurfaceDistance_h
 #define __vtkvmtkSurfaceDistance_h
@@ -39,25 +39,37 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkSurfaceDistance : public vtkPolyDataAlgorithm
 
   static vtkvmtkSurfaceDistance *New();
 
-  // Description:
-  // Set/Get the name of the array where the computed distance has to be stored.
+  ///@{
+  /**
+   * Set/Get the name of the array where the computed distance has to be stored.
+   */
   vtkSetStringMacro(DistanceArrayName);
   vtkGetStringMacro(DistanceArrayName);
+  ///@}
 
-  // Description:
-  // Set/Get the name of the array where the computed distance has to be stored.
+  ///@{
+  /**
+   * Set/Get the name of the array where the computed distance has to be stored.
+   */
   vtkSetStringMacro(SignedDistanceArrayName);
   vtkGetStringMacro(SignedDistanceArrayName);
+  ///@}
 
-  // Description:
-  // Set/Get the name of the array where the computed distance vectors have to be stored.
+  ///@{
+  /**
+   * Set/Get the name of the array where the computed distance vectors have to be stored.
+   */
   vtkSetStringMacro(DistanceVectorsArrayName);
   vtkGetStringMacro(DistanceVectorsArrayName);
+  ///@}
 
-  // Description:
-  // Set/Get the reference surface to compute distance from.
+  ///@{
+  /**
+   * Set/Get the reference surface to compute distance from.
+   */
   vtkSetObjectMacro(ReferenceSurface,vtkPolyData);
   vtkGetObjectMacro(ReferenceSurface,vtkPolyData);
+  ///@}
 
   protected:
   vtkvmtkSurfaceDistance();

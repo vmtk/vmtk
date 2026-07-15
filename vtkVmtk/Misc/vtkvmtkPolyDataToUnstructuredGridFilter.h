@@ -1,10 +1,6 @@
 /*=========================================================================
 
 Program:   VMTK
-Module:    $RCSfile: vtkvmtkPolyDataToUnstructuredGridFilter.h,v $
-Language:  C++
-Date:      $Date: 2006/04/06 16:47:48 $
-Version:   $Revision: 1.4 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -18,9 +14,22 @@ Version:   $Revision: 1.4 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkPolyDataToUnstructuredGridFilter - create a mesh type object from a surface type object
-// .SECTION Description
-// ...
+/**
+ * @class   vtkvmtkPolyDataToUnstructuredGridFilter
+ * @brief   Repackage a vtkPolyData surface as a vtkUnstructuredGrid, unchanged otherwise.
+ * @ingroup Misc
+ *
+ * This filter copies the points, cells (of whatever type they are -- vertices, lines,
+ * polygons, triangle strips), point data, and cell data of the input poly data into an
+ * unstructured grid output, without altering geometry, topology, or connectivity. It performs
+ * no interpolation, subdivision, or tetrahedralization: the output has exactly the same cells
+ * as the input, only represented with the more general vtkUnstructuredGrid data structure.
+ *
+ * This is used by the vmtksurfacetomesh pype script to turn a (typically triangulated) surface
+ * into the mesh representation ("vtkUnstructuredGrid") expected by vmtk's mesh I/O and mesh
+ * processing scripts, e.g. as a lightweight way to obtain a "surface mesh" prior to volumetric
+ * mesh generation.
+ */
 
 #ifndef __vtkvmtkPolyDataToUnstructuredGridFilter_h
 #define __vtkvmtkPolyDataToUnstructuredGridFilter_h

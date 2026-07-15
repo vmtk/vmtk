@@ -1,10 +1,6 @@
 /*=========================================================================
                                                                                                                                     
 Program:   VMTK
-Module:    $RCSfile: vtkvmtkFDNEUTReader.h,v $
-Language:  C++
-Date:      $Date: 2006/04/06 16:47:47 $
-Version:   $Revision: 1.6 $
                                                                                                                                     
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -18,11 +14,16 @@ Version:   $Revision: 1.6 $
      PURPOSE.  See the above copyright notices for more information.
                                                                                                                                     
 =========================================================================*/
-// .NAME vtkvmtkFDNEUTReader - Reads FDNEUT Fidap files.
-// .SECTION Description
-// vtkvmtkFDNEUTReader reads unstructured grid data from Fidap FDNEUT format
-// .SECTION See Also
-// vtkvmtkFDNEUTWriter
+/**
+ * @class   vtkvmtkFDNEUTReader
+ * @brief   Reads FDNEUT Fidap files.
+ * @ingroup IO
+ *
+ * vtkvmtkFDNEUTReader reads unstructured grid data from Fidap FDNEUT format
+ *
+ * @sa
+ * vtkvmtkFDNEUTWriter
+ */
 
 #ifndef __vtkvmtkFDNEUTReader_h
 #define __vtkvmtkFDNEUTReader_h
@@ -44,16 +45,41 @@ class VTK_VMTK_IO_EXPORT vtkvmtkFDNEUTReader : public vtkUnstructuredGridReader
 
   static vtkvmtkFDNEUTReader *New();
 
+  ///@{
+  /**
+   * Set/get the name of the cell data array where a per-element-group entity id is stored. Each
+   * FDNEUT "ELEMENT GROUPS" block encountered while reading is assigned an increasing integer id
+   * (starting at 0, in file order), and every cell belonging to that group is tagged with it in this
+   * array.
+   * Commonly named "CellEntityIds".
+   */
   vtkSetStringMacro(SingleCellDataEntityArrayName);
   vtkGetStringMacro(SingleCellDataEntityArrayName);
+  ///@}
 
+  ///@{
+  /**
+   * Set/get whether the extra "ghost" (mid-face/mid-volume) nodes present in some higher-order FDNEUT
+   * element types (e.g. the 9th node of a biquadratic quad, or the 27th node of a triquadratic
+   * hexahedron) are kept when building the output cells. When off, those extra nodes are discarded
+   * (read from the file but not stored) and the corresponding VTK quadratic (not biquadratic) cell
+   * type is produced instead. Default: on.
+   */
   vtkSetMacro(GhostNodes,int);
   vtkGetMacro(GhostNodes,int);
   vtkBooleanMacro(GhostNodes,int);
+  ///@}
 
+  ///@{
+  /**
+   * Set/get whether only volume elements (bricks, wedges, tetrahedra) are read, skipping surface
+   * elements (quadrilaterals, triangles) found in the file. Default: off (both volume and surface
+   * elements are read).
+   */
   vtkSetMacro(VolumeElementsOnly,int);
   vtkGetMacro(VolumeElementsOnly,int);
   vtkBooleanMacro(VolumeElementsOnly,int);
+  ///@}
 
   int ReadMeshSimple(VTK_FILEPATH const std::string& fname, vtkDataObject* output) override;
 

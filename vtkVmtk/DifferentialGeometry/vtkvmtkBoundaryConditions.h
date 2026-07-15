@@ -1,10 +1,6 @@
 /*=========================================================================
 
   Program:   VMTK
-  Module:    $RCSfile: vtkvmtkBoundaryConditions.h,v $
-  Language:  C++
-  Date:      $Date: 2006/04/06 16:46:43 $
-  Version:   $Revision: 1.3 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -18,9 +14,22 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkBoundaryConditions - Base class to store nodes, value, and linear system composing a boundary condition.
-// .SECTION Description
-// ..
+/**
+ * @class   vtkvmtkBoundaryConditions
+ * @brief   Serves as the base class that stores nodes, value, and the linear system composing a boundary condition.
+ * @ingroup DifferentialGeometry
+ *
+ * vtkvmtkBoundaryConditions holds the three ingredients needed to impose a boundary condition on a
+ * finite-element linear system: the vtkvmtkLinearSystem to modify, the list of node (row) ids the
+ * condition applies to (BoundaryNodes), and the prescribed value at each of those nodes
+ * (BoundaryValues). Apply() checks that all three are consistently set (in particular that
+ * BoundaryNodes and BoundaryValues have the same length) but performs no actual modification of the
+ * linear system; concrete subclasses (e.g. vtkvmtkDirichletBoundaryConditions) override Apply() to
+ * carry out the specific boundary condition type.
+ *
+ * @sa
+ * vtkvmtkDirichletBoundaryConditions, vtkvmtkLinearSystem, vtkvmtkEllipticProblem
+ */
 
 #ifndef __vtkvmtkBoundaryConditions_h
 #define __vtkvmtkBoundaryConditions_h
@@ -38,15 +47,38 @@ public:
 
   vtkTypeMacro(vtkvmtkBoundaryConditions,vtkObject);
 
+  ///@{
+  /**
+   * Set/get the linear system that the boundary condition is applied to when Apply() is called.
+   */
   vtkSetObjectMacro(LinearSystem,vtkvmtkLinearSystem);
   vtkGetObjectMacro(LinearSystem,vtkvmtkLinearSystem);
+  ///@}
 
+  ///@{
+  /**
+   * Set/get the list of node (linear system row) ids that the boundary condition applies to, in the
+   * same order as BoundaryValues.
+   */
   vtkSetObjectMacro(BoundaryNodes,vtkIdList);
   vtkGetObjectMacro(BoundaryNodes,vtkIdList);
+  ///@}
 
+  ///@{
+  /**
+   * Set/get the prescribed value at each node listed in BoundaryNodes, one value per node and in the
+   * same order.
+   */
   vtkSetObjectMacro(BoundaryValues,vtkDoubleArray);
   vtkGetObjectMacro(BoundaryValues,vtkDoubleArray);
+  ///@}
 
+  /**
+   * Impose the boundary condition on LinearSystem. This base class implementation only validates
+   * that LinearSystem, BoundaryNodes, and BoundaryValues are set and mutually consistent (same
+   * number of nodes and values); subclasses override this method to actually modify the system
+   * matrix and right-hand side.
+   */
   virtual void Apply();
 
 protected:

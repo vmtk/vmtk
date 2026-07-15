@@ -6,10 +6,13 @@
   or http://www.slicer.org/copyright/copyright.txt for details.
 
   Program:   vtkvmtkITK
-  Module:    $HeadURL: http://www.na-mic.org/svn/Slicer3/trunk/Libs/vtkITK/vtkITK.h $
-  Date:      $Date: 2006-12-21 13:21:52 +0100 (Thu, 21 Dec 2006) $
-  Version:   $Revision: 1900 $
 
 ==========================================================================*/
+
+/**
+ * @file
+ * @brief Common include pulling in the Utilities/vtkvmtkITK module's
+ * Windows export-macro header; included by every header in this module.
+ */
 
 #include "vtkvmtkWin32Header.h"

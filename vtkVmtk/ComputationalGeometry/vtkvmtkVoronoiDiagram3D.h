@@ -1,10 +1,6 @@
 /*=========================================================================
 
 Program:   VMTK
-Module:    $RCSfile: vtkvmtkVoronoiDiagram3D.h,v $
-Language:  C++
-Date:      $Date: 2006/04/06 16:46:43 $
-Version:   $Revision: 1.4 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -18,9 +14,13 @@ Version:   $Revision: 1.4 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkVoronoiDiagram3D - Compute the Voronoi diagram from a Delaunay tessellation or an internal Delaunay tessellation
-// .SECTION Description
-// This class computes the Voronoi diagram of a set of points given their Delaunay tessellation. Basically, the output points are Delaunay tetrahedra circumcenters, and the cells are convex polygons constructed by connecting circumcenters of tetrahedra sharing a face. The radius of the circumsphere associated with each circumcenter is stored in a point data array with name specifed by RadiusArrayName. The id list of poles is also provided. Poles are the farthest inner and outer Voronoi points associated with a Delaunay point. Since this class is meant to deal with Delaunay tessellations which are internal to a given surface, only the internal pole is considered for each input point.
+/**
+ * @class   vtkvmtkVoronoiDiagram3D
+ * @brief   Compute the Voronoi diagram from a Delaunay tessellation or an internal Delaunay tessellation.
+ * @ingroup ComputationalGeometry
+ *
+ * This class computes the Voronoi diagram of a set of points given their Delaunay tessellation. Basically, the output points are Delaunay tetrahedra circumcenters, and the cells are convex polygons constructed by connecting circumcenters of tetrahedra sharing a face. The radius of the circumsphere associated with each circumcenter is stored in a point data array with name specifed by RadiusArrayName. The id list of poles is also provided. Poles are the farthest inner and outer Voronoi points associated with a Delaunay point. Since this class is meant to deal with Delaunay tessellations which are internal to a given surface, only the internal pole is considered for each input point.
+ */
 
 #ifndef __vtkvmtkVoronoiDiagram3D_h
 #define __vtkvmtkVoronoiDiagram3D_h
@@ -45,14 +45,22 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkVoronoiDiagram3D : public vt
   //  vtkGetMacro(BuildLines,int);
   //  vtkBooleanMacro(BuildLines,int);
 
-  // Description:
-  // Set/Get the name of the point data array where circumsphere radius values are stored.
+  ///@{
+  /**
+   * Set/Get the name of the point data array where circumsphere radius values are stored.
+   * Commonly named "MaximumInscribedSphereRadius".
+   */
   vtkSetStringMacro(RadiusArrayName);
   vtkGetStringMacro(RadiusArrayName);
+  ///@}
 
-  // Description:
-  // Get the id list of poles. The id list has the same size as input points. For every input point, one Voronoi point id is stored in the list.
+  ///@{
+  /**
+   * Get the id list of poles. The id list has the same size as input points. For every input point, one
+   * Voronoi point id is stored in the list.
+   */
   vtkGetObjectMacro(PoleIds,vtkIdList);
+  ///@}
 
   protected:
   vtkvmtkVoronoiDiagram3D();

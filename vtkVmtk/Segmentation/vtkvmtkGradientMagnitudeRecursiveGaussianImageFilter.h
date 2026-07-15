@@ -1,10 +1,6 @@
 /*=========================================================================
 
 Program:   VMTK
-Module:    $RCSfile: vtkvmtkGradientMagnitudeRecursiveGaussianImageFilter.h,v $
-Language:  C++
-Date:      $Date: 2006/04/06 16:48:25 $
-Version:   $Revision: 1.3 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -23,10 +19,18 @@ Version:   $Revision: 1.3 $
 
 =========================================================================*/
 
-// .NAME vtkvmtkGradientMagnitudeRecursiveGaussianImageFilter - Wrapper class around itk::GradientMagnitudeRecursiveGaussianImageFilter
-// .SECTION Description
-// vtkvmtkGradientMagnitudeImageFilter
-
+/**
+ * @class   vtkvmtkGradientMagnitudeRecursiveGaussianImageFilter
+ * @brief   Wraps itk::GradientMagnitudeRecursiveGaussianImageFilter.
+ * @ingroup Segmentation
+ *
+ * Computes the magnitude of the gradient of the input image after Gaussian smoothing at scale
+ * Sigma, using ITK's efficient IIR (recursive) Gaussian derivative implementation rather than a
+ * discrete convolution kernel. Commonly used to build a speed/feature image for level-set
+ * segmentation (see vtkvmtkGeodesicActiveContourLevelSetImageFilter).
+ *
+ * @sa vtkvmtkGradientMagnitudeRecursiveGaussian2DImageFilter, vtkvmtkGradientMagnitudeImageFilter
+ */
 
 #ifndef __vtkvmtkGradientMagnitudeRecursiveGaussianImageFilter_h
 #define __vtkvmtkGradientMagnitudeRecursiveGaussianImageFilter_h
@@ -40,12 +44,24 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkGradientMagnitudeRecursiveGaussianImag
   static vtkvmtkGradientMagnitudeRecursiveGaussianImageFilter *New();
   vtkTypeMacro(vtkvmtkGradientMagnitudeRecursiveGaussianImageFilter, vtkSimpleImageToImageFilter);
 
+  ///@{
+  /**
+   * Set/Get the standard deviation of the Gaussian used to smooth the image before differentiating,
+   * in the same physical units as the image spacing.
+   */
   vtkGetMacro(Sigma,double);
   vtkSetMacro(Sigma,double);
+  ///@}
 
+  ///@{
+  /**
+   * Toggle normalizing the derivative across scale space (ITK's SetNormalizeAcrossScale), which
+   * keeps gradient magnitudes comparable across different Sigma values. Default: off.
+   */
   vtkGetMacro(NormalizeAcrossScale,int);
   vtkSetMacro(NormalizeAcrossScale,int);
   vtkBooleanMacro(NormalizeAcrossScale,int);
+  ///@}
 
 protected:
   vtkvmtkGradientMagnitudeRecursiveGaussianImageFilter();

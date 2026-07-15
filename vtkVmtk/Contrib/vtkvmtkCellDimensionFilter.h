@@ -1,10 +1,6 @@
 /*=========================================================================
 
   Program:   VMTK
-  Module:    $RCSfile: vtkvmtkCellDimensionFilter.h,v $
-  Language:  C++
-  Date:      $$
-  Version:   $$
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -22,9 +18,18 @@
 	Kalkulo AS
 	Simula Research Laboratory
 =========================================================================*/
-// .NAME vtkvmtkCellDimensionFilter - Threshold all cells of a given dimension, output to an unstructured grid
-// .SECTION Description
-// ..
+/**
+ * @class   vtkvmtkCellDimensionFilter
+ * @brief   Threshold all cells of a given dimension, output to an unstructured grid.
+ * @ingroup Contrib
+ *
+ * vtkvmtkCellDimensionFilter selects the cells of the input data set whose
+ * topological dimension (0 for vertices, 1 for lines, 2 for polygons, 3 for
+ * solids) satisfies a threshold criterion set with ThresholdByLower(),
+ * ThresholdByUpper(), or ThresholdBetween(), and outputs them as an
+ * unstructured grid. It is a thin wrapper around vtkThreshold applied to
+ * a cell-dimension array.
+ */
 
 #ifndef __vtkvmtkCellDimensionFilter_h
 #define __vtkvmtkCellDimensionFilter_h
@@ -44,23 +49,29 @@ class VTK_VMTK_CONTRIB_EXPORT vtkvmtkCellDimensionFilter : public vtkUnstructure
 
   static vtkvmtkCellDimensionFilter* New();
 
-  // Description:
-  // Criterion is cells whose dimension is less or equal to lower threshold.
+  /**
+   * Criterion is cells whose dimension is less or equal to lower threshold.
+   */
   void ThresholdByLower(int lower);
 
-  // Description:
-  // Criterion is cells whose dimension is greater or equal to upper threshold.
+  /**
+   * Criterion is cells whose dimension is greater or equal to upper threshold.
+   */
   void ThresholdByUpper(int upper);
 
-  // Description:
-  // Criterion is cells whose dimension is between lower and upper thresholds
-  // (inclusive of the end values).
+  /**
+   * Criterion is cells whose dimension is between lower and upper thresholds (inclusive of the end
+   * values).
+   */
   void ThresholdBetween(int lower, int upper);
   
-  // Description:
-  // Get the Upper and Lower thresholds.
+  ///@{
+  /**
+   * Get the Upper and Lower thresholds.
+   */
   virtual int GetUpperThreshold();
   virtual int GetLowerThreshold();
+  ///@}
 
   protected:
   vtkvmtkCellDimensionFilter();

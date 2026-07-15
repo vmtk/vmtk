@@ -1,10 +1,6 @@
 /*=========================================================================
 
 Program:   VMTK
-Module:    $RCSfile: vtkvmtkMeshProjection.h,v $
-Language:  C++
-Date:      $Date: 2006/07/17 09:53:14 $
-Version:   $Revision: 1.1 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -18,9 +14,16 @@ Version:   $Revision: 1.1 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-  // .NAME vtkvmtkMeshProjection - Project point data from a reference mesh onto a query mesh.
-  // .SECTION Description
-  // .
+/**
+ * @class   vtkvmtkMeshProjection
+ * @brief   Project point data from a reference mesh onto a query mesh.
+ * @ingroup Misc
+ *
+ * For each point of the input (query) mesh, finds the enclosing cell (within Tolerance) of
+ * ReferenceMesh and interpolates every point data array present there onto the query point. Used,
+ * e.g., to transfer a computed solution (velocity, pressure, wall shear stress) from one mesh
+ * discretization onto another (differently meshed or remeshed) geometry.
+ */
 
 #ifndef __vtkvmtkMeshProjection_h
 #define __vtkvmtkMeshProjection_h
@@ -37,11 +40,22 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkMeshProjection : public vtkUnstructuredGridAlg
 
   static vtkvmtkMeshProjection *New();
 
+  ///@{
+  /**
+   * Set/Get the mesh whose point data is projected onto the input (query) mesh. Required input.
+   */
   vtkSetObjectMacro(ReferenceMesh,vtkUnstructuredGrid);
   vtkGetObjectMacro(ReferenceMesh,vtkUnstructuredGrid);
+  ///@}
 
+  ///@{
+  /**
+   * Set/Get the parametric-coordinate tolerance used when locating the ReferenceMesh cell enclosing
+   * each query point.
+   */
   vtkSetMacro(Tolerance,double);
   vtkGetMacro(Tolerance,double);
+  ///@}
 
   protected:
   vtkvmtkMeshProjection();

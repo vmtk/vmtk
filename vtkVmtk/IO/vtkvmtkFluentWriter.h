@@ -1,10 +1,6 @@
 /*=========================================================================
                                                                                                                                     
 Program:   VMTK
-Module:    $RCSfile: vtkvmtkFluentWriter.h,v $
-Language:  C++
-Date:      $Date: 2006/04/06 16:47:47 $
-Version:   $Revision: 1.2 $
                                                                                                                                     
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -18,11 +14,15 @@ Version:   $Revision: 1.2 $
      PURPOSE.  See the above copyright notices for more information.
                                                                                                                                     
 =========================================================================*/
-// .NAME vtkvmtkFluentWriter - writes Fluent .msh files.
-// .SECTION Description
-// vtkvmtkFluentWriter writes Fluent .msh files. Many thanks to M. Xenos, Y. Alemu and D. Bluestein, BioFluids Laboratory, Stony Brook University, Stony Brook, NY, for the inputs on the file format.
-//
-// .SECTION See Also
+/**
+ * @class   vtkvmtkFluentWriter
+ * @brief   Writes Fluent .msh files.
+ * @ingroup IO
+ *
+ * vtkvmtkFluentWriter writes Fluent .msh files. Many thanks to M. Xenos, Y. Alemu and D. Bluestein, BioFluids Laboratory, Stony Brook University, Stony Brook, NY, for the inputs on the file format.
+ *
+ *
+ */
 
 #ifndef __vtkvmtkFluentWriter_h
 #define __vtkvmtkFluentWriter_h
@@ -41,8 +41,17 @@ public:
   vtkTypeMacro(vtkvmtkFluentWriter,vtkUnstructuredGridWriter);
   void PrintSelf(std::ostream& os, vtkIndent indent) override;
 
+  ///@{
+  /**
+   * Set/get the name of the input cell data array holding integer boundary zone ids for the boundary
+   * (triangle) cells. Triangles sharing the same array value are grouped into one Fluent boundary
+   * face zone ("wall surface<N>") in the output .msh file. If left NULL (default), all boundary
+   * triangles are written as a single zone with id 0.
+   * Commonly named "CellEntityIds".
+   */
   vtkSetStringMacro(BoundaryDataArrayName);
   vtkGetStringMacro(BoundaryDataArrayName);
+  ///@}
 
 protected:
   vtkvmtkFluentWriter();

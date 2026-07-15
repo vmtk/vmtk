@@ -1,10 +1,6 @@
 /*=========================================================================
 
 Program:   VMTK
-Module:    $RCSfile: vtkvmtkMeshVorticity.h,v $
-Language:  C++
-Date:      $Date: 2006/07/27 08:28:36 $
-Version:   $Revision: 1.1 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -18,9 +14,21 @@ Version:   $Revision: 1.1 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkMeshVorticity - Calculates vorticity from velocity gradients in a mesh.
-// .SECTION Description
-// .
+/**
+ * @class   vtkvmtkMeshVorticity
+ * @brief   Calculates vorticity from velocity gradients in a mesh.
+ * @ingroup Misc
+ *
+ * Computes the full 3x3 velocity gradient tensor of the 3-component point data array named
+ * VelocityArrayName using vtkvmtkUnstructuredGridGradientFilter (finite-element L2 projection,
+ * Gauss quadrature order QuadratureOrder, solved to ConvergenceTolerance), then derives the
+ * vorticity (curl) from the antisymmetric part of that tensor and stores it in the point data array
+ * named VorticityArrayName. Unlike vtkvmtkUnstructuredGridVorticityFilter (which assembles the curl
+ * directly, one component at a time, via vtkvmtkUnstructuredGridFEVorticityAssembler), this class
+ * goes through the full gradient tensor.
+ *
+ * @sa vtkvmtkUnstructuredGridGradientFilter, vtkvmtkUnstructuredGridVorticityFilter
+ */
 
 #ifndef __vtkvmtkMeshVorticity_h
 #define __vtkvmtkMeshVorticity_h
@@ -37,21 +45,52 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkMeshVorticity : public vtkUnstructuredGridAlgo
 
   static vtkvmtkMeshVorticity *New();
 
+  ///@{
+  /**
+   * Set/Get the name of the 3-component point data array holding the velocity field. Required
+   * input.
+   */
   vtkSetStringMacro(VelocityArrayName);
   vtkGetStringMacro(VelocityArrayName);
- 
+  ///@}
+
+  ///@{
+  /**
+   * Set/Get the name of the output 3-component point data array where the computed vorticity is
+   * stored. If not set, "Vorticity" is used.
+   */
   vtkSetStringMacro(VorticityArrayName);
   vtkGetStringMacro(VorticityArrayName);
- 
+  ///@}
+
+  ///@{
+  /**
+   * Toggle assembling and solving each partial derivative of the velocity gradient as a separate
+   * linear system, instead of assembling the full gradient in a single system. See
+   * vtkvmtkUnstructuredGridGradientFilter::ComputeIndividualPartialDerivatives. Default: off.
+   */
   vtkSetMacro(ComputeIndividualPartialDerivatives,int);
   vtkGetMacro(ComputeIndividualPartialDerivatives,int);
   vtkBooleanMacro(ComputeIndividualPartialDerivatives,int);
+  ///@}
 
+  ///@{
+  /**
+   * Set/Get the convergence tolerance of the iterative linear solver used to solve the
+   * finite-element gradient projection.
+   */
   vtkSetMacro(ConvergenceTolerance,double);
   vtkGetMacro(ConvergenceTolerance,double);
+  ///@}
 
+  ///@{
+  /**
+   * Set/Get the order of the Gauss quadrature rule used to integrate the finite-element gradient
+   * matrices.
+   */
   vtkSetMacro(QuadratureOrder,int);
   vtkGetMacro(QuadratureOrder,int);
+  ///@}
 
   protected:
   vtkvmtkMeshVorticity();

@@ -1,10 +1,6 @@
 /*=========================================================================
 
   Program:   VMTK
-  Module:    $RCSfile: vtkvmtkUnstructuredGridFEVorticityAssembler.h,v $
-  Language:  C++
-  Date:      $Date: 2006/04/06 16:46:44 $
-  Version:   $Revision: 1.4 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -18,9 +14,17 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkUnstructuredGridFEVorticityAssembler - Construct a vorticity based finite element calculation on a mesh.
-// .SECTION Description
-// ..
+/**
+ * @class   vtkvmtkUnstructuredGridFEVorticityAssembler
+ * @brief   Construct a vorticity based finite element calculation on a mesh.
+ * @ingroup DifferentialGeometry
+ *
+ * Assembles, over a vtkUnstructuredGrid, the finite-element right-hand side for a single component
+ * (Direction) of the vorticity field (curl) of the 3-component point data velocity array named
+ * VelocityArrayName. Used internally by vtkvmtkUnstructuredGridVorticityFilter.
+ *
+ * @sa vtkvmtkFEAssembler, vtkvmtkUnstructuredGridVorticityFilter
+ */
 
 #ifndef __vtkvmtkUnstructuredGridFEVorticityAssembler_h
 #define __vtkvmtkUnstructuredGridFEVorticityAssembler_h
@@ -35,13 +39,26 @@ public:
   static vtkvmtkUnstructuredGridFEVorticityAssembler* New();
   vtkTypeMacro(vtkvmtkUnstructuredGridFEVorticityAssembler,vtkvmtkFEAssembler);
 
+  /**
+   * Assemble the vorticity right-hand side for component Direction.
+   */
   virtual void Build() override;
 
+  ///@{
+  /**
+   * Set/Get the name of the 3-component point data array holding the velocity field.
+   */
   vtkSetStringMacro(VelocityArrayName);
   vtkGetStringMacro(VelocityArrayName);
+  ///@}
 
+  ///@{
+  /**
+   * Set/Get the coordinate direction (0=x, 1=y, 2=z) of the vorticity component being assembled for.
+   */
   vtkSetMacro(Direction,int);
   vtkGetMacro(Direction,int);
+  ///@}
 
 protected:
   vtkvmtkUnstructuredGridFEVorticityAssembler();

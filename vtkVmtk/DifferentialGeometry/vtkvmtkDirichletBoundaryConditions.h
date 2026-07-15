@@ -1,10 +1,6 @@
 /*=========================================================================
 
   Program:   VMTK
-  Module:    $RCSfile: vtkvmtkDirichletBoundaryConditions.h,v $
-  Language:  C++
-  Date:      $Date: 2006/04/06 16:46:43 $
-  Version:   $Revision: 1.3 $
 
   Copyright (c) Luca Antiga 
 
@@ -20,9 +16,23 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkDirichletBoundaryConditions - Set up a Dirichlet (or first-type) boundary conditions that a linear system needs to take along the boundary of the domain.
-// .SECTION Description
-// ..
+/**
+ * @class   vtkvmtkDirichletBoundaryConditions
+ * @brief   Set up Dirichlet (or first-type) boundary conditions that a linear system needs to take along the boundary of the domain.
+ * @ingroup DifferentialGeometry
+ *
+ * vtkvmtkDirichletBoundaryConditions imposes a Dirichlet (essential) boundary condition on
+ * LinearSystem's sparse matrix A and right-hand side vector B: for every node listed in
+ * BoundaryNodes, the corresponding row of A is zeroed out except for a unit diagonal entry, and B
+ * is set to the prescribed BoundaryValues entry, so that the solution x is forced to take that
+ * value at the node. To preserve symmetry of the reduced system, the boundary node's column is also
+ * eliminated from every other row, moving its known contribution to the right-hand side. This is
+ * the standard way vmtk's finite-element solvers (e.g. distance-to-boundary / Laplacian-type
+ * problems) impose fixed values on a subset of nodes, typically the mesh boundary.
+ *
+ * @sa
+ * vtkvmtkBoundaryConditions, vtkvmtkLinearSystem, vtkvmtkEllipticProblem
+ */
 
 #ifndef __vtkvmtkDirichletBoundaryConditions_h
 #define __vtkvmtkDirichletBoundaryConditions_h

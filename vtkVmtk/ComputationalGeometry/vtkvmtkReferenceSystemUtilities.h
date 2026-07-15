@@ -1,10 +1,6 @@
 /*=========================================================================
 
 Program:   VMTK
-Module:    $RCSfile: vtkvmtkReferenceSystemUtilities.h,v $
-Language:  C++
-Date:      $Date: 2006/04/06 16:46:43 $
-Version:   $Revision: 1.2 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -18,9 +14,21 @@ Version:   $Revision: 1.2 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkReferenceSystemUtilities - Utility function to get the reference system point id of a group. 
-// .SECTION Description
-// ..
+/**
+ * @class   vtkvmtkReferenceSystemUtilities
+ * @brief   Utility functions for looking up branch reference system points by group id.
+ * @ingroup ComputationalGeometry
+ *
+ * A reference systems poly data (as produced e.g. by vtkvmtkCenterlineBranchExtractor /
+ * vtkvmtkCenterlineBifurcationReferenceSystems) stores one point per branch group, tagged with the
+ * group's id in a point data array. This class provides a static helper to find the point id
+ * corresponding to a given group id, used by other filters (e.g.
+ * vtkvmtkPolyDataReferenceSystemBoundaryMetricFilter) that need to relate a branch to its reference
+ * system origin.
+ *
+ * @sa
+ * vtkvmtkPolyDataReferenceSystemBoundaryMetricFilter, vtkvmtkCenterlineBifurcationReferenceSystems
+ */
 
 #ifndef __vtkvmtkReferenceSystemUtilities_h
 #define __vtkvmtkReferenceSystemUtilities_h
@@ -37,6 +45,10 @@ public:
   vtkTypeMacro(vtkvmtkReferenceSystemUtilities,vtkObject);
   static vtkvmtkReferenceSystemUtilities* New();
 
+  /**
+   * Return the id of the point of referenceSystems whose groupIdsArrayName point data value equals
+   * groupId, or -1 if no such point is found.
+   */
   static vtkIdType GetReferenceSystemPointId(vtkPolyData* referenceSystems, const char* groupIdsArrayName, vtkIdType groupId);
   
 protected:

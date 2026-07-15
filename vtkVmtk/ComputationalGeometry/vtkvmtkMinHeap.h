@@ -1,10 +1,6 @@
 /*=========================================================================
 
 Program:   VMTK
-Module:    $RCSfile: vtkvmtkMinHeap.h,v $
-Language:  C++
-Date:      $Date: 2006/04/06 16:46:43 $
-Version:   $Revision: 1.3 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -18,17 +14,23 @@ Version:   $Revision: 1.3 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkMinHeap - Implementation of the min heap data structure.
-// .SECTION Description
-// This class is an implementation of the min heap data structure, used to handle a set of values in such a way that the retrieval of the minimum element takes constant time. A min heap is a complete binary tree where the value at each node is equal or less than the value at its children, and it is represented as an array where the children of a node stored at location k are at location 2k and 2k+1 (so that the parent of k is located at k/2). Keeping the min heap ordered after a value is updated or an id is inserted in teh heap takes O(log N). 
-//
-// In the present implementation, values are provided in a vtkDoubleArray, and element ids are inserted in the heap. Backpointers are used to access the heap by id. This class is optimized for working in conjunction with vtkNonManifoldFastMarching.
-//
-// For more insight see J.A. Sethian, Level Set Methods and Fast Marching Methods, Cambridge University Press, 2nd Edition, 1999.
-// .SECTION Caveats
-// Be sure to call Initialize() after defining MinHeapScalars.
-// .SECTION See Also
-// vtkNonManifoldFastMarching
+/**
+ * @class   vtkvmtkMinHeap
+ * @brief   Implements the min-heap data structure.
+ * @ingroup ComputationalGeometry
+ *
+ * This class is an implementation of the min heap data structure, used to handle a set of values in such a way that the retrieval of the minimum element takes constant time. A min heap is a complete binary tree where the value at each node is equal or less than the value at its children, and it is represented as an array where the children of a node stored at location k are at location 2k and 2k+1 (so that the parent of k is located at k/2). Keeping the min heap ordered after a value is updated or an id is inserted in teh heap takes O(log N).
+ *
+ * In the present implementation, values are provided in a vtkDoubleArray, and element ids are inserted in the heap. Backpointers are used to access the heap by id. This class is optimized for working in conjunction with vtkNonManifoldFastMarching.
+ *
+ * For more insight see J.A. Sethian, Level Set Methods and Fast Marching Methods, Cambridge University Press, 2nd Edition, 1999.
+ *
+ * @warning
+ * Be sure to call Initialize() after defining MinHeapScalars.
+ *
+ * @sa
+ * vtkNonManifoldFastMarching
+ */
 
 #ifndef __vtkvmtkMinHeap_h
 #define __vtkvmtkMinHeap_h
@@ -46,33 +48,43 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkMinHeap : public vtkObject
 
   static vtkvmtkMinHeap *New();
   
-  // Description:
-  // Initializes the heap to an empty state and prepares back pointers. Calls this method before using the min heap once MinHeapScalars have been defined.
+  /**
+   * Initializes the heap to an empty state and prepares back pointers. Calls this method before using
+   * the min heap once MinHeapScalars have been defined.
+   */
   void Initialize();
 
-  // Description:
-  // Set/Get the array containing the values indexed by the min heap.
+  ///@{
+  /**
+   * Set/Get the array containing the values indexed by the min heap.
+   */
   vtkSetObjectMacro(MinHeapScalars,vtkDoubleArray);
   vtkGetObjectMacro(MinHeapScalars,vtkDoubleArray);
+  ///@}
 
-  // Description:
-  // Get heap size.
+  /**
+   * Get heap size.
+   */
   int GetSize();
 
-  // Description:
-  // Insert an index to a value in HeapScalars in the min heap.
+  /**
+   * Insert an index to a value in HeapScalars in the min heap.
+   */
   void InsertNextId(vtkIdType id);
 
-  // Description:
-  // Tells the min heap that the value indexed by id has changed in MinHeapScalars array.
+  /**
+   * Tells the min heap that the value indexed by id has changed in MinHeapScalars array.
+   */
   void UpdateId(vtkIdType id);
 
-  // Description:
-  // Gets the id of the minimum value in the min heap.
+  /**
+   * Gets the id of the minimum value in the min heap.
+   */
   vtkIdType GetMin();
 
-  // Description:
-  // Gets the id of the minimum value in the min heap and removes it from the min heap.
+  /**
+   * Gets the id of the minimum value in the min heap and removes it from the min heap.
+   */
   vtkIdType RemoveMin();
 
   protected:

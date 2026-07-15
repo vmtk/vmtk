@@ -6,9 +6,6 @@
   or http://www.slicer.org/copyright/copyright.txt for details.
 
   Program:   vtkITK
-  Module:    $HeadURL$
-  Date:      $Date$
-  Version:   $Revision$
 
 ==========================================================================*/
 
@@ -19,6 +16,17 @@
 
 #include "itkImageFileReader.h"
 
+/**
+ * @class   vtkvmtkITKArchetypeImageSeriesScalarReader
+ * @brief   Read a series of files into a single-component (scalar) volume.
+ * @ingroup Utilities
+ *
+ * Specializes vtkvmtkITKArchetypeImageSeriesReader for single-component
+ * pixel types, reading the series through ITK's itk::ImageSeriesReader /
+ * itk::ImageFileReader and exporting the result as a scalar vtkImageData.
+ *
+ * @sa vtkvmtkITKArchetypeImageSeriesReader
+ */
 class VTK_VMTK_ITK_EXPORT vtkvmtkITKArchetypeImageSeriesScalarReader : public vtkvmtkITKArchetypeImageSeriesReader
 {
  public:

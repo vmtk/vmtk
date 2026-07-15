@@ -1,10 +1,6 @@
 /*=========================================================================
 
   Program:   VMTK
-  Module:    $RCSfile: vtkvmtkPolyDataDiscreteElasticaFilter.h,v $
-  Language:  C++
-  Date:      $Date: 2006/04/06 16:46:44 $
-  Version:   $Revision: 1.5 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -18,8 +14,16 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkPolyDataDiscreteElasticaFilter - Not implemented; smooth a surface with via an elastic forces method.
-// .SECTION Description
+/**
+ * @class   vtkvmtkPolyDataDiscreteElasticaFilter
+ * @brief   Not implemented; smooths a surface via an elastic-forces method.
+ * @ingroup DifferentialGeometry
+ *
+ * vtkvmtkPolyDataDiscreteElasticaFilter is a placeholder vtkPolyDataAlgorithm: its RequestData body
+ * (an iterative mean/Gaussian-curvature-driven point displacement scheme, intended as a discrete
+ * "elastica" surface-smoothing method) is currently disabled at compile time (guarded out with
+ * "#if 0" in the .cxx file), so this class has no functional implementation and should not be used.
+ */
 
 #ifndef __vtkvmtkPolyDataDiscreteElasticaFilter_h
 #define __vtkvmtkPolyDataDiscreteElasticaFilter_h

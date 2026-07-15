@@ -1,10 +1,6 @@
 /*=========================================================================
 
   Program:   VMTK
-  Module:    $RCSfile: vtkvmtkBoundaryLayerGenerator2.h,v $
-  Language:  C++
-  Date:      $$
-  Version:   $$
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -22,9 +18,15 @@
 	Kalkulo AS
 	Simula Research Laboratory
 =========================================================================*/
-// .NAME vtkvmtkBoundaryLayerGenerator2 - Extended version of vtkvmtkBoundaryLayerGenerator 
-// .SECTION Description
-// This version allows finer control on the surfaces to be included. If the original surface has open profiles, a surface can be extracted from them as well. The points on the open profiles may be specified with an array (OpenProfilesIdsArrayName). A value of -1 in this array specifies a point on the interior of the surface. Cell entity ids can also be output for the volume and surface elements. Surface elements are numbered in increasing numbers, using the openProfilesIds if specified.
+/**
+ * @class   vtkvmtkBoundaryLayerGenerator2
+ * @brief   Provides an extended version of vtkvmtkBoundaryLayerGenerator.
+ * @ingroup Contrib
+ *
+ * This version allows finer control on the surfaces to be included. If the original surface has open profiles, a surface can be extracted from them as well. The points on the open profiles may be specified with an array (OpenProfilesIdsArrayName). A value of -1 in this array specifies a point on the interior of the surface. Cell entity ids can also be output for the volume and surface elements. Surface elements are numbered in increasing numbers, using the openProfilesIds if specified.
+ *
+ * @sa vtkvmtkBoundaryLayerGenerator
+ */
 
 #ifndef __vtkvmtkBoundaryLayerGenerator2_h
 #define __vtkvmtkBoundaryLayerGenerator2_h
@@ -46,39 +48,72 @@ class VTK_VMTK_CONTRIB_EXPORT vtkvmtkBoundaryLayerGenerator2 : public vtkvmtkBou
 
   // vtkGetStringMacro(CellEntityIdsArrayName);
   // vtkSetStringMacro(CellEntityIdsArrayName);
-  
+
+  ///@{
+  /**
+   * Set/get the name of the per-point array that identifies which points
+   * of the input surface lie on an open profile. A value of -1 marks a
+   * point on the interior of the surface; any other value groups points
+   * belonging to the same open profile.
+   */
   vtkGetStringMacro(OpenProfilesIdsArrayName);
   vtkSetStringMacro(OpenProfilesIdsArrayName);
+  ///@}
 
-  //Description:
-  //Include/Exclude the different surfaces into the resulting unstructures grud
-  //If IncludeSurfaceCells is set to 1 all of the surfaces are included
+  ///@{
+  /**
+   * Include/exclude the extruded open-profile surface cells (the caps
+   * generated on the boundary-layer extrusion of the open profiles) in
+   * the output unstructured grid.
+   */
   vtkGetMacro(IncludeExtrudedOpenProfilesCells,int);
   vtkSetMacro(IncludeExtrudedOpenProfilesCells,int);
   vtkBooleanMacro(IncludeExtrudedOpenProfilesCells,int);
-  
+  ///@}
+
+  ///@{
+  /**
+   * Include/exclude the extruded outer surface cells (the outermost shell
+   * of the boundary layer) in the output unstructured grid.
+   */
   vtkGetMacro(IncludeExtrudedSurfaceCells,int);
   vtkSetMacro(IncludeExtrudedSurfaceCells,int);
   vtkBooleanMacro(IncludeExtrudedSurfaceCells,int);
-  
+  ///@}
+
+  ///@{
+  /**
+   * Include/exclude the original (non-extruded) input surface cells in
+   * the output unstructured grid.
+   */
   vtkGetMacro(IncludeOriginalSurfaceCells,int);
   vtkSetMacro(IncludeOriginalSurfaceCells,int);
   vtkBooleanMacro(IncludeOriginalSurfaceCells,int);
+  ///@}
 
-  //Description:
-  //Id assigned to the volumetric layer in the CellEntityIds array
+  ///@{
+  /**
+   * Id assigned to the volumetric layer in the CellEntityIds array
+   */
   vtkGetMacro(LayerEntityId,int);
   vtkSetMacro(LayerEntityId,int);
+  ///@}
 
-  //Description:
-  //Entity Id of the first surface element of the layer.
+  ///@{
+  /**
+   * Entity Id of the first surface element of the layer.
+   */
   vtkGetMacro(SurfaceEntityId,int);
   vtkSetMacro(SurfaceEntityId,int);
+  ///@}
   
-  //Description
-  //Entity Id of the first open profile of the layer
+  ///@{
+  /**
+   * Entity Id of the first open profile of the layer
+   */
   vtkGetMacro(OpenProfilesEntityId,int);
   vtkSetMacro(OpenProfilesEntityId,int);
+  ///@}
 
   protected:
   vtkvmtkBoundaryLayerGenerator2();

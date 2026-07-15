@@ -1,7 +1,6 @@
 /*=========================================================================
 
   Program:   Visualization Toolkit
-  Module:    $RCSfile: vtkvmtkWin32Header.h,v $
 
   Copyright (c) Ken Martin, Will Schroeder, Bill Lorensen
   All rights reserved.
@@ -12,9 +11,12 @@
      PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
-// .NAME vtkWin32Header - manage Windows system differences
-// .SECTION Description
-// The vtkWin32Header captures some system differences between Unix and Windows operating systems. 
+/**
+ * @class   vtkWin32Header
+ * @brief   manage Windows system differences
+ *
+ * The vtkWin32Header captures some system differences between Unix and Windows operating systems.
+ */
 
 #ifndef __vtkvmtkWIN32Header_h
 #define __vtkvmtkWIN32Header_h

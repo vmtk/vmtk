@@ -1,10 +1,6 @@
 /*=========================================================================
 
 Program:   VMTK
-Module:    $RCSfile: vtkvmtkPolyDataNetworkExtraction.h,v $
-Language:  C++
-Date:      $Date: 2006/07/17 09:53:14 $
-Version:   $Revision: 1.5 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -18,9 +14,21 @@ Version:   $Revision: 1.5 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkPolyDataNetworkExtraction - create an approximated network graph (preliminary to centerline) from an input surface with atleast one hole in it. 
-// .SECTION Description
-// ...
+/**
+ * @class   vtkvmtkPolyDataNetworkExtraction
+ * @brief   Create an approximated network graph (preliminary to centerline) from an input surface with at least one hole in it.
+ * @ingroup Misc
+ *
+ * Starting from an open boundary of the input surface, advances a series of inscribed spheres along
+ * the (approximate) medial axis of the tubular structure, stepping each sphere outward by
+ * AdvancementRatio times the local radius, splitting into new branches at bifurcations and stopping
+ * at free ends or closed caps. The result is a coarse network graph (a fast, approximate
+ * predecessor to full centerline extraction -- see vtkvmtkPolyDataCenterlines -- useful for
+ * quickly identifying topology/seed points on very large or complex models). This is the filter
+ * behind the vmtknetworkextraction pype script.
+ *
+ * @sa vtkvmtkPolyDataCenterlines
+ */
 
 #ifndef __vtkvmtkPolyDataNetworkExtraction_h
 #define __vtkvmtkPolyDataNetworkExtraction_h
@@ -42,25 +50,69 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkPolyDataNetworkExtraction : public vtkPolyData
 
   static vtkvmtkPolyDataNetworkExtraction *New();
  
+  ///@{
+  /**
+   * Set/Get the name of the point data array used internally to mark points of the input surface as
+   * visited during network propagation (see the NON_VISITED/VISITED/GLOBAL enum). Default: "Marks".
+   */
   vtkSetStringMacro(MarksArrayName);
   vtkGetStringMacro(MarksArrayName);
+  ///@}
 
+  ///@{
+  /**
+   * Set/Get the name of the point data array of the output network where the local inscribed sphere
+   * radius is stored at each network point. Default: "Radius".
+   */
   vtkSetStringMacro(RadiusArrayName);
   vtkGetStringMacro(RadiusArrayName);
+  ///@}
 
+  ///@{
+  /**
+   * Set/Get the name of the cell data array of the output network where topology information
+   * (segment connectivity) is stored. Default: "Topology".
+   */
   vtkSetStringMacro(TopologyArrayName);
   vtkGetStringMacro(TopologyArrayName);
+  ///@}
 
+  ///@{
+  /**
+   * Set/Get the ratio between the propagation step size and the local maximum radius: at each step,
+   * the next inscribed sphere is advanced by AdvancementRatio times the current radius. Values
+   * closer to 1 produce a denser, more accurate network at higher computational cost. Default: not
+   * set by the class itself; the vmtknetworkextraction pype script defaults it to 1.05.
+   */
   vtkSetMacro(AdvancementRatio,double);
   vtkGetMacro(AdvancementRatio,double);
+  ///@}
 
+  /**
+   * Get the total number of surface points visited (marked) during network propagation. Valid only
+   * after Update() has been called.
+   */
   vtkGetMacro(TotalMarkedPoints,int);
 
+  /**
+   * Get the smallest propagation step size encountered during network extraction. Valid only after
+   * Update() has been called.
+   */
   vtkGetMacro(MinimumStep,double);
 
+  /**
+   * Get a simplified graph-layout representation of the extracted network (nodes and edges only, no
+   * geometric radius information), useful for visualization/inspection of the network topology.
+   * Valid only after Update() has been called.
+   */
   vtkGetObjectMacro(GraphLayout,vtkPolyData);
 
 //BTX
+  /**
+   * Return values of the internal per-step propagation state machine (StepIteration): whether to
+   * keep advancing, redefine the current step, or stop because a free end, bifurcation, or closed
+   * cap was reached.
+   */
   enum
   {
     STEP_ITERATION_PROCEED,
@@ -72,6 +124,10 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkPolyDataNetworkExtraction : public vtkPolyData
 //ETX
 
 //BTX
+  /**
+   * Values stored in the MarksArrayName point data array, tracking each surface point's visitation
+   * status during network propagation.
+   */
   enum
   {
     NON_VISITED,

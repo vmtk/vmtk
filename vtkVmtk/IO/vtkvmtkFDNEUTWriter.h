@@ -1,10 +1,6 @@
 /*=========================================================================
                                                                                                                                     
 Program:   VMTK
-Module:    $RCSfile: vtkvmtkFDNEUTWriter.h,v $
-Language:  C++
-Date:      $Date: 2006/04/06 16:47:47 $
-Version:   $Revision: 1.3 $
                                                                                                                                     
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -18,12 +14,19 @@ Version:   $Revision: 1.3 $
      PURPOSE.  See the above copyright notices for more information.
                                                                                                                                     
 =========================================================================*/
-// .NAME vtkvmtkFDNEUTWriter - writes FDNEUT Fidap files
-// .SECTION Description
-// vtkvmtkFDNEUTWriter writes FDNEUT Fidap files
-//
-// .SECTION See Also
-// vtkvmtkFDNEUTWriter
+/**
+ * @class   vtkvmtkFDNEUTWriter
+ * @brief   Writes FDNEUT Fidap files.
+ * @ingroup IO
+ *
+ * vtkvmtkFDNEUTWriter writes an unstructured grid to the Fidap FDNEUT neutral file format. Cells are
+ * grouped by VTK cell type, each group being written as one FDNEUT "ELEMENT GROUP" (in decreasing
+ * cell-type order); node ids are 1-based in the output, per the FDNEUT convention. This is the
+ * writer behind the "fdneut" format option of the vmtkmeshwriter pype script.
+ *
+ * @sa
+ * vtkvmtkFDNEUTReader
+ */
 
 #ifndef __vtkvmtkFDNEUTWriter_h
 #define __vtkvmtkFDNEUTWriter_h

@@ -26,7 +26,6 @@ Modification Authors:
 	Richard Izzo
 		University at Buffalo
 		Github: rlizzo
-		Date: April 12, 2018
 	Luca Antiga
 		Orobix Srl.
 		Github: lantiga
@@ -51,10 +50,11 @@ using namespace std;
 namespace itk
 {
 
-/// \brief This class computes the average outward flux associated to an object implicitly 
-/// represented as a distance transform. This class implements the centerline extraction 
+/// \brief This class computes the average outward flux associated to an object implicitly
+/// represented as a distance transform. This class implements the centerline extraction
 ///	algorithm described in : "S. Bouix, K. Siddiqi, and A. Tannenbaum. Flux driven automatic centerline extraction. Technical Report
-///	SOCS-04.2, School of Ccomputer Science, McGill University, 2004."
+///	SOCS-04.2, School of Computer Science, McGill University, 2004."
+/// \ingroup Segmentation
 
 /// TODO:
 /// 1. manual instantation

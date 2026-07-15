@@ -1,10 +1,6 @@
 /*=========================================================================
 
 Program:   VTK Blood Vessel Smoothing
-Module:    $RCSfile: vtkvmtkCenterlineSmoothing.h,v $
-Language:  C++
-Date:      $Date: 2006/07/17 09:52:56 $
-Version:   $Revision: 1.1 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -18,9 +14,21 @@ Version:   $Revision: 1.1 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkCenterlineSmoothing - iteratively smooth a centerline with a laplacian kernel 
-// .SECTION Description
-// ...
+/**
+ * @class   vtkvmtkCenterlineSmoothing
+ * @brief   Iteratively smooth a centerline with a Laplacian kernel.
+ * @ingroup ComputationalGeometry
+ *
+ * Applies Laplacian (moving-average) smoothing to the points of every line/polyline cell of the
+ * input centerlines, independently for each cell: each point is repeatedly nudged towards the
+ * midpoint of its two neighbors by a fraction (SmoothingFactor) of the difference, repeated
+ * NumberOfSmoothingIterations times. This is the filter behind the vmtkcenterlinesmoothing pype
+ * script; it's commonly used before differential-geometry computations (curvature, torsion) which
+ * are sensitive to point-to-point noise.
+ *
+ * @sa
+ * vtkvmtkCenterlineGeometry
+ */
 
 #ifndef __vtkvmtkCenterlineSmoothing_h
 #define __vtkvmtkCenterlineSmoothing_h
@@ -39,12 +47,28 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkCenterlineSmoothing : public
 
   static vtkvmtkCenterlineSmoothing* New();
 
+  ///@{
+  /**
+   * Set/Get the relaxation factor applied at each smoothing iteration: at each step, every point
+   * moves this fraction of the way towards the midpoint of its two neighbors. Default: 0.01.
+   */
   vtkSetMacro(SmoothingFactor,double);
   vtkGetMacro(SmoothingFactor,double);
+  ///@}
 
+  ///@{
+  /**
+   * Set/Get the number of Laplacian smoothing iterations applied to each line. Default: 100.
+   */
   vtkSetMacro(NumberOfSmoothingIterations,int);
   vtkGetMacro(NumberOfSmoothingIterations,int);
+  ///@}
 
+  /**
+   * Apply Laplacian smoothing to a single polyline, given as an ordered set of points, storing the
+   * result in smoothLinePoints (resized/filled by this call). Static utility usable standalone,
+   * also used internally by RequestData.
+   */
   static void SmoothLine(vtkPoints* linePoints, vtkPoints* smoothLinePoints, int numberOfIterations = 10, double relaxation = 0.1);
 
   protected:

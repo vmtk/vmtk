@@ -1,10 +1,6 @@
 /*=========================================================================
 
   Program:   VMTK
-  Module:    $RCSfile: vtkvmtkSurfaceProjectCellArray.h,v $
-  Language:  C++
-  Date:      $$
-  Version:   $$
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -22,9 +18,13 @@
 	Kalkulo AS
 	Simula Research Laboratory
 =========================================================================*/
-// .NAME vtkvmtkSurfaceProjectCellArray - Projects a cell array from a reference surface.
-// .SECTION Description
-// For each cell, the cell value chosen is the one of the cell on the reference surface which has the smallest minimum distance to the cell vertices. If the distance of any vertices in the cell to the reference surface is higher than DistanceTolerance, the cell array values are set to DefaultValue for each component. 
+/**
+ * @class   vtkvmtkSurfaceProjectCellArray
+ * @brief   Projects a cell array from a reference surface.
+ * @ingroup Contrib
+ *
+ * For each cell, the cell value chosen is the one of the cell on the reference surface which has the smallest minimum distance to the cell vertices. If the distance of any vertices in the cell to the reference surface is higher than DistanceTolerance, the cell array values are set to DefaultValue for each component.
+ */
 
 #ifndef __vtkvmtkSurfaceProjectCellArray_h
 #define __vtkvmtkSurfaceProjectCellArray_h
@@ -43,22 +43,41 @@ class VTK_VMTK_CONTRIB_EXPORT vtkvmtkSurfaceProjectCellArray : public vtkPolyDat
 
   static vtkvmtkSurfaceProjectCellArray *New();
 
-  // Description:
-  // Set/Get the reference surface to compute distance from.
+  ///@{
+  /**
+   * Set/Get the reference surface to compute distance from.
+   */
   vtkSetObjectMacro(ReferenceSurface,vtkPolyData);
   vtkGetObjectMacro(ReferenceSurface,vtkPolyData);
+  ///@}
 
-  //Set/Get the name of the array to project
+  ///@{
+  /**
+   * Set/Get the name of the output cell array holding the projected values.
+   * Commonly named "CellEntityIds".
+   */
   vtkSetStringMacro(ProjectedArrayName);
   vtkGetStringMacro(ProjectedArrayName);
+  ///@}
 
-  //Set/Get the distance tolerance 
+  ///@{
+  /**
+   * Set/Get the maximum admissible distance between a cell of the input
+   * surface and the closest cell of the reference surface. Cells farther
+   * than this tolerance from the reference surface are assigned DefaultValue.
+   */
   vtkSetMacro(DistanceTolerance, double);
   vtkGetMacro(DistanceTolerance, double);
+  ///@}
 
-  //Set/Get the default value
+  ///@{
+  /**
+   * Set/Get the value assigned to cells whose distance to the reference
+   * surface exceeds DistanceTolerance.
+   */
   vtkSetMacro(DefaultValue, double);
   vtkGetMacro(DefaultValue, double);
+  ///@}
 
   protected:
   vtkvmtkSurfaceProjectCellArray();

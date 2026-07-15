@@ -1,10 +1,6 @@
 /*=========================================================================
 
 Program:   VMTK
-Module:    $RCSfile: vtkvmtkCenterlineSphereDistance.h,v $
-Language:  C++
-Date:      $Date: 2006/04/06 16:46:43 $
-Version:   $Revision: 1.3 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -18,11 +14,22 @@ Version:   $Revision: 1.3 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkCenterlineSphereDistance - Collection of functions which compute point ids which are n-spheres away from a reference point.
-// .SECTION Description
-// Allows us to find points which are n-touching spheres upstream or downstream from a reference point. In this description, "touching sphere" refers to the the points on the centerline (one upstream, one downstream) which lie closest to ("touch") the surface of a sphere whose barycenter is located at the reference points location. In practice, this means that we use the centerline's MaximumInscribedSphereRadius point data as the "sphere" radius/surface. 
-//
-// This metric is used because it is a well behaved way to normalize the comparison of distance as vessel radius scales. 
+/**
+ * @class   vtkvmtkCenterlineSphereDistance
+ * @brief   Provides a collection of functions that compute point ids which are n-spheres away from a reference point.
+ * @ingroup ComputationalGeometry
+ *
+ * Allows us to find points which are n-touching spheres upstream or downstream from a reference point. In this description, "touching sphere" refers to the the points on the centerline (one upstream, one downstream) which lie closest to ("touch") the surface of a sphere whose barycenter is located at the reference points location. In practice, this means that we use the centerline's MaximumInscribedSphereRadius point data as the "sphere" radius/surface.
+ *
+ * This metric is used because it is a well behaved way to normalize the comparison of distance as vessel radius scales.
+ *
+ * Purely a static utility class (never instantiated) used internally by the "branch extractor"
+ * family of filters (e.g. vtkvmtkCenterlineBranchExtractor, vtkvmtkCenterlineEndpointExtractor) to
+ * locate splitting points a given number of local vessel radii away from a reference location.
+ *
+ * @sa
+ * vtkvmtkCenterlineBranchExtractor, vtkvmtkCenterlineEndpointExtractor
+ */
 
 #ifndef __vtkvmtkCenterlineSphereDistance_h
 #define __vtkvmtkCenterlineSphereDistance_h
@@ -40,8 +47,19 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkCenterlineSphereDistance : p
   void PrintSelf(std::ostream& os, vtkIndent indent) override;
   static vtkvmtkCenterlineSphereDistance* New();
 
+  /**
+   * Starting from the point at (cellId, subId, pcoord) on centerlines, walk forward (or backward, if
+   * forward is false) until reaching the point whose maximum inscribed sphere (radius taken from the
+   * radiusArrayName point data array) just touches the sphere centered at the starting point. The
+   * result is returned in touchingSubId/touchingPCoord.
+   */
   static void FindTouchingSphereCenter(vtkPolyData* centerlines, const char* radiusArrayName, vtkIdType cellId, vtkIdType subId, double pcoord, vtkIdType& touchingSubId, double& touchingPCoord, bool forward=true);
 
+  /**
+   * Like FindTouchingSphereCenter, but repeats the touching-sphere walk numberOfTouchingSpheres times
+   * in a row (each new sphere touching the previous one), returning the final position in
+   * touchingSubId/touchingPCoord.
+   */
   static void FindNTouchingSphereCenter(vtkPolyData* centerlines, const char* radiusArrayName, vtkIdType cellId, vtkIdType subId, double pcoord, int numberOfTouchingSpheres, vtkIdType& touchingSubId, double& touchingPCoord, bool forward=true);
 
   protected:

@@ -1,10 +1,6 @@
 /*=========================================================================
 
 Program:   VMTK
-Module:    $RCSfile: vtkvmtkInternalTetrahedraExtractor.h,v $
-Language:  C++
-Date:      $Date: 2006/04/06 16:46:43 $
-Version:   $Revision: 1.5 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -18,11 +14,16 @@ Version:   $Revision: 1.5 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkInternalTetrahedraExtractor - Extract internal tetrahedra from a Delaunay tessellation of a surface.
-// .SECTION Description
-// This class takes in input the Delaunay tessellation of a point set and extracts internal tetrahedra based on outward oriented point normals (to be provided as input point data array). A tetrahedron \f$T_i\f$ is retained if \f[(x_j - c_i) \cdot n_j \geq 0  \qquad  \forall x_j \in T_i \f] where \f$x_i\f$ are the vertices of \f$T_i\f$, \f$c_i\f$ its circumcenter and \f$n_j\f$ the normals at the vertices. It is possible to properly handle capped regions (generated with vtkCapPolyData) by activating UseCaps and providing the ids of cap centers.
-// .SECTION See Also
-// vtkCapPolyData
+/**
+ * @class   vtkvmtkInternalTetrahedraExtractor
+ * @brief   Extract internal tetrahedra from a Delaunay tessellation of a surface.
+ * @ingroup ComputationalGeometry
+ *
+ * This class takes in input the Delaunay tessellation of a point set and extracts internal tetrahedra based on outward oriented point normals (to be provided as input point data array). A tetrahedron \f$T_i\f$ is retained if \f[(x_j - c_i) \cdot n_j \geq 0  \qquad  \forall x_j \in T_i \f] where \f$x_i\f$ are the vertices of \f$T_i\f$, \f$c_i\f$ its circumcenter and \f$n_j\f$ the normals at the vertices. It is possible to properly handle capped regions (generated with vtkCapPolyData) by activating UseCaps and providing the ids of cap centers.
+ *
+ * @sa
+ * vtkCapPolyData
+ */
 
 #ifndef __vtkvmtkInternalTetrahedraExtractor_h
 #define __vtkvmtkInternalTetrahedraExtractor_h
@@ -41,36 +42,67 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkInternalTetrahedraExtractor 
 
   static vtkvmtkInternalTetrahedraExtractor *New();
   
-  // Description:
-  // Set/Get the name of the array containing outward oriented point normals.
+  ///@{
+  /**
+   * Set/Get the name of the array containing outward oriented point normals.
+   */
   vtkSetStringMacro(OutwardNormalsArrayName);
   vtkGetStringMacro(OutwardNormalsArrayName);
+  ///@}
 
-  // Description:
-  // Turn on/off special handling of caps.
+  ///@{
+  /**
+   * Turn on/off special handling of caps.
+   */
   vtkSetMacro(UseCaps,int);
   vtkGetMacro(UseCaps,int);
   vtkBooleanMacro(UseCaps,int);
+  ///@}
 
-  // Description:
-  // Set/Get the ids of cap centers.
+  ///@{
+  /**
+   * Set/Get the ids of cap centers.
+   */
   vtkSetObjectMacro(CapCenterIds,vtkIdList);
   vtkGetObjectMacro(CapCenterIds,vtkIdList);
+  ///@}
 
+  ///@{
+  /**
+   * Set/Get the numerical tolerance used when testing the retention inequality for each tetrahedron.
+   * Default: VTK_VMTK_DOUBLE_TOL.
+   */
   vtkSetMacro(Tolerance,double);
   vtkGetMacro(Tolerance,double);
+  ///@}
 
-  // Description:
-  // Turn on/off removal of surface slivers.
+  ///@{
+  /**
+   * Turn on/off removal of surface slivers.
+   */
   vtkSetMacro(RemoveSubresolutionTetrahedra,int);
   vtkGetMacro(RemoveSubresolutionTetrahedra,int);
   vtkBooleanMacro(RemoveSubresolutionTetrahedra,int);
+  ///@}
 
+  ///@{
+  /**
+   * Set/Get the factor, relative to local feature size, below which a surface tetrahedron is
+   * considered a sub-resolution sliver and removed when RemoveSubresolutionTetrahedra is on.
+   * Requires Surface to be set. Default: 1.0.
+   */
   vtkSetMacro(SubresolutionFactor,double);
   vtkGetMacro(SubresolutionFactor,double);
+  ///@}
 
+  ///@{
+  /**
+   * Set/Get the original (uncapped or capped) surface used as reference when
+   * RemoveSubresolutionTetrahedra is on, to identify and discard degenerate surface slivers.
+   */
   vtkSetObjectMacro(Surface,vtkPolyData);
   vtkGetObjectMacro(Surface,vtkPolyData);
+  ///@}
 
   protected:
   vtkvmtkInternalTetrahedraExtractor();

@@ -1,10 +1,6 @@
 /*=========================================================================
 
   Program:   VMTK
-  Module:    $RCSfile: vtkvmtkPolyDataUmbrellaStencil.h,v $
-  Language:  C++
-  Date:      $Date: 2006/04/06 16:46:44 $
-  Version:   $Revision: 1.4 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -18,9 +14,22 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkPolyDataUmbrellaStencil - Weight the neighborhood connections of a surface mesh with a laplacian.
-// .SECTION Description
-// ..
+/**
+ * @class   vtkvmtkPolyDataUmbrellaStencil
+ * @brief   Implements a uniform (unweighted) Laplacian stencil for the one-ring neighborhood of a surface mesh.
+ * point.
+ * @ingroup DifferentialGeometry
+ *
+ * vtkvmtkPolyDataUmbrellaStencil builds, for each mesh point, the simplest discrete Laplacian
+ * ("umbrella") stencil: every neighbor in the point's one-ring receives an equal weight of 1/N
+ * (N being the number of neighbors), and the center point receives a weight of -1 (subject to the
+ * sign convention set by NegateWeights), so that applying the stencil yields the displacement
+ * towards the unweighted average of the neighbors. This is the cheapest and most common stencil
+ * used for surface smoothing / mesh relaxation (see vtkvmtkPolyDataStencilFlowFilter,
+ * vtkvmtkStencils).
+ *
+ * @sa vtkvmtkPolyDataManifoldStencil, vtkvmtkStencils, vtkvmtkPolyDataStencilFlowFilter
+ */
 
 #ifndef __vtkvmtkPolyDataUmbrellaStencil_h
 #define __vtkvmtkPolyDataUmbrellaStencil_h
@@ -37,8 +46,17 @@ public:
   static vtkvmtkPolyDataUmbrellaStencil *New();
   vtkTypeMacro(vtkvmtkPolyDataUmbrellaStencil,vtkvmtkPolyDataManifoldStencil);
 
+  /**
+   * Return the stencil item type identifier (VTK_VMTK_UMBRELLA_STENCIL), used by
+   * vtkvmtkStencils/vtkvmtkItems factories to instantiate the correct stencil subclass.
+   */
   virtual vtkIdType GetItemType() override {return VTK_VMTK_UMBRELLA_STENCIL;};
 
+  /**
+   * Build the umbrella stencil at the current point: populate the one-ring neighbor weights with
+   * 1/N each and the center weight with -1 (before sign/area scaling), where N is the number of
+   * one-ring neighbors.
+   */
   void Build() override;
 
 protected:

@@ -1,10 +1,6 @@
 /*=========================================================================
 
 Program:   VMTK
-Module:    $RCSfile: vtkvmtkDanielssonDistanceMapImageFilter.h,v $
-Language:  C++
-Date:      $Date: 2006/04/06 16:48:25 $
-Version:   $Revision: 1.3 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -23,10 +19,20 @@ Version:   $Revision: 1.3 $
 
 =========================================================================*/
 
-// .NAME vtkvmtkDanielssonDistanceMapImageFilter - Wrapper class around itk::DanielssonDistanceMapImageFilter
-// .SECTION Description
-// vtkvmtkDanielssonDistanceMapImageFilter
-
+/**
+ * @class   vtkvmtkDanielssonDistanceMapImageFilter
+ * @brief   Wraps itk::DanielssonDistanceMapImageFilter.
+ * @ingroup Segmentation
+ *
+ * vtkvmtkDanielssonDistanceMapImageFilter computes, for every pixel of the (internally float-cast,
+ * assumed 3D) input image, the Euclidean distance to the nearest non-zero pixel, using ITK's
+ * Danielsson two-pass algorithm. Non-zero input pixels are treated as the boundary/seed set (the
+ * distance transform is computed away from them); with InputIsBinary on, all non-zero input pixels
+ * are treated as foreground with unit weight rather than being interpreted as distance-contributing
+ * intensity values.
+ *
+ * @sa vtkvmtkFastMarchingUpwindGradientImageFilter
+ */
 
 #ifndef __vtkvmtkDanielssonDistanceMapImageFilter_h
 #define __vtkvmtkDanielssonDistanceMapImageFilter_h
@@ -40,13 +46,24 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkDanielssonDistanceMapImageFilter : pub
   static vtkvmtkDanielssonDistanceMapImageFilter *New();
   vtkTypeMacro(vtkvmtkDanielssonDistanceMapImageFilter, vtkSimpleImageToImageFilter);
 
+  ///@{
+  /**
+   * Toggle output of squared Euclidean distances instead of Euclidean distances. Default: off.
+   */
   vtkGetMacro(SquaredDistance,int);
   vtkSetMacro(SquaredDistance,int);
   vtkBooleanMacro(SquaredDistance,int);
+  ///@}
 
+  ///@{
+  /**
+   * Toggle treating the input as a binary mask, i.e. every non-zero pixel is foreground with equal
+   * weight, rather than using pixel intensity values directly. Default: off.
+   */
   vtkGetMacro(InputIsBinary,int);
   vtkSetMacro(InputIsBinary,int);
   vtkBooleanMacro(InputIsBinary,int);
+  ///@}
 
 protected:
 

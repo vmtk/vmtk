@@ -1,10 +1,6 @@
 /*=========================================================================
 
   Program:   VMTK
-  Module:    $RCSfile: vtkvmtkPolyDataFELaplaceBeltramiStencil.h,v $
-  Language:  C++
-  Date:      $Date: 2006/04/06 16:46:44 $
-  Version:   $Revision: 1.4 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -18,9 +14,24 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkPolyDataFELaplaceBeltramiStencil - Apply finite-element LB weighting to the neighborhood connections of a surface.
-// .SECTION Description
-// ..
+/**
+ * @class   vtkvmtkPolyDataFELaplaceBeltramiStencil
+ * @brief   Apply finite-element LB weighting to the neighborhood connections of a surface.
+ * @ingroup DifferentialGeometry
+ *
+ * vtkvmtkPolyDataFELaplaceBeltramiStencil is a thin specialization of
+ * vtkvmtkPolyDataLaplaceBeltramiStencil (which builds the cotangent-weight discrete Laplace-Beltrami
+ * stencil, see vtkvmtkPolyDataLaplaceBeltramiStencil::Build) that overrides the area-normalization
+ * step (ScaleWithArea) to divide the cotangent weights by one third of the barycentric mixed area
+ * (Area/3), matching the mass-lumped finite-element (FE) discretization of the Laplace-Beltrami
+ * operator. UseExtendedNeighborhood is enabled by default so that the underlying neighborhood used
+ * to build the stencil includes second-ring points where needed. It is one of the stencil types
+ * selectable through vtkvmtkStencils and vtkvmtkPolyDataMeanCurvature
+ * (VTK_VMTK_FE_LAPLACE_BELTRAMI_STENCIL) for mesh smoothing and curvature estimation.
+ *
+ * @sa vtkvmtkPolyDataLaplaceBeltramiStencil, vtkvmtkPolyDataFVFELaplaceBeltramiStencil,
+ *     vtkvmtkStencils, vtkvmtkPolyDataMeanCurvature
+ */
 
 #ifndef __vtkvmtkPolyDataFELaplaceBeltramiStencil_h
 #define __vtkvmtkPolyDataFELaplaceBeltramiStencil_h

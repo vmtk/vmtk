@@ -1,10 +1,6 @@
 /*=========================================================================
 
   Program:   VMTK
-  Module:    $RCSfile: vtkvmtkPolyDataSampleFunction.h,v $
-  Language:  C++
-  Date:      $$
-  Version:   $$
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -22,9 +18,17 @@
 	Kalkulo AS
 	Simula Research Laboratory
 =========================================================================*/
-// .NAME vtkvmtkPolyDataSampleFunction - ..
-// .SECTION Description
-// ..
+/**
+ * @class   vtkvmtkPolyDataSampleFunction
+ * @brief   Sample an implicit function at the points of a surface.
+ * @ingroup Contrib
+ *
+ * vtkvmtkPolyDataSampleFunction evaluates ImplicitFunction at every point
+ * of the input poly data and writes the resulting scalar values into a
+ * point data array named SampleArrayName, e.g. to visualize or threshold
+ * an implicit function (such as a vtkvmtkPolyBallLine) directly on a
+ * surface rather than on a volumetric sampling grid.
+ */
 
 #ifndef __vtkvmtkPolyDataSampleFunction_h
 #define __vtkvmtkPolyDataSampleFunction_h
@@ -41,13 +45,23 @@ public:
   static vtkvmtkPolyDataSampleFunction* New();
   vtkTypeMacro(vtkvmtkPolyDataSampleFunction,vtkPolyDataAlgorithm);
 
-  // Description:
-  // Specify the implicit function to use to generate data.
+  ///@{
+  /**
+   * Specify the implicit function to use to generate data.
+   */
   virtual void SetImplicitFunction(vtkImplicitFunction*);
   vtkGetObjectMacro(ImplicitFunction,vtkImplicitFunction);
+  ///@}
 
+  ///@{
+  /**
+   * Set/get the name of the output point data array holding the sampled
+   * function values.
+   * Commonly named "ResolutionArray".
+   */
   vtkSetStringMacro(SampleArrayName);
   vtkGetStringMacro(SampleArrayName);
+  ///@}
 
 protected:
   vtkvmtkPolyDataSampleFunction();

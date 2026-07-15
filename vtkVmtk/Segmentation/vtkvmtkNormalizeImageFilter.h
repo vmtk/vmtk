@@ -1,10 +1,6 @@
 /*=========================================================================
 
 Program:   VMTK
-Module:    $RCSfile: vtkvmtkNormalizeImageFilter.h,v $
-Language:  C++
-Date:      $Date: 2006/04/06 16:48:25 $
-Version:   $Revision: 1.2 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -23,10 +19,21 @@ Version:   $Revision: 1.2 $
 
 =========================================================================*/
 
-// .NAME vtkvmtkNormalizeImageFilter - Wrapper class around itk::NormalizeImageFilter
-// .SECTION Description
-// vtkvmtkNormalizeImageFilter
-
+/**
+ * @class   vtkvmtkNormalizeImageFilter
+ * @brief   Wraps itk::NormalizeImageFilter.
+ * @ingroup Segmentation
+ *
+ * vtkvmtkNormalizeImageFilter rescales the intensities of the input image so that the resulting
+ * image has zero mean and unit variance, using the image's statistical mean and standard deviation
+ * (as opposed to a fixed intensity range as in min/max rescaling). It is the filter behind the
+ * vmtkimagenormalize pype script, used to bring images from different scanners/protocols to a
+ * comparable intensity scale before further processing (e.g. before feature extraction or level
+ * set segmentation). Like the other single-purpose ITK wrappers in this module, it is a thin
+ * vtkSimpleImageToImageFilter: SimpleExecute() converts the VTK input to a float itk::Image, runs
+ * itk::NormalizeImageFilter, and converts the result back to vtkImageData. Has no configurable
+ * parameters beyond the input image itself.
+ */
 
 #ifndef __vtkvmtkNormalizeImageFilter_h
 #define __vtkvmtkNormalizeImageFilter_h

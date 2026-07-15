@@ -1,10 +1,6 @@
 /*=========================================================================
 
   Program:   VMTK
-  Module:    $RCSfile: vtkvmtkPolyDataNeighborhood.h,v $
-  Language:  C++
-  Date:      $Date: 2006/04/06 16:46:44 $
-  Version:   $Revision: 1.3 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -18,9 +14,20 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkPolyDataNeighborhood - Create a neighborhood for points on a surface.
-// .SECTION Description
-// ..
+/**
+ * @class   vtkvmtkPolyDataNeighborhood
+ * @brief   Build the one-ring neighborhood of a point on a vtkPolyData surface mesh.
+ * @ingroup DifferentialGeometry
+ *
+ * Given a point id set on the underlying vtkvmtkNeighborhood (via SetDataSet/SetDataSetPointId)
+ * and a vtkPolyData data set, Build() collects the ids of all points connected to that point by a
+ * shared cell (its one-ring / umbrella neighborhood) and stores them for later access through the
+ * inherited vtkvmtkNeighborhood point-id array. This is the neighborhood implementation used by
+ * mesh-processing classes that operate on triangulated surfaces, and is instantiated internally
+ * by classes such as vtkvmtkSparseMatrix when building neighborhoods from a vtkPolyData input.
+ *
+ * @sa vtkvmtkNeighborhood, vtkvmtkUnstructuredGridNeighborhood, vtkvmtkStencil
+ */
 
 #ifndef __vtkvmtkPolyDataNeighborhood_h
 #define __vtkvmtkPolyDataNeighborhood_h
@@ -38,10 +45,15 @@ public:
   static vtkvmtkPolyDataNeighborhood *New();
   vtkTypeMacro(vtkvmtkPolyDataNeighborhood,vtkvmtkNeighborhood);
 
+  /**
+   * Return the neighborhood item type identifier (VTK_VMTK_POLYDATA_NEIGHBORHOOD), used by
+   * vtkvmtkNeighborhoods/vtkvmtkItems factories to instantiate the correct neighborhood subclass.
+   */
   virtual vtkIdType GetItemType() override {return VTK_VMTK_POLYDATA_NEIGHBORHOOD;};
 
-  // Description:
-  // Build the neighborhood.
+  /**
+   * Build the neighborhood.
+   */
   virtual void Build() override;
 
 protected:

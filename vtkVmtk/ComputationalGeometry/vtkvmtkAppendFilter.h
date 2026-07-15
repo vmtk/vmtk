@@ -1,10 +1,6 @@
 /*=========================================================================
 
 Program:   VMTK
-Module:    $RCSfile: vtkvmtkAppendFilter.h,v $
-Language:  C++
-Date:      $Date: 2006/04/06 16:47:48 $
-Version:   $Revision: 1.4 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -18,25 +14,14 @@ Version:   $Revision: 1.4 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkAppendFilter - merges points, point data, and cell data.
-// .SECTION Description
-// The RequestData method implementation is heavily based on the same method in vtkAppendFilter.
-// vtkAppendFilter is covered by the following (VTK) copyright notice.
-/*=========================================================================
-
-  Program:   Visualization Toolkit
-  Module:    $RCSfile: vtkAppendFilter.h,v $
-
-  Copyright (c) Ken Martin, Will Schroeder, Bill Lorensen
-  All rights reserved.
-  See Copyright.txt or http://www.kitware.com/Copyright.htm for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
+/**
+ * @class   vtkvmtkAppendFilter
+ * @brief   Merges points, point data, and cell data.
+ * @ingroup ComputationalGeometry
+ *
+ * The RequestData method implementation is heavily based on the same method in vtkAppendFilter.
+ * vtkAppendFilter is covered by the following (VTK) copyright notice.
+ */
 
 #ifndef __vtkvmtkAppendFilter_h
 #define __vtkvmtkAppendFilter_h
@@ -54,9 +39,15 @@ public:
   vtkTypeMacro(vtkvmtkAppendFilter,vtkAppendFilter);
   void PrintSelf(std::ostream& os, vtkIndent indent) override;
 
+  ///@{
+  /**
+   * Toggle merging of duplicate (coincident) points across the appended inputs, in addition to the
+   * point/point-data/cell-data merging already performed by the base vtkAppendFilter. Default: on.
+   */
   vtkSetMacro(MergeDuplicatePoints,int);
   vtkGetMacro(MergeDuplicatePoints,int);
   vtkBooleanMacro(MergeDuplicatePoints,int);
+  ///@}
 
 protected:
   vtkvmtkAppendFilter();

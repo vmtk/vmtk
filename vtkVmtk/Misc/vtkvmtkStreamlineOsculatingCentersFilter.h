@@ -1,10 +1,6 @@
 /*=========================================================================
 
 Program:   VMTK
-Module:    $RCSfile: vtkvmtkStreamlineOsculatingCentersFilter.h,v $
-Language:  C++
-Date:      $Date: 2006/07/17 09:53:14 $
-Version:   $Revision: 1.5 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -18,9 +14,19 @@ Version:   $Revision: 1.5 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkStreamlineOsculatingCentersFilter - Cluster streamlines based on Mahalanobis distance metric and K-Means clustering.
-// .SECTION Description
-// This class clusters streamlines.
+/**
+ * @class   vtkvmtkStreamlineOsculatingCentersFilter
+ * @brief   Compute the osculating (center-of-curvature) points of a set of streamlines.
+ * @ingroup Misc
+ *
+ * Resamples each input polyline (streamline) cell to a fixed point spacing, then, for every
+ * interior point, computes the center of the osculating circle defined by it and its two
+ * neighbors (i.e. the local center of curvature) and its radius, storing the result as vertex
+ * points in the output GetOsculatingCenters() poly data (with "Label" and "Radius" point data
+ * arrays). If a VoronoiDiagram is supplied, each osculating center is additionally tagged with the
+ * id of the nearest Voronoi "sheet" (VoronoiSheetIdsArrayName), associating the local curvature
+ * behavior of the flow with the underlying medial-surface structure of the vessel.
+ */
 
 #ifndef __vtkvmtkStreamlineOsculatingCentersFilter_h
 #define __vtkvmtkStreamlineOsculatingCentersFilter_h
@@ -36,12 +42,31 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkStreamlineOsculatingCentersFilter : public vtk
 
   static vtkvmtkStreamlineOsculatingCentersFilter *New();
 
+  ///@{
+  /**
+   * Set/Get an optional Voronoi diagram (e.g. as computed during centerline extraction) used to tag
+   * each osculating center with its nearest Voronoi "sheet" id. If not set, no sheet-id tagging is
+   * performed.
+   */
   vtkSetObjectMacro(VoronoiDiagram,vtkPolyData);
   vtkGetObjectMacro(VoronoiDiagram,vtkPolyData);
+  ///@}
 
+  ///@{
+  /**
+   * Set/Get the name of the cell data array of VoronoiDiagram holding each cell's sheet id; also the
+   * name used for the corresponding output point data array on GetOsculatingCenters().
+   */
   vtkSetStringMacro(VoronoiSheetIdsArrayName);
   vtkGetStringMacro(VoronoiSheetIdsArrayName);
+  ///@}
 
+  /**
+   * Get the computed osculating centers, one vertex point per interior point of every resampled
+   * input streamline, with "Label" (source streamline id) and "Radius" (osculating circle radius)
+   * point data arrays, plus VoronoiSheetIdsArrayName if VoronoiDiagram was supplied. Valid only
+   * after Update() has been called.
+   */
   vtkGetObjectMacro(OsculatingCenters,vtkPolyData);
 
   protected:

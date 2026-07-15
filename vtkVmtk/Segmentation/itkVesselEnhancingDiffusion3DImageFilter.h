@@ -1,10 +1,6 @@
 /*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit
-  Module:    $RCSfile: itkVesselEnhancingDiffusion3DImageFilter.h,v $
-  Language:  C++
-  Date:      $Date: 2008/12/30 12:32:29 $
-  Version:   $Revision: 1.1 $
 
 =========================================================================*/
 #ifndef __itkVesselEnhancingDiffusion3DImageFilter_h
@@ -17,6 +13,9 @@ namespace itk
 {
 
 /** \class VesselEnhancingDiffusion3DImageFilter
+ * \brief Enhances tubular (vessel-like) structures in a 3D image via anisotropic diffusion
+ * guided by the local Hessian.
+ * \ingroup Segmentation
  *
  * Complete rewrite of previous versions, only using itk/vnl routines
  * for derivatives, eigensystem calculations and diffusion. Internally,
