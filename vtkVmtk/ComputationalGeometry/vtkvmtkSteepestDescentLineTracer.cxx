@@ -245,10 +245,18 @@ void vtkvmtkSteepestDescentLineTracer::Backtrace(vtkPolyData* input, vtkIdType s
     previousPoint[0] = currentPoint[0];
     previousPoint[1] = currentPoint[1]; 
     previousPoint[2] = currentPoint[2];
-                
-    currentPoint[0] = input->GetPoint(currentEdge[0])[0] * (1.0 - currentS) + input->GetPoint(currentEdge[1])[0] * currentS;
-    currentPoint[1] = input->GetPoint(currentEdge[0])[1] * (1.0 - currentS) + input->GetPoint(currentEdge[1])[1] * currentS;
-    currentPoint[2] = input->GetPoint(currentEdge[0])[2] * (1.0 - currentS) + input->GetPoint(currentEdge[1])[2] * currentS;
+
+    // Do not call GetPoint(id) twice in one expression: with float points VTK
+    // returns a shared temporary buffer, so the second call overwrites the first
+    // (VTK 9). Copy into locals first (same pattern as GetSteepestDescentInCell).
+    {
+    double edgePoint0[3], edgePoint1[3];
+    input->GetPoint(currentEdge[0], edgePoint0);
+    input->GetPoint(currentEdge[1], edgePoint1);
+    currentPoint[0] = edgePoint0[0] * (1.0 - currentS) + edgePoint1[0] * currentS;
+    currentPoint[1] = edgePoint0[1] * (1.0 - currentS) + edgePoint1[1] * currentS;
+    currentPoint[2] = edgePoint0[2] * (1.0 - currentS) + edgePoint1[2] * currentS;
+    }
                 
     currentScalar = this->DescentArray->GetTuple1(currentEdge[0]) * (1.0 - currentS) + this->DescentArray->GetTuple1(currentEdge[1]) * currentS;
     currentRadius = this->LineDataArray->GetTuple1(currentEdge[0]) * (1.0 - currentS) + this->LineDataArray->GetTuple1(currentEdge[1]) * currentS;
