@@ -87,14 +87,6 @@ else ()
 endif ()
 
 if (VTK_VMTK_BUILD_STREAMTRACER)
-  if(${VTK_VERSION} VERSION_GREATER_EQUAL "9.2")
-    # Interpolated velocity fields were completely reworked in VTK-9.2
-    # (see https://gitlab.kitware.com/vtk/vtk/-/commit/4659e29a49034760520540f004d0bf76a2b46a4b).
-    # This refactoring broke VMTK's vtkvmtkStaticTemporalInterpolatedVelocityField class.
-    # Until VMTK is updated to use the new API, VTK_VMTK_BUILD_STREAMTRACER is not available anymore.
-    message(FATAL_ERROR "VTK_VMTK_BUILD_STREAMTRACER is not yet supported for VTK version 9.2 and above.")
-  endif()
-
   set (VTK_VMTK_MISC_SRCS ${VTK_VMTK_MISC_SRCS} vtkvmtkStaticTemporalInterpolatedVelocityField.cxx vtkvmtkStaticTemporalStreamTracer.cxx)
 endif ()
 
