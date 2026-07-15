@@ -590,6 +590,12 @@ void vtkvmtkPolyDataBifurcationSections::ComputeBifurcationSections(vtkPolyData*
     vtkvmtkPolyDataBranchSections::ExtractCylinderSection(cylinder,averagePoint,averageTangent,section,closed);
 
     section->BuildCells();
+    if (section->GetNumberOfCells() == 0)
+      {
+      cylinder->Delete();
+      section->Delete();
+      continue;
+      }
     vtkPoints* sectionCellPoints = section->GetCell(0)->GetPoints();
     int numberOfSectionCellPoints = sectionCellPoints->GetNumberOfPoints();
     outputPolys->InsertNextCell(numberOfSectionCellPoints);
