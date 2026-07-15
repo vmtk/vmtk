@@ -29,7 +29,11 @@ endif()
 
 find_package( Python3 COMPONENTS Interpreter )
 if (NOT VMTK_PYTHON_VERSION)
-  set(VMTK_PYTHON_VERSION "python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}" CACHE STRING "" FORCE)
+  # find_package(Python3) sets Python3_VERSION_*; the PYTHON_VERSION_* naming
+  # belongs to the legacy FindPythonInterp module and is never populated here,
+  # which used to yield a "python." install directory unless the caller passed
+  # VMTK_PYTHON_VERSION explicitly.
+  set(VMTK_PYTHON_VERSION "python${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}" CACHE STRING "" FORCE)
 endif ()
 mark_as_advanced(VMTK_PYTHON_VERSION)
 
