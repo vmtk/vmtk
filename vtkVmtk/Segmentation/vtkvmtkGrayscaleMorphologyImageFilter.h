@@ -1,10 +1,6 @@
 /*=========================================================================
 
 Program:   VMTK
-Module:    $RCSfile: vtkvmtkGrayscaleMorphologyImageFilter.h,v $
-Language:  C++
-Date:      $Date: 2006/04/06 16:48:25 $
-Version:   $Revision: 1.2 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -23,10 +19,15 @@ Version:   $Revision: 1.2 $
 
 =========================================================================*/
 
-// .NAME vtkvmtkGrayscaleMorphologyImageFilter - Wrapper class around itk::GrayscaleMorphologyImageFilter
-// .SECTION Description
-// vtkvmtkGrayscaleMorphologyImageFilter
-
+/**
+ * @class   vtkvmtkGrayscaleMorphologyImageFilter
+ * @brief   Wraps itk::GrayscaleMorphologyImageFilter.
+ * @ingroup Segmentation
+ *
+ * Applies a grayscale morphological operation (dilate, erode, or their compositions close/open)
+ * to the input image using a ball-shaped structuring element of radius BallRadius (in voxels, one
+ * value per axis). Used e.g. to clean up or fill small gaps in a segmented/thresholded image.
+ */
 
 #ifndef __vtkvmtkGrayscaleMorphologyImageFilter_h
 #define __vtkvmtkGrayscaleMorphologyImageFilter_h
@@ -40,20 +41,48 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkGrayscaleMorphologyImageFilter : publi
   static vtkvmtkGrayscaleMorphologyImageFilter *New();
   vtkTypeMacro(vtkvmtkGrayscaleMorphologyImageFilter, vtkSimpleImageToImageFilter);
 
+  ///@{
+  /**
+   * Set/Get the radius, in voxels (one value per axis), of the ball-shaped structuring element used
+   * for the morphological operation. Default: (1,1,1).
+   */
   vtkGetVectorMacro(BallRadius,int,3);
   vtkSetVectorMacro(BallRadius,int,3);
+  ///@}
 
+  ///@{
+  /**
+   * Set/Get the morphological operation to apply: DILATE, ERODE (default), CLOSE (dilate then
+   * erode, fills small gaps/holes), or OPEN (erode then dilate, removes small protrusions). See also
+   * SetOperationToDilate / SetOperationToErode / SetOperationToClose / SetOperationToOpen.
+   */
   vtkSetMacro(Operation,int);
   vtkGetMacro(Operation,int);
+  ///@}
+  /**
+   * Convenience method: set Operation to DILATE.
+   */
   void SetOperationToDilate()
   { this->SetOperation(DILATE); }
+  /**
+   * Convenience method: set Operation to ERODE (default).
+   */
   void SetOperationToErode()
   { this->SetOperation(ERODE); }
+  /**
+   * Convenience method: set Operation to CLOSE (dilate then erode).
+   */
   void SetOperationToClose()
   { this->SetOperation(CLOSE); }
+  /**
+   * Convenience method: set Operation to OPEN (erode then dilate).
+   */
   void SetOperationToOpen()
   { this->SetOperation(OPEN); }
 
+  /**
+   * Values for Operation.
+   */
   enum
   {
     DILATE,

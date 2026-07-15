@@ -1,10 +1,6 @@
 /*=========================================================================
 
 Program:   VMTK
-Module:    $RCSfile: vtkvmtkAnnularCapPolyData.h,v $
-Language:  C++
-Date:      $Date: 2006/07/17 09:53:14 $
-Version:   $Revision: 1.5 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -18,9 +14,27 @@ Version:   $Revision: 1.5 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkAnnularCapPolyData - Add annular caps between the boundaries of a walled surface.
-// .SECTION Description
-// This class closes the boundaries between the surfaces of a walled surface with caps. The surfaces are required to be dense for the algorithm to produce legal caps.
+/**
+ * @class   vtkvmtkAnnularCapPolyData
+ * @brief   Add annular caps between the boundaries of a walled surface.
+ * @ingroup Misc
+ *
+ * This class closes the boundaries between the surfaces of a walled surface with caps. The
+ * surfaces are required to be dense for the algorithm to produce legal caps.
+ *
+ * Unlike vtkvmtkCapPolyData (which caps each open boundary independently with a single-vertex
+ * triangle fan), this filter is meant for surfaces that have two "parallel" boundaries bounding a
+ * wall thickness (e.g. an inner lumen boundary and an outer wall boundary produced by offsetting
+ * a vessel surface) -- it pairs up the closest boundaries by barycenter distance and connects them
+ * with an annular strip of triangles, without inserting new points. This is one of the capping
+ * strategies used by the vmtksurfacecapper pype script (its "annular" Method), producing a closed
+ * surface out of a "walled" (double-boundary) input. Boundaries can be restricted with
+ * BoundaryIds. If CellEntityIdsArrayName is set, the newly created cap triangles are tagged with
+ * per-boundary-pair ids in that cell data array.
+ *
+ * @sa
+ * vtkvmtkCapPolyData, vtkvmtkPolyDataBoundaryExtractor, vtkvmtkBoundaryReferenceSystems
+ */
 
 #ifndef __vtkvmtkAnnularCapPolyData_h
 #define __vtkvmtkAnnularCapPolyData_h
@@ -37,14 +51,40 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkAnnularCapPolyData : public vtkPolyDataAlgorit
 
   static vtkvmtkAnnularCapPolyData *New();
 
+  ///@{
+  /**
+   * Set/Get the ids (into the list of open boundaries extracted from the input, in the order
+   * returned by vtkvmtkPolyDataBoundaryExtractor) of the boundaries to pair up and cap. If not
+   * set (default, NULL), every open boundary of the input surface is considered, paired with its
+   * closest (by barycenter distance) unpaired boundary. The number of boundaries considered must
+   * be even.
+   */
   vtkSetObjectMacro(BoundaryIds,vtkIdList);
   vtkGetObjectMacro(BoundaryIds,vtkIdList);
+  ///@}
 
+  ///@{
+  /**
+   * Set/Get the name of the cell data array used to tag the newly created annular cap triangles
+   * with an integer id, one distinct value per capped boundary pair (offset by
+   * CellEntityIdOffset, then further offset by boundary index + 1). If the array already exists
+   * on the input, existing cell values are preserved and only the new cap cells are appended with
+   * the new tag. If left NULL (default), no cell entity id array is created.
+   * Commonly named "CellEntityIds".
+   */
   vtkSetStringMacro(CellEntityIdsArrayName);
   vtkGetStringMacro(CellEntityIdsArrayName);
+  ///@}
 
+  ///@{
+  /**
+   * Set/Get the base offset added to the ids written into CellEntityIdsArrayName. The id assigned
+   * to the cap connecting the i-th processed boundary pair is (i + 1 + CellEntityIdOffset).
+   * Default: 1.
+   */
   vtkSetMacro(CellEntityIdOffset,int);
   vtkGetMacro(CellEntityIdOffset,int);
+  ///@}
 
   protected:
   vtkvmtkAnnularCapPolyData();

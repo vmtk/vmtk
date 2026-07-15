@@ -1,10 +1,6 @@
 /*=========================================================================
 
   Program:   VMTK
-  Module:    $RCSfile: vtkvmtkPolyDataFVFELaplaceBeltramiStencil.h,v $
-  Language:  C++
-  Date:      $Date: 2006/04/06 16:46:44 $
-  Version:   $Revision: 1.4 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -18,9 +14,25 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkPolyDataFVFELaplaceBeltramiStencil - Apply finite-volume, finite-element LB weighting to the neighborhood connections of a surface.
-// .SECTION Description
-// ..
+/**
+ * @class   vtkvmtkPolyDataFVFELaplaceBeltramiStencil
+ * @brief   Apply finite-volume, finite-element LB weighting to the neighborhood connections of a surface.
+ * @ingroup DifferentialGeometry
+ *
+ * vtkvmtkPolyDataFVFELaplaceBeltramiStencil is a specialization of
+ * vtkvmtkPolyDataLaplaceBeltramiStencil (which builds the cotangent-weight discrete Laplace-Beltrami
+ * stencil, see vtkvmtkPolyDataLaplaceBeltramiStencil::Build) that recomputes the normalizing area
+ * (ComputeArea) as a proper Voronoi finite-volume mixed area: for each incident triangle it adds the
+ * Voronoi sector area if the triangle is non-obtuse, or half/quarter of the triangle area if it is
+ * obtuse at the center point / at another vertex respectively (see vtkvmtkMath::IsTriangleObtuse,
+ * vtkvmtkMath::VoronoiSectorArea). ScaleWithArea then divides the cotangent weights by one third of
+ * this finite-volume area. UseExtendedNeighborhood is enabled by default. It is one of the stencil
+ * types selectable through vtkvmtkStencils and vtkvmtkPolyDataMeanCurvature
+ * (VTK_VMTK_FVFE_LAPLACE_BELTRAMI_STENCIL) for mesh smoothing and curvature estimation.
+ *
+ * @sa vtkvmtkPolyDataLaplaceBeltramiStencil, vtkvmtkPolyDataFELaplaceBeltramiStencil,
+ *     vtkvmtkStencils, vtkvmtkPolyDataMeanCurvature
+ */
 
 #ifndef __vtkvmtkPolyDataFVFELaplaceBeltramiStencil_h
 #define __vtkvmtkPolyDataFVFELaplaceBeltramiStencil_h

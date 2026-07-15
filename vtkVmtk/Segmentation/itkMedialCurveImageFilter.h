@@ -23,11 +23,9 @@ Modification Authors:
 	Richard Izzo
 		University at Buffalo
 		Github: rlizzo
-		Date: April 12, 2018
 	Luca Antiga
 		Orobix Srl.
 		Github: lantiga
-		Date: April 12, 2018
 
 =========================================================================*/
 
@@ -50,7 +48,8 @@ Modification Authors:
 namespace itk
 {
 
-/// \brief Computation of the Medial curve of a tube like object.
+/// \brief Computes the medial curve of a tube-like object.
+/// \ingroup Segmentation
 ///
 /// The object is represented as a binary image. A topological prunning is performed guided
 /// by the distance transform to the object. The prunning stops when all voxels that are end points

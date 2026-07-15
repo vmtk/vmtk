@@ -1,10 +1,6 @@
 /*=========================================================================
                                                                                                                                     
 Program:   VMTK
-Module:    $RCSfile: vtkvmtkXdaReader.h,v $
-Language:  C++
-Date:      $Date: 2006/04/06 16:47:47 $
-Version:   $Revision: 1.3 $
                                                                                                                                     
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -18,11 +14,19 @@ Version:   $Revision: 1.3 $
      PURPOSE.  See the above copyright notices for more information.
                                                                                                                                     
 =========================================================================*/
-// .NAME vtkvmtkXdaReader - reads libmesh Xda files
-// .SECTION Description
-// vtkvmtkXdaReader reads libmesh Xda files
-//
-// .SECTION See Also
+/**
+ * @class   vtkvmtkXdaReader
+ * @brief   Reads libmesh Xda files.
+ * @ingroup IO
+ *
+ * vtkvmtkXdaReader is intended to read unstructured grid data from the libmesh Xda ASCII mesh format
+ * (the counterpart of vtkvmtkXdaWriter). Currently ReadMeshSimple() is a stub that does not parse the
+ * file; the "xda" format option of the vmtkmeshreader pype script explicitly reports it as not yet
+ * implemented and refuses to use this class.
+ *
+ * @sa
+ * vtkvmtkXdaWriter
+ */
 
 #ifndef __vtkvmtkXdaReader_h
 #define __vtkvmtkXdaReader_h
@@ -46,8 +50,15 @@ public:
   vtkTypeMacro(vtkvmtkXdaReader,vtkUnstructuredGridReader);
   void PrintSelf(std::ostream& os, vtkIndent indent) override;
 
+  ///@{
+  /**
+   * Set/get the name of the cell data array intended to hold boundary marker values (mirroring
+   * vtkvmtkXdaWriter::BoundaryDataArrayName). Unused while ReadMeshSimple() remains a stub.
+   * Commonly named "CellEntityIds".
+   */
   vtkSetStringMacro(BoundaryDataArrayName);
   vtkGetStringMacro(BoundaryDataArrayName);
+  ///@}
 
   int ReadMeshSimple(VTK_FILEPATH const std::string& fname, vtkDataObject* output) override;
 

@@ -6,9 +6,6 @@
   or http://www.slicer.org/copyright/copyright.txt for details.
 
   Program:   vtkvmtkITK
-  Module:    $HeadURL: http://www.na-mic.org/svn/Slicer3/trunk/Libs/vtkvmtkITK/vtkvmtkITKUtility.h $
-  Date:      $Date: 2006-12-21 13:21:52 +0100 (Thu, 21 Dec 2006) $
-  Version:   $Revision: 1900 $
 
 ==========================================================================*/
 
@@ -18,6 +15,22 @@
 
 #include "vtkObjectFactory.h"
 #include "vtkSetGet.h"
+
+/**
+ * @file
+ * @brief Helper templates and macros for connecting VTK and ITK image
+ * pipelines and for delegating Set/Get calls to a wrapped ITK filter.
+ *
+ * ConnectPipelines() wires the callback-based itk::VTKImageExport /
+ * vtkImageImport (or vtkImageExport / itk::VTKImageImport) pair so that
+ * updates propagate across the VTK/ITK pipeline boundary without copying
+ * image data. DelegateITKInputMacro/DelegateITKOutputMacro (and their
+ * one- and two-argument DelegateSetMacro/DelegateSetMacro2/DelegateGetMacro
+ * shorthands) generate Set/Get methods that forward to the wrapped ITK
+ * filter held in m_Filter; used throughout vtkvmtk's ITK-backed image
+ * filters (e.g. the Segmentation module) to expose ITK filter parameters
+ * as ordinary VTK Set/Get accessors.
+ */
 
 /**
  * This function will connect the given itk::VTKImageExport filter to

@@ -1,10 +1,6 @@
 /*=========================================================================
 
 Program:   VMTK
-Module:    $RCSfile: itkUpwindGradientMagnitudeImageFilter.h,v $
-Language:  C++
-Date:      $Date: 2005/10/06 11:03:26 $
-Version:   $Revision: 1.2 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -32,6 +28,7 @@ namespace itk
 {
 /** \class UpwindGradientMagnitudeImageFilter
  * \brief Computes the gradient magnitude of an image region at each pixel.
+ * \ingroup Segmentation
  *
  * 
  * \ingroup GradientFilters

@@ -1,10 +1,6 @@
 /*=========================================================================
 
 Program:   VMTK 
-Module:    vtkvmtkITKVersion
-Language:  C++
-Date:      $Date: 2021/12/16 $
-Version:   $Revision: 1.5 $
 
   Copyright (c) Kurt Sansom, Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -28,6 +24,15 @@ Version:   $Revision: 1.5 $
 #include "itkVersion.h" // For export macro
 
 
+/**
+ * @class   vtkvmtkITKVersion
+ * @brief   Report the version of ITK that vmtk was built against.
+ * @ingroup Utilities
+ *
+ * vtkvmtkITKVersion exposes itk::Version through a set of static accessors,
+ * so that client code can query the ITK version linked into vtkvmtk without
+ * including ITK headers directly.
+ */
 class VTK_VMTK_ITK_EXPORT vtkvmtkITKVersion : public vtkObject
 {
 public:
@@ -35,6 +40,7 @@ public:
   vtkTypeMacro(vtkvmtkITKVersion, vtkObject);
   void PrintSelf(std::ostream& os, vtkIndent indent) override;
 
+  ///@{
   /**
    * Return the version of itk this object is a part of.
    * A variety of methods are included. GetITKSourceVersion returns a string
@@ -45,6 +51,7 @@ public:
   static int GetITKMinorVersion() { return itk::Version::GetITKMinorVersion(); }
   static int GetITKBuildVersion() { return itk::Version::GetITKBuildVersion(); }
   static const char* GetITKSourceVersion() { return itk::Version::GetITKSourceVersion(); }
+  ///@}
 
 protected:
   vtkvmtkITKVersion() = default; // ensure constructor/destructor protected

@@ -1,10 +1,6 @@
 /*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit
-  Module:    $RCSfile: itkAnisotropicDiffusionVesselEnhancementImageFilter.h,v $
-  Language:  C++
-  Date:      $Date: 2007/06/20 16:03:23 $
-  Version:   $Revision: 1.15 $
 
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
@@ -26,9 +22,10 @@
 #include "itkSymmetricEigenVectorAnalysisImageFilter.h"
 
 namespace itk {
-/** \class AnisotropicDiffusionVesselEnhancementFunction
- * \brief This class iteratively enhances vessels in an image by solving
+/** \class AnisotropicDiffusionVesselEnhancementImageFilter
+ * \brief This class iteratively enhances vessels in an image by solving a
  * non-linear diffusion equation developed by Manniesing et al.
+ * \ingroup Segmentation
  *
  * \par References
  *  Manniesing, R, Viergever, MA, & Niessen, WJ (2006). Vessel Enhancing 

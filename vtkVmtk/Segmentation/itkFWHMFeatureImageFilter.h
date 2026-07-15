@@ -1,10 +1,6 @@
 /*=========================================================================
 
 Program:   VMTK
-Module:    $RCSfile: itkFWHMFeatureImageFilter.h,v $
-Language:  C++
-Date:      $Date: 2005/03/04 11:14:37 $
-Version:   $Revision: 1.2 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -33,7 +29,8 @@ Version:   $Revision: 1.2 $
 namespace itk
 {
 /** \class FWHMFeatureImageFilter
- * \brief Builds a feature image which allows to perform FWHM level sets segmentation.
+ * \brief Builds a feature image that allows FWHM level-set segmentation to be performed.
+ * \ingroup Segmentation
  *
  */
 template <typename TInputImage, typename TOutputImage>

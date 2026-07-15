@@ -1,10 +1,6 @@
 /*=========================================================================
 
 Program:   VMTK
-Module:    $RCSfile: vtkvmtkPolyDataCenterlineSections.h,v $
-Language:  C++
-Date:      $Date: 2006/10/17 15:16:16 $
-Version:   $Revision: 1.1 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -18,14 +14,25 @@ Version:   $Revision: 1.1 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkPolyDataCenterlineSections - Extract a set of vessel sections from a surface along a centerline.
-// .SECTION Description
-//  The set of vessel sections contain the profile as well as the the following information about the section:
-//  - Centerline Section Area
-//  - Centerline Section Min Size
-//  - Centerline Section Max Size
-//  - Centerline Section Shape
-//  - Centerline Section Closed
+/**
+ * @class   vtkvmtkPolyDataCenterlineSections
+ * @brief   Extract a set of vessel sections from a surface along a centerline.
+ * @ingroup ComputationalGeometry
+ *
+ *  Unlike vtkvmtkPolyDataBranchSections/vtkvmtkPolyDataBifurcationSections (which cut one section
+ *  at a fixed sphere-distance per branch/bifurcation), this class cuts one cross-section at every
+ *  point of the input Centerlines, giving a dense series of sections along the whole vessel.
+ *
+ *  The set of vessel sections contain the profile as well as the the following information about the section:
+ *  - Centerline Section Area
+ *  - Centerline Section Min Size
+ *  - Centerline Section Max Size
+ *  - Centerline Section Shape
+ *  - Centerline Section Closed
+ *
+ * @sa
+ * vtkvmtkPolyDataBranchSections, vtkvmtkPolyDataBifurcationSections
+ */
 
 #ifndef __vtkvmtkPolyDataCenterlineSections_h
 #define __vtkvmtkPolyDataCenterlineSections_h
@@ -43,23 +50,64 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataCenterlineSections :
 
   static vtkvmtkPolyDataCenterlineSections* New();
 
+  ///@{
+  /**
+   * Set/Get the centerline(s) along which sections are cut, one per centerline point. Required
+   * input.
+   */
   vtkSetObjectMacro(Centerlines,vtkPolyData);
   vtkGetObjectMacro(Centerlines,vtkPolyData);
+  ///@}
 
+  ///@{
+  /**
+   * Set/Get the name of the output cell data array where the cross-sectional area of each section is
+   * stored.
+   * Commonly named "CenterlineSectionArea".
+   */
   vtkSetStringMacro(CenterlineSectionAreaArrayName);
   vtkGetStringMacro(CenterlineSectionAreaArrayName);
+  ///@}
 
+  ///@{
+  /**
+   * Set/Get the name of the output cell data array where the minimum diameter of each section is
+   * stored.
+   * Commonly named "CenterlineSectionMinSize".
+   */
   vtkSetStringMacro(CenterlineSectionMinSizeArrayName);
   vtkGetStringMacro(CenterlineSectionMinSizeArrayName);
+  ///@}
 
+  ///@{
+  /**
+   * Set/Get the name of the output cell data array where the maximum diameter of each section is
+   * stored.
+   * Commonly named "CenterlineSectionMaxSize".
+   */
   vtkSetStringMacro(CenterlineSectionMaxSizeArrayName);
   vtkGetStringMacro(CenterlineSectionMaxSizeArrayName);
+  ///@}
 
+  ///@{
+  /**
+   * Set/Get the name of the output cell data array where the shape index of each section (the ratio
+   * between its minimum and maximum diameter) is stored.
+   * Commonly named "CenterlineSectionShape".
+   */
   vtkSetStringMacro(CenterlineSectionShapeArrayName);
   vtkGetStringMacro(CenterlineSectionShapeArrayName);
+  ///@}
 
+  ///@{
+  /**
+   * Set/Get the name of the output cell data array where, for each section, whether the cutting
+   * plane fully closes off the vessel lumen (1) or not (0) is stored.
+   * Commonly named "CenterlineSectionClosed".
+   */
   vtkSetStringMacro(CenterlineSectionClosedArrayName);
   vtkGetStringMacro(CenterlineSectionClosedArrayName);
+  ///@}
 
   protected:
   vtkvmtkPolyDataCenterlineSections();

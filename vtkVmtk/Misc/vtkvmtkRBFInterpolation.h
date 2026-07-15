@@ -1,10 +1,6 @@
 /*=========================================================================
 
 Program:   VMTK
-Module:    $RCSfile: vtkvmtkRBFInterpolation.h,v $
-Language:  C++
-Date:      $Date: 2006/04/06 16:46:43 $
-Version:   $Revision: 1.3 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -18,9 +14,22 @@ Version:   $Revision: 1.3 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkRBFInterpolation - Implicit function which when given a set of disjoined points and a radial basis shape type will evaluate it self at its zero level set. 
-// .SECTION Description
-// ..
+/**
+ * @class   vtkvmtkRBFInterpolation
+ * @brief   Implements an implicit function that interpolates a scalar value at a scattered set of
+ * points using radial basis functions.
+ * @ingroup Misc
+ *
+ * vtkvmtkRBFInterpolation builds a radial basis function (RBF) interpolant that takes the value
+ * RBFInterpolationValue at every point of Source, and evaluates that interpolant as an implicit
+ * function anywhere in space. The interpolation weights are found by solving the dense linear
+ * system obtained by requiring the RBF sum to match RBFInterpolationValue at each source point
+ * (see ComputeCoefficients); RBFType selects the radial kernel (thin-plate spline, biharmonic,
+ * or triharmonic). Since all source points share the same target value, this does not directly
+ * reconstruct a signed-distance-like implicit surface from on/off-surface samples; instead it is
+ * used to build a smooth scalar field seeded at a set of points, e.g. by vmtkrbfinterpolation to
+ * resample a set of seed points onto a regular image grid via vtkSampleFunction.
+ */
 
 #ifndef __vtkvmtkRBFInterpolation_h
 #define __vtkvmtkRBFInterpolation_h
@@ -39,23 +48,42 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkRBFInterpolation : public vtkImplicitFunction
 
   static vtkvmtkRBFInterpolation *New();
 
-  // Description
-  // Evaluate polyball.
+  ///@{
+  /**
+   * Evaluate polyball.
+   */
   double EvaluateFunction(double x[3]) override;
   double EvaluateFunction(double x, double y, double z) override
   {return this->vtkImplicitFunction::EvaluateFunction(x, y, z); } ;
+  ///@}
 
-  // Description
-  // Evaluate polyball gradient.
+  /**
+   * Evaluate polyball gradient.
+   */
   void EvaluateGradient(double x[3], double n[3]) override;
 
+  /**
+   * Solve for the RBF interpolation weights (Coefficients) so that the interpolant evaluates
+   * to RBFInterpolationValue at every point of Source, using the kernel selected by RBFType.
+   * Called automatically by EvaluateFunction the first time it runs if Coefficients has not
+   * been computed yet; can also be called explicitly beforehand.
+   */
   void ComputeCoefficients();
 
-  // Description:
-  // Set / get source poly data.
+  ///@{
+  /**
+   * Set / get source poly data.
+   */
   vtkSetObjectMacro(Source,vtkPolyData);
   vtkGetObjectMacro(Source,vtkPolyData);
+  ///@}
 
+  ///@{
+  /**
+   * Set/Get the radial basis kernel used to build the interpolant, one of the THIN_PLATE_SPLINE,
+   * BIHARMONIC, or TRIHARMONIC enum values (equivalently set through the SetRBFTypeTo... methods
+   * below). Default: THIN_PLATE_SPLINE.
+   */
   vtkSetMacro(RBFType,int);
   vtkGetMacro(RBFType,int);
   void SetRBFTypeToThinPlateSpline()
@@ -64,6 +92,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkRBFInterpolation : public vtkImplicitFunction
   { this->SetRBFType(BIHARMONIC); }
   void SetRBFTypeToTriharmonic()
   { this->SetRBFType(TRIHARMONIC); }
+  ///@}
 
 //BTX
   enum 

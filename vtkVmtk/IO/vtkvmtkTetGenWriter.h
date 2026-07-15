@@ -1,10 +1,6 @@
 /*=========================================================================
                                                                                                                                     
 Program:   VMTK
-Module:    $RCSfile: vtkvmtkTetGenWriter.h,v $
-Language:  C++
-Date:      $Date: 2006/04/06 16:47:47 $
-Version:   $Revision: 1.2 $
                                                                                                                                     
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -18,11 +14,15 @@ Version:   $Revision: 1.2 $
      PURPOSE.  See the above copyright notices for more information.
                                                                                                                                     
 =========================================================================*/
-// .NAME vtkvmtkTetGenWriter - writes TetGen .msh files.
-// .SECTION Description
-// vtkvmtkTetGenWriter writes TetGen .msh files. Many thanks to M. Xenos, Y. Alemu and D. Bluestein, BioFluids Laboratory, Stony Brook University, Stony Brook, NY, for the inputs on the file format.
-//
-// .SECTION See Also
+/**
+ * @class   vtkvmtkTetGenWriter
+ * @brief   Writes TetGen .msh files.
+ * @ingroup IO
+ *
+ * vtkvmtkTetGenWriter writes TetGen .msh files. Many thanks to M. Xenos, Y. Alemu and D. Bluestein, BioFluids Laboratory, Stony Brook University, Stony Brook, NY, for the inputs on the file format.
+ *
+ *
+ */
 
 #ifndef __vtkvmtkTetGenWriter_h
 #define __vtkvmtkTetGenWriter_h
@@ -41,8 +41,17 @@ public:
   vtkTypeMacro(vtkvmtkTetGenWriter,vtkUnstructuredGridWriter);
   void PrintSelf(std::ostream& os, vtkIndent indent) override;
 
+  ///@{
+  /**
+   * Set/get the name of the cell data array intended to hold boundary marker values to be written out
+   * alongside node/element data (mirroring vtkvmtkTetGenReader::BoundaryDataArrayName). Not currently
+   * used by WriteData: the .node/.ele files this writer produces have no attribute/boundary-marker
+   * columns.
+   * Commonly named "CellEntityIds".
+   */
   vtkSetStringMacro(BoundaryDataArrayName);
   vtkGetStringMacro(BoundaryDataArrayName);
+  ///@}
 
 protected:
   vtkvmtkTetGenWriter();

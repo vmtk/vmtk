@@ -1,10 +1,6 @@
 /*=========================================================================
 
   Program:   VMTK
-  Module:    $RCSfile: vtkvmtkItems.h,v $
-  Language:  C++
-  Date:      $Date: 2006/04/06 16:46:43 $
-  Version:   $Revision: 1.3 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -18,9 +14,22 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkItems - Control allocation and memory footprint of item instances. 
-// .SECTION Description
-// ..
+/**
+ * @class   vtkvmtkItems
+ * @brief   Control allocation and memory footprint of item instances.
+ * @ingroup DifferentialGeometry
+ *
+ * vtkvmtkItems is an abstract, reference-counted, resizable array of vtkvmtkItem pointers (modeled
+ * after VTK's own vtkCellArray/vtkPoints-style container classes). Allocate() creates and takes
+ * ownership of numItems items (each instantiated through the subclass-provided
+ * InstantiateNewItem() factory method), AllocateItem() replaces a single slot with a new item of a
+ * possibly different type, and Resize()/Squeeze() grow or shrink the backing array as needed.
+ * DeepCopy()/ShallowCopy() copy or share another collection's items. vtkvmtkDataSetItems is the
+ * concrete subclass used to hold one item per point of a vtkDataSet.
+ *
+ * @sa
+ * vtkvmtkItem, vtkvmtkDataSetItems, vtkvmtkNeighborhoods
+ */
 
 #ifndef __vtkvmtkItems_h
 #define __vtkvmtkItems_h
@@ -37,43 +46,68 @@ public:
 
   vtkTypeMacro(vtkvmtkItems,vtkObject);
 
+  ///@{
+  /**
+   * Set/get the item type (as understood by the subclass's InstantiateNewItem()) used by Allocate()
+   * to create new items.
+   */
   vtkSetMacro(ItemType,int);
   vtkGetMacro(ItemType,int);
+  ///@}
 
-  // Description:
-  // Allocate the specified number of items (i.e., number of points) that
-  // will be built.
+  /**
+   * Allocate the specified number of items (i.e., number of points) that will be built.
+   */
   void Allocate(vtkIdType numItems, vtkIdType ext=1000);
 
+  /**
+   * Get the item stored at index id.
+   */
   vtkvmtkItem* GetItem(vtkIdType id) {return this->Array[id];};
 
+  ///@{
+  /**
+   * Set/get the number of valid items in the collection (i.e. MaxId + 1). Setting this only moves
+   * the MaxId marker; it does not allocate or free storage.
+   */
   void SetNumberOfItems(vtkIdType numberOfItems) { this->MaxId = numberOfItems - 1;};
   vtkIdType GetNumberOfItems() {return this->MaxId + 1;};
+  ///@}
 
-  // Description:
-  // Reclaim any unused memory.
+  /**
+   * Reclaim any unused memory.
+   */
   void Squeeze();
 
-  // Description:
-  // Reset to a state of no entries without freeing the memory.
+  /**
+   * Reset to a state of no entries without freeing the memory.
+   */
   void Reset();
 
-  // Description:
-  // Reset to a state of no entries freeing the memory.
+  /**
+   * Reset to a state of no entries freeing the memory.
+   */
   void Initialize();
 
-  // Description:
-  // Releases the stencil array.
+  /**
+   * Releases the stencil array.
+   */
   void ReleaseArray();
 
+  /**
+   * Replace the item at index i with a newly instantiated item of the given itemType, deleting the
+   * previous item at that index.
+   */
   void AllocateItem(vtkIdType i, vtkIdType itemType);
 
-  // Description:
-  // Standard DeepCopy method.
+  /**
+   * Standard DeepCopy method.
+   */
   void DeepCopy(vtkvmtkItems *src);
 
-  // Description:
-  // Standard ShallowCopy method.
+  /**
+   * Standard ShallowCopy method.
+   */
   void ShallowCopy(vtkvmtkItems *src);
 
 protected:

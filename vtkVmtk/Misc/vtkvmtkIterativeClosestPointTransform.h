@@ -1,10 +1,6 @@
 /*=========================================================================
 
 Program:   VMTK
-Module:    $RCSfile: vtkvmtkIterativeClosestPointTransform.h,v $
-Language:  C++
-Date:      $Date: 2010/05/30 11:29:48 $
-Version:   $Revision: 1.1 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -18,9 +14,23 @@ Version:   $Revision: 1.1 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkIterativeClosestPointTransform - Implementation of the ICP algorithm with FarThreshold variant
-// .SECTION Description
-// ..
+/**
+ * @class   vtkvmtkIterativeClosestPointTransform
+ * @brief   Implements the ICP algorithm, with a FarThreshold variant.
+ * @ingroup Misc
+ *
+ * This class extends VTK's vtkIterativeClosestPointTransform (rigid/similarity registration of a
+ * source point set onto a target point set by iteratively matching closest points and solving a
+ * landmark transform) with an optional far-point rejection step. When UseFarThreshold is on,
+ * source points whose closest target point is farther than FarThreshold are excluded from the
+ * landmark correspondences used to update the transform at each iteration; this makes the
+ * registration robust to partially overlapping surfaces, where forcing every source point to match
+ * some target point would bias the result.
+ *
+ * This is the transform behind the vmtkicpregistration pype script, used to rigidly align a
+ * surface onto a reference surface (e.g. two segmentations of the same vessel from different
+ * imaging sessions).
+ */
 
 #ifndef __vtkvmtkIterativeClosestPointTransform_h
 #define __vtkvmtkIterativeClosestPointTransform_h
@@ -35,23 +45,25 @@ public:
   vtkTypeMacro(vtkvmtkIterativeClosestPointTransform,vtkIterativeClosestPointTransform);
   void PrintSelf(std::ostream& os, vtkIndent indent) override;
 
-  // Description: 
-  // Set/Get the threshold to declare a point to not have a corresponding
-  // point in the other point set. This value is only used if
-  // UseFarThreshold is True (not the default).
-  // This is useful to align partially overlapping surfaces.
-  // If this value is negative, all points are considered to have a
-  // corresponding point in the other point set.
-  // The default is 1.0.
+  ///@{
+  /**
+   * Set/Get the threshold to declare a point to not have a corresponding point in the other point set.
+   * This value is only used if UseFarThreshold is True (not the default). This is useful to align
+   * partially overlapping surfaces. If this value is negative, all points are considered to have a
+   * corresponding point in the other point set. The default is 1.0.
+   */
   vtkSetMacro(FarThreshold,double);
   vtkGetMacro(FarThreshold,double);
+  ///@}
 
-  // Description: 
-  // Determine whether or not to use the FarThreshold.
-  // The default is 0.
+  ///@{
+  /**
+   * Determine whether or not to use the FarThreshold. The default is 0.
+   */
   vtkSetMacro(UseFarThreshold,int);
   vtkGetMacro(UseFarThreshold,int);
   vtkBooleanMacro(UseFarThreshold,int);
+  ///@}
 
 protected:
 

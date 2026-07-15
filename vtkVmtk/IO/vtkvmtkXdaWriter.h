@@ -1,10 +1,6 @@
 /*=========================================================================
                                                                                                                                     
 Program:   VMTK
-Module:    $RCSfile: vtkvmtkXdaWriter.h,v $
-Language:  C++
-Date:      $Date: 2006/04/06 16:47:47 $
-Version:   $Revision: 1.2 $
                                                                                                                                     
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -18,11 +14,15 @@ Version:   $Revision: 1.2 $
      PURPOSE.  See the above copyright notices for more information.
                                                                                                                                     
 =========================================================================*/
-// .NAME vtkvmtkXdaWriter - writes libmesh Xda files
-// .SECTION Description
-// vtkvmtkXdaWriter writes libmesh Xda files
-//
-// .SECTION See Also
+/**
+ * @class   vtkvmtkXdaWriter
+ * @brief   Writes libmesh Xda files.
+ * @ingroup IO
+ *
+ * vtkvmtkXdaWriter writes libmesh Xda files
+ *
+ *
+ */
 
 #ifndef __vtkvmtkXdaWriter_h
 #define __vtkvmtkXdaWriter_h
@@ -40,8 +40,17 @@ public:
   vtkTypeMacro(vtkvmtkXdaWriter,vtkUnstructuredGridWriter);
   void PrintSelf(std::ostream& os, vtkIndent indent) override;
 
+  ///@{
+  /**
+   * Set/get the name of the input cell data array holding integer boundary marker values for boundary
+   * (triangle/quad) cells. If set, one boundary-condition line per boundary cell is written to the
+   * output, giving the owning volume element, the libMesh-numbered local face id, and this marker
+   * value. If left NULL (default), no boundary condition section is written.
+   * Commonly named "CellEntityIds".
+   */
   vtkSetStringMacro(BoundaryDataArrayName);
   vtkGetStringMacro(BoundaryDataArrayName);
+  ///@}
 
 protected:
   vtkvmtkXdaWriter();

@@ -1,10 +1,6 @@
 /*=========================================================================
                                                                                                                                     
 Program:   VMTK
-Module:    vtkvmtkTetGenReader.h
-Language:  C++
-Date:      Sat Feb 19 15:15:16 CET 2011
-Version:   Revision: 1.0
                                                                                                                                     
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -18,10 +14,14 @@ Version:   Revision: 1.0
      PURPOSE.  See the above copyright notices for more information.
                                                                                                                                     
 =========================================================================*/
-// .NAME vtkvmtkTetGenReader - reads unstructured grid data from Tetgen node/elem format
-// .SECTION Description
-// vtkvmtkTetGenReader reads unstructured grid data from Tetgen node/elem format
-// Thanks to Sebastian Ordas for getting the class going.
+/**
+ * @class   vtkvmtkTetGenReader
+ * @brief   Reads unstructured grid data from Tetgen node/elem format.
+ * @ingroup IO
+ *
+ * vtkvmtkTetGenReader reads unstructured grid data from Tetgen node/elem format
+ * Thanks to Sebastian Ordas for getting the class going.
+ */
 
 #ifndef __vtkvmtkTetGenReader_h
 #define __vtkvmtkTetGenReader_h
@@ -45,8 +45,18 @@ public:
 
   static vtkvmtkTetGenReader *New();
 
+  ///@{
+  /**
+   * Set/get the name used for the point data and cell data arrays that store TetGen boundary marker
+   * values. Point boundary markers are read verbatim from the .node file (when present); the
+   * per-tetrahedron cell marker is the maximum node boundary marker found among a tetrahedron's
+   * points (excluding the first). If TetGen's .node file has no boundary marker column, no arrays are
+   * added.
+   * Commonly named "CellEntityIds".
+   */
   vtkSetStringMacro(BoundaryDataArrayName);
   vtkGetStringMacro(BoundaryDataArrayName);
+  ///@}
 
   int ReadMeshSimple(VTK_FILEPATH const std::string& fname, vtkDataObject* output) override;
 

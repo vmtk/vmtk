@@ -1,10 +1,6 @@
 /*=========================================================================
 
   Program:   VMTK
-  Module:    $RCSfile: vtkvmtkUnstructuredGridFELaplaceAssembler.h,v $
-  Language:  C++
-  Date:      $Date: 2006/04/06 16:46:44 $
-  Version:   $Revision: 1.4 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -18,9 +14,17 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkUnstructuredGridFELaplaceAssembler - Construct a laplacian based finite element calculation on a mesh.
-// .SECTION Description
-// ..
+/**
+ * @class   vtkvmtkUnstructuredGridFELaplaceAssembler
+ * @brief   Construct a laplacian based finite element calculation on a mesh.
+ * @ingroup DifferentialGeometry
+ *
+ * Assembles, over a vtkUnstructuredGrid, the finite-element stiffness matrix for the Laplace
+ * operator (used e.g. by vtkvmtkUnstructuredGridHarmonicMappingFilter to solve for a harmonic
+ * function with given boundary values).
+ *
+ * @sa vtkvmtkFEAssembler, vtkvmtkUnstructuredGridHarmonicMappingFilter
+ */
 
 #ifndef __vtkvmtkUnstructuredGridFELaplaceAssembler_h
 #define __vtkvmtkUnstructuredGridFELaplaceAssembler_h
@@ -35,6 +39,9 @@ public:
   static vtkvmtkUnstructuredGridFELaplaceAssembler* New();
   vtkTypeMacro(vtkvmtkUnstructuredGridFELaplaceAssembler,vtkvmtkFEAssembler);
 
+  /**
+   * Assemble the Laplace stiffness matrix.
+   */
   virtual void Build() override;
 
 protected:

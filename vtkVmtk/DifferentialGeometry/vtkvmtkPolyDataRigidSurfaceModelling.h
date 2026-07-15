@@ -1,10 +1,6 @@
 /*=========================================================================
 
   Program:   VMTK
-  Module:    $RCSfile: vtkvmtkPolyDataRigidSurfaceModelling.h,v $
-  Language:  C++
-  Date:      $Date: 2006/04/06 16:46:44 $
-  Version:   $Revision: 1.5 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -18,9 +14,16 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkPolyDataRigidSurfaceModelling - Not implemented; no utility developed yet.
-// .SECTION Description
-// ..
+/**
+ * @class   vtkvmtkPolyDataRigidSurfaceModelling
+ * @brief   Serves as a placeholder filter for rigid surface modelling; not yet implemented.
+ * @ingroup DifferentialGeometry
+ *
+ * This class is a stub reserved for a future rigid-surface-modelling filter (e.g. fitting or
+ * deforming a surface under rigid-body constraints). Its RequestData() currently only reports an
+ * error ("hasn't been implemented yet") and produces no output; it performs no useful processing
+ * and has no pype script wrapper.
+ */
 
 #ifndef __vtkvmtkPolyDataRigidSurfaceModelling_h
 #define __vtkvmtkPolyDataRigidSurfaceModelling_h

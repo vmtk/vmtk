@@ -6,9 +6,6 @@ See COPYRIGHT.txt
 or http://www.slicer.org/copyright/copyright.txt for details.
 
 Program:   vtkITK
-Module:    $HeadURL$
-Date:      $Date$
-Version:   $Revision$
 
 ==========================================================================*/
 
@@ -33,6 +30,7 @@ class vtkMatrix4x4;
 #include <cmath>
 
 /// \brief Read a series of files that have a common naming convention.
+/// \ingroup Utilities
 ///
 /// ArchetypeImageSeriesReader creates a volume from a series of images
 /// stored in files. The series are represented by one filename. This

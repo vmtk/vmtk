@@ -1,10 +1,6 @@
 /*=========================================================================
 
   Program:   VMTK
-  Module:    $RCSfile: vtkvmtkEmptyNeighborhood.h,v $
-  Language:  C++
-  Date:      $Date: 2006/04/06 16:46:43 $
-  Version:   $Revision: 1.3 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -18,9 +14,19 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkEmptyNeighborhood - Create an an empty neighborhood instance.
-// .SECTION Description
-// ..
+/**
+ * @class   vtkvmtkEmptyNeighborhood
+ * @brief   Create an empty neighborhood instance.
+ * @ingroup DifferentialGeometry
+ *
+ * vtkvmtkEmptyNeighborhood is the trivial vtkvmtkNeighborhood implementation: Build() always
+ * results in zero points (NPoints = 0, PointIds freed). It is used as a placeholder item type
+ * (VTK_VMTK_EMPTY_NEIGHBORHOOD), e.g. by vtkvmtkNeighborhoods, for points that should not have a
+ * real neighborhood computed.
+ *
+ * @sa
+ * vtkvmtkNeighborhood, vtkvmtkNeighborhoods
+ */
 
 #ifndef __vtkvmtkEmptyNeighborhood_h
 #define __vtkvmtkEmptyNeighborhood_h
@@ -37,10 +43,14 @@ public:
   static vtkvmtkEmptyNeighborhood* New();
   vtkTypeMacro(vtkvmtkEmptyNeighborhood,vtkvmtkNeighborhood);
 
+  /**
+   * Get the item type identifier, VTK_VMTK_EMPTY_NEIGHBORHOOD.
+   */
   virtual vtkIdType GetItemType() override {return VTK_VMTK_EMPTY_NEIGHBORHOOD;};
 
-  // Description:
-  // Build the stencil.
+  /**
+   * Build the stencil.
+   */
   void Build() override;
 
 protected:

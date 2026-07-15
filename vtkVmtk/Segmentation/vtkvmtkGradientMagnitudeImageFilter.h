@@ -1,10 +1,6 @@
 /*=========================================================================
 
 Program:   VMTK
-Module:    $RCSfile: vtkvmtkGradientMagnitudeImageFilter.h,v $
-Language:  C++
-Date:      $Date: 2006/04/06 16:48:25 $
-Version:   $Revision: 1.3 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -23,10 +19,18 @@ Version:   $Revision: 1.3 $
 
 =========================================================================*/
 
-// .NAME vtkvmtkGradientMagnitudeImageFilter - Wrapper class around itk::GradientMagnitudeImageFilterImageFilter
-// .SECTION Description
-// vtkvmtkGradientMagnitudeImageFilter
-
+/**
+ * @class   vtkvmtkGradientMagnitudeImageFilter
+ * @brief   Wraps itk::GradientMagnitudeImageFilter.
+ * @ingroup Segmentation
+ *
+ * Computes the magnitude of the gradient of the input image at each pixel using simple
+ * finite-difference derivatives (unlike vtkvmtkGradientMagnitudeRecursiveGaussianImageFilter, no
+ * Gaussian smoothing/scale parameter is involved). No configurable parameters beyond the input
+ * image itself.
+ *
+ * @sa vtkvmtkGradientMagnitudeRecursiveGaussianImageFilter
+ */
 
 #ifndef __vtkvmtkGradientMagnitudeImageFilter_h
 #define __vtkvmtkGradientMagnitudeImageFilter_h

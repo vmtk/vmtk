@@ -1,10 +1,6 @@
 /*=========================================================================
 
   Program:   VMTK
-  Module:    $RCSfile: vtkvmtkPolyDataGradientStencil.h,v $
-  Language:  C++
-  Date:      $Date: 2006/04/06 16:46:44 $
-  Version:   $Revision: 1.4 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -18,9 +14,23 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkPolyDataGradientStencil - Apply gradient weighting to the neighborhood connections of a surface.
-// .SECTION Description
-// ..
+/**
+ * @class   vtkvmtkPolyDataGradientStencil
+ * @brief   Apply gradient weighting to the neighborhood connections of a surface.
+ * @ingroup DifferentialGeometry
+ *
+ * vtkvmtkPolyDataGradientStencil builds, for each mesh point, a 3-component-per-neighbor stencil
+ * (NumberOfComponents == 3) whose weights, when dotted with the scalar values at the center point and
+ * its one-ring neighbors, approximate the 3D surface gradient of that scalar field at the center
+ * point. For every triangle incident to an edge of the one-ring, the (area-weighted) contribution of
+ * each of its three vertices to the gradient is computed via the internal Gamma() helper --
+ * essentially the standard piecewise-linear finite-element gradient formula, weighted by 1/(4*triangle
+ * area) -- and accumulated into CenterWeight (contribution of the center point) and the neighbor
+ * Weights. It is one of the stencil types built by vtkvmtkStencils and consumed, e.g., by gradient
+ * estimation on a surface (see also the finite-element based vtkvmtkPolyDataGradientFilter).
+ *
+ * @sa vtkvmtkPolyDataManifoldStencil, vtkvmtkStencils, vtkvmtkPolyDataGradientFilter
+ */
 
 #ifndef __vtkvmtkPolyDataGradientStencil_h
 #define __vtkvmtkPolyDataGradientStencil_h

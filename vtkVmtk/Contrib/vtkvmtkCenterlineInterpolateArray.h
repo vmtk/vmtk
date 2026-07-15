@@ -1,10 +1,6 @@
 /*=========================================================================
 
   Program:   VMTK
-  Module:    $RCSfile: vtkvmtkCenterlineInterpolateArray.h,v $
-  Language:  C++
-  Date:      $$
-  Version:   $$
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -22,9 +18,22 @@
 	Kalkulo AS
 	Simula Research Laboratory
 =========================================================================*/
-// .NAME vtkvmtkInterpolateCenterlineArray - Interpolate a point-based array from a set of provided values.
-// .SECTION Description
-// ..
+/**
+ * @class   vtkvmtkCenterlineInterpolateArray
+ * @brief   Interpolate a point-based array from a set of provided values.
+ * @ingroup Contrib
+ *
+ * Given a sparse set of values (Values) attached to a subset of the input
+ * poly data's points (ValuesIds), vtkvmtkCenterlineInterpolateArray produces
+ * a dense point-data array (InterpolatedArrayName) covering all points of
+ * every polyline cell (e.g. a set of centerlines). Along each polyline, the
+ * value at points lying between two provided points is obtained by linear
+ * interpolation with respect to arc length (abscissa); points before the
+ * first provided value or after the last one are set to that nearest
+ * provided value (constant extrapolation). Points on cells that contain no
+ * provided value at all, or that are not polylines, are set to
+ * DefaultValue.
+ */
 
 #ifndef __vtkvmtkCenterlineInterpolateArray_h
 #define __vtkvmtkCenterlineInterpolateArray_h
@@ -42,25 +51,38 @@ public:
   static vtkvmtkCenterlineInterpolateArray* New();
   vtkTypeMacro(vtkvmtkCenterlineInterpolateArray,vtkPolyDataAlgorithm);
 
-  //Description:
-  //Default value to fill in when no data is available
+  ///@{
+  /**
+   * Default value to fill in when no data is available
+   */
   vtkSetMacro(DefaultValue,double);
   vtkGetMacro(DefaultValue,double);
+  ///@}
 
-  //Description:
-  //Set/Get the values from which to interpolate
+  ///@{
+  /**
+   * Set/Get the values from which to interpolate
+   */
   vtkSetObjectMacro(Values,vtkDataArray);
   vtkGetObjectMacro(Values,vtkDataArray);
+  ///@}
 
-  //Description:
-  //Set/Get the point ids corresponding to the provided values
+  ///@{
+  /**
+   * Set/Get the point ids corresponding to the provided values
+   */
   vtkSetObjectMacro(ValuesIds,vtkIdList);
   vtkGetObjectMacro(ValuesIds,vtkIdList);
+  ///@}
 
-  //Description:
-  //Set/Get the name of the resulting array
+  ///@{
+  /**
+   * Set/Get the name of the resulting array
+   * Commonly named "InterpolatedRadius" or "ResolutionArray", depending on context.
+   */
   vtkSetStringMacro(InterpolatedArrayName);
   vtkGetStringMacro(InterpolatedArrayName);
+  ///@}
   
 
 protected:

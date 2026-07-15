@@ -1,10 +1,6 @@
 /*=========================================================================
 
 Program:   VMTK
-Module:    $RCSfile: vtkvmtkPolyDataKiteRemovalFilter.h,v $
-Language:  C++
-Date:      $Date: 2006/04/06 16:47:48 $
-Version:   $Revision: 1.2 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -18,9 +14,18 @@ Version:   $Revision: 1.2 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkPolyDataKiteRemovalFilter - removes small protrusions (kites) from a surface based on a SizeFactor parameter
-// .SECTION Description
-// ...
+/**
+ * @class   vtkvmtkPolyDataKiteRemovalFilter
+ * @brief   Removes small protrusions (kites) from a surface based on a SizeFactor parameter.
+ * @ingroup Misc
+ *
+ * A "kite" is a small triangle (or connected group of triangles) whose area is much smaller than
+ * the surrounding local average, typically a meshing artifact. For every triangle, this filter
+ * compares its neighborhood's local average area against the global average area (scaled by
+ * SizeFactor) and removes/patches over triangles that fall below the threshold. This is the filter
+ * behind the vmtksurfacekiteremoval pype script, typically run before Taubin smoothing to avoid
+ * artifacts around degenerate small triangles.
+ */
 
 #ifndef __vtkvmtkPolyDataKiteRemovalFilter_h
 #define __vtkvmtkPolyDataKiteRemovalFilter_h
@@ -36,8 +41,14 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkPolyDataKiteRemovalFilter : public vtkPolyData
 
   static vtkvmtkPolyDataKiteRemovalFilter *New();
   
+  ///@{
+  /**
+   * Set/Get the ratio between a triangle's local neighborhood average area and the surface's global
+   * average triangle area, below which the triangle is considered a kite and removed. Default: 0.1.
+   */
   vtkGetMacro(SizeFactor,double);
   vtkSetMacro(SizeFactor,double);
+  ///@}
 
   protected:
   vtkvmtkPolyDataKiteRemovalFilter();

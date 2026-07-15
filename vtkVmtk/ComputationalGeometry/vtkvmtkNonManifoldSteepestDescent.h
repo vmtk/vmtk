@@ -1,10 +1,6 @@
 /*=========================================================================
 
 Program:   VMTK
-Module:    $RCSfile: vtkvmtkNonManifoldSteepestDescent.h,v $
-Language:  C++
-Date:      $Date: 2006/04/06 16:46:43 $
-Version:   $Revision: 1.4 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -18,12 +14,17 @@ Version:   $Revision: 1.4 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkNonManifoldSteepestDescent - Abstract class for steepest descent on a polygonal non-manifold.
-// .SECTION Description
-// This class is an abstract filter used as base class for performing steepest descent on a non-manifold surface made of convex polygons (such as the Voronoi diagram) on the basis of a given scalar field. Steepest descent is performed on the edges of input polygons with a first order approximation.
-//
-// .SECTION See Also
-// vtkSteepestDescentLineTracer vtkSurfaceToCenterlines vtkVoronoiDiagram3D
+/**
+ * @class   vtkvmtkNonManifoldSteepestDescent
+ * @brief   Provides an abstract base class for steepest descent on a polygonal non-manifold.
+ * @ingroup ComputationalGeometry
+ *
+ * This class is an abstract filter used as base class for performing steepest descent on a non-manifold surface made of convex polygons (such as the Voronoi diagram) on the basis of a given scalar field. Steepest descent is performed on the edges of input polygons with a first order approximation.
+ *
+ *
+ * @sa
+ * vtkSteepestDescentLineTracer vtkSurfaceToCenterlines vtkVoronoiDiagram3D
+ */
 
 #ifndef __vtkvmtkNonManifoldSteepestDescent_h
 #define __vtkvmtkNonManifoldSteepestDescent_h
@@ -44,17 +45,29 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkNonManifoldSteepestDescent :
 
   static vtkvmtkNonManifoldSteepestDescent *New();
 
-  // Description:
-  // Set/Get the name of the point data array used as the descent scalar field.
+  ///@{
+  /**
+   * Set/Get the name of the point data array used as the descent scalar field.
+   * Commonly named "VoronoiGeodesicDistance".
+   */
   vtkSetStringMacro(DescentArrayName);
   vtkGetStringMacro(DescentArrayName);
+  ///@}
 
+  ///@{
+  /**
+   * Set/Get the direction of steepest descent search: VTK_VMTK_DOWNWARD (default) looks for the
+   * neighboring point along the edges where the descent scalar field decreases most steeply,
+   * VTK_VMTK_UPWARD looks for the steepest increase instead. Use SetDirectionToDownward /
+   * SetDirectionToUpward as convenience setters.
+   */
   vtkSetMacro(Direction,int);
   vtkGetMacro(Direction,int);
-  void SetDirectionToDownward() 
+  void SetDirectionToDownward()
   {this->SetDirection(VTK_VMTK_DOWNWARD); }
-  void SetDirectionToUpward() 
+  void SetDirectionToUpward()
   {this->SetDirection(VTK_VMTK_UPWARD); }
+  ///@}
 
   protected:
   vtkvmtkNonManifoldSteepestDescent();
@@ -62,10 +75,15 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkNonManifoldSteepestDescent :
 
   virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
-  // Description:
-  // Compute the steepest descent point in terms of edge (point id pair) and parametric coordinate on edge. It takes in input a starting point expressed in terms of edge (point id pair) and parametric coordinate on edge. It returns the descent value.
+  ///@{
+  /**
+   * Compute the steepest descent point in terms of edge (point id pair) and parametric coordinate on
+   * edge. It takes in input a starting point expressed in terms of edge (point id pair) and parametric
+   * coordinate on edge. It returns the descent value.
+   */
   double GetSteepestDescent(vtkPolyData* input, vtkIdType* edge, double s, vtkIdType* steepestDescentEdge, double &steepestDescentS);
   double GetSteepestDescentInCell(vtkPolyData* input, vtkIdType cellId, vtkIdType* edge, double s, vtkIdType* steepestDescentEdge, double &steepestDescentS, double &steepestDescentLength);
+  ///@}
 
   vtkDataArray* DescentArray;
   char* DescentArrayName;

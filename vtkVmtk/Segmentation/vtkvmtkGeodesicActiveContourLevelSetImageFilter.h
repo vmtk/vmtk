@@ -1,10 +1,6 @@
 /*=========================================================================
 
 Program:   VMTK
-Module:    $RCSfile: vtkvmtkGeodesicActiveContourLevelSetImageFilter.h,v $
-Language:  C++
-Date:      $Date: 2006/04/06 16:48:25 $
-Version:   $Revision: 1.4 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -23,10 +19,24 @@ Version:   $Revision: 1.4 $
 
 =========================================================================*/
 
-// .NAME vtkvmtkGeodesicActiveContourLevelSetImageFilter - Wrapper class around itk::GeodesicActiveContourLevelSetImageFilter
-// .SECTION Description
-// vtkvmtkGeodesicActiveContourLevelSetImageFilter
-
+/**
+ * @class   vtkvmtkGeodesicActiveContourLevelSetImageFilter
+ * @brief   Wraps itk::GeodesicActiveContourLevelSetImageFilter.
+ * @ingroup Segmentation
+ *
+ * vtkvmtkGeodesicActiveContourLevelSetImageFilter wraps ITK's geodesic active contour level set
+ * filter, operating on a (internally float-cast, assumed 3D) input level set image. Given an initial
+ * level set image (the filter's input, whose IsoSurfaceValue isocontour defines the starting front)
+ * and either a FeatureImage -- from which speed and advection images are generated internally when
+ * AutoGenerateSpeedAdvection is on -- or explicit SpeedImage/advection images, it evolves the level
+ * set for up to NumberOfIterations iterations, or until the RMS change of the level set values drops
+ * below MaximumRMSError, combining propagation, curvature, and advection force terms weighted by
+ * PropagationScaling, CurvatureScaling, and AdvectionScaling respectively. This is one of the
+ * segmentation methods (the "geodesic" LevelSetsType) offered by the vmtklevelsetsegmentation pype
+ * script.
+ *
+ * @sa vtkvmtkGeodesicActiveContourLevelSet2DImageFilter, vtkvmtkCurvesLevelSetImageFilter
+ */
 
 #ifndef __vtkvmtkGeodesicActiveContourLevelSetImageFilter_h
 #define __vtkvmtkGeodesicActiveContourLevelSetImageFilter_h
@@ -42,51 +52,140 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkGeodesicActiveContourLevelSetImageFilt
   static vtkvmtkGeodesicActiveContourLevelSetImageFilter *New();
   vtkTypeMacro(vtkvmtkGeodesicActiveContourLevelSetImageFilter, vtkSimpleImageToImageFilter);
 
+  ///@{
+  /**
+   * Set/get the isovalue, in the input level set image, that defines the initial front to evolve.
+   * Default: 0.0.
+   */
   vtkGetMacro(IsoSurfaceValue,double);
   vtkSetMacro(IsoSurfaceValue,double);
+  ///@}
 
+  ///@{
+  /**
+   * Set/get the maximum number of level set evolution iterations; evolution may stop earlier if
+   * MaximumRMSError is reached. Default: 0.
+   */
   vtkGetMacro(NumberOfIterations,int);
   vtkSetMacro(NumberOfIterations,int);
+  ///@}
 
+  ///@{
+  /**
+   * Set/get the weight of the propagation (speed-image-driven expansion/contraction) force term.
+   * Default: 0.0.
+   */
   vtkGetMacro(PropagationScaling,double);
   vtkSetMacro(PropagationScaling,double);
+  ///@}
 
+  ///@{
+  /**
+   * Set/get the weight of the curvature-based regularization force term; larger values produce a
+   * smoother evolving front. Default: 0.0.
+   */
   vtkGetMacro(CurvatureScaling,double);
   vtkSetMacro(CurvatureScaling,double);
+  ///@}
 
+  ///@{
+  /**
+   * Set/get the weight of the advection force term that pulls the front toward features (e.g. edges)
+   * of the speed/feature image. Default: 0.0.
+   */
   vtkGetMacro(AdvectionScaling,double);
   vtkSetMacro(AdvectionScaling,double);
+  ///@}
 
+  ///@{
+  /**
+   * Set/get the convergence threshold on the RMS change of the level set values between iterations;
+   * evolution stops early once the RMS change falls below this value. Default: 1E-6.
+   */
   vtkGetMacro(MaximumRMSError,double);
   vtkSetMacro(MaximumRMSError,double);
+  ///@}
 
+  ///@{
+  /**
+   * Toggle reversal of the front's expansion direction (passed through to the underlying ITK
+   * filter's SetReverseExpansionDirection). Default: off.
+   */
   vtkGetMacro(UseNegativeFeatures,int);
   vtkSetMacro(UseNegativeFeatures,int);
   vtkBooleanMacro(UseNegativeFeatures,int);
+  ///@}
 
+  ///@{
+  /**
+   * Toggle automatic generation of the speed and advection images from FeatureImage. When on
+   * (default), FeatureImage must be set; when off, explicit SpeedImage (and advection) images must be
+   * supplied instead.
+   */
   vtkGetMacro(AutoGenerateSpeedAdvection,int);
   vtkSetMacro(AutoGenerateSpeedAdvection,int);
   vtkBooleanMacro(AutoGenerateSpeedAdvection,int);
+  ///@}
 
+  ///@{
+  /**
+   * Toggle sub-voxel interpolation of the zero level set surface location when computing the output.
+   * Default: on.
+   */
   vtkGetMacro(InterpolateSurfaceLocation,int);
   vtkSetMacro(InterpolateSurfaceLocation,int);
   vtkBooleanMacro(InterpolateSurfaceLocation,int);
+  ///@}
 
+  ///@{
+  /**
+   * Toggle use of the image spacing when computing derivatives and forces during evolution. Default:
+   * on.
+   */
   vtkGetMacro(UseImageSpacing,int);
   vtkSetMacro(UseImageSpacing,int);
   vtkBooleanMacro(UseImageSpacing,int);
+  ///@}
 
+  ///@{
+  /**
+   * Set/get the Gaussian sigma used when computing derivatives of FeatureImage for the internally
+   * generated speed and advection images (only relevant when AutoGenerateSpeedAdvection is on).
+   * Default: 0.0 (no smoothing).
+   */
   vtkGetMacro(DerivativeSigma,double);
   vtkSetMacro(DerivativeSigma,double);
+  ///@}
 
+  ///@{
+  /**
+   * Set/get the feature image (e.g. a gradient-magnitude-derived image) from which speed and
+   * advection images are generated internally when AutoGenerateSpeedAdvection is on.
+   */
   vtkGetObjectMacro(FeatureImage,vtkImageData);
   vtkSetObjectMacro(FeatureImage,vtkImageData);
+  ///@}
 
+  ///@{
+  /**
+   * Set/get an explicit speed image controlling front propagation rate, used instead of an
+   * internally generated one when AutoGenerateSpeedAdvection is off.
+   */
   vtkGetObjectMacro(SpeedImage,vtkImageData);
   vtkSetObjectMacro(SpeedImage,vtkImageData);
+  ///@}
 
+  /**
+   * Get the RMS change of the level set values computed over the last iteration performed. Valid
+   * only after Update() has been called.
+   */
   vtkGetMacro(RMSChange,double);
 
+  /**
+   * Get the actual number of iterations performed, which may be less than NumberOfIterations if the
+   * MaximumRMSError convergence criterion was reached first. Valid only after Update() has been
+   * called.
+   */
   vtkGetMacro(ElapsedIterations,int);
 
 protected:

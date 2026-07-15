@@ -1,10 +1,6 @@
 /*=========================================================================
 
   Program:   VMTK
-  Module:    $RCSfile: vtkvmtkEllipticProblem.h,v $
-  Language:  C++
-  Date:      $Date: 2006/04/06 16:46:43 $
-  Version:   $Revision: 1.3 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -18,9 +14,20 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkEllipticProblem - High level container holding references to vtkvmtkLinearSystem and associated vtkvmtkDirichletBoundaryConditions.
-// .SECTION Description
-// ..
+/**
+ * @class   vtkvmtkEllipticProblem
+ * @brief   Serves as a high-level container holding references to a vtkvmtkLinearSystem and its associated vtkvmtkDirichletBoundaryConditions.
+ * @ingroup DifferentialGeometry
+ *
+ * vtkvmtkEllipticProblem groups together the pieces that make up a discretized elliptic PDE
+ * (e.g. a Laplace/Poisson-type problem): a vtkvmtkLinearSystem holding the assembled system matrix
+ * and vectors, and a vtkvmtkDirichletBoundaryConditions object holding the essential boundary
+ * conditions to be applied to it. This base class currently only declares the two member
+ * references; assembling the system and driving the solve is left to subclasses / calling code.
+ *
+ * @sa
+ * vtkvmtkLinearSystem, vtkvmtkDirichletBoundaryConditions, vtkvmtkFEAssembler
+ */
 
 #ifndef __vtkvmtkEllipticProblem_h
 #define __vtkvmtkEllipticProblem_h

@@ -1,10 +1,6 @@
 /*=========================================================================
 
   Program:   VMTK
-  Module:    $RCSfile: vtkvmtkPolyDataCenterlineMetricFilter.h,v $
-  Language:  C++
-  Date:      $Date: 2006/04/06 16:46:43 $
-  Version:   $Revision: 1.8 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -18,9 +14,23 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkPolyDataCenterlineMetricFilter - Base class for evaluating metrics over a centerline onto a surface. 
-// .SECTION Description
-// Pure virtual functions.
+/**
+ * @class   vtkvmtkPolyDataCenterlineMetricFilter
+ * @brief   Serves as the base class for evaluating metrics over a centerline onto a surface.
+ * @ingroup ComputationalGeometry
+ *
+ * For each point of the input surface (already split into branches), finds the nearest point on the
+ * corresponding branch of Centerlines and evaluates a per-point scalar metric there, storing the
+ * result in the output point data array named MetricArrayName. The actual metric is defined by
+ * subclasses overriding EvaluateMetric -- see vtkvmtkPolyDataCenterlineAbscissaMetricFilter (arc
+ * length along the centerline) and vtkvmtkPolyDataCenterlineAngularMetricFilter (circumferential
+ * angle around the centerline). Used by the vmtkbranchmetrics pype script to build the longitudinal/
+ * circumferential parameterization used for centerline-based surface mapping and patching.
+ *
+ * @sa
+ * vtkvmtkPolyDataCenterlineAbscissaMetricFilter, vtkvmtkPolyDataCenterlineAngularMetricFilter,
+ * vtkvmtkPolyDataStretchMappingFilter, vtkvmtkPolyDataPatchingFilter
+ */
 
 #ifndef __vtkvmtkPolyDataCenterlineMetricFilter_h
 #define __vtkvmtkPolyDataCenterlineMetricFilter_h
@@ -38,37 +48,101 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataCenterlineMetricFilt
 public:
   vtkTypeMacro(vtkvmtkPolyDataCenterlineMetricFilter,vtkPolyDataAlgorithm);
 
+  ///@{
+  /**
+   * Set/Get the name of the output point data array where the evaluated metric is stored.
+   * Commonly named "AbscissaMetric".
+   */
   vtkSetStringMacro(MetricArrayName);
   vtkGetStringMacro(MetricArrayName);
+  ///@}
 
+  ///@{
+  /**
+   * Set/Get the name of the cell data array of the input surface holding the branch group id of each
+   * cell. Required input.
+   * Commonly named "GroupIds".
+   */
   vtkSetStringMacro(GroupIdsArrayName);
   vtkGetStringMacro(GroupIdsArrayName);
+  ///@}
 
+  ///@{
+  /**
+   * Set/Get the split, grouped centerlines corresponding to the input surface. Required input.
+   */
   vtkSetObjectMacro(Centerlines,vtkPolyData);
   vtkGetObjectMacro(Centerlines,vtkPolyData);
+  ///@}
 
+  ///@{
+  /**
+   * Toggle using the maximum inscribed sphere radius (RadiusArrayName) when locating the nearest
+   * centerline point to each surface point, so that the search accounts for local vessel size rather
+   * than pure Euclidean distance. Default: on.
+   */
   vtkSetMacro(UseRadiusInformation,int);
   vtkGetMacro(UseRadiusInformation,int);
   vtkBooleanMacro(UseRadiusInformation,int);
+  ///@}
 
+  ///@{
+  /**
+   * Set/Get the name of the point data array of Centerlines holding the maximum inscribed sphere
+   * radius at each point. Used when UseRadiusInformation is on.
+   * Commonly named "MaximumInscribedSphereRadius".
+   */
   vtkSetStringMacro(RadiusArrayName);
   vtkGetStringMacro(RadiusArrayName);
+  ///@}
 
+  ///@{
+  /**
+   * Set/Get the name of the cell data array of Centerlines holding the branch group id of each cell.
+   * Commonly named "GroupIds".
+   */
   vtkSetStringMacro(CenterlineGroupIdsArrayName);
   vtkGetStringMacro(CenterlineGroupIdsArrayName);
+  ///@}
 
+  ///@{
+  /**
+   * Set/Get the name of the cell data array of Centerlines holding the id of the original, unsplit
+   * centerline that each cell belongs to.
+   * Commonly named "CenterlineIds".
+   */
   vtkSetStringMacro(CenterlineIdsArrayName);
   vtkGetStringMacro(CenterlineIdsArrayName);
+  ///@}
 
+  ///@{
+  /**
+   * Set/Get the name of the cell data array of Centerlines holding the tract id of each cell.
+   * Commonly named "TractIds".
+   */
   vtkSetStringMacro(CenterlineTractIdsArrayName);
   vtkGetStringMacro(CenterlineTractIdsArrayName);
+  ///@}
 
+  ///@{
+  /**
+   * Set/Get the name of the cell data array of Centerlines holding, for each cell, whether it is a
+   * "blanked" (redundant, overlapping) tract.
+   * Commonly named "Blanking".
+   */
   vtkSetStringMacro(BlankingArrayName);
   vtkGetStringMacro(BlankingArrayName);
+  ///@}
 
+  ///@{
+  /**
+   * Toggle including blanked (bifurcation-region) centerline tracts when locating the nearest
+   * centerline point to each surface point. Default: on.
+   */
   vtkSetMacro(IncludeBifurcations,int);
   vtkGetMacro(IncludeBifurcations,int);
   vtkBooleanMacro(IncludeBifurcations,int);
+  ///@}
 
 protected:
   vtkvmtkPolyDataCenterlineMetricFilter();

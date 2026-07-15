@@ -1,10 +1,6 @@
 /*=========================================================================
 
 Program:   VMTK
-Module:    $RCSfile: vtkvmtkMeshVelocityStatistics.h,v $
-Language:  C++
-Date:      $Date: 2006/07/27 08:28:36 $
-Version:   $Revision: 1.1 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -18,9 +14,16 @@ Version:   $Revision: 1.1 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkMeshVelocityStatistics - calculates average and RMS velocity statistics
-// .SECTION Description
-// .
+/**
+ * @class   vtkvmtkMeshVelocityStatistics
+ * @brief   Calculates average and RMS velocity statistics.
+ * @ingroup Misc
+ *
+ * Given several time steps of a velocity field stored as separate 3-component point data arrays on
+ * the input mesh, computes the time-average and RMS (root-mean-square) velocity vectors at each
+ * point. Typically used to summarize unsteady/pulsatile CFD simulation results into cycle-averaged
+ * and turbulence-like statistics.
+ */
 
 #ifndef __vtkvmtkMeshVelocityStatistics_h
 #define __vtkvmtkMeshVelocityStatistics_h
@@ -39,8 +42,15 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkMeshVelocityStatistics : public vtkUnstructure
 
   static vtkvmtkMeshVelocityStatistics *New();
 
+  ///@{
+  /**
+   * Set/Get the point data array indices (indices into the input's point data, as returned by
+   * vtkPointData::GetArray(int), not array ids) of the per-time-step velocity arrays to average.
+   * Required input; at least 2 entries are needed for RMS to be meaningful.
+   */
   vtkSetObjectMacro(VelocityArrayIds,vtkIdList);
   vtkGetObjectMacro(VelocityArrayIds,vtkIdList);
+  ///@}
   
   protected:
   vtkvmtkMeshVelocityStatistics();

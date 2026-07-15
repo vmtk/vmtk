@@ -1,10 +1,6 @@
 /*=========================================================================
 
   Program:   VMTK
-  Module:    $RCSfile: vtkvmtkPolyDataManifoldExtendedNeighborhood.h,v $
-  Language:  C++
-  Date:      $Date: 2006/04/06 16:46:44 $
-  Version:   $Revision: 1.3 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -18,9 +14,23 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkPolyDataManifoldExtendedNeighborhood - Apply a an extended neighborhood to the points of a manifold surface.
-// .SECTION Description
-// ..
+/**
+ * @class   vtkvmtkPolyDataManifoldExtendedNeighborhood
+ * @brief   Apply a an extended neighborhood to the points of a manifold surface.
+ * @ingroup DifferentialGeometry
+ *
+ * vtkvmtkPolyDataManifoldExtendedNeighborhood extends vtkvmtkPolyDataManifoldNeighborhood by
+ * enlarging the interior (non-boundary) one-ring neighborhood of a point when the ring only has 3 or
+ * 4 points: for each edge of the ring whose two incident triangles both lie on the "outward" side of
+ * the edge relative to the center point (tested via a dot-product sign check on the edge and the two
+ * candidate outer points), the extra point across that edge is appended to the neighborhood. This
+ * produces a wider (extended) stencil support, which is used, e.g., by
+ * vtkvmtkPolyDataFELaplaceBeltramiStencil / vtkvmtkPolyDataFVFELaplaceBeltramiStencil (via
+ * vtkvmtkPolyDataManifoldStencil::UseExtendedNeighborhood) to improve the accuracy of
+ * Laplace-Beltrami weight computation on coarse or nearly-degenerate meshes.
+ *
+ * @sa vtkvmtkPolyDataManifoldNeighborhood, vtkvmtkPolyDataManifoldStencil
+ */
 
 #ifndef __vtkvmtkPolyDataManifoldExtendedNeighborhood_h
 #define __vtkvmtkPolyDataManifoldExtendedNeighborhood_h
@@ -41,8 +51,9 @@ public:
 
   virtual vtkIdType GetItemType() override {return VTK_VMTK_POLYDATA_MANIFOLD_EXTENDED_NEIGHBORHOOD;};
 
-  // Description:
-  // Build the neighborhood.
+  /**
+   * Build the neighborhood.
+   */
   virtual void Build() override;
 
 protected:

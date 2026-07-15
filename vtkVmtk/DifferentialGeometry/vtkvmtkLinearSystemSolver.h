@@ -1,10 +1,6 @@
 /*=========================================================================
 
   Program:   VMTK
-  Module:    $RCSfile: vtkvmtkLinearSystemSolver.h,v $
-  Language:  C++
-  Date:      $Date: 2006/04/06 16:46:43 $
-  Version:   $Revision: 1.4 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -18,9 +14,20 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkLinearSystemSolver - Base class for linear system of equation solver implementations.
-// .SECTION Description
-// ..
+/**
+ * @class   vtkvmtkLinearSystemSolver
+ * @brief   Serves as the base class for linear-system-of-equations solver implementations.
+ * @ingroup DifferentialGeometry
+ *
+ * vtkvmtkLinearSystemSolver defines the common interface and iteration control parameters
+ * (MaximumNumberOfIterations, ConvergenceTolerance) for iterative solvers of a vtkvmtkLinearSystem.
+ * This base class implementation of Solve() only validates that LinearSystem is set and internally
+ * consistent (via vtkvmtkLinearSystem::CheckSystem()); concrete subclasses override Solve() to
+ * actually iterate towards a solution, updating NumberOfIterations and Residual as they progress.
+ *
+ * @sa
+ * vtkvmtkLinearSystem, vtkvmtkFEAssembler
+ */
 
 #ifndef __vtkvmtkLinearSystemSolver_h
 #define __vtkvmtkLinearSystemSolver_h
@@ -35,15 +42,38 @@ public:
   static vtkvmtkLinearSystemSolver* New();
   vtkTypeMacro(vtkvmtkLinearSystemSolver,vtkObject);
 
+  ///@{
+  /**
+   * Set/get the linear system to be solved.
+   */
   vtkSetObjectMacro(LinearSystem,vtkvmtkLinearSystem);
   vtkGetObjectMacro(LinearSystem,vtkvmtkLinearSystem);
+  ///@}
 
+  ///@{
+  /**
+   * Set/get the maximum number of iterations an iterative solver subclass is allowed to perform
+   * before giving up. Default: a very large integer (effectively unlimited).
+   */
   vtkSetMacro(MaximumNumberOfIterations,int);
   vtkGetMacro(MaximumNumberOfIterations,int);
+  ///@}
 
+  ///@{
+  /**
+   * Set/get the residual tolerance at which an iterative solver subclass considers the system to
+   * have converged. Default: 1E-4.
+   */
   vtkSetMacro(ConvergenceTolerance,double);
   vtkGetMacro(ConvergenceTolerance,double);
+  ///@}
 
+  /**
+   * Solve LinearSystem. This base class implementation only checks that LinearSystem is set and
+   * consistent (returning -1 and emitting an error if not); subclasses override this method to
+   * perform the actual solve, storing the number of iterations and residual reached in
+   * NumberOfIterations / Residual, and returning 0 on success or -1 on failure.
+   */
   virtual int Solve();
 
 protected:

@@ -1,10 +1,6 @@
 /*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit
-  Module:    $RCSfile: itkFastMarchingDirectionalFreezeImageFilter.h,v $
-  Language:  C++
-  Date:      $Date: 2006/09/01 21:33:26 $
-  Version:   $Revision: 1.5 $
 
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
@@ -25,10 +21,9 @@ namespace itk
 {
 /** \class FastMarchingDirectionalFreezeImageFilter
  *
- * \brief Propagates a front freezing points based on the relative direction of 
+ * \brief Propagates a front, freezing points based on the relative direction of
  * the front and the gradient vector of the speed image.
- * 
- * 
+ * \ingroup Segmentation
  */
 template <
   class TLevelSet, 

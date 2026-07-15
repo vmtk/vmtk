@@ -1,10 +1,6 @@
 /*=========================================================================
 
 Program:   VMTK
-Module:    $RCSfile: vtkvmtkSurfMeshWrapper.h,v $
-Language:  C++
-Date:      $Date: 2006/04/06 16:47:48 $
-Version:   $Revision: 1.4 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -18,9 +14,17 @@ Version:   $Revision: 1.4 $
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkSurfMeshWrapper - wrapper around surfmesh surface mesh generator by Gordan Stuhne; May not be working. 
-// .SECTION Description
-// ...
+/**
+ * @class   vtkvmtkSurfMeshWrapper
+ * @brief   Wraps the surfmesh surface mesh generator by Gordan Stuhne; may not be working.
+ * @ingroup Misc
+ *
+ * Intended to remesh the input surface to an approximately uniform triangle edge length of
+ * NodeSpacing using the third-party "surfmesh" mesh generator by Gordan Stuhne. See
+ * vtkvmtkPolyDataSurfaceRemeshing for an actively used alternative surface remeshing filter.
+ *
+ * @sa vtkvmtkPolyDataSurfaceRemeshing
+ */
 
 #ifndef __vtkvmtkSurfMeshWrapper_h
 #define __vtkvmtkSurfMeshWrapper_h
@@ -35,8 +39,13 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkSurfMeshWrapper : public vtkPolyDataAlgorithm
   vtkTypeMacro(vtkvmtkSurfMeshWrapper,vtkPolyDataAlgorithm);
   void PrintSelf(std::ostream& os, vtkIndent indent) override;
 
+  ///@{
+  /**
+   * Set/Get the target (approximately uniform) triangle edge length of the remeshed output.
+   */
   vtkSetMacro(NodeSpacing,double);
   vtkGetMacro(NodeSpacing,double);
+  ///@}
 
   protected:
   vtkvmtkSurfMeshWrapper();

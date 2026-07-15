@@ -1,10 +1,6 @@
 /*=========================================================================
 
   Program:   VMTK
-  Module:    $RCSfile: vtkvmtkUnstructuredGridNeighborhood.h,v $
-  Language:  C++
-  Date:      $Date: 2006/04/06 16:46:44 $
-  Version:   $Revision: 1.3 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -18,9 +14,17 @@
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-// .NAME vtkvmtkUnstructuredGridNeighborhood - Apply a neighborhood to the vertices on of a unstructured grid data set. 
-// .SECTION Description
-// ..
+/**
+ * @class   vtkvmtkUnstructuredGridNeighborhood
+ * @brief   Apply a neighborhood to the vertices on of a unstructured grid data set.
+ * @ingroup DifferentialGeometry
+ *
+ * Concrete vtkvmtkNeighborhood implementation for a vtkUnstructuredGrid: Build() collects, for the
+ * point set via SetDataSetPointId, the ids of every other point sharing a cell with it (its
+ * one-ring neighbors in the volumetric mesh).
+ *
+ * @sa vtkvmtkNeighborhood, vtkvmtkNeighborhoods
+ */
 
 #ifndef __vtkvmtkUnstructuredGridNeighborhood_h
 #define __vtkvmtkUnstructuredGridNeighborhood_h
@@ -40,8 +44,9 @@ public:
 
   virtual vtkIdType GetItemType() override {return VTK_VMTK_UNSTRUCTUREDGRID_NEIGHBORHOOD;};
 
-  // Description:
-  // Build the neighborhood.
+  /**
+   * Build the neighborhood.
+   */
   virtual void Build() override;
 
 protected:

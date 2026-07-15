@@ -1,10 +1,6 @@
 /*=========================================================================
 
 Program:   VMTK
-Module:    $RCSfile: vtkvmtkUpwindGradientMagnitudeImageFilter.h,v $
-Language:  C++
-Date:      $Date: 2006/04/06 16:48:25 $
-Version:   $Revision: 1.3 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -23,10 +19,24 @@ Version:   $Revision: 1.3 $
 
 =========================================================================*/
 
-// .NAME vtkvmtkUpwindGradientMagnitudeImageFilter - Wrapper class around itk::UpwindGradientMagnitudeImageFilter
-// .SECTION Description
-// vtkvmtkUpwindGradientMagnitudeImageFilter
-
+/**
+ * @class   vtkvmtkUpwindGradientMagnitudeImageFilter
+ * @brief   Wraps itk::UpwindGradientMagnitudeImageFilter.
+ * @ingroup Segmentation
+ *
+ * vtkvmtkUpwindGradientMagnitudeImageFilter computes the gradient magnitude of the input image
+ * using an upwind (one-sided) finite difference scheme rather than central differences, which
+ * produces a sharper, less smoothed edge response than vtkvmtkGradientMagnitudeImageFilter /
+ * vtkvmtkGradientMagnitudeRecursiveGaussianImageFilter. It is one of the feature image types
+ * selectable (as "upwind") by the vmtkimagefeatures pype script (in turn used by
+ * vmtklevelsetsegmentation), whose gradient magnitude output is typically remapped (with
+ * vtkvmtkSigmoidImageFilter or vtkvmtkBoundedReciprocalImageFilter) into a level set speed/feature
+ * image. Like the other ITK wrappers in this module, it is a thin vtkSimpleImageToImageFilter:
+ * SimpleExecute() converts the VTK input to a float itk::Image, runs
+ * itk::UpwindGradientMagnitudeImageFilter, and converts the result back to vtkImageData.
+ *
+ * @sa vtkvmtkGradientMagnitudeImageFilter, vtkvmtkGradientMagnitudeRecursiveGaussianImageFilter
+ */
 
 #ifndef __vtkvmtkUpwindGradientMagnitudeImageFilter_h
 #define __vtkvmtkUpwindGradientMagnitudeImageFilter_h
@@ -41,8 +51,15 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkUpwindGradientMagnitudeImageFilter : p
   static vtkvmtkUpwindGradientMagnitudeImageFilter *New();
   vtkTypeMacro(vtkvmtkUpwindGradientMagnitudeImageFilter, vtkSimpleImageToImageFilter);
 
+  ///@{
+  /**
+   * Set/get the blend between upwind and centered finite differences used to estimate the
+   * gradient: 1.0 is full upwind (one-sided) differencing, 0.0 is centered differencing, -1.0 is
+   * full downwind differencing. Default: 1.0.
+   */
   vtkGetMacro(UpwindFactor,double);
   vtkSetMacro(UpwindFactor,double);
+  ///@}
 
 protected:
   vtkvmtkUpwindGradientMagnitudeImageFilter();

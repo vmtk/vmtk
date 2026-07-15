@@ -6,9 +6,6 @@
   or http://www.slicer.org/copyright/copyright.txt for details.
 
   Program:   vtkITK
-  Module:    $HeadURL$
-  Date:      $Date$
-  Version:   $Revision$
 
 ==========================================================================*/
 
@@ -25,6 +22,18 @@
 
 class vtkStringArray;
 
+/**
+ * @class   vtkvmtkITKImageWriter
+ * @brief   Write vtkImageData to a file using an ITK image IO.
+ * @ingroup Utilities
+ *
+ * vtkvmtkITKImageWriter converts its input vtkImageData to an ITK image
+ * (choosing the ITK pixel type from the VTK scalar type) and writes it
+ * with itk::ImageFileWriter, so it supports any file format for which an
+ * ITK ImageIO is available (e.g. NRRD, NIfTI, MetaImage, DICOM). The
+ * orientation of the written image can be set explicitly via
+ * SetRasToIJKMatrix() and, for diffusion data, SetMeasurementFrameMatrix().
+ */
 class VTK_VMTK_ITK_EXPORT vtkvmtkITKImageWriter : public vtkImageAlgorithm
 {
 public:

@@ -1,10 +1,6 @@
 /*=========================================================================
 
   Program:   Insight Segmentation & Registration Toolkit
-  Module:    $RCSfile: itkSymmetricEigenVectorAnalysisImageFilter.h,v $
-  Language:  C++
-  Date:      $Date: 2007/03/30 17:58:14 $
-  Version:   $Revision: 1.2 $
 
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
@@ -96,8 +92,11 @@ private:
 
 
 /** \class SymmetricEigenVectorAnalysisImageFilter
- * 
+ * \brief Computes, at every pixel, the eigenvectors of a symmetric matrix input via a unary
+ * functor image filter.
+ *
  * \ingroup IntensityImageFilters  Multithreaded  TensorObjects
+ * \ingroup Segmentation
  *
  */
 template <typename  TInputImage, typename  TOutputImage, typename TOutputMatrix>

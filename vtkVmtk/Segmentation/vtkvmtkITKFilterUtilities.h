@@ -1,10 +1,6 @@
 /*=========================================================================
 
 Program:   VMTK
-Module:    vtkvmtkITKFilterUtilities.h
-Language:  C++
-Date:      $Date: 2006/04/06 16:48:25 $
-Version:   $Revision: 1.2 $
 
   Copyright (c) Luca Antiga, David Steinman. All rights reserved.
   See LICENSE file for details.
@@ -23,10 +19,22 @@ Version:   $Revision: 1.2 $
 
 =========================================================================*/
 
-// .NAME vtkvmtkITKFilterUtilities - Abstract class for wrapping ITK filters
-// .SECTION Description
-// vtkvmtkSimpleImageToImageITKFilter
-
+/**
+ * @class   vtkvmtkITKFilterUtilities
+ * @brief   Provides static helper methods for converting between vtkImageData and ITK images.
+ * @ingroup Segmentation
+ *
+ * vtkvmtkITKFilterUtilities is a collection of static template methods used throughout vtkVmtk's
+ * Segmentation module to bridge VTK and ITK image pipelines without copying the underlying pixel
+ * buffer: VTKToITKImage and VTKToITKVectorImage wrap the memory owned by a vtkImageData into an
+ * itk::Image (scalar or vector-valued) by importing the raw pointer, while ITKToVTKImage copies an
+ * ITK image's buffer into a (compatible, pre-typed) vtkImageData. ConnectProgress/ProgressCallback
+ * forward ITK progress events to the vtkAlgorithm driving the ITK pipeline, so that vtkvmtk*ImageFilter
+ * wrapper classes (e.g. vtkvmtkSigmoidImageFilter, vtkvmtkVesselnessMeasureImageFilter) can report
+ * progress through the usual VTK mechanism. Instances of this class are never created; all members
+ * are static and it exists purely as a namespace-like utility used internally by the ITK filter
+ * wrapper classes in this module.
+ */
 
 #ifndef __vtkvmtkITKFilterUtilities_h
 #define __vtkvmtkITKFilterUtilities_h
@@ -42,6 +50,12 @@ class VTK_VMTK_SEGMENTATION_EXPORT vtkvmtkITKFilterUtilities
 {
 public:
 
+  /**
+   * Wrap a scalar vtkImageData's pixel buffer into an ITK image of type TImage, without copying
+   * pixel data (the ITK image imports the VTK scalar pointer directly, so input must outlive
+   * output and must not be modified/reallocated while output is in use). Dimensions, spacing,
+   * origin, and (buffered/largest possible) region are copied from input's extent.
+   */
   template<typename TImage>
   static void
   VTKToITKImage(vtkImageData* input, typename TImage::Pointer output) {
@@ -81,6 +95,11 @@ public:
     output->SetOrigin(origin);
   }
 
+  /**
+   * Wrap a multi-component vtkImageData's pixel buffer into an ITK vector image of type TImage,
+   * without copying pixel data (same aliasing caveats as VTKToITKImage). The number of VTK scalar
+   * components becomes the ITK image's VectorLength.
+   */
   template<typename TImage>
     static void
     VTKToITKVectorImage(vtkImageData* input, typename TImage::Pointer output) {
@@ -123,6 +142,13 @@ public:
     output->SetVectorLength(components);
   }
 
+  /**
+   * Copy the buffer of an ITK image of type TImage into output, a vtkImageData that must already
+   * have its scalar type set by the caller (this method reads output's current scalar type and
+   * allocates accordingly; it does not infer it from TImage::PixelType). Origin, spacing, and
+   * extent are set from input's region; the number of scalar components is set from
+   * TImage::PixelType's number of components.
+   */
   template<typename TImage>
   static void
   ITKToVTKImage(typename TImage::Pointer input, vtkImageData* output) {
@@ -179,12 +205,22 @@ public:
     memcpy(static_cast<PixelType*>(output->GetScalarPointer()),input->GetBufferPointer(),input->GetBufferedRegion().GetNumberOfPixels()*sizeof(PixelType));
   }
 
+  /**
+   * ITK progress event callback (itk::CStyleCommand signature) that forwards the progress of the
+   * ITK process object o to the vtkAlgorithm passed as client data via UpdateProgress. Not meant to
+   * be called directly; installed on an ITK filter by ConnectProgress.
+   */
   static void
   ProgressCallback(itk::Object *o, const itk::EventObject &, void *data)
   {
     ((vtkAlgorithm*)data)->UpdateProgress(dynamic_cast<const itk::ProcessObject*>(o)->GetProgress());
   }
 
+  /**
+   * Register a progress observer on the ITK object obj so that its ProgressEvent notifications are
+   * forwarded to alg's UpdateProgress, letting an ITK filter wrapped inside a vtkAlgorithm (e.g. a
+   * SimpleExecute-based vtkvmtk*ImageFilter) report progress through the normal VTK mechanism.
+   */
   static void
   ConnectProgress(itk::Object* obj, vtkAlgorithm* alg)
   {
