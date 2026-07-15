@@ -474,6 +474,13 @@ void vtkvmtkPolyDataBranchSections::ComputeBranchSections(vtkPolyData* input, in
     this->ExtractCylinderSection(cylinder,averagePoint,averageTangent,section,closed);
 
     section->BuildCells();
+    if (section->GetNumberOfCells() == 0)
+      {
+      groupCellIds->Delete();
+      cylinder->Delete();
+      section->Delete();
+      continue;
+      }
     vtkPoints* sectionCellPoints = section->GetCell(0)->GetPoints();
     int numberOfSectionCellPoints = sectionCellPoints->GetNumberOfPoints();
     branchSectionPolys->InsertNextCell(numberOfSectionCellPoints);
@@ -515,9 +522,16 @@ void vtkvmtkPolyDataBranchSections::ExtractCylinderSection(vtkPolyData* cylinder
   cutter->SetValue(0,0.0);
   cutter->Update();
 
+  // The section attributes are never used downstream, so only the geometry of
+  // the cut is passed on; interpolating and merging the attributes would be
+  // wasted work.
+  vtkPolyData* cutGeometry = vtkPolyData::New();
+  cutGeometry->CopyStructure(cutter->GetOutput());
+
   vtkCleanPolyData* cleaner = vtkCleanPolyData::New();
-  cleaner->SetInputConnection(cutter->GetOutputPort());
+  cleaner->SetInputData(cutGeometry);
   cleaner->Update();
+  cutGeometry->Delete();
 
   if (cleaner->GetOutput()->GetNumberOfPoints() == 0)
     {
@@ -626,10 +640,25 @@ void vtkvmtkPolyDataBranchSections::ExtractCylinderSection(vtkPolyData* cylinder
     polygonPointIds->InsertNextId(pointId);
     }
 
-  section->GetLines()->Reset();
-  section->GetPolys()->Reset();
+  // Replace the connectivity line cells with the single reconstructed
+  // polygon. The arrays returned by GetLines()/GetPolys() must not be
+  // mutated in place: since VTK 9, GetPolys() hands back a dummy container
+  // when the polydata has no polys, so a polygon inserted into it would be
+  // lost. Also drop the cell map and links built above - they refer to the
+  // discarded line cells, and vtkPolyData::BuildCells() does not rebuild an
+  // existing map, so callers would crash reading the new cell through the
+  // stale bookkeeping.
+  vtkCellArray* sectionLines = vtkCellArray::New();
+  section->SetLines(sectionLines);
+  sectionLines->Delete();
 
-  section->GetPolys()->InsertNextCell(polygonPointIds);
+  vtkCellArray* sectionPolys = vtkCellArray::New();
+  sectionPolys->InsertNextCell(polygonPointIds);
+  section->SetPolys(sectionPolys);
+  sectionPolys->Delete();
+
+  section->DeleteCells();
+  section->DeleteLinks();
 
   cutter->Delete();
   connectivityFilter->Delete();
