@@ -5,6 +5,7 @@ FULL_PATH_NAMES        = NO
 WARN_IF_UNDOCUMENTED   = NO
 
 GENERATE_TREEVIEW      = NO
+LAYOUT_FILE             = "@VTK_VMTK_SOURCE_DIR@/Utilities/Doxygen/DoxygenLayout.xml"
 GENERATE_TODOLIST      = YES
 GENERATE_BUGLIST       = YES
 GENERATE_HTML          = YES
@@ -16,6 +17,8 @@ GENERATE_RTF           = NO
 
 HAVE_DOT               = YES
 DOT_PATH               = @DOXYGEN_DOT_PATH@
+DOT_NUM_THREADS        = 1
+USE_MATHJAX            = YES
 DOT_IMAGE_FORMAT       = svg
 HTML_FILE_EXTENSION    = .html
 CLASS_GRAPH            = YES
@@ -23,7 +26,6 @@ COLLABORATION_GRAPH    = YES
 TEMPLATE_RELATIONS     = YES
 INCLUDE_GRAPH          = YES
 INCLUDED_BY_GRAPH      = YES
-CLASS_DIAGRAMS         = YES
 CLASS_GRAPH            = YES
 GENERATE_LEGEND        = YES
 GRAPHICAL_HIERARCHY    = YES
@@ -35,12 +37,17 @@ IMAGE_PATH             = "@VTK_VMTK_SOURCE_DIR@/Utilities/Doxygen" "@VTK_VMTK_BI
 
 OUTPUT_DIRECTORY       = "@VTK_VMTK_BINARY_DIR@/Utilities/Doxygen/doc"
 
-INPUT                  = "@VTK_VMTK_BINARY_DIR@/Utilities/Doxygen/dox/Common" \
-                         "@VTK_VMTK_BINARY_DIR@/Utilities/Doxygen/dox/ComputationalGeometry" \
-                         "@VTK_VMTK_BINARY_DIR@/Utilities/Doxygen/dox/DifferentialGeometry" \
-                         "@VTK_VMTK_BINARY_DIR@/Utilities/Doxygen/dox/Misc" \
-                         "@VTK_VMTK_BINARY_DIR@/Utilities/Doxygen/dox/IO" \
-                         "@VTK_VMTK_BINARY_DIR@/Utilities/Doxygen/dox/Segmentation" \
+STRIP_FROM_PATH        = "@VTK_VMTK_SOURCE_DIR@"
+
+INPUT                  = "@VTK_VMTK_SOURCE_DIR@/Common" \
+                         "@VTK_VMTK_SOURCE_DIR@/ComputationalGeometry" \
+                         "@VTK_VMTK_SOURCE_DIR@/Contrib" \
+                         "@VTK_VMTK_SOURCE_DIR@/DifferentialGeometry" \
+                         "@VTK_VMTK_SOURCE_DIR@/IO" \
+                         "@VTK_VMTK_SOURCE_DIR@/Misc" \
+                         "@VTK_VMTK_SOURCE_DIR@/Rendering" \
+                         "@VTK_VMTK_SOURCE_DIR@/Segmentation" \
+                         "@VTK_VMTK_SOURCE_DIR@/Utilities/vtkvmtkITK" \
                          "@VTK_VMTK_SOURCE_DIR@/Utilities/Doxygen/doc_mainpage.dox"
 
 #TAGFILES              = "/usr/local/src/CVS/BuildTrees/VTK/Utilities/Doxygen/vtk8.tag"=http://public.kitware.com/VTK/doc/nightly/html
@@ -60,16 +67,14 @@ SHOW_INCLUDE_FILES     = YES
 SORT_MEMBER_DOCS       = NO
 DISTRIBUTE_GROUP_DOC   = YES
 TAB_SIZE               = 3
-CLANG_ASSISTED_PARSING = YES
+CLANG_ASSISTED_PARSING = NO
 
 RECURSIVE              = YES
 FILE_PATTERNS          = 
 EXCLUDE                = 
 EXCLUDE_PATTERNS       = *Win32Header*
 
-HTML_ALIGN_MEMBERS     = YES
 ALPHABETICAL_INDEX     = YES
-COLS_IN_ALPHA_INDEX    = 3
 # IGNORE_PREFIX        = vtkvmtk
 
 ENABLE_PREPROCESSING   = YES

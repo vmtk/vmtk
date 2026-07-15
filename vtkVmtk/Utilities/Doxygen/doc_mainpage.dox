@@ -1,10 +1,107 @@
 /*! \mainpage VMTK Documentation
 
-\section intro Introduction 
+\section intro Introduction
 
-These pages contain the Doxygen documentation of the C++ classes contained in the Vascular Modeling Toolkit.
-See http://www.vmtk.org for more information on the project.
+The Vascular Modeling Toolkit (VMTK) is a collection of libraries and tools for 3D reconstruction,
+geometric analysis, mesh generation, and surface/volume data analysis for image-based modeling of
+blood vessels. It is used to turn segmented medical images (CT, MR, etc.) of vascular anatomy into
+computational models suitable for geometric characterization, mesh generation, and computational
+fluid dynamics (CFD) simulation. VMTK can be used via its standalone command-line interface,
+included as a Python or C++ library, or as an extension to the medical image processing platform
+<a href="https://www.slicer.org/">3D Slicer</a>.
 
- 
+These pages document \b vtkVmtk, the C++ class library at the core of VMTK, built as an extension
+to <a href="https://vtk.org/">VTK</a> (and, for image segmentation, <a href="https://itk.org/">ITK</a>).
+vtkVmtk implements the toolkit's core algorithms, organized into the modules listed under
+\ref index "Modules" (see the navigation above), matching the library's source directory structure:
+
+- \b Common: shared math and numerical-constant utilities used throughout the library.
+- \b ComputationalGeometry: centerline extraction and processing -- Voronoi-diagram-based
+  centerline computation, splitting/grouping centerlines into branches, bifurcation reference
+  systems and vectors, the "polyball" implicit tube function family, surface capping, cross-section
+  extraction, and related geometric filters.
+- \b Contrib: additional, community-contributed filters that extend or vary the behavior of the
+  core modules (e.g. alternative capping, RBF interpolation, or centerline utility variants).
+- \b DifferentialGeometry: finite-element and finite-volume differential operators on surface and
+  volume meshes (gradient, Laplace-Beltrami smoothing, harmonic mapping), built on a small sparse
+  linear algebra layer and a stencil/neighborhood abstraction shared by the different discretization
+  schemes.
+- \b IO: readers and writers for third-party mesh and CFD file formats (TetGen, FDNEUT, Dolfin/
+  FEniCS, Xda, Fluent).
+- \b Misc: surface and mesh post-processing utilities -- additional capping strategies, remeshing
+  helpers, wall shear rate/vorticity computation, streamline clustering and particle tracing, and
+  volumetric meshing wrappers (TetGen).
+- \b Rendering: small VTK interactor/widget extensions used by vmtk's interactive rendering
+  windows.
+- \b Segmentation: ITK-based image filters for level-set segmentation and vessel enhancement --
+  geodesic active contours, colliding fronts, Hessian-based vesselness/objectness (Frangi, Sato)
+  filtering, and vessel-enhancing anisotropic diffusion.
+- \b Utilities: low-level ITK/VTK image-pipeline bridging helpers used internally by the
+  Segmentation module.
+
+Most of these C++ classes are accessed through their one-to-one Python bindings (the \c vtkvmtk
+module) rather than written against directly in C++. The
+<a href="https://vmtk.github.io/documentation/vmtkscripts.html">vmtkScripts</a> layer wraps them
+into individual command-line tools, which can in turn be composed into processing pipelines with
+<a href="https://vmtk.github.io/documentation/pypes.html">PypeS</a>. This C++ reference is most
+useful when extending VMTK itself, implementing new filters, or understanding the algorithm behind
+a particular vmtk script.
+
+\section resources Further resources
+
+- <a href="https://vmtk.github.io/">https://vmtk.github.io/</a> -- project home page, downloads, and news
+- <a href="https://vmtk.github.io/documentation/installation.html">Installation</a>
+- <a href="https://vmtk.github.io/documentation/getting-started.html">Getting Started</a>
+- <a href="https://vmtk.github.io/tutorials/">Tutorials</a>
+- <a href="https://vmtk.github.io/documentation/vmtkscripts.html">vmtkScripts reference</a> (Python/command-line layer)
+- <a href="https://github.com/vmtk/vmtk">Source code on GitHub</a>
+
 */
 
+/*!
+ * \defgroup Common Common
+ * \brief Shared math and numerical-constant utilities used throughout vtkVmtk.
+ */
+
+/*!
+ * \defgroup ComputationalGeometry ComputationalGeometry
+ * \brief Centerline extraction and processing, implicit tube functions, surface capping, and
+ * related geometric filters.
+ */
+
+/*!
+ * \defgroup Contrib Contrib
+ * \brief Additional, community-contributed filters that extend or vary the behavior of the core
+ * modules.
+ */
+
+/*!
+ * \defgroup DifferentialGeometry DifferentialGeometry
+ * \brief Finite-element and finite-volume differential operators on surface and volume meshes.
+ */
+
+/*!
+ * \defgroup IO IO
+ * \brief Readers and writers for third-party mesh and CFD file formats.
+ */
+
+/*!
+ * \defgroup Misc Misc
+ * \brief Surface and mesh post-processing utilities.
+ */
+
+/*!
+ * \defgroup Rendering Rendering
+ * \brief Small VTK interactor/widget extensions used by vmtk's interactive rendering windows.
+ */
+
+/*!
+ * \defgroup Segmentation Segmentation
+ * \brief ITK-based image filters for level-set segmentation and vessel enhancement.
+ */
+
+/*!
+ * \defgroup Utilities Utilities
+ * \brief Low-level ITK/VTK image-pipeline bridging helpers used internally by the Segmentation
+ * module.
+ */
