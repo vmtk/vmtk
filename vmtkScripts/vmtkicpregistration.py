@@ -70,8 +70,15 @@ class vmtkICPRegistration(pypes.pypeScript):
 
 ##         if (self.SignedDistanceArrayName != '') & (self.ReferenceSurface.GetPointData().GetNormals() == None):
         if (self.SignedDistanceArrayName != ''):
+            # Since VTK 9.4, vtkPolyDataNormals passes pre-existing normals
+            # through unchanged; strip inherited normals so they are always
+            # recomputed with consistent outward orientation.
+            referenceSurface = vtk.vtkPolyData()
+            referenceSurface.ShallowCopy(self.ReferenceSurface)
+            referenceSurface.GetPointData().SetNormals(None)
+            referenceSurface.GetCellData().SetNormals(None)
             normalsFilter = vtk.vtkPolyDataNormals()
-            normalsFilter.SetInputData(self.ReferenceSurface)
+            normalsFilter.SetInputData(referenceSurface)
             normalsFilter.AutoOrientNormalsOn()
             normalsFilter.ConsistencyOn()
             normalsFilter.SplittingOff()

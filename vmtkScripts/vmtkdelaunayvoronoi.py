@@ -167,8 +167,17 @@ class vmtkDelaunayVoronoi(pypes.pypeScript):
 
         capCenterIds = surfaceCapper.GetCapCenterIds()
 
+        # Since VTK 9.4, vtkPolyDataNormals passes pre-existing normals through
+        # unchanged instead of recomputing them; strip inherited normals so
+        # outward-oriented normals are always recomputed for the internal
+        # tetrahedra classification.
+        cappedSurface = vtk.vtkPolyData()
+        cappedSurface.ShallowCopy(surfaceCapper.GetOutput())
+        cappedSurface.GetPointData().SetNormals(None)
+        cappedSurface.GetCellData().SetNormals(None)
+
         surfaceNormals = vtk.vtkPolyDataNormals()
-        surfaceNormals.SetInputConnection(surfaceCapper.GetOutputPort())
+        surfaceNormals.SetInputData(cappedSurface)
         surfaceNormals.SplittingOff()
         surfaceNormals.AutoOrientNormalsOn()
         surfaceNormals.SetFlipNormals(self.FlipNormals)

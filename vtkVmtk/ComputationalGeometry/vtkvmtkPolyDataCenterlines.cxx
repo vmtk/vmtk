@@ -34,6 +34,7 @@ Version:   $Revision: 1.6 $
 #include "vtkUnstructuredGrid.h"
 #include "vtkTetra.h"
 #include "vtkPointData.h"
+#include "vtkCellData.h"
 #include "vtkIdList.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
@@ -211,8 +212,20 @@ int vtkvmtkPolyDataCenterlines::RequestData(
     return 1;
   }
 
+  // Since VTK 9.4, vtkPolyDataNormals passes pre-existing normals through
+  // unchanged instead of recomputing them, so inherited input normals would
+  // bypass AutoOrientNormals and feed arbitrarily oriented normals to the
+  // internal tetrahedra classification below, breaking the Voronoi diagram
+  // and centerline backtracing. Strip them so outward-oriented normals are
+  // always recomputed.
+  vtkPolyData* inputWithoutNormals = vtkPolyData::New();
+  inputWithoutNormals->ShallowCopy(input);
+  inputWithoutNormals->GetPointData()->SetNormals(NULL);
+  inputWithoutNormals->GetCellData()->SetNormals(NULL);
+
   vtkPolyDataNormals* surfaceNormals = vtkPolyDataNormals::New();
-  surfaceNormals->SetInputData(input);
+  surfaceNormals->SetInputData(inputWithoutNormals);
+  inputWithoutNormals->Delete();
   surfaceNormals->SplittingOff();
   surfaceNormals->AutoOrientNormalsOn();
   surfaceNormals->SetFlipNormals(this->FlipNormals);

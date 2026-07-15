@@ -26,6 +26,7 @@ Version:   $Revision: 2.0 $
 #include "vtkUnstructuredGrid.h"
 #include "vtkPolyData.h"
 #include "vtkPointData.h"
+#include "vtkCellData.h"
 #include "vtkDoubleArray.h"
 #include "vtkMath.h"
 #include "vtkGeometryFilter.h"
@@ -110,8 +111,17 @@ int vtkvmtkMeshWallShearRate::RequestData(
   geometryFilter->SetInputConnection(gradientFilter->GetOutputPort());
   geometryFilter->Update();
 
+  // Since VTK 9.4, vtkPolyDataNormals passes pre-existing normals through
+  // unchanged instead of recomputing them; strip normals inherited from the
+  // mesh so consistently outward-oriented normals are always recomputed.
+  vtkPolyData* surfaceWithoutNormals = vtkPolyData::New();
+  surfaceWithoutNormals->ShallowCopy(geometryFilter->GetOutput());
+  surfaceWithoutNormals->GetPointData()->SetNormals(NULL);
+  surfaceWithoutNormals->GetCellData()->SetNormals(NULL);
+
   vtkPolyDataNormals* normalsFilter = vtkPolyDataNormals::New();
-  normalsFilter->SetInputConnection(geometryFilter->GetOutputPort());
+  normalsFilter->SetInputData(surfaceWithoutNormals);
+  surfaceWithoutNormals->Delete();
   normalsFilter->AutoOrientNormalsOn();
   normalsFilter->ConsistencyOn();
   normalsFilter->SplittingOff();
