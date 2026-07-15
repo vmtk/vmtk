@@ -18,11 +18,21 @@ import pytest
 import vmtk.vmtksurfacesmoothing as smoothing
 
 
+## Windowed sinc smoothing is a Chebyshev polynomial approximation whose
+## degree equals the iteration count, so it needs a reasonable number of
+## iterations to define a meaningful filter. The script's default single
+## iteration is degenerate: vtkWindowedSincPolyDataFilter cannot build its
+## kernel from it and its output in that regime is implementation-defined
+## (it changed with the VTK 9.2 rewrite of the filter). The tests therefore
+## pass explicit, meaningful parameters.
+
 def test_taubin(aorta_surface, compare_surfaces):
     name = __name__ + '_test_taubin.vtp'
     smoother = smoothing.vmtkSurfaceSmoothing()
     smoother.Surface = aorta_surface
     smoother.Method = 'taubin'
+    smoother.NumberOfIterations = 30
+    smoother.PassBand = 0.1
     smoother.Execute()
 
     assert compare_surfaces(smoother.Surface, name) == True
@@ -33,7 +43,8 @@ def test_taubin_change_passband(aorta_surface, compare_surfaces):
     smoother = smoothing.vmtkSurfaceSmoothing()
     smoother.Surface = aorta_surface
     smoother.Method = 'taubin'
-    smoother.PassBand = 1.5
+    smoother.NumberOfIterations = 30
+    smoother.PassBand = 0.01
     smoother.Execute()
 
     assert compare_surfaces(smoother.Surface, name) == True
