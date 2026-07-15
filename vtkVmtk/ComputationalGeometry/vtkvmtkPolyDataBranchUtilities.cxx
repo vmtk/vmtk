@@ -78,16 +78,13 @@ void vtkvmtkPolyDataBranchUtilities::GetGroupsIdList(vtkPolyData* surface, const
 
 void vtkvmtkPolyDataBranchUtilities::ExtractGroup(vtkPolyData* surface, const char* groupIdsArrayName, vtkIdType groupId, bool cleanGroupSurface, vtkPolyData* groupSurface)
 {
-  groupSurface->DeepCopy(surface);
-
-  int numberOfCells = surface->GetPolys()->GetNumberOfCells();
-
   vtkDataArray* groupIdsArray = surface->GetPointData()->GetArray(groupIdsArrayName);
 
   surface->BuildCells();
 
-  vtkCellArray* polys = groupSurface->GetPolys();
-  polys->Reset();
+  int numberOfCells = surface->GetPolys()->GetNumberOfCells();
+
+  vtkCellArray* groupPolys = vtkCellArray::New();
   vtkIdType npts;
   const vtkIdType *pts;
   for (int j=0; j<numberOfCells; j++)
@@ -106,10 +103,27 @@ void vtkvmtkPolyDataBranchUtilities::ExtractGroup(vtkPolyData* surface, const ch
       {
       continue;
       }
-    polys->InsertNextCell(npts,pts);
+    groupPolys->InsertNextCell(npts,pts);
     }
-  polys->Squeeze();
-  
+  groupPolys->Squeeze();
+
+  // Assemble the group surface from scratch instead of deep copying the input
+  // and swapping out its polys. Once the input has its cell map built,
+  // DeepCopy brings a copy of that map along, and mutating the polys array
+  // afterwards leaves the map out of sync with the actual cells - downstream
+  // filters then read cells through the stale map and crash (observed with
+  // VTK >= 9.6 inside vtkCleanPolyData and vtkPolyDataConnectivityFilter).
+  // This also no longer copies the input's cell data, which referred to the
+  // original full set of cells and was meaningless for the extracted subset.
+  groupSurface->Initialize();
+  vtkPoints* groupPoints = vtkPoints::New();
+  groupPoints->DeepCopy(surface->GetPoints());
+  groupSurface->SetPoints(groupPoints);
+  groupPoints->Delete();
+  groupSurface->GetPointData()->DeepCopy(surface->GetPointData());
+  groupSurface->SetPolys(groupPolys);
+  groupPolys->Delete();
+
   if (cleanGroupSurface)
     {
     vtkCleanPolyData* cleaner = vtkCleanPolyData::New();
