@@ -15,19 +15,19 @@
 ##       University at Buffalo
 
 python:
-  - 3.10
-  - 3.9
-  - 3.8
-  - 3.7
+  - 3.12
 
 vtk:
-  - 9.1.*
+  - 9.6.*
+
+boost:
+  - 1.90.0
 
 itk:
   - 5.*
 
 numpy:
-  - 1.20
+  - 1.26
 
 pin_run_as_build:
   python:
@@ -37,10 +37,11 @@ pin_run_as_build:
   itk: x.x.x
 
 c_compiler:
-  - vs2015           # [win]
+  - vs2022           # [win]
 
 cxx_compiler:
-  - vs2015           # [win]
+  - vs2022           # [win]
 
 CONDA_BUILD_SYSROOT:
-  - $HOME/MacOSX-SDKs/MacOSX10.9.sdk   # [osx]
+  - $HOME/MacOSX-SDKs/MacOSX10.13.sdk  # [osx and x86_64]
+  - $HOME/MacOSX-SDKs/MacOSX11.0.sdk   # [osx and arm64]

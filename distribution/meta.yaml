@@ -23,38 +23,37 @@ source:
 
 build:
   number: 1
-  features:
-    - vc14  # [win]  
-  
+
 requirements:
   build:
     - {{ compiler('c') }}
     - {{ compiler('cxx') }}
     - pkgconfig              # [unix]
-    - cmake 
-    - boost 1.74 # [linux]
+    - cmake
     - git
     - ninja
-    - setuptools             # [win] 
+    - setuptools             # [win]
   host:
     - python {{ python }}
     - vtk {{ vtk }}
     - libitk {{ itk }}
     - libitk-devel {{ itk }}
+    # VTK 9.6's CMake config demands its third-party dependencies at exact
+    # versions; keep these in sync with what the conda-forge vtk build uses.
+    - libboost-devel {{ boost }}
+    - libxml2-devel
     - numpy >=1.20
     - h5py
     - tbb-devel
-    - llvm
     - setuptools              # [win]
     - joblib
 
   run:
     - python {{ python }}
-    - future 
+    - future
     - vtk {{ vtk }}
     - libitk {{ itk }}
-    - numpy 
-    - llvm
+    - numpy
     - h5py
     - joblib
 
