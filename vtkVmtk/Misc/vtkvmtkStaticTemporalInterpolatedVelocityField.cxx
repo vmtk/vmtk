@@ -22,7 +22,13 @@
 #include "vtkMath.h"
 #include "vtkObjectFactory.h"
 
-vtkStandardNewMacro(vtkvmtkStaticTemporalInterpolatedVelocityField); 
+// The interpolated velocity fields were reworked in VTK 9.2: the DataSets
+// collection became DataSetsInfo, the GenCell/Cell scratch cells were removed
+// and the Weights member became a std::vector.
+#define VMTK_VTK_HAS_REWORKED_IVF \
+  (VTK_MAJOR_VERSION > 9 || (VTK_MAJOR_VERSION == 9 && VTK_MINOR_VERSION >= 2))
+
+vtkStandardNewMacro(vtkvmtkStaticTemporalInterpolatedVelocityField);
 vtkCxxSetObjectMacro(vtkvmtkStaticTemporalInterpolatedVelocityField, TimeStepsTable, vtkTable);
 
 vtkvmtkStaticTemporalInterpolatedVelocityField::vtkvmtkStaticTemporalInterpolatedVelocityField()
@@ -35,6 +41,10 @@ vtkvmtkStaticTemporalInterpolatedVelocityField::vtkvmtkStaticTemporalInterpolate
   this->Component0Prefix = NULL;
   this->Component1Prefix = NULL;
   this->Component2Prefix = NULL;
+#if VMTK_VTK_HAS_REWORKED_IVF
+  this->TemporalGenCell = vtkGenericCell::New();
+  this->TemporalCell = vtkGenericCell::New();
+#endif
 }
 
 vtkvmtkStaticTemporalInterpolatedVelocityField::~vtkvmtkStaticTemporalInterpolatedVelocityField()
@@ -60,20 +70,36 @@ vtkvmtkStaticTemporalInterpolatedVelocityField::~vtkvmtkStaticTemporalInterpolat
   }
 
   this->SetTimeStepsTable(NULL);
+
+#if VMTK_VTK_HAS_REWORKED_IVF
+  this->TemporalGenCell->Delete();
+  this->TemporalCell->Delete();
+#endif
 }
 
 void vtkvmtkStaticTemporalInterpolatedVelocityField::SetLastCellId( vtkIdType c, int dataindex )
 {
-  this->LastCellId  = c; 
+  this->LastCellId  = c;
+#if VMTK_VTK_HAS_REWORKED_IVF
+  this->LastDataSet = this->DataSetsInfo[dataindex].DataSet;
+
+  // if the dataset changes, then the cached cell is invalidated
+  // we might as well prefetch the cached cell either way
+  if ( this->LastCellId != -1 )
+  {
+    this->LastDataSet->GetCell( this->LastCellId, this->TemporalGenCell );
+  }
+#else
   this->LastDataSet = ( *this->DataSets )[dataindex];
-  
+
   // if the dataset changes, then the cached cell is invalidated
   // we might as well prefetch the cached cell either way
   if ( this->LastCellId != -1 )
   {
     this->LastDataSet->GetCell( this->LastCellId, this->GenCell );
-  } 
-  
+  }
+#endif
+
   this->LastDataSetIndex = dataindex;
 }
 
@@ -231,17 +257,31 @@ int vtkvmtkStaticTemporalInterpolatedVelocityField::FunctionValues( vtkDataSet *
       } 
     }
 
-  double tol2 = dataset->GetLength() * 
+  double tol2 = dataset->GetLength() *
                 vtkAbstractInterpolatedVelocityField::TOLERANCE_SCALE;
+
+#if VMTK_VTK_HAS_REWORKED_IVF
+  if (this->Weights.size() < static_cast<size_t>(dataset->GetMaxCellSize()))
+    {
+    this->Weights.resize(dataset->GetMaxCellSize());
+    }
+  double* weights = this->Weights.data();
+  vtkGenericCell* genCell = this->TemporalGenCell;
+  vtkGenericCell* scratchCell = this->TemporalCell;
+#else
+  double* weights = this->Weights;
+  vtkGenericCell* genCell = this->GenCell;
+  vtkGenericCell* scratchCell = this->Cell;
+#endif
 
   int found = 0;
 
   if ( this->Caching )
     {
     // See if the point is in the cached cell
-    if ( this->LastCellId == -1 || 
-         !(  ret = this->GenCell->EvaluatePosition
-                   ( x, 0, subId, this->LastPCoords, dist2, this->Weights)
+    if ( this->LastCellId == -1 ||
+         !(  ret = genCell->EvaluatePosition
+                   ( x, 0, subId, this->LastPCoords, dist2, weights)
           )
         || ret == -1
        )
@@ -251,15 +291,15 @@ int vtkvmtkStaticTemporalInterpolatedVelocityField::FunctionValues( vtkDataSet *
         {
         this->CacheMiss ++;
 
-        dataset->GetCell( this->LastCellId, this->Cell );
-        
-        this->LastCellId = 
-          dataset->FindCell( x, this->Cell, this->GenCell, this->LastCellId, 
-                             tol2, subId, this->LastPCoords, this->Weights );
-                             
+        dataset->GetCell( this->LastCellId, scratchCell );
+
+        this->LastCellId =
+          dataset->FindCell( x, scratchCell, genCell, this->LastCellId,
+                             tol2, subId, this->LastPCoords, weights );
+
         if ( this->LastCellId != -1 )
           {
-          dataset->GetCell( this->LastCellId, this->GenCell );
+          dataset->GetCell( this->LastCellId, genCell );
           found = 1;
           }
         }
@@ -275,29 +315,29 @@ int vtkvmtkStaticTemporalInterpolatedVelocityField::FunctionValues( vtkDataSet *
     {
     // if the cell is not found, do a global search (ignore initial
     // cell if there is one)
-    this->LastCellId = 
-      dataset->FindCell( x, 0, this->GenCell, -1, tol2, 
-                         subId, this->LastPCoords, this->Weights );
-                         
+    this->LastCellId =
+      dataset->FindCell( x, 0, genCell, -1, tol2,
+                         subId, this->LastPCoords, weights );
+
     if ( this->LastCellId != -1 )
       {
-      dataset->GetCell( this->LastCellId, this->GenCell );
+      dataset->GetCell( this->LastCellId, genCell );
       }
     else
       {
       return  0;
       }
     }
-                                
+
   // if the cell is valid
   if ( this->LastCellId >= 0 )
     {
-    numPts = this->GenCell->GetNumberOfPoints();
-    
+    numPts = genCell->GetNumberOfPoints();
+
     // interpolate the vectors
     for ( j = 0; j < numPts; j ++ )
       {
-      id = this->GenCell->PointIds->GetId( j );
+      id = genCell->PointIds->GetId( j );
       if (this->UseVectorComponents)
         {
         vecPrev[0] = this->VelocityScale * component0Prev->GetTuple1(id);
@@ -331,14 +371,14 @@ int vtkvmtkStaticTemporalInterpolatedVelocityField::FunctionValues( vtkDataSet *
         {
         for ( i = 0; i < 3; i ++ )
           {
-          f[i] +=  (timeP * vecNext[i] + (1.0 - timeP) * vecPrev[i]) * this->Weights[j];
+          f[i] +=  (timeP * vecNext[i] + (1.0 - timeP) * vecPrev[i]) * weights[j];
           }
         }
       else
         {
         for ( i = 0; i < 3; i ++ )
           {
-          f[i] +=  vecPrev[i] * this->Weights[j];
+          f[i] +=  vecPrev[i] * weights[j];
           }
         }
       }

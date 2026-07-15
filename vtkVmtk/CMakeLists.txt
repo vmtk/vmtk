@@ -44,13 +44,7 @@ endif()
 
 option(VTK_VMTK_BUILD_TETGEN "Build TetGen and TetGen wrapper. Check TetGen license before you activate this." ON)
 
-set(_VTK_VMTK_BUILD_STREAMTRACER_DEFAULT ON)
-if(${VTK_VERSION} VERSION_GREATER_EQUAL "9.2")
-  # Interpolated velocity fields were completely reworked in VTK-9.2
-  # and VMTK is now incompatible.
-  set(_VTK_VMTK_BUILD_STREAMTRACER_DEFAULT OFF)
-endif()
-option(VTK_VMTK_BUILD_STREAMTRACER "Build static temporal stream tracer." _VTK_VMTK_BUILD_STREAMTRACER_DEFAULT)
+option(VTK_VMTK_BUILD_STREAMTRACER "Build static temporal stream tracer." ON)
 
 if (VTK_USE_COCOA)
   option(VTK_VMTK_USE_COCOA "Build the Cocoa vmtk classes." ON)

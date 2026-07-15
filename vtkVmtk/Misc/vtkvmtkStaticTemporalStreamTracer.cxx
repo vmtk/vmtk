@@ -28,8 +28,9 @@ PURPOSE.  See the above copyright notice for more information.
 #include "vtkPointData.h"
 #include "vtkSmartPointer.h"
 #include "vtkVersion.h"
-#include "vtkInterpolatedVelocityField.h"
 
+// brings in VMTK_STIVF_SUPERCLASS (the composite velocity field base class,
+// which replaced vtkInterpolatedVelocityField in the VTK 9.2 rework)
 #include "vtkvmtkStaticTemporalInterpolatedVelocityField.h"
 
 #include "vtkTable.h"
@@ -202,7 +203,7 @@ int vtkvmtkStaticTemporalStreamTracer::CheckInputs(vtkAbstractInterpolatedVeloci
         {
         *maxCellSize = cellSize;
         }
-      vtkInterpolatedVelocityField::SafeDownCast(func)->AddDataSet(inp);
+      VMTK_STIVF_SUPERCLASS::SafeDownCast(func)->AddDataSet(inp);
       numInputs++;
       }
     iterP->GoToNextItem();

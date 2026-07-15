@@ -38,17 +38,25 @@ Language:  C++
 #include "vtkvmtkWin32Header.h"
 #include "vtkVersion.h"
 
+#if VTK_MAJOR_VERSION > 9 || (VTK_MAJOR_VERSION == 9 && VTK_MINOR_VERSION >= 2)
+// vtkInterpolatedVelocityField was deprecated by the VTK 9.2 rework of the
+// interpolated velocity fields and later removed.
+#include "vtkCompositeInterpolatedVelocityField.h"
+#define VMTK_STIVF_SUPERCLASS vtkCompositeInterpolatedVelocityField
+#else
 #include "vtkInterpolatedVelocityField.h"
+#define VMTK_STIVF_SUPERCLASS vtkInterpolatedVelocityField
+#endif
 
 class vtkTable;
-class vtkAbstractInterpolatedVelocityFieldDataSetsType;
+class vtkGenericCell;
 
 class VTK_VMTK_MISC_EXPORT vtkvmtkStaticTemporalInterpolatedVelocityField
-  : public vtkInterpolatedVelocityField
+  : public VMTK_STIVF_SUPERCLASS
 {
 public:
   vtkTypeMacro( vtkvmtkStaticTemporalInterpolatedVelocityField,
-                      vtkInterpolatedVelocityField );
+                      VMTK_STIVF_SUPERCLASS );
 
   void PrintSelf( std::ostream & os, vtkIndent indent ) override;
 
@@ -123,6 +131,13 @@ protected:
   char* Component1Prefix;
   char* Component2Prefix;
   int LastDataSetIndex;
+
+#if VTK_MAJOR_VERSION > 9 || (VTK_MAJOR_VERSION == 9 && VTK_MINOR_VERSION >= 2)
+  // The VTK 9.2 rework of the interpolated velocity fields removed the
+  // GenCell/Cell scratch members from the base class; keep our own.
+  vtkGenericCell* TemporalGenCell;
+  vtkGenericCell* TemporalCell;
+#endif
 
 private:
   vtkvmtkStaticTemporalInterpolatedVelocityField

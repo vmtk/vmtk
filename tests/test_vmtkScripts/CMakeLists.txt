@@ -41,6 +41,7 @@ set(TEST_VMTKSCRIPTS_SRCS
     test_vmtklevelsetsegmentation.py
     test_vmtkmarchingcubes.py
     # test_vmtkmeshtonumpy.py
+    test_vmtkstatictemporalstreamtracer.py
     test_vmtksurfaceappend.py
     test_vmtksurfacebooleanoperation.py
     test_vmtksurfacecapper.py
