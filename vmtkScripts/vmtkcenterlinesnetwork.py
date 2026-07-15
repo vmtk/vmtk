@@ -103,6 +103,18 @@ class vmtkCenterlinesNetwork(pypes.pypeScript):
             self.UseJoblib = False
         else:
             self.UseJoblib = True
+
+        # The joblib parallelization hands data to the forked worker processes as
+        # raw memory address strings, which requires the VTK Python wrappers to
+        # support constructing an object from an address string. Modern VTK
+        # removed that constructor form, so fall back to serial execution there.
+        if self.UseJoblib:
+            try:
+                _addressProbe = vtk.vtkPolyData()
+                vtk.vtkPolyData(_addressProbe.__this__)
+            except TypeError:
+                self.PrintLog('This VTK version does not support wrapping objects from memory addresses; centerlines will be extracted serially.')
+                self.UseJoblib = False
         
         self.vmtkRenderer = None
         self.OwnRenderer = 0
