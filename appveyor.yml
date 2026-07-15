@@ -26,31 +26,20 @@
 #    environment configuration    #
 #---------------------------------#
 image:
-  - Ubuntu2004
-  - Visual Studio 2019
+  - Ubuntu2204
+  - Visual Studio 2022
 
 
 environment:
     global:
       # HTML report location for pytest
       PYTEST_REPORT: "--html=$APPVEYOR_BUILD_FOLDER/pytest_report.html --self-contained-html"
+      # A path that AppVeyor's stock VM images don't pre-populate with their own
+      # bundled Miniconda, so our install below can't silently no-op against it.
+      CONDA_ROOT: C:\VMTKMiniconda
     matrix:
-      - PYTHON_VERSION: "3.10"
-      
-      - PYTHON_VERSION: "3.9"
-      
-      - PYTHON_VERSION: "3.8"
-      
-      - PYTHON_VERSION: "3.7"
-for:
--
-  matrix:
-    only:
-      - PYTHON_VERSION: "3.8"
-      - PYTHON_VERSION: "3.7"
-  only_commits:
-    message: "/.*\\[ci all\\].*/"
-platform: 
+      - PYTHON_VERSION: "3.12"
+platform:
   - x64
 
 # Configuration of build
@@ -62,10 +51,12 @@ configuration:
 #  - sh: curl -sflL 'https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-ssh.sh' | bash -e - 
 install:
   - sh: . distribution/appveyor/install.sh
-#  - cmd: call distribution/appveyor/install.bat
-  - cmd: SET PATH=C:\Miniconda37-x64;C:\Miniconda37-x64\Scripts;%PATH%
+  - cmd: curl -fsSL -o %TEMP%\miniconda.exe https://repo.anaconda.com/miniconda/Miniconda3-py312_26.5.3-1-Windows-x86_64.exe
+  - cmd: start /wait %TEMP%\miniconda.exe /InstallationType=JustMe /RegisterPython=0 /S /D=%CONDA_ROOT%
+  - cmd: if not exist %CONDA_ROOT%\python.exe (echo Miniconda install did not produce %CONDA_ROOT%\python.exe && exit /b 1)
+  - cmd: SET PATH=%CONDA_ROOT%;%CONDA_ROOT%\Scripts;%CONDA_ROOT%\Library\bin;%PATH%
   - cmd: conda config --set always_yes true
-  - cmd: conda install --quiet -y conda conda-build anaconda-client
+  - cmd: conda install --quiet -y conda-build anaconda-client
   - cmd: conda config --prepend channels conda-forge
   - cmd: conda config --prepend channels vmtk
   - cmd: conda info -a
@@ -83,12 +74,12 @@ build: false
 
 test_script:
   - sh: conda build --python $PYTHON_VERSION --no-copy-test-source-files distribution/
-  - cmd: C:\Miniconda37-x64\Scripts\conda build --python %PYTHON_VERSION% --no-copy-test-source-files distribution
+  - cmd: conda build --python %PYTHON_VERSION% --no-copy-test-source-files distribution
 
 on_finish: # Upload conda package and pytest report
    - sh: . distribution/appveyor/after_test.sh
    - cmd: appveyor PushArtifact pytest_report.html
-   - ps: Get-ChildItem C:\Miniconda37-x64\conda-bld\win-64\*.tar.bz2 | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name }
+   - cmd: for %%f in (%CONDA_ROOT%\conda-bld\win-64\vmtk*.conda %CONDA_ROOT%\conda-bld\win-64\vmtk*.tar.bz2) do appveyor PushArtifact %%f
 
 
 #  - sh: sleep 10m
