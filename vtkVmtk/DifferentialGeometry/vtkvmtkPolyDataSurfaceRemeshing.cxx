@@ -245,6 +245,14 @@ int vtkvmtkPolyDataSurfaceRemeshing::RequestData(
   normals->Delete();
 
   this->Mesh->BuildCells();
+#if VTK_MAJOR_VERSION > 9 || (VTK_MAJOR_VERSION == 9 && VTK_MINOR_VERSION >= 4)
+  // Since VTK 9.4, vtkPolyData::BuildLinks() builds read-only
+  // vtkStaticCellLinks by default, but this filter edits the mesh topology
+  // in place through RemoveReferenceToCell/AddReferenceToCell/ResizeCellList,
+  // which require the editable vtkCellLinks and crash on static links.
+  // Marking the mesh editable makes BuildLinks() build the editable variant.
+  this->Mesh->SetEditable(true);
+#endif
   this->Mesh->BuildLinks();
 
   if (this->Locator)
