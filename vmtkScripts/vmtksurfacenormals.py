@@ -54,8 +54,18 @@ class vmtkSurfaceNormals(pypes.pypeScript):
         if self.Surface == None:
             self.PrintError('Error: No Surface.')
 
+        # Since the VTK 9.4 refactor, vtkPolyDataNormals passes pre-existing
+        # normals through unchanged instead of recomputing them, so the
+        # Consistency/AutoOrientNormals/FlipNormals options would silently not
+        # be applied when the input surface already carries normals. Drop
+        # inherited normals so they are always recomputed.
+        surface = vtk.vtkPolyData()
+        surface.ShallowCopy(self.Surface)
+        surface.GetPointData().SetNormals(None)
+        surface.GetCellData().SetNormals(None)
+
         normalsFilter = vtk.vtkPolyDataNormals()
-        normalsFilter.SetInputData(self.Surface)
+        normalsFilter.SetInputData(surface)
         normalsFilter.SetAutoOrientNormals(self.AutoOrientNormals)
         normalsFilter.SetFlipNormals(self.FlipNormals)
         normalsFilter.SetConsistency(self.Consistency)

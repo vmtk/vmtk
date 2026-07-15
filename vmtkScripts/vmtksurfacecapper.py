@@ -185,8 +185,16 @@ class vmtkSurfaceCapper(pypes.pypeScript):
             triangle.Update()
             self.Surface = triangle.GetOutput()
 
+        # Since VTK 9.4, vtkPolyDataNormals passes pre-existing normals through
+        # unchanged; strip inherited normals so they are always recomputed with
+        # consistent outward orientation on the capped surface.
+        cappedSurface = vtk.vtkPolyData()
+        cappedSurface.ShallowCopy(self.Surface)
+        cappedSurface.GetPointData().SetNormals(None)
+        cappedSurface.GetCellData().SetNormals(None)
+
         normals = vtk.vtkPolyDataNormals()
-        normals.SetInputData(self.Surface)
+        normals.SetInputData(cappedSurface)
         normals.AutoOrientNormalsOn()
         normals.SplittingOff()
         normals.ConsistencyOn()

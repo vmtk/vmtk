@@ -503,8 +503,15 @@ class vmtkTetrInGenerator(pypes.pypeScript):
                 extractSurface = vtk.vtkGeometryFilter()
                 extractSurface.SetInputData(self.Mesh)
                 extractSurface.Update()
+                # Since VTK 9.4, vtkPolyDataNormals passes pre-existing normals
+                # through unchanged; strip normals inherited from the mesh so
+                # they are always recomputed.
+                extractedSurface = vtk.vtkPolyData()
+                extractedSurface.ShallowCopy(extractSurface.GetOutput())
+                extractedSurface.GetPointData().SetNormals(None)
+                extractedSurface.GetCellData().SetNormals(None)
                 normalsFilter = vtk.vtkPolyDataNormals()
-                normalsFilter.SetInputConnection(extractSurface.GetOutputPort())
+                normalsFilter.SetInputData(extractedSurface)
                 normalsFilter.AutoOrientNormalsOn()
                 normalsFilter.ConsistencyOn()
                 normalsFilter.Update()
