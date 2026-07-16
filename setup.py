@@ -222,9 +222,9 @@ def auto_build_itk():
     build_dir = deps_dir / f"itk-build-{version}-{lib_type}{abi_suffix}"
     stamp = build_dir / ".vmtk-itk-build-complete"
 
-    if stamp.exists():
-        return build_dir
-
+    # The source tree must exist even when a cached build tree is reused:
+    # the build-tree ITKConfig.cmake references CMake modules and headers
+    # inside the source tree (CI caches only the build tree).
     if not (source_dir / "CMakeLists.txt").exists():
         subprocess.check_call(
             [
@@ -235,6 +235,9 @@ def auto_build_itk():
                 str(source_dir),
             ]
         )
+
+    if stamp.exists():
+        return build_dir
 
     configure_cmd = [
         "cmake",
