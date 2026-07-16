@@ -88,7 +88,7 @@ jobs:
           - os: ubuntu-latest
           - os: ubuntu-24.04-arm
           - os: windows-latest
-          - os: macos-13        # x86_64
+          - os: macos-15-intel  # x86_64 (macos-13 runners are retired)
             macosx_deployment_target: "10.13"
           - os: macos-latest    # arm64
             macosx_deployment_target: "11.0"
