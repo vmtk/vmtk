@@ -36,8 +36,9 @@ env:
   VMTK_VTK_VERSION: "9.6.2"
   VMTK_ITK_VERSION: "5.4.5"
 
-  # Python versions for which VTK 9.6.2 wheels + wheel SDKs are available.
-  CIBW_BUILD: "cp39-* cp310-* cp311-* cp312-* cp313-* cp314-*"
+  # vmtk supports Python 3.12 and later; VTK 9.6.2 wheels + wheel SDKs are
+  # available for these versions.
+  CIBW_BUILD: "cp312-* cp313-* cp314-*"
   CIBW_SKIP: "*-musllinux_*"
   CIBW_BUILD_VERBOSITY: "1"
 

@@ -346,7 +346,7 @@ setup(
     package_dir={"vmtk": "vmtk"},
     include_package_data=False,
     cmake_args=cmake_args,
-    python_requires=">=3.9",
+    python_requires=">=3.12",
     install_requires=[
         f"vtk=={vtk_version()}",
         "numpy",

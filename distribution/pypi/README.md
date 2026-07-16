@@ -43,7 +43,7 @@ and [Korijn/VTKU3DExporter](https://github.com/Korijn/VTKU3DExporter).
 
 * **CI**: `.github/workflows/build-pypi-packages.yml` builds the sdist and
   wheels for Linux (x86_64 + aarch64), Windows and macOS (x86_64 + arm64)
-  for CPython 3.9–3.13 with [cibuildwheel](https://cibuildwheel.pypa.io),
+  for CPython 3.12–3.14 with [cibuildwheel](https://cibuildwheel.pypa.io),
   runs `distribution/pypi/test_wheel.py` against every wheel, and publishes
   to PyPI via [trusted publishing](https://docs.pypi.org/trusted-publishers/)
   when a GitHub release with a `v*` tag is published (the `pypi` GitHub
@@ -52,7 +52,7 @@ and [Korijn/VTKU3DExporter](https://github.com/Korijn/VTKU3DExporter).
 
 ## Building locally
 
-Prerequisites: a C++ compiler (MSVC on Windows), git, and Python ≥ 3.9.
+Prerequisites: a C++ compiler (MSVC on Windows), git, and Python ≥ 3.12.
 CMake and Ninja are installed automatically as build requirements.
 
 ```sh

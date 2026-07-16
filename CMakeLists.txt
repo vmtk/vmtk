@@ -248,6 +248,30 @@ if(VMTK_WHEEL_BUILD)
   find_package(Python3 COMPONENTS Interpreter Development.Module
     OPTIONAL_COMPONENTS Development.Embed)
 
+  if(UNIX)
+    # Wheel extension modules must not link libpython: the Python symbols
+    # are provided by the running interpreter when the module is imported
+    # (manylinux images do not even ship a libpython to link against).
+    # vtkAddon's vtkWrapPython.cmake downgrades its
+    # find_package(Python3 COMPONENTS Development) from REQUIRED to QUIET
+    # when VTK_UNDEFINED_SYMBOLS_ALLOWED is enabled.
+    set(VTK_UNDEFINED_SYMBOLS_ALLOWED ON)
+    # scikit-build passes -DPYTHON_LIBRARY=... whenever the build Python
+    # provides one (e.g. macOS framework builds), and vtkAddon's wrapping
+    # links it into the wrapped modules; clear it so the modules resolve
+    # the Python symbols at import time instead.
+    set(PYTHON_LIBRARY "" CACHE FILEPATH
+      "Cleared for the wheel build: modules must not link libpython" FORCE)
+    set(PYTHON_DEBUG_LIBRARY "" CACHE FILEPATH
+      "Cleared for the wheel build: modules must not link libpython" FORCE)
+    if(APPLE)
+      # Allow the wrapped MODULE libraries to link with unresolved Python
+      # symbols (the default macOS module link flags treat them as errors).
+      set(CMAKE_MODULE_LINKER_FLAGS
+        "${CMAKE_MODULE_LINKER_FLAGS} -undefined dynamic_lookup")
+    endif()
+  endif()
+
   # Everything that is needed at runtime goes into the package directory.
   set(VMTK_MODULE_INSTALL_LIB_DIR ${VMTK_WHEEL_PACKAGE_DIR})
   set(PYPES_MODULE_INSTALL_LIB_DIR ${VMTK_WHEEL_PACKAGE_DIR})
