@@ -224,4 +224,7 @@ jobs:
           # C++ modules (vtkvmtkCommonPython.pyd etc.) have no such shim, so register
           # vmtk-install/bin (and vtk-install/bin, defensively) ourselves.
           export VMTK_DLL_DIRS="${WORKSPACE}/vmtk-install/bin${PATH_SEP}${WORKSPACE}/vtk-install/bin"
-          python3 -c "import os, sys; [os.add_dll_directory(d) for d in os.environ.get('VMTK_DLL_DIRS', '').split(os.pathsep) if d and os.path.isdir(d)] if sys.platform == 'win32' and hasattr(os, 'add_dll_directory') else None; import pytest; sys.exit(pytest.main(['-vv', 'build/tests']))"
+          # -P (PYTHONSAFEPATH) keeps the current directory off sys.path. Tests run
+          # from the repo root, which contains a launcher script named vmtk.py; without
+          # this it shadows the installed vmtk package ("'vmtk' is not a package").
+          python3 -P -c "import os, sys; [os.add_dll_directory(d) for d in os.environ.get('VMTK_DLL_DIRS', '').split(os.pathsep) if d and os.path.isdir(d)] if sys.platform == 'win32' and hasattr(os, 'add_dll_directory') else None; import pytest; sys.exit(pytest.main(['-vv', 'build/tests']))"
