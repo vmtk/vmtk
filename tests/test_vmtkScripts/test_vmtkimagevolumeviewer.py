@@ -78,30 +78,35 @@ def test_volume_viewer_preset_values(aorta_image, preset, expected_results_dict)
 
     resultsDict = copy.deepcopy(expected_results_dict[preset])
 
+    # The sample points and interpolated transfer-function values are computed in
+    # floating point (scaling by 0.1, VTK's piecewise interpolation), so their last
+    # bit differs between platforms' math libraries. Compare the numeric results with
+    # pytest.approx rather than exact equality; the categorical InterpolationType and
+    # Shade stay exact.
     assert interpolationType == resultsDict["InterpolationType"]
     assert shade == resultsDict["Shade"]
-    assert specularPower == resultsDict["SpecularPower"]
-    assert specular == resultsDict["Specular"]
-    assert diffuse == resultsDict["Diffuse"]
-    assert ambient == resultsDict["Ambient"]
-    assert colorTransferFunctionPointMin == resultsDict["ColorTransferFunctionPointMin"]
-    assert colorTransferFunctionPointMax == resultsDict["ColorTransferFunctionPointMax"]
-    assert colorTransferFunctionRangeWidth == resultsDict["ColorTransferFunctionRangeWidth"]
-    assert colorTransferFunctionSamplePointSmall == resultsDict["ColorTransferFunctionSamplePointSmall"]
-    assert colorTransferFunctionSamplePointLarge == resultsDict["ColorTransferFunctionSamplePointLarge"]
-    assert colorTransferFunctionColorAtSamplePointSmall == tuple(resultsDict["ColorTransferFunctionColorAtSamplePointSmall"])
-    assert colorTransferFunctionColorAtSamplePointLarge == tuple(resultsDict["ColorTransferFunctionColorAtSamplePointLarge"])
-    assert opacityTransferFunctionPointMin == resultsDict["OpacityTransferFunctionPointMin"]
-    assert opacityTransferFunctionPointMax == resultsDict["OpacityTransferFunctionPointMax"]
-    assert opacityTransferFunctionRangeWidth == resultsDict["OpacityTransferFunctionRangeWidth"]
-    assert opacityTransferFunctionSamplePointSmall == resultsDict["OpacityTransferFunctionSamplePointSmall"]
-    assert opacityTransferFunctionSamplePointLarge == resultsDict["OpacityTransferFunctionSamplePointLarge"]
-    assert opacityTransferFunctionColorAtSamplePointSmall == resultsDict["OpacityTransferFunctionColorAtSamplePointSmall"]
-    assert opacityTransferFunctionColorAtSamplePointLarge == resultsDict["OpacityTransferFunctionColorAtSamplePointLarge"]
-    assert gradientOpacityTransferFunctionPointMin == resultsDict["GradientOpacityTransferFunctionPointMin"]
-    assert gradientOpacityTransferFunctionPointMax == resultsDict["GradientOpacityTransferFunctionPointMax"]
-    assert gradientOpacityTransferFunctionRangeWidth == resultsDict["GradientOpacityTransferFunctionRangeWidth"]
-    assert gradientOpacityTransferFunctionSamplePointSmall == resultsDict["GradientOpacityTransferFunctionSamplePointSmall"]
-    assert gradientOpacityTransferFunctionSamplePointLarge == resultsDict["GradientOpacityTransferFunctionSamplePointLarge"]
-    assert gradientOpacityTransferFunctionColorAtSamplePointSmall == resultsDict["GradientOpacityTransferFunctionColorAtSamplePointSmall"]
-    assert gradientOpacityTransferFunctionColorAtSamplePointLarge == resultsDict["GradientOpacityTransferFunctionColorAtSamplePointLarge"]
+    assert specularPower == pytest.approx(resultsDict["SpecularPower"])
+    assert specular == pytest.approx(resultsDict["Specular"])
+    assert diffuse == pytest.approx(resultsDict["Diffuse"])
+    assert ambient == pytest.approx(resultsDict["Ambient"])
+    assert colorTransferFunctionPointMin == pytest.approx(resultsDict["ColorTransferFunctionPointMin"])
+    assert colorTransferFunctionPointMax == pytest.approx(resultsDict["ColorTransferFunctionPointMax"])
+    assert colorTransferFunctionRangeWidth == pytest.approx(resultsDict["ColorTransferFunctionRangeWidth"])
+    assert colorTransferFunctionSamplePointSmall == pytest.approx(resultsDict["ColorTransferFunctionSamplePointSmall"])
+    assert colorTransferFunctionSamplePointLarge == pytest.approx(resultsDict["ColorTransferFunctionSamplePointLarge"])
+    assert colorTransferFunctionColorAtSamplePointSmall == pytest.approx(tuple(resultsDict["ColorTransferFunctionColorAtSamplePointSmall"]))
+    assert colorTransferFunctionColorAtSamplePointLarge == pytest.approx(tuple(resultsDict["ColorTransferFunctionColorAtSamplePointLarge"]))
+    assert opacityTransferFunctionPointMin == pytest.approx(resultsDict["OpacityTransferFunctionPointMin"])
+    assert opacityTransferFunctionPointMax == pytest.approx(resultsDict["OpacityTransferFunctionPointMax"])
+    assert opacityTransferFunctionRangeWidth == pytest.approx(resultsDict["OpacityTransferFunctionRangeWidth"])
+    assert opacityTransferFunctionSamplePointSmall == pytest.approx(resultsDict["OpacityTransferFunctionSamplePointSmall"])
+    assert opacityTransferFunctionSamplePointLarge == pytest.approx(resultsDict["OpacityTransferFunctionSamplePointLarge"])
+    assert opacityTransferFunctionColorAtSamplePointSmall == pytest.approx(resultsDict["OpacityTransferFunctionColorAtSamplePointSmall"])
+    assert opacityTransferFunctionColorAtSamplePointLarge == pytest.approx(resultsDict["OpacityTransferFunctionColorAtSamplePointLarge"])
+    assert gradientOpacityTransferFunctionPointMin == pytest.approx(resultsDict["GradientOpacityTransferFunctionPointMin"])
+    assert gradientOpacityTransferFunctionPointMax == pytest.approx(resultsDict["GradientOpacityTransferFunctionPointMax"])
+    assert gradientOpacityTransferFunctionRangeWidth == pytest.approx(resultsDict["GradientOpacityTransferFunctionRangeWidth"])
+    assert gradientOpacityTransferFunctionSamplePointSmall == pytest.approx(resultsDict["GradientOpacityTransferFunctionSamplePointSmall"])
+    assert gradientOpacityTransferFunctionSamplePointLarge == pytest.approx(resultsDict["GradientOpacityTransferFunctionSamplePointLarge"])
+    assert gradientOpacityTransferFunctionColorAtSamplePointSmall == pytest.approx(resultsDict["GradientOpacityTransferFunctionColorAtSamplePointSmall"])
+    assert gradientOpacityTransferFunctionColorAtSamplePointLarge == pytest.approx(resultsDict["GradientOpacityTransferFunctionColorAtSamplePointLarge"])
