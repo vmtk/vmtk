@@ -16,6 +16,7 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
     env:
       VTK_VERSION: "9.6.0"
+      PYTHON_VERSION: "3.12"
       BUILD_TYPE: Release
     steps:
       - name: Install dependencies (Linux)
@@ -27,6 +28,11 @@ jobs:
       - name: Install CMake
         uses: lukka/get-cmake@latest
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
       - name: Cache VTK build
         id: cache-vtk
         uses: actions/cache@v4
@@ -34,7 +40,7 @@ jobs:
           path: |
             ${{ github.workspace }}/vtk-build
             ${{ github.workspace }}/vtk-install
-          key: ${{ runner.os }}-${{ runner.arch }}-vtk-${{ env.VTK_VERSION }}
+          key: ${{ runner.os }}-${{ runner.arch }}-vtk-${{ env.VTK_VERSION }}-py${{ env.PYTHON_VERSION }}
 
       - name: Download and build VTK
         if: steps.cache-vtk.outputs.cache-hit != 'true'
@@ -42,7 +48,7 @@ jobs:
         run: |
           WORKSPACE=$(echo "$GITHUB_WORKSPACE" | tr '\\' '/')
           git clone --branch v${{ env.VTK_VERSION }} https://github.com/Kitware/VTK.git vtk-src
-          cmake -S vtk-src -B vtk-build -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DCMAKE_INSTALL_PREFIX="${WORKSPACE}/vtk-install"
+          cmake -S vtk-src -B vtk-build -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DCMAKE_INSTALL_PREFIX="${WORKSPACE}/vtk-install" -DVTK_WRAP_PYTHON=ON
           cmake --build vtk-build --config ${{ env.BUILD_TYPE }} --target install --parallel 2
 
   build-itk:
@@ -72,15 +78,29 @@ jobs:
           path: |
             ${{ github.workspace }}/itk-build
             ${{ github.workspace }}/itk-install
-          key: ${{ runner.os }}-${{ runner.arch }}-itk-${{ env.ITK_VERSION }}
+          key: ${{ runner.os }}-${{ runner.arch }}-itk-${{ env.ITK_VERSION }}-v2
 
       - name: Download and build ITK
         if: steps.cache-itk.outputs.cache-hit != 'true'
         shell: bash
         run: |
           WORKSPACE=$(echo "$GITHUB_WORKSPACE" | tr '\\' '/')
+          # ITK must be built SHARED on Linux/macOS: with static ITK, each vmtk
+          # shared library embeds its own copy of ITK's globals, and (via ELF
+          # symbol interposition) the IO factory registration lands in a
+          # different copy of the factory registry than the one the image
+          # readers consult, yielding "There are no registered IO factories"
+          # at runtime. One shared ITK gives a single process-wide registry
+          # (this matches how Slicer and the conda-forge packages build ITK).
+          # Windows keeps static ITK: each DLL's private registry is populated
+          # and read by the same DLL, which works and is what was validated.
+          if [ "${RUNNER_OS}" = "Windows" ]; then
+            ITK_SHARED=OFF
+          else
+            ITK_SHARED=ON
+          fi
           git clone --branch v${{ env.ITK_VERSION }} https://github.com/InsightSoftwareConsortium/ITK.git itk-src
-          cmake -S itk-src -B itk-build -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DCMAKE_INSTALL_PREFIX="${WORKSPACE}/itk-install" -DBUILD_TESTING=OFF
+          cmake -S itk-src -B itk-build -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DCMAKE_INSTALL_PREFIX="${WORKSPACE}/itk-install" -DBUILD_TESTING=OFF -DBUILD_SHARED_LIBS=${ITK_SHARED}
           cmake --build itk-build --config ${{ env.BUILD_TYPE }} --target install --parallel 2
 
   build-test:
@@ -94,6 +114,7 @@ jobs:
     env:
       VTK_VERSION: "9.6.0"
       ITK_VERSION: "5.4.5"
+      PYTHON_VERSION: "3.12"
       BUILD_TYPE: Release
     steps:
       - name: Checkout repository
@@ -108,12 +129,17 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
+          python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Print system Python version
         run: |
           python3 --version
           which python3
+
+      - name: Install Python test dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install numpy future h5py joblib pytest
 
       - name: Restore VTK build
         uses: actions/cache@v4
@@ -121,7 +147,7 @@ jobs:
           path: |
             ${{ github.workspace }}/vtk-build
             ${{ github.workspace }}/vtk-install
-          key: ${{ runner.os }}-${{ runner.arch }}-vtk-${{ env.VTK_VERSION }}
+          key: ${{ runner.os }}-${{ runner.arch }}-vtk-${{ env.VTK_VERSION }}-py${{ env.PYTHON_VERSION }}
           fail-on-cache-miss: true
 
       - name: Restore ITK build
@@ -130,7 +156,7 @@ jobs:
           path: |
             ${{ github.workspace }}/itk-build
             ${{ github.workspace }}/itk-install
-          key: ${{ runner.os }}-${{ runner.arch }}-itk-${{ env.ITK_VERSION }}
+          key: ${{ runner.os }}-${{ runner.arch }}-itk-${{ env.ITK_VERSION }}-v2
           fail-on-cache-miss: true
 
       - name: Configure VMTK
@@ -143,21 +169,59 @@ jobs:
           # Convert workspace path to forward slashes (required on Windows where
           # ${{ github.workspace }} uses backslashes that bash treats as escape chars)
           WORKSPACE=$(echo "$GITHUB_WORKSPACE" | tr '\\' '/')
+          # Superbuild is off because VTK/ITK are already built above; this also
+          # keeps VMTK's own CMakeLists (and its tests/ subdirectory) at the top
+          # level of "build" instead of nesting it under build/VMTK-Build.
           cmake -S . -B build \
             -DUSE_SYSTEM_ITK=ON \
             -DUSE_SYSTEM_VTK=ON \
             -DVTK_DIR="${WORKSPACE}/vtk-install/lib/cmake/vtk-${VTK_VERSION_SHORT}" \
             -DITK_DIR="${WORKSPACE}/itk-install/lib/cmake/ITK-${ITK_VERSION_SHORT}" \
             -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} \
-            -DVTK_VMTK_WRAP_PYTHON=OFF \
-            -DVTK_WRAP_PYTHON=OFF
+            -DCMAKE_INSTALL_PREFIX="${WORKSPACE}/vmtk-install" \
+            -DVMTK_USE_SUPERBUILD=OFF \
+            -DVMTK_BUILD_TESTING=ON \
+            -DVTK_VMTK_WRAP_PYTHON=ON \
+            -DBUILD_SHARED_LIBS=ON \
+            -DVMTK_USE_RENDERING=ON \
+            -DVMTK_CONTRIB_SCRIPTS=ON
 
-      - name: Build VMTK
+      - name: Build and install VMTK
         shell: bash
         run: |
-          cmake --build build --config ${{ env.BUILD_TYPE }} --parallel 2
+          cmake --build build --config ${{ env.BUILD_TYPE }} --target install --parallel 2
 
       - name: Run tests
         shell: bash
         run: |
-          ctest --test-dir build --output-on-failure
+          # VTK's own Python bindings (vtk.py + vtkmodules/) install to a
+          # platform-dependent relative path -- lib/site-packages on Windows,
+          # but lib/python<major>.<minor>/site-packages on Linux/macOS (each
+          # matching that platform's native Python packaging convention). The
+          # vmtk Python package always installs to
+          # <vmtk-install>/lib/python<major>.<minor>/site-packages/vmtk
+          # regardless of platform (vmtk's own CMakeLists sets this explicitly).
+          # Both parents must be on PYTHONPATH for the pytest suite's imports to
+          # resolve. Windows paths contain a drive-letter colon, so PYTHONPATH
+          # there must be ';'-separated; POSIX platforms use ':'.
+          WORKSPACE=$(echo "$GITHUB_WORKSPACE" | tr '\\' '/')
+          if [ "${RUNNER_OS}" = "Windows" ]; then
+            PATH_SEP=";"
+            VTK_SITE_PACKAGES="${WORKSPACE}/vtk-install/lib/site-packages"
+          else
+            PATH_SEP=":"
+            VTK_SITE_PACKAGES="${WORKSPACE}/vtk-install/lib/python${PYTHON_VERSION}/site-packages"
+          fi
+          export PYTHONPATH="${WORKSPACE}/vmtk-install/lib/python${PYTHON_VERSION}/site-packages${PATH_SEP}${VTK_SITE_PACKAGES}"
+          # Linux/macOS: the wrapped .so modules need their VTK/vmtk shared libs
+          # on the loader path (harmless if RPATH already resolves them), and
+          # the shared ITK libraries as well.
+          export LD_LIBRARY_PATH="${WORKSPACE}/vmtk-install/lib:${WORKSPACE}/vtk-install/lib:${WORKSPACE}/itk-install/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+          export DYLD_LIBRARY_PATH="${WORKSPACE}/vmtk-install/lib:${WORKSPACE}/vtk-install/lib:${WORKSPACE}/itk-install/lib${DYLD_LIBRARY_PATH:+:$DYLD_LIBRARY_PATH}"
+          # Windows: since Python 3.8, extension modules no longer search PATH for
+          # dependent DLLs -- only os.add_dll_directory()-registered paths. VTK's own
+          # vtkmodules/__init__.py self-registers its own bin dir, but VMTK's wrapped
+          # C++ modules (vtkvmtkCommonPython.pyd etc.) have no such shim, so register
+          # vmtk-install/bin (and vtk-install/bin, defensively) ourselves.
+          export VMTK_DLL_DIRS="${WORKSPACE}/vmtk-install/bin${PATH_SEP}${WORKSPACE}/vtk-install/bin"
+          python3 -c "import os, sys; [os.add_dll_directory(d) for d in os.environ.get('VMTK_DLL_DIRS', '').split(os.pathsep) if d and os.path.isdir(d)] if sys.platform == 'win32' and hasattr(os, 'add_dll_directory') else None; import pytest; sys.exit(pytest.main(['-vv', 'build/tests']))"

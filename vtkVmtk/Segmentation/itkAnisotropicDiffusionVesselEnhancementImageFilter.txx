@@ -577,35 +577,45 @@ AnisotropicDiffusionVesselEnhancementImageFilter<TInputImage, TOutputImage, TVes
 
   UpdateIteratorType nU(m_UpdateBuffer,  *fIt);
   nD.GoToBegin();
+  dTN.GoToBegin();
   while( !nD.IsAtEnd() )
     {
     nU.Value() = df->ComputeUpdate(nD, dTN, globalData);
     ++nD;
     ++nU;
+    ++dTN;
     }
 
   // Process each of the boundary faces.
 
   NeighborhoodIteratorType bD;
-  
+
   DiffusionTensorNeighborhoodType bDD;
 
   UpdateIteratorType   bU;
-  for (++fIt; fIt != faceList.end(); ++fIt)
+  // fIt and dfIt must advance in lockstep: both face lists are computed over
+  // the same geometry, and each boundary face of the output image must be
+  // paired with the *same* face of the diffusion tensor image. Advancing dfIt
+  // only at the end of the body (while fIt is pre-incremented in the for-init)
+  // left the tensor iterator one face behind for the whole loop, so it was
+  // constructed on the wrong region -- for edge slabs this was the *empty*
+  // interior face, and marching it past its end read out of bounds.
+  for (++fIt, ++dfIt; fIt != faceList.end(); ++fIt, ++dfIt)
     {
     bD = NeighborhoodIteratorType(radius, output, *fIt);
     bDD = DiffusionTensorNeighborhoodType(radius, m_DiffusionTensorImage, *dfIt);
     bU = UpdateIteratorType  (m_UpdateBuffer, *fIt);
-     
+
     bD.GoToBegin();
     bU.GoToBegin();
+    bDD.GoToBegin();
     while ( !bD.IsAtEnd() )
       {
       bU.Value() = df->ComputeUpdate(bD,bDD,globalData);
       ++bD;
       ++bU;
+      ++bDD;
       }
-    ++dfIt;
     }
 
   // Ask the finite difference function to compute the time step for
