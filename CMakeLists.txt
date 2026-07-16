@@ -296,7 +296,12 @@ if(VMTK_WHEEL_BUILD)
   # when a locally built wheel is used directly.
   if(APPLE)
     set(CMAKE_BUILD_WITH_INSTALL_NAME_DIR ON)
-    set(CMAKE_INSTALL_NAME_DIR "@rpath")
+    # Use @loader_path (not @rpath) install names for the vmtk libraries:
+    # every consumer (the wrapped extension modules and the other vmtk
+    # libraries) lives in the same package directory, so the references
+    # resolve without relying on LC_RPATH entries, which the wheel repair
+    # step (delocate) may rewrite or remove.
+    set(CMAKE_INSTALL_NAME_DIR "@loader_path")
     set(CMAKE_MACOSX_RPATH ON)
     list(APPEND CMAKE_INSTALL_RPATH
       "@loader_path"

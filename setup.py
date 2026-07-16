@@ -178,6 +178,19 @@ def vtk_cmake_dir(sdk_path):
     return matches[0]
 
 
+def linux_needs_old_cxx11_abi():
+    """The x86_64 VTK wheels (and their SDK) are built on manylinux2014,
+    whose toolchain uses the pre-cxx11 libstdc++ ABI
+    (_GLIBCXX_USE_CXX11_ABI=0). Anything linking against them must use the
+    same ABI or std::string-based VTK symbols do not resolve at import
+    time. The aarch64 wheels are built on manylinux_2_28 with the default
+    (new) ABI, so no flag is needed there."""
+    return (
+        sys.platform == "linux"
+        and "manylinux2014" in vtk_wheel_sdk_platform_suffix()
+    )
+
+
 def itk_use_shared_libs():
     override = os.getenv("VMTK_ITK_SHARED")
     if override:
@@ -200,8 +213,13 @@ def auto_build_itk():
     version = itk_version()
     shared = itk_use_shared_libs()
     lib_type = "shared" if shared else "static"
+    # ITK must be built with the same libstdc++ ABI as vmtk and VTK
+    # (std::string crosses the ITK API boundary); encode the ABI in the
+    # build directory name so that cached builds with the other ABI are
+    # not reused.
+    abi_suffix = "-abi0" if linux_needs_old_cxx11_abi() else ""
     source_dir = deps_dir / f"itk-src-{version}"
-    build_dir = deps_dir / f"itk-build-{version}-{lib_type}"
+    build_dir = deps_dir / f"itk-build-{version}-{lib_type}{abi_suffix}"
     stamp = build_dir / ".vmtk-itk-build-complete"
 
     if stamp.exists():
@@ -229,6 +247,10 @@ def auto_build_itk():
         "-DBUILD_EXAMPLES:BOOL=OFF",
         "-DITK_LEGACY_SILENT:BOOL=ON",
     ]
+    if linux_needs_old_cxx11_abi():
+        configure_cmd.append(
+            "-DCMAKE_CXX_FLAGS:STRING=-D_GLIBCXX_USE_CXX11_ABI=0"
+        )
     if sys.platform != "win32":
         # Ninja is provided by the build requirements (pyproject.toml). On
         # Windows the default (Visual Studio) generator is used instead,
@@ -305,6 +327,11 @@ if native_build_needed():
         f"-DITK_DIR:PATH={Path(itk_dir).as_posix()}",
         f"-DPython3_EXECUTABLE:FILEPATH={Path(python3_executable).as_posix()}",
     ]
+
+    if linux_needs_old_cxx11_abi():
+        cmake_args.append(
+            "-DCMAKE_CXX_FLAGS:STRING=-D_GLIBCXX_USE_CXX11_ABI=0"
+        )
 
     if itk_use_shared_libs():
         # Lets the wheel repair tools (auditwheel/delocate) and locally

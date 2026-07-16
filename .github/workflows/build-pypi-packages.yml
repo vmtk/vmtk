@@ -39,7 +39,8 @@ env:
   # vmtk supports Python 3.12 and later; VTK 9.6.2 wheels + wheel SDKs are
   # available for these versions.
   CIBW_BUILD: "cp312-* cp313-* cp314-*"
-  CIBW_SKIP: "*-musllinux_*"
+  # Only 64-bit wheels: there are no 32-bit (win32/i686) or musl VTK wheels.
+  CIBW_SKIP: "*-musllinux_* *-win32 *_i686"
   CIBW_BUILD_VERBOSITY: "1"
 
   # AlmaLinux 8 based images: new enough toolchain for ITK 5.4.
@@ -101,7 +102,10 @@ jobs:
         uses: actions/cache@v4
         with:
           path: _deps/itk-build-*
-          key: ${{ runner.os }}-${{ runner.arch }}-itk-${{ env.VMTK_ITK_VERSION }}-wheel-v1
+          # v2: the ITK build directory name now encodes the libstdc++ ABI
+          # (see auto_build_itk in setup.py), so older caches hold builds
+          # under a name that would never be reused on Linux x86_64.
+          key: ${{ runner.os }}-${{ runner.arch }}-itk-${{ env.VMTK_ITK_VERSION }}-wheel-v2
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v3.2
