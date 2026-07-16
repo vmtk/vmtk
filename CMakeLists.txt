@@ -6,6 +6,11 @@ project(VMTK)
 set(VMTK_VERSION_MAJOR 1)
 set(VMTK_VERSION_MINOR 5)
 set(VMTK_VERSION_PATCH 0)
+# Optional pre-release suffix used by the PyPI packages (setup.py appends it
+# to the version, e.g. "a1" -> 1.5.0a1, "b2" -> 1.5.0b2, "rc1" -> 1.5.0rc1;
+# see PEP 440). Leave empty for final releases. It intentionally does not
+# affect VMTK_VERSION, which the C++ build uses for library versioning.
+set(VMTK_VERSION_SUFFIX "b0")
 set(VMTK_VERSION
     "${VMTK_VERSION_MAJOR}.${VMTK_VERSION_MINOR}.${VMTK_VERSION_PATCH}")
 
@@ -79,7 +84,16 @@ set(VMTK_RENDERING_BACKEND "OpenGL2" CACHE STRING "Graphic backend for VTK")
 option( USE_SYSTEM_VTK
   "Exclude VTK from SuperBuild and use an existing build instead." OFF )
 if( USE_SYSTEM_VTK )
-  find_package( VTK REQUIRED )
+  if( VMTK_WHEEL_BUILD )
+    # When building against the VTK wheel SDK, a component-less
+    # find_package(VTK) would try to resolve the third-party dependencies of
+    # every module the SDK was built with (OpenXRRemoting, ...), most of
+    # which are not available (and not needed). Only resolve a minimal
+    # component here; each vtkVmtk kit finds its own VTK components.
+    find_package( VTK REQUIRED COMPONENTS CommonCore )
+  else()
+    find_package( VTK REQUIRED )
+  endif()
   if( ${VTK_VERSION_MAJOR} LESS 6 )
     include( ${VTK_USE_FILE} )
   endif()
@@ -198,6 +212,84 @@ else()
 
 endif()
 
+#-----------------------------------------------------------------------------
+# Python wheel build (PyPI packaging)
+#
+# Enabled by setup.py at the repository root (driven by scikit-build) to
+# produce a binary wheel that works alongside the "vtk" wheels published on
+# PyPI. The install tree is rearranged into a single self-contained "vmtk"
+# Python package directory: pure Python modules, wrapped extension modules
+# and native libraries are installed side by side so that relative rpaths
+# (and, on Windows, os.add_dll_directory calls in the package __init__)
+# resolve every dependency. Headers, CMake export/config files and
+# command-line launcher scripts are excluded from the wheel; a "vmtk"
+# console entry point defined in setup.py replaces the launchers.
+option(VMTK_WHEEL_BUILD "Install a self-contained vmtk Python package layout for building a wheel." OFF)
+mark_as_advanced(VMTK_WHEEL_BUILD)
+
+# Expands to EXCLUDE_FROM_ALL inside install() commands that only make sense
+# in a regular install tree (static libraries, import libraries): the files
+# are then skipped by the component-less "cmake --install" that scikit-build
+# performs, and stay out of the wheel.
+set(VMTK_WHEEL_EXCLUDE_FROM_ALL "")
+
+if(VMTK_WHEEL_BUILD)
+  set(VMTK_WHEEL_EXCLUDE_FROM_ALL EXCLUDE_FROM_ALL)
+  set(VMTK_WHEEL_PACKAGE_DIR vmtk)
+
+  # The VTK::Python target exported by the VTK wheel SDK references
+  # Python3::Python / Python3::Module in its link interface, and imported
+  # targets created by find_package(Python3) are directory-scoped: the
+  # per-kit find_package calls in the vtkVmtk subdirectories do not make
+  # them visible at this scope, where the VTK targets are defined. Find
+  # them here as well. Development.Embed (which provides Python3::Python)
+  # is optional because some build environments (e.g. manylinux images)
+  # do not ship an embeddable libpython.
+  find_package(Python3 COMPONENTS Interpreter Development.Module
+    OPTIONAL_COMPONENTS Development.Embed)
+
+  # Everything that is needed at runtime goes into the package directory.
+  set(VMTK_MODULE_INSTALL_LIB_DIR ${VMTK_WHEEL_PACKAGE_DIR})
+  set(PYPES_MODULE_INSTALL_LIB_DIR ${VMTK_WHEEL_PACKAGE_DIR})
+  set(VMTK_SCRIPTS_INSTALL_LIB_DIR ${VMTK_WHEEL_PACKAGE_DIR})
+  set(VMTK_CONTRIB_SCRIPTS_INSTALL_LIB_DIR ${VMTK_WHEEL_PACKAGE_DIR})
+  set(VTK_VMTK_MODULE_INSTALL_LIB_DIR ${VMTK_WHEEL_PACKAGE_DIR})
+  set(VTK_VMTK_INSTALL_LIB_DIR ${VMTK_WHEEL_PACKAGE_DIR})
+  set(VTK_VMTK_INSTALL_BIN_DIR ${VMTK_WHEEL_PACKAGE_DIR})
+
+  # No per-script launchers in the wheel (see the console entry point in
+  # setup.py). This must be set before the PypeS/vmtkScripts subdirectories
+  # are added; the option() declared later keeps this value (CMP0077).
+  set(VMTK_MINIMAL_INSTALL ON)
+
+  # Shared libraries and Python extension modules must find their
+  # dependencies relative to the package directory: vmtk's own libraries
+  # sit side by side, and the VTK libraries are provided by the "vtk" wheel
+  # in the sibling "vtkmodules" package. VMTK_WHEEL_ITK_RUNTIME_LIB_DIR
+  # (set by setup.py on platforms where ITK is built as shared libraries)
+  # additionally lets the build-tree ITK libraries be found, both when the
+  # wheel repair tool (auditwheel/delocate) resolves and bundles them and
+  # when a locally built wheel is used directly.
+  if(APPLE)
+    set(CMAKE_BUILD_WITH_INSTALL_NAME_DIR ON)
+    set(CMAKE_INSTALL_NAME_DIR "@rpath")
+    set(CMAKE_MACOSX_RPATH ON)
+    list(APPEND CMAKE_INSTALL_RPATH
+      "@loader_path"
+      "@loader_path/../vtkmodules"
+      "@loader_path/../vtkmodules/.dylibs"
+      )
+  elseif(UNIX)
+    list(APPEND CMAKE_INSTALL_RPATH
+      "$ORIGIN"
+      "$ORIGIN/../vtkmodules"
+      )
+  endif()
+  if(UNIX AND VMTK_WHEEL_ITK_RUNTIME_LIB_DIR)
+    list(APPEND CMAKE_INSTALL_RPATH "${VMTK_WHEEL_ITK_RUNTIME_LIB_DIR}")
+  endif()
+endif()
+
 option(VMTK_SCRIPTS_ENABLED "Build and install vmtkScripts and Pypes" ON)
 mark_as_advanced(VMTK_SCRIPTS_ENABLED)
 
@@ -253,12 +345,24 @@ if(VMTK_SCRIPTS_ENABLED)
 
   configure_file(${VMTK_SOURCE_DIR}/__init__.py.in ${VMTK_BINARY_DIR}/__init__.py COPYONLY)
 
-  install(FILES __init__.py.in
-    DESTINATION ${VMTK_MODULE_INSTALL_LIB_DIR}
-    COMPONENT PythonRuntimeLibraries
-    RENAME __init__.py)
+  if(VMTK_WHEEL_BUILD)
+    # The wheel variant of the package __init__ registers the DLL
+    # directories that Windows needs to load the wrapped extension modules.
+    install(FILES ${VMTK_SOURCE_DIR}/distribution/pypi/package_init.py
+      DESTINATION ${VMTK_MODULE_INSTALL_LIB_DIR}
+      COMPONENT PythonRuntimeLibraries
+      RENAME __init__.py)
+  else()
+    install(FILES __init__.py.in
+      DESTINATION ${VMTK_MODULE_INSTALL_LIB_DIR}
+      COMPONENT PythonRuntimeLibraries
+      RENAME __init__.py)
+  endif()
 
-  if (NOT WIN32)
+  if (VMTK_WHEEL_BUILD)
+    # The "vmtk" console entry point declared in setup.py replaces the
+    # vmtk launcher script.
+  elseif (NOT WIN32)
 
     set (STRIPPED_SCRIPTS_SRCS )
 
@@ -293,6 +397,7 @@ if(VMTK_SCRIPTS_ENABLED)
   #   add_subdirectory(distribution)
   # endif()
 
+  if(NOT VMTK_WHEEL_BUILD)
   install(EXPORT VMTK-Targets DESTINATION ${VMTK_BINARY_DIR})
 
   get_property(_wrap_hierarchy_targets GLOBAL PROPERTY VMTK_WRAP_HIERARCHY_TARGETS)
@@ -323,5 +428,7 @@ if(VMTK_SCRIPTS_ENABLED)
   install(FILES ${VMTK_BINARY_DIR}/VMTKUse.cmake
     TYPE LIB
   )
+
+  endif() # NOT VMTK_WHEEL_BUILD
 
 endif()

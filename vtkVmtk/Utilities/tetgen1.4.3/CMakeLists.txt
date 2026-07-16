@@ -15,4 +15,6 @@ if(NOT WIN32)
   set_target_properties(tet PROPERTIES COMPILE_FLAGS "-O0 -fPIC")
 endif()
 
-install(TARGETS tet DESTINATION ${VTK_VMTK_INSTALL_BIN_DIR} EXPORT VMTK-Targets)
+# The static TetGen library is linked into the vmtk libraries and is not
+# needed at runtime, so it is excluded from Python wheels.
+install(TARGETS tet DESTINATION ${VTK_VMTK_INSTALL_BIN_DIR} EXPORT VMTK-Targets ${VMTK_WHEEL_EXCLUDE_FROM_ALL})

@@ -1,0 +1,148 @@
+name: Build PyPI packages
+
+# Builds the vmtk sdist and binary wheels for publication on PyPI.
+#
+# The wheels are built with cibuildwheel (https://cibuildwheel.pypa.io),
+# driven by the setup.py at the repository root: vmtk is compiled against
+# the VTK wheel SDK matching the "vtk" wheels on PyPI, and against an ITK
+# build created on the fly (cached between runs; static on Windows, shared
+# on Linux/macOS where the wheel repair step bundles the ITK libraries into
+# the wheel). Modeled on https://github.com/Korijn/VTKU3DExporter.
+#
+# Publishing a GitHub release whose tag starts with "v" builds the packages
+# and uploads them to PyPI automatically. The upload uses PyPI "trusted
+# publishing", so before the first release:
+#   1. on pypi.org, add a trusted publisher to the vmtk project
+#      (repository owner/name, workflow "build-pypi-packages.yml",
+#      environment "pypi"), and
+#   2. in the GitHub repository settings, create an environment named
+#      "pypi".
+# A workflow_dispatch run only builds the packages (no upload), which is
+# useful for testing.
+
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Keep in sync: a VTK wheel SDK must exist for VMTK_VTK_VERSION (see
+  # https://vtk.org/files/release/) and the built wheels pin vtk to the
+  # same version.
+  VMTK_VTK_VERSION: "9.6.2"
+  VMTK_ITK_VERSION: "5.4.5"
+
+  # Python versions for which VTK 9.6.2 wheels + wheel SDKs are available.
+  CIBW_BUILD: "cp39-* cp310-* cp311-* cp312-* cp313-* cp314-*"
+  CIBW_SKIP: "*-musllinux_*"
+  CIBW_BUILD_VERBOSITY: "1"
+
+  # AlmaLinux 8 based images: new enough toolchain for ITK 5.4.
+  CIBW_MANYLINUX_X86_64_IMAGE: manylinux_2_28
+  CIBW_MANYLINUX_AARCH64_IMAGE: manylinux_2_28
+
+  # OpenGL/X11 development files needed to link the vmtk rendering classes
+  # against the VTK SDK inside the manylinux container.
+  CIBW_BEFORE_ALL_LINUX: dnf install -y mesa-libGL-devel libX11-devel libXt-devel libXcursor-devel
+
+  # Pass the version pins into the Linux build containers.
+  CIBW_ENVIRONMENT_PASS_LINUX: VMTK_VTK_VERSION VMTK_ITK_VERSION
+
+  # The VTK libraries are provided at runtime by the "vtk" wheel, so they
+  # must not be grafted into the vmtk wheel; the shared ITK libraries are
+  # bundled by the repair step (they are resolved through the rpath that
+  # points at the ITK build tree, see VMTK_WHEEL_ITK_RUNTIME_LIB_DIR in
+  # setup.py).
+  CIBW_REPAIR_WHEEL_COMMAND_LINUX: auditwheel repair --exclude "libvtk*" -w {dest_dir} {wheel}
+  CIBW_REPAIR_WHEEL_COMMAND_MACOS: delocate-wheel --exclude libvtk -w {dest_dir} {wheel}
+  # Windows: ITK is linked statically and the VTK DLLs come from the "vtk"
+  # wheel, so there is nothing to repair.
+  CIBW_REPAIR_WHEEL_COMMAND_WINDOWS: ""
+
+  CIBW_TEST_COMMAND: python {package}/distribution/pypi/test_wheel.py
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build_wheels:
+    name: Build wheels (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+          - os: ubuntu-24.04-arm
+          - os: windows-latest
+          - os: macos-13        # x86_64
+            macosx_deployment_target: "10.13"
+          - os: macos-latest    # arm64
+            macosx_deployment_target: "11.0"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # ITK is Python-version independent, so one build per OS/arch is
+      # shared by all wheels (and by later workflow runs via this cache).
+      - name: Cache ITK build
+        uses: actions/cache@v4
+        with:
+          path: _deps/itk-build-*
+          key: ${{ runner.os }}-${{ runner.arch }}-itk-${{ env.VMTK_ITK_VERSION }}-wheel-v1
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v3.2
+        env:
+          MACOSX_DEPLOYMENT_TARGET: ${{ matrix.macosx_deployment_target }}
+        with:
+          output-dir: wheelhouse
+
+      - name: Upload build trees if an error occurred (for debugging)
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: skbuild-${{ matrix.os }}
+          path: _skbuild
+          if-no-files-found: ignore
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wheels-${{ matrix.os }}
+          path: wheelhouse/*.whl
+
+  build_sdist:
+    name: Build sdist
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build sdist
+        run: pipx run build --sdist
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sdist
+          path: dist/*.tar.gz
+
+  upload_pypi:
+    name: Upload packages to PyPI
+    needs: [build_wheels, build_sdist]
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
+    # Upload to PyPI whenever a v* release is published on GitHub.
+    if: github.event_name == 'release' && startsWith(github.event.release.tag_name, 'v')
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - uses: pypa/gh-action-pypi-publish@release/v1

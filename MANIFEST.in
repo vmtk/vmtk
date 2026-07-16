@@ -1,0 +1,26 @@
+# Source distribution contents for the vmtk PyPI package (see setup.py and
+# distribution/pypi/README.md).
+include LICENSE
+include README.md
+include CMakeLists.txt
+include SuperBuild.cmake
+include vmtk.py
+include __init__.py.in
+include vmtk_env.sh.in
+include vmtk_startup.bat.in
+include pyproject.toml
+include setup.py
+include vmtk/.keep
+
+graft CMake
+graft PypeS
+graft vmtkScripts
+graft vtkVmtk
+graft distribution/pypi
+
+prune _deps
+prune _skbuild
+
+global-exclude __pycache__
+global-exclude *.py[cod]
+global-exclude .DS_Store

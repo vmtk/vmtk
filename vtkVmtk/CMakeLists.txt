@@ -84,10 +84,12 @@ include_directories (${VTK_VMTK_BINARY_DIR})
 
 set(VTK_DOXYGEN_HOME ${VTK_VMTK_SOURCE_DIR}/Utilities/Doxygen)
 
-file(GLOB files "${VTK_VMTK_BINARY_DIR}/vtkvmtkConfigure*.h")
-install(FILES ${files}
-  DESTINATION ${VTK_VMTK_INSTALL_INCLUDE_DIR}
-  COMPONENT Development)
+if(NOT VMTK_WHEEL_BUILD)
+  file(GLOB files "${VTK_VMTK_BINARY_DIR}/vtkvmtkConfigure*.h")
+  install(FILES ${files}
+    DESTINATION ${VTK_VMTK_INSTALL_INCLUDE_DIR}
+    COMPONENT Development)
+endif()
 
 if (VTK_WRAP_PYTHON AND VTK_VMTK_WRAP_PYTHON)
   include_directories (${VTK_PYTHON_INCLUDE_DIR})
