@@ -59,7 +59,13 @@ env:
   # points at the ITK build tree, see VMTK_WHEEL_ITK_RUNTIME_LIB_DIR in
   # setup.py).
   CIBW_REPAIR_WHEEL_COMMAND_LINUX: auditwheel repair --exclude "libvtk*" -w {dest_dir} {wheel}
-  CIBW_REPAIR_WHEEL_COMMAND_MACOS: delocate-wheel --exclude libvtk -w {dest_dir} {wheel}
+  # --ignore-missing-dependencies: the VTK libraries resolve through the
+  # @loader_path/../vtkmodules rpath, which only exists once the wheel is
+  # installed next to the "vtk" package, so delocate cannot resolve them at
+  # repair time (the ITK libraries resolve through the absolute rpath to the
+  # ITK build tree and are bundled). The test command below imports the
+  # installed wheel, which would catch any dependency that is truly missing.
+  CIBW_REPAIR_WHEEL_COMMAND_MACOS: delocate-wheel --exclude libvtk --ignore-missing-dependencies -w {dest_dir} {wheel}
   # Windows: ITK is linked statically and the VTK DLLs come from the "vtk"
   # wheel, so there is nothing to repair.
   CIBW_REPAIR_WHEEL_COMMAND_WINDOWS: ""
