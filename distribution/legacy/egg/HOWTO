@@ -15,7 +15,7 @@ sudo easy_install <vmtk-egg>
 
 HOW TO BUILD A VMTK PYTHON EGG FROM SOURCE:
 
-compile vmtk from source ---> (http://www.vmtk.org/documentation/installation.html#installing_from_source)
+compile vmtk from source ---> (http://vmtk.github.io/documentation/installation.html#installing_from_source)
 python setup.py vmtk_build
 python setup.py bdist_egg
 or for Windows:

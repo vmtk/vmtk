@@ -1,4 +1,4 @@
-## [VMTK - the Vascular Modeling Toolkit](http://vmtk.org)
+## [VMTK - the Vascular Modeling Toolkit](http://vmtk.github.io)
 
 [![Build Status](https://travis-ci.org/vmtk/vmtk.svg?branch=master)](https://travis-ci.org/vmtk/vmtk)
 [![Build status](https://ci.appveyor.com/api/projects/status/3u6nupu2r47qbesq/branch/master?svg=true)](https://ci.appveyor.com/project/rlizzo/vmtk-bh6uc/branch/master)
@@ -21,30 +21,30 @@ institutions.
 Getting Started
 ===============
 
-Tutorials, development instructions, and the general information is available at https://www.vmtk.org 
+Tutorials, development instructions, and the general information is available at https://vmtk.github.io 
 
-[Installation](http://www.vmtk.org/documentation/installation.html)
+[Installation](http://vmtk.github.io/documentation/installation.html)
 - How to install VMTK. 
 
-[Getting Started](http://www.vmtk.org/documentation/getting-started.html) 
+[Getting Started](http://vmtk.github.io/documentation/getting-started.html) 
 - Learn how to open your dataset in vmtk, navigate into a 3D volume and set up your image for further processing. 
 
-[Pypes](http://www.vmtk.org/documentation/pypes.html)
+[Pypes](http://vmtk.github.io/documentation/pypes.html)
 - Learn how to use Pypes.
 
-[Tutorials](http://www.vmtk.org/tutorials)
+[Tutorials](http://vmtk.github.io/tutorials)
 - Tutorials will guide you through the main features.
 
-[vmtkScripts](http://www.vmtk.org/documentation/vmtkscripts.html)
+[vmtkScripts](http://vmtk.github.io/documentation/vmtkscripts.html)
 - Automatically generated python class references
 
-[C++ Scripts](http://www.vmtk.org/doc/html/index.html)
+[C++ Scripts](http://vmtk.github.io/doc/html/index.html)
 - Automatically generated C++ class reference
 
-[Screenshots](http://www.vmtk.org/documentation/screenshots.html)
+[Screenshots](http://vmtk.github.io/documentation/screenshots.html)
 - Screenshots from VMTK examples.
 
-[Presentations](http://www.vmtk.org/documentation/presentations.html)
+[Presentations](http://vmtk.github.io/documentation/presentations.html)
 - Presentations about VMTK. 
 
 
@@ -53,7 +53,7 @@ Features
 
 ## Gradient-based 3D level sets segmentation
 
-Take a look into the [Level Set Segmentation](http://www.vmtk.org/tutorials/ImageBasedModeling.html) tutorial to learn how to reconstruct the 3D surface of a vascular segment from CT or MR images using level sets.
+Take a look into the [Level Set Segmentation](http://vmtk.github.io/tutorials/ImageBasedModeling.html) tutorial to learn how to reconstruct the 3D surface of a vascular segment from CT or MR images using level sets.
 
 ```
 // Image segmentation
@@ -84,7 +84,7 @@ everything in a single model.
 
 ## Computing centerlines
 
-Take a look into the [Computing Centerlines](http://www.vmtk.org/tutorials/Centerlines.html) tutorial to learn how to compute centerlines of a vascular segment.
+Take a look into the [Computing Centerlines](http://vmtk.github.io/tutorials/Centerlines.html) tutorial to learn how to compute centerlines of a vascular segment.
 
 ```
 // Computing centerlines
@@ -113,7 +113,7 @@ the integral of the radius of `maximal inscribed spheres` along the path, which 
 
 ## Geometric analysis
 
-Take a look into the [Geometric analysis](http://www.vmtk.org/tutorials/GeometricAnalysis.html) tutorial to learn how to analyze the 3D geometry of a vascular segment and into the [Preparing a Surface for Meshing](http://www.vmtk.org/tutorials/SurfaceForMeshing.html) tutorial to learn how to prepare a surface for mesh generation.
+Take a look into the [Geometric analysis](http://vmtk.github.io/tutorials/GeometricAnalysis.html) tutorial to learn how to analyze the 3D geometry of a vascular segment and into the [Preparing a Surface for Meshing](http://vmtk.github.io/tutorials/SurfaceForMeshing.html) tutorial to learn how to prepare a surface for mesh generation.
 
 ```
 // Generate a vtp file containing the data on the bifurcation vectors
@@ -152,7 +152,7 @@ actual vessel.
 
 ## Generating a mesh
 
-Take a look into the [Generating a Mesh](http://www.vmtk.org/tutorials/MeshGeneration.html) tutorial to learn how to generate a mesh from a surface and into the [Meshing based on centerlines](http://www.vmtk.org/tutorials/CenterlinesGmsh.html) tutorial to learn how to generate tetrahedral or <strong>mixed hexahedral</strong> meshes using vmtk coupled to Gmsh. Contributed by Emilie Marchandise, U. Louvain.
+Take a look into the [Generating a Mesh](http://vmtk.github.io/tutorials/MeshGeneration.html) tutorial to learn how to generate a mesh from a surface and into the [Meshing based on centerlines](http://vmtk.github.io/tutorials/CenterlinesGmsh.html) tutorial to learn how to generate tetrahedral or <strong>mixed hexahedral</strong> meshes using vmtk coupled to Gmsh. Contributed by Emilie Marchandise, U. Louvain.
 
 ```
 // generating a uniform element mesh
@@ -180,7 +180,7 @@ the `boundary layer`.
 
 ## Mapping and patching
 
-Take a look into the [Mapping and patching](http://www.vmtk.org/tutorials/MappingAndPatching.html) tutorial to
+Take a look into the [Mapping and patching](http://vmtk.github.io/tutorials/MappingAndPatching.html) tutorial to
 learn how to map the surface of a population of vessels onto the same parametric space and enable statistical 
 analyses of surface-based quantities
 
@@ -211,7 +211,7 @@ StretchedMapping array is added to the surface.
 
 ## Pypes
 
-Take a look into the [Basic PypeS](http://www.vmtk.org/tutorials/PypesBasic.html) tutorial to learn how to effectively pipe vmtk scripts together, the [Use PypeS Programmatically](http://www.vmtk.org/tutorials/PypesProgrammatically.html) tutorial to learn how to interactively work with PypeS objects and into the [Advanced PypeS](http://www.vmtk.org//tutorials/PypesAdvanced.html) tutorial to learn how to write your own PypeS modules.
+Take a look into the [Basic PypeS](http://vmtk.github.io/tutorials/PypesBasic.html) tutorial to learn how to effectively pipe vmtk scripts together, the [Use PypeS Programmatically](http://vmtk.github.io/tutorials/PypesProgrammatically.html) tutorial to learn how to interactively work with PypeS objects and into the [Advanced PypeS](http://vmtk.github.io//tutorials/PypesAdvanced.html) tutorial to learn how to write your own PypeS modules.
 
 ```
 vmtkmarchingcubes --help
@@ -266,4 +266,4 @@ Development of VMTK is supported by [Orobix Srl.](http://www.orobix.com/)
 Contact
 ==============
 
-If you have any questions or comments [contact the VMTK community](http://www.vmtk.org/community).
+If you have any questions or comments [contact the VMTK community](http://vmtk.github.io/community).

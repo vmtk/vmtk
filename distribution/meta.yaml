@@ -67,9 +67,9 @@ test:
     - pytest  {{ environ.get('PYTEST_REPORT', '') }} -vv ./build/tests/
 
 about:
-  home: www.vmtk.org
+  home: vmtk.github.io
   license_file: LICENSE
-  summary: "vmtk - the Vascular Modeling Toolkit. See www.vmtk.org/ for details."
+  summary: "vmtk - the Vascular Modeling Toolkit. See vmtk.github.io/ for details."
 extra:
   recipe-maintainers:
     - ramtingh

@@ -72,7 +72,7 @@ two major open source frameworks for building highly performant and well
 validated image analysis algorithms and visualizations: the Visualization
 Toolkit (``VTK``) and the Insight Segmentation and Registration Toolkit
 (``ITK``).  Thorough tutorials and documentation are available on the project
-webpage: www.vmtk.org.
+webpage: vmtk.github.io.
 
 # VMTK In Action
 

@@ -12,7 +12,7 @@ Original Method Developed By:
 
 Modifications Made To Support Integration Into:
 	The Vascular Modeling Toolkit (VMTK)
-	www.vmtk.org
+	vmtk.github.io
 
 Modification Authors:
 	Richard Izzo

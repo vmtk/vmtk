@@ -353,7 +353,7 @@ setup(
     description="vmtk - the Vascular Modeling Toolkit",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="http://www.vmtk.org",
+    url="http://vmtk.github.io",
     author="Luca Antiga, David Steinman, Simone Manini, Richard Izzo",
     license="BSD",
     classifiers=[
@@ -395,6 +395,6 @@ setup(
     project_urls={
         "Bug Reports": "https://github.com/vmtk/vmtk/issues",
         "Source": "https://github.com/vmtk/vmtk",
-        "Documentation": "http://www.vmtk.org/documentation",
+        "Documentation": "http://vmtk.github.io/documentation",
     },
 )

@@ -2,7 +2,7 @@ Metadata-Version: 1.1
 Name: vmtk
 Version: 1.2
 Summary: vmtk - The Vascular Modeling Toolkit
-Home-page: http://www.vmtk.org
+Home-page: http://vmtk.github.io
 Author: Luca Antiga
 Author-email: Luca Antiga <luca.antiga@orobix.com>
 License: BSD
@@ -12,7 +12,7 @@ Description: vmtk
         vmtk is a collection of libraries and tools for 3D reconstruction, geometric analysis, 
         mesh generation and surface data analysis for image-based modeling of blood vessels.
         
-        http://www.vmtk.org
+        http://vmtk.github.io
         
         
   		Installation requirements:

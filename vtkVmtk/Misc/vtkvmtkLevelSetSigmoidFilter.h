@@ -26,7 +26,7 @@ Program:   VMTK
  * (in voxel units) and height controlled by ScaleValue (or, if ComputeScaleValueFromInput is on,
  * by the mean of the input image). Voxels farther from the level set are left unchanged.
  *
- * This is primarily used in feature image correction (see http://www.vmtk.org/tutorials/ImageFeatureCorrection.html for details), where it locally boosts the speed/feature image
+ * This is primarily used in feature image correction (see http://vmtk.github.io/tutorials/ImageFeatureCorrection.html for details), where it locally boosts the speed/feature image
  * near a preliminary level set front so that a subsequent level set evolution is encouraged to
  * settle more precisely on the true boundary.
  */
