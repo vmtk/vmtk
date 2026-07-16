@@ -21,7 +21,14 @@ import sys
 from vmtk import vtkvmtk
 from vmtk import pypes
 from vmtk import vmtkcenterlines, vmtkcenterlinestonumpy, vmtknetworkextraction, vmtkdelaunayvoronoi, vmtknumpytocenterlines, vmtksurfacecapper
-from joblib import Parallel, delayed
+# joblib is optional: it is only used to parallelize the centerline
+# computation, and execution falls back to serial mode when it is not
+# installed (see UseJoblib below).
+try:
+    from joblib import Parallel, delayed
+    JOBLIB_AVAILABLE = True
+except ImportError:
+    JOBLIB_AVAILABLE = False
 import random
 import numpy as np
 
@@ -103,6 +110,11 @@ class vmtkCenterlinesNetwork(pypes.pypeScript):
             self.UseJoblib = False
         else:
             self.UseJoblib = True
+
+        if self.UseJoblib and not JOBLIB_AVAILABLE:
+            self.PrintLog('joblib is not installed; centerlines will be extracted serially.')
+            self.PrintLog('To speed up execution, install the joblib package.')
+            self.UseJoblib = False
 
         # The joblib parallelization hands data to the forked worker processes as
         # raw memory address strings, which requires the VTK Python wrappers to
@@ -223,6 +235,11 @@ class vmtkCenterlinesNetwork(pypes.pypeScript):
 
         out = []
         self.PrintLog('Computing Centerlines ...')
+        if self.UseJoblib and not JOBLIB_AVAILABLE:
+            # UseJoblib may have been enabled from the command line even
+            # though joblib is not installed.
+            self.PrintLog('joblib is not installed; centerlines will be extracted serially.')
+            self.UseJoblib = False
         if self.UseJoblib:
             # vtk objects cannot be serialized in python. Instead of converting the inputs to numpy arrays and having
             # to reconstruct the vtk object each time the loop executes (a slow process), we can just pass in the

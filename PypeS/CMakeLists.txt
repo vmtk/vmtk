@@ -2,6 +2,7 @@ project(PYPES)
 
 set(PYPES_SRCS
   pypebatch.py
+  pypemain.py
   pypepad.py
   pypeserver.py
   pypetest.py

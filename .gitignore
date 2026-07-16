@@ -6,4 +6,13 @@ __pycache__
 .cache
 .DS_Store
 .vscode
-build*
+# Build directories at the repository root (anchored so that files elsewhere
+# whose names start with "build", e.g. .github/workflows/build-*.yml, are
+# not ignored)
+/build*/
+# PyPI packaging (setup.py / scikit-build / cibuildwheel)
+_deps/
+_skbuild/
+dist/
+wheelhouse/
+*.egg-info/
