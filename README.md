@@ -1,8 +1,9 @@
 ## [VMTK - the Vascular Modeling Toolkit](http://vmtk.github.io)
 
-[![Build Status](https://travis-ci.org/vmtk/vmtk.svg?branch=master)](https://travis-ci.org/vmtk/vmtk)
-[![Build status](https://ci.appveyor.com/api/projects/status/3u6nupu2r47qbesq/branch/master?svg=true)](https://ci.appveyor.com/project/rlizzo/vmtk-bh6uc/branch/master)
-[![DOI](http://joss.theoj.org/papers/10.21105/joss.00745/status.svg)](https://doi.org/10.21105/joss.00745)
+[![Build and Test](https://github.com/vmtk/vmtk/actions/workflows/build-test-vmtk.yml/badge.svg?branch=master)](https://github.com/vmtk/vmtk/actions/workflows/build-test-vmtk.yml)
+[![Build PyPI packages](https://github.com/vmtk/vmtk/actions/workflows/build-pypi-packages.yml/badge.svg)](https://github.com/vmtk/vmtk/actions/workflows/build-pypi-packages.yml)
+[![PyPI](https://img.shields.io/pypi/v/vmtk.svg)](https://pypi.org/project/vmtk/)
+[![DOI](https://joss.theoj.org/papers/10.21105/joss.00745/status.svg)](https://doi.org/10.21105/joss.00745)
 
 
 Introduction
@@ -38,7 +39,7 @@ Tutorials, development instructions, and the general information is available at
 [vmtkScripts](http://vmtk.github.io/documentation/vmtkscripts.html)
 - Automatically generated python class references
 
-[C++ Scripts](http://vmtk.github.io/doc/html/index.html)
+[C++ Scripts](http://vmtk.github.io/documentation/api/index.html)
 - Automatically generated C++ class reference
 
 [Screenshots](http://vmtk.github.io/documentation/screenshots.html)
@@ -211,7 +212,7 @@ StretchedMapping array is added to the surface.
 
 ## Pypes
 
-Take a look into the [Basic PypeS](http://vmtk.github.io/tutorials/PypesBasic.html) tutorial to learn how to effectively pipe vmtk scripts together, the [Use PypeS Programmatically](http://vmtk.github.io/tutorials/PypesProgrammatically.html) tutorial to learn how to interactively work with PypeS objects and into the [Advanced PypeS](http://vmtk.github.io//tutorials/PypesAdvanced.html) tutorial to learn how to write your own PypeS modules.
+Take a look into the [Basic PypeS](http://vmtk.github.io/tutorials/PypesBasic.html) tutorial to learn how to effectively pipe vmtk scripts together, the [Use PypeS Programmatically](http://vmtk.github.io/tutorials/PypesProgrammatically.html) tutorial to learn how to interactively work with PypeS objects and into the [Advanced PypeS](http://vmtk.github.io/tutorials/PypesAdvanced.html) tutorial to learn how to write your own PypeS modules.
 
 ```
 vmtkmarchingcubes --help
