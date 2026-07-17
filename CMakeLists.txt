@@ -10,7 +10,7 @@ set(VMTK_VERSION_PATCH 0)
 # to the version, e.g. "a1" -> 1.5.0a1, "b2" -> 1.5.0b2, "rc1" -> 1.5.0rc1;
 # see PEP 440). Leave empty for final releases. It intentionally does not
 # affect VMTK_VERSION, which the C++ build uses for library versioning.
-set(VMTK_VERSION_SUFFIX "b0")
+set(VMTK_VERSION_SUFFIX "")
 set(VMTK_VERSION
     "${VMTK_VERSION_MAJOR}.${VMTK_VERSION_MINOR}.${VMTK_VERSION_PATCH}")
 
