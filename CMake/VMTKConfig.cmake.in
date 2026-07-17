@@ -1,3 +1,17 @@
+# Find the ITK and VTK builds used by VMTK. The embedded paths point at the
+# build trees used when VMTK was built (e.g. the superbuild's ITK-Build and
+# VTK-Build directories), so this config is not relocatable. A consumer can
+# override them by setting ITK_DIR/VTK_DIR before find_package(VMTK).
+include(CMakeFindDependencyMacro)
+if(NOT ITK_DIR)
+  set(ITK_DIR "@ITK_DIR@")
+endif()
+if(NOT VTK_DIR)
+  set(VTK_DIR "@VTK_DIR@")
+endif()
+find_dependency(ITK)
+find_dependency(VTK)
+
 # Tell the user project where to find headers and libraries
 set(VMTK_CPP_SOURCE_DIRS "@VMTK_SOURCE_DIR@/vtkVmtk")
 
