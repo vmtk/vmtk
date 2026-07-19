@@ -103,7 +103,8 @@ class vmtkMeshAddExternalLayer(pypes.pypeScript):
         #cut off the volumetric elements
         wallThreshold = vtk.vtkThreshold()
         wallThreshold.SetInputData(self.Mesh)
-        wallThreshold.ThresholdByUpper(self.SurfaceCellEntityId-0.5)
+        wallThreshold.SetThresholdFunction(vtk.vtkThreshold.THRESHOLD_UPPER)
+        wallThreshold.SetUpperThreshold(self.SurfaceCellEntityId-0.5)
         wallThreshold.SetInputArrayToProcess(0,0,0,1,self.CellEntityIdsArrayName)
         wallThreshold.Update()
 
@@ -137,13 +138,15 @@ class vmtkMeshAddExternalLayer(pypes.pypeScript):
         #cut off the boundaries and other surfaces
         extrudeThresholdLower = vtk.vtkThreshold()
         extrudeThresholdLower.SetInputData(wallWithBoundariesMesh)
-        extrudeThresholdLower.ThresholdByLower(self.ExtrudeCellEntityId+0.5)
+        extrudeThresholdLower.SetThresholdFunction(vtk.vtkThreshold.THRESHOLD_LOWER)
+        extrudeThresholdLower.SetLowerThreshold(self.ExtrudeCellEntityId+0.5)
         extrudeThresholdLower.SetInputArrayToProcess(0,0,0,1,self.CellEntityIdsArrayName)
         extrudeThresholdLower.Update()
 
         extrudeThresholdUpper = vtk.vtkThreshold()
         extrudeThresholdUpper.SetInputConnection(extrudeThresholdLower.GetOutputPort())
-        extrudeThresholdUpper.ThresholdByUpper(self.ExtrudeCellEntityId-0.5)
+        extrudeThresholdUpper.SetThresholdFunction(vtk.vtkThreshold.THRESHOLD_UPPER)
+        extrudeThresholdUpper.SetUpperThreshold(self.ExtrudeCellEntityId-0.5)
         extrudeThresholdUpper.SetInputArrayToProcess(0,0,0,1,self.CellEntityIdsArrayName)
         extrudeThresholdUpper.Update()
 
