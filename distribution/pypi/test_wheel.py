@@ -8,7 +8,11 @@ command for every built wheel). It verifies that:
     linkage against the VTK libraries of the "vtk" wheel),
   * the ITK-based segmentation classes work (which exercises the ITK
     libraries, statically linked on Windows and bundled on Linux/macOS),
-  * the pype mechanism and the vmtk script modules import.
+  * the pype mechanism and the vmtk script modules import,
+  * the contrib scripts and the wrapped vtkVmtk/Contrib classes they
+    need are both present (they are enabled separately at build time,
+    and shipping one without the other broke conda-forge packages,
+    see https://github.com/vmtk/vmtk/issues/443).
 
 No rendering window is created, so the test also runs on headless CI
 machines.
@@ -94,10 +98,36 @@ def test_pypes():
           f"UseJoblib: {bool(script.UseJoblib)})")
 
 
+def test_contrib():
+    from vmtk import vtkvmtk
+    from vmtk import vmtkcontribscripts
+
+    for class_name in [
+        "vtkvmtkBoundaryLayerGenerator2",
+        "vtkvmtkPolyDataSampleFunction",
+    ]:
+        cls = getattr(vtkvmtk, class_name, None)
+        assert cls is not None, (
+            "%s missing: vtkVmtk/Contrib classes were not built "
+            "(VTK_VMTK_CONTRIB)" % class_name
+        )
+        instance = cls()
+        print("instantiated", instance.GetClassName())
+
+    for script_name in [
+        "vmtkBoundaryLayer2",
+        "vmtkMeshAddExternalLayer",
+    ]:
+        script = getattr(vmtkcontribscripts, script_name)()
+        print("instantiated contrib script", script.GetClassName()
+              if hasattr(script, "GetClassName") else type(script).__name__)
+
+
 def main():
     test_import()
     test_itk_filter()
     test_pypes()
+    test_contrib()
     print("vmtk wheel smoke test passed")
     return 0
 
