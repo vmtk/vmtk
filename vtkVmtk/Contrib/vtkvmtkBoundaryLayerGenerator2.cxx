@@ -285,7 +285,6 @@ int vtkvmtkBoundaryLayerGenerator2::RequestData(
 
 
   //Add the volumetric elements and the open profiles extensions if necessary
-  boundaryLayerCellArray->InitTraversal();
   int k;
   for (k=0; k<this->NumberOfSubLayers; k++)
     {
@@ -358,11 +357,9 @@ int vtkvmtkBoundaryLayerGenerator2::RequestData(
         
         this->Triangulator->TemplateTriangulate(prismType, prismNPts, prismNEdges);
         
-        //Go to the end of the list
-        while (boundaryLayerCellArray->GetNextCell(nTetraPts,tetraPts));
-        //Location from which the tetras will be inserted
-        vtkIdType tetraStartLoc = boundaryLayerCellArray->GetTraversalLocation();
-        //Insert the new tetras 
+        //Index of the first tetrahedron that is about to be inserted
+        vtkIdType tetraStartId = boundaryLayerCellArray->GetNumberOfCells();
+        //Insert the new tetras
         vtkIdType numTets = this->Triangulator->AddTetras(0,boundaryLayerCellArray);
         
         for (j=0; j<numTets; j++)
@@ -392,11 +389,9 @@ int vtkvmtkBoundaryLayerGenerator2::RequestData(
               
               vtkIdList *tetraPtsList = vtkIdList::New();
               //Go through the tetrahedra we just added
-              boundaryLayerCellArray->SetTraversalLocation(tetraStartLoc);
-              
               for (int k=0; k<numTets; k++)
                 {
-                boundaryLayerCellArray->GetNextCell(nTetraPts,tetraPts);
+                boundaryLayerCellArray->GetCellAtId(tetraStartId + k, nTetraPts, tetraPts);
                 tetraPtsList->Initialize();
                 for (int l=0; l<nTetraPts; l++) 
                   {
