@@ -184,7 +184,8 @@ jobs:
             -DVTK_VMTK_WRAP_PYTHON=ON \
             -DBUILD_SHARED_LIBS=ON \
             -DVMTK_USE_RENDERING=ON \
-            -DVMTK_CONTRIB_SCRIPTS=ON
+            -DVMTK_CONTRIB_SCRIPTS=ON \
+            -DVTK_VMTK_CONTRIB=ON
 
       - name: Build and install VMTK
         shell: bash
