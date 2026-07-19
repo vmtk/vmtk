@@ -269,7 +269,8 @@ class vmtkMeshClipCenterlines(pypes.pypeScript):
             #Get the original surface cells
             meshThreshold = vtk.vtkThreshold()
             meshThreshold.SetInputData(self.Mesh)
-            meshThreshold.ThresholdByUpper(self.WallCellEntityId+0.5)
+            meshThreshold.SetThresholdFunction(vtk.vtkThreshold.THRESHOLD_UPPER)
+            meshThreshold.SetUpperThreshold(self.WallCellEntityId+0.5)
             meshThreshold.SetInputArrayToProcess(0,0,0,1,self.CellEntityIdsArrayName)
             meshThreshold.Update()
 

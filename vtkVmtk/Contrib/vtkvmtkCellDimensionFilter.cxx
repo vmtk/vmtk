@@ -60,8 +60,8 @@ int vtkvmtkCellDimensionFilter::FillInputPortInformation(int, vtkInformation *in
 void vtkvmtkCellDimensionFilter::ThresholdByLower(int lower)
 {
 #if VTK_MAJOR_VERSION >= 9
-  Threshold->SetUpperThreshold(lower);
-  Threshold->SetThresholdFunction(vtkThreshold::THRESHOLD_UPPER);
+  Threshold->SetLowerThreshold(lower);
+  Threshold->SetThresholdFunction(vtkThreshold::THRESHOLD_LOWER);
 #else
   Threshold->ThresholdByLower(lower);
 #endif
@@ -70,8 +70,8 @@ void vtkvmtkCellDimensionFilter::ThresholdByLower(int lower)
 void vtkvmtkCellDimensionFilter::ThresholdByUpper(int upper)
 {
 #if VTK_MAJOR_VERSION >= 9
-  Threshold->SetLowerThreshold(upper);
-  Threshold->SetThresholdFunction(vtkThreshold::THRESHOLD_LOWER);
+  Threshold->SetUpperThreshold(upper);
+  Threshold->SetThresholdFunction(vtkThreshold::THRESHOLD_UPPER);
 #else
   Threshold->ThresholdByUpper(upper);
 #endif
