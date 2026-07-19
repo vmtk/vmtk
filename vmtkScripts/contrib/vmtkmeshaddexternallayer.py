@@ -22,9 +22,11 @@
 
 from __future__ import absolute_import #NEEDS TO STAY AS TOP LEVEL MODULE FOR Py2-3 COMPATIBILITY
 import vtk
+from vtk.util import numpy_support
 from vmtk import vtkvmtk
 import sys
 from vmtk import vmtkscripts
+from vmtk import vmtkboundarylayer2
 
 from vmtk import pypes
 
@@ -195,7 +197,7 @@ class vmtkMeshAddExternalLayer(pypes.pypeScript):
         if self.IncludeSurfaceCells or self.IncludeExtrudedSurfaceCells:
             wallOffset+=1
 
-        boundaryLayer = vmtkscripts.vmtkBoundaryLayer2()
+        boundaryLayer = vmtkboundarylayer2.vmtkBoundaryLayer2()
         boundaryLayer.Mesh = surfaceToMesh.Mesh
         boundaryLayer.WarpVectorsArrayName = 'Normals'
         boundaryLayer.NegateWarpVectors = False
@@ -220,30 +222,16 @@ class vmtkMeshAddExternalLayer(pypes.pypeScript):
         boundaryLayer.Execute()
 
         if cellEntityIdsArray != None:
-            #offset the previous cellentityids to make room for the new ones
-            arrayCalculator = vtk.vtkArrayCalculator()
-            arrayCalculator.SetInputData(self.Mesh)
-            if vtk.vtkVersion.GetVTKMajorVersion()>=9 or (vtk.vtkVersion.GetVTKMajorVersion()>=8 and vtk.vtkVersion.GetVTKMinorVersion()>=1):
-                arrayCalculator.SetAttributeTypeToCellData()
-            else:
-                arrayCalculator.SetAttributeModeToUseCellData()
-            arrayCalculator.AddScalarVariable("entityid",self.CellEntityIdsArrayName,0)
-            arrayCalculator.SetFunction("if( entityid > " + str(self.InletOutletCellEntityId-1) +", entityid + " + str(wallOffset) + ", entityid)")
-            arrayCalculator.SetResultArrayName('CalculatorResult')
-            arrayCalculator.Update()
-
-            #This need to be copied in order to be of the right type (int)
-            cellEntityIdsArray.DeepCopy(arrayCalculator.GetOutput().GetCellData().GetArray('CalculatorResult'))
-
-            arrayCalculator.SetFunction("if( entityid > " + str(self.SurfaceCellEntityId-1) +", entityid + 1, entityid)")
-            arrayCalculator.Update()
-
-            ##This need to be copied in order to be of the right type (int)
-            cellEntityIdsArray.DeepCopy(arrayCalculator.GetOutput().GetCellData().GetArray('CalculatorResult'))
+            #offset the previous cellentityids to make room for the new ones,
+            #operating on the array in place so that its integer type is preserved
+            cellEntityIds = numpy_support.vtk_to_numpy(cellEntityIdsArray)
+            cellEntityIds[cellEntityIds >= self.InletOutletCellEntityId] += wallOffset
+            cellEntityIds[cellEntityIds >= self.SurfaceCellEntityId] += 1
+            cellEntityIdsArray.Modified()
 
         appendFilter = vtkvmtk.vtkvmtkAppendFilter()
-        appendFilter.AddInput(self.Mesh)
-        appendFilter.AddInput(boundaryLayer.Mesh)
+        appendFilter.AddInputData(self.Mesh)
+        appendFilter.AddInputData(boundaryLayer.Mesh)
         appendFilter.Update()
 
         self.Mesh = appendFilter.GetOutput()
