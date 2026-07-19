@@ -107,9 +107,11 @@ class vmtkMeshViewer2(pypes.pypeScript):
         thresholder = vtk.vtkThreshold()
         thresholder.SetInputData(self.InitialMesh)
         if (self.ThresholdUpper):
-            thresholder.ThresholdByUpper(self.Threshold)
+            thresholder.SetThresholdFunction(vtk.vtkThreshold.THRESHOLD_UPPER)
+            thresholder.SetUpperThreshold(self.Threshold)
         else:
-            thresholder.ThresholdByLower(self.Threshold)
+            thresholder.SetThresholdFunction(vtk.vtkThreshold.THRESHOLD_LOWER)
+            thresholder.SetLowerThreshold(self.Threshold)
         thresholder.SetInputArrayToProcess(0,0,0,1,self.ArrayName)
         thresholder.Update()
         self.Mesh = thresholder.GetOutput()
