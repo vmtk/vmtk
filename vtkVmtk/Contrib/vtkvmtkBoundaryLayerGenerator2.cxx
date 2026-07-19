@@ -320,27 +320,27 @@ int vtkvmtkBoundaryLayerGenerator2::RequestData(
           }
         
         //Tetrahedralize the cell
+        //Wedge parametric coords
+        double pCoordsWedge[] = {0.0,0.0,0.0, 1.0,0.0,0.0, 0.0,1.0,0.0,
+                   0.0,0.0,1.0, 1.0,0.0,1.0, 0.0,1.0,1.0};
+        //Hexahedron parametric coords
+        double pCoordsHex[] = {0.0,0.0,0.0, 1.0,0.0,0.0,
+                               1.0,1.0,0.0, 0.0,1.0,0.0,
+                               0.0,0.0,1.0, 1.0,0.0,1.0,
+                               1.0,1.0,1.0, 0.0,1.0,1.0};
         double *pCoords = NULL;
         int prismNEdges = 0;
         int prismType = 0;
-        
+
         if (cellType == VTK_TRIANGLE)
           {
           prismType = VTK_WEDGE;
-          //Wedge parametric coords
-          double pCoordsWedge[] = {0.0,0.0,0.0, 1.0,0.0,0.0, 0.0,1.0,0.0,
-                     0.0,0.0,1.0, 1.0,0.0,1.0, 0.0,1.0,1.0};
           pCoords = pCoordsWedge;
           prismNEdges = 9;
           }
         else if (cellType == VTK_QUAD)
           {
-          prismType = VTK_HEXAHEDRON;;
-          //Hexahedron parametric coords
-          double pCoordsHex[] = {0.0,0.0,0.0, 1.0,0.0,0.0,
-                                 1.0,1.0,0.0, 0.0,1.0,0.0,
-                                 0.0,0.0,1.0, 1.0,0.0,1.0,
-                                 1.0,1.0,1.0, 0.0,1.0,1.0};
+          prismType = VTK_HEXAHEDRON;
           pCoords = pCoordsHex;
           prismNEdges = 12;
           }
