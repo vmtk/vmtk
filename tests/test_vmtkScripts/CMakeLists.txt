@@ -40,6 +40,7 @@ set(TEST_VMTKSCRIPTS_SRCS
     test_vmtkimagevolumeviewer.py
     test_vmtklevelsetsegmentation.py
     test_vmtkmarchingcubes.py
+    test_vmtkmeshaddexternallayer.py
     # test_vmtkmeshtonumpy.py
     test_vmtkstatictemporalstreamtracer.py
     test_vmtksurfaceappend.py

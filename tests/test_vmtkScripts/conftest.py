@@ -359,57 +359,47 @@ def aorta_mesh(input_datadir):
 
 
 @pytest.fixture(scope='module')
-def write_mesh():
+def mesh_reference_datadir():
+    datadir = os.path.join(
+                os.path.dirname(
+                    os.path.dirname(
+                        os.path.realpath(__file__))), 'vmtk-test-data', 'meshreference')
+    if os.path.isdir(datadir):
+        return datadir
+    datadir = '@ExternalData_BINARY_ROOT@/tests/data/meshreference'
+    if os.path.isdir(datadir):
+        return datadir
+    datadir = '@ExternalData_BINARY_ROOT@'.replace('/work/build/ExternalData', '/test_tmp/build/ExternalData/tests/data/meshreference')
+    if os.path.isdir(datadir):
+        return datadir
+    datadir = os.path.join(
+        os.path.dirname(
+            os.path.dirname(
+                os.path.dirname(
+                    os.path.dirname(
+                        os.path.realpath(__file__))))),
+        'vmtk-test-data/meshreference')
+    if not os.path.isdir(datadir):
+        raise ValueError('the vmtk-test-data repository cannot be found at the same level as vmtk. expected it to be at', datadir)
+    return datadir
+
+
+@pytest.fixture(scope='module')
+def write_mesh(mesh_reference_datadir):
     def make_write_mesh(mesh, filename):
         writer = meshwriter.vmtkMeshWriter()
         writer.Mesh = mesh
-        try:
-            datadir = '@ExternalData_BINARY_ROOT@/tests/data/meshreference'
-            if not os.path.isdir(datadir): raise ValueError()
-        except ValueError:
-            try:
-                datadir = '@ExternalData_BINARY_ROOT@'
-                datadir = datadir.replace('/work/build/ExternalData', '/test_tmp/build/ExternalData/tests/data/meshreference')
-                if not os.path.isdir(datadir): raise ValueError()
-            except ValueError:
-                datadir = os.path.join(
-                    os.path.dirname(
-                        os.path.dirname(
-                            os.path.dirname(
-                                os.path.dirname(
-                                    os.path.realpath(__file__))))),
-                    'vmtk-test-data/meshreference')
-                if not os.path.isdir(datadir):
-                    raise ValueError('the vmtk-test-data repository cannot be found at the same level as vmtk. expected it to be at', datadir)
-        writer.OutputFileName = os.path.join(datadir, filename)
+        writer.OutputFileName = os.path.join(mesh_reference_datadir, filename)
         writer.Execute()
         return
     return make_write_mesh
 
 
 @pytest.fixture(scope='module')
-def compare_meshes():
+def compare_meshes(mesh_reference_datadir):
     def make_compare_meshes(mesh, reference_file, tolerance=0.001, method='cellarray', arrayname=''):
         reader = meshreader.vmtkMeshReader()
-        try:
-            datadir = '@ExternalData_BINARY_ROOT@/tests/data/meshreference'
-            if not os.path.isdir(datadir): raise ValueError()
-        except ValueError:
-            try:
-                datadir = '@ExternalData_BINARY_ROOT@'
-                datadir = datadir.replace('/work/build/ExternalData', '/test_tmp/build/ExternalData/tests/data/meshreference')
-                if not os.path.isdir(datadir): raise ValueError()
-            except ValueError:
-                datadir = os.path.join(
-                    os.path.dirname(
-                        os.path.dirname(
-                            os.path.dirname(
-                                os.path.dirname(
-                                    os.path.realpath(__file__))))),
-                    'vmtk-test-data/meshreference')
-                if not os.path.isdir(datadir):
-                    raise ValueError('the vmtk-test-data repository cannot be found at the same level as vmtk. expected it to be at', datadir)
-        reader.InputFileName = os.path.join(datadir, reference_file)
+        reader.InputFileName = os.path.join(mesh_reference_datadir, reference_file)
         reader.Execute()
 
         comp = meshcompare.vmtkMeshCompare()
