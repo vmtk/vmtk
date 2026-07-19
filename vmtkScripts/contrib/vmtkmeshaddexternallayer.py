@@ -207,7 +207,7 @@ class vmtkMeshAddExternalLayer(pypes.pypeScript):
         boundaryLayer.NumberOfSubLayers = self.NumberOfSubLayers
         boundaryLayer.SubLayerRatio = self.SubLayerRatio
         boundaryLayer.Thickness = self.Thickness
-        boundaryLayer.ThicknessRatio = self.Thickness
+        boundaryLayer.ThicknessRatio = self.ThicknessRatio
         boundaryLayer.MaximumThickness = self.MaximumThickness
         boundaryLayer.CellEntityIdsArrayName = self.CellEntityIdsArrayName
         boundaryLayer.IncludeExtrudedOpenProfilesCells = self.IncludeExtrudedOpenProfilesCells
