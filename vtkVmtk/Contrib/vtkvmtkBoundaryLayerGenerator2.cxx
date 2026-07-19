@@ -351,7 +351,7 @@ int vtkvmtkBoundaryLayerGenerator2::RequestData(
         double *p;
         for (p=pCoords, j=0; j<prismNPts; j++, p+=3)
           {
-          outputPoints->GetPoint(j, prismPt);
+          outputPoints->GetPoint(prismPts[j], prismPt);
           this->Triangulator->InsertPoint(prismPts[j], prismPt, p, 0);
           }
         
