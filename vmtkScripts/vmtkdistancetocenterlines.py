@@ -37,7 +37,7 @@ class vmtkDistanceToCenterlines(pypes.pypeScript):
         self.DistanceToCenterlinesArrayName = 'DistanceToCenterlines'
         self.RadiusArrayName = 'MaximumInscribedSphereRadius'
         self.UseRadiusThreshold = 0
-        self.RadiusThreshold = 0.0
+        self.RadiusThreshold = 1.0
 
 
         self.SetScriptName('vmtkdistancetocenterlines')
@@ -52,8 +52,8 @@ class vmtkDistanceToCenterlines(pypes.pypeScript):
             ['ProjectPointArrays','projectarrays','bool',1],
             ['DistanceToCenterlinesArrayName','distancetocenterlinesarray','str',1],
             ['RadiusArrayName','radiusarray','str',1],
-            ['UseRadiusThreshold','useradiusthreshold','bool',0],
-            ['RadiusThreshold','radiusthreshold','float',1,'(0.0,)','set radius threshold']
+            ['UseRadiusThreshold','useradiusthreshold','bool',0,'','cap the output distance array at RadiusThreshold, useful when the array is fed to vmtksurfaceremeshing/vmtkmeshgenerator as TargetEdgeLengthArrayName, to avoid oversized elements at surface points far from any centerline'],
+            ['RadiusThreshold','radiusthreshold','float',1,'(0.0,)','maximum value of the distance array when UseRadiusThreshold is set']
             ])
         self.SetOutputMembers([
             ['Surface','o','vtkPolyData',1,'','','vmtksurfacewriter']
