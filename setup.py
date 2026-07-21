@@ -345,25 +345,10 @@ if native_build_needed():
             f"-DVMTK_WHEEL_ITK_RUNTIME_LIB_DIR:PATH={itk_runtime_lib_dir.as_posix()}"
         )
 
-long_description = (repo_root / "README.md").read_text(encoding="utf-8")
-
+# See pyproject.toml for static metadata
 setup(
     name="vmtk",
     version=vmtk_version(),
-    description="vmtk - the Vascular Modeling Toolkit",
-    long_description=long_description,
-    long_description_content_type="text/markdown",
-    url="http://vmtk.github.io",
-    author="Luca Antiga, David Steinman, Simone Manini, Richard Izzo",
-    license="BSD",
-    classifiers=[
-        "Development Status :: 5 - Production/Stable",
-        "Intended Audience :: Science/Research",
-        "License :: OSI Approved :: BSD License",
-        "Programming Language :: Python :: 3",
-        "Topic :: Scientific/Engineering :: Medical Science Apps.",
-    ],
-    keywords="vascular modeling mesh segmentation centerline vtk itk",
     # The whole package content is produced by the CMake build (see the
     # VMTK_WHEEL_BUILD option in the top-level CMakeLists.txt, which makes
     # the install rules place everything into a "vmtk" directory).
@@ -372,29 +357,9 @@ setup(
     # the placeholder vmtk/.keep file in the source tree only exists so that
     # the declared package directory is present (the same pattern is used by
     # VTKU3DExporter).
-    packages=["vmtk"],
-    package_dir={"vmtk": "vmtk"},
-    include_package_data=False,
     cmake_args=cmake_args,
-    python_requires=">=3.12",
     install_requires=[
         f"vtk=={vtk_version()}",
         "numpy",
     ],
-    extras_require={
-        # Optional runtime dependencies: joblib parallelizes
-        # vmtkcenterlinesnetwork (serial fallback without it), h5py is
-        # imported on demand by the numpy reader/writer scripts.
-        "all": ["h5py", "joblib"],
-    },
-    entry_points={
-        "console_scripts": [
-            "vmtk = vmtk.pypemain:main",
-        ],
-    },
-    project_urls={
-        "Bug Reports": "https://github.com/vmtk/vmtk/issues",
-        "Source": "https://github.com/vmtk/vmtk",
-        "Documentation": "http://vmtk.github.io/documentation",
-    },
 )

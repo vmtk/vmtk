@@ -1,9 +1,53 @@
 [build-system]
 requires = [
-  "setuptools>=42",
+  "setuptools>=77",
   "wheel",
   "scikit-build",
   "cmake>=3.16",
   "ninja",
 ]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "vmtk"
+authors = [
+    {name = "Luca Antiga"},
+    {name = "David Steinman"},
+    {name = "Simone Manini"},
+    {name = "Richard Izzo"},
+]
+description = "vmtk - the Vascular Modeling Toolkit"
+readme = "README.md"
+requires-python = ">=3.12"
+keywords = ["vascular", "modeling", "mesh", "segmentation", "centerline", "vtk", "itk"]
+license = "BSD-3-Clause"
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Science/Research",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Medical Science Apps.",
+]
+# See setup.py for dynamic metadata
+dynamic = ["dependencies", "version"]
+
+[project.optional-dependencies]
+all = [
+    # imported on demand by the numpy reader/writer scripts
+    "h5py",
+    # parallelizes vmtkcenterlinesnetwork (serial fallback without it)
+    "joblib",
+]
+
+[project.scripts]
+vmtk = "vmtk.pypemain:main"
+
+[project.urls]
+"Home" = "https://vmtk.github.io"
+"Bug Reports" = "https://github.com/vmtk/vmtk/issues"
+"Source" = "https://github.com/vmtk/vmtk"
+"Documentation" = "https://vmtk.github.io/documentation"
+
+[tool.setuptools]
+include-package-data = false
+package-dir = {"vmtk" = "vmtk"}
+packages = ["vmtk"]
