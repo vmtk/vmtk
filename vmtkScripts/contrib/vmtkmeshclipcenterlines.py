@@ -37,13 +37,13 @@ class vmtkMeshClipCenterlines(pypes.pypeScript):
 
         pypes.pypeScript.__init__(self)
 
-        #The orignal mesh
+        #The original mesh
         self.Mesh = None
         #Preview of the resulting mesh
         self.PreviewMesh = None
         #Clipped part of the mesh
         self.ClippedMesh = None
-        #Which mesh is displayed : 0 intial mesh, 1 preview mesh, 2 clipped mesh
+        #Which mesh is displayed : 0 initial mesh, 1 preview mesh, 2 clipped mesh
         self.DisplayedMesh = 0
         self.vmtkRenderer = None
         self.OwnRenderer = 0
@@ -339,7 +339,7 @@ class vmtkMeshClipCenterlines(pypes.pypeScript):
         #eventPosition = obj.GetEventPosition()
         result = picker.Pick(float(eventPosition[0]),float(eventPosition[1]),0.0,self.vmtkRenderer.Renderer)
         if result == 0:
-            #Reenable the sphere widget
+            #Re-enable the sphere widget
             self.SphereWidget.On()
             return
         pickId = picker.GetPointId()
@@ -356,7 +356,7 @@ class vmtkMeshClipCenterlines(pypes.pypeScript):
                 self.SpheresRadii.InsertNextValue(self.Centerlines.GetLength()*0.01)
             self.Spheres.Modified()
             self.PlaceSphere()
-        #Reenable the sphere widget
+        #Re-enable the sphere widget
         self.SphereWidget.On()
         self.vmtkRenderer.RenderWindow.Render()
 
@@ -371,7 +371,7 @@ class vmtkMeshClipCenterlines(pypes.pypeScript):
              eventPosition = obj.GetEventPosition()
              result = picker.Pick(float(eventPosition[0]),float(eventPosition[1]),0.0,self.vmtkRenderer.Renderer)
              if result == 0:
-                 #Reenable the sphere widget
+                 #Re-enable the sphere widget
                  self.SphereWidget.On()
                  return
              pickId = picker.GetPointId()
@@ -388,7 +388,7 @@ class vmtkMeshClipCenterlines(pypes.pypeScript):
                      self.SpheresRadii.InsertNextValue(self.Centerlines.GetLength()*0.01)
                  self.Spheres.Modified()
                  self.PlaceSphere()
-            #Reenable the sphere widget
+            #Re-enable the sphere widget
              self.SphereWidget.On()
              self.vmtkRenderer.RenderWindow.Render()
 

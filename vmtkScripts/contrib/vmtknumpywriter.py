@@ -53,7 +53,7 @@ class vmtkNumpyWriter(pypes.pypeScript):
             ['OutputFileName','ofile','str',1,'','the output file name'],
             ['Compression','compression','str',1,'(1,0)','Boolean value to compress hdf5 dataset files using gzip, default=1'],
             ['CompressionLevel','compressionlevel','str',1,'(0,9)','Specify compression level for gzip compressed hdf5 files. '
-                                                                   'Must be an intiger from 0 to 9, higher levels have more compression,'
+                                                                   'Must be an integer from 0 to 9, higher levels have more compression,'
                                                                    'but take longer to process. Default=4'],
             ['Format','format','str',1,'["pickle","hdf5"]','write files as pickled object or hdf5 file format']])
         self.SetOutputMembers([])

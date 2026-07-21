@@ -107,7 +107,7 @@ class vmtkSurfaceToNumpy(pypes.pypeScript):
         it = np.nditer(cellArray, flags=['multi_index'], op_flags=['readwrite'])
 
         # this is an efficient ndarray iterator method. the loop "for x in it" pulls an element out of
-        # the cellArray iterator (it) and with the elipses syntax (x[...]) writes the point id.
+        # the cellArray iterator (it) and with the ellipses syntax (x[...]) writes the point id.
         # this is equivalent to writing
         # for cellId in range(numberOfCells):
         #     cell = surfWrapper.VTKObject.GetCell(cellId)

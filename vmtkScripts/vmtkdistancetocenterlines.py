@@ -41,7 +41,7 @@ class vmtkDistanceToCenterlines(pypes.pypeScript):
 
 
         self.SetScriptName('vmtkdistancetocenterlines')
-        self.SetScriptDoc('calculate the minimum euclidian from surface points to a centerline')
+        self.SetScriptDoc('calculate the minimum euclidean from surface points to a centerline')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','','vmtksurfacereader'],
             ['Centerlines','centerlines','vtkPolyData',1,'','','vmtksurfacereader'],

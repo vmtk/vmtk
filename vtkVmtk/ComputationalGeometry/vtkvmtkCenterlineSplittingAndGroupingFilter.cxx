@@ -181,7 +181,7 @@ int vtkvmtkCenterlineSplittingAndGroupingFilter::RequestData(
 
   this->GroupTracts(input,centerlineTracts);
   this->MergeTracts(centerlineTracts); 
-  //FIXME: now, ill situations may still occour after merging: a branch that was inbetween two same-group and has been merged, might have had a buddy that didn't need to be merged on another centerline. In that case ehat should we do? Leave the other one alone? Or rething the whole thing once for all?
+  //FIXME: now, ill situations may still occur after merging: a branch that was in between two same-group and has been merged, might have had a buddy that didn't need to be merged on another centerline. In that case ehat should we do? Leave the other one alone? Or rething the whole thing once for all?
   this->MakeGroupIdsAdjacent(centerlineTracts);
   this->MakeTractIdsAdjacent(centerlineTracts);
 

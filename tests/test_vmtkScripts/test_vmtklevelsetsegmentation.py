@@ -59,14 +59,14 @@ def test_level_sets(aorta_image, initial_level_sets, feature_image,
     assert compare_images(ls.LevelSets, name) == True
 
 
-@pytest.mark.parametrize('iterations,propogation,curvature,advection,paramid,', [
+@pytest.mark.parametrize('iterations,propagation,curvature,advection,paramid,', [
     (20, 0.0, 0.0, 1.0, '0'),
     (10, 2.0, 0.0, 1.0, '1'),
     (10, 0.0, 4.0, 1.0, '2'),
     (10, 0.0, 0.0, 3.0, '3'),
 ])
 def test_geodesic_level_set_parameters(aorta_image, initial_level_sets, feature_image,
-                                       iterations, propogation, curvature, advection,
+                                       iterations, propagation, curvature, advection,
                                        paramid, compare_images):
     name = __name__ + '_test_geodesic_level_set_parameters_' + paramid + '.mha'
     ls = levelsetsegmentation.vmtkLevelSetSegmentation()
@@ -75,7 +75,7 @@ def test_geodesic_level_set_parameters(aorta_image, initial_level_sets, feature_
     ls.FeatureImage = feature_image
     ls.LevelSetsType = 'geodesic'
     ls.NumberOfIterations = iterations
-    ls.PropagationScaling = propogation
+    ls.PropagationScaling = propagation
     ls.CurvatureScaling = curvature
     ls.AdvectionScaling = advection
     ls.Execute()

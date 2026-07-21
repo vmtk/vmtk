@@ -25,7 +25,7 @@ Program:   VMTK
  * \f[ D_g(\mathbf{x}) = T(\mathbf{p}(\mathbf{x})) + |\mathbf{p}(\mathbf{x}) - \mathbf{x}| \f]
  * where T(x) is the geodesic distance to centerlines field defined on the Voronoi diagram (computed by solving the Eikonal equation with unit speed over the Voronoi diagram by means of vtkNonManifoldFastMarching), and p(x) is the pole associated with surface point x.
  *
- * Normalized tangency deviation is a normalized measure of how much a surface point is far from being a tangency point to the evelope of maximal spheres defined on the centerlines (their envelope is the maximal inscribed cylinder), and it is computed as
+ * Normalized tangency deviation is a normalized measure of how much a surface point is far from being a tangency point to the envelope of maximal spheres defined on the centerlines (their envelope is the maximal inscribed cylinder), and it is computed as
  * \f[\mathit{NTD}=\frac{T(\mathbf{p}(\mathbf{x}))}{D_g(\mathbf{x})}\f]
  * This quantity ranges from 0 to 1, and it is independent from the radius of the maximal inscribed cylinder (on an elliptical base cylinder, NTD only depends on base ellipse eccentricity).
  *

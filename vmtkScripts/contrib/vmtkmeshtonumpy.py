@@ -118,7 +118,7 @@ class vmtkMeshToNumpy(pypes.pypeScript):
             self.ArrayDict['Cells']['CellPointIds'] = cells
 
         # flat array of shape == cellEntityIds == cellLocations which defines
-        # the intiger descriptor of the VTK_CELL_TYPE for each cell in cells
+        # the integer descriptor of the VTK_CELL_TYPE for each cell in cells
         cellTypes = np.array(wrappedData.CellTypes)
         self.ArrayDict['Cells']['CellTypes'] = cellTypes
 

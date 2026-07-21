@@ -89,7 +89,7 @@ class vmtkSurfaceToBinaryImage(pypes.pypeScript):
         # initially set all values of the image to a value self.InsideValue
         npFillImagePoints = np.zeros(whiteImage.GetNumberOfPoints(), dtype=np.uint8)
         npFillImagePoints[:] = self.InsideValue
-        # it is much faster to use the vtk data set adaptor functions to fill the point data tupples that it is to
+        # it is much faster to use the vtk data set adaptor functions to fill the point data tuples that it is to
         # loop over each index and set values individually.
         pointDataArray = dsa.numpyTovtkDataArray(npFillImagePoints, name='ImageScalars', array_type=vtk.VTK_UNSIGNED_CHAR)
         whiteImage.GetPointData().SetActiveScalars('ImageScalars')

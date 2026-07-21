@@ -39,7 +39,7 @@ class vmtkPickPointSeedSelector(object):
         self.PastPickedActorList = []
 
     def UndoCallback(self, obj):
-        # The execution order is extremly important in this method. Do not change if possible.
+        # The execution order is extremely important in this method. Do not change if possible.
         self.vmtkRenderer.RenderWindow.Render()
         # First remove the vtkPolyDataObject from the list where it is being stored.
         # by default we remove the last element selected first

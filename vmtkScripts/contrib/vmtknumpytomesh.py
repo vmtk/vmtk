@@ -46,7 +46,7 @@ class vmtkNumpyToMesh(pypes.pypeScript):
                            'CellData, and CellPointIds describing connectivity and returns a VMTK mesh (VTK Unstructured Grid) object ')
         self.SetInputMembers([
             ['ArrayDict','i','dict',1,'','the input array dictionary','vmtknumpyreader'],
-            ['FlattenListOfCells','flatten','bool',0,'','enable to convert cells which are formated as a list of numpy arrays to the default flat structure']])
+            ['FlattenListOfCells','flatten','bool',0,'','enable to convert cells which are formatted as a list of numpy arrays to the default flat structure']])
         self.SetOutputMembers([
             ['Mesh','o','vtkUnstructuredGrid',1,'','the output mesh','vmtkmeshwriter']])
 

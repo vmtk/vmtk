@@ -58,7 +58,7 @@ namespace itk
 ///	SOCS-04.2, School of Ccomputer Science, McGill University, 2004."
 
 /// TODO:
-/// 1. manual instantation
+/// 1. manual instantiation
 template< class TInputImage,
 	  class TAverageOutwardFluxPixelType = float,
 	  class TOutputPixelType = unsigned char>

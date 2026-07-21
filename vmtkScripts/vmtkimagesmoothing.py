@@ -35,7 +35,7 @@ class vmtkImageSmoothing(pypes.pypeScript):
         self.Dimensionality = 3
         self.EnhancedImage = None
 
-        # This is the default value from Slicer 3 which assums pixel spacing = 1.0: (PixelSpacing)/2^{N+1}->1.0/2^{3+1}
+        # This is the default value from Slicer 3 which assumes pixel spacing = 1.0: (PixelSpacing)/2^{N+1}->1.0/2^{3+1}
         # If AutoCalculateTimeStep is enabled, this will be overwritten with the value calculated with the actual image
         # pixel spacing and number of dimensions.
         self.TimeStep = 0.0625
@@ -49,7 +49,7 @@ class vmtkImageSmoothing(pypes.pypeScript):
             ['Image','i','vtkImageData',1,'','the input image','vmtkimagereader'],
             ['Method','method','str',1,'["gauss","anisotropic"]'],
             ['StandardDeviation','sigma','float',1,'(0.0,)','the standard deviation of the Gaussian in real space units (gauss)'],
-            ['RadiusFactor','radiusfactor','float',1,'(0.0,)','the factor specifing the width of the discrete Gaussian kernel (gauss)'],
+            ['RadiusFactor','radiusfactor','float',1,'(0.0,)','the factor specifying the width of the discrete Gaussian kernel (gauss)'],
             ['Dimensionality','dimensionality','int',1,'(2,3)','the dimensionality of the Aconvolution (gauss)'],
             ['Conductance','conductance','float',1,'(0.0,)','anisotropic diffustion coefficients (anisotropic)'],
             ['NumberOfIterations','iterations','int',1,'(5,)',' number of anisotropic diffusion iterationsl (anisotropic)'],

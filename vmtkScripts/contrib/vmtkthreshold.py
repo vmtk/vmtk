@@ -13,7 +13,7 @@ class vmtkThreshold(pypes.pypeScript):
         pypes.pypeScript.__init__(self)
 
         self.SetScriptName('vmtkthreshold')
-        self.SetScriptDoc('Extract part of surface or mesh with cell entitiy ids between given thresholds.')
+        self.SetScriptDoc('Extract part of surface or mesh with cell entity ids between given thresholds.')
 
         self.Surface = None
         self.Mesh = None

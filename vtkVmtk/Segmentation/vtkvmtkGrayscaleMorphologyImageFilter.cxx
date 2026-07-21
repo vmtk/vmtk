@@ -98,7 +98,7 @@ void vtkvmtkGrayscaleMorphologyImageFilter::SimpleExecute(vtkImageData *input, v
     }
     catch( itk::ExceptionObject & excep )
     {
-      std::cerr << "Exception catched !" << std::endl;
+      std::cerr << "Exception caught !" << std::endl;
       std::cerr << excep << std::endl;
     }
     outputImage = imageFilter->GetOutput();
@@ -114,7 +114,7 @@ void vtkvmtkGrayscaleMorphologyImageFilter::SimpleExecute(vtkImageData *input, v
     }
     catch( itk::ExceptionObject & excep )
     {
-      std::cerr << "Exception catched !" << std::endl;
+      std::cerr << "Exception caught !" << std::endl;
       std::cerr << excep << std::endl;
     }
     outputImage = imageFilter->GetOutput();
@@ -129,7 +129,7 @@ void vtkvmtkGrayscaleMorphologyImageFilter::SimpleExecute(vtkImageData *input, v
     }
     catch( itk::ExceptionObject & excep )
     {
-      std::cerr << "Exception catched !" << std::endl;
+      std::cerr << "Exception caught !" << std::endl;
       std::cerr << excep << std::endl;
     }
     outputImage = imageFilter->GetOutput();
@@ -144,7 +144,7 @@ void vtkvmtkGrayscaleMorphologyImageFilter::SimpleExecute(vtkImageData *input, v
     }
     catch( itk::ExceptionObject & excep )
     {
-      std::cerr << "Exception catched !" << std::endl;
+      std::cerr << "Exception caught !" << std::endl;
       std::cerr << excep << std::endl;
     }
     outputImage = imageFilter->GetOutput();

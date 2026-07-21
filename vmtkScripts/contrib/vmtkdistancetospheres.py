@@ -237,7 +237,7 @@ class vmtkDistanceToSpheres(pypes.pypeScript):
         self.ParametersChanged = True
 
     def SwitchModeCallback(self,obj):
-        #Switch beetween examien and interact mode
+        #Switch between examien and interact mode
         if self.InteractionMode == 0:
             self.InteractionMode = 1
             self.ExamineSurface = self.ComputeDistances()

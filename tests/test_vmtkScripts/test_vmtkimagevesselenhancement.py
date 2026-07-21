@@ -18,7 +18,7 @@ import pytest
 import vmtk.vmtkimagevesselenhancement as vesselenhancement
 
 
-#TODO: VEDM Method is currently diabled in vtkVmtk (vtkvmtkVesselEnhancingDiffusion3DImageFilter). Find a fix or remove.
+#TODO: VEDM Method is currently disabled in vtkVmtk (vtkvmtkVesselEnhancingDiffusion3DImageFilter). Find a fix or remove.
 @pytest.mark.parametrize("enhance_method,paramid", [
     ('frangi', '0'),
     ('sato', '1'),

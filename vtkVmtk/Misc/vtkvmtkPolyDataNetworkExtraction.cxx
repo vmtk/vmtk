@@ -459,7 +459,7 @@ void vtkvmtkPolyDataNetworkExtraction::PropagateFromBaseProfilePoint(vtkPolyData
       }
    
     // call LookForNeighbors, compare distances and call PropagateFromBaseProfilePovtkIdType again is povtkIdType 
-    // is non visited and falls inside the sphere. If it falls outside add adge to edge list
+    // is non visited and falls inside the sphere. If it falls outside add edge to edge list
     vtkIdList* notVisitedNeighbors = vtkIdList::New();
     if (LookForNeighbors(model,currentPointId,notVisitedNeighbors,edgeTableForIncludedGlobalProfiles))
       {

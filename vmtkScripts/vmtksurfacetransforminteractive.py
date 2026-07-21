@@ -165,7 +165,7 @@ class vmtkSurfaceTransformInteractive(pypes.pypeScript):
         #self.OutputText('Press \'i\' to activate the box widget interactor \n')
         #self.OutputText('Use the left-mousebutton to rotate the box \n')
         #self.OutputText('Use the middle-mouse-button to move the box \n')
-        #self.OutputText('Press space to move the surface to its new postion \n')
+        #self.OutputText('Press space to move the surface to its new position \n')
         #self.OutputText('Press \'q\' to quit and apply the transform \n')
 
         self.vmtkRenderer.AddKeyBinding('space','Move the surface.',self.MoveCallback)

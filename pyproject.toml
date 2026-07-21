@@ -51,3 +51,7 @@ vmtk = "vmtk.pypemain:main"
 include-package-data = false
 package-dir = {"vmtk" = "vmtk"}
 packages = ["vmtk"]
+
+[tool.codespell]
+skip = "./vtkVmtk/Utilities"
+ignore-words-list = ["ans", "blockin", "pres", "bU", "ND", "nD"]

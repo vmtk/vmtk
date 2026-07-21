@@ -14,7 +14,7 @@ reconstruction, geometric analysis, mesh generation and surface data analysis
 for image-based modeling of blood vessels. VMTK can be used via its standalone
 interface, included as a Python or C++ library, or as an extension to the
 medical image processing platform [3D Slicer](https://www.slicer.org/). By
-providing multiple user interfaces with various requirments of technical
+providing multiple user interfaces with various requirements of technical
 ability, VMTK aims to be usable by anyone with an interest in medical image
 processing; be they clinicians, researchers, industries, or educational
 institutions.

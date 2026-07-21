@@ -52,7 +52,7 @@ endif()
 
 
 ##
-## Check if sytem ITK or superbuild ITK
+## Check if system ITK or superbuild ITK
 ##
 if( NOT USE_SYSTEM_ITK )
 
@@ -118,7 +118,7 @@ if( NOT USE_SYSTEM_ITK )
 endif()
 
 ##
-## Check if sytem VTK or superbuild VTK
+## Check if system VTK or superbuild VTK
 ##
 if( NOT USE_SYSTEM_VTK )
 

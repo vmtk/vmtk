@@ -208,7 +208,7 @@ class vmtkSufaceResolution(pypes.pypeScript):
         self.vmtkRenderer.RenderWindow.Render()
 
     def ExamineCallback(self,obj):
-        #Switch beetween examien and interact mode
+        #Switch between examien and interact mode
         if self.InteractionMode == 0:
             self.InteractionMode = 1
             self.ExamineSurface = self.ComputeArray()
