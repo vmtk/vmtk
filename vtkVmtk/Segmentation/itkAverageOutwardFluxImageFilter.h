@@ -57,7 +57,7 @@ namespace itk
 /// \ingroup Segmentation
 
 /// TODO:
-/// 1. manual instantation
+/// 1. manual instantiation
 template< class TInputImage,
 	  class TOutputPixelType = float,
 	  class TInputVectorPixelType = ::itk::CovariantVector<TOutputPixelType,TInputImage::ImageDimension> > 

@@ -170,7 +170,7 @@ private:
 
     // calculates diffusion tensor
     // based on current values of hessian (for which we have
-    // maximim vessel response). 
+    // maximum vessel response).
     void DiffusionTensor();
 
     inline Precision VesselnessFunction3D ( // sorted magn increasing

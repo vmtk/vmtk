@@ -36,11 +36,11 @@ def test_compare_same_image(aorta_image):
 
 def test_compare_not_same_image(aorta_image):
 
-    wraper = wrap.vmtkImageToNumpy()
-    wraper.Image = aorta_image
-    wraper.Execute()
+    wrapper = wrap.vmtkImageToNumpy()
+    wrapper.Image = aorta_image
+    wrapper.Execute()
 
-    multiplied = wraper.ArrayDict
+    multiplied = wrapper.ArrayDict
     multiplied['PointData']['ImageScalars'] = multiplied['PointData']['ImageScalars'] * 2
 
     back = wrap2.vmtkNumpyToImage()

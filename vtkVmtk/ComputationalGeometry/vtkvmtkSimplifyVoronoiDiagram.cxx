@@ -191,7 +191,7 @@ int vtkvmtkSimplifyVoronoiDiagram::RequestData(
   // #pragma message "vtkvmtkSimplifyVoronoiDiagram::RequestData not functional. Must be updated based on Kitware/VTK@88efc809a"
   // if (true)
   //   {
-  //   vtkErrorMacro(<< "vtkvmtkSimplifyVoronoiDiagram::RequestData is not functionnal when built against VTK >= 9");
+  //   vtkErrorMacro(<< "vtkvmtkSimplifyVoronoiDiagram::RequestData is not functional when built against VTK >= 9");
   //   return 0;
   //   }
   poly->SetPolys(currentPolys);

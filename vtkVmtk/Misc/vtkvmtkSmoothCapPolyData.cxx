@@ -90,7 +90,7 @@ int vtkvmtkSmoothCapPolyData::RequestData(
   vtkCellArray* newPolys = vtkCellArray::New();
   newPolys->DeepCopy(input->GetPolys());
 
-  // Copy cell entitiy ids array
+  // Copy cell entity ids array
   vtkIdTypeArray* cellEntityIdsArray = NULL;
   bool markCells = this->CellEntityIdsArrayName && this->CellEntityIdsArrayName[0];
   if (markCells)

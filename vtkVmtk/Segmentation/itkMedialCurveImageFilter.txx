@@ -100,7 +100,7 @@ bool MedialCurveImageFilter<TInputImage, TAverageOutwardFluxPixelType, TOutputPi
 {
 	try
 	{
-		// Compute new index of the auxiliar queued image
+		// Compute new index of the auxiliary queued image
 		OutputIndexType start;
 
 		for ( int i = 0; i < TOutputImage::ImageDimension; i++ )
@@ -232,7 +232,7 @@ bool MedialCurveImageFilter<TInputImage, TAverageOutwardFluxPixelType, TOutputPi
 {
 	try
 	{
-		// Compute new index of the auxiliar queued image
+		// Compute new index of the auxiliary queued image
 		OutputIndexType start;
 
 		for ( int i = 0; i < TOutputImage::ImageDimension; i++ )

@@ -252,7 +252,7 @@ def build_vmtk():
                         '-DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=10.5',
                         ])
     if on_windows():
-        options.extend(['-DVMTK_INSTALL_PYTHON:BOOLD=ON',])
+        options.extend(['-DVMTK_INSTALL_PYTHON:BOOL=ON',])
         if not MINGW:
             vcredist_x86 = os.path.abspath(os.path.join(WORK_DIR, "vcredist_x86.exe"))
             vcredist_x64 = os.path.abspath(os.path.join(WORK_DIR, "vcredist_x64.exe"))

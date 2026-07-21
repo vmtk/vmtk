@@ -50,7 +50,7 @@ class vmtkCenterlineImage(pypes.pypeScript):
         self.SetScriptDoc('Automatically extract a binary skeleton centerline image from a surface using a flux-driven medial curve extraction algorithm. Note: results will be slightly different on different operating systems.')
         self.SetInputMembers([
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
-            ['Sigma','sigma','float',1,'(0.0,)','the kernal width of the gaussian used for image smoothing'],
+            ['Sigma','sigma','float',1,'(0.0,)','the kernel width of the gaussian used for image smoothing'],
             ['Threshold','threshold','float',1,'(0.0,1.0)','the threshold to filter the output skeleton image at'],
             ['PolyDataToImageDataSpacing','spacing','float',3,'(0.0,)','the sample spacing for the polydata to image data conversion']
             ])
@@ -100,7 +100,7 @@ class vmtkCenterlineImage(pypes.pypeScript):
         # Step 2: Feed into the vtkvmtkMedialCurveFilter
         #         This takes the binary image and computes the average outward flux of the image. This is then
         #         used to compute the skeleton image. It returns a binary image where values of 1 are skeleton points
-        #         and values of 0 are outside the skeleton. The execution speed of this algorithm is fairly sensetive to
+        #         and values of 0 are outside the skeleton. The execution speed of this algorithm is fairly sensitive to
         #         the extent of the input image.
         self.PrintLog('Extracting Centerline Skeleton from Image Mask...')
         medialCurveFilter = vtkvmtk.vtkvmtkMedialCurveFilter()

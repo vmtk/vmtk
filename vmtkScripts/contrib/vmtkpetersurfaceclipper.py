@@ -79,7 +79,7 @@ class vmtkPeterSurfaceClipper(pypes.pypeScript):
             ['Surface','o','vtkPolyData',1,'','the output surface','vmtksurfacewriter'],
             ['ClippedSurface','oclipped','vtkPolyData',1,'','the clipped surface','vmtksurfacewriter'],
             ['CutLines','ocutlines','vtkPolyData',1,'','the cutlines','vmtksurfacewriter'],
-            # The new otput member which will be a MultiBlock file
+            # The new output member which will be a MultiBlock file
             ['ClipsOut','oclip','vtkMultiBlockDataSet',-1,'','the output surfaces associated with the clips made','vmtksurfacewriter'],
             ['Transform','otransform','vtkTransform',1,'','the output widget transform']
             ])
@@ -89,7 +89,7 @@ class vmtkPeterSurfaceClipper(pypes.pypeScript):
             self.PrintError('Error: CleanAutoClip input is not PolyData.')
             return
 
-        # Use connectivty to clean data of any fragments generated
+        # Use connectivity to clean data of any fragments generated
         Filter = vtk.vtkPolyDataConnectivityFilter()
         Filter.SetInputData(self.Surface)
         Filter.Update()

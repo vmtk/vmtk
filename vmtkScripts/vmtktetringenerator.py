@@ -437,7 +437,7 @@ class vmtkTetrInGenerator(pypes.pypeScript):
             f.write(line)
             line = str(sectionProperties.Normal[0]) + ' ' + str(sectionProperties.Normal[1]) + ' ' + str(sectionProperties.Normal[2]) + '\n'
             f.write(line)
-            #TODO: for every inlet insert fourier coefficients given points of waveform (spline-interpolate points beforehands to get them equispaced).
+            #TODO: for every inlet insert fourier coefficients given points of waveform (spline-interpolate points beforehand to get them equispaced).
 
         if (self.OutletEntity != ''):
             line = '\n'

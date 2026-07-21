@@ -92,7 +92,7 @@ class vmtkImageVolumeViewer(pypes.pypeScript):
                     value specifies the yValue of the point to add (aka, value at that image scalar)
 
             Outputs:
-                piecewiseFunction (vtkPiecewiseFunction object): containing points at tupples in the points list
+                piecewiseFunction (vtkPiecewiseFunction object): containing points at tuples in the points list
         '''
 
         piecewiseFunction = vtk.vtkPiecewiseFunction()
@@ -110,7 +110,7 @@ class vmtkImageVolumeViewer(pypes.pypeScript):
                     third, and fourth values specify the RGB value to assign at that point
 
             Outputs:
-                colorTransferFunction (vtkColorTransferFunction object): containing RGB points at tupples in the points list
+                colorTransferFunction (vtkColorTransferFunction object): containing RGB points at tuples in the points list
         '''
         colorTransferFunction = vtk.vtkColorTransferFunction()
         for xValue, RVal, GVal, BVal in pointsList:
@@ -136,7 +136,7 @@ class vmtkImageVolumeViewer(pypes.pypeScript):
             for i in range_func(0, len(l), n):
                 yield l[i:i + n]
 
-        # need to convert the space seperated string displaying values into a list of floats
+        # need to convert the space separated string displaying values into a list of floats
         colorList = [float(i) for i in volPropertiesDict['colorTransfer'].split()]
         gradientOpacityList = [float(i) for i in volPropertiesDict['gradientOpacity'].split()]
         opacityList = [float(i) for i in volPropertiesDict['scalarOpacity'].split()]
@@ -236,7 +236,7 @@ class vmtkImageVolumeViewer(pypes.pypeScript):
 
     def BuildView(self):
 
-        # ensure python 2-3 compatibility for checking string type (difference with unicode str handeling)
+        # ensure python 2-3 compatibility for checking string type (difference with unicode str handling)
         PY3 = sys.version_info[0] == 3
 
         if not self.vmtkRenderer:

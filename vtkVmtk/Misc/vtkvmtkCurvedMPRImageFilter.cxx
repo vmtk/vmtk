@@ -215,7 +215,7 @@ int vtkvmtkCurvedMPRImageFilter::RequestData(
     return 1;
     }
 
-  //check if everything is allright
+  //check if everything is all right
   if (inputImage == NULL || outputImage==NULL)
     {
     if (outputImage)
@@ -320,7 +320,7 @@ int vtkvmtkCurvedMPRImageFilter::RequestData(
   reslice->SetOutputDimensionality(2);
   reslice->SetInputData(inputImage);
   reslice->SetInterpolationModeToCubic();
-  //turn off transformation of the input spacin, origin and extent, so we can define what we want
+  //turn off transformation of the input spacing, origin and extent, so we can define what we want
   reslice->TransformInputSamplingOff();
   //set the value of the voxels that are out of the input data
   reslice->SetBackgroundLevel(this->ReslicingBackgroundLevel);
@@ -333,8 +333,8 @@ int vtkvmtkCurvedMPRImageFilter::RequestData(
     double centerSlice[3];
     linePoints->GetPoint(slice,centerSlice);
 
-    // To calculate the outputorigin & the necessarry transform 
-    // the vectors are retreived from the array's
+    // To calculate the outputorigin & the necessary transform 
+    // the vectors are retrieved from the array's
     //t is the vector in the direction of the Centerline, so along the z-axis in the MPR volume
     double t[3];
     frenetTangentArray->GetTuple(slice,t);
@@ -351,7 +351,7 @@ int vtkvmtkCurvedMPRImageFilter::RequestData(
 
     //set the axis of the first slice according to the vectors of the first point in the line
     reslice->SetResliceAxesDirectionCosines(p[0],p[1],p[2],tp[0],tp[1],tp[2],t[0],t[1],t[2]);
-    // the firstPoint on the Centerline coresponds to the origin of the output axes unit vectors
+    // the firstPoint on the Centerline corresponds to the origin of the output axes unit vectors
     reslice->SetResliceAxesOrigin(centerSlice[0],centerSlice[1],centerSlice[2]); 
     //the outputextent will be one slice
     reslice->SetOutputExtent(this->OutputExtent[0],this->OutputExtent[1],this->OutputExtent[2],this->OutputExtent[3],0,0);

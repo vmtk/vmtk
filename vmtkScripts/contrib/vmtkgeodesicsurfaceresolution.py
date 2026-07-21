@@ -177,7 +177,7 @@ class vmtkGeodesicSurfaceResolution(pypes.pypeScript):
         self.vmtkRenderer.RenderWindow.Render()
 
     def ExmienModeCallback(self, obj):
-        #Switch beetween examien and interact mode
+        #Switch between examien and interact mode
         if self.InteractionMode == 0:
             self.InteractionMode = 1
             self.ExamineSurface = self.ComputeArray()
@@ -289,7 +289,7 @@ class vmtkGeodesicSurfaceResolution(pypes.pypeScript):
         self.vmtkRenderer.AddKeyBinding('n','Show next sphere',self.NextSphereCallback)
         self.vmtkRenderer.AddKeyBinding('v','Show previous sphere',self.PreviousSphereCallback)
         self.vmtkRenderer.AddKeyBinding('d','Display ',self.DisplayCallback)
-        self.vmtkRenderer.AddKeyBinding('w','Switch beetween examien and interact mode ',self.ExmienModeCallback)
+        self.vmtkRenderer.AddKeyBinding('w','Switch between examien and interact mode ',self.ExmienModeCallback)
         self.vmtkRenderer.AddKeyBinding('space','Pick sphere',self.PickCallback)
 
         self.SurfaceMapper = vtk.vtkPolyDataMapper()

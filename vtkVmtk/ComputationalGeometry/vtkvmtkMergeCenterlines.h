@@ -19,7 +19,7 @@ Program:   VMTK
  * @brief   Combine multiple centerlines which lie within the same branch of a split and grouped centerline.
  * @ingroup ComputationalGeometry
  *
- * If multiple centerlines exist within the same branch, each centerlines point locations are averaged (euclidian interpolation) to result in a branch with only one centerline.
+ * If multiple centerlines exist within the same branch, each centerlines point locations are averaged (euclidean interpolation) to result in a branch with only one centerline.
  *
  * Takes as input split, grouped centerlines (see vtkvmtkCenterlineSplittingAndGroupingFilter) and
  * outputs one merged, resampled line per branch group. This is the filter behind the

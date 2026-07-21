@@ -126,7 +126,7 @@ class vmtkPeterGenerateSurface(pypes.pypeScript):
             else:
                 acceptableResult = 0
 
-        # Level set segmenation and marching cubes
+        # Level set segmentation and marching cubes
         acceptableResult = 0
         while acceptableResult == 0:
 
@@ -220,7 +220,7 @@ class vmtkPeterGenerateSurface(pypes.pypeScript):
         self.SurfaceSubdivision.Surface = self.Surface
         self.SurfaceSubdivision.Method = 'butterfly'
 
-        self.SurfaceSubdivision.Exectute()
+        self.SurfaceSubdivision.Execute()
 
         self.Surface = self.SurfaceSubdivision.Surface
 
