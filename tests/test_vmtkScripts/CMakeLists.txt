@@ -22,6 +22,8 @@ set(TEST_VMTKSCRIPTS_SRCS
     test_vmtkcenterlines.py
     test_vmtkcenterlinesnetwork.py
     test_vmtkcenterlinesmoothing.py
+    test_vmtkentityextractor.py
+    test_vmtkentitylist.py
     test_vmtkimagebinarize.py
     test_vmtkimagecast.py
     test_vmtkimagecompare.py
@@ -33,6 +35,7 @@ set(TEST_VMTKSCRIPTS_SRCS
     test_vmtkimageobjectenhancement.py
     test_vmtkimageotsuthresholds.py
     test_vmtkimagereader.py
+    test_vmtkimagereslice.py
     test_vmtkimageshiftscale.py
     test_vmtkimagesmoother.py
     test_vmtkimagevesselenhancement.py
@@ -43,24 +46,31 @@ set(TEST_VMTKSCRIPTS_SRCS
     test_vmtkmarchingcubes.py
     test_vmtkmeshaddexternallayer.py
     # test_vmtkmeshtonumpy.py
+    test_vmtkarraythreshold.py
     test_vmtkstatictemporalstreamtracer.py
     test_vmtksurfaceappend.py
     test_vmtksurfacebooleanoperation.py
     test_vmtksurfacecapper.py
     test_vmtksurfacecelldatatopointdata.py
     test_vmtksurfaceconnectivity.py
+    test_vmtksurfacecoords.py
     test_vmtksurfacedecimation.py
+    test_vmtksurfacefeatureedges.py
+    test_vmtksurfaceimplicitdistance.py
     test_vmtksurfacekiteremoval.py
     test_vmtksurfacemassproperties.py
     test_vmtksurfacemodeller.py
     test_vmtksurfacenormals.py
+    test_vmtksurfaceprojection.py
     test_vmtksurfacereader.py
     test_vmtksurfaceremeshing.py
     test_vmtksurfacescaling.py
     test_vmtksurfacesmoothing.py
     test_vmtksurfacesubdivision.py
     test_vmtksurfacetobinaryimage.py
+    test_vmtksurfacetransform.py
     test_vmtksurfacetransformtoras.py
+    test_vmtksurfacewarpbyvector.py
     )
 
 if(NOT TEST_VMTKSCRIPTS_INSTALL_LIB_DIR)
