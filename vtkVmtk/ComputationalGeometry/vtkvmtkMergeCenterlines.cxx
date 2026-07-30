@@ -179,7 +179,8 @@ int vtkvmtkMergeCenterlines::RequestData(vtkInformation *vtkNotUsed(request), vt
   vtkPolyData* resampledCenterlines = vtkPolyData::New();
   resampledCenterlines->DeepCopy(resampler->GetOutput());
 
-  resampler->Delete(); 
+  resampler->Delete();
+  cleaner->Delete();
 
   radiusArray = resampledCenterlines->GetPointData()->GetArray(this->RadiusArrayName);
 

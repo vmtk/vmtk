@@ -532,6 +532,8 @@ void vtkvmtkCenterlineSplittingAndGroupingFilter::PointInTubeGroupTracts(vtkPoly
   groupIdsArray->Delete();
   tube->Delete();
   tubeCellIds->Delete();
+  centerlineTube->Delete();
+  centerlineTubeCellIds->Delete();
 }
 
 void vtkvmtkCenterlineSplittingAndGroupingFilter::MakeGroupIdsAdjacent(vtkPolyData* centerlineTracts)
@@ -688,6 +690,7 @@ void vtkvmtkCenterlineSplittingAndGroupingFilter::SplitCenterline(vtkPolyData* i
     splitCenterlineCellArray->Delete();
     splitCenterlineCellPointIds->Delete();
     centerlineIdsArray->Delete();
+    tractIdsArray->Delete();
     blankingArray->Delete();
     return;
     }
@@ -808,6 +811,7 @@ void vtkvmtkCenterlineSplittingAndGroupingFilter::SplitCenterline(vtkPolyData* i
   splitCenterlineCellArray->Delete();
   splitCenterlineCellPointIds->Delete();
   centerlineIdsArray->Delete();
+  tractIdsArray->Delete();
   blankingArray->Delete();
 }
 

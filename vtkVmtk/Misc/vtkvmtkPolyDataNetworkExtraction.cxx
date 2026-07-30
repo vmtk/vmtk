@@ -1925,6 +1925,7 @@ int vtkvmtkPolyDataNetworkExtraction::RequestData(vtkInformation *vtkNotUsed(req
 
   marksArray->Delete();
   modelBoundary->Delete();
+  model->Delete();
  
   double progress = 1.0; 
   this->InvokeEvent(vtkCommand::ProgressEvent,&progress);
