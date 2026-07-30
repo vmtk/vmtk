@@ -351,6 +351,7 @@ double vtkvmtkCenterlineBranchGeometry::ComputeGroupCurvature(vtkPolyData* input
     double curvature = vtkvmtkCenterlineGeometry::ComputeLineCurvature(linePoints,curvatureArray);
 
     curvatureArray->Delete();
+    linePoints->Delete();
 
     groupCurvature += curvature;
     groupCurvatureWeightSum += 1.0;

@@ -176,6 +176,7 @@ void vtkvmtkCenterlineSphereDistance::FindTouchingSphereCenter(vtkPolyData* cent
     if ((sphereDistance0<=0.0) && (sphereDistance1<=0.0))
       {
       touchingSubId = -1;
+      subIds->Delete();
       return;
       }
 
