@@ -5,6 +5,10 @@ on:
     branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
+  # Allows recreating the VTK and ITK caches in the master scope by hand after
+  # they have expired; refresh-ci-caches.yml keeps them alive but cannot bring
+  # back an entry that is already gone.
+  workflow_dispatch:
 
 jobs:
   build-vtk:
