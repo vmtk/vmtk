@@ -23,6 +23,7 @@ set(TEST_VMTKSCRIPTS_SRCS
     test_vmtkcenterlinesnetwork.py
     test_vmtkcenterlinesmoothing.py
     test_vmtkentityextractor.py
+    test_vmtkflowextensions.py
     test_vmtkentitylist.py
     test_vmtkimagebinarize.py
     test_vmtkimagecast.py

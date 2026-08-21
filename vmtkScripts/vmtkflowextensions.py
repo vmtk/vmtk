@@ -34,6 +34,7 @@ class vmtkFlowExtensions(pypes.pypeScript):
         self.AdaptiveExtensionLength = 0
         self.AdaptiveExtensionRadius = 1
         self.AdaptiveNumberOfBoundaryPoints = 0
+        self.PreserveCrossSectionShape = 0
         self.ExtensionLength = 1.0
         self.ExtensionRatio = 10.0
         self.ExtensionRadius = 1.0
@@ -55,7 +56,8 @@ class vmtkFlowExtensions(pypes.pypeScript):
             ['Surface','i','vtkPolyData',1,'','','vmtksurfacereader'],
             ['Centerlines','centerlines','vtkPolyData',1,'','','vmtksurfacereader'],
             ['ExtensionMode','extensionmode','str',1,'["centerlinedirection","boundarynormal"]','method for computing the normal for extension'],
-            ['InterpolationMode','interpolationmode','str',1,'["linear","thinplatespline"]','method for computing interpolation from the model section to a circular section'],
+            ['PreserveCrossSectionShape','preserveshape','bool',1,'','preserve the shape of the boundary cross-section instead of morphing it to a circle'],
+            ['InterpolationMode','interpolationmode','str',1,'["linear","thinplatespline"]','method for computing interpolation from the model section to the target section'],
             ['Sigma','sigma','float',1,'(0.0,)','thin plate spline stiffness'],
             ['AdaptiveExtensionLength','adaptivelength','bool',1],
             ['AdaptiveExtensionRadius','adaptiveradius','bool',1],
@@ -165,6 +167,7 @@ class vmtkFlowExtensions(pypes.pypeScript):
         flowExtensionsFilter.SetAdaptiveExtensionLength(self.AdaptiveExtensionLength)
         flowExtensionsFilter.SetAdaptiveExtensionRadius(self.AdaptiveExtensionRadius)
         flowExtensionsFilter.SetAdaptiveNumberOfBoundaryPoints(self.AdaptiveNumberOfBoundaryPoints)
+        flowExtensionsFilter.SetPreserveCrossSectionShape(self.PreserveCrossSectionShape)
         flowExtensionsFilter.SetExtensionLength(self.ExtensionLength)
         flowExtensionsFilter.SetExtensionRatio(self.ExtensionRatio)
         flowExtensionsFilter.SetExtensionRadius(self.ExtensionRadius)

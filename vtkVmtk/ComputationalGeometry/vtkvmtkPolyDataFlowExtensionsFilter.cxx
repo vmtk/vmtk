@@ -37,8 +37,66 @@ Version:   $Revision: 1.12 $
 #include "vtkObjectFactory.h"
 #include "vtkVersion.h"
 
+#include <vector>
+
 
 vtkStandardNewMacro(vtkvmtkPolyDataFlowExtensionsFilter);
+
+namespace {
+
+// Resamples a closed polygon into numberOfPoints points equally spaced along its perimeter. The
+// first sample is placed at offsetRatio times the sampling step past the polygon's first point,
+// so that offsetRatio 0.5 gives the set of points staggered halfway between the unshifted ones.
+// The polygon is implicitly closed: the segment from its last to its first point is part of the
+// outline. Returns the perimeter of the polygon.
+double ResampleClosedPolygon(vtkPoints* polygonPoints, int numberOfPoints, double offsetRatio, vtkPoints* resampledPoints)
+{
+  vtkIdType numberOfPolygonPoints = polygonPoints->GetNumberOfPoints();
+
+  std::vector<double> arcLength(numberOfPolygonPoints+1);
+  arcLength[0] = 0.0;
+  double point0[3], point1[3];
+  vtkIdType i;
+  for (i=0; i<numberOfPolygonPoints; i++)
+    {
+    polygonPoints->GetPoint(i,point0);
+    polygonPoints->GetPoint((i+1)%numberOfPolygonPoints,point1);
+    arcLength[i+1] = arcLength[i] + sqrt(vtkMath::Distance2BetweenPoints(point0,point1));
+    }
+  double perimeter = arcLength[numberOfPolygonPoints];
+
+  double step = perimeter / numberOfPoints;
+  vtkIdType segmentId = 0;
+  int j, k;
+  double resampledPoint[3];
+  for (j=0; j<numberOfPoints; j++)
+    {
+    // stations are increasing, so the segment they fall in can be tracked incrementally
+    double station = (j + offsetRatio) * step;
+    while (segmentId < numberOfPolygonPoints-1 && arcLength[segmentId+1] < station)
+      {
+      segmentId++;
+      }
+    double segmentLength = arcLength[segmentId+1] - arcLength[segmentId];
+    double parametricCoordinate = 0.0;
+    if (segmentLength > 0.0)
+      {
+      parametricCoordinate = (station - arcLength[segmentId]) / segmentLength;
+      parametricCoordinate = parametricCoordinate < 0.0 ? 0.0 : (parametricCoordinate > 1.0 ? 1.0 : parametricCoordinate);
+      }
+    polygonPoints->GetPoint(segmentId,point0);
+    polygonPoints->GetPoint((segmentId+1)%numberOfPolygonPoints,point1);
+    for (k=0; k<3; k++)
+      {
+      resampledPoint[k] = point0[k] + parametricCoordinate * (point1[k] - point0[k]);
+      }
+    resampledPoints->InsertNextPoint(resampledPoint);
+    }
+
+  return perimeter;
+}
+
+}
 
 vtkvmtkPolyDataFlowExtensionsFilter::vtkvmtkPolyDataFlowExtensionsFilter()
 {
@@ -50,6 +108,7 @@ vtkvmtkPolyDataFlowExtensionsFilter::vtkvmtkPolyDataFlowExtensionsFilter()
   this->CenterlineNormalEstimationDistanceRatio = 1.0;
   this->AdaptiveExtensionLength = 1;
   this->AdaptiveExtensionRadius = 1;
+  this->PreserveCrossSectionShape = 0;
   this->NumberOfBoundaryPoints = 50;
   this->AdaptiveNumberOfBoundaryPoints = 0;
   this->BoundaryIds = NULL;
@@ -286,32 +345,51 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
       }
 
     double point[3], extensionPoint[3];
+
+    // Project the boundary onto the plane through the barycenter orthogonal to the extension
+    // direction. This is the outline the extension is swept from when PreserveCrossSectionShape
+    // is on, and its mean radius is the extension radius when AdaptiveExtensionRadius is on.
+    vtkPoints* projectedBoundaryPoints = vtkPoints::New();
+    double meanProjectedRadius = 0.0;
+
+    double barycenterToPoint[3];
+    double outOfPlaneDistance;
+    double projectedPoint[3];
+    for (j=0; j<numberOfBoundaryPoints; j++)
+      {
+      boundary->GetPoints()->GetPoint(j,point);
+      for (k=0; k<3; k++)
+        {
+        barycenterToPoint[k] = point[k] - barycenter[k];
+        }
+      outOfPlaneDistance = vtkMath::Dot(barycenterToPoint,flowExtensionNormal);
+      for (k=0; k<3; k++)
+        {
+        barycenterToPoint[k] -= outOfPlaneDistance*flowExtensionNormal[k];
+        projectedPoint[k] = barycenter[k] + barycenterToPoint[k];
+        }
+      projectedBoundaryPoints->InsertNextPoint(projectedPoint);
+      meanProjectedRadius += vtkMath::Norm(barycenterToPoint);
+      }
+    meanProjectedRadius /= numberOfBoundaryPoints;
+
     double targetRadius = 0.0;
 
     if (this->AdaptiveExtensionRadius)
       {
-      double barycenterToPoint[3];
-      double outOfPlaneDistance;
-      double projectedBarycenterToPoint[3];
-      for (j=0; j<numberOfBoundaryPoints; j++)
-        {
-        boundary->GetPoints()->GetPoint(j,point);
-        for (k=0; k<3; k++)
-          {
-          barycenterToPoint[k] = point[k] - barycenter[k];
-          }
-        outOfPlaneDistance = vtkMath::Dot(barycenterToPoint,flowExtensionNormal);
-        for (k=0; k<3; k++)
-          {
-          projectedBarycenterToPoint[k] = barycenterToPoint[k] - outOfPlaneDistance*flowExtensionNormal[k];
-          }
-        targetRadius += vtkMath::Norm(projectedBarycenterToPoint);
-        }
-      targetRadius /= numberOfBoundaryPoints;
+      targetRadius = meanProjectedRadius;
       }
     else
       {
       targetRadius = this->ExtensionRadius;
+      }
+
+    if (this->PreserveCrossSectionShape && meanProjectedRadius < 1E-4 * meanRadius)
+      {
+      vtkWarningMacro(<<"Degenerate boundary outline, skipping flow extension for boundary "<<i);
+      projectedBoundaryPoints->Delete();
+      boundaryIds->Delete();
+      continue;
       }
 
     vtkIdList* newBoundaryIds = vtkIdList::New();
@@ -328,7 +406,7 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
       targetNumberOfBoundaryPoints = numberOfBoundaryPoints;
       }
 
-    double targetDistanceBetweenPoints = 2.0 * sin (vtkMath::Pi() / targetNumberOfBoundaryPoints) * targetRadius;
+    double targetDistanceBetweenPoints = 0.0;
 
     vtkThinPlateSplineTransform* thinPlateSplineTransform = vtkThinPlateSplineTransform::New();
     thinPlateSplineTransform->SetSigma(this->Sigma);
@@ -341,70 +419,123 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
     vtkPoints* targetBoundaryPoints = vtkPoints::New();
     vtkPoints* targetStaggeredBoundaryPoints = vtkPoints::New();
 
-    double baseRadialNormal[3];
-    input->GetPoint(previousBoundaryIds->GetId(0),point);
-    for (k=0; k<3; k++)
-      {
-      baseRadialNormal[k] = point[k] - barycenter[k];
-      }
-    double outOfPlaneComponent = vtkMath::Dot(baseRadialNormal,flowExtensionNormal);
-    for (k=0; k<3; k++)
-      {
-      baseRadialNormal[k] -= outOfPlaneComponent * flowExtensionNormal[k];
-      }
-    vtkMath::Normalize(baseRadialNormal);
     int startNumberOfBoundaryPoints = numberOfBoundaryPoints;
-    double angle = 360.0 / targetNumberOfBoundaryPoints;
-    vtkTransform* transform = vtkTransform::New();
-    transform->RotateWXYZ(0.5*angle,flowExtensionNormal);
-    double testRadialNormal[3];
-    transform->TransformPoint(baseRadialNormal,testRadialNormal);
-    double cross[3], testCross[3], point1[3];
-    vtkMath::Cross(baseRadialNormal,testRadialNormal,testCross);
-    double dist = 0.0;
-    int testId = 1;
-    int numberOfPreviousBoundaryIds = previousBoundaryIds->GetNumberOfIds();
-    while (dist < 1E-8 && testId < numberOfPreviousBoundaryIds)
+
+    if (this->PreserveCrossSectionShape)
       {
-      input->GetPoint(previousBoundaryIds->GetId(testId),point1);
-      dist = sqrt(vtkMath::Distance2BetweenPoints(point,point1));
-      testId++;
+      // The target cross-section is the boundary's own outline, projected onto the plane
+      // orthogonal to the extension direction and uniformly resampled along its perimeter. Since
+      // the samples follow the order of the boundary points, their winding matches the boundary's.
+      double perimeter = ResampleClosedPolygon(projectedBoundaryPoints,targetNumberOfBoundaryPoints,0.0,targetBoundaryPoints);
+      ResampleClosedPolygon(projectedBoundaryPoints,targetNumberOfBoundaryPoints,0.5,targetStaggeredBoundaryPoints);
+
+      double targetPoint[3];
+      double scale = 1.0;
+
+      if (!this->AdaptiveExtensionRadius)
+        {
+        // scale the outline about the barycenter so that its mean radius is the requested
+        // extension radius; the outline is left at its natural size when the radius is adaptive
+        double meanResampledRadius = 0.0;
+        for (j=0; j<targetNumberOfBoundaryPoints; j++)
+          {
+          targetBoundaryPoints->GetPoint(j,targetPoint);
+          for (k=0; k<3; k++)
+            {
+            targetPoint[k] -= barycenter[k];
+            }
+          meanResampledRadius += vtkMath::Norm(targetPoint);
+          }
+        meanResampledRadius /= targetNumberOfBoundaryPoints;
+        scale = targetRadius / meanResampledRadius;
+
+        for (j=0; j<targetNumberOfBoundaryPoints; j++)
+          {
+          targetBoundaryPoints->GetPoint(j,targetPoint);
+          for (k=0; k<3; k++)
+            {
+            targetPoint[k] = barycenter[k] + scale * (targetPoint[k] - barycenter[k]);
+            }
+          targetBoundaryPoints->SetPoint(j,targetPoint);
+          targetStaggeredBoundaryPoints->GetPoint(j,targetPoint);
+          for (k=0; k<3; k++)
+            {
+            targetPoint[k] = barycenter[k] + scale * (targetPoint[k] - barycenter[k]);
+            }
+          targetStaggeredBoundaryPoints->SetPoint(j,targetPoint);
+          }
+        }
+
+      targetDistanceBetweenPoints = scale * perimeter / targetNumberOfBoundaryPoints;
       }
-    double testRadialVector[3];
-    for (k=0; k<3; k++)
+    else
       {
-      testRadialVector[k] = point1[k] - barycenter[k];
-      }
-    vtkMath::Cross(baseRadialNormal,testRadialVector,cross);
-    if (vtkMath::Dot(cross,testCross) < 0.0)
-      {
-      angle *= -1.0;
-      transform->Identity();
-      transform->RotateWXYZ(0.5*angle,flowExtensionNormal); 
-      }
-    double radialVector[3];
-    for (k=0; k<3; k++)
-      {
-      radialVector[k] = targetRadius * baseRadialNormal[k];
-      }
-    double targetPoint[3];
-    for (j=0; j<targetNumberOfBoundaryPoints; j++)
-      {
+      targetDistanceBetweenPoints = 2.0 * sin (vtkMath::Pi() / targetNumberOfBoundaryPoints) * targetRadius;
+
+      double baseRadialNormal[3];
+      input->GetPoint(previousBoundaryIds->GetId(0),point);
       for (k=0; k<3; k++)
         {
-        targetPoint[k] = barycenter[k] + radialVector[k];
+        baseRadialNormal[k] = point[k] - barycenter[k];
         }
-      targetBoundaryPoints->InsertNextPoint(targetPoint);
-      transform->TransformPoint(radialVector,radialVector);
+      double outOfPlaneComponent = vtkMath::Dot(baseRadialNormal,flowExtensionNormal);
       for (k=0; k<3; k++)
         {
-        targetPoint[k] = barycenter[k] + radialVector[k];
+        baseRadialNormal[k] -= outOfPlaneComponent * flowExtensionNormal[k];
         }
-      targetStaggeredBoundaryPoints->InsertNextPoint(targetPoint);
-      transform->TransformPoint(radialVector,radialVector);
+      vtkMath::Normalize(baseRadialNormal);
+      double angle = 360.0 / targetNumberOfBoundaryPoints;
+      vtkTransform* transform = vtkTransform::New();
+      transform->RotateWXYZ(0.5*angle,flowExtensionNormal);
+      double testRadialNormal[3];
+      transform->TransformPoint(baseRadialNormal,testRadialNormal);
+      double cross[3], testCross[3], point1[3];
+      vtkMath::Cross(baseRadialNormal,testRadialNormal,testCross);
+      double dist = 0.0;
+      int testId = 1;
+      int numberOfPreviousBoundaryIds = previousBoundaryIds->GetNumberOfIds();
+      while (dist < 1E-8 && testId < numberOfPreviousBoundaryIds)
+        {
+        input->GetPoint(previousBoundaryIds->GetId(testId),point1);
+        dist = sqrt(vtkMath::Distance2BetweenPoints(point,point1));
+        testId++;
+        }
+      double testRadialVector[3];
+      for (k=0; k<3; k++)
+        {
+        testRadialVector[k] = point1[k] - barycenter[k];
+        }
+      vtkMath::Cross(baseRadialNormal,testRadialVector,cross);
+      if (vtkMath::Dot(cross,testCross) < 0.0)
+        {
+        angle *= -1.0;
+        transform->Identity();
+        transform->RotateWXYZ(0.5*angle,flowExtensionNormal);
+        }
+      double radialVector[3];
+      for (k=0; k<3; k++)
+        {
+        radialVector[k] = targetRadius * baseRadialNormal[k];
+        }
+      double targetPoint[3];
+      for (j=0; j<targetNumberOfBoundaryPoints; j++)
+        {
+        for (k=0; k<3; k++)
+          {
+          targetPoint[k] = barycenter[k] + radialVector[k];
+          }
+        targetBoundaryPoints->InsertNextPoint(targetPoint);
+        transform->TransformPoint(radialVector,radialVector);
+        for (k=0; k<3; k++)
+          {
+          targetPoint[k] = barycenter[k] + radialVector[k];
+          }
+        targetStaggeredBoundaryPoints->InsertNextPoint(targetPoint);
+        transform->TransformPoint(radialVector,radialVector);
+        }
+      transform->Delete();
       }
-    transform->Delete();
-    
+
     if (this->InterpolationMode == USE_THIN_PLATE_SPLINE_INTERPOLATION)
       {
       for (j=0; j<targetNumberOfBoundaryPoints; j++)
@@ -557,6 +688,7 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
       previousBoundaryIds->DeepCopy(newBoundaryIds);
       }
 
+    projectedBoundaryPoints->Delete();
     targetBoundaryPoints->Delete();
     targetStaggeredBoundaryPoints->Delete();
     newBoundaryIds->Delete();
