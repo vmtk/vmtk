@@ -25,8 +25,8 @@ Program:   VMTK
  * = USE_NORMAL_TO_BOUNDARY). The extension is swept from a target cross-section, which is a circle by
  * default, or the boundary's own outline when PreserveCrossSectionShape is on. The boundary's original
  * (possibly irregular and non-planar) shape is morphed into the target cross-section over the initial
- * TransitionRatio fraction of the extension, using either linear or thin-plate-spline interpolation
- * (InterpolationMode). This is the filter behind the vmtkflowextensions pype script, which is typically
+ * TransitionRatio fraction of the extension, either by a thin-plate-spline warp or by fading out a
+ * ramp (InterpolationMode). This is the filter behind the vmtkflowextensions pype script, which is typically
  * used to add inlet/outlet flow extensions to a vascular surface before CFD meshing, so that boundary
  * conditions can be applied away from geometrically complex regions and inlet/outlet flow profiles have
  * room to develop/relax.
@@ -108,7 +108,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataFlowExtensionsFilter
    * Set/Get the stiffness parameter of the thin-plate-spline transform used to morph the boundary's
    * cross-section into the target cross-section when InterpolationMode is
    * USE_THIN_PLATE_SPLINE_INTERPOLATION. Larger values produce a stiffer, less locally-deforming
-   * transform. Default: 1.0.
+   * transform. Ignored by the ramp interpolation modes. Default: 1.0.
    */
   vtkSetMacro(Sigma,double);
   vtkGetMacro(Sigma,double);
@@ -162,6 +162,17 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataFlowExtensionsFilter
   /**
    * Set/Get the number of points used to discretize the target cross-section of the extension,
    * used when AdaptiveNumberOfBoundaryPoints is off. Default: 50.
+   *
+   * This count also sets how finely the transition is resolved, because the extension is built one
+   * layer of points at a time and the layers are spaced by the distance between two neighbouring
+   * points of the target cross-section: 2 * sin(pi/NumberOfBoundaryPoints) * radius for a circular
+   * target cross-section, perimeter/NumberOfBoundaryPoints for a preserved one. The number of
+   * layers the transition is made of therefore grows in proportion to NumberOfBoundaryPoints, and
+   * the first layer, which is one layer thickness away from the boundary, gets that much closer to
+   * it. Raising this is what makes the junction between the surface and the extension smooth on a
+   * strongly non-circular boundary, where the default 50 leaves the transition a handful of coarse
+   * layers. The cost is quadratic: NumberOfBoundaryPoints points per layer, over a number of layers
+   * proportional to NumberOfBoundaryPoints.
    */
   vtkSetMacro(NumberOfBoundaryPoints,int);
   vtkGetMacro(NumberOfBoundaryPoints,int);
@@ -171,6 +182,9 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataFlowExtensionsFilter
   /**
    * Toggle whether the number of points used to discretize the extension's target cross-section is
    * taken equal to the number of points on the original boundary (on), or from NumberOfBoundaryPoints (off).
+   * Turning this on keeps the extension at the mesh density of the surface it grows from, which on
+   * a finely meshed surface also gives the transition the thin layers it needs to be smooth,
+   * without having to pick a count; see NumberOfBoundaryPoints for why the count matters.
    * Default: off.
    */
   vtkSetMacro(AdaptiveNumberOfBoundaryPoints,int);
@@ -207,10 +221,30 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataFlowExtensionsFilter
   ///@{
   /**
    * Set/Get the method used to morph the extension's cross-section from the original boundary shape
-   * into the target cross-section over the TransitionRatio portion of the extension: USE_LINEAR_INTERPOLATION or
-   * USE_THIN_PLATE_SPLINE_INTERPOLATION (default). Use the SetInterpolationModeToLinear() /
-   * SetInterpolationModeToThinPlateSpline() convenience methods instead of setting the integer value
-   * directly.
+   * into the target cross-section over the TransitionRatio portion of the extension.
+   *
+   * USE_THIN_PLATE_SPLINE_INTERPOLATION warps the transition portion of the extension with a
+   * thin-plate spline pinned to the original boundary at one end and to the undeformed extension at
+   * the other. It is the default, and is kept as such for backward compatibility. A thin-plate
+   * spline reproduces the boundary exactly only where it is pinned, and loses the finer features of
+   * the cross-section faster than the coarse ones as it moves away, so on a strongly non-circular
+   * (say, flat) boundary most of the transition happens within the first layers of the extension
+   * and lengthening TransitionRatio does not spread it out.
+   *
+   * USE_LINEAR_INTERPOLATION and USE_RAMP_INTERPOLATION instead pair each point of the target
+   * cross-section with the point of the boundary it grows from, and fade the displacement between
+   * the two out over the transition: linearly for the former, and with a smoothstep, flat at both
+   * ends, for the latter. Both make the extension start on the real cross-section and reach the
+   * target one exactly at the end of the transition, however non-circular the boundary is, so the
+   * transition is both smoother and as long as TransitionRatio asks for. USE_RAMP_INTERPOLATION is
+   * the one to prefer: being flat at both ends, it leaves no crease where the extension meets the
+   * boundary or where it becomes a uniform tube. How closely the extension actually starts on the
+   * boundary is still limited by the thickness of its first layer, so a strongly non-circular
+   * boundary also wants a NumberOfBoundaryPoints high enough to resolve the transition into thin
+   * layers.
+   *
+   * Use the SetInterpolationModeToLinear() / SetInterpolationModeToThinPlateSpline() /
+   * SetInterpolationModeToRamp() convenience methods instead of setting the integer value directly.
    */
   vtkSetMacro(InterpolationMode,int);
   vtkGetMacro(InterpolationMode,int);
@@ -218,6 +252,8 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataFlowExtensionsFilter
   { this->SetInterpolationMode(USE_LINEAR_INTERPOLATION); }
   void SetInterpolationModeToThinPlateSpline()
   { this->SetInterpolationMode(USE_THIN_PLATE_SPLINE_INTERPOLATION); }
+  void SetInterpolationModeToRamp()
+  { this->SetInterpolationMode(USE_RAMP_INTERPOLATION); }
   ///@}
 
 //BTX
@@ -228,7 +264,8 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataFlowExtensionsFilter
 
   enum {
     USE_LINEAR_INTERPOLATION = 0,
-    USE_THIN_PLATE_SPLINE_INTERPOLATION
+    USE_THIN_PLATE_SPLINE_INTERPOLATION,
+    USE_RAMP_INTERPOLATION
   };
 //ETX
 

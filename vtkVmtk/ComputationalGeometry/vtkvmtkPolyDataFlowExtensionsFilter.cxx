@@ -48,8 +48,10 @@ namespace {
 // first sample is placed at offsetRatio times the sampling step past the polygon's first point,
 // so that offsetRatio 0.5 gives the set of points staggered halfway between the unshifted ones.
 // The polygon is implicitly closed: the segment from its last to its first point is part of the
-// outline. Returns the perimeter of the polygon.
-double ResampleClosedPolygon(vtkPoints* polygonPoints, int numberOfPoints, double offsetRatio, vtkPoints* resampledPoints)
+// outline. If companionPoints is given, it must have as many points as the polygon and is sampled
+// at the same segment and parametric coordinate as the polygon itself, which pairs each sample
+// with its counterpart on the companion polygon. Returns the perimeter of the polygon.
+double ResampleClosedPolygon(vtkPoints* polygonPoints, int numberOfPoints, double offsetRatio, vtkPoints* resampledPoints, vtkPoints* companionPoints = nullptr, vtkPoints* resampledCompanionPoints = nullptr)
 {
   vtkIdType numberOfPolygonPoints = polygonPoints->GetNumberOfPoints();
 
@@ -91,9 +93,105 @@ double ResampleClosedPolygon(vtkPoints* polygonPoints, int numberOfPoints, doubl
       resampledPoint[k] = point0[k] + parametricCoordinate * (point1[k] - point0[k]);
       }
     resampledPoints->InsertNextPoint(resampledPoint);
+
+    if (companionPoints && resampledCompanionPoints)
+      {
+      companionPoints->GetPoint(segmentId,point0);
+      companionPoints->GetPoint((segmentId+1)%numberOfPolygonPoints,point1);
+      for (k=0; k<3; k++)
+        {
+        resampledPoint[k] = point0[k] + parametricCoordinate * (point1[k] - point0[k]);
+        }
+      resampledCompanionPoints->InsertNextPoint(resampledPoint);
+      }
     }
 
   return perimeter;
+}
+
+// Samples a closed polygon along numberOfPoints rays cast from center within the plane orthogonal
+// to planeNormal, the j-th ray pointing at (j + offsetRatio) * angleStep degrees from
+// startDirection, so that the samples pair up with the points of a ring built at the same angular
+// stations. The polygon is sampled where the ray leaves it, that is at the outermost crossing, and
+// the sample is taken on companionPoints, which must have as many points as the polygon, at the
+// same segment and parametric coordinate. Returns false, leaving sampledPoints incomplete, if any
+// ray misses the polygon, which happens when the polygon is not star-shaped about center.
+bool SampleClosedPolygonByAngle(vtkPoints* polygonPoints, vtkPoints* companionPoints, double center[3], double planeNormal[3], double startDirection[3], double angleStep, double offsetRatio, int numberOfPoints, vtkPoints* sampledPoints)
+{
+  vtkIdType numberOfPolygonPoints = polygonPoints->GetNumberOfPoints();
+
+  double firstAxis[3], secondAxis[3];
+  int k;
+  for (k=0; k<3; k++)
+    {
+    firstAxis[k] = startDirection[k];
+    }
+  vtkMath::Cross(planeNormal,firstAxis,secondAxis);
+
+  // in-plane coordinates of the polygon points relative to the center
+  std::vector<double> firstCoordinate(numberOfPolygonPoints), secondCoordinate(numberOfPolygonPoints);
+  double point[3], centerToPoint[3];
+  vtkIdType i;
+  for (i=0; i<numberOfPolygonPoints; i++)
+    {
+    polygonPoints->GetPoint(i,point);
+    for (k=0; k<3; k++)
+      {
+      centerToPoint[k] = point[k] - center[k];
+      }
+    firstCoordinate[i] = vtkMath::Dot(centerToPoint,firstAxis);
+    secondCoordinate[i] = vtkMath::Dot(centerToPoint,secondAxis);
+    }
+
+  double point0[3], point1[3], sampledPoint[3];
+  int j;
+  for (j=0; j<numberOfPoints; j++)
+    {
+    double angle = vtkMath::RadiansFromDegrees((j + offsetRatio) * angleStep);
+    double cosAngle = cos(angle);
+    double sinAngle = sin(angle);
+
+    // the ray is the positive half of the axis the polygon points are projected onto below; a
+    // segment crosses it where its distance to the ray's line changes sign
+    double bestRadius = 0.0;
+    vtkIdType bestSegmentId = -1;
+    double bestParametricCoordinate = 0.0;
+    for (i=0; i<numberOfPolygonPoints; i++)
+      {
+      vtkIdType nextId = (i+1)%numberOfPolygonPoints;
+      double distance0 = -firstCoordinate[i]*sinAngle + secondCoordinate[i]*cosAngle;
+      double distance1 = -firstCoordinate[nextId]*sinAngle + secondCoordinate[nextId]*cosAngle;
+      if (!((distance0 <= 0.0 && distance1 > 0.0) || (distance0 > 0.0 && distance1 <= 0.0)))
+        {
+        continue;
+        }
+      double parametricCoordinate = distance0 / (distance0 - distance1);
+      double radius0 = firstCoordinate[i]*cosAngle + secondCoordinate[i]*sinAngle;
+      double radius1 = firstCoordinate[nextId]*cosAngle + secondCoordinate[nextId]*sinAngle;
+      double radius = radius0 + parametricCoordinate * (radius1 - radius0);
+      if (radius > bestRadius)
+        {
+        bestRadius = radius;
+        bestSegmentId = i;
+        bestParametricCoordinate = parametricCoordinate;
+        }
+      }
+
+    if (bestSegmentId == -1)
+      {
+      return false;
+      }
+
+    companionPoints->GetPoint(bestSegmentId,point0);
+    companionPoints->GetPoint((bestSegmentId+1)%numberOfPolygonPoints,point1);
+    for (k=0; k<3; k++)
+      {
+      sampledPoint[k] = point0[k] + bestParametricCoordinate * (point1[k] - point0[k]);
+      }
+    sampledPoints->InsertNextPoint(sampledPoint);
+    }
+
+  return true;
 }
 
 }
@@ -419,6 +517,13 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
     vtkPoints* targetBoundaryPoints = vtkPoints::New();
     vtkPoints* targetStaggeredBoundaryPoints = vtkPoints::New();
 
+    // The ramp interpolation modes need, for each point of the target cross-section, the point of
+    // the real boundary it grows from. The pairing is built along with the target cross-section
+    // itself, so that it is ordered and one-to-one whatever the shape of the boundary.
+    bool useRampInterpolation = (this->InterpolationMode == USE_LINEAR_INTERPOLATION) || (this->InterpolationMode == USE_RAMP_INTERPOLATION);
+    vtkPoints* rimBoundaryPoints = vtkPoints::New();
+    vtkPoints* rimStaggeredBoundaryPoints = vtkPoints::New();
+
     int startNumberOfBoundaryPoints = numberOfBoundaryPoints;
 
     if (this->PreserveCrossSectionShape)
@@ -426,8 +531,12 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
       // The target cross-section is the boundary's own outline, projected onto the plane
       // orthogonal to the extension direction and uniformly resampled along its perimeter. Since
       // the samples follow the order of the boundary points, their winding matches the boundary's.
-      double perimeter = ResampleClosedPolygon(projectedBoundaryPoints,targetNumberOfBoundaryPoints,0.0,targetBoundaryPoints);
-      ResampleClosedPolygon(projectedBoundaryPoints,targetNumberOfBoundaryPoints,0.5,targetStaggeredBoundaryPoints);
+      // Sampling the boundary itself at the same stations pairs each target point with the point
+      // it is the projection of.
+      vtkPoints* rimPoints = useRampInterpolation ? rimBoundaryPoints : nullptr;
+      vtkPoints* rimStaggeredPoints = useRampInterpolation ? rimStaggeredBoundaryPoints : nullptr;
+      double perimeter = ResampleClosedPolygon(projectedBoundaryPoints,targetNumberOfBoundaryPoints,0.0,targetBoundaryPoints,boundary->GetPoints(),rimPoints);
+      ResampleClosedPolygon(projectedBoundaryPoints,targetNumberOfBoundaryPoints,0.5,targetStaggeredBoundaryPoints,boundary->GetPoints(),rimStaggeredPoints);
 
       double targetPoint[3];
       double scale = 1.0;
@@ -534,6 +643,55 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
         transform->TransformPoint(radialVector,radialVector);
         }
       transform->Delete();
+
+      if (useRampInterpolation)
+        {
+        // Pair each point of the circle with the point of the boundary that lies on the same ray
+        // from the barycenter, so that the transition is a purely radial morph. Matching by
+        // proximity instead would collapse whole arcs of the circle onto the same few boundary
+        // points on a strongly non-circular boundary, and would pair the two facing sides of a
+        // flat one with each other.
+        if (!SampleClosedPolygonByAngle(projectedBoundaryPoints,boundary->GetPoints(),barycenter,flowExtensionNormal,baseRadialNormal,angle,0.0,targetNumberOfBoundaryPoints,rimBoundaryPoints)
+            || !SampleClosedPolygonByAngle(projectedBoundaryPoints,boundary->GetPoints(),barycenter,flowExtensionNormal,baseRadialNormal,angle,0.5,targetNumberOfBoundaryPoints,rimStaggeredBoundaryPoints))
+          {
+          vtkWarningMacro(<<"Boundary "<<i<<" is not star-shaped about its barycenter, pairing it with the extension by arc length instead of by angle");
+          rimBoundaryPoints->Initialize();
+          rimStaggeredBoundaryPoints->Initialize();
+          vtkPoints* discardedPoints = vtkPoints::New();
+          ResampleClosedPolygon(projectedBoundaryPoints,targetNumberOfBoundaryPoints,0.0,discardedPoints,boundary->GetPoints(),rimBoundaryPoints);
+          discardedPoints->Initialize();
+          ResampleClosedPolygon(projectedBoundaryPoints,targetNumberOfBoundaryPoints,0.5,discardedPoints,boundary->GetPoints(),rimStaggeredBoundaryPoints);
+          discardedPoints->Delete();
+          }
+        }
+      }
+
+    // Displacement taking each point of the target cross-section onto the point of the real
+    // boundary it is paired with. Fading it out over the transition length is what the ramp
+    // interpolation modes do, so the extension starts on the real boundary and reaches the target
+    // cross-section exactly at the end of the transition, whatever the shape of the boundary.
+    std::vector<double> displacement, staggeredDisplacement;
+
+    if (useRampInterpolation)
+      {
+      displacement.resize(3*targetNumberOfBoundaryPoints);
+      staggeredDisplacement.resize(3*targetNumberOfBoundaryPoints);
+      double targetPoint[3], rimPoint[3];
+      for (j=0; j<targetNumberOfBoundaryPoints; j++)
+        {
+        targetBoundaryPoints->GetPoint(j,targetPoint);
+        rimBoundaryPoints->GetPoint(j,rimPoint);
+        for (k=0; k<3; k++)
+          {
+          displacement[3*j+k] = rimPoint[k] - targetPoint[k];
+          }
+        targetStaggeredBoundaryPoints->GetPoint(j,targetPoint);
+        rimStaggeredBoundaryPoints->GetPoint(j,rimPoint);
+        for (k=0; k<3; k++)
+          {
+          staggeredDisplacement[3*j+k] = rimPoint[k] - targetPoint[k];
+          }
+        }
       }
 
     if (this->InterpolationMode == USE_THIN_PLATE_SPLINE_INTERPOLATION)
@@ -570,8 +728,9 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
       thinPlateSplineTransform->SetTargetLandmarks(targetLandmarks);
       }
 
+    double transitionLength = extensionLength * this->TransitionRatio;
     int numberOfLayers = extensionLength / targetDistanceBetweenPoints;
-    int numberOfTransitionLayers = (extensionLength * this->TransitionRatio) / targetDistanceBetweenPoints;
+    int numberOfTransitionLayers = transitionLength / targetDistanceBetweenPoints;
     int l;
     for (l=0; l<numberOfLayers; l++)
       {
@@ -592,12 +751,34 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
           }
         if (l<numberOfTransitionLayers)
           {
-          if (this->InterpolationMode == USE_LINEAR_INTERPOLATION)
-            {
-            }
-          else if (this->InterpolationMode == USE_THIN_PLATE_SPLINE_INTERPOLATION)
+          if (this->InterpolationMode == USE_THIN_PLATE_SPLINE_INTERPOLATION)
             {
             thinPlateSplineTransform->TransformPoint(extensionPoint,extensionPoint);
+            }
+          else
+            {
+            // fade the displacement onto the real boundary from full at the boundary to none at
+            // the end of the transition; since the whole displacement is scaled by the same
+            // weight, the transition spans exactly transitionLength however irregular the
+            // boundary is
+            double parametricHeight = (l+1) * targetDistanceBetweenPoints / transitionLength;
+            parametricHeight = parametricHeight > 1.0 ? 1.0 : parametricHeight;
+            double weight = 0.0;
+            if (this->InterpolationMode == USE_LINEAR_INTERPOLATION)
+              {
+              weight = 1.0 - parametricHeight;
+              }
+            else
+              {
+              // smoothstep, flat at both ends, so that the extension leaves the boundary
+              // tangentially and settles into the uniform tube without a crease
+              weight = 1.0 - parametricHeight * parametricHeight * (3.0 - 2.0 * parametricHeight);
+              }
+            const std::vector<double>& layerDisplacement = (l%2 != 0) ? displacement : staggeredDisplacement;
+            for (k=0; k<3; k++)
+              {
+              extensionPoint[k] += weight * layerDisplacement[3*j+k];
+              }
             }
           }
         pointId = outputPoints->InsertNextPoint(extensionPoint);
@@ -691,6 +872,8 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
     projectedBoundaryPoints->Delete();
     targetBoundaryPoints->Delete();
     targetStaggeredBoundaryPoints->Delete();
+    rimBoundaryPoints->Delete();
+    rimStaggeredBoundaryPoints->Delete();
     newBoundaryIds->Delete();
     previousBoundaryIds->Delete();
     boundaryIds->Delete();

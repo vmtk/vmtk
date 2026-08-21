@@ -57,8 +57,8 @@ class vmtkFlowExtensions(pypes.pypeScript):
             ['Centerlines','centerlines','vtkPolyData',1,'','','vmtksurfacereader'],
             ['ExtensionMode','extensionmode','str',1,'["centerlinedirection","boundarynormal"]','method for computing the normal for extension'],
             ['PreserveCrossSectionShape','preserveshape','bool',1,'','preserve the shape of the boundary cross-section instead of morphing it to a circle'],
-            ['InterpolationMode','interpolationmode','str',1,'["linear","thinplatespline"]','method for computing interpolation from the model section to the target section'],
-            ['Sigma','sigma','float',1,'(0.0,)','thin plate spline stiffness'],
+            ['InterpolationMode','interpolationmode','str',1,'["linear","thinplatespline","ramp"]','method for computing interpolation from the model section to the target section; thinplatespline is the default, kept for backward compatibility, while ramp gives a smoother transition of the length asked for by transitionratio, which makes a difference on strongly non-circular sections'],
+            ['Sigma','sigma','float',1,'(0.0,)','thin plate spline stiffness; only used by the thinplatespline interpolation mode'],
             ['AdaptiveExtensionLength','adaptivelength','bool',1],
             ['AdaptiveExtensionRadius','adaptiveradius','bool',1],
             ['AdaptiveNumberOfBoundaryPoints','adaptivepoints','bool',1],
@@ -182,6 +182,8 @@ class vmtkFlowExtensions(pypes.pypeScript):
             flowExtensionsFilter.SetInterpolationModeToLinear()
         elif self.InterpolationMode == "thinplatespline":
             flowExtensionsFilter.SetInterpolationModeToThinPlateSpline()
+        elif self.InterpolationMode == "ramp":
+            flowExtensionsFilter.SetInterpolationModeToRamp()
         if self.Interactive:
             flowExtensionsFilter.SetBoundaryIds(boundaryIds)
         flowExtensionsFilter.Update()
