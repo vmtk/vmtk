@@ -16,18 +16,23 @@ Program:   VMTK
 =========================================================================*/
 /**
  * @class   vtkvmtkPolyDataFlowExtensionsFilter
- * @brief   Extend open boundaries of a surface with straight (or centerline-following) tubes, tapering the cross-section to a circle.
+ * @brief   Extend open boundaries of a surface with straight (or centerline-following) tubes, tapering the cross-section to a target shape.
  * @ingroup ComputationalGeometry
  *
  * For each selected open boundary of the input surface, this filter appends a tubular extension that
  * grows outward from the boundary along a direction either estimated from the local centerline
  * tangent (ExtensionMode = USE_CENTERLINE_DIRECTION) or from the boundary's own normal (ExtensionMode
- * = USE_NORMAL_TO_BOUNDARY), and morphs the boundary's original (possibly irregular) cross-sectional
- * shape into a circular one over the initial TransitionRatio fraction of the extension, using either
- * linear or thin-plate-spline interpolation (InterpolationMode). This is the filter behind the
- * vmtkflowextensions pype script, which is typically used to add inlet/outlet flow extensions to a
- * vascular surface before CFD meshing, so that boundary conditions can be applied away from
- * geometrically complex regions and inlet/outlet flow profiles have room to develop/relax.
+ * = USE_NORMAL_TO_BOUNDARY). The extension is swept from a target cross-section, which is a circle by
+ * default, or the boundary's own outline when PreserveCrossSectionShape is on. The boundary's original
+ * (possibly irregular and non-planar) shape is morphed into the target cross-section over the initial
+ * TransitionRatio fraction of the extension, using either linear or thin-plate-spline interpolation
+ * (InterpolationMode). This is the filter behind the vmtkflowextensions pype script, which is typically
+ * used to add inlet/outlet flow extensions to a vascular surface before CFD meshing, so that boundary
+ * conditions can be applied away from geometrically complex regions and inlet/outlet flow profiles have
+ * room to develop/relax.
+ *
+ * The extension is left open: its last ring of points is the new inlet/outlet boundary, to be closed
+ * downstream (e.g. by vtkvmtkSimpleCapPolyData or vtkvmtkCapPolyData) if a closed surface is needed.
  *
  * @sa
  * vtkvmtkPolyDataBoundaryExtractor, vtkvmtkBoundaryReferenceSystems, vtkvmtkPolyBallLine
@@ -79,6 +84,8 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataFlowExtensionsFilter
   ///@{
   /**
    * Set/Get the absolute radius of the extension, used when AdaptiveExtensionRadius is off. Default: 1.0.
+   * When PreserveCrossSectionShape is on, the boundary outline is uniformly scaled so that its mean
+   * radius equals this value, rather than being replaced by a circle of this radius.
    */
   vtkSetMacro(ExtensionRadius,double);
   vtkGetMacro(ExtensionRadius,double);
@@ -87,8 +94,10 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataFlowExtensionsFilter
   ///@{
   /**
    * Set/Get the fraction of the extension length, starting from the original boundary, over which the
-   * cross-section is morphed from its original (possibly non-circular) shape into a circle. Beyond this
-   * fraction, the extension is a straight, uniform-radius tube. Default: 0.5.
+   * cross-section is morphed from its original shape into the target cross-section. Beyond this
+   * fraction, the extension is a straight, uniform tube. When PreserveCrossSectionShape is on, the
+   * target cross-section is the boundary's own outline, so the transition only reconciles the extension
+   * with the real, possibly oblique and non-planar rim. Default: 0.5.
    */
   vtkSetMacro(TransitionRatio,double);
   vtkGetMacro(TransitionRatio,double);
@@ -97,8 +106,9 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataFlowExtensionsFilter
   ///@{
   /**
    * Set/Get the stiffness parameter of the thin-plate-spline transform used to morph the boundary's
-   * cross-section into a circle when InterpolationMode is USE_THIN_PLATE_SPLINE_INTERPOLATION. Larger
-   * values produce a stiffer, less locally-deforming transform. Default: 1.0.
+   * cross-section into the target cross-section when InterpolationMode is
+   * USE_THIN_PLATE_SPLINE_INTERPOLATION. Larger values produce a stiffer, less locally-deforming
+   * transform. Default: 1.0.
    */
   vtkSetMacro(Sigma,double);
   vtkGetMacro(Sigma,double);
@@ -136,7 +146,21 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataFlowExtensionsFilter
 
   ///@{
   /**
-   * Set/Get the number of points used to discretize the (circular) cross-section of the extension,
+   * Toggle whether the extension keeps the cross-sectional shape of the boundary it grows from (on),
+   * or morphs it into a circle (off, default). When on, the target cross-section is the boundary
+   * outline projected onto the plane orthogonal to the extension direction, uniformly resampled by
+   * arc length, so that the area distribution of a non-circular inlet/outlet is not altered. Note
+   * that a strongly concave (non star-shaped) preserved outline may be difficult to cap downstream
+   * with barycenter-fan cappers, just like the original boundary it reproduces. Default: off.
+   */
+  vtkSetMacro(PreserveCrossSectionShape,int);
+  vtkGetMacro(PreserveCrossSectionShape,int);
+  vtkBooleanMacro(PreserveCrossSectionShape,int);
+  ///@}
+
+  ///@{
+  /**
+   * Set/Get the number of points used to discretize the target cross-section of the extension,
    * used when AdaptiveNumberOfBoundaryPoints is off. Default: 50.
    */
   vtkSetMacro(NumberOfBoundaryPoints,int);
@@ -145,8 +169,8 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataFlowExtensionsFilter
 
   ///@{
   /**
-   * Toggle whether the number of points used to discretize the extension's cross-section is taken
-   * equal to the number of points on the original boundary (on), or from NumberOfBoundaryPoints (off).
+   * Toggle whether the number of points used to discretize the extension's target cross-section is
+   * taken equal to the number of points on the original boundary (on), or from NumberOfBoundaryPoints (off).
    * Default: off.
    */
   vtkSetMacro(AdaptiveNumberOfBoundaryPoints,int);
@@ -183,7 +207,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataFlowExtensionsFilter
   ///@{
   /**
    * Set/Get the method used to morph the extension's cross-section from the original boundary shape
-   * into a circle over the TransitionRatio portion of the extension: USE_LINEAR_INTERPOLATION or
+   * into the target cross-section over the TransitionRatio portion of the extension: USE_LINEAR_INTERPOLATION or
    * USE_THIN_PLATE_SPLINE_INTERPOLATION (default). Use the SetInterpolationModeToLinear() /
    * SetInterpolationModeToThinPlateSpline() convenience methods instead of setting the integer value
    * directly.
@@ -227,6 +251,8 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataFlowExtensionsFilter
 
   int AdaptiveExtensionLength;
   int AdaptiveExtensionRadius;
+
+  int PreserveCrossSectionShape;
 
   int NumberOfBoundaryPoints;
   int AdaptiveNumberOfBoundaryPoints;
