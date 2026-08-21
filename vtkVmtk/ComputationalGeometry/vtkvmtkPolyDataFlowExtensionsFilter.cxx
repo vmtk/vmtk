@@ -34,6 +34,7 @@ Version:   $Revision: 1.12 $
 #include "vtkCellArray.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
+#include "vtkNew.h"
 #include "vtkObjectFactory.h"
 #include "vtkVersion.h"
 
@@ -252,22 +253,22 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
       }
     }
 
-  vtkPoints* outputPoints = vtkPoints::New();
-  vtkCellArray* outputPolys = vtkCellArray::New();
+  vtkNew<vtkPoints> outputPoints;
+  vtkNew<vtkCellArray> outputPolys;
 
   outputPoints->DeepCopy(input->GetPoints());
   outputPolys->DeepCopy(input->GetPolys());
 
-  vtkvmtkPolyDataBoundaryExtractor* boundaryExtractor = vtkvmtkPolyDataBoundaryExtractor::New();
+  vtkNew<vtkvmtkPolyDataBoundaryExtractor> boundaryExtractor;
   boundaryExtractor->SetInputData(input);
 
   boundaryExtractor->Update();
 
   vtkPolyData* boundaries = boundaryExtractor->GetOutput();
 
-  vtkPolyData* centerlines = vtkPolyData::New();
-  vtkvmtkPolyBallLine* tube = vtkvmtkPolyBallLine::New();
-  vtkDoubleArray* zeroRadiusArray = vtkDoubleArray::New();
+  vtkNew<vtkPolyData> centerlines;
+  vtkNew<vtkvmtkPolyBallLine> tube;
+  vtkNew<vtkDoubleArray> zeroRadiusArray;
 
   if (this->ExtensionMode == USE_CENTERLINE_DIRECTION)
     {
@@ -309,7 +310,7 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
 
     int numberOfBoundaryPoints = boundary->GetNumberOfPoints();
 
-    vtkIdList* boundaryIds = vtkIdList::New();
+    vtkNew<vtkIdList> boundaryIds;
     int j;
     for (j=0; j<numberOfBoundaryPoints; j++)
       {
@@ -447,7 +448,7 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
     // Project the boundary onto the plane through the barycenter orthogonal to the extension
     // direction. This is the outline the extension is swept from when PreserveCrossSectionShape
     // is on, and its mean radius is the extension radius when AdaptiveExtensionRadius is on.
-    vtkPoints* projectedBoundaryPoints = vtkPoints::New();
+    vtkNew<vtkPoints> projectedBoundaryPoints;
     double meanProjectedRadius = 0.0;
 
     double barycenterToPoint[3];
@@ -485,13 +486,11 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
     if (this->PreserveCrossSectionShape && meanProjectedRadius < 1E-4 * meanRadius)
       {
       vtkWarningMacro(<<"Degenerate boundary outline, skipping flow extension for boundary "<<i);
-      projectedBoundaryPoints->Delete();
-      boundaryIds->Delete();
       continue;
       }
 
-    vtkIdList* newBoundaryIds = vtkIdList::New();
-    vtkIdList* previousBoundaryIds = vtkIdList::New();
+    vtkNew<vtkIdList> newBoundaryIds;
+    vtkNew<vtkIdList> previousBoundaryIds;
     vtkIdType pointId;
 
     previousBoundaryIds->DeepCopy(boundaryIds);
@@ -506,23 +505,23 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
 
     double targetDistanceBetweenPoints = 0.0;
 
-    vtkThinPlateSplineTransform* thinPlateSplineTransform = vtkThinPlateSplineTransform::New();
+    vtkNew<vtkThinPlateSplineTransform> thinPlateSplineTransform;
     thinPlateSplineTransform->SetSigma(this->Sigma);
     thinPlateSplineTransform->SetBasisToR2LogR();
 //    thinPlateSplineTransform->SetBasisToR();
     
-    vtkPoints* sourceLandmarks = vtkPoints::New();
-    vtkPoints* targetLandmarks = vtkPoints::New();
+    vtkNew<vtkPoints> sourceLandmarks;
+    vtkNew<vtkPoints> targetLandmarks;
 
-    vtkPoints* targetBoundaryPoints = vtkPoints::New();
-    vtkPoints* targetStaggeredBoundaryPoints = vtkPoints::New();
+    vtkNew<vtkPoints> targetBoundaryPoints;
+    vtkNew<vtkPoints> targetStaggeredBoundaryPoints;
 
     // The ramp interpolation modes need, for each point of the target cross-section, the point of
     // the real boundary it grows from. The pairing is built along with the target cross-section
     // itself, so that it is ordered and one-to-one whatever the shape of the boundary.
     bool useRampInterpolation = (this->InterpolationMode == USE_LINEAR_INTERPOLATION) || (this->InterpolationMode == USE_RAMP_INTERPOLATION);
-    vtkPoints* rimBoundaryPoints = vtkPoints::New();
-    vtkPoints* rimStaggeredBoundaryPoints = vtkPoints::New();
+    vtkNew<vtkPoints> rimBoundaryPoints;
+    vtkNew<vtkPoints> rimStaggeredBoundaryPoints;
 
     int startNumberOfBoundaryPoints = numberOfBoundaryPoints;
 
@@ -533,8 +532,8 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
       // the samples follow the order of the boundary points, their winding matches the boundary's.
       // Sampling the boundary itself at the same stations pairs each target point with the point
       // it is the projection of.
-      vtkPoints* rimPoints = useRampInterpolation ? rimBoundaryPoints : nullptr;
-      vtkPoints* rimStaggeredPoints = useRampInterpolation ? rimStaggeredBoundaryPoints : nullptr;
+      vtkPoints* rimPoints = useRampInterpolation ? rimBoundaryPoints.GetPointer() : nullptr;
+      vtkPoints* rimStaggeredPoints = useRampInterpolation ? rimStaggeredBoundaryPoints.GetPointer() : nullptr;
       double perimeter = ResampleClosedPolygon(projectedBoundaryPoints,targetNumberOfBoundaryPoints,0.0,targetBoundaryPoints,boundary->GetPoints(),rimPoints);
       ResampleClosedPolygon(projectedBoundaryPoints,targetNumberOfBoundaryPoints,0.5,targetStaggeredBoundaryPoints,boundary->GetPoints(),rimStaggeredPoints);
 
@@ -594,7 +593,7 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
         }
       vtkMath::Normalize(baseRadialNormal);
       double angle = 360.0 / targetNumberOfBoundaryPoints;
-      vtkTransform* transform = vtkTransform::New();
+      vtkNew<vtkTransform> transform;
       transform->RotateWXYZ(0.5*angle,flowExtensionNormal);
       double testRadialNormal[3];
       transform->TransformPoint(baseRadialNormal,testRadialNormal);
@@ -642,7 +641,6 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
         targetStaggeredBoundaryPoints->InsertNextPoint(targetPoint);
         transform->TransformPoint(radialVector,radialVector);
         }
-      transform->Delete();
 
       if (useRampInterpolation)
         {
@@ -657,11 +655,10 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
           vtkWarningMacro(<<"Boundary "<<i<<" is not star-shaped about its barycenter, pairing it with the extension by arc length instead of by angle");
           rimBoundaryPoints->Initialize();
           rimStaggeredBoundaryPoints->Initialize();
-          vtkPoints* discardedPoints = vtkPoints::New();
+          vtkNew<vtkPoints> discardedPoints;
           ResampleClosedPolygon(projectedBoundaryPoints,targetNumberOfBoundaryPoints,0.0,discardedPoints,boundary->GetPoints(),rimBoundaryPoints);
           discardedPoints->Initialize();
           ResampleClosedPolygon(projectedBoundaryPoints,targetNumberOfBoundaryPoints,0.5,discardedPoints,boundary->GetPoints(),rimStaggeredBoundaryPoints);
-          discardedPoints->Delete();
           }
         }
       }
@@ -869,28 +866,10 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
       previousBoundaryIds->DeepCopy(newBoundaryIds);
       }
 
-    projectedBoundaryPoints->Delete();
-    targetBoundaryPoints->Delete();
-    targetStaggeredBoundaryPoints->Delete();
-    rimBoundaryPoints->Delete();
-    rimStaggeredBoundaryPoints->Delete();
-    newBoundaryIds->Delete();
-    previousBoundaryIds->Delete();
-    boundaryIds->Delete();
-    thinPlateSplineTransform->Delete();
-    sourceLandmarks->Delete();
-    targetLandmarks->Delete();
     }
 
   output->SetPoints(outputPoints);
   output->SetPolys(outputPolys);
-
-  outputPoints->Delete();
-  outputPolys->Delete();
-
-  tube->Delete();
-  zeroRadiusArray->Delete();
-  boundaryExtractor->Delete();
 
   return 1;
 }
