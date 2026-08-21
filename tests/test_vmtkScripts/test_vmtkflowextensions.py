@@ -16,14 +16,9 @@ import vmtk.vmtkflowextensions as flowextensions
 from vmtk import vtkvmtk
 
 
-@pytest.fixture(scope='module')
-def elliptic_tube():
-    '''An open-ended tube with a 2:1 elliptic cross-section, extruded along the z axis.
-
-    Its profiles depart from a circle much more than any of the test surfaces, which makes the
-    difference between a preserved and a circularized cross-section easy to measure.
-    '''
-    semiAxisX, semiAxisY, length = 2.0, 1.0, 6.0
+def elliptic_tube_surface(semiAxisX, semiAxisY):
+    '''An open-ended tube with an elliptic cross-section of the given semi-axes, extruded along z.'''
+    length = 6.0
     numberOfCircumferentialPoints, numberOfAxialPoints = 48, 12
     points = vtk.vtkPoints()
     polys = vtk.vtkCellArray()
@@ -44,6 +39,26 @@ def elliptic_tube():
     surface.SetPoints(points)
     surface.SetPolys(polys)
     return surface
+
+
+@pytest.fixture(scope='module')
+def elliptic_tube():
+    '''An open-ended tube with a 2:1 elliptic cross-section, extruded along the z axis.
+
+    Its profiles depart from a circle much more than any of the test surfaces, which makes the
+    difference between a preserved and a circularized cross-section easy to measure.
+    '''
+    return elliptic_tube_surface(2.0, 1.0)
+
+
+@pytest.fixture(scope='module')
+def flat_tube():
+    '''An open-ended tube with a 6:1 elliptic cross-section, extruded along the z axis.
+
+    Flat enough that most of what makes its profile that shape sits in the high circumferential
+    frequencies, which is where the transition interpolation modes differ.
+    '''
+    return elliptic_tube_surface(6.0, 1.0)
 
 
 def boundary_profiles(surface):
@@ -129,3 +144,81 @@ def test_cross_section_shape_is_preserved_along_a_centerline(aorta_surface_opene
         assert inputRatio > 1.1
         assert circularizedRatio == pytest.approx(1.0, rel=0.01)
         assert preservedRatio == pytest.approx(inputRatio, rel=0.2)
+
+
+def extension_ring_ratios(inputSurface, surface, numberOfRingPoints, numberOfRings):
+    '''Radius ratio of the first rings of the extension grown on the first open boundary.
+
+    The filter copies the input points first and then appends one ring of numberOfRingPoints points
+    per layer, boundary after boundary, so the rings of the first extension follow the input points
+    directly. Reading them one by one shows how the cross-section changes along the transition,
+    which the profile of the finished extension alone does not.
+    '''
+    firstExtensionPointId = inputSurface.GetNumberOfPoints()
+    ratios = []
+    for ring in range(numberOfRings):
+        points = [surface.GetPoint(firstExtensionPointId + ring * numberOfRingPoints + i)
+                  for i in range(numberOfRingPoints)]
+        barycenter = [sum(point[k] for point in points) / len(points) for k in range(3)]
+        radii = [math.sqrt(sum((point[k] - barycenter[k]) ** 2 for k in range(3))) for point in points]
+        ratios.append(max(radii) / min(radii))
+    return ratios
+
+
+# a transition resolved into enough layers for its profile to be read off ring by ring
+TRANSITION = dict(AdaptiveExtensionLength=0, ExtensionLength=6.0, TransitionRatio=0.5)
+
+
+def test_ramp_transition_starts_at_the_real_cross_section(flat_tube):
+    numberOfRingPoints = 200
+    options = dict(TargetNumberOfBoundaryPoints=numberOfRingPoints, **TRANSITION)
+
+    splined = extend(flat_tube, 0, InterpolationMode='thinplatespline', **options)
+    ramped = extend(flat_tube, 0, InterpolationMode='ramp', **options)
+
+    # The boundary is 6:1. The ramp fades the displacement onto it out from full, so the extension
+    # starts on it, while the thin plate spline reproduces it only where it is pinned and loses the
+    # high circumferential frequencies that make a section flat as soon as it moves away.
+    assert extension_ring_ratios(flat_tube, ramped, numberOfRingPoints, 1)[0] > 5.5
+    assert extension_ring_ratios(flat_tube, splined, numberOfRingPoints, 1)[0] < 4.5
+
+
+def test_ramp_transition_spans_the_requested_length(elliptic_tube):
+    numberOfRingPoints = 50
+    options = dict(TargetNumberOfBoundaryPoints=numberOfRingPoints, InterpolationMode='ramp',
+                   AdaptiveExtensionLength=0, ExtensionLength=6.0)
+
+    longTransition = extension_ring_ratios(
+        elliptic_tube, extend(elliptic_tube, 0, TransitionRatio=0.5, **options), numberOfRingPoints, 16)
+    shortTransition = extension_ring_ratios(
+        elliptic_tube, extend(elliptic_tube, 0, TransitionRatio=0.25, **options), numberOfRingPoints, 16)
+
+    # the cross-section goes from the boundary to the circle once, without turning back
+    assert all(longTransition[i] >= longTransition[i+1] for i in range(len(longTransition)-1))
+    # halving the transition halves the number of rings it takes: the short one is already a circle
+    # where the long one is only half way through
+    assert shortTransition[7] == pytest.approx(1.0, rel=0.01)
+    assert longTransition[7] > 1.3
+    assert longTransition[15] == pytest.approx(1.0, rel=0.01)
+
+
+def test_linear_interpolation_mode_blends(elliptic_tube):
+    numberOfRingPoints = 50
+    surface = extend(elliptic_tube, 0, InterpolationMode='linear',
+                     TargetNumberOfBoundaryPoints=numberOfRingPoints, **TRANSITION)
+
+    # the linear mode used to be an empty branch, which left the first ring the plain circle the
+    # extension is swept from, that is a ratio of 1
+    ratios = extension_ring_ratios(elliptic_tube, surface, numberOfRingPoints, 16)
+    assert ratios[0] > 1.8
+    assert ratios[15] == pytest.approx(1.0, rel=0.01)
+
+
+def test_ramp_leaves_a_preserved_cross_section_alone(elliptic_tube):
+    numberOfRingPoints = 50
+    surface = extend(elliptic_tube, 1, InterpolationMode='ramp',
+                     TargetNumberOfBoundaryPoints=numberOfRingPoints, **TRANSITION)
+
+    # nothing to morph: every ring, the transition included, is the 2:1 boundary outline
+    for ratio in extension_ring_ratios(elliptic_tube, surface, numberOfRingPoints, 8):
+        assert ratio == pytest.approx(2.0, rel=0.02)
