@@ -1,0 +1,80 @@
+name: Refresh CI caches
+
+# GitHub deletes any Actions cache entry that has not been *accessed* for 7 days.
+# The VTK and ITK builds that build-test-vmtk.yml depends on take about an hour
+# to recreate, so a quiet fortnight on master used to be enough to lose them and
+# make the next pull request pay for a full rebuild on all three platforms.
+#
+# This workflow does nothing but restore those cache entries on a schedule.
+# A restore counts as an access, so it resets the 7-day timer for the cost of a
+# download. Scheduled runs always use the default branch, so the entries that get
+# refreshed are the ones in the master scope - the only scope pull requests can
+# read from.
+#
+# Note that GitHub disables scheduled workflows in public repositories after
+# 60 days without repository activity, and that a cache that has already expired
+# cannot be refreshed: it has to be rebuilt by a run of build-test-vmtk.yml on
+# master, which can be started by hand from the Actions tab (workflow_dispatch).
+
+on:
+  schedule:
+    # Mondays and Thursdays. Twice a week rather than weekly so that the gap
+    # stays well under the 7-day expiry even when GitHub drops a scheduled run,
+    # which it is allowed to do when the scheduler is under load.
+    - cron: "0 5 * * 1,4"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  refresh:
+    name: Refresh caches (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        # Must match the runner labels used by build-test-vmtk.yml: the cache
+        # keys start with runner.os and runner.arch, so a different label would
+        # refresh a different entry (or none at all).
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      # These steps deliberately match on the key prefix instead of the full key.
+      # The prefix restore picks the most recently created matching entry, which
+      # is the one worth keeping alive, and it means this workflow does not have
+      # to be updated whenever the VTK, ITK or Python version in
+      # build-test-vmtk.yml changes.
+      - name: Refresh VTK cache
+        id: vtk
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            ${{ github.workspace }}/vtk-build
+            ${{ github.workspace }}/vtk-install
+          key: ${{ runner.os }}-${{ runner.arch }}-vtk-refresh-never-matches
+          restore-keys: |
+            ${{ runner.os }}-${{ runner.arch }}-vtk-
+
+      - name: Refresh ITK cache
+        id: itk
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            ${{ github.workspace }}/itk-build
+            ${{ github.workspace }}/itk-install
+          key: ${{ runner.os }}-${{ runner.arch }}-itk-refresh-never-matches
+          restore-keys: |
+            ${{ runner.os }}-${{ runner.arch }}-itk-
+
+      - name: Report
+        shell: bash
+        run: |
+          report() {
+            if [ -n "$2" ]; then
+              echo "$1 cache refreshed: $2"
+            else
+              echo "::warning::No $1 cache found for ${{ runner.os }}-${{ runner.arch }}. It has expired or was never created on master; run the 'Build and Test VMTK with VTK 9.6' workflow on master to recreate it."
+            fi
+          }
+          report VTK "${{ steps.vtk.outputs.cache-matched-key }}"
+          report ITK "${{ steps.itk.outputs.cache-matched-key }}"
