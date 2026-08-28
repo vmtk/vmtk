@@ -204,6 +204,7 @@ vtkvmtkPolyDataFlowExtensionsFilter::vtkvmtkPolyDataFlowExtensionsFilter()
   this->TransitionRatio = 0.5;
   this->ExtensionLength = 0.0;
   this->ExtensionRadius = 1.0;
+  this->ExtensionLengthScaleFactors = NULL;
   this->CenterlineNormalEstimationDistanceRatio = 1.0;
   this->AdaptiveExtensionLength = 1;
   this->AdaptiveExtensionRadius = 1;
@@ -228,6 +229,12 @@ vtkvmtkPolyDataFlowExtensionsFilter::~vtkvmtkPolyDataFlowExtensionsFilter()
     {
     this->BoundaryIds->Delete();
     this->BoundaryIds = NULL;
+    }
+
+  if (this->ExtensionLengthScaleFactors)
+    {
+    this->ExtensionLengthScaleFactors->Delete();
+    this->ExtensionLengthScaleFactors = NULL;
     }
 }
 
@@ -441,6 +448,11 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
     else
       {
       extensionLength = this->ExtensionLength;
+      }
+
+    if (this->ExtensionLengthScaleFactors && i < this->ExtensionLengthScaleFactors->GetNumberOfTuples())
+      {
+      extensionLength *= this->ExtensionLengthScaleFactors->GetValue(i);
       }
 
     double point[3], extensionPoint[3];
