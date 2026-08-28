@@ -37,6 +37,7 @@ class vmtkFlowExtensions(pypes.pypeScript):
         self.PreserveCrossSectionShape = 0
         self.ExtensionLength = 1.0
         self.ExtensionRatio = 10.0
+        self.ExtensionLengthScaleFactors = None
         self.ExtensionRadius = 1.0
         self.TransitionRatio = 0.25
         self.TargetNumberOfBoundaryPoints = 50
@@ -64,6 +65,7 @@ class vmtkFlowExtensions(pypes.pypeScript):
             ['AdaptiveNumberOfBoundaryPoints','adaptivepoints','bool',1],
             ['ExtensionLength','extensionlength','float',1,'(0.0,)'],
             ['ExtensionRatio','extensionratio','float',1,'(0.0,)'],
+            ['ExtensionLengthScaleFactors','extensionlengthscalefactors','float',-1,'(0.0,)','per-boundary scale factors applied to the extension length, indexed by boundary id; boundaries beyond the end of the list are not scaled'],
             ['ExtensionRadius','extensionradius','float',1,'(0.0,)'],
             ['TransitionRatio','transitionratio','float',1,'(0.0,)'],
             ['TargetNumberOfBoundaryPoints','boundarypoints','int',1,'(0,)'],
@@ -170,6 +172,11 @@ class vmtkFlowExtensions(pypes.pypeScript):
         flowExtensionsFilter.SetPreserveCrossSectionShape(self.PreserveCrossSectionShape)
         flowExtensionsFilter.SetExtensionLength(self.ExtensionLength)
         flowExtensionsFilter.SetExtensionRatio(self.ExtensionRatio)
+        if self.ExtensionLengthScaleFactors:
+            extensionLengthScaleFactors = vtk.vtkDoubleArray()
+            for scaleFactor in self.ExtensionLengthScaleFactors:
+                extensionLengthScaleFactors.InsertNextValue(scaleFactor)
+            flowExtensionsFilter.SetExtensionLengthScaleFactors(extensionLengthScaleFactors)
         flowExtensionsFilter.SetExtensionRadius(self.ExtensionRadius)
         flowExtensionsFilter.SetTransitionRatio(self.TransitionRatio)
         flowExtensionsFilter.SetCenterlineNormalEstimationDistanceRatio(self.CenterlineNormalEstimationDistanceRatio)

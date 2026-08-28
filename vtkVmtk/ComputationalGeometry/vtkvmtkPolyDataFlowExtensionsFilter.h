@@ -44,6 +44,7 @@ Program:   VMTK
 #include "vtkPolyDataAlgorithm.h"
 #include "vtkPolyData.h"
 #include "vtkIdList.h"
+#include "vtkDoubleArray.h"
 #include "vtkvmtkWin32Header.h"
 
 class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataFlowExtensionsFilter : public vtkPolyDataAlgorithm
@@ -79,6 +80,19 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataFlowExtensionsFilter
    */
   vtkSetMacro(ExtensionLength,double);
   vtkGetMacro(ExtensionLength,double);
+  ///@}
+
+  ///@{
+  /**
+   * Set/Get an optional per-boundary scale factor applied to the extension length. Entry i of the
+   * array multiplies the length of the extension grown from boundary i, where i is the boundary's
+   * id in the list of open boundaries extracted from the input (the same ids used in BoundaryIds),
+   * whether that length comes from ExtensionRatio times the boundary's mean radius or from
+   * ExtensionLength. A boundary whose id is beyond the end of the array, or all boundaries when the
+   * array is not set (default, NULL), get a factor of 1.0.
+   */
+  vtkSetObjectMacro(ExtensionLengthScaleFactors,vtkDoubleArray);
+  vtkGetObjectMacro(ExtensionLengthScaleFactors,vtkDoubleArray);
   ///@}
 
   ///@{
@@ -280,6 +294,8 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataFlowExtensionsFilter
   double ExtensionRatio;
   double ExtensionLength;
   double ExtensionRadius;
+
+  vtkDoubleArray* ExtensionLengthScaleFactors;
 
   double TransitionRatio;
   double Sigma;

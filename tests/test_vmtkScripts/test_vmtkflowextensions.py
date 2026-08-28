@@ -214,6 +214,36 @@ def test_linear_interpolation_mode_blends(elliptic_tube):
     assert ratios[15] == pytest.approx(1.0, rel=0.01)
 
 
+def extension_growths(inputSurface, surface):
+    '''How far the surface grew past the input at either end of the z axis, in ascending order.
+
+    The tube fixtures are extruded along z and extended along their boundary normals, so each
+    extension's length is the growth of the z extent on its side. Sorting makes the result
+    independent of the order the boundary extractor happens to number the two boundaries in.
+    '''
+    inputBounds = inputSurface.GetBounds()
+    bounds = surface.GetBounds()
+    return sorted([inputBounds[4] - bounds[4], bounds[5] - inputBounds[5]])
+
+
+def test_extension_length_scale_factors_scale_each_extension(elliptic_tube):
+    options = dict(AdaptiveExtensionLength=0, ExtensionLength=2.0)
+
+    unscaled = extension_growths(elliptic_tube, extend(elliptic_tube, 0, **options))
+    scaled = extension_growths(
+        elliptic_tube, extend(elliptic_tube, 0, ExtensionLengthScaleFactors=[2.0, 0.5], **options))
+    partial = extension_growths(
+        elliptic_tube, extend(elliptic_tube, 0, ExtensionLengthScaleFactors=[3.0], **options))
+
+    # extensions are built in whole layers, so lengths match the request only to within a layer
+    assert all(growth == pytest.approx(2.0, rel=0.1) for growth in unscaled)
+    assert scaled[0] == pytest.approx(0.5 * 2.0, rel=0.15)
+    assert scaled[1] == pytest.approx(2.0 * 2.0, rel=0.1)
+    # a boundary beyond the end of the list keeps its unscaled length
+    assert partial[0] == pytest.approx(2.0, rel=0.1)
+    assert partial[1] == pytest.approx(3.0 * 2.0, rel=0.1)
+
+
 def test_ramp_leaves_a_preserved_cross_section_alone(elliptic_tube):
     numberOfRingPoints = 50
     surface = extend(elliptic_tube, 1, InterpolationMode='ramp',
