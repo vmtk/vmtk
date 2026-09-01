@@ -26,6 +26,7 @@ Version:   $Revision: 1.5 $
 #include "vtkCellArray.h"
 #include "vtkPointData.h"
 #include "vtkCellData.h"
+#include "vtkDataArray.h"
 #include "vtkMath.h"
 #include "vtkPolyLine.h"
 #include "vtkLine.h"
@@ -45,6 +46,7 @@ vtkvmtkCapPolyData::vtkvmtkCapPolyData()
   this->InPlaneDisplacement = 1E-1;
   this->CapCenterIds = NULL;
   this->CellEntityIdsArrayName = NULL;
+  this->BoundaryCellEntityIds = NULL;
   this->CellEntityIdOffset = 1;
 }
 
@@ -64,6 +66,11 @@ vtkvmtkCapPolyData::~vtkvmtkCapPolyData()
     {
     delete[] this->CellEntityIdsArrayName;
     this->CellEntityIdsArrayName = NULL;
+    }
+  if (this->BoundaryCellEntityIds)
+    {
+    this->BoundaryCellEntityIds->Delete();
+    this->BoundaryCellEntityIds = NULL;
     }
 }
 
@@ -122,6 +129,10 @@ int vtkvmtkCapPolyData::RequestData(
       }
     }
 
+  // Ids the caller chose for the boundaries, used in place of the index-derived ones when deciding
+  // a cap's cell entity id (see BoundaryCellEntityIds).
+  bool useBoundaryCellEntityIds = markCells && this->BoundaryCellEntityIds;
+
   // Execute
   boundaryExtractor->SetInputData(input);
   boundaryExtractor->Update();
@@ -175,6 +186,14 @@ int vtkvmtkCapPolyData::RequestData(
     this->CapCenterIds->SetId(i,barycenterId);
 
     vtkIdType numberOfBoundaryPoints = boundary->GetNumberOfPoints();
+
+    vtkIdType capCellEntityId = i + 1 + this->CellEntityIdOffset;
+    if (useBoundaryCellEntityIds && i < this->BoundaryCellEntityIds->GetNumberOfIds()
+        && this->BoundaryCellEntityIds->GetId(i) >= 0)
+      {
+      capCellEntityId = this->BoundaryCellEntityIds->GetId(i);
+      }
+
     for (j=0; j<numberOfBoundaryPoints; j++)
       {
       trianglePoints[0] = static_cast<vtkIdType>(boundaries->GetPointData()->GetScalars()->GetTuple1(boundary->GetPointId(j)));
@@ -185,7 +204,7 @@ int vtkvmtkCapPolyData::RequestData(
 
       if (markCells)
         {
-        cellEntityIdsArray->InsertNextValue(i+1+this->CellEntityIdOffset);
+        cellEntityIdsArray->InsertNextValue(capCellEntityId);
         }
 
       }

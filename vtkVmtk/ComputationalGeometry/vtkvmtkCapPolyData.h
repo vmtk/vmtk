@@ -64,9 +64,10 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkCapPolyData : public vtkPoly
   ///@}
 
   ///@{
-  /*! Set/Get the name of the cell data array used to tag the newly created cap triangles with an
-      integer id, one distinct value per capped boundary (offset by CellEntityIdOffset, then further
-      offset by boundary index + 1). If the array already exists on the input, existing cell values
+  /*! Set/Get the name of the cell data array used to tag the cells of the output with an integer
+      id: the cells copied from the input all get CellEntityIdOffset, and each cap gets a distinct
+      id of its own, (boundary index + 1 + CellEntityIdOffset) by default or whatever
+      BoundaryCellEntityIds asks for. If the array already exists on the input, existing cell values
       are preserved and only the new cap cells are appended with the new tag. If left NULL (default),
       no cell entity id array is created. Commonly named "CellEntityIds". */
   vtkSetStringMacro(CellEntityIdsArrayName);
@@ -74,10 +75,39 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkCapPolyData : public vtkPoly
   ///@}
 
   ///@{
-  /*! Set/Get the base offset added to the ids written into CellEntityIdsArrayName. The id assigned
-      to the cap of the i-th processed boundary is (i + 1 + CellEntityIdOffset). Default: 1. */
+  /*! Set/Get the base offset of the ids written into CellEntityIdsArrayName. It is both the id left
+      on the cells copied from the input -- the wall, in a vascular surface -- and the base the cap
+      ids count up from: the cap of the i-th processed boundary gets (i + 1 + CellEntityIdOffset),
+      so the caps occupy the ids above the wall. A cap named by BoundaryCellEntityIds is the
+      exception: it takes that id as it stands, with no offset applied. Default: 1. */
   vtkSetMacro(CellEntityIdOffset,int);
   vtkGetMacro(CellEntityIdOffset,int);
+  ///@}
+
+  ///@{
+  /*! Set/Get the cell entity id to write into CellEntityIdsArrayName for the cap of each boundary,
+      in place of the (boundary index + 1 + CellEntityIdOffset) that boundary's position in the list
+      would give it. Indexed consistently with BoundaryIds -- entry i belongs to boundary i of the
+      list of open boundaries extracted from the input. A boundary whose entry is negative or beyond
+      the end of the list keeps the index-derived id, as does every boundary when this is not set
+      (default, NULL). Requires CellEntityIdsArrayName to be set; ignored otherwise.
+
+      The id given here is used as it stands: CellEntityIdOffset is not added to it. The offset still
+      applies to everything it is not asked about, so the three can appear side by side in one
+      output -- with an offset of 100 and entries [7, -1], the cells copied from the input get 100,
+      the first cap gets 7, and the second, left to its position, gets 102. Choosing an offset that
+      puts the derived ids clear of the chosen ones is what keeps a boundary the caller did not
+      account for from colliding with one it did.
+
+      The point of all this is that the boundary list is ordered by the boundary extractor, so a
+      cap's id otherwise depends on how the input happens to be meshed and on which other boundaries
+      exist, which is fragile for a caller that has to keep the same face numbering across runs. Note
+      that the ids here are indices into *this* filter's extraction of *its own* input: a caller that
+      grew flow extensions first has to carry its ids across that change with
+      vtkvmtkPolyDataFlowExtensionsFilter::GetOutputBoundaryIds(), since extending a boundary
+      replaces it and reorders the extraction. */
+  vtkSetObjectMacro(BoundaryCellEntityIds,vtkIdList);
+  vtkGetObjectMacro(BoundaryCellEntityIds,vtkIdList);
   ///@}
 
   ///@{
@@ -112,6 +142,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkCapPolyData : public vtkPoly
 
   vtkIdList* BoundaryIds;
   char* CellEntityIdsArrayName;
+  vtkIdList* BoundaryCellEntityIds;
   int CellEntityIdOffset;
 
   double Displacement;

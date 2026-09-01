@@ -28,7 +28,9 @@ Version:   $Revision: 1.12 $
 #include "vtkTransform.h"
 #include "vtkPolyLine.h"
 #include "vtkPointData.h"
+#include "vtkDataArray.h"
 #include "vtkDoubleArray.h"
+#include "vtkSmartPointer.h"
 #include "vtkIntArray.h"
 #include "vtkMath.h"
 #include "vtkCellArray.h"
@@ -212,6 +214,7 @@ vtkvmtkPolyDataFlowExtensionsFilter::vtkvmtkPolyDataFlowExtensionsFilter()
   this->NumberOfBoundaryPoints = 50;
   this->AdaptiveNumberOfBoundaryPoints = 0;
   this->BoundaryIds = NULL;
+  this->OutputBoundaryIds = NULL;
   this->Sigma = 1.0;
   this->SetExtensionModeToUseCenterlineDirection();
   this->SetInterpolationModeToThinPlateSpline();
@@ -235,6 +238,12 @@ vtkvmtkPolyDataFlowExtensionsFilter::~vtkvmtkPolyDataFlowExtensionsFilter()
     {
     this->ExtensionLengthScaleFactors->Delete();
     this->ExtensionLengthScaleFactors = NULL;
+    }
+
+  if (this->OutputBoundaryIds)
+    {
+    this->OutputBoundaryIds->Delete();
+    this->OutputBoundaryIds = NULL;
     }
 }
 
@@ -266,12 +275,32 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
   outputPoints->DeepCopy(input->GetPoints());
   outputPolys->DeepCopy(input->GetPolys());
 
+  if (this->OutputBoundaryIds)
+    {
+    this->OutputBoundaryIds->Delete();
+    this->OutputBoundaryIds = NULL;
+    }
+
   vtkNew<vtkvmtkPolyDataBoundaryExtractor> boundaryExtractor;
   boundaryExtractor->SetInputData(input);
 
   boundaryExtractor->Update();
 
   vtkPolyData* boundaries = boundaryExtractor->GetOutput();
+
+  // One slot per input boundary, holding an output point that lies on whatever boundary replaces
+  // it. The points copied above keep their input ids, so a boundary left alone is already answered
+  // by its own first point; a boundary that is extended is answered by its new tip ring below.
+  // These are only a means to the boundary ids published at the end (see OutputBoundaryIds).
+  std::vector<vtkIdType> replacementPointIds(boundaries->GetNumberOfCells(),-1);
+  for (vtkIdType boundaryIndex=0; boundaryIndex<boundaries->GetNumberOfCells(); boundaryIndex++)
+    {
+    vtkPolyLine* inputBoundary = vtkPolyLine::SafeDownCast(boundaries->GetCell(boundaryIndex));
+    if (inputBoundary && inputBoundary->GetNumberOfPoints() > 0)
+      {
+      replacementPointIds[boundaryIndex] = static_cast<vtkIdType>(vtkMath::Round(boundaries->GetPointData()->GetScalars()->GetComponent(inputBoundary->GetPointId(0),0)));
+      }
+    }
 
   vtkNew<vtkPolyData> centerlines;
   vtkNew<vtkvmtkPolyBallLine> tube;
@@ -323,6 +352,7 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
       {
       boundaryIds->InsertNextId(static_cast<vtkIdType>(vtkMath::Round(boundaries->GetPointData()->GetScalars()->GetComponent(boundary->GetPointId(j),0))));
       }
+
     
     double barycenter[3];
     double normal[3], outwardNormal[3];
@@ -450,9 +480,12 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
       extensionLength = this->ExtensionLength;
       }
 
-    if (this->ExtensionLengthScaleFactors && i < this->ExtensionLengthScaleFactors->GetNumberOfTuples())
+    if (this->ExtensionLengthScaleFactors)
       {
-      extensionLength *= this->ExtensionLengthScaleFactors->GetValue(i);
+      if (i < this->ExtensionLengthScaleFactors->GetNumberOfTuples())
+        {
+        extensionLength *= this->ExtensionLengthScaleFactors->GetValue(i);
+        }
       }
 
     double point[3], extensionPoint[3];
@@ -878,10 +911,58 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
       previousBoundaryIds->DeepCopy(newBoundaryIds);
       }
 
+    // previousBoundaryIds is now the last ring laid down, which is the new open boundary at the tip
+    // of this extension - or, when the extension was too short for a single layer, still the ids of
+    // the boundary this started from, which is then the right answer too.
+    if (previousBoundaryIds->GetNumberOfIds() > 0)
+      {
+      replacementPointIds[i] = previousBoundaryIds->GetId(0);
+      }
     }
 
   output->SetPoints(outputPoints);
   output->SetPolys(outputPolys);
+
+  // Where each input boundary ended up, as an id into the output's own boundary extraction, so that
+  // a downstream filter indexing boundaries the same way can be told which is which. The output is
+  // extracted here rather than left to the caller because only this filter knows which of the new
+  // points belong to which extension.
+  this->OutputBoundaryIds = vtkIdList::New();
+  this->OutputBoundaryIds->SetNumberOfIds(boundaries->GetNumberOfCells());
+  for (vtkIdType boundaryIndex=0; boundaryIndex<boundaries->GetNumberOfCells(); boundaryIndex++)
+    {
+    this->OutputBoundaryIds->SetId(boundaryIndex,-1);
+    }
+
+  vtkNew<vtkvmtkPolyDataBoundaryExtractor> outputBoundaryExtractor;
+  outputBoundaryExtractor->SetInputData(output);
+  outputBoundaryExtractor->Update();
+  vtkPolyData* outputBoundaries = outputBoundaryExtractor->GetOutput();
+  vtkDataArray* outputBoundaryPointIds = outputBoundaries->GetPointData()->GetScalars();
+  if (outputBoundaryPointIds)
+    {
+    for (vtkIdType outputBoundaryIndex=0; outputBoundaryIndex<outputBoundaries->GetNumberOfCells(); outputBoundaryIndex++)
+      {
+      vtkPolyLine* outputBoundary = vtkPolyLine::SafeDownCast(outputBoundaries->GetCell(outputBoundaryIndex));
+      if (!outputBoundary)
+        {
+        continue;
+        }
+      vtkNew<vtkIdList> outputBoundaryIds;
+      for (vtkIdType j2=0; j2<outputBoundary->GetNumberOfPoints(); j2++)
+        {
+        outputBoundaryIds->InsertNextId(static_cast<vtkIdType>(vtkMath::Round(outputBoundaryPointIds->GetTuple1(outputBoundary->GetPointId(j2)))));
+        }
+      for (vtkIdType boundaryIndex=0; boundaryIndex<static_cast<vtkIdType>(replacementPointIds.size()); boundaryIndex++)
+        {
+        if (replacementPointIds[boundaryIndex] >= 0
+            && outputBoundaryIds->IsId(replacementPointIds[boundaryIndex]) != -1)
+          {
+          this->OutputBoundaryIds->SetId(boundaryIndex,outputBoundaryIndex);
+          }
+        }
+      }
+    }
 
   return 1;
 }

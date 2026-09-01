@@ -38,6 +38,7 @@ class vmtkFlowExtensions(pypes.pypeScript):
         self.ExtensionLength = 1.0
         self.ExtensionRatio = 10.0
         self.ExtensionLengthScaleFactors = None
+        self.OutputBoundaryIds = None
         self.ExtensionRadius = 1.0
         self.TransitionRatio = 0.25
         self.TargetNumberOfBoundaryPoints = 50
@@ -76,7 +77,8 @@ class vmtkFlowExtensions(pypes.pypeScript):
             ])
         self.SetOutputMembers([
             ['Surface','o','vtkPolyData',1,'','','vmtksurfacewriter'],
-            ['Centerlines','centerlines','vtkPolyData',1]
+            ['Centerlines','centerlines','vtkPolyData',1],
+            ['OutputBoundaryIds','outputboundaryids','int',-1,'','where each open boundary of the input ended up in the output: entry i is the id of the boundary that replaced boundary i, in the boundaries extracted from the output. Extending a boundary replaces it, so this is what a downstream script indexing boundaries by id (vmtksurfacecapper, say) needs to be given the same boundaries back']
             ])
 
     def LabelValidator(self,text):
@@ -196,6 +198,9 @@ class vmtkFlowExtensions(pypes.pypeScript):
         flowExtensionsFilter.Update()
 
         self.Surface = flowExtensionsFilter.GetOutput()
+
+        outputBoundaryIds = flowExtensionsFilter.GetOutputBoundaryIds()
+        self.OutputBoundaryIds = [outputBoundaryIds.GetId(i) for i in range(outputBoundaryIds.GetNumberOfIds())]
 
 
 if __name__=='__main__':

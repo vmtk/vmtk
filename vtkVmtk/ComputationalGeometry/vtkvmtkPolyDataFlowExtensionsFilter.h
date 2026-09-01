@@ -84,12 +84,13 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataFlowExtensionsFilter
 
   ///@{
   /**
-   * Set/Get an optional per-boundary scale factor applied to the extension length. Entry i of the
-   * array multiplies the length of the extension grown from boundary i, where i is the boundary's
-   * id in the list of open boundaries extracted from the input (the same ids used in BoundaryIds),
-   * whether that length comes from ExtensionRatio times the boundary's mean radius or from
-   * ExtensionLength. A boundary whose id is beyond the end of the array, or all boundaries when the
-   * array is not set (default, NULL), get a factor of 1.0.
+   * Set/Get an optional per-boundary scale factor applied to the extension length, whether that
+   * length comes from ExtensionRatio times the boundary's mean radius or from ExtensionLength.
+   *
+   * Entry i multiplies the length of the extension grown from boundary i, where i is the boundary's
+   * id in the list of open boundaries extracted from the input (the same ids used in BoundaryIds).
+   * A boundary whose id is beyond the end of the array, and every boundary when the array is not
+   * set (default, NULL), get a factor of 1.0.
    */
   vtkSetObjectMacro(ExtensionLengthScaleFactors,vtkDoubleArray);
   vtkGetObjectMacro(ExtensionLengthScaleFactors,vtkDoubleArray);
@@ -216,6 +217,23 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataFlowExtensionsFilter
   vtkGetObjectMacro(BoundaryIds,vtkIdList);
   ///@}
 
+  /**
+   * Get where each open boundary of the input ended up in the output: entry i is the id of the
+   * boundary of the output surface that replaced boundary i of the input, in the list of open
+   * boundaries extracted from the output -- so that a downstream filter that indexes boundaries the
+   * way this one does (vtkvmtkCapPolyData and the other cappers, through their own BoundaryIds) can
+   * still be told which boundary is which.
+   *
+   * Extending a boundary replaces it: the new open boundary at the tip of the extension is made of
+   * new points, several radii from the original, and the boundary extraction order of the output is
+   * not the input's. A boundary that was not extended still appears here, mapped to wherever it now
+   * falls in that order. Entry i is -1 if boundary i has no counterpart in the output.
+   *
+   * Indexed consistently with BoundaryIds, like the input boundary ids everywhere else in this
+   * filter. Valid only after Update() has been called.
+   */
+  vtkGetObjectMacro(OutputBoundaryIds,vtkIdList);
+
   ///@{
   /**
    * Set/Get the method used to compute the direction along which each boundary is extended: either
@@ -314,6 +332,8 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataFlowExtensionsFilter
   int InterpolationMode;
 
   vtkIdList* BoundaryIds;
+
+  vtkIdList* OutputBoundaryIds;
 
   private:
   vtkvmtkPolyDataFlowExtensionsFilter(const vtkvmtkPolyDataFlowExtensionsFilter&);  // Not implemented.

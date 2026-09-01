@@ -86,7 +86,7 @@ def boundary_profiles(surface):
     return profiles
 
 
-def extend(surface, preserveshape, centerlines=None, **kwargs):
+def run_extensions(surface, preserveshape, centerlines=None, **kwargs):
     extensions = flowextensions.vmtkFlowExtensions()
     extensions.Surface = surface
     extensions.PreserveCrossSectionShape = preserveshape
@@ -99,7 +99,11 @@ def extend(surface, preserveshape, centerlines=None, **kwargs):
     for name, value in kwargs.items():
         setattr(extensions, name, value)
     extensions.Execute()
-    return extensions.Surface
+    return extensions
+
+
+def extend(surface, preserveshape, centerlines=None, **kwargs):
+    return run_extensions(surface, preserveshape, centerlines, **kwargs).Surface
 
 
 def test_extensions_are_appended_to_the_surface(elliptic_tube):
@@ -252,3 +256,70 @@ def test_ramp_leaves_a_preserved_cross_section_alone(elliptic_tube):
     # nothing to morph: every ring, the transition included, is the 2:1 boundary outline
     for ratio in extension_ring_ratios(elliptic_tube, surface, numberOfRingPoints, 8):
         assert ratio == pytest.approx(2.0, rel=0.02)
+
+
+def boundary_barycenters(surface):
+    '''The barycenter of each open boundary, in boundary extraction order.'''
+    boundaryExtractor = vtkvmtk.vtkvmtkPolyDataBoundaryExtractor()
+    boundaryExtractor.SetInputData(surface)
+    boundaryExtractor.Update()
+    boundaries = boundaryExtractor.GetOutput()
+    barycenters = []
+    for i in range(boundaries.GetNumberOfCells()):
+        barycenter = [0.0, 0.0, 0.0]
+        vtkvmtk.vtkvmtkBoundaryReferenceSystems.ComputeBoundaryBarycenter(
+            boundaries.GetCell(i).GetPoints(), barycenter)
+        barycenters.append(barycenter)
+    return barycenters
+
+
+def test_output_boundary_ids_account_for_every_boundary(elliptic_tube):
+    extensions = run_extensions(elliptic_tube, 0, AdaptiveExtensionLength=0, ExtensionLength=2.0)
+
+    # the tube has two open boundaries, and each is replaced by the one at the tip of its extension
+    assert len(extensions.OutputBoundaryIds) == len(boundary_barycenters(elliptic_tube)) == 2
+    assert sorted(extensions.OutputBoundaryIds) == [0, 1]
+
+
+def test_output_boundary_ids_point_at_the_boundary_that_replaced_each_one(elliptic_tube):
+    extensions = run_extensions(elliptic_tube, 0, AdaptiveExtensionLength=0, ExtensionLength=2.0)
+
+    before = boundary_barycenters(elliptic_tube)
+    after = boundary_barycenters(extensions.Surface)
+    # the tube is extruded along z and extended along its boundary normals, so a boundary and its
+    # replacement sit on the same axis, the replacement 2 mm further out
+    for boundaryId, outputBoundaryId in enumerate(extensions.OutputBoundaryIds):
+        assert after[outputBoundaryId][0] == pytest.approx(before[boundaryId][0], abs=1e-6)
+        assert after[outputBoundaryId][1] == pytest.approx(before[boundaryId][1], abs=1e-6)
+        assert abs(after[outputBoundaryId][2] - before[boundaryId][2]) == pytest.approx(2.0, rel=0.1)
+
+
+def test_output_boundary_ids_are_not_simply_the_input_ids(elliptic_tube):
+    # Extending one boundary of two leaves the other where it is, so it is met first when the output
+    # is walked for boundaries and the ids no longer line up with the input: the case a caller that
+    # assumed the extraction order was preserved would get wrong.
+    before = boundary_barycenters(elliptic_tube)
+    mappings = []
+    for extendOnly in range(len(before)):
+        boundaryIds = vtk.vtkIdList()
+        boundaryIds.InsertNextId(extendOnly)
+        extensionsFilter = vtkvmtk.vtkvmtkPolyDataFlowExtensionsFilter()
+        extensionsFilter.SetInputData(elliptic_tube)
+        extensionsFilter.SetExtensionModeToUseNormalToBoundary()
+        extensionsFilter.SetAdaptiveExtensionLength(0)
+        extensionsFilter.SetExtensionLength(2.0)
+        extensionsFilter.SetAdaptiveExtensionRadius(1)
+        extensionsFilter.SetBoundaryIds(boundaryIds)
+        extensionsFilter.Update()
+
+        reported = extensionsFilter.GetOutputBoundaryIds()
+        mapping = [reported.GetId(i) for i in range(reported.GetNumberOfIds())]
+        mappings.append(mapping)
+
+        assert sorted(mapping) == list(range(len(before)))
+        after = boundary_barycenters(extensionsFilter.GetOutput())
+        for boundaryId, outputBoundaryId in enumerate(mapping):
+            grown = abs(after[outputBoundaryId][2] - before[boundaryId][2])
+            assert grown == pytest.approx(2.0 if boundaryId == extendOnly else 0.0, abs=0.3)
+
+    assert any(mapping != list(range(len(before))) for mapping in mappings)

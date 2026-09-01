@@ -31,6 +31,7 @@ class vmtkSurfaceCapper(pypes.pypeScript):
         self.TriangleOutput = 1
         self.CellEntityIdsArrayName = 'CellEntityIds'
         self.CellEntityIdOffset = 1
+        self.CellEntityIds = None
         self.Interactive = 1
         self.Method = 'simple'
         self.ConstraintFactor = 1.0
@@ -46,7 +47,8 @@ class vmtkSurfaceCapper(pypes.pypeScript):
             ['Method','method','str',1,'["simple","centerpoint","smooth","annular","concaveannular"]','capping method'],
             ['TriangleOutput','triangle','bool',1,'','toggle triangulation of the output'],
             ['CellEntityIdsArrayName','entityidsarray','str',1,'','name of the array where the id of the caps have to be stored'],
-            ['CellEntityIdOffset','entityidoffset','int',1,'(0,)','offset for entity ids'],
+            ['CellEntityIdOffset','entityidoffset','int',1,'(0,)','base offset for entity ids: the id left on the cells of the input surface, and the base the cap ids count up from, the cap of boundary i getting i+1+entityidoffset. A cap named by cellentityids is the exception, taking that id with no offset applied'],
+            ['CellEntityIds','cellentityids','int',-1,'','the entity id to give the cap of each boundary, indexed by boundary id, in place of the id its position in the list would give it; -1 leaves a boundary with that positional id, as do boundaries beyond the end of the list ("centerpoint" method only). The id is used as it stands, with entityidoffset not added to it, while every boundary not named here still counts up from that offset - so pick an offset that keeps the two apart. Use this to keep the same id on the same inlet or outlet across runs, since the order boundaries are extracted in depends on how the surface happens to be meshed; for a surface that has been extended first, vmtkflowextensions reports in outputboundaryids where each boundary went'],
             ['ConstraintFactor','constraint','float',1,'','amount of influence of the shape of the surface near the boundary on the shape of the cap ("smooth" method only)'],
             ['NumberOfRings','rings','int',1,'(0,)','number of rings composing the cap ("smooth" method only)'],
             ['Interactive','interactive','bool',1],
@@ -172,6 +174,14 @@ class vmtkSurfaceCapper(pypes.pypeScript):
 
         if self.Interactive:
             capper.SetBoundaryIds(boundaryIds)
+        if self.CellEntityIds:
+            if not hasattr(capper,'SetBoundaryCellEntityIds'):
+                self.PrintError('Error: cellentityids is only supported by the centerpoint capping method.')
+            else:
+                boundaryCellEntityIds = vtk.vtkIdList()
+                for cellEntityId in self.CellEntityIds:
+                    boundaryCellEntityIds.InsertNextId(cellEntityId)
+                capper.SetBoundaryCellEntityIds(boundaryCellEntityIds)
         capper.SetCellEntityIdsArrayName(self.CellEntityIdsArrayName)
         capper.SetCellEntityIdOffset(self.CellEntityIdOffset)
         capper.Update()
