@@ -38,6 +38,8 @@ class vmtkFlowExtensions(pypes.pypeScript):
         self.ExtensionLength = 1.0
         self.ExtensionRatio = 10.0
         self.ExtensionLengthScaleFactors = None
+        self.BoundaryLabelsArrayName = ''
+        self.BoundaryPointOrderArrayName = ''
         self.ExtensionRadius = 1.0
         self.TransitionRatio = 0.25
         self.TargetNumberOfBoundaryPoints = 50
@@ -65,7 +67,9 @@ class vmtkFlowExtensions(pypes.pypeScript):
             ['AdaptiveNumberOfBoundaryPoints','adaptivepoints','bool',1],
             ['ExtensionLength','extensionlength','float',1,'(0.0,)'],
             ['ExtensionRatio','extensionratio','float',1,'(0.0,)'],
-            ['ExtensionLengthScaleFactors','extensionlengthscalefactors','float',-1,'(0.0,)','per-boundary scale factors applied to the extension length, indexed by boundary id; boundaries beyond the end of the list are not scaled'],
+            ['ExtensionLengthScaleFactors','extensionlengthscalefactors','float',-1,'(0.0,)','per-boundary scale factors applied to the extension length, indexed by boundary id, which is the boundary label when boundarylabelsarray is in use and the position in the extraction order otherwise; boundaries beyond the end of the list are not scaled'],
+            ['BoundaryLabelsArrayName','boundarylabelsarray','str',1,'','name of the point data array holding the boundary labels written by vmtkboundarylabeler; when set together with boundarypointorderarray the boundaries are read from the labels rather than extracted, and each extension carries its boundary label to the new boundary at its tip'],
+            ['BoundaryPointOrderArrayName','boundarypointorderarray','str',1,'','name of the point data array holding the position of each point within its own boundary, written by vmtkboundarylabeler alongside boundarylabelsarray'],
             ['ExtensionRadius','extensionradius','float',1,'(0.0,)'],
             ['TransitionRatio','transitionratio','float',1,'(0.0,)'],
             ['TargetNumberOfBoundaryPoints','boundarypoints','int',1,'(0,)'],
@@ -172,6 +176,9 @@ class vmtkFlowExtensions(pypes.pypeScript):
         flowExtensionsFilter.SetPreserveCrossSectionShape(self.PreserveCrossSectionShape)
         flowExtensionsFilter.SetExtensionLength(self.ExtensionLength)
         flowExtensionsFilter.SetExtensionRatio(self.ExtensionRatio)
+        if self.BoundaryLabelsArrayName and self.BoundaryPointOrderArrayName:
+            flowExtensionsFilter.SetBoundaryLabelsArrayName(self.BoundaryLabelsArrayName)
+            flowExtensionsFilter.SetBoundaryPointOrderArrayName(self.BoundaryPointOrderArrayName)
         if self.ExtensionLengthScaleFactors:
             extensionLengthScaleFactors = vtk.vtkDoubleArray()
             for scaleFactor in self.ExtensionLengthScaleFactors:

@@ -85,14 +85,35 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataFlowExtensionsFilter
   ///@{
   /**
    * Set/Get an optional per-boundary scale factor applied to the extension length. Entry i of the
-   * array multiplies the length of the extension grown from boundary i, where i is the boundary's
-   * id in the list of open boundaries extracted from the input (the same ids used in BoundaryIds),
-   * whether that length comes from ExtensionRatio times the boundary's mean radius or from
-   * ExtensionLength. A boundary whose id is beyond the end of the array, or all boundaries when the
-   * array is not set (default, NULL), get a factor of 1.0.
+   * array multiplies the length of the extension grown from the boundary whose id is i (the same
+   * ids used in BoundaryIds), whether that length comes from ExtensionRatio times the boundary's
+   * mean radius or from ExtensionLength. A boundary whose id is beyond the end of the array, or
+   * all boundaries when the array is not set (default, NULL), get a factor of 1.0.
    */
   vtkSetObjectMacro(ExtensionLengthScaleFactors,vtkDoubleArray);
   vtkGetObjectMacro(ExtensionLengthScaleFactors,vtkDoubleArray);
+  ///@}
+
+  ///@{
+  /**
+   * Set/Get the names of the point data arrays that carry the boundary labels of the input, as
+   * written by vtkvmtkPolyDataBoundaryLabeler. When both are set and the input carries arrays
+   * that still describe it, the boundaries are read from them instead of being extracted, and
+   * the same arrays are written on the output, with the label of each extended boundary carried
+   * over to the new boundary at the tip of its extension. That is what lets a caller name a
+   * vessel end once and still be talking about the same end after the extension has replaced
+   * the boundary it grew from.
+   *
+   * Setting them also settles what a boundary id means everywhere else in this filter: with the
+   * labels in use a boundary's id is its label, and without them it is the boundary's position
+   * in the order the extractor returns, which is what it has always been. So BoundaryIds and
+   * ExtensionLengthScaleFactors are read the same way either way, and a caller that labels its
+   * surface gets ids that survive the filters in between without having to say so twice.
+   */
+  vtkSetStringMacro(BoundaryLabelsArrayName);
+  vtkGetStringMacro(BoundaryLabelsArrayName);
+  vtkSetStringMacro(BoundaryPointOrderArrayName);
+  vtkGetStringMacro(BoundaryPointOrderArrayName);
   ///@}
 
   ///@{
@@ -208,9 +229,11 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataFlowExtensionsFilter
 
   ///@{
   /**
-   * Set/Get the ids (into the list of open boundaries extracted from the input, in the order returned
-   * by vtkvmtkPolyDataBoundaryExtractor) of the boundaries to extend. If not set (default, NULL),
-   * every open boundary of the input surface is extended.
+   * Set/Get the ids of the boundaries to extend. If not set (default, NULL), every open boundary
+   * of the input surface is extended. A boundary's id is its label when BoundaryLabelsArrayName
+   * and BoundaryPointOrderArrayName are set and the input carries those arrays, and otherwise its
+   * position in the list of open boundaries extracted from the input, in the order returned by
+   * vtkvmtkPolyDataBoundaryExtractor.
    */
   vtkSetObjectMacro(BoundaryIds,vtkIdList);
   vtkGetObjectMacro(BoundaryIds,vtkIdList);
@@ -296,6 +319,8 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataFlowExtensionsFilter
   double ExtensionRadius;
 
   vtkDoubleArray* ExtensionLengthScaleFactors;
+  char* BoundaryLabelsArrayName;
+  char* BoundaryPointOrderArrayName;
 
   double TransitionRatio;
   double Sigma;
