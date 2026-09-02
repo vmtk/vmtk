@@ -168,7 +168,7 @@ def test_cap_takes_the_id_chosen_for_its_label(tube):
     assert capZ[107] == pytest.approx(TUBE_LENGTH)
 
 
-def test_cap_keeps_its_positional_id_where_none_was_chosen(tube):
+def test_cap_keeps_its_label_where_no_id_was_chosen(tube):
     wallCellCount = tube.GetNumberOfCells()
     surface = labeled(tube, [0, 1])
 
@@ -176,11 +176,12 @@ def test_cap_keeps_its_positional_id_where_none_was_chosen(tube):
                  BoundaryCellEntityIds=[-1, 55])
 
     capZ = cap_z_by_entity_id(capped, wallCellCount)
-    # the boundary labeled 1 took the id it was given, and the one labeled 0, whose entry is
-    # negative, kept the id its position gives it: 0 + 1 + CellEntityIdOffset
+    # the boundary labeled 1 took the id it was given; the one labeled 0, whose entry is
+    # negative, kept its own label, which names it just as well
     assert 55 in capZ
     assert capZ[55] == pytest.approx(TUBE_LENGTH)
-    assert 0 + 1 + 1 in capZ
+    assert 0 in capZ
+    assert capZ[0] == pytest.approx(0.0)
 
 
 def test_a_chosen_id_is_free_of_the_offset(tube):

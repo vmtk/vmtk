@@ -113,8 +113,9 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkSmoothCapPolyData : public vtkPolyDataAlgorith
    * the way boundary ids are indexed everywhere else here (see BoundaryIds): entry i is the id
    * given to the cap closing the boundary whose id is i.
    *
-   * An id beyond the end of the array, or one whose entry is negative, keeps the id the
-   * boundary's position would have given it. An id chosen here is used as it stands, with
+   * An id beyond the end of the array, or one whose entry is negative, is no entry at all: with
+   * the labels in use that cap keeps its boundary's label, and without them the id its position
+   * would have given it. An id chosen here is used as it stands, with
    * CellEntityIdOffset not added to it, while the offset still lands on the cells copied from
    * the input and on any boundary left to its positional id.
    */
@@ -155,7 +156,7 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkSmoothCapPolyData : public vtkPolyDataAlgorith
 
   /// The id to tag the cap of a boundary with: the one BoundaryCellEntityIds chose for it, or
   /// the one its position gives it.
-  vtkIdType CapCellEntityId(vtkIdType boundaryIndex, vtkIdType boundaryId);
+  vtkIdType CapCellEntityId(vtkIdType boundaryIndex, vtkIdType boundaryId, bool useBoundaryLabels);
 
   vtkIdList* BoundaryIds;
   char* BoundaryLabelsArrayName;

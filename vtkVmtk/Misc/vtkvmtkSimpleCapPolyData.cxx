@@ -151,7 +151,9 @@ int vtkvmtkSimpleCapPolyData::RequestData(
       // An id the caller chose for this boundary is used as it stands; CellEntityIdOffset is
       // what moves the ids this filter derives itself out of the way of the input's, and has
       // no business shifting one that was picked deliberately.
-      vtkIdType capCellEntityId = i+1+this->CellEntityIdOffset;
+      // With the labels in use the boundary's label is its name, so it is also the cap's id
+      // unless the caller chose another; neither is shifted by CellEntityIdOffset.
+      vtkIdType capCellEntityId = useBoundaryLabels ? boundaryId : i+1+this->CellEntityIdOffset;
       if (this->BoundaryCellEntityIds
           && boundaryId < this->BoundaryCellEntityIds->GetNumberOfTuples()
           && this->BoundaryCellEntityIds->GetValue(boundaryId) >= 0)

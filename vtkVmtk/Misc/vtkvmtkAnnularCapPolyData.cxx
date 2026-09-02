@@ -348,7 +348,7 @@ int vtkvmtkAnnularCapPolyData::RequestData(
         vtkIdType boundaryId = useBoundaryLabels ? boundaryLabels->GetId(i) : i;
         vtkIdType partnerBoundaryId = useBoundaryLabels ? boundaryLabels->GetId(boundaryPairings->GetId(i)) : boundaryPairings->GetId(i);
         cellEntityIdsArray->InsertNextValue(
-          this->PairCapCellEntityId(i+1+this->CellEntityIdOffset,boundaryId,partnerBoundaryId));
+          this->PairCapCellEntityId(i+1+this->CellEntityIdOffset,boundaryId,partnerBoundaryId,useBoundaryLabels));
         }
       }
 
@@ -377,11 +377,17 @@ int vtkvmtkAnnularCapPolyData::RequestData(
   return 1;
 }
 
-vtkIdType vtkvmtkAnnularCapPolyData::PairCapCellEntityId(vtkIdType positionalId, vtkIdType boundaryId, vtkIdType partnerBoundaryId)
+vtkIdType vtkvmtkAnnularCapPolyData::PairCapCellEntityId(vtkIdType positionalId, vtkIdType boundaryId, vtkIdType partnerBoundaryId, bool useBoundaryLabels)
 {
+  // With the labels in use a boundary's label is its name, so the pair is named by the
+  // lower of its two labels -- the inner boundary, when the surface was labelled in annular
+  // mode -- unless the caller chose an id for it. Without them there is only position.
+  vtkIdType unchosenId = useBoundaryLabels
+    ? (boundaryId < partnerBoundaryId ? boundaryId : partnerBoundaryId)
+    : positionalId;
   if (!this->BoundaryCellEntityIds)
     {
-    return positionalId;
+    return unchosenId;
     }
 
   vtkIdType lowerId = boundaryId < partnerBoundaryId ? boundaryId : partnerBoundaryId;
@@ -408,7 +414,7 @@ vtkIdType vtkvmtkAnnularCapPolyData::PairCapCellEntityId(vtkIdType positionalId,
     {
     return higherEntry;
     }
-  return positionalId;
+  return unchosenId;
 }
 
 void vtkvmtkAnnularCapPolyData::PrintSelf(std::ostream& os, vtkIndent indent)

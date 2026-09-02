@@ -130,8 +130,9 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkAnnularCapPolyData : public vtkPolyDataAlgorit
   virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   /// The id to tag the cap closing a pair of boundaries with: the entry of whichever of the two
-  /// has one, the lower boundary id winning a disagreement, or the positional id.
-  vtkIdType PairCapCellEntityId(vtkIdType positionalId, vtkIdType boundaryId, vtkIdType partnerBoundaryId);
+  /// has one, the lower boundary id winning a disagreement; failing that the pair's lower
+  /// boundary id with the labels in use, and the positional id without them.
+  vtkIdType PairCapCellEntityId(vtkIdType positionalId, vtkIdType boundaryId, vtkIdType partnerBoundaryId, bool useBoundaryLabels);
 
   vtkIdList* BoundaryIds;
   char* BoundaryLabelsArrayName;

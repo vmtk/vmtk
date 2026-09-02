@@ -243,15 +243,17 @@ int vtkvmtkCapPolyData::RequestData(
         // An id the caller chose for this boundary is used as it stands; CellEntityIdOffset is
         // what moves the ids this filter derives itself out of the way of the input's, and has
         // no business shifting one that was picked deliberately.
-        vtkIdType capCellEntityId = i+1+this->CellEntityIdOffset;
-        if (this->BoundaryCellEntityIds)
+        // With the labels in use the boundary's label is its name, so it is also the cap's id
+        // unless the caller chose another: a label is as deliberate as an entry in
+        // BoundaryCellEntityIds, and neither is shifted by CellEntityIdOffset. Without them
+        // there is nothing to go on but the boundary's position.
+        vtkIdType boundaryId = useBoundaryLabels ? boundaryLabels->GetId(i) : i;
+        vtkIdType capCellEntityId = useBoundaryLabels ? boundaryId : i+1+this->CellEntityIdOffset;
+        if (this->BoundaryCellEntityIds
+            && boundaryId < this->BoundaryCellEntityIds->GetNumberOfTuples()
+            && this->BoundaryCellEntityIds->GetValue(boundaryId) >= 0)
           {
-          vtkIdType boundaryId = useBoundaryLabels ? boundaryLabels->GetId(i) : i;
-          if (boundaryId < this->BoundaryCellEntityIds->GetNumberOfTuples()
-              && this->BoundaryCellEntityIds->GetValue(boundaryId) >= 0)
-            {
-            capCellEntityId = this->BoundaryCellEntityIds->GetValue(boundaryId);
-            }
+          capCellEntityId = this->BoundaryCellEntityIds->GetValue(boundaryId);
           }
         cellEntityIdsArray->InsertNextValue(capCellEntityId);
         }
