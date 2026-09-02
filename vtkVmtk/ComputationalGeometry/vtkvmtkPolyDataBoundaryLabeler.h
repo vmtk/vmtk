@@ -86,6 +86,8 @@ Program:   VMTK
 #include "vtkPoints.h"
 #include "vtkvmtkWin32Header.h"
 
+#include <vector>
+
 class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataBoundaryLabeler : public vtkPolyDataAlgorithm
 {
   public:
@@ -133,6 +135,40 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataBoundaryLabeler : pu
   void SetLabelingModeToClosestToPlaneOrigin() { this->SetLabelingMode(CLOSEST_TO_PLANE_ORIGIN); }
   void SetLabelingModeToOnPlane() { this->SetLabelingMode(ON_PLANE); }
   void SetLabelingModeToMatchExistingLabels() { this->SetLabelingMode(MATCH_EXISTING_LABELS); }
+  ///@}
+
+  ///@{
+  /**
+   * Set/Get whether the input is a walled surface, whose open boundaries come in pairs -- an
+   * inner boundary and the outer one facing it across the wall thickness.
+   *
+   * With this off (default) every boundary is labelled on its own, and the two boundaries of a
+   * wall end up with unrelated labels. With it on the boundaries are paired by barycenter
+   * distance, the inner boundary of each pair is labelled as it would have been anyway, and its
+   * outer partner takes that label plus AnnularOuterBoundaryOffset. Of a pair, the inner is
+   * whichever has the smaller mean radius.
+   *
+   * The point of the arrangement is that the two labels of a wall are then related by a known
+   * constant, and the inner one is always the lower of the two: a filter that caps the annulus
+   * between them names its cap after the lower id, and so always names it after the vessel end
+   * the caller meant, whichever way round the pair was found. An odd boundary with no partner
+   * keeps the label it was given.
+   */
+  vtkSetMacro(Annular,bool);
+  vtkGetMacro(Annular,bool);
+  vtkBooleanMacro(Annular,bool);
+  ///@}
+
+  ///@{
+  /**
+   * Set/Get what is added to an inner boundary's label to give its outer partner's, when
+   * Annular is on. Default 1000.
+   *
+   * It has to be larger than the highest label the surface will ever carry, or an outer
+   * boundary's label collides with some other boundary's inner one.
+   */
+  vtkSetMacro(AnnularOuterBoundaryOffset,vtkIdType);
+  vtkGetMacro(AnnularOuterBoundaryOffset,vtkIdType);
   ///@}
 
   ///@{
@@ -210,10 +246,16 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataBoundaryLabeler : pu
 
   int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
+  /// Pair the boundaries by barycenter distance and give each outer boundary its inner
+  /// partner's label plus AnnularOuterBoundaryOffset. See Annular.
+  void LabelAnnularPairs(vtkPolyData* boundaries, std::vector<vtkIdType>& labels);
+
   char* BoundaryLabelsArrayName;
   char* BoundaryPointOrderArrayName;
 
   int LabelingMode;
+  bool Annular;
+  vtkIdType AnnularOuterBoundaryOffset;
 
   vtkPoints* PlaneOrigins;
   vtkDoubleArray* PlaneNormals;

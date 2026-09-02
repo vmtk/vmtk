@@ -40,6 +40,7 @@ Program:   VMTK
 
 #include "vtkPolyDataAlgorithm.h"
 #include "vtkIdList.h"
+#include "vtkIdTypeArray.h"
 #include "vtkvmtkWin32Header.h"
 
 class VTK_VMTK_CONTRIB_EXPORT vtkvmtkConcaveAnnularCapPolyData : public vtkPolyDataAlgorithm
@@ -85,13 +86,48 @@ class VTK_VMTK_CONTRIB_EXPORT vtkvmtkConcaveAnnularCapPolyData : public vtkPolyD
   vtkGetMacro(CellEntityIdOffset,int);
   ///@}
 
+  ///@{
+  /**
+   * Set/Get the names of the point data arrays that carry the boundary labels of the input, as
+   * written by vtkvmtkPolyDataBoundaryLabeler. When both are set and the input carries arrays
+   * that still describe it, the boundaries are read from them instead of being extracted, and
+   * the cap of each pair can be named through BoundaryCellEntityIds. With the labels in use a
+   * boundary's id is its label, and without them it is its position in the extraction order.
+   */
+  vtkSetStringMacro(BoundaryLabelsArrayName);
+  vtkGetStringMacro(BoundaryLabelsArrayName);
+  vtkSetStringMacro(BoundaryPointOrderArrayName);
+  vtkGetStringMacro(BoundaryPointOrderArrayName);
+  ///@}
+
+  ///@{
+  /**
+   * Set/Get the id to write into CellEntityIdsArrayName for the cap of each boundary pair,
+   * indexed by boundary id (see BoundaryLabelsArrayName).
+   *
+   * A cap closes a pair of boundaries, so it takes whichever of the two has an entry, and when
+   * both do and they disagree it takes the one of the lower boundary id and says so. Labelling
+   * the surface with vtkvmtkPolyDataBoundaryLabeler in its Annular mode makes the lower of a
+   * pair the inner boundary every time.
+   */
+  vtkSetObjectMacro(BoundaryCellEntityIds,vtkIdTypeArray);
+  vtkGetObjectMacro(BoundaryCellEntityIds,vtkIdTypeArray);
+  ///@}
+
   protected:
   vtkvmtkConcaveAnnularCapPolyData();
   ~vtkvmtkConcaveAnnularCapPolyData();
 
   virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
+  /// The id to tag the cap closing a pair of boundaries with: the entry of whichever of the two
+  /// has one, the lower boundary id winning a disagreement, or the positional id.
+  vtkIdType PairCapCellEntityId(vtkIdType positionalId, vtkIdType boundaryId, vtkIdType partnerBoundaryId);
+
   vtkIdList* BoundaryIds;
+  char* BoundaryLabelsArrayName;
+  char* BoundaryPointOrderArrayName;
+  vtkIdTypeArray* BoundaryCellEntityIds;
   char* CellEntityIdsArrayName;
   int CellEntityIdOffset;
 

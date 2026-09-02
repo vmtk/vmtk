@@ -34,8 +34,10 @@ Program:   VMTK
 #include "vtkPolyLine.h"
 
 #include "vtkvmtkBoundaryLabels.h"
+#include "vtkvmtkBoundaryReferenceSystems.h"
 #include "vtkvmtkPolyDataBoundaryExtractor.h"
 
+#include <algorithm>
 #include <map>
 #include <vector>
 
@@ -79,6 +81,8 @@ vtkvmtkPolyDataBoundaryLabeler::vtkvmtkPolyDataBoundaryLabeler()
   this->SetBoundaryPointOrderArrayName(vtkvmtkBoundaryLabels::GetDefaultBoundaryPointOrderArrayName());
 
   this->LabelingMode = BOUNDARY_EXTRACTION_ORDER;
+  this->Annular = false;
+  this->AnnularOuterBoundaryOffset = 1000;
 
   this->PlaneOrigins = nullptr;
   this->PlaneNormals = nullptr;
@@ -444,6 +448,11 @@ int vtkvmtkPolyDataBoundaryLabeler::RequestData(
       }
     }
 
+  if (this->Annular)
+    {
+    this->LabelAnnularPairs(boundaries,labels);
+    }
+
   for (vtkIdType boundaryIndex=0; boundaryIndex<numberOfBoundaries; boundaryIndex++)
     {
     for (size_t j=0; j<rings[boundaryIndex].size(); j++)
@@ -468,6 +477,82 @@ int vtkvmtkPolyDataBoundaryLabeler::RequestData(
   output->GetPointData()->AddArray(orderArray);
 
   return 1;
+}
+
+void vtkvmtkPolyDataBoundaryLabeler::LabelAnnularPairs(vtkPolyData* boundaries, std::vector<vtkIdType>& labels)
+{
+  vtkIdType numberOfBoundaries = boundaries->GetNumberOfCells();
+  if (numberOfBoundaries < 2)
+    {
+    return;
+    }
+
+  // Barycenter and mean radius of each boundary: the first pairs them, the second says which of
+  // a pair is the inner one.
+  std::vector<std::vector<double> > barycenters(numberOfBoundaries,std::vector<double>(3,0.0));
+  std::vector<double> meanRadii(numberOfBoundaries,0.0);
+  for (vtkIdType boundaryIndex=0; boundaryIndex<numberOfBoundaries; boundaryIndex++)
+    {
+    vtkPolyLine* boundary = vtkPolyLine::SafeDownCast(boundaries->GetCell(boundaryIndex));
+    if (!boundary)
+      {
+      continue;
+      }
+    double barycenter[3];
+    vtkvmtkBoundaryReferenceSystems::ComputeBoundaryBarycenter(boundary->GetPoints(),barycenter);
+    for (int j=0; j<3; j++)
+      {
+      barycenters[boundaryIndex][j] = barycenter[j];
+      }
+    meanRadii[boundaryIndex] = vtkvmtkBoundaryReferenceSystems::ComputeBoundaryMeanRadius(boundary->GetPoints(),barycenter);
+    }
+
+  // Each boundary still unpaired takes the closest boundary still unpaired, which is how the
+  // annular cappers pair them too.
+  std::vector<bool> paired(numberOfBoundaries,false);
+  for (vtkIdType boundaryIndex=0; boundaryIndex<numberOfBoundaries; boundaryIndex++)
+    {
+    if (paired[boundaryIndex])
+      {
+      continue;
+      }
+    vtkIdType closestIndex = -1;
+    double closestDistance2 = 0.0;
+    for (vtkIdType candidateIndex=boundaryIndex+1; candidateIndex<numberOfBoundaries; candidateIndex++)
+      {
+      if (paired[candidateIndex])
+        {
+        continue;
+        }
+      double distance2 = vtkMath::Distance2BetweenPoints(&barycenters[boundaryIndex][0],&barycenters[candidateIndex][0]);
+      if (closestIndex == -1 || distance2 < closestDistance2)
+        {
+        closestIndex = candidateIndex;
+        closestDistance2 = distance2;
+        }
+      }
+    if (closestIndex == -1)
+      {
+      // An odd boundary with nothing left to pair with keeps the label it was given.
+      vtkWarningMacro(<<"Annular labeling: the boundary labelled "<<labels[boundaryIndex]
+                      <<" has no partner, so it keeps its label and no outer label is derived from it.");
+      break;
+      }
+
+    paired[boundaryIndex] = true;
+    paired[closestIndex] = true;
+
+    vtkIdType innerIndex = boundaryIndex;
+    vtkIdType outerIndex = closestIndex;
+    if (meanRadii[outerIndex] < meanRadii[innerIndex])
+      {
+      std::swap(innerIndex,outerIndex);
+      }
+
+    // The inner boundary keeps the label it was given; the outer one is named after it, so the
+    // pair reads as one vessel end and the inner label is the lower of the two.
+    labels[outerIndex] = labels[innerIndex] + this->AnnularOuterBoundaryOffset;
+    }
 }
 
 void vtkvmtkPolyDataBoundaryLabeler::PrintSelf(std::ostream& os, vtkIndent indent)

@@ -43,6 +43,7 @@ Program:   VMTK
 
 #include "vtkPolyDataAlgorithm.h"
 #include "vtkIdList.h"
+#include "vtkIdTypeArray.h"
 #include "vtkvmtkWin32Header.h"
 
 class VTK_VMTK_MISC_EXPORT vtkvmtkSmoothCapPolyData : public vtkPolyDataAlgorithm
@@ -88,6 +89,41 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkSmoothCapPolyData : public vtkPolyDataAlgorith
 
   ///@{
   /**
+   * Set/Get the names of the point data arrays that carry the boundary labels of the input, as
+   * written by vtkvmtkPolyDataBoundaryLabeler. When both are set and the input carries arrays
+   * that still describe it, the boundaries are read from them instead of being extracted, and
+   * the cap of each boundary can be named through BoundaryCellEntityIds.
+   *
+   * Setting them also settles what a boundary id means everywhere else in this filter: with the
+   * labels in use a boundary's id is its label, and without them it is the boundary's position
+   * in the order the extractor returns, which is what it has always been.
+   *
+   * Note that this filter writes no point data on its output, the labels included: the caps it
+   * builds add points of their own, and it has never carried the input's point data over.
+   */
+  vtkSetStringMacro(BoundaryLabelsArrayName);
+  vtkGetStringMacro(BoundaryLabelsArrayName);
+  vtkSetStringMacro(BoundaryPointOrderArrayName);
+  vtkGetStringMacro(BoundaryPointOrderArrayName);
+  ///@}
+
+  ///@{
+  /**
+   * Set/Get the id to write into CellEntityIdsArrayName for the cap of each boundary, indexed
+   * the way boundary ids are indexed everywhere else here (see BoundaryIds): entry i is the id
+   * given to the cap closing the boundary whose id is i.
+   *
+   * An id beyond the end of the array, or one whose entry is negative, keeps the id the
+   * boundary's position would have given it. An id chosen here is used as it stands, with
+   * CellEntityIdOffset not added to it, while the offset still lands on the cells copied from
+   * the input and on any boundary left to its positional id.
+   */
+  vtkSetObjectMacro(BoundaryCellEntityIds,vtkIdTypeArray);
+  vtkGetObjectMacro(BoundaryCellEntityIds,vtkIdTypeArray);
+  ///@}
+
+  ///@{
+  /**
    * Set/Get the factor controlling how much the cap bulges outward before curving in towards
    * the center, i.e. how strongly the shape of the input surface near the boundary influences
    * the shape of the cap. It scales the outward displacement (along the direction from each
@@ -117,7 +153,14 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkSmoothCapPolyData : public vtkPolyDataAlgorith
 
   virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
+  /// The id to tag the cap of a boundary with: the one BoundaryCellEntityIds chose for it, or
+  /// the one its position gives it.
+  vtkIdType CapCellEntityId(vtkIdType boundaryIndex, vtkIdType boundaryId);
+
   vtkIdList* BoundaryIds;
+  char* BoundaryLabelsArrayName;
+  char* BoundaryPointOrderArrayName;
+  vtkIdTypeArray* BoundaryCellEntityIds;
   char* CellEntityIdsArrayName;
   int CellEntityIdOffset;
 

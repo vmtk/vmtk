@@ -39,6 +39,7 @@ Program:   VMTK
 
 #include "vtkPolyDataAlgorithm.h"
 #include "vtkIdList.h"
+#include "vtkIdTypeArray.h"
 #include "vtkvmtkWin32Header.h"
 
 class VTK_VMTK_MISC_EXPORT vtkvmtkSimpleCapPolyData : public vtkPolyDataAlgorithm
@@ -51,9 +52,11 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkSimpleCapPolyData : public vtkPolyDataAlgorith
 
   ///@{
   /**
-   * Set/Get the ids (into the list of open boundaries extracted from the input, in the order
-   * returned by vtkvmtkPolyDataBoundaryExtractor) of the boundaries to cap. If not set (default,
-   * NULL), every open boundary of the input surface is capped.
+   * Set/Get the ids of the boundaries to cap. If not set (default, NULL), every open boundary of
+   * the input surface is capped. A boundary's id is its label when BoundaryLabelsArrayName and
+   * BoundaryPointOrderArrayName are set and the input carries those arrays, and otherwise its
+   * position in the list of open boundaries extracted from the input, in the order returned by
+   * vtkvmtkPolyDataBoundaryExtractor.
    */
   vtkSetObjectMacro(BoundaryIds,vtkIdList);
   vtkGetObjectMacro(BoundaryIds,vtkIdList);
@@ -82,6 +85,40 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkSimpleCapPolyData : public vtkPolyDataAlgorith
   vtkGetMacro(CellEntityIdOffset,int);
   ///@}
 
+  ///@{
+  /**
+   * Set/Get the names of the point data arrays that carry the boundary labels of the input, as
+   * written by vtkvmtkPolyDataBoundaryLabeler. When both are set and the input carries arrays
+   * that still describe it, the boundaries are read from them instead of being extracted, and
+   * the cap of each boundary can be named through BoundaryCellEntityIds. This filter adds no
+   * point, so the arrays reach the output unchanged with the rest of the input's point data.
+   *
+   * Setting them also settles what a boundary id means everywhere else in this filter: with the
+   * labels in use a boundary's id is its label, and without them it is the boundary's position
+   * in the order the extractor returns, which is what it has always been.
+   */
+  vtkSetStringMacro(BoundaryLabelsArrayName);
+  vtkGetStringMacro(BoundaryLabelsArrayName);
+  vtkSetStringMacro(BoundaryPointOrderArrayName);
+  vtkGetStringMacro(BoundaryPointOrderArrayName);
+  ///@}
+
+  ///@{
+  /**
+   * Set/Get the id to write into CellEntityIdsArrayName for the cap of each boundary, indexed
+   * the way boundary ids are indexed everywhere else here (see BoundaryIds): entry i is the id
+   * given to the cap closing the boundary whose id is i.
+   *
+   * An id beyond the end of the array, or one whose entry is negative, keeps the id the
+   * boundary's position would have given it, so an output can carry ids from both rules at once.
+   * An id chosen here is used as it stands, with CellEntityIdOffset not added to it, while the
+   * offset still lands on the cells copied from the input and on any boundary left to its
+   * positional id.
+   */
+  vtkSetObjectMacro(BoundaryCellEntityIds,vtkIdTypeArray);
+  vtkGetObjectMacro(BoundaryCellEntityIds,vtkIdTypeArray);
+  ///@}
+
   protected:
   vtkvmtkSimpleCapPolyData();
   ~vtkvmtkSimpleCapPolyData();  
@@ -91,6 +128,9 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkSimpleCapPolyData : public vtkPolyDataAlgorith
   vtkIdList* BoundaryIds;
   char* CellEntityIdsArrayName;
   int CellEntityIdOffset;
+  char* BoundaryLabelsArrayName;
+  char* BoundaryPointOrderArrayName;
+  vtkIdTypeArray* BoundaryCellEntityIds;
 
   private:
   vtkvmtkSimpleCapPolyData(const vtkvmtkSimpleCapPolyData&);  // Not implemented.

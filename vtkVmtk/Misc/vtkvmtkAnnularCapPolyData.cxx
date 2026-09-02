@@ -20,7 +20,8 @@ Version:   $Revision: 1.6 $
 =========================================================================*/
 
 #include "vtkvmtkAnnularCapPolyData.h"
-#include "vtkvmtkPolyDataBoundaryExtractor.h"
+#include "vtkvmtkBoundaryLabels.h"
+#include "vtkNew.h"
 #include "vtkvmtkBoundaryReferenceSystems.h"
 #include "vtkPolyData.h"
 #include "vtkCellArray.h"
@@ -43,6 +44,9 @@ vtkvmtkAnnularCapPolyData::vtkvmtkAnnularCapPolyData()
   this->BoundaryIds = NULL;
   this->CellEntityIdsArrayName = NULL;
   this->CellEntityIdOffset = 1;
+  this->BoundaryLabelsArrayName = NULL;
+  this->BoundaryPointOrderArrayName = NULL;
+  this->BoundaryCellEntityIds = NULL;
 }
 
 vtkvmtkAnnularCapPolyData::~vtkvmtkAnnularCapPolyData()
@@ -56,6 +60,15 @@ vtkvmtkAnnularCapPolyData::~vtkvmtkAnnularCapPolyData()
     {
     this->BoundaryIds->Delete();
     this->BoundaryIds = NULL;
+    }
+
+  this->SetBoundaryLabelsArrayName(NULL);
+  this->SetBoundaryPointOrderArrayName(NULL);
+
+  if (this->BoundaryCellEntityIds)
+    {
+    this->BoundaryCellEntityIds->Delete();
+    this->BoundaryCellEntityIds = NULL;
     }
 }
 
@@ -102,11 +115,13 @@ int vtkvmtkAnnularCapPolyData::RequestData(
       }
     }
 
-  vtkvmtkPolyDataBoundaryExtractor* boundaryExtractor = vtkvmtkPolyDataBoundaryExtractor::New();
-  boundaryExtractor->SetInputData(input);
-  boundaryExtractor->Update();
-
-  vtkPolyData* boundaries = boundaryExtractor->GetOutput();
+  // The boundaries either come from the labels the input already carries, which are the same
+  // boundaries in the same order every other filter reading those labels sees, or they are
+  // extracted here as they always were.
+  vtkNew<vtkPolyData> boundaries;
+  vtkNew<vtkIdList> boundaryLabels;
+  bool useBoundaryLabels = vtkvmtkBoundaryLabels::GetOrExtractBoundaries(
+    input,this->BoundaryLabelsArrayName,this->BoundaryPointOrderArrayName,boundaries,boundaryLabels,this);
   int numberOfBoundaries = boundaries->GetNumberOfCells();
 
   if ( (this->BoundaryIds && this->BoundaryIds->GetNumberOfIds() % 2)
@@ -119,7 +134,6 @@ int vtkvmtkAnnularCapPolyData::RequestData(
       {
       cellEntityIdsArray->Delete();
       }
-    boundaryExtractor->Delete();
     }
 
   vtkPoints* barycenters = vtkPoints::New();
@@ -145,7 +159,7 @@ int vtkvmtkAnnularCapPolyData::RequestData(
   vtkIdType closestBoundaryId;
   for (int i=0; i<numberOfBoundaries; i++)
     {
-    if (this->BoundaryIds && this->BoundaryIds->IsId(i) == -1)
+    if (this->BoundaryIds && this->BoundaryIds->IsId(useBoundaryLabels ? boundaryLabels->GetId(i) : i) == -1)
       {
       continue;
       }
@@ -157,7 +171,7 @@ int vtkvmtkAnnularCapPolyData::RequestData(
     closestBoundaryId = -1;
     for (int j=i+1; j<numberOfBoundaries; j++)
       {
-      if (this->BoundaryIds && this->BoundaryIds->IsId(j) == -1)
+      if (this->BoundaryIds && this->BoundaryIds->IsId(useBoundaryLabels ? boundaryLabels->GetId(j) : j) == -1)
         {
         continue;
         }
@@ -179,7 +193,7 @@ int vtkvmtkAnnularCapPolyData::RequestData(
 
   for (int i=0; i<numberOfBoundaries; i++)
     {
-    if (this->BoundaryIds && this->BoundaryIds->IsId(i) == -1)
+    if (this->BoundaryIds && this->BoundaryIds->IsId(useBoundaryLabels ? boundaryLabels->GetId(i) : i) == -1)
       {
       continue;
       }
@@ -329,7 +343,12 @@ int vtkvmtkAnnularCapPolyData::RequestData(
 
       if (markCells)
         {
-        cellEntityIdsArray->InsertNextValue(i+1+this->CellEntityIdOffset);
+        // A cap here closes two boundaries, so the id comes from the pair rather than from one
+        // of them. i is the pair's position; the ids that name it are the two boundaries'.
+        vtkIdType boundaryId = useBoundaryLabels ? boundaryLabels->GetId(i) : i;
+        vtkIdType partnerBoundaryId = useBoundaryLabels ? boundaryLabels->GetId(boundaryPairings->GetId(i)) : boundaryPairings->GetId(i);
+        cellEntityIdsArray->InsertNextValue(
+          this->PairCapCellEntityId(i+1+this->CellEntityIdOffset,boundaryId,partnerBoundaryId));
         }
       }
 
@@ -351,11 +370,45 @@ int vtkvmtkAnnularCapPolyData::RequestData(
 
   newPoints->Delete();
   newPolys->Delete();
-  boundaryExtractor->Delete();
   barycenters->Delete();
+  boundaryPairings->Delete();
   visitedBoundaries->Delete();
 
   return 1;
+}
+
+vtkIdType vtkvmtkAnnularCapPolyData::PairCapCellEntityId(vtkIdType positionalId, vtkIdType boundaryId, vtkIdType partnerBoundaryId)
+{
+  if (!this->BoundaryCellEntityIds)
+    {
+    return positionalId;
+    }
+
+  vtkIdType lowerId = boundaryId < partnerBoundaryId ? boundaryId : partnerBoundaryId;
+  vtkIdType higherId = boundaryId < partnerBoundaryId ? partnerBoundaryId : boundaryId;
+
+  vtkIdType numberOfEntries = this->BoundaryCellEntityIds->GetNumberOfTuples();
+  vtkIdType lowerEntry = (lowerId >= 0 && lowerId < numberOfEntries) ? this->BoundaryCellEntityIds->GetValue(lowerId) : -1;
+  vtkIdType higherEntry = (higherId >= 0 && higherId < numberOfEntries) ? this->BoundaryCellEntityIds->GetValue(higherId) : -1;
+
+  if (lowerEntry >= 0 && higherEntry >= 0 && lowerEntry != higherEntry)
+    {
+    // Silence here would name the cap after whichever boundary the pairing happened to reach
+    // first, which is not something the caller can predict or see afterwards.
+    vtkWarningMacro(<<"The two boundaries of a pair were given different cap ids ("<<lowerEntry<<" for boundary "<<lowerId
+                    <<" and "<<higherEntry<<" for boundary "<<higherId<<"); the cap takes "<<lowerEntry
+                    <<", the id of the lower boundary.");
+    }
+
+  if (lowerEntry >= 0)
+    {
+    return lowerEntry;
+    }
+  if (higherEntry >= 0)
+    {
+    return higherEntry;
+    }
+  return positionalId;
 }
 
 void vtkvmtkAnnularCapPolyData::PrintSelf(std::ostream& os, vtkIndent indent)

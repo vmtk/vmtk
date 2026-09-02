@@ -20,7 +20,9 @@ Version:   $Revision: 1.6 $
 =========================================================================*/
 
 #include "vtkvmtkSimpleCapPolyData.h"
-#include "vtkvmtkPolyDataBoundaryExtractor.h"
+#include "vtkvmtkBoundaryLabels.h"
+#include "vtkIdList.h"
+#include "vtkNew.h"
 #include "vtkPolyData.h"
 #include "vtkCellArray.h"
 #include "vtkPointData.h"
@@ -41,6 +43,9 @@ vtkvmtkSimpleCapPolyData::vtkvmtkSimpleCapPolyData()
   this->CellEntityIdsArrayName = NULL;
   this->BoundaryIds = NULL;
   this->CellEntityIdOffset = 1;
+  this->BoundaryLabelsArrayName = NULL;
+  this->BoundaryPointOrderArrayName = NULL;
+  this->BoundaryCellEntityIds = NULL;
 }
 
 vtkvmtkSimpleCapPolyData::~vtkvmtkSimpleCapPolyData()
@@ -55,6 +60,15 @@ vtkvmtkSimpleCapPolyData::~vtkvmtkSimpleCapPolyData()
     {
     this->BoundaryIds->Delete();
     this->BoundaryIds = NULL;
+    }
+
+  this->SetBoundaryLabelsArrayName(NULL);
+  this->SetBoundaryPointOrderArrayName(NULL);
+
+  if (this->BoundaryCellEntityIds)
+    {
+    this->BoundaryCellEntityIds->Delete();
+    this->BoundaryCellEntityIds = NULL;
     }
 }
 
@@ -103,17 +117,22 @@ int vtkvmtkSimpleCapPolyData::RequestData(
       }
     }
 
-  vtkvmtkPolyDataBoundaryExtractor* boundaryExtractor = vtkvmtkPolyDataBoundaryExtractor::New();
-  boundaryExtractor->SetInputData(input);
-  boundaryExtractor->Update();
-
-  vtkPolyData* boundaries = boundaryExtractor->GetOutput();
+  // The boundaries either come from the labels the input already carries, which are the same
+  // boundaries in the same order every other filter reading those labels sees, or they are
+  // extracted here as they always were.
+  vtkNew<vtkPolyData> boundaries;
+  vtkNew<vtkIdList> boundaryLabels;
+  bool useBoundaryLabels = vtkvmtkBoundaryLabels::GetOrExtractBoundaries(
+    input,this->BoundaryLabelsArrayName,this->BoundaryPointOrderArrayName,boundaries,boundaryLabels,this);
 
   for (int i=0; i<boundaries->GetNumberOfCells(); i++)
     {
+    // A boundary is named by its label when the labels are in use, and by its position in the
+    // extraction order otherwise, here as everywhere else in this filter.
+    vtkIdType boundaryId = useBoundaryLabels ? boundaryLabels->GetId(i) : i;
     if (this->BoundaryIds)
       {
-      if (this->BoundaryIds->IsId(i) == -1)
+      if (this->BoundaryIds->IsId(boundaryId) == -1)
         {
         continue;
         }
@@ -129,7 +148,17 @@ int vtkvmtkSimpleCapPolyData::RequestData(
     newPolys->InsertNextCell(boundaryPointIds);
     if (markCells)
       {
-      cellEntityIdsArray->InsertNextValue(i+1+this->CellEntityIdOffset);
+      // An id the caller chose for this boundary is used as it stands; CellEntityIdOffset is
+      // what moves the ids this filter derives itself out of the way of the input's, and has
+      // no business shifting one that was picked deliberately.
+      vtkIdType capCellEntityId = i+1+this->CellEntityIdOffset;
+      if (this->BoundaryCellEntityIds
+          && boundaryId < this->BoundaryCellEntityIds->GetNumberOfTuples()
+          && this->BoundaryCellEntityIds->GetValue(boundaryId) >= 0)
+        {
+        capCellEntityId = this->BoundaryCellEntityIds->GetValue(boundaryId);
+        }
+      cellEntityIdsArray->InsertNextValue(capCellEntityId);
       }
     boundaryPointIds->Delete();
     }
@@ -147,7 +176,6 @@ int vtkvmtkSimpleCapPolyData::RequestData(
 
   newPoints->Delete();
   newPolys->Delete();
-  boundaryExtractor->Delete();
 
   return 1;
 }

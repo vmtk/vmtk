@@ -24,7 +24,7 @@ TUBE_LENGTH = 6.0
 TUBE_RADIUS = 1.0
 
 
-def tube_surface(xOffset=0.0):
+def tube_surface(xOffset=0.0, radius=TUBE_RADIUS):
     '''An open-ended circular tube along z, with a boundary at z=0 and another at z=TUBE_LENGTH.'''
     numberOfCircumferentialPoints, numberOfAxialPoints = 24, 13
     points = vtk.vtkPoints()
@@ -33,7 +33,7 @@ def tube_surface(xOffset=0.0):
         z = TUBE_LENGTH * i / (numberOfAxialPoints - 1.0)
         for j in range(numberOfCircumferentialPoints):
             angle = 2.0 * math.pi * j / numberOfCircumferentialPoints
-            points.InsertNextPoint(xOffset + TUBE_RADIUS * math.cos(angle), TUBE_RADIUS * math.sin(angle), z)
+            points.InsertNextPoint(xOffset + radius * math.cos(angle), radius * math.sin(angle), z)
     for i in range(numberOfAxialPoints - 1):
         for j in range(numberOfCircumferentialPoints):
             p0 = i * numberOfCircumferentialPoints + j
@@ -355,3 +355,92 @@ def test_matching_gives_a_newly_cut_boundary_a_label_of_its_own(tube):
     freshLabel = [boundaryLabel for boundaryLabel in labels if boundaryLabel != 2][0]
     assert freshLabel not in (2, 8)
     assert boundary_centroid_z(matched, byLabel[freshLabel]) == pytest.approx(TUBE_LENGTH * 0.5, abs=0.3)
+
+
+OUTER_OFFSET = 1000
+
+
+def walled_tube_surface(innerRadius=TUBE_RADIUS, outerRadius=TUBE_RADIUS * 1.4):
+    '''Two concentric open tubes, the way a surface with a wall thickness comes out: four
+    boundaries, an inner and an outer at each end.'''
+    walled = vtk.vtkAppendPolyData()
+    walled.AddInputData(tube_surface(radius=innerRadius))
+    walled.AddInputData(tube_surface(radius=outerRadius))
+    walled.Update()
+    return walled.GetOutput()
+
+
+def annular_labels(surface, offset=None):
+    '''The boundary labels the filter gives surface with its annular mode on.'''
+    labeler = vtkvmtk.vtkvmtkPolyDataBoundaryLabeler()
+    labeler.SetInputData(surface)
+    labeler.AnnularOn()
+    if offset is not None:
+        labeler.SetAnnularOuterBoundaryOffset(offset)
+    labeler.Update()
+    return [labeler.GetBoundaryLabels().GetId(i) for i in range(labeler.GetNumberOfBoundaries())]
+
+
+def test_annular_is_off_by_default():
+    """Nothing about a surface changes until the mode is asked for: the four boundaries of a
+    walled tube are labelled one by one, as they always were."""
+    labeler = vtkvmtk.vtkvmtkPolyDataBoundaryLabeler()
+    labeler.SetInputData(walled_tube_surface())
+    labeler.Update()
+
+    assert labeler.GetAnnular() is False
+    assert labeler.GetAnnularOuterBoundaryOffset() == OUTER_OFFSET
+    assert sorted(labeler.GetBoundaryLabels().GetId(i) for i in range(4)) == [0, 1, 2, 3]
+
+
+def test_annular_names_each_outer_boundary_after_its_inner_partner():
+    """The pair of boundaries that bound one wall end read as one vessel end: the inner keeps the
+    label it would have had, and the outer is that label plus the offset."""
+    labels = annular_labels(walled_tube_surface())
+
+    inner = sorted(label for label in labels if label < OUTER_OFFSET)
+    outer = sorted(label for label in labels if label >= OUTER_OFFSET)
+    assert len(inner) == 2 and len(outer) == 2
+    # each outer label names an inner one, so the two of a wall differ by the offset alone
+    assert [label - OUTER_OFFSET for label in outer] == inner
+
+
+def test_annular_makes_the_inner_boundary_the_lower_id_of_a_pair():
+    """What the arrangement is for: a filter that caps the annulus between a pair takes the lower
+    of the two ids, and so always takes the inner boundary's, whichever way round it found them."""
+    labels = annular_labels(walled_tube_surface())
+
+    for label in labels:
+        if label >= OUTER_OFFSET:
+            assert label - OUTER_OFFSET in labels
+            assert label - OUTER_OFFSET < label
+
+
+def test_annular_offset_is_configurable():
+    labels = annular_labels(walled_tube_surface(), offset=500)
+
+    inner = sorted(label for label in labels if label < 500)
+    outer = sorted(label for label in labels if label >= 500)
+    assert len(inner) == 2 and len(outer) == 2
+    assert [label - 500 for label in outer] == inner
+
+
+def test_annular_leaves_a_boundary_with_no_partner_alone():
+    """An odd boundary cannot be half of a wall. It keeps the label it was given rather than
+    being paired with whatever was left."""
+    surface = vtk.vtkAppendPolyData()
+    surface.AddInputData(walled_tube_surface())
+    lonePatch = vtk.vtkPlaneSource()
+    lonePatch.SetOrigin(20.0, 20.0, 0.0)
+    lonePatch.SetPoint1(21.0, 20.0, 0.0)
+    lonePatch.SetPoint2(20.0, 21.0, 0.0)
+    lonePatch.Update()
+    surface.AddInputData(lonePatch.GetOutput())
+    surface.Update()
+
+    labels = annular_labels(surface.GetOutput())
+
+    # five boundaries: two walls paired off, and one left with its own label
+    assert len(labels) == 5
+    assert len([label for label in labels if label >= OUTER_OFFSET]) == 2
+    assert len([label for label in labels if label < OUTER_OFFSET]) == 3
