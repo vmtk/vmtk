@@ -31,6 +31,9 @@ class vmtkSurfaceCapper(pypes.pypeScript):
         self.TriangleOutput = 1
         self.CellEntityIdsArrayName = 'CellEntityIds'
         self.CellEntityIdOffset = 1
+        self.BoundaryCellEntityIds = None
+        self.BoundaryLabelsArrayName = ''
+        self.BoundaryPointOrderArrayName = ''
         self.Interactive = 1
         self.Method = 'simple'
         self.ConstraintFactor = 1.0
@@ -47,6 +50,9 @@ class vmtkSurfaceCapper(pypes.pypeScript):
             ['TriangleOutput','triangle','bool',1,'','toggle triangulation of the output'],
             ['CellEntityIdsArrayName','entityidsarray','str',1,'','name of the array where the id of the caps have to be stored'],
             ['CellEntityIdOffset','entityidoffset','int',1,'(0,)','offset for entity ids'],
+            ['BoundaryCellEntityIds','boundaryentityids','int',-1,'','id to give the cap of each boundary, indexed by boundary id, which is the boundary label when boundarylabelsarray is in use and the position in the extraction order otherwise: entry i is the id of the cap closing the boundary whose id is i, and a negative entry or an id beyond the end of the list keeps the id the boundary position gives it; an id chosen here is used as it stands, without entityidoffset added to it; only used by the centerpoint method'],
+            ['BoundaryLabelsArrayName','boundarylabelsarray','str',1,'','name of the point data array holding the boundary labels written by vmtkboundarylabeler; when set together with boundarypointorderarray the boundaries are read from the labels rather than extracted, so that a cap can be named by the vessel end it closes rather than by where that end happens to come in the extraction order; only used by the centerpoint method'],
+            ['BoundaryPointOrderArrayName','boundarypointorderarray','str',1,'','name of the point data array holding the position of each point within its own boundary, written by vmtkboundarylabeler alongside boundarylabelsarray'],
             ['ConstraintFactor','constraint','float',1,'','amount of influence of the shape of the surface near the boundary on the shape of the cap ("smooth" method only)'],
             ['NumberOfRings','rings','int',1,'(0,)','number of rings composing the cap ("smooth" method only)'],
             ['Interactive','interactive','bool',1],
@@ -149,6 +155,14 @@ class vmtkSurfaceCapper(pypes.pypeScript):
             capper.SetInputData(self.Surface)
             capper.SetDisplacement(0.0)
             capper.SetInPlaneDisplacement(0.0)
+            if self.BoundaryLabelsArrayName and self.BoundaryPointOrderArrayName:
+                capper.SetBoundaryLabelsArrayName(self.BoundaryLabelsArrayName)
+                capper.SetBoundaryPointOrderArrayName(self.BoundaryPointOrderArrayName)
+            if self.BoundaryCellEntityIds:
+                boundaryCellEntityIds = vtk.vtkIdTypeArray()
+                for cellEntityId in self.BoundaryCellEntityIds:
+                    boundaryCellEntityIds.InsertNextValue(cellEntityId)
+                capper.SetBoundaryCellEntityIds(boundaryCellEntityIds)
 
         elif self.Method == 'smooth':
             triangle = vtk.vtkTriangleFilter()

@@ -44,6 +44,7 @@ Program:   VMTK
 #include "vtkPolyData.h"
 #include "vtkPoints.h"
 #include "vtkIdList.h"
+#include "vtkIdTypeArray.h"
 //#include "vtkvmtkComputationalGeometryWin32Header.h"
 #include "vtkvmtkWin32Header.h"
 
@@ -56,9 +57,11 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkCapPolyData : public vtkPoly
   static vtkvmtkCapPolyData *New();
 
   ///@{
-  /*! Set/Get the ids (into the list of open boundaries extracted from the input, in the order
-      returned by vtkvmtkPolyDataBoundaryExtractor) of the boundaries to cap. If not set (default,
-      NULL), every open boundary of the input surface is capped. */
+  /*! Set/Get the ids of the boundaries to cap. If not set (default, NULL), every open boundary of
+      the input surface is capped. A boundary's id is its label when BoundaryLabelsArrayName and
+      BoundaryPointOrderArrayName are set and the input carries those arrays, and otherwise its
+      position in the list of open boundaries extracted from the input, in the order returned by
+      vtkvmtkPolyDataBoundaryExtractor. */
   vtkSetObjectMacro(BoundaryIds,vtkIdList);
   vtkGetObjectMacro(BoundaryIds,vtkIdList);
   ///@}
@@ -78,6 +81,45 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkCapPolyData : public vtkPoly
       to the cap of the i-th processed boundary is (i + 1 + CellEntityIdOffset). Default: 1. */
   vtkSetMacro(CellEntityIdOffset,int);
   vtkGetMacro(CellEntityIdOffset,int);
+  ///@}
+
+  ///@{
+  /*! Set/Get the names of the point data arrays that carry the boundary labels of the input, as
+      written by vtkvmtkPolyDataBoundaryLabeler. When both are set and the input carries arrays
+      that still describe it, the boundaries are read from them instead of being extracted, and
+      the cap of each boundary can be named through BoundaryCellEntityIds. The arrays are written
+      on the output too, where the points of a capped boundary keep the label they had, as a
+      record of the boundary the cap closed.
+
+      Setting them also settles what a boundary id means everywhere else in this filter: with the
+      labels in use a boundary's id is its label, and without them it is the boundary's position
+      in the order the extractor returns, which is what it has always been. So BoundaryIds and
+      BoundaryCellEntityIds are read the same way either way, and a caller that labels its surface
+      gets ids that survive the filters in between without having to say so twice. */
+  vtkSetStringMacro(BoundaryLabelsArrayName);
+  vtkGetStringMacro(BoundaryLabelsArrayName);
+  vtkSetStringMacro(BoundaryPointOrderArrayName);
+  vtkGetStringMacro(BoundaryPointOrderArrayName);
+  ///@}
+
+  ///@{
+  /*! Set/Get the id to write into CellEntityIdsArrayName for the cap of each boundary, indexed
+      the way boundary ids are indexed everywhere else here (see BoundaryIds): entry i is the id
+      given to the cap closing the boundary whose id is i.
+
+      An id beyond the end of the array, or one whose entry is negative, keeps the id the
+      boundary's position would have given it, so an output can carry ids from both rules at once.
+      An id chosen here is used as it stands, with CellEntityIdOffset not added to it, while the
+      offset still lands on the cells copied from the input and on any boundary left to its
+      positional id.
+
+      Where this earns its keep is with the boundary labels in use, because then the choice
+      survives the filters in between: the label of a vessel end is carried by the surface's own
+      point data, so a flow extension that replaces a boundary with a new one at the tip of its
+      extension, or any filter that renumbers the points, leaves the answer to "which end is this"
+      unchanged. */
+  vtkSetObjectMacro(BoundaryCellEntityIds,vtkIdTypeArray);
+  vtkGetObjectMacro(BoundaryCellEntityIds,vtkIdTypeArray);
   ///@}
 
   ///@{
@@ -113,6 +155,9 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkCapPolyData : public vtkPoly
   vtkIdList* BoundaryIds;
   char* CellEntityIdsArrayName;
   int CellEntityIdOffset;
+  char* BoundaryLabelsArrayName;
+  char* BoundaryPointOrderArrayName;
+  vtkIdTypeArray* BoundaryCellEntityIds;
 
   double Displacement;
   double InPlaneDisplacement;

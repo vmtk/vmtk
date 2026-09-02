@@ -22,6 +22,7 @@ Version:   $Revision: 1.5 $
 #include "vtkvmtkCapPolyData.h"
 #include "vtkvmtkPolyDataBoundaryExtractor.h"
 #include "vtkvmtkBoundaryReferenceSystems.h"
+#include "vtkvmtkBoundaryLabels.h"
 #include "vtkvmtkConstants.h"
 #include "vtkCellArray.h"
 #include "vtkPointData.h"
@@ -30,8 +31,10 @@ Version:   $Revision: 1.5 $
 #include "vtkPolyLine.h"
 #include "vtkLine.h"
 #include "vtkIdTypeArray.h"
+#include "vtkIntArray.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
+#include "vtkNew.h"
 #include "vtkObjectFactory.h"
 #include "vtkVersion.h"
 
@@ -46,6 +49,9 @@ vtkvmtkCapPolyData::vtkvmtkCapPolyData()
   this->CapCenterIds = NULL;
   this->CellEntityIdsArrayName = NULL;
   this->CellEntityIdOffset = 1;
+  this->BoundaryLabelsArrayName = NULL;
+  this->BoundaryPointOrderArrayName = NULL;
+  this->BoundaryCellEntityIds = NULL;
 }
 
 vtkvmtkCapPolyData::~vtkvmtkCapPolyData()
@@ -64,6 +70,13 @@ vtkvmtkCapPolyData::~vtkvmtkCapPolyData()
     {
     delete[] this->CellEntityIdsArrayName;
     this->CellEntityIdsArrayName = NULL;
+    }
+  this->SetBoundaryLabelsArrayName(NULL);
+  this->SetBoundaryPointOrderArrayName(NULL);
+  if (this->BoundaryCellEntityIds)
+    {
+    this->BoundaryCellEntityIds->Delete();
+    this->BoundaryCellEntityIds = NULL;
     }
 }
 
@@ -123,10 +136,50 @@ int vtkvmtkCapPolyData::RequestData(
     }
 
   // Execute
-  boundaryExtractor->SetInputData(input);
-  boundaryExtractor->Update();
+  // The boundaries either come from the labels the input already carries, which are the same
+  // boundaries in the same order every other filter reading those labels sees, or they are
+  // extracted here as they always were.
+  vtkNew<vtkPolyData> labeledBoundaries;
+  vtkNew<vtkIdList> boundaryLabels;
+  boundaries = NULL;
+  bool useBoundaryLabels = false;
+  if (this->BoundaryLabelsArrayName && this->BoundaryLabelsArrayName[0]
+      && this->BoundaryPointOrderArrayName && this->BoundaryPointOrderArrayName[0])
+    {
+    useBoundaryLabels = vtkvmtkBoundaryLabels::GetBoundaries(
+      input,this->BoundaryLabelsArrayName,this->BoundaryPointOrderArrayName,
+      labeledBoundaries,boundaryLabels);
+    if (useBoundaryLabels)
+      {
+      boundaries = labeledBoundaries;
+      }
+    else
+      {
+      vtkWarningMacro(<<"The boundary label arrays are missing from the input surface or no longer describe it; "
+                      <<"extracting its boundaries instead, and naming the caps by position.");
+      }
+    }
+  if (!boundaries)
+    {
+    boundaryExtractor->SetInputData(input);
+    boundaryExtractor->Update();
+    boundaries = boundaryExtractor->GetOutput();
+    }
 
-  boundaries = boundaryExtractor->GetOutput();
+  if (this->BoundaryCellEntityIds)
+    {
+    // Silence here is how a caller ends up with caps carrying ids it did not choose and no way
+    // of telling. Say which boundaries were left out instead.
+    for (vtkIdType boundaryIndex=0; boundaryIndex<boundaries->GetNumberOfCells(); boundaryIndex++)
+      {
+      vtkIdType boundaryId = useBoundaryLabels ? boundaryLabels->GetId(boundaryIndex) : boundaryIndex;
+      if (boundaryId >= this->BoundaryCellEntityIds->GetNumberOfTuples())
+        {
+        vtkWarningMacro(<<"BoundaryCellEntityIds has no entry for the boundary with id "<<boundaryId
+                        <<"; its cap takes the id its position gives it.");
+        }
+      }
+    }
 
   if (this->CapCenterIds)
     {
@@ -147,7 +200,9 @@ int vtkvmtkCapPolyData::RequestData(
     {
     if (this->BoundaryIds)
       {
-      if (this->BoundaryIds->IsId(i) == -1)
+      // A boundary is named by its label when the labels are in use, and by its position in the
+      // extraction order otherwise, here as everywhere else in this filter.
+      if (this->BoundaryIds->IsId(useBoundaryLabels ? boundaryLabels->GetId(i) : i) == -1)
         {
         continue;
         }
@@ -185,7 +240,20 @@ int vtkvmtkCapPolyData::RequestData(
 
       if (markCells)
         {
-        cellEntityIdsArray->InsertNextValue(i+1+this->CellEntityIdOffset);
+        // An id the caller chose for this boundary is used as it stands; CellEntityIdOffset is
+        // what moves the ids this filter derives itself out of the way of the input's, and has
+        // no business shifting one that was picked deliberately.
+        vtkIdType capCellEntityId = i+1+this->CellEntityIdOffset;
+        if (this->BoundaryCellEntityIds)
+          {
+          vtkIdType boundaryId = useBoundaryLabels ? boundaryLabels->GetId(i) : i;
+          if (boundaryId < this->BoundaryCellEntityIds->GetNumberOfTuples()
+              && this->BoundaryCellEntityIds->GetValue(boundaryId) >= 0)
+            {
+            capCellEntityId = this->BoundaryCellEntityIds->GetValue(boundaryId);
+            }
+          }
+        cellEntityIdsArray->InsertNextValue(capCellEntityId);
         }
 
       }
@@ -198,6 +266,39 @@ int vtkvmtkCapPolyData::RequestData(
     {
     output->GetCellData()->AddArray(cellEntityIdsArray);
     cellEntityIdsArray->Delete();
+    }
+
+  if (useBoundaryLabels)
+    {
+    // The input's points keep the ids they had - they are deep copied first and the cap centers
+    // only appended - so the labels copy across as they stand. They describe no open boundary
+    // any more, every one of them having just been closed, but they are left in place as a
+    // record of which vessel end each ring of points was.
+    const vtkIdType invalidLabel = vtkvmtkBoundaryLabels::GetInvalidBoundaryLabel();
+    vtkIdType numberOfInputPoints = input->GetNumberOfPoints();
+    vtkIdType numberOfOutputPoints = newPoints->GetNumberOfPoints();
+
+    vtkDataArray* inputLabels = input->GetPointData()->GetArray(this->BoundaryLabelsArrayName);
+    vtkDataArray* inputOrder = input->GetPointData()->GetArray(this->BoundaryPointOrderArrayName);
+
+    vtkNew<vtkIntArray> outputLabels;
+    outputLabels->SetName(this->BoundaryLabelsArrayName);
+    outputLabels->SetNumberOfTuples(numberOfOutputPoints);
+    outputLabels->FillComponent(0,static_cast<double>(invalidLabel));
+
+    vtkNew<vtkIntArray> outputOrder;
+    outputOrder->SetName(this->BoundaryPointOrderArrayName);
+    outputOrder->SetNumberOfTuples(numberOfOutputPoints);
+    outputOrder->FillComponent(0,static_cast<double>(invalidLabel));
+
+    for (vtkIdType pointId=0; pointId<numberOfInputPoints; pointId++)
+      {
+      outputLabels->SetValue(pointId,static_cast<int>(vtkMath::Round(inputLabels->GetComponent(pointId,0))));
+      outputOrder->SetValue(pointId,static_cast<int>(vtkMath::Round(inputOrder->GetComponent(pointId,0))));
+      }
+
+    output->GetPointData()->AddArray(outputLabels);
+    output->GetPointData()->AddArray(outputOrder);
     }
 
   // TODO: the filter throws all the point and cell data

@@ -12,6 +12,7 @@ import math
 import pytest
 import vtk
 
+import vmtk.vmtkboundarylabeler as boundarylabeler
 import vmtk.vmtkflowextensions as flowextensions
 from vmtk import vtkvmtk
 
@@ -252,3 +253,80 @@ def test_ramp_leaves_a_preserved_cross_section_alone(elliptic_tube):
     # nothing to morph: every ring, the transition included, is the 2:1 boundary outline
     for ratio in extension_ring_ratios(elliptic_tube, surface, numberOfRingPoints, 8):
         assert ratio == pytest.approx(2.0, rel=0.02)
+
+
+LABELS = 'BoundaryLabels'
+ORDER = 'BoundaryPointOrder'
+
+
+def labeled(surface, endPointLabels):
+    """The surface with its two ends labeled, the first entry of endPointLabels going to the end at
+    z=0 and the second to the far end."""
+    bounds = surface.GetBounds()
+    labeler = boundarylabeler.vmtkBoundaryLabeler()
+    labeler.Surface = surface
+    labeler.LabelingMode = 'closesttoplaneorigin'
+    labeler.PlaneOrigins = [0.0, 0.0, bounds[4], 0.0, 0.0, bounds[5]]
+    labeler.PlaneLabels = list(endPointLabels)
+    labeler.Execute()
+    assert labeler.UnmatchedPlaneLabels == []
+    return labeler.Surface
+
+
+def boundaries_by_label(surface):
+    """The mean z of each boundary of surface, keyed by its label, read back from the arrays."""
+    boundaries = vtk.vtkPolyData()
+    boundaryLabels = vtk.vtkIdList()
+    assert vtkvmtk.vtkvmtkBoundaryLabels.GetBoundaries(surface, LABELS, ORDER, boundaries, boundaryLabels)
+    pointIds = boundaries.GetPointData().GetScalars()
+    result = {}
+    for i in range(boundaries.GetNumberOfCells()):
+        cell = boundaries.GetCell(i)
+        numberOfPoints = cell.GetNumberOfPoints()
+        zs = [surface.GetPoint(int(pointIds.GetTuple1(cell.GetPointId(j))))[2] for j in range(numberOfPoints)]
+        result[boundaryLabels.GetId(i)] = sum(zs) / float(len(zs))
+    return result
+
+
+def test_boundary_labels_move_to_the_tips_of_the_extensions(elliptic_tube):
+    surface = labeled(elliptic_tube, [4, 7])
+    before = boundaries_by_label(surface)
+
+    extended = extend(surface, 0, AdaptiveExtensionLength=0, ExtensionLength=2.0,
+                      BoundaryLabelsArrayName=LABELS, BoundaryPointOrderArrayName=ORDER)
+    after = boundaries_by_label(extended)
+
+    # the same two vessel ends, still answering to the labels they were given, and no others:
+    # the ring each extension grew from is inside the surface now and is nobody's boundary
+    assert sorted(after.keys()) == [4, 7]
+    assert after[4] < before[4] - 1.0
+    assert after[7] > before[7] + 1.0
+
+
+def test_extension_length_scale_factors_follow_the_label_not_the_position(elliptic_tube):
+    # the very same option as without labels, but a boundary's id is now its label: these are
+    # deliberately the other way round from the extraction order, so a list read positionally
+    # would scale the wrong end
+    surface = labeled(elliptic_tube, [1, 0])
+    before = boundaries_by_label(surface)
+
+    extended = extend(surface, 0, AdaptiveExtensionLength=0, ExtensionLength=2.0,
+                      BoundaryLabelsArrayName=LABELS, BoundaryPointOrderArrayName=ORDER,
+                      ExtensionLengthScaleFactors=[0.5, 2.0])
+    after = boundaries_by_label(extended)
+
+    # label 1 is the end at z=0, and grows downward by 2.0 * 2.0
+    assert before[1] - after[1] == pytest.approx(2.0 * 2.0, rel=0.15)
+    # label 0 is the far end, and grows upward by 0.5 * 2.0
+    assert after[0] - before[0] == pytest.approx(0.5 * 2.0, rel=0.15)
+
+
+def test_unlabeled_input_is_extended_exactly_as_before(elliptic_tube):
+    """The label arrays are an addition, not a change: without them the filter works as it did."""
+    plain = extend(elliptic_tube, 0, AdaptiveExtensionLength=0, ExtensionLength=2.0)
+    asked = extend(elliptic_tube, 0, AdaptiveExtensionLength=0, ExtensionLength=2.0,
+                   BoundaryLabelsArrayName=LABELS, BoundaryPointOrderArrayName=ORDER)
+
+    assert asked.GetNumberOfPoints() == plain.GetNumberOfPoints()
+    assert asked.GetNumberOfCells() == plain.GetNumberOfCells()
+    assert asked.GetPointData().GetArray(LABELS) is None

@@ -10,11 +10,11 @@ Version:   $Revision: 1.12 $
   See LICENSE file for details.
 
   Portions of this code are covered under the VTK copyright.
-  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
+  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm
   for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -22,6 +22,7 @@ Version:   $Revision: 1.12 $
 #include "vtkvmtkPolyDataFlowExtensionsFilter.h"
 #include "vtkvmtkPolyDataBoundaryExtractor.h"
 #include "vtkvmtkBoundaryReferenceSystems.h"
+#include "vtkvmtkBoundaryLabels.h"
 #include "vtkvmtkPolyBallLine.h"
 #include "vtkvmtkMath.h"
 #include "vtkThinPlateSplineTransform.h"
@@ -30,6 +31,7 @@ Version:   $Revision: 1.12 $
 #include "vtkPointData.h"
 #include "vtkDoubleArray.h"
 #include "vtkIntArray.h"
+#include "vtkIdTypeArray.h"
 #include "vtkMath.h"
 #include "vtkCellArray.h"
 #include "vtkInformation.h"
@@ -205,6 +207,8 @@ vtkvmtkPolyDataFlowExtensionsFilter::vtkvmtkPolyDataFlowExtensionsFilter()
   this->ExtensionLength = 0.0;
   this->ExtensionRadius = 1.0;
   this->ExtensionLengthScaleFactors = NULL;
+  this->BoundaryLabelsArrayName = NULL;
+  this->BoundaryPointOrderArrayName = NULL;
   this->CenterlineNormalEstimationDistanceRatio = 1.0;
   this->AdaptiveExtensionLength = 1;
   this->AdaptiveExtensionRadius = 1;
@@ -236,6 +240,9 @@ vtkvmtkPolyDataFlowExtensionsFilter::~vtkvmtkPolyDataFlowExtensionsFilter()
     this->ExtensionLengthScaleFactors->Delete();
     this->ExtensionLengthScaleFactors = NULL;
     }
+
+  this->SetBoundaryLabelsArrayName(NULL);
+  this->SetBoundaryPointOrderArrayName(NULL);
 }
 
 int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
@@ -266,12 +273,40 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
   outputPoints->DeepCopy(input->GetPoints());
   outputPolys->DeepCopy(input->GetPolys());
 
-  vtkNew<vtkvmtkPolyDataBoundaryExtractor> boundaryExtractor;
-  boundaryExtractor->SetInputData(input);
+  // The boundaries either come from the labels the input already carries, in which case they
+  // cost a bucket sort rather than an extraction and, more to the point, are the very same
+  // boundaries every other filter reading those labels sees, or they are extracted here as they
+  // always were.
+  bool useBoundaryLabels = false;
 
-  boundaryExtractor->Update();
-
-  vtkPolyData* boundaries = boundaryExtractor->GetOutput();
+  // Outlives the block below: the label of each boundary is needed wherever a boundary id is
+  // read, which with the labels in use is the label rather than the position.
+  vtkNew<vtkIdList> boundaryLabels;
+  vtkSmartPointer<vtkPolyData> boundaries;
+  if (this->BoundaryLabelsArrayName && this->BoundaryLabelsArrayName[0]
+      && this->BoundaryPointOrderArrayName && this->BoundaryPointOrderArrayName[0])
+    {
+    vtkNew<vtkPolyData> labeledBoundaries;
+    useBoundaryLabels = vtkvmtkBoundaryLabels::GetBoundaries(
+      input, this->BoundaryLabelsArrayName, this->BoundaryPointOrderArrayName,
+      labeledBoundaries, boundaryLabels);
+    if (useBoundaryLabels)
+      {
+      boundaries = labeledBoundaries;
+      }
+    else
+      {
+      vtkWarningMacro(<<"The boundary label arrays are missing from the input surface or no longer describe it; "
+                      <<"extracting its boundaries instead, and leaving the output unlabeled.");
+      }
+    }
+  if (!boundaries)
+    {
+    vtkNew<vtkvmtkPolyDataBoundaryExtractor> boundaryExtractor;
+    boundaryExtractor->SetInputData(input);
+    boundaryExtractor->Update();
+    boundaries = boundaryExtractor->GetOutput();
+    }
 
   vtkNew<vtkPolyData> centerlines;
   vtkNew<vtkvmtkPolyBallLine> tube;
@@ -286,9 +321,9 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
     zeroRadiusArray->SetName(zeroRadiusArrayName);
     zeroRadiusArray->SetNumberOfTuples(centerlines->GetNumberOfPoints());
     zeroRadiusArray->FillComponent(0,0.0);
-    
+
     centerlines->GetPointData()->AddArray(zeroRadiusArray);
-  
+
     tube->SetInput(centerlines);
     tube->SetPolyBallRadiusArrayName(zeroRadiusArrayName);
     }
@@ -296,17 +331,25 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
   input->BuildCells();
   input->BuildLinks();
 
+  // Per boundary, the ring it started from and the ring it ended as, so that its label can be
+  // moved from the one to the other once the mesh is built. Empty for a boundary that was not
+  // extended, whose own ring is still a boundary of the output and keeps its label where it is.
+  std::vector<std::vector<vtkIdType> > originalRingByBoundary(boundaries->GetNumberOfCells());
+  std::vector<std::vector<vtkIdType> > tipRingByBoundary(boundaries->GetNumberOfCells());
+
   int i, k;
   for (i=0; i<boundaries->GetNumberOfCells(); i++)
     {
     if (this->BoundaryIds)
       {
-      if (this->BoundaryIds->IsId(i) == -1)
+      // A boundary is named by its label when the labels are in use, and by its position in the
+      // extraction order otherwise, here as everywhere else in this filter.
+      if (this->BoundaryIds->IsId(useBoundaryLabels ? boundaryLabels->GetId(i) : i) == -1)
         {
         continue;
         }
       }
-    
+
     vtkPolyLine* boundary = vtkPolyLine::SafeDownCast(boundaries->GetCell(i));
 
     if (!boundary)
@@ -323,7 +366,7 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
       {
       boundaryIds->InsertNextId(static_cast<vtkIdType>(vtkMath::Round(boundaries->GetPointData()->GetScalars()->GetComponent(boundary->GetPointId(j),0))));
       }
-    
+
     double barycenter[3];
     double normal[3], outwardNormal[3];
     double meanRadius;
@@ -334,12 +377,12 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
     vtkvmtkBoundaryReferenceSystems::OrientBoundaryNormalOutwards(input,boundaries,i,normal,outwardNormal);
 
     double flowExtensionNormal[3];
-    flowExtensionNormal[0] = flowExtensionNormal[1] = flowExtensionNormal[2] = 0.0;  
- 
+    flowExtensionNormal[0] = flowExtensionNormal[1] = flowExtensionNormal[2] = 0.0;
+
     if (this->ExtensionMode == USE_CENTERLINE_DIRECTION)
       {
       tube->EvaluateFunction(barycenter);
-  
+
       double centerlinePoint[3];
       vtkIdType cellId, subId;
       double pcoord;
@@ -347,14 +390,14 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
       cellId = tube->GetLastPolyBallCellId();
       subId = tube->GetLastPolyBallCellSubId();
       pcoord = tube->GetLastPolyBallCellPCoord();
-  
+
       vtkCell* centerline = centerlines->GetCell(cellId);
-  
+
       vtkIdType pointId0, pointId1;
       double abscissa;
-  
+
       double point0[3], point1[3];
-  
+
       pointId0 = 0;
       abscissa = sqrt(vtkMath::Distance2BetweenPoints(centerlinePoint,centerline->GetPoints()->GetPoint(subId)));
       for (j=subId-1; j>=0; j--)
@@ -368,7 +411,7 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
           break;
           }
         }
-  
+
       pointId1 = centerline->GetNumberOfPoints()-1;
       abscissa = sqrt(vtkMath::Distance2BetweenPoints(centerlinePoint,centerline->GetPoints()->GetPoint(subId+1)));
       for (j=subId+1; j<centerline->GetNumberOfPoints()-2; j++)
@@ -382,16 +425,16 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
           break;
           }
         }
-  
+
       // use an approximating spline or smooth centerline points to better catch the trend in computing centerlineNormal?
-  
+
       double centerlineNormal[3];
-  
+
       centerline->GetPoints()->GetPoint(pointId0,point0);
       centerline->GetPoints()->GetPoint(pointId1,point1);
-  
+
       double toleranceFactor = 1E-4;
-  
+
       for (k=0; k<3; k++)
         {
         centerlineNormal[k] = 0.0;
@@ -402,7 +445,7 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
           {
           centerlineNormal[k] += point1[k] - centerlinePoint[k];
           }
-        } 
+        }
       if (sqrt(vtkMath::Distance2BetweenPoints(centerlinePoint,point0)) > toleranceFactor*meanRadius)
         {
         for (k=0; k<3; k++)
@@ -410,14 +453,14 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
           centerlineNormal[k] += centerlinePoint[k] - point0[k];
           }
         }
-  
+
       vtkMath::Normalize(centerlineNormal);
-  
+
       for (k=0; k<3; k++)
         {
         flowExtensionNormal[k] = centerlineNormal[k];
         }
-  
+
       if (vtkMath::Dot(outwardNormal,centerlineNormal) < 0.0)
         {
         for (k=0; k<3; k++)
@@ -450,9 +493,13 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
       extensionLength = this->ExtensionLength;
       }
 
-    if (this->ExtensionLengthScaleFactors && i < this->ExtensionLengthScaleFactors->GetNumberOfTuples())
+    if (this->ExtensionLengthScaleFactors)
       {
-      extensionLength *= this->ExtensionLengthScaleFactors->GetValue(i);
+      vtkIdType boundaryId = useBoundaryLabels ? boundaryLabels->GetId(i) : i;
+      if (boundaryId < this->ExtensionLengthScaleFactors->GetNumberOfTuples())
+        {
+        extensionLength *= this->ExtensionLengthScaleFactors->GetValue(boundaryId);
+        }
       }
 
     double point[3], extensionPoint[3];
@@ -521,7 +568,7 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
     thinPlateSplineTransform->SetSigma(this->Sigma);
     thinPlateSplineTransform->SetBasisToR2LogR();
 //    thinPlateSplineTransform->SetBasisToR();
-    
+
     vtkNew<vtkPoints> sourceLandmarks;
     vtkNew<vtkPoints> targetLandmarks;
 
@@ -727,8 +774,8 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
         sourceLandmarks->InsertNextPoint(firstBoundaryPoint);
         targetLandmarks->InsertNextPoint(point);
         for (k=0; k<3; k++)
-          { 
-          lastBoundaryPoint[k] = firstBoundaryPoint[k] + extensionLength * this->TransitionRatio * flowExtensionNormal[k]; 
+          {
+          lastBoundaryPoint[k] = firstBoundaryPoint[k] + extensionLength * this->TransitionRatio * flowExtensionNormal[k];
           }
         sourceLandmarks->InsertNextPoint(lastBoundaryPoint);
         targetLandmarks->InsertNextPoint(lastBoundaryPoint);
@@ -815,7 +862,7 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
             {
             advance = false;
             }
-          while(advance) 
+          while(advance)
             {
             pts[0] = previousBoundaryIds->GetId(j2%startNumberOfBoundaryPoints);
             pts[1] = newBoundaryIds->GetId(j);
@@ -854,7 +901,7 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
             pts[1] = newBoundaryIds->GetId((j-1+targetNumberOfBoundaryPoints)%targetNumberOfBoundaryPoints);
             pts[2] = previousBoundaryIds->GetId((j-1+targetNumberOfBoundaryPoints)%targetNumberOfBoundaryPoints);
             outputPolys->InsertNextCell(3,pts);
-  
+
             pts[0] = previousBoundaryIds->GetId(j);
             pts[1] = newBoundaryIds->GetId(j);
             pts[2] = previousBoundaryIds->GetId((j-1+targetNumberOfBoundaryPoints)%targetNumberOfBoundaryPoints);
@@ -866,7 +913,7 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
             pts[1] = newBoundaryIds->GetId((j-1+targetNumberOfBoundaryPoints)%targetNumberOfBoundaryPoints);
             pts[2] = previousBoundaryIds->GetId(j);
             outputPolys->InsertNextCell(3,pts);
-    
+
             pts[0] = previousBoundaryIds->GetId(j);
             pts[1] = newBoundaryIds->GetId((j-1+targetNumberOfBoundaryPoints)%targetNumberOfBoundaryPoints);
             pts[2] = previousBoundaryIds->GetId((j-1+targetNumberOfBoundaryPoints)%targetNumberOfBoundaryPoints);
@@ -878,10 +925,78 @@ int vtkvmtkPolyDataFlowExtensionsFilter::RequestData(
       previousBoundaryIds->DeepCopy(newBoundaryIds);
       }
 
+    // previousBoundaryIds is now the last ring laid down, which is the new open boundary at the
+    // tip of this extension - or, when the extension was too short for a single layer, still the
+    // ring this started from, which is then the right answer too.
+    if (useBoundaryLabels)
+      {
+      for (j=0; j<boundaryIds->GetNumberOfIds(); j++)
+        {
+        originalRingByBoundary[i].push_back(boundaryIds->GetId(j));
+        }
+      for (j=0; j<previousBoundaryIds->GetNumberOfIds(); j++)
+        {
+        tipRingByBoundary[i].push_back(previousBoundaryIds->GetId(j));
+        }
+      }
+
     }
 
   output->SetPoints(outputPoints);
   output->SetPolys(outputPolys);
+
+  if (useBoundaryLabels)
+    {
+    // Carry the labels onto the output. The points of the input keep the ids they had - they are
+    // deep copied first and the extensions only append - so the arrays copy across as they
+    // stand, and only the boundaries that were extended have to be moved: the ring an extension
+    // grew from is inside the surface now and is no longer anything's boundary, while the ring
+    // at the tip is, and is the same vessel end.
+    const vtkIdType invalidLabel = vtkvmtkBoundaryLabels::GetInvalidBoundaryLabel();
+    vtkIdType numberOfInputPoints = input->GetNumberOfPoints();
+    vtkIdType numberOfOutputPoints = outputPoints->GetNumberOfPoints();
+
+    vtkDataArray* inputLabels = input->GetPointData()->GetArray(this->BoundaryLabelsArrayName);
+    vtkDataArray* inputOrder = input->GetPointData()->GetArray(this->BoundaryPointOrderArrayName);
+
+    vtkNew<vtkIntArray> outputLabels;
+    outputLabels->SetName(this->BoundaryLabelsArrayName);
+    outputLabels->SetNumberOfTuples(numberOfOutputPoints);
+    outputLabels->FillComponent(0,static_cast<double>(invalidLabel));
+
+    vtkNew<vtkIntArray> outputOrder;
+    outputOrder->SetName(this->BoundaryPointOrderArrayName);
+    outputOrder->SetNumberOfTuples(numberOfOutputPoints);
+    outputOrder->FillComponent(0,static_cast<double>(invalidLabel));
+
+    for (vtkIdType pointId=0; pointId<numberOfInputPoints; pointId++)
+      {
+      outputLabels->SetValue(pointId,static_cast<int>(vtkMath::Round(inputLabels->GetComponent(pointId,0))));
+      outputOrder->SetValue(pointId,static_cast<int>(vtkMath::Round(inputOrder->GetComponent(pointId,0))));
+      }
+
+    for (size_t boundaryIndex=0; boundaryIndex<tipRingByBoundary.size(); boundaryIndex++)
+      {
+      if (tipRingByBoundary[boundaryIndex].empty())
+        {
+        continue;
+        }
+      vtkIdType boundaryLabel = boundaryLabels->GetId(static_cast<vtkIdType>(boundaryIndex));
+      for (size_t j2=0; j2<originalRingByBoundary[boundaryIndex].size(); j2++)
+        {
+        outputLabels->SetValue(originalRingByBoundary[boundaryIndex][j2],static_cast<int>(invalidLabel));
+        outputOrder->SetValue(originalRingByBoundary[boundaryIndex][j2],static_cast<int>(invalidLabel));
+        }
+      for (size_t j2=0; j2<tipRingByBoundary[boundaryIndex].size(); j2++)
+        {
+        outputLabels->SetValue(tipRingByBoundary[boundaryIndex][j2],static_cast<int>(boundaryLabel));
+        outputOrder->SetValue(tipRingByBoundary[boundaryIndex][j2],static_cast<int>(j2));
+        }
+      }
+
+    output->GetPointData()->AddArray(outputLabels);
+    output->GetPointData()->AddArray(outputOrder);
+    }
 
   return 1;
 }
