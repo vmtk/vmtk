@@ -4,6 +4,7 @@ set(TEST_VMTKSCRIPTS_SRCS
     test_importvtkvmtk.py
     test_pypescripts.py
     test_vmtkboundarylabeler.py
+    test_vmtkcappers.py
     test_vmtkbifurcationprofiles.py
     test_vmtkbifurcationreferencesystems.py
     test_vmtkbifurcationsections.py

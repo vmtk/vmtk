@@ -16,6 +16,7 @@ Program:   VMTK
 =========================================================================*/
 
 #include "vtkvmtkBoundaryLabels.h"
+#include "vtkvmtkPolyDataBoundaryExtractor.h"
 
 #include "vtkCellArray.h"
 #include "vtkDataArray.h"
@@ -179,6 +180,40 @@ bool vtkvmtkBoundaryLabels::GetBoundaries(vtkPolyData* surface, const char* boun
   boundaries->GetPointData()->SetScalars(newScalars);
 
   return true;
+}
+
+bool vtkvmtkBoundaryLabels::GetOrExtractBoundaries(vtkPolyData* surface, const char* boundaryLabelsArrayName, const char* boundaryPointOrderArrayName, vtkPolyData* boundaries, vtkIdList* boundaryLabels, vtkObject* warningSource)
+{
+  if (!surface || !boundaries)
+    {
+    return false;
+    }
+
+  if (boundaryLabels)
+    {
+    boundaryLabels->Reset();
+    }
+
+  if (boundaryLabelsArrayName && boundaryLabelsArrayName[0]
+      && boundaryPointOrderArrayName && boundaryPointOrderArrayName[0])
+    {
+    if (vtkvmtkBoundaryLabels::GetBoundaries(surface,boundaryLabelsArrayName,boundaryPointOrderArrayName,boundaries,boundaryLabels))
+      {
+      return true;
+      }
+    if (warningSource)
+      {
+      vtkWarningWithObjectMacro(warningSource,<<"The boundary label arrays are missing from the input surface or no longer describe it; "
+                                              <<"extracting its boundaries instead, and naming the caps by position.");
+      }
+    }
+
+  vtkNew<vtkvmtkPolyDataBoundaryExtractor> boundaryExtractor;
+  boundaryExtractor->SetInputData(surface);
+  boundaryExtractor->Update();
+  boundaries->ShallowCopy(boundaryExtractor->GetOutput());
+
+  return false;
 }
 
 void vtkvmtkBoundaryLabels::PrintSelf(std::ostream& os, vtkIndent indent)

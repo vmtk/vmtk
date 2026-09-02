@@ -127,6 +127,22 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkBoundaryLabels : public vtkO
    */
   static bool GetBoundaries(vtkPolyData* surface, const char* boundaryLabelsArrayName, const char* boundaryPointOrderArrayName, vtkPolyData* boundaries, vtkIdList* boundaryLabels);
 
+  /**
+   * The boundaries of surface, read from the labels when both array names are given and the
+   * arrays still describe it, and extracted with vtkvmtkPolyDataBoundaryExtractor otherwise.
+   *
+   * boundaries is filled either way, in the form the extractor produces, so a filter can work
+   * from it without knowing which of the two happened. boundaryLabels holds the label of each
+   * boundary when the labels were used and is emptied when they were not, and the return value
+   * says which -- and so says what a boundary's id means: its label with the labels in use, and
+   * its position in the extraction order without them.
+   *
+   * A surface that names the arrays but no longer carries ones describing it falls back to
+   * extraction, which renames every cap a caller had chosen an id for. Pass the calling filter
+   * as warningSource to have that said rather than passed over.
+   */
+  static bool GetOrExtractBoundaries(vtkPolyData* surface, const char* boundaryLabelsArrayName, const char* boundaryPointOrderArrayName, vtkPolyData* boundaries, vtkIdList* boundaryLabels, vtkObject* warningSource = nullptr);
+
   protected:
   vtkvmtkBoundaryLabels() {}
   ~vtkvmtkBoundaryLabels() override {}

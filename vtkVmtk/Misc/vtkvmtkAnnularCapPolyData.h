@@ -41,6 +41,7 @@ Program:   VMTK
 
 #include "vtkPolyDataAlgorithm.h"
 #include "vtkIdList.h"
+#include "vtkIdTypeArray.h"
 #include "vtkvmtkWin32Header.h"
 
 class VTK_VMTK_MISC_EXPORT vtkvmtkAnnularCapPolyData : public vtkPolyDataAlgorithm
@@ -86,13 +87,56 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkAnnularCapPolyData : public vtkPolyDataAlgorit
   vtkGetMacro(CellEntityIdOffset,int);
   ///@}
 
+  ///@{
+  /**
+   * Set/Get the names of the point data arrays that carry the boundary labels of the input, as
+   * written by vtkvmtkPolyDataBoundaryLabeler. When both are set and the input carries arrays
+   * that still describe it, the boundaries are read from them instead of being extracted, and
+   * the cap of each pair can be named through BoundaryCellEntityIds.
+   *
+   * Setting them also settles what a boundary id means everywhere else in this filter: with the
+   * labels in use a boundary's id is its label, and without them it is the boundary's position
+   * in the order the extractor returns, which is what it has always been.
+   */
+  vtkSetStringMacro(BoundaryLabelsArrayName);
+  vtkGetStringMacro(BoundaryLabelsArrayName);
+  vtkSetStringMacro(BoundaryPointOrderArrayName);
+  vtkGetStringMacro(BoundaryPointOrderArrayName);
+  ///@}
+
+  ///@{
+  /**
+   * Set/Get the id to write into CellEntityIdsArrayName for the cap of each boundary, indexed
+   * the way boundary ids are indexed everywhere else here (see BoundaryIds).
+   *
+   * A cap here closes a pair of boundaries rather than one, so it has two entries to choose
+   * between: it takes whichever of the two has an entry, and when both do and they disagree it
+   * takes the one of the lower boundary id and says so. Labelling the surface with
+   * vtkvmtkPolyDataBoundaryLabeler in its Annular mode makes the lower of a pair the inner
+   * boundary every time, so the cap is named after the vessel end rather than after whichever
+   * boundary the pairing happened to find first.
+   *
+   * An id beyond the end of the array, or one whose entry is negative, is no entry at all. An id
+   * chosen here is used as it stands, with CellEntityIdOffset not added to it.
+   */
+  vtkSetObjectMacro(BoundaryCellEntityIds,vtkIdTypeArray);
+  vtkGetObjectMacro(BoundaryCellEntityIds,vtkIdTypeArray);
+  ///@}
+
   protected:
   vtkvmtkAnnularCapPolyData();
   ~vtkvmtkAnnularCapPolyData();
 
   virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
+  /// The id to tag the cap closing a pair of boundaries with: the entry of whichever of the two
+  /// has one, the lower boundary id winning a disagreement, or the positional id.
+  vtkIdType PairCapCellEntityId(vtkIdType positionalId, vtkIdType boundaryId, vtkIdType partnerBoundaryId);
+
   vtkIdList* BoundaryIds;
+  char* BoundaryLabelsArrayName;
+  char* BoundaryPointOrderArrayName;
+  vtkIdTypeArray* BoundaryCellEntityIds;
   char* CellEntityIdsArrayName;
   int CellEntityIdOffset;
 
