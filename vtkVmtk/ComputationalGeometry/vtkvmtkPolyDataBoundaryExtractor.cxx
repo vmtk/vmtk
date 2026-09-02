@@ -52,8 +52,7 @@ int vtkvmtkPolyDataBoundaryExtractor::RequestData(
     outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
   vtkIdList *boundary, *boundaryIds, *cellEdgeNeighbors, *newCell;
-  vtkIdType i, j, currentId, firstId, id, newId, id0, id1;
-  newId = -1;
+  vtkIdType i, j, currentId, id, id0, id1;
   vtkCell* cell;
   bool foundAny, foundNeighbor, done;
   vtkPoints* newPoints;
@@ -156,20 +155,19 @@ int vtkvmtkPolyDataBoundaryExtractor::RequestData(
 
     if ( (((!foundNeighbor)&&(foundAny))||(!foundAny)) && (boundary->GetNumberOfIds() > 2))
       {
+      // Each point of the boundary is listed once. The polyline is a ring, and the caller closes
+      // it, which is what every caller in vmtk does: it takes the number of points of the cell
+      // and steps round with (j+1) modulo that. Repeating the first point at the end to mark the
+      // ring as closed would put a duplicate in the middle of that arithmetic, which biases the
+      // barycenter, the mean radius and the normal computed from these points, and leaves a
+      // degenerate triangle in the fan of a cap and in the first layer of a flow extension.
       newCell->Initialize();
       newCell->SetNumberOfIds(boundary->GetNumberOfIds());
-      firstId = newPoints->GetNumberOfPoints();
       for (j=0; j<boundary->GetNumberOfIds(); j++)
         {
         id = boundary->GetId(j);
-        newId = newPoints->InsertNextPoint(input->GetPoint(id));
-        newCell->SetId(j,newId);
+        newCell->SetId(j,newPoints->InsertNextPoint(input->GetPoint(id)));
         newScalars->InsertNextValue(id);
-        }
-
-      if (input->IsEdge(newId,firstId))
-        {
-        newCell->InsertNextId(firstId);
         }
 
       newLines->InsertNextCell(newCell);
