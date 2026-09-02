@@ -59,8 +59,19 @@ int vtkvmtkPolyDataBoundaryExtractor::RequestData(
   vtkCellArray* newLines;
   vtkIdTypeArray* newScalars;
 
-  input->BuildCells();
-  input->BuildLinks();
+  // The topology queries below need cell links, but they must not be built on the input: a
+  // filter does not own its input, and since VTK 9.4 the links hold a reference back to the
+  // dataset they were built for. That reference cycle is normally reclaimed by VTK's garbage
+  // collector, but when it is created while another filter's Update() is executing - this
+  // extractor runs inside vtkvmtkPolyDataSurfaceRemeshing, among others - the collector never
+  // reclaims it, and the caller's surface is leaked together with the links, its cell map and
+  // its cell instances. The links are built instead on a shallow structural copy, which shares
+  // the points and cell arrays (so every point and cell id below means the same thing) but
+  // keeps the acceleration structures, and their reference cycle, to itself.
+  vtkPolyData* working = vtkPolyData::New();
+  working->CopyStructure(input);
+  working->BuildCells();
+  working->BuildLinks();
 
   // Allocate
   boundary = vtkIdList::New();
@@ -72,9 +83,9 @@ int vtkvmtkPolyDataBoundaryExtractor::RequestData(
   newScalars = vtkIdTypeArray::New();
 
   // Execute  
-  for (i=0; i<input->GetNumberOfCells(); i++)
+  for (i=0; i<working->GetNumberOfCells(); i++)
     {
-    cell = input->GetCell(i);
+    cell = working->GetCell(i);
     for (j=0; j<3; j++)
       {
       cellEdgeNeighbors->Initialize();
@@ -83,7 +94,7 @@ int vtkvmtkPolyDataBoundaryExtractor::RequestData(
       auto pointIds = edge->GetPointIds();
       id0 = pointIds->GetId(0);
       id1 = pointIds->GetId(1);
-      input->GetCellEdgeNeighbors(i,id0,id1,cellEdgeNeighbors);
+      working->GetCellEdgeNeighbors(i,id0,id1,cellEdgeNeighbors);
       if (cellEdgeNeighbors->GetNumberOfIds()==0)
         {
         boundaryIds->InsertUniqueId(id0);
@@ -107,6 +118,11 @@ int vtkvmtkPolyDataBoundaryExtractor::RequestData(
     cellEdgeNeighbors->Delete();
     newCell->Delete();
 
+    // Dropping the links first breaks their reference cycle with the working copy by plain
+    // reference counting, so its destruction cannot depend on the garbage collector either.
+    working->Initialize();
+    working->Delete();
+
     return 1;
     }
 
@@ -129,10 +145,10 @@ int vtkvmtkPolyDataBoundaryExtractor::RequestData(
         {
         foundAny = true;
         isBoundaryEdge = false;
-        if (currentId!=-1 && input->IsEdge(currentId,id))
+        if (currentId!=-1 && working->IsEdge(currentId,id))
           {
           cellEdgeNeighbors->Initialize();
-          input->GetCellEdgeNeighbors(-1,currentId,id,cellEdgeNeighbors);
+          working->GetCellEdgeNeighbors(-1,currentId,id,cellEdgeNeighbors);
           if (cellEdgeNeighbors->GetNumberOfIds() == 1)
             {
             isBoundaryEdge = true;
@@ -166,7 +182,7 @@ int vtkvmtkPolyDataBoundaryExtractor::RequestData(
       for (j=0; j<boundary->GetNumberOfIds(); j++)
         {
         id = boundary->GetId(j);
-        newCell->SetId(j,newPoints->InsertNextPoint(input->GetPoint(id)));
+        newCell->SetId(j,newPoints->InsertNextPoint(working->GetPoint(id)));
         newScalars->InsertNextValue(id);
         }
 
@@ -210,6 +226,11 @@ int vtkvmtkPolyDataBoundaryExtractor::RequestData(
   boundaryIds->Delete();
   cellEdgeNeighbors->Delete();
   newCell->Delete();
+
+  // Dropping the links first breaks their reference cycle with the working copy by plain
+  // reference counting, so its destruction cannot depend on the garbage collector either.
+  working->Initialize();
+  working->Delete();
 
   return 1;
 }
