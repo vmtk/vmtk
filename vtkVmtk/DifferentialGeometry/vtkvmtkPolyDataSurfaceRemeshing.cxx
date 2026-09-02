@@ -685,12 +685,13 @@ int vtkvmtkPolyDataSurfaceRemeshing::IsPointOnEntityBoundary(vtkIdType pointId)
     break;
     }
 
+  ptCells->Delete();
+
   if (!uniformCellEntityIds)
     {
     return 1;
     }
 
-  ptCells->Delete();
   return 0;
 }
 
