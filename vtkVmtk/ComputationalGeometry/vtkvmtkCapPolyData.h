@@ -107,8 +107,10 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkCapPolyData : public vtkPoly
       the way boundary ids are indexed everywhere else here (see BoundaryIds): entry i is the id
       given to the cap closing the boundary whose id is i.
 
-      An id beyond the end of the array, or one whose entry is negative, keeps the id the
-      boundary's position would have given it, so an output can carry ids from both rules at once.
+      An id beyond the end of the array, or one whose entry is negative, is no entry at all: with
+      the labels in use that cap keeps its boundary's label, which names it just as well, and
+      without them the id its position would have given it. An output can carry ids from both
+      rules at once.
       An id chosen here is used as it stands, with CellEntityIdOffset not added to it, while the
       offset still lands on the cells copied from the input and on any boundary left to its
       positional id.

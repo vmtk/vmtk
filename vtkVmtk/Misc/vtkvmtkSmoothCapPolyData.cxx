@@ -267,7 +267,7 @@ int vtkvmtkSmoothCapPolyData::RequestData(
         newPolyIds->Delete();
         if (markCells)
           {
-          cellEntityIdsArray->InsertNextValue(this->CapCellEntityId(boundaryId,capBoundaryId));
+          cellEntityIdsArray->InsertNextValue(this->CapCellEntityId(boundaryId,capBoundaryId,useBoundaryLabels));
           }
         }
       }
@@ -276,7 +276,7 @@ int vtkvmtkSmoothCapPolyData::RequestData(
 
     if (markCells)
       {
-      cellEntityIdsArray->InsertNextValue(this->CapCellEntityId(boundaryId,capBoundaryId));
+      cellEntityIdsArray->InsertNextValue(this->CapCellEntityId(boundaryId,capBoundaryId,useBoundaryLabels));
       }
 
     boundaryPointIds->Delete();
@@ -304,7 +304,7 @@ int vtkvmtkSmoothCapPolyData::RequestData(
   return 1;
 }
 
-vtkIdType vtkvmtkSmoothCapPolyData::CapCellEntityId(vtkIdType boundaryIndex, vtkIdType boundaryId)
+vtkIdType vtkvmtkSmoothCapPolyData::CapCellEntityId(vtkIdType boundaryIndex, vtkIdType boundaryId, bool useBoundaryLabels)
 {
   // An id the caller chose for this boundary is used as it stands; CellEntityIdOffset is what
   // moves the ids this filter derives itself out of the way of the input's, and has no business
@@ -314,6 +314,12 @@ vtkIdType vtkvmtkSmoothCapPolyData::CapCellEntityId(vtkIdType boundaryIndex, vtk
       && this->BoundaryCellEntityIds->GetValue(boundaryId) >= 0)
     {
     return this->BoundaryCellEntityIds->GetValue(boundaryId);
+    }
+  if (useBoundaryLabels)
+    {
+    // The boundary's label is its name, and so the cap's id; neither it nor a chosen id is
+    // shifted by CellEntityIdOffset.
+    return boundaryId;
     }
   return boundaryIndex+1+this->CellEntityIdOffset;
 }

@@ -140,17 +140,31 @@ def test_cap_takes_the_id_chosen_for_the_boundary_it_closes(capperClass):
 
 
 @pytest.mark.parametrize('capperClass', SINGLE_BOUNDARY_CAPPERS)
-def test_cap_keeps_its_positional_id_where_no_id_was_chosen(capperClass):
-    """An entry of -1 is no entry at all: that boundary falls back to the id its position gives
-    it, so a caller can name the boundaries it cares about and leave the rest alone."""
+def test_cap_takes_the_boundary_label_when_no_id_is_chosen(capperClass):
+    """The label is the boundary's name, so it is the cap's id when the caller names none: an
+    id has to be asked for only where it should differ from the label."""
+    surface, labels = labelled(tube_surface())
+
+    ids = cap_ids(capperClass(), surface, useLabels=True)
+
+    # 0 is the wall here as well as the label of the first boundary, so both caps are accounted
+    # for by their labels
+    assert ids == sorted(set([0]) | set(labels))
+
+
+@pytest.mark.parametrize('capperClass', SINGLE_BOUNDARY_CAPPERS)
+def test_cap_falls_back_to_its_label_where_no_id_was_chosen_for_it(capperClass):
+    """An entry of -1 is no entry at all: that cap keeps its own label, so a caller can choose
+    ids for the ends it cares about and leave the rest named after their boundaries."""
     surface, labels = labelled(tube_surface())
 
     ids = cap_ids(capperClass(), surface, useLabels=True,
                   boundaryCellEntityIds=chosen_ids({labels[0]: 55}))
 
-    # the wall, the cap that was named, and one still numbered by its position
+    # the wall, the cap that was named, and one carrying its own label
     assert len(ids) == 3
     assert 55 in ids
+    assert labels[1] in ids
 
 
 @pytest.mark.parametrize('capperClass', SINGLE_BOUNDARY_CAPPERS)
