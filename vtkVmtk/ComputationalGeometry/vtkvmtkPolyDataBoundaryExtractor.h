@@ -20,6 +20,10 @@ Program:   VMTK
  * @ingroup ComputationalGeometry
  *
  * This class identifies boundary edges and organizes them into poly lines based on connectivity. It also provides the output with a point data vtkIntArray (set as active scalars) in which the ids of boundary points in the input dataset are stored.
+ *
+ * Each poly line lists every point of its boundary once and does not repeat the first point at
+ * the end: a boundary is a ring, and the caller closes it, stepping round with (j+1) modulo the
+ * number of points of the cell, which is what every caller in vmtk does.
  */
 
 #ifndef __vtkvmtkPolyDataBoundaryExtractor_h
