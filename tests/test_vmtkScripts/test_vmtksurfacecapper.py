@@ -50,8 +50,8 @@ def test_methods_with_default_params(aorta_surface_open_ends, method, paramid, c
     capper.Method = method
     capper.Interactive = 0
     capper.Execute()
-    write_surface(capper.Surface)
 
+    write_surface(capper.Surface, name)
     assert compare_surfaces(capper.Surface, name) == True
 
 
@@ -72,8 +72,8 @@ def test_smooth_method_with_changing_params(aorta_surface_open_ends, constraint,
     capper.NumberOfRings = rings
     capper.Interactive = 0
     capper.Execute()
-    write_surface(capper.Surface)
 
+    write_surface(capper.Surface, name)
     assert compare_surfaces(capper.Surface, name) == True
 
 

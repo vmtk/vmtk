@@ -35,6 +35,101 @@ import vmtk.vmtkmeshwriter as meshwriter
 import vmtk.vmtkmeshcompare as meshcompare
 
 
+@pytest.fixture(scope='session')
+def output_datadir(tmp_path_factory):
+    '''
+    returns the directory the tests write their output to.
+
+    The outputs are kept because they are useful when debugging a failure, but
+    they must not go to the vmtk-test-data checkout: a test that writes its own
+    reference file rewrites the very thing it then compares against, so the
+    assertion can no longer fail, and it leaves the data checkout dirty. They go
+    to the build tree instead. Set VMTK_TEST_OUTPUT_DIR to choose the directory
+    when running the tests straight from a source checkout, where CMake has not
+    filled the build path in; without it they land in pytest's temporary
+    directory. Each write reports where it went, which pytest shows for a test
+    that fails.
+    '''
+    datadir = os.environ.get('VMTK_TEST_OUTPUT_DIR')
+    if not datadir:
+        binarydir = '@CMAKE_BINARY_DIR@'
+        if not binarydir.startswith('@'):
+            datadir = os.path.join(binarydir, 'tests', 'output')
+    if not datadir:
+        datadir = str(tmp_path_factory.mktemp('output'))
+    if not os.path.isdir(datadir):
+        os.makedirs(datadir)
+    return datadir
+
+
+def vmtk_test_datadir():
+    '''
+    returns the root of the vmtk-test-data checkout, or None if it is not found
+    '''
+    for datadir in [
+        os.path.join(
+            os.path.dirname(
+                os.path.dirname(
+                    os.path.realpath(__file__))), 'vmtk-test-data'),
+        os.path.join(
+            os.path.dirname(
+                os.path.dirname(
+                    os.path.dirname(
+                        os.path.dirname(
+                            os.path.realpath(__file__))))), 'vmtk-test-data')]:
+        if os.path.isdir(datadir):
+            return datadir
+    return None
+
+
+def snapshot_datadir(datadir):
+    '''
+    returns a {relative path: (size, modification time)} map of every file under
+    datadir, skipping the version control metadata git maintains on its own
+    '''
+    snapshot = {}
+    for dirpath, dirnames, filenames in os.walk(datadir):
+        dirnames[:] = [dirname for dirname in dirnames if dirname != '.git']
+        for filename in filenames:
+            path = os.path.join(dirpath, filename)
+            info = os.stat(path)
+            snapshot[os.path.relpath(path, datadir)] = (info.st_size, info.st_mtime_ns)
+    return snapshot
+
+
+@pytest.fixture(scope='session', autouse=True)
+def readonly_test_data():
+    '''
+    fails the run if it changed anything in the test data.
+
+    The input and reference data are a checkout of the vmtk-test-data
+    repository, and nothing here has any reason to write to it. A test that
+    writes a reference file rewrites the very thing it then compares against,
+    so the assertion can no longer fail, and it leaves the data checkout dirty,
+    which breaks everything that expects a clean tree.
+    '''
+    datadir = vmtk_test_datadir()
+    if datadir is None:
+        yield
+        return
+
+    before = snapshot_datadir(datadir)
+    yield
+    after = snapshot_datadir(datadir)
+
+    changes = ['  added: ' + path for path in sorted(set(after) - set(before))]
+    changes += ['  removed: ' + path for path in sorted(set(before) - set(after))]
+    changes += ['  modified: ' + path for path in sorted(set(before) & set(after))
+                if before[path] != after[path]]
+
+    if changes:
+        pytest.fail('the test run changed the test data in %s:\n%s\n\n'
+                    'The tests must treat that directory as read only. Write to '
+                    'the tmp_path fixture instead, and restore the data with '
+                    '"git -C %s checkout ."'
+                    % (datadir, '\n'.join(changes), datadir))
+
+
 @pytest.fixture(scope='module')
 def input_datadir():
     '''
@@ -87,29 +182,14 @@ def image_to_sha():
 
 
 @pytest.fixture(scope='module')
-def write_image():
+def write_image(output_datadir):
     def make_write_image(image, filename):
         writer = imagewriter.vmtkImageWriter()
         writer.Image = image
-        try:
-            datadir = os.path.join(
-                        os.path.dirname(
-                            os.path.dirname(
-                                os.path.realpath(__file__))), 'vmtk-test-data', 'imagereference')
-            if not os.path.isdir(datadir): raise ValueError()
-        except ValueError:
-            datadir = os.path.join(
-                os.path.dirname(
-                    os.path.dirname(
-                        os.path.dirname(
-                            os.path.dirname(
-                                os.path.realpath(__file__))))),
-                'vmtk-test-data', 'imagereference')
-            if not os.path.isdir(datadir):
-                raise ValueError('the vmtk-test-data repository cannot be found at the same level as vmtk. expected it to be at', datadir)
-        writer.OutputFileName = os.path.join(datadir, filename)
+        writer.OutputFileName = os.path.join(output_datadir, filename)
         writer.Execute()
-        return
+        print('wrote ' + writer.OutputFileName)
+        return writer.OutputFileName
     return make_write_image
 
 
@@ -203,29 +283,14 @@ def poly_to_np(scope='module'):
 
 
 @pytest.fixture(scope='module')
-def write_surface():
+def write_surface(output_datadir):
     def make_write_surface(surface, filename):
         writer = surfacewriter.vmtkSurfaceWriter()
         writer.Surface = surface
-        try:
-            datadir = os.path.join(
-                        os.path.dirname(
-                            os.path.dirname(
-                                os.path.realpath(__file__))), 'vmtk-test-data', 'surfacereference')
-            if not os.path.isdir(datadir): raise ValueError()
-        except ValueError:
-            datadir = os.path.join(
-                os.path.dirname(
-                    os.path.dirname(
-                        os.path.dirname(
-                            os.path.dirname(
-                                os.path.realpath(__file__))))),
-                'vmtk-test-data', 'surfacereference')
-            if not os.path.isdir(datadir):
-                raise ValueError('the vmtk-test-data repository cannot be found at the same level as vmtk. expected it to be at', datadir)
-        writer.OutputFileName = os.path.join(datadir, filename)
+        writer.OutputFileName = os.path.join(output_datadir, filename)
         writer.Execute()
-        return
+        print('wrote ' + writer.OutputFileName)
+        return writer.OutputFileName
     return make_write_surface
 
 
@@ -285,29 +350,14 @@ def aorta_centerline_branches(input_datadir):
 
 
 @pytest.fixture(scope='module')
-def write_centerline():
+def write_centerline(output_datadir):
     def make_write_centerline(centerline, filename):
         writer = surfacewriter.vmtkSurfaceWriter()
         writer.Surface = centerline
-        try:
-            datadir = os.path.join(
-                        os.path.dirname(
-                            os.path.dirname(
-                                os.path.realpath(__file__))), 'vmtk-test-data', 'centerlinereference')
-            if not os.path.isdir(datadir): raise ValueError()
-        except ValueError:
-            datadir = os.path.join(
-                os.path.dirname(
-                    os.path.dirname(
-                        os.path.dirname(
-                            os.path.dirname(
-                                os.path.realpath(__file__))))),
-                'vmtk-test-data', 'centerlinereference')
-            if not os.path.isdir(datadir):
-                raise ValueError('the vmtk-test-data repository cannot be found at the same level as vmtk. expected it to be at', datadir)
-        writer.OutputFileName = os.path.join(datadir, filename)
+        writer.OutputFileName = os.path.join(output_datadir, filename)
         writer.Execute()
-        return
+        print('wrote ' + writer.OutputFileName)
+        return writer.OutputFileName
     return make_write_centerline
 
 
@@ -385,13 +435,14 @@ def mesh_reference_datadir():
 
 
 @pytest.fixture(scope='module')
-def write_mesh(mesh_reference_datadir):
+def write_mesh(output_datadir):
     def make_write_mesh(mesh, filename):
         writer = meshwriter.vmtkMeshWriter()
         writer.Mesh = mesh
-        writer.OutputFileName = os.path.join(mesh_reference_datadir, filename)
+        writer.OutputFileName = os.path.join(output_datadir, filename)
         writer.Execute()
-        return
+        print('wrote ' + writer.OutputFileName)
+        return writer.OutputFileName
     return make_write_mesh
 
 
