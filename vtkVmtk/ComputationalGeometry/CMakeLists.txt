@@ -30,6 +30,7 @@ set (VTK_VMTK_COMPUTATIONALGEOMETRY_SRCS
   vtkvmtkCenterlineSplitExtractor.cxx
   vtkvmtkCenterlineSplittingAndGroupingFilter.cxx
   vtkvmtkCenterlineUtilities.cxx
+  vtkvmtkBoundaryLabels.cxx
   vtkvmtkBoundaryReferenceSystems.cxx
   vtkvmtkInternalTetrahedraExtractor.cxx
   vtkvmtkMergeCenterlines.cxx
@@ -42,6 +43,7 @@ set (VTK_VMTK_COMPUTATIONALGEOMETRY_SRCS
   vtkvmtkPolyDataBifurcationSections.cxx
   vtkvmtkPolyDataBifurcationProfiles.cxx
   vtkvmtkPolyDataBoundaryExtractor.cxx
+  vtkvmtkPolyDataBoundaryLabeler.cxx
   vtkvmtkPolyDataBranchSections.cxx
   vtkvmtkPolyDataBranchUtilities.cxx
   vtkvmtkPolyDataCenterlines.cxx
