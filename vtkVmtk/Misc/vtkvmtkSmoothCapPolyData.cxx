@@ -258,25 +258,60 @@ int vtkvmtkSmoothCapPolyData::RequestData(
         }
       for (i=0; i<numberOfBoundaryPoints; i++)
         {
-        vtkIdList* newPolyIds = vtkIdList::New();
-        newPolyIds->InsertNextId(previousCirclePointIds->GetId(i));
-        newPolyIds->InsertNextId(previousCirclePointIds->GetId((i+1)%numberOfBoundaryPoints));
-        newPolyIds->InsertNextId(circlePointIds->GetId((i+1)%numberOfBoundaryPoints));
-        newPolyIds->InsertNextId(circlePointIds->GetId(i));
-        newPolys->InsertNextCell(newPolyIds);
-        newPolyIds->Delete();
+        // Two triangles rather than the quad they would make. The four points are not reliably
+        // a simple quadrilateral: the warp that places a ring can bring neighbouring points of
+        // it past each other, and the quad through them then crosses itself. vtkTriangleFilter
+        // gives up on such a cell and emits nothing for it, which takes a hole out of a cap that
+        // was closed - so the split is made here, where the two triangles are known, instead of
+        // being left to a filter that cannot always make it.
+        vtkIdType previousId = previousCirclePointIds->GetId(i);
+        vtkIdType previousNextId = previousCirclePointIds->GetId((i+1)%numberOfBoundaryPoints);
+        vtkIdType currentId = circlePointIds->GetId(i);
+        vtkIdType currentNextId = circlePointIds->GetId((i+1)%numberOfBoundaryPoints);
+
+        vtkIdType firstTriangle[3] = {previousId, previousNextId, currentId};
+        vtkIdType secondTriangle[3] = {previousNextId, currentNextId, currentId};
+        newPolys->InsertNextCell(3,firstTriangle);
+        newPolys->InsertNextCell(3,secondTriangle);
         if (markCells)
           {
-          cellEntityIdsArray->InsertNextValue(this->CapCellEntityId(boundaryId,capBoundaryId,useBoundaryLabels));
+          vtkIdType capCellEntityId = this->CapCellEntityId(boundaryId,capBoundaryId,useBoundaryLabels);
+          cellEntityIdsArray->InsertNextValue(capCellEntityId);
+          cellEntityIdsArray->InsertNextValue(capCellEntityId);
           }
         }
       }
 
-    newPolys->InsertNextCell(circlePointIds);
-
-    if (markCells)
+    // The innermost ring closes the cap. It used to be one polygon, which leaves the same trap
+    // as the ring cells did: the ring is not reliably convex, or even simple, so a filter asked
+    // to triangulate it can fail and leave the tip open. Close it with a fan from its own centre
+    // instead, which is a triangle either way.
+    double tipCentre[3] = {0.0, 0.0, 0.0};
+    vtkIdType numberOfTipPoints = circlePointIds->GetNumberOfIds();
+    for (i=0; i<numberOfTipPoints; i++)
       {
-      cellEntityIdsArray->InsertNextValue(this->CapCellEntityId(boundaryId,capBoundaryId,useBoundaryLabels));
+      double tipPoint[3];
+      newPoints->GetPoint(circlePointIds->GetId(i),tipPoint);
+      for (int component=0; component<3; component++)
+        {
+        tipCentre[component] += tipPoint[component];
+        }
+      }
+    for (int component=0; component<3; component++)
+      {
+      tipCentre[component] /= static_cast<double>(numberOfTipPoints);
+      }
+    vtkIdType tipCentreId = newPoints->InsertNextPoint(tipCentre);
+    for (i=0; i<numberOfTipPoints; i++)
+      {
+      vtkIdType tipTriangle[3] = {circlePointIds->GetId(i),
+                                  circlePointIds->GetId((i+1)%numberOfTipPoints),
+                                  tipCentreId};
+      newPolys->InsertNextCell(3,tipTriangle);
+      if (markCells)
+        {
+        cellEntityIdsArray->InsertNextValue(this->CapCellEntityId(boundaryId,capBoundaryId,useBoundaryLabels));
+        }
       }
 
     boundaryPointIds->Delete();

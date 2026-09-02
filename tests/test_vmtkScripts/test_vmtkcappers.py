@@ -176,6 +176,47 @@ def test_cap_ids_are_positional_when_the_labels_are_not_used(capperClass):
     assert ids == [0, 1, 2]
 
 
+def test_the_smooth_cap_is_made_of_triangles():
+    """Whatever the ring geometry comes out as, the cells are triangles.
+
+    The rings used to be closed with quadrilaterals, and the warp that places a ring can bring
+    neighbouring points of it past each other, so that the quad through them crosses itself.
+    vtkTriangleFilter gives up on such a cell and emits nothing for it, which takes a hole out of
+    a cap that was closed -- and a caller triangulating the output, as the doc string tells it to,
+    got back an open surface. Splitting the ring cells here means there is nothing left to fail
+    on.
+    """
+    surface, _labels = labelled(tube_surface())
+
+    capper = vtkvmtk.vtkvmtkSmoothCapPolyData()
+    capper.SetInputData(surface)
+    capper.SetConstraintFactor(0.0)
+    capper.SetNumberOfRings(8)
+    capper.Update()
+    capped = capper.GetOutput()
+
+    assert capped.GetNumberOfCells() > 0
+    assert capped.GetPolys().IsHomogeneous() == 3
+
+    # and triangulating it, which is what a caller does, leaves it as it was and still closed
+    triangles = vtk.vtkTriangleFilter()
+    triangles.SetInputData(capped)
+    triangles.PassLinesOff()
+    triangles.PassVertsOff()
+    triangles.Update()
+    assert triangles.GetOutput().GetNumberOfCells() == capped.GetNumberOfCells()
+
+    for polyData in (capped, triangles.GetOutput()):
+        featureEdges = vtk.vtkFeatureEdges()
+        featureEdges.SetInputData(polyData)
+        featureEdges.BoundaryEdgesOn()
+        featureEdges.FeatureEdgesOff()
+        featureEdges.NonManifoldEdgesOff()
+        featureEdges.ManifoldEdgesOff()
+        featureEdges.Update()
+        assert featureEdges.GetOutput().GetNumberOfCells() == 0
+
+
 @pytest.mark.parametrize('capperClass', ANNULAR_CAPPERS)
 def test_annular_cap_takes_the_id_of_the_inner_boundary(capperClass):
     """A cap here closes a pair, so it has two labels to choose between. Labelled in annular mode
