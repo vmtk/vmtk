@@ -7,6 +7,7 @@ __all__ = [
     'vmtk.vmtkbifurcationsections',
     'vmtk.vmtkbifurcationvectors',
     'vmtk.vmtkboundarylayer',
+    'vmtk.vmtkboundarylabeler',
     'vmtk.vmtkboundaryreferencesystems',
     'vmtk.vmtkbranchclipper',
     'vmtk.vmtkbranchextractor',

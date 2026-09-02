@@ -11,6 +11,7 @@ set(SCRIPTS_SRCS
   vmtkbifurcationsections.py
   vmtkbifurcationvectors.py
   vmtkboundarylayer.py
+  vmtkboundarylabeler.py
   vmtkboundaryreferencesystems.py
   vmtkbranchclipper.py
   vmtkbranchextractor.py
