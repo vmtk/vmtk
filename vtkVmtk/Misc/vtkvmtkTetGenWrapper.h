@@ -290,6 +290,12 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkTetGenWrapper : public vtkUnstructuredGridAlgo
    * Toggle using the per-point sizing function (SizingFunctionArrayName) as a spatially-varying
    * maximum tetrahedron volume constraint (TetGen "-m" switch, used together with VarVolume).
    * Default: off.
+   *
+   * Turning this on is refused, with an error saying what to do instead: "-m" takes its sizes
+   * from a background mesh, this wrapper cannot supply one, and the mesh TetGen then builds for
+   * itself puts it on a path that does not answer the same way twice - the same input meshed
+   * twice in one session comes back tetrahedralized once and empty once. Bound the element
+   * volume with FixedVolume and MaxVolume instead.
    */
   vtkSetMacro(UseSizingFunction,int);
   vtkGetMacro(UseSizingFunction,int);
