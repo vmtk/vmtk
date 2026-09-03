@@ -95,7 +95,12 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkCapPolyData : public vtkPoly
       labels in use a boundary's id is its label, and without them it is the boundary's position
       in the order the extractor returns, which is what it has always been. So BoundaryIds and
       BoundaryCellEntityIds are read the same way either way, and a caller that labels its surface
-      gets ids that survive the filters in between without having to say so twice. */
+      gets ids that survive the filters in between without having to say so twice.
+
+      A label is not merely a name this filter then has to turn into an id: it is the id. The
+      labeler numbers the boundaries of a surface from CellEntityIdOffset+1 up, which is where
+      this filter would have numbered their caps anyway, so the cap of a labeled boundary carries
+      its label unchanged and a labeled surface is capped exactly as an unlabeled one is. */
   vtkSetStringMacro(BoundaryLabelsArrayName);
   vtkGetStringMacro(BoundaryLabelsArrayName);
   vtkSetStringMacro(BoundaryPointOrderArrayName);
@@ -108,12 +113,13 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkCapPolyData : public vtkPoly
       given to the cap closing the boundary whose id is i.
 
       An id beyond the end of the array, or one whose entry is negative, is no entry at all: with
-      the labels in use that cap keeps its boundary's label, which names it just as well, and
-      without them the id its position would have given it. An output can carry ids from both
-      rules at once.
+      the labels in use that cap keeps its boundary's label, which already is the id its position
+      would have given it, and without them the id its position gives it. An output can carry ids
+      from both rules at once.
       An id chosen here is used as it stands, with CellEntityIdOffset not added to it, while the
       offset still lands on the cells copied from the input and on any boundary left to its
-      positional id.
+      positional id. A label is not shifted either, for the same reason: it was numbered above the
+      wall to begin with, and shifting it again would move the cap off the id its end is known by.
 
       Where this earns its keep is with the boundary labels in use, because then the choice
       survives the filters in between: the label of a vessel end is carried by the surface's own

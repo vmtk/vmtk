@@ -85,13 +85,23 @@ def test_boundary_extraction_order_labels_every_boundary(tube):
     labeler = label(tube)
 
     assert labeler.NumberOfBoundaries == 2
-    assert labeler.BoundaryLabels == [0, 1]
+    # a label is the cell entity id of the cap that will close its boundary, so the labels start
+    # above the wall (entityidoffset, 1 by default) rather than at zero
+    assert labeler.BoundaryLabels == [2, 3]
     assert labeler.UnmatchedPlaneLabels == []
 
     labels, rings = labels_of_boundaries(labeler.Surface)
-    assert labels == [0, 1]
+    assert labels == [2, 3]
     # every point of each boundary is accounted for, and no interior point is claimed
     assert sorted(len(ring) for ring in rings) == [24, 24]
+
+
+def test_boundary_extraction_order_follows_the_entity_id_offset(tube):
+    """The labels are the ids the capper would have given the caps itself, so moving the wall
+    moves them with it."""
+    labeler = label(tube, CellEntityIdOffset=10)
+
+    assert labeler.BoundaryLabels == [11, 12]
 
 
 def test_extractor_lists_each_boundary_point_once(tube):
@@ -390,7 +400,7 @@ def test_annular_is_off_by_default():
 
     assert labeler.GetAnnular() is False
     assert labeler.GetAnnularOuterBoundaryOffset() == OUTER_OFFSET
-    assert sorted(labeler.GetBoundaryLabels().GetId(i) for i in range(4)) == [0, 1, 2, 3]
+    assert sorted(labeler.GetBoundaryLabels().GetId(i) for i in range(4)) == [2, 3, 4, 5]
 
 
 def test_annular_names_each_outer_boundary_after_its_inner_partner():

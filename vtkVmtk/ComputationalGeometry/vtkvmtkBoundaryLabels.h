@@ -30,7 +30,13 @@ Program:   VMTK
  * answer travels with the mesh:
  *
  * - the labels array holds, on each point of a boundary, the label of the boundary it belongs
- *   to, and InvalidBoundaryLabel on every other point. This is the boundary's identity.
+ *   to, and InvalidBoundaryLabel on every other point. This is the boundary's identity, and it
+ *   is also the cell entity id of the cap that closes that boundary: the cappers here read a
+ *   label as the id to give the cap they build, so the one number names the vessel end in the
+ *   point data and names its face in the cell data. Labels therefore start above the wall
+ *   rather than at zero -- vtkvmtkPolyDataBoundaryLabeler::CellEntityIdOffset is where that is
+ *   decided. InvalidBoundaryLabel is negative and so is no cell entity id at all: it says the
+ *   point is on no boundary, not that it belongs to any particular face.
  * - the point order array holds that point's index within its boundary, 0..n-1, and
  *   InvalidBoundaryLabel elsewhere. This is the ring's order and its winding direction.
  *

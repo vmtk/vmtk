@@ -30,6 +30,7 @@ class vmtkBoundaryLabeler(pypes.pypeScript):
         self.BoundaryLabelsArrayName = 'BoundaryLabels'
         self.BoundaryPointOrderArrayName = 'BoundaryPointOrder'
         self.LabelingMode = 'boundaryextractionorder'
+        self.CellEntityIdOffset = 1
         self.PlaneOrigins = None
         self.PlaneNormals = None
         self.PlaneLabels = None
@@ -46,10 +47,11 @@ class vmtkBoundaryLabeler(pypes.pypeScript):
             ['Surface','i','vtkPolyData',1,'','the input surface','vmtksurfacereader'],
             ['BoundaryLabelsArrayName','boundarylabelsarray','str',1,'','name of the point data array where each boundary point\'s label has to be stored'],
             ['BoundaryPointOrderArrayName','boundarypointorderarray','str',1,'','name of the point data array where the position of each point within its own boundary has to be stored'],
-            ['LabelingMode','labelingmode','str',1,'["boundaryextractionorder","closesttoplaneorigin","onplane","matchexistinglabels"]','where the labels come from: boundaryextractionorder gives boundary i the label i, i being its position in the order the boundary extraction returns the boundaries in; closesttoplaneorigin gives each plane\'s label to the boundary lying nearest its origin, the normal not being used; onplane gives a boundary a plane\'s label when every one of its points lies in that plane within maxdistancefromplane; matchexistinglabels gives a boundary the label a strict majority of its own points already carry, which is how a surface is brought back into line after a filter that knew nothing about the arrays; it matches labels rather than geometry, so a newly cut boundary gets a fresh label rather than the label of the nearest old one'],
+            ['LabelingMode','labelingmode','str',1,'["boundaryextractionorder","closesttoplaneorigin","onplane","matchexistinglabels"]','where the labels come from: boundaryextractionorder gives boundary i the label i+1+entityidoffset, i being its position in the order the boundary extraction returns the boundaries in, which is the id vmtksurfacecapper would have given its cap anyway; closesttoplaneorigin gives each plane\'s label to the boundary lying nearest its origin, the normal not being used; onplane gives a boundary a plane\'s label when every one of its points lies in that plane within maxdistancefromplane; matchexistinglabels gives a boundary the label a strict majority of its own points already carry, which is how a surface is brought back into line after a filter that knew nothing about the arrays; it matches labels rather than geometry, so a newly cut boundary gets a fresh label rather than the label of the nearest old one'],
+            ['CellEntityIdOffset','entityidoffset','int',1,'','cell entity id of the wall, which the labels are numbered above; a label is the cell entity id of the cap that will close its boundary, and a capper leaves this value on the cells it copied from its input, so the first id a cap may take is the one above it; leave it at the entityidoffset vmtksurfacecapper will be run with'],
             ['PlaneOrigins','planeorigins','float',-1,'','plane origins, three coordinates per plane; a point is a plane whose normal is never asked for, so this is also where positions go when there are no planes to give'],
             ['PlaneNormals','planenormals','float',-1,'','plane normals, three components per plane; required by the onplane mode and ignored by the others'],
-            ['PlaneLabels','planelabels','int',-1,'','label to give the boundary each plane matches; plane i is taken to carry the label i when this is not given'],
+            ['PlaneLabels','planelabels','int',-1,'','label to give the boundary each plane matches; plane i is taken to carry the label i+1+entityidoffset when this is not given; a label given here is used as it stands, so keeping it above entityidoffset is up to the caller'],
             ['MaximumDistanceFromPlane','maxdistancefromplane','float',1,'(0.0,)','how far any point of a boundary may be from a plane for that boundary to count as lying in it; used by the onplane mode, which requires a positive value, a plane being infinite and every boundary lying in it otherwise'],
             ['MaximumDistanceFromPlaneOrigin','maxdistancefromplaneorigin','float',1,'(0.0,)','how far any point of a boundary may be from a plane origin for that boundary to be a candidate for that plane label; a boundary is considered only when it lies entirely within this distance, so one point of it beyond and it is passed over however well the rest fits; zero puts no limit on it; used by both the closesttoplaneorigin and the onplane modes']
             ])
@@ -79,6 +81,7 @@ class vmtkBoundaryLabeler(pypes.pypeScript):
         labeler.SetInputData(self.Surface)
         labeler.SetBoundaryLabelsArrayName(self.BoundaryLabelsArrayName)
         labeler.SetBoundaryPointOrderArrayName(self.BoundaryPointOrderArrayName)
+        labeler.SetCellEntityIdOffset(self.CellEntityIdOffset)
         labeler.SetMaximumDistanceFromPlane(self.MaximumDistanceFromPlane)
         labeler.SetMaximumDistanceFromPlaneOrigin(self.MaximumDistanceFromPlaneOrigin)
 

@@ -81,6 +81,7 @@ vtkvmtkPolyDataBoundaryLabeler::vtkvmtkPolyDataBoundaryLabeler()
   this->SetBoundaryPointOrderArrayName(vtkvmtkBoundaryLabels::GetDefaultBoundaryPointOrderArrayName());
 
   this->LabelingMode = BOUNDARY_EXTRACTION_ORDER;
+  this->CellEntityIdOffset = 1;
   this->Annular = false;
   this->AnnularOuterBoundaryOffset = 1000;
 
@@ -182,7 +183,9 @@ int vtkvmtkPolyDataBoundaryLabeler::RequestData(
 
   // Labels already in use, so that a boundary given a fresh one never collides with a label a
   // end point asked for, or with one that is on the surface already but on no boundary any more.
-  vtkIdType highestLabelInUse = invalidLabel;
+  // It starts at the wall rather than at invalidLabel because a label is a cap's cell entity id,
+  // and the first id a cap may take is the one above the wall (see CellEntityIdOffset).
+  vtkIdType highestLabelInUse = this->CellEntityIdOffset;
 
   vtkIdType numberOfPlanes = 0;
   if ((this->LabelingMode == CLOSEST_TO_PLANE_ORIGIN || this->LabelingMode == ON_PLANE)
@@ -200,7 +203,7 @@ int vtkvmtkPolyDataBoundaryLabeler::RequestData(
   for (vtkIdType planeIndex=0; planeIndex<numberOfPlanes; planeIndex++)
     {
     planeLabels[planeIndex] = this->PlaneLabels && planeIndex < this->PlaneLabels->GetNumberOfIds()
-      ? this->PlaneLabels->GetId(planeIndex) : planeIndex;
+      ? this->PlaneLabels->GetId(planeIndex) : planeIndex+1+this->CellEntityIdOffset;
     if (planeLabels[planeIndex] > highestLabelInUse)
       {
       highestLabelInUse = planeLabels[planeIndex];
@@ -423,10 +426,13 @@ int vtkvmtkPolyDataBoundaryLabeler::RequestData(
       {
       for (vtkIdType boundaryIndex=0; boundaryIndex<numberOfBoundaries; boundaryIndex++)
         {
-        labels[boundaryIndex] = boundaryIndex;
-        if (boundaryIndex > highestLabelInUse)
+        // The id vtkvmtkCapPolyData gives the cap of the boundary in this position when it is
+        // left to number the caps itself, so that labeling a surface this way and not labeling
+        // it at all come to the same thing.
+        labels[boundaryIndex] = boundaryIndex+1+this->CellEntityIdOffset;
+        if (labels[boundaryIndex] > highestLabelInUse)
           {
-          highestLabelInUse = boundaryIndex;
+          highestLabelInUse = labels[boundaryIndex];
           }
         }
       break;
