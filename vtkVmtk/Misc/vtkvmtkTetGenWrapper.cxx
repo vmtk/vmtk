@@ -220,7 +220,28 @@ int vtkvmtkTetGenWrapper::RequestData(
 
   if (this->UseSizingFunction && sizingFunctionArray)
     {
-    tetgenOptionString += "m"; 
+    // TetGen reads a sizing function through its -m switch, and -m means "take the sizes from a
+    // background mesh". This wrapper has no way to hand one over, so TetGen makes its own by
+    // duplicating the mesh it is about to refine, and that path does not answer the same way
+    // twice: the same surface, meshed twice over in one session, comes back filled with
+    // tetrahedra one time and empty the next. Nothing is produced here rather than a mesh that
+    // cannot be reproduced.
+    vtkErrorMacro(<<"UseSizingFunction is on, and the sizing function array '"
+      <<this->SizingFunctionArrayName<<"' was found on the input, so TetGen would be run with its "
+      "-m switch. -m takes element sizes from a background mesh; with none given, TetGen builds "
+      "one out of the mesh it is meshing, and that gives a different answer from one run to the "
+      "next - the same input meshed twice in one session comes back tetrahedralized once and "
+      "empty once. No mesh is generated, rather than one that cannot be reproduced.\n"
+      "  To ask for a size without it: leave UseSizingFunction off and bound the element volume "
+      "instead, with SetFixedVolume(1) and SetMaxVolume(v), where v is the volume of the regular "
+      "tetrahedron of the edge length wanted - v = a*a*a/(6*sqrt(2)) for edge length a. That "
+      "gives the same mesh every time.\n"
+      "  A single volume bound is one size for the whole mesh, where the sizing function was a "
+      "size per point. Where the size has to vary, vary the triangles of the surface that is "
+      "handed in: the elements against it follow their size, and the bound then only says how "
+      "coarse the middle may become.");
+    this->SetLastRunExitStatus(1);
+    return 1;
     }
 
   tetgenio in_tetgenio;
