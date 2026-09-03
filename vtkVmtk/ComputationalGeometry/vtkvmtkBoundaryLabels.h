@@ -130,6 +130,13 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkBoundaryLabels : public vtkO
    * mesh, a merge that collapsed two points of a ring onto one, and the fractional values a
    * clipping filter leaves behind when it interpolates the arrays onto the points it creates.
    * A boundary whose points were all removed simply disappears, which is not an error.
+   *
+   * Nor is a boundary that is no longer open. The labels stay on the points of a boundary that
+   * has been capped, on purpose, as a record of which vessel end that ring was, so a surface
+   * that has been through a capper carries rings with cells on both sides of them. Only rings
+   * every edge of which still has a single cell behind it are returned, which is what the
+   * extractor would have found; a surface every boundary of which has been closed comes back
+   * with none, the same answer as for a surface that never had any.
    */
   static bool GetBoundaries(vtkPolyData* surface, const char* boundaryLabelsArrayName, const char* boundaryPointOrderArrayName, vtkPolyData* boundaries, vtkIdList* boundaryLabels);
 

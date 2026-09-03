@@ -123,6 +123,15 @@ bool vtkvmtkBoundaryLabels::GetBoundaries(vtkPolyData* surface, const char* boun
     return true;
     }
 
+  // Cell links, to tell an edge that still has only one cell behind it from one that has been
+  // closed since. Built on a copy of the structure rather than on surface itself: BuildLinks on
+  // the caller's own polydata leaves it holding a reference it did not ask for.
+  vtkNew<vtkPolyData> working;
+  working->CopyStructure(surface);
+  working->BuildLinks();
+  vtkNew<vtkIdList> edgeNeighbors;
+
+  std::vector<vtkIdType> closedLabels;
   for (std::map<vtkIdType,std::vector<std::pair<vtkIdType,vtkIdType> > >::iterator
        boundary=pointsByLabel.begin(); boundary!=pointsByLabel.end(); ++boundary)
     {
@@ -143,6 +152,32 @@ bool vtkvmtkBoundaryLabels::GetBoundaries(vtkPolyData* surface, const char* boun
         return false;
         }
       }
+    // A ring the arrays describe is not necessarily still an open boundary. The labels are left
+    // on the points of a boundary that has been capped, on purpose, as a record of which vessel
+    // end that ring was -- so a surface that has been through a capper carries rings with cells
+    // on both sides of them. Handing one of those back as a boundary has it capped a second
+    // time, over the cap already there, which is not an error anywhere it would be noticed: the
+    // surface comes back closed, of very nearly the right size, and non-manifold along every rim.
+    // What the extractor would return is the test, and it returns open boundaries only.
+    size_t numberOfRingPoints = ring.size();
+    bool stillOpen = true;
+    for (size_t index=0; index<numberOfRingPoints && stillOpen; index++)
+      {
+      working->GetCellEdgeNeighbors(-1,ring[index].second,
+                                    ring[(index+1)%numberOfRingPoints].second,edgeNeighbors);
+      // One cell behind the edge and it is on the boundary of the surface; two and it is inside
+      // it. Zero means the two points are no longer joined by an edge at all, which is no more
+      // an open boundary than the others.
+      stillOpen = (edgeNeighbors->GetNumberOfIds() == 1);
+      }
+    if (!stillOpen)
+      {
+      closedLabels.push_back(boundary->first);
+      }
+    }
+  for (size_t index=0; index<closedLabels.size(); index++)
+    {
+    pointsByLabel.erase(closedLabels[index]);
     }
 
   // Each point of a boundary is listed once, the way vtkvmtkPolyDataBoundaryExtractor lists
