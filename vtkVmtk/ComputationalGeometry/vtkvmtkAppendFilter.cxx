@@ -271,6 +271,7 @@ int vtkvmtkAppendFilter::RequestData(
   newPts->Delete();
   ptIds->Delete();
   newPtIds->Delete();
+  ptIdMap->Delete();
   locator->Delete();
 
   return 1;
