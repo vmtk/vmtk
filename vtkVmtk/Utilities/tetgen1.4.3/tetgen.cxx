@@ -4825,16 +4825,16 @@ void tetgenmesh::maketetrahedronmap(int*& idx2tetlist,
 
 void tetgenmesh::dummyinit(int tetwords, int shwords)
 {
-  unsigned long alignptr;
+  uintptr_t alignptr;
 
   // Set up 'dummytet', the 'tetrahedron' that occupies "outer space".
   dummytetbase = (tetrahedron *) new char[tetwords * sizeof(tetrahedron)
                                           + tetrahedrons->alignbytes];
   // Align 'dummytet' on a 'tetrahedrons->alignbytes'-byte boundary.
-  alignptr = (unsigned long) dummytetbase;
+  alignptr = (uintptr_t) dummytetbase;
   dummytet = (tetrahedron *)
-    (alignptr + (unsigned long) tetrahedrons->alignbytes
-     - (alignptr % (unsigned long) tetrahedrons->alignbytes));
+    (alignptr + (uintptr_t) tetrahedrons->alignbytes
+     - (alignptr % (uintptr_t) tetrahedrons->alignbytes));
   // Initialize the four adjoining tetrahedra to be "outer space". These
   //   will eventually be changed by various bonding operations, but their
   //   values don't really matter, as long as they can legally be
@@ -4856,10 +4856,10 @@ void tetgenmesh::dummyinit(int tetwords, int shwords)
     dummyshbase = (shellface *) new char[shwords * sizeof(shellface)
                                          + subfaces->alignbytes];
     // Align 'dummysh' on a 'subfaces->alignbytes'-byte boundary.
-    alignptr = (unsigned long) dummyshbase;
+    alignptr = (uintptr_t) dummyshbase;
     dummysh = (shellface *)
-      (alignptr + (unsigned long) subfaces->alignbytes
-       - (alignptr % (unsigned long) subfaces->alignbytes));
+      (alignptr + (uintptr_t) subfaces->alignbytes
+       - (alignptr % (uintptr_t) subfaces->alignbytes));
     // Initialize the three adjoining subfaces to be the omnipresent
     //   subface. These will eventually be changed by various bonding
     //   operations, but their values don't really matter, as long as they
@@ -8313,7 +8313,7 @@ void tetgenmesh::randomsample(point searchpt, triface *searchtet)
   void **sampleblock;
   long sampleblocks, samplesperblock, samplenum;
   long tetblocks, i, j;
-  unsigned long alignptr;
+  uintptr_t alignptr;
   REAL searchdist, dist;
 
   // 'searchtet' should be a valid tetrahedron.
@@ -8359,10 +8359,10 @@ void tetgenmesh::randomsample(point searchpt, triface *searchtet)
   sampleblocks = samples / samplesperblock;
   sampleblock = tetrahedrons->firstblock;
   for (i = 0; i < sampleblocks; i++) {
-    alignptr = (unsigned long) (sampleblock + 1);
+    alignptr = (uintptr_t) (sampleblock + 1);
     firsttet = (tetrahedron *)
-               (alignptr + (unsigned long) tetrahedrons->alignbytes
-               - (alignptr % (unsigned long) tetrahedrons->alignbytes));
+               (alignptr + (uintptr_t) tetrahedrons->alignbytes
+               - (alignptr % (uintptr_t) tetrahedrons->alignbytes));
     for (j = 0; j < samplesperblock; j++) {
       if (i == tetblocks - 1) {
         // This is the last block.
