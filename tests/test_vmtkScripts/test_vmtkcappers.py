@@ -36,6 +36,10 @@ except ImportError:
 LABELS = 'BoundaryLabels'
 ORDER = 'BoundaryPointOrder'
 CELL_ENTITY_IDS = 'CellEntityIds'
+# The wall id these tests cap with, and the one they label with: the two have to be the same
+# number for a label to be the id of the cap that closes its boundary. Not the default 1, so
+# that nothing here passes by accident of the default.
+CELL_ENTITY_ID_OFFSET = 0
 OUTER_OFFSET = 1000
 
 TUBE_LENGTH = 6.0
@@ -75,10 +79,15 @@ def walled_tube_surface():
     return walled.GetOutput()
 
 
-def labelled(surface, annular=False):
-    """surface with the boundary label arrays written on it, and the labels themselves."""
+def labelled(surface, annular=False, cellEntityIdOffset=CELL_ENTITY_ID_OFFSET):
+    """surface with the boundary label arrays written on it, and the labels themselves.
+
+    Labelled with the offset the cappers here are given, which is what the two have to agree on:
+    a label is the id of the cap that will close its boundary, so it has to be numbered above the
+    same wall the capper leaves on the cells it copies."""
     labeler = vtkvmtk.vtkvmtkPolyDataBoundaryLabeler()
     labeler.SetInputData(surface)
+    labeler.SetCellEntityIdOffset(cellEntityIdOffset)
     labeler.SetAnnular(annular)
     labeler.Update()
     labels = [labeler.GetBoundaryLabels().GetId(i) for i in range(labeler.GetNumberOfBoundaries())]
@@ -101,7 +110,7 @@ def cap_ids(capper, surface, useLabels=False, boundaryCellEntityIds=None):
     """The distinct cell entity ids of the capped surface."""
     capper.SetInputData(surface)
     capper.SetCellEntityIdsArrayName(CELL_ENTITY_IDS)
-    capper.SetCellEntityIdOffset(0)
+    capper.SetCellEntityIdOffset(CELL_ENTITY_ID_OFFSET)
     if useLabels:
         capper.SetBoundaryLabelsArrayName(LABELS)
         capper.SetBoundaryPointOrderArrayName(ORDER)
@@ -135,8 +144,8 @@ def test_cap_takes_the_id_chosen_for_the_boundary_it_closes(capperClass):
     ids = cap_ids(capperClass(), surface, useLabels=True,
                   boundaryCellEntityIds=chosen_ids(wanted))
 
-    # 0 is the wall, which keeps the offset; each cap carries the id asked for by label
-    assert ids == sorted(set([0]) | set(wanted.values()))
+    # the wall keeps the offset; each cap carries the id asked for by label
+    assert ids == sorted(set([CELL_ENTITY_ID_OFFSET]) | set(wanted.values()))
 
 
 @pytest.mark.parametrize('capperClass', SINGLE_BOUNDARY_CAPPERS)
@@ -147,9 +156,10 @@ def test_cap_takes_the_boundary_label_when_no_id_is_chosen(capperClass):
 
     ids = cap_ids(capperClass(), surface, useLabels=True)
 
-    # 0 is the wall here as well as the label of the first boundary, so both caps are accounted
-    # for by their labels
-    assert ids == sorted(set([0]) | set(labels))
+    # the wall keeps the offset and the caps carry their labels, which are numbered above it, so
+    # no cap can be mistaken for the wall
+    assert CELL_ENTITY_ID_OFFSET not in labels
+    assert ids == sorted([CELL_ENTITY_ID_OFFSET] + list(labels))
 
 
 @pytest.mark.parametrize('capperClass', SINGLE_BOUNDARY_CAPPERS)
@@ -173,7 +183,21 @@ def test_cap_ids_are_positional_when_the_labels_are_not_used(capperClass):
     arrays named, the caps are numbered by the order the boundaries come out in."""
     ids = cap_ids(capperClass(), tube_surface())
 
-    assert ids == [0, 1, 2]
+    assert ids == [CELL_ENTITY_ID_OFFSET, CELL_ENTITY_ID_OFFSET + 1, CELL_ENTITY_ID_OFFSET + 2]
+
+
+@pytest.mark.parametrize('capperClass', SINGLE_BOUNDARY_CAPPERS)
+def test_labelling_a_surface_does_not_change_how_it_is_capped(capperClass):
+    """The labeler numbers a boundary with the id the capper would have given its cap anyway, so
+    labelling a surface and capping it comes out cell entity id for cell entity id the same as
+    capping it unlabelled. That is what lets the labels be turned on for a pipeline that had them
+    off without renumbering the boundary conditions of everything downstream."""
+    surface, labels = labelled(tube_surface())
+
+    assert cap_ids(capperClass(), surface, useLabels=True) == cap_ids(capperClass(), tube_surface())
+    # and the labels themselves are those ids, so a vessel end is the same number in the point
+    # data that says which end it is and in the cell data a solver reads its faces from
+    assert sorted(labels) == [CELL_ENTITY_ID_OFFSET + 1, CELL_ENTITY_ID_OFFSET + 2]
 
 
 def test_the_smooth_cap_is_made_of_triangles():
@@ -228,7 +252,7 @@ def test_annular_cap_takes_the_id_of_the_inner_boundary(capperClass):
     ids = cap_ids(capperClass(), surface, useLabels=True,
                   boundaryCellEntityIds=chosen_ids(wanted))
 
-    assert ids == sorted(set([0]) | set(wanted.values()))
+    assert ids == sorted(set([CELL_ENTITY_ID_OFFSET]) | set(wanted.values()))
 
 
 @pytest.mark.parametrize('capperClass', ANNULAR_CAPPERS)
@@ -244,11 +268,11 @@ def test_annular_cap_prefers_the_lower_boundary_id_when_both_are_named(capperCla
                   boundaryCellEntityIds=chosen_ids(wanted))
 
     innerIds = [700 + label for label in labels if label < OUTER_OFFSET]
-    assert ids == sorted(set([0]) | set(innerIds))
+    assert ids == sorted(set([CELL_ENTITY_ID_OFFSET]) | set(innerIds))
 
 
 @pytest.mark.parametrize('capperClass', ANNULAR_CAPPERS)
 def test_annular_cap_ids_are_positional_when_the_labels_are_not_used(capperClass):
     ids = cap_ids(capperClass(), walled_tube_surface())
 
-    assert ids == [0, 1, 2]
+    assert ids == [CELL_ENTITY_ID_OFFSET, CELL_ENTITY_ID_OFFSET + 1, CELL_ENTITY_ID_OFFSET + 2]

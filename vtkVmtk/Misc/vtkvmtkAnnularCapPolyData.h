@@ -96,7 +96,11 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkAnnularCapPolyData : public vtkPolyDataAlgorit
    *
    * Setting them also settles what a boundary id means everywhere else in this filter: with the
    * labels in use a boundary's id is its label, and without them it is the boundary's position
-   * in the order the extractor returns, which is what it has always been.
+   * in the order the extractor returns, which is what it has always been.   *
+   * A label is not merely a name this filter turns into an id: it is the id. The labeler numbers
+   * the boundaries of a surface from CellEntityIdOffset+1 up, which is where this filter would
+   * have numbered their caps anyway, so the cap of a labeled boundary carries its label unchanged
+   * and a labeled surface is capped exactly as an unlabeled one is.
    */
   vtkSetStringMacro(BoundaryLabelsArrayName);
   vtkGetStringMacro(BoundaryLabelsArrayName);

@@ -92,7 +92,11 @@ class VTK_VMTK_CONTRIB_EXPORT vtkvmtkConcaveAnnularCapPolyData : public vtkPolyD
    * written by vtkvmtkPolyDataBoundaryLabeler. When both are set and the input carries arrays
    * that still describe it, the boundaries are read from them instead of being extracted, and
    * the cap of each pair can be named through BoundaryCellEntityIds. With the labels in use a
-   * boundary's id is its label, and without them it is its position in the extraction order.
+   * boundary's id is its label, and without them it is its position in the extraction order.   *
+   * A label is not merely a name this filter turns into an id: it is the id. The labeler numbers
+   * the boundaries of a surface from CellEntityIdOffset+1 up, which is where this filter would
+   * have numbered their caps anyway, so the cap of a labeled boundary carries its label unchanged
+   * and a labeled surface is capped exactly as an unlabeled one is.
    */
   vtkSetStringMacro(BoundaryLabelsArrayName);
   vtkGetStringMacro(BoundaryLabelsArrayName);

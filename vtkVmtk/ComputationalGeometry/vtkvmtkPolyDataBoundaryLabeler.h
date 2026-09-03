@@ -30,11 +30,18 @@ Program:   VMTK
  * recomputed, so vtkvmtkCapPolyData and vtkvmtkPolyDataFlowExtensionsFilter can be told which
  * vessel end is which without the caller having to translate ids across each of them.
  *
+ * A boundary's label is the cell entity id its cap will carry. That is the whole point of the
+ * numbering: a cap is asked for by the same number that names the vessel end it closes, so
+ * nothing has to be translated between the point data that says which end a boundary is and the
+ * cell data a solver reads its boundary conditions off. Labels therefore start above the wall,
+ * at CellEntityIdOffset+1, rather than at zero -- see CellEntityIdOffset.
+ *
  * The labeling modes differ only in where the labels come from:
  *
- * - BoundaryExtractionOrder gives boundary i the label i, i being its position in the order
- *   vtkvmtkPolyDataBoundaryExtractor returns the boundaries in. This is what the filters do
- *   implicitly today, made explicit and, once written down, kept.
+ * - BoundaryExtractionOrder gives boundary i the label i+1+CellEntityIdOffset, i being its
+ *   position in the order vtkvmtkPolyDataBoundaryExtractor returns the boundaries in. These are
+ *   exactly the ids vtkvmtkCapPolyData would have given the caps had it been left to number them
+ *   itself, so a surface labeled this way is capped exactly as an unlabeled one is.
  * - ClosestToPlaneOrigin gives each plane's label to the boundary lying nearest its origin. The
  *   plane's normal is not used, so a caller with nothing but a position to point at a vessel end
  *   with can give the position as the origin and leave the normals unset.
@@ -57,8 +64,9 @@ Program:   VMTK
  *   neither: the boundaries are whatever the extractor finds in the mesh as it stands.
  *
  * In every mode a boundary that ends up with no label of its own is given a fresh one, above
- * every label already in use, so no two boundaries ever share a label. Planes that matched no
- * boundary are reported in UnmatchedPlaneLabels rather than passed over in silence.
+ * every label already in use and never below CellEntityIdOffset+1, so no two boundaries ever
+ * share a label and none of them is mistaken for the wall. Planes that matched no boundary are
+ * reported in UnmatchedPlaneLabels rather than passed over in silence.
  *
  * This is the class to use. It uses vtkvmtkBoundaryLabels internally -- the names of the two
  * arrays and the value that means "not on a boundary" come from there, and that class is what
@@ -139,6 +147,20 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataBoundaryLabeler : pu
 
   ///@{
   /**
+   * Set/Get the cell entity id of the wall, which the labels are numbered above. Default 1, the
+   * same value vtkvmtkCapPolyData's own CellEntityIdOffset defaults to.
+   *
+   * A label is the cell entity id of the cap that will close its boundary, and the cappers leave
+   * CellEntityIdOffset on the cells they copied from their input. So the first id a cap may take
+   * is CellEntityIdOffset+1: this is what keeps a label off the wall, and off the 0 the volume
+   * elements of a mesh carry. Set it to whatever the capper this surface will go to is set to.
+   */
+  vtkSetMacro(CellEntityIdOffset,vtkIdType);
+  vtkGetMacro(CellEntityIdOffset,vtkIdType);
+  ///@}
+
+  ///@{
+  /**
    * Set/Get whether the input is a walled surface, whose open boundaries come in pairs -- an
    * inner boundary and the outer one facing it across the wall thickness.
    *
@@ -192,7 +214,11 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataBoundaryLabeler : pu
   ///@{
   /**
    * Set/Get the label to give the boundary each plane matches. Entry i belongs to plane i. When
-   * not set, plane i is taken to carry the label i.
+   * not set, plane i is taken to carry the label i+1+CellEntityIdOffset.
+   *
+   * A label set here is taken as it stands, so a caller choosing its own is the one responsible
+   * for keeping them above the wall: a label of CellEntityIdOffset or below names a cap that
+   * cannot be told from the wall it is set into.
    */
   vtkSetObjectMacro(PlaneLabels,vtkIdList);
   vtkGetObjectMacro(PlaneLabels,vtkIdList);
@@ -254,6 +280,7 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataBoundaryLabeler : pu
   char* BoundaryPointOrderArrayName;
 
   int LabelingMode;
+  vtkIdType CellEntityIdOffset;
   bool Annular;
   vtkIdType AnnularOuterBoundaryOffset;
 
