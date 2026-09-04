@@ -59,6 +59,8 @@ vtkvmtkBoundaryLayerGenerator::vtkvmtkBoundaryLayerGenerator()
   this->NumberOfSubsteps = 2000;
   this->Relaxation = 0.01;
   this->LocalCorrectionFactor = 0.45;
+  this->MaximumUntangleRoundsWithoutImprovement = 10;
+  this->NumberOfTangledCells = 0;
 
   this->IncludeSurfaceCells = 0;
   this->IncludeSidewallCells = 0;
@@ -253,27 +255,47 @@ int vtkvmtkBoundaryLayerGenerator::RequestData(
   this->IncrementalWarpVectors(input,initialNumberOfSubsteps,relaxation);
   
   int iteration = 0;
-  int check = this->CheckTangle(input,checkArray);  
-  if (check==1)
+  int tangled = this->CheckTangle(input,checkArray);
+  if (tangled > 0)
     {
-    std::cout <<"untangle procedure.. "<<std::endl; 
+    std::cout << "untangle procedure.. " << tangled << " tangled cells" << std::endl;
     }
 
-  int maximumNumberOfIterations = this->NumberOfSubsteps / 10; 
-  while (check==1 && iteration < maximumNumberOfIterations)
+  // Each round is a local correction followed by a tenth of the sweep, and the loop may go
+  // round as many times as there are tenths - but a layer that will not untangle does not
+  // untangle in a hundred rounds either, and every round costs a sweep of the surface. So the
+  // loop also stops once a run of rounds has left the count of tangled cells no lower than the
+  // best it has been, and says so, rather than spending the full allowance to hand back the
+  // same tangle.
+  int maximumNumberOfIterations = this->NumberOfSubsteps / 10;
+  int fewestTangled = tangled;
+  int roundsWithoutImprovement = 0;
+  while (tangled > 0 && iteration < maximumNumberOfIterations)
     {
     this->LocalUntangle(input,checkArray,this->LocalCorrectionFactor);
-    this->IncrementalWarpVectors(input,intermediateNumberOfSubsteps,relaxation);   
-    //std::cout << "iteration " << iteration << std::endl;
-    check = this->CheckTangle(input,checkArray);
+    this->IncrementalWarpVectors(input,intermediateNumberOfSubsteps,relaxation);
+    tangled = this->CheckTangle(input,checkArray);
     iteration += 1;
-    if (check==0)
+    if (tangled == 0)
       {
-      std::cout <<"try last : " ;
+      std::cout << "untangle iteration " << iteration << ": untangled, sweeping the rest" << std::endl;
       this->IncrementalWarpVectors(input,finalNumberOfSubsteps,relaxation); //questo se alto tira un po la piega che altrimenti si forma
-      check = this->CheckTangle(input,checkArray); 
+      tangled = this->CheckTangle(input,checkArray);
       }
-    }  
+    std::cout << "untangle iteration " << iteration << ": " << tangled << " tangled cells" << std::endl;
+    if (tangled < fewestTangled)
+      {
+      fewestTangled = tangled;
+      roundsWithoutImprovement = 0;
+      }
+    else if (++roundsWithoutImprovement >= this->MaximumUntangleRoundsWithoutImprovement)
+      {
+      std::cout << "untangle procedure stopped: " << tangled << " cells are still tangled after "
+                << roundsWithoutImprovement << " rounds without improvement" << std::endl;
+      break;
+      }
+    }
+  this->NumberOfTangledCells = tangled;
   
   int k;
   for (k=0; k<this->NumberOfSubLayers; k++)
@@ -611,7 +633,6 @@ int vtkvmtkBoundaryLayerGenerator::CheckTangle(vtkUnstructuredGrid* input, vtkUn
   double baseNormal[3], warpedNormal[3];
   
   int found = 0;
-  int check = 0;
   for (vtkIdType j=0; j<input->GetNumberOfCells(); j++)
     {
     input->GetCellPoints(j,pointList);
@@ -644,7 +665,6 @@ int vtkvmtkBoundaryLayerGenerator::CheckTangle(vtkUnstructuredGrid* input, vtkUn
     double testArea = warpedArea / baseArea;    
     if (prod < 0 || testArea <= 0.1 )
       {
-      check = 1;
       found = found + 1;
       checkArray->SetValue(j,1); 
       }
@@ -653,10 +673,8 @@ int vtkvmtkBoundaryLayerGenerator::CheckTangle(vtkUnstructuredGrid* input, vtkUn
       checkArray->SetValue(j,0);  
       }
     }
-  //std::cout << found <<" tangle triangles found"<<std::endl;
-  
   pointList->Delete();
-  return check;
+  return found;
 }
 
 void vtkvmtkBoundaryLayerGenerator::LocalUntangle(vtkUnstructuredGrid* input, vtkUnsignedCharArray* checkArray, double alpha)
@@ -698,7 +716,7 @@ void vtkvmtkBoundaryLayerGenerator::LocalUntangle(vtkUnstructuredGrid* input, vt
         input->GetPointCells(pointList->GetId(0),cellList);
         for (int i=0; i<cellList->GetNumberOfIds();i++)
           {
-          input->GetCellPoints(i,pointList2);
+          input->GetCellPoints(cellList->GetId(i),pointList2);
           input->GetPoint(pointList2->GetId(0),point1);
           input->GetPoint(pointList2->GetId(1),point2);
           input->GetPoint(pointList2->GetId(2),point3);
@@ -711,7 +729,7 @@ void vtkvmtkBoundaryLayerGenerator::LocalUntangle(vtkUnstructuredGrid* input, vt
         input->GetPointCells(pointList->GetId(1),cellList);
         for (int i=0; i<cellList->GetNumberOfIds();i++)
           {                       
-          input->GetCellPoints(i,pointList2);
+          input->GetCellPoints(cellList->GetId(i),pointList2);
           input->GetPoint(pointList2->GetId(0),point1);
           input->GetPoint(pointList2->GetId(1),point2);
           input->GetPoint(pointList2->GetId(2),point3);
@@ -724,7 +742,7 @@ void vtkvmtkBoundaryLayerGenerator::LocalUntangle(vtkUnstructuredGrid* input, vt
         input->GetPointCells(pointList->GetId(2),cellList);
         for (int i=0; i<cellList->GetNumberOfIds();i++)
           {                       
-          input->GetCellPoints(i,pointList2);
+          input->GetCellPoints(cellList->GetId(i),pointList2);
           input->GetPoint(pointList2->GetId(0),point1);
           input->GetPoint(pointList2->GetId(1),point2);
           input->GetPoint(pointList2->GetId(2),point3);

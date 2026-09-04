@@ -216,6 +216,27 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkBoundaryLayerGenerator : public vtkUnstructure
 
   ///@{
   /**
+   * Set/Get how many rounds of the local untangling procedure may pass without the number of
+   * tangled elements falling below the fewest seen before the procedure gives up. Each round
+   * sweeps the surface again, so a layer that will not untangle would otherwise cost as many
+   * rounds as NumberOfSubsteps allows (a tenth of them) and still come back tangled. Default: 10.
+   */
+  vtkGetMacro(MaximumUntangleRoundsWithoutImprovement,int);
+  vtkSetMacro(MaximumUntangleRoundsWithoutImprovement,int);
+  ///@}
+
+  ///@{
+  /**
+   * Get how many elements of the layer were still tangled - inside out, or squashed to less
+   * than a tenth of their base area - when the untangling procedure ended on the last update.
+   * 0 when the sweep never tangled or the procedure untangled it; anything else says the layer
+   * folds over itself somewhere, and a mesher handed its inner surface fails or never finishes.
+   */
+  vtkGetMacro(NumberOfTangledCells,int);
+  ///@}
+
+  ///@{
+  /**
    * Set/Get the name of the cell data array used to tag every output cell (surface, sidewall, and
    * volume) with the entity id corresponding to its role (see InnerSurfaceCellEntityId,
    * OuterSurfaceCellEntityId, SidewallCellEntityId, VolumeCellEntityId). Must be set before
@@ -317,6 +338,8 @@ class VTK_VMTK_MISC_EXPORT vtkvmtkBoundaryLayerGenerator : public vtkUnstructure
 
   double Relaxation;
   double LocalCorrectionFactor;
+  int MaximumUntangleRoundsWithoutImprovement;
+  int NumberOfTangledCells;
 
   private:
   vtkvmtkBoundaryLayerGenerator(const vtkvmtkBoundaryLayerGenerator&);  // Not implemented.
