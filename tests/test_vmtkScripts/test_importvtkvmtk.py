@@ -128,6 +128,7 @@ def vmtk_vtkvmtk_attributes():
         'vtkvmtkPolyDataBranchUtilities',
         'vtkvmtkPolyDataCenterlineAbscissaMetricFilter',
         'vtkvmtkPolyDataCenterlineAngularMetricFilter',
+        'vtkvmtkPolyDataCenterlineBranchSplitting',
         'vtkvmtkPolyDataCenterlineGroupsClipper',
         'vtkvmtkPolyDataCenterlineMetricFilter',
         'vtkvmtkPolyDataCenterlineProjection',
