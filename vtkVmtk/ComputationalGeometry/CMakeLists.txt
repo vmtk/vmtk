@@ -53,6 +53,7 @@ set (VTK_VMTK_COMPUTATIONALGEOMETRY_SRCS
   vtkvmtkPolyDataCenterlineMetricFilter.cxx
   vtkvmtkPolyDataCenterlineProjection.cxx
   vtkvmtkPolyDataCenterlineSections.cxx
+  vtkvmtkPolyDataCenterlineBranchSplitting.cxx
   vtkvmtkPolyDataFlowExtensionsFilter.cxx
   vtkvmtkPolyDataDistanceToCenterlines.cxx
   vtkvmtkPolyDataLineEmbedder.cxx

@@ -15,6 +15,7 @@ set(TEST_VMTKSCRIPTS_SRCS
     test_vmtkbranchmetrics.py
     test_vmtkbranchsections.py
     test_vmtkcenterlineattributes.py
+    test_vmtkcenterlinebranchsplitting.py
     test_vmtkcenterlinegeometry.py
     test_vmtkcenterlineimage.py
     test_vmtkcenterlineinterpolation.py
