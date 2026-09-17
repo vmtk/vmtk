@@ -22,9 +22,24 @@ import sys
 
 
 def test_import():
+    import os
+    import sysconfig
     import vmtk
     from vmtk import vtkvmtk
     print("vmtk package:", vmtk.__file__)
+
+    # The package must be installed into site-packages. A wheel that puts it
+    # into its data directory installs it into the environment root instead,
+    # which is only importable by accident (on Windows the environment root
+    # is on sys.path).
+    package_parent = os.path.normcase(os.path.realpath(
+        os.path.dirname(os.path.dirname(vmtk.__file__))))
+    site_packages = {os.path.normcase(os.path.realpath(sysconfig.get_path(name)))
+                     for name in ("purelib", "platlib")}
+    assert package_parent in site_packages, (
+        "vmtk is imported from %s instead of site-packages (%s)"
+        % (package_parent, ", ".join(sorted(site_packages)))
+    )
 
     # One class from each of the main wrapped kits.
     for class_name in [

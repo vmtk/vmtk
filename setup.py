@@ -357,6 +357,14 @@ setup(
     # the placeholder vmtk/.keep file in the source tree only exists so that
     # the declared package directory is present (the same pattern is used by
     # VTKU3DExporter).
+    # packages, package_dir and include_package_data must be passed here and
+    # not only in pyproject.toml: scikit-build reads them from the setup()
+    # arguments to classify the CMake-installed files, and without them it
+    # puts every installed file into the wheel's data directory instead of the
+    # vmtk package, outside site-packages.
+    packages=["vmtk"],
+    package_dir={"vmtk": "vmtk"},
+    include_package_data=False,
     cmake_args=cmake_args,
     install_requires=[
         f"vtk=={vtk_version()}",
