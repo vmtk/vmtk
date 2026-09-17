@@ -47,11 +47,6 @@ vmtk = "vmtk.pypemain:main"
 "Source" = "https://github.com/vmtk/vmtk"
 "Documentation" = "https://vmtk.github.io/documentation"
 
-[tool.setuptools]
-include-package-data = false
-package-dir = {"vmtk" = "vmtk"}
-packages = ["vmtk"]
-
 [tool.codespell]
 skip = "./vtkVmtk/Utilities"
 ignore-words-list = ["ans", "blockin", "pres", "bU", "ND", "nD"]
