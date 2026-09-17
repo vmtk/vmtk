@@ -78,8 +78,34 @@ defaults:
     shell: bash
 
 jobs:
+  check_version:
+    name: Check version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # The package version comes from CMakeLists.txt, not from the release
+      # tag. Stop a release before the long wheel builds if they disagree, as
+      # the packages would otherwise be published under the wrong version.
+      - name: Check that the release tag matches the package version
+        if: github.event_name == 'release'
+        env:
+          TAG: ${{ github.event.release.tag_name }}
+        run: |
+          major=$(sed -n 's/^set(VMTK_VERSION_MAJOR \([0-9]*\))$/\1/p' CMakeLists.txt)
+          minor=$(sed -n 's/^set(VMTK_VERSION_MINOR \([0-9]*\))$/\1/p' CMakeLists.txt)
+          patch=$(sed -n 's/^set(VMTK_VERSION_PATCH \([0-9]*\))$/\1/p' CMakeLists.txt)
+          suffix=$(sed -n 's/^set(VMTK_VERSION_SUFFIX "\(.*\)")$/\1/p' CMakeLists.txt)
+          version="${major}.${minor}.${patch}${suffix}"
+          echo "Package version: ${version}, release tag: ${TAG}"
+          if [ "${TAG}" != "v${version}" ]; then
+            echo "::error::Release tag ${TAG} does not match the package version ${version} set in CMakeLists.txt"
+            exit 1
+          fi
+
   build_wheels:
     name: Build wheels (${{ matrix.os }})
+    needs: [check_version]
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -129,6 +155,7 @@ jobs:
 
   build_sdist:
     name: Build sdist
+    needs: [check_version]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

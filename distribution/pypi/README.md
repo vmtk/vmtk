@@ -87,8 +87,9 @@ python distribution/pypi/test_wheel.py
 The package version is read from `set(VMTK_VERSION_MAJOR/MINOR/PATCH ...)`
 in the top-level CMakeLists.txt. GitHub releases only trigger publication
 (publishing a release whose tag starts with `v` runs the build and upload
-jobs); the tag name does not determine the version, so keep it consistent
-with CMakeLists.txt by convention.
+jobs); the tag name does not determine the version. The workflow checks that
+the tag is `v` followed by that version and stops the release before building
+anything if it is not, so bump the version in CMakeLists.txt before tagging.
 
 For a beta/pre-release, set the suffix next to the version numbers in
 CMakeLists.txt, e.g.
