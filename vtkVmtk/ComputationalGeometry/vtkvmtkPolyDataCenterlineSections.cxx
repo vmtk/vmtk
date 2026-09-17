@@ -42,6 +42,10 @@ Version:   $Revision: 1.1 $
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
+#include "vtkIdList.h"
+#include "vtkNew.h"
+
+#include <vector>
 
 #include "vtkvmtkCenterlineUtilities.h"
 #include "vtkvmtkPolyDataBranchUtilities.h"
@@ -148,41 +152,26 @@ int vtkvmtkPolyDataCenterlineSections::RequestData(
     return 1;
     }
 
-  vtkPoints* outputPoints = vtkPoints::New();
-  vtkCellArray* outputPolys = vtkCellArray::New();
+  vtkNew<vtkPoints> outputPoints;
+  vtkNew<vtkCellArray> outputPolys;
 
   output->SetPoints(outputPoints);
   output->SetPolys(outputPolys);
 
-  vtkDoubleArray* centerlineSectionAreaArray = vtkDoubleArray::New();
+  int numberOfCenterlinePoints = this->Centerlines->GetNumberOfPoints();
+
+  // Sections are stored both on the output, one tuple per section, and on
+  // the centerline points. Centerline points that get no section keep 0.
+  vtkNew<vtkDoubleArray> centerlineSectionAreaArray;
   centerlineSectionAreaArray->SetName(this->CenterlineSectionAreaArrayName);
-
-  vtkDoubleArray* centerlineSectionShapeArray = vtkDoubleArray::New();
-  centerlineSectionShapeArray->SetName(this->CenterlineSectionShapeArrayName);
-
-  vtkDoubleArray* centerlineSectionMinSizeArray = vtkDoubleArray::New();
+  vtkNew<vtkDoubleArray> centerlineSectionMinSizeArray;
   centerlineSectionMinSizeArray->SetName(this->CenterlineSectionMinSizeArrayName);
-
-  vtkDoubleArray* centerlineSectionMaxSizeArray = vtkDoubleArray::New();
+  vtkNew<vtkDoubleArray> centerlineSectionMaxSizeArray;
   centerlineSectionMaxSizeArray->SetName(this->CenterlineSectionMaxSizeArrayName);
-
-  vtkIntArray* centerlineSectionClosedArray = vtkIntArray::New();
+  vtkNew<vtkDoubleArray> centerlineSectionShapeArray;
+  centerlineSectionShapeArray->SetName(this->CenterlineSectionShapeArrayName);
+  vtkNew<vtkIntArray> centerlineSectionClosedArray;
   centerlineSectionClosedArray->SetName(this->CenterlineSectionClosedArrayName);
-
-  vtkDoubleArray* centerlineAreaArray = vtkDoubleArray::New();
-  centerlineAreaArray->SetName(this->CenterlineSectionAreaArrayName);
-
-  vtkDoubleArray* centerlineShapeArray = vtkDoubleArray::New();
-  centerlineShapeArray->SetName(this->CenterlineSectionShapeArrayName);
-
-  vtkDoubleArray* centerlineMinSizeArray = vtkDoubleArray::New();
-  centerlineMinSizeArray->SetName(this->CenterlineSectionMinSizeArrayName);
-
-  vtkDoubleArray* centerlineMaxSizeArray = vtkDoubleArray::New();
-  centerlineMaxSizeArray->SetName(this->CenterlineSectionMaxSizeArrayName);
-
-  vtkIntArray* centerlineClosedArray = vtkIntArray::New();
-  centerlineClosedArray->SetName(this->CenterlineSectionClosedArrayName);
 
   output->GetCellData()->AddArray(centerlineSectionAreaArray);
   output->GetCellData()->AddArray(centerlineSectionMinSizeArray);
@@ -190,46 +179,31 @@ int vtkvmtkPolyDataCenterlineSections::RequestData(
   output->GetCellData()->AddArray(centerlineSectionShapeArray);
   output->GetCellData()->AddArray(centerlineSectionClosedArray);
 
-  this->Centerlines->GetPointData()->AddArray(centerlineAreaArray);
-  this->Centerlines->GetPointData()->AddArray(centerlineMinSizeArray);
-  this->Centerlines->GetPointData()->AddArray(centerlineMaxSizeArray);
-  this->Centerlines->GetPointData()->AddArray(centerlineShapeArray);
-  this->Centerlines->GetPointData()->AddArray(centerlineClosedArray);
+  vtkNew<vtkDoubleArray> centerlineAreaArray;
+  centerlineAreaArray->SetName(this->CenterlineSectionAreaArrayName);
+  vtkNew<vtkDoubleArray> centerlineMinSizeArray;
+  centerlineMinSizeArray->SetName(this->CenterlineSectionMinSizeArrayName);
+  vtkNew<vtkDoubleArray> centerlineMaxSizeArray;
+  centerlineMaxSizeArray->SetName(this->CenterlineSectionMaxSizeArrayName);
+  vtkNew<vtkDoubleArray> centerlineShapeArray;
+  centerlineShapeArray->SetName(this->CenterlineSectionShapeArrayName);
+  vtkNew<vtkIntArray> centerlineClosedArray;
+  centerlineClosedArray->SetName(this->CenterlineSectionClosedArrayName);
 
-  int numberOfCenterlinePoints = this->Centerlines->GetNumberOfPoints();
+  vtkDataArray* centerlineArrays[] = {centerlineAreaArray, centerlineMinSizeArray, centerlineMaxSizeArray, centerlineShapeArray, centerlineClosedArray};
+  for (vtkDataArray* centerlineArray : centerlineArrays)
+    {
+    centerlineArray->SetNumberOfTuples(numberOfCenterlinePoints);
+    centerlineArray->Fill(0.0);
+    this->Centerlines->GetPointData()->AddArray(centerlineArray);
+    }
 
-  centerlineAreaArray->SetNumberOfTuples(numberOfCenterlinePoints);
-  centerlineMinSizeArray->SetNumberOfTuples(numberOfCenterlinePoints);
-  centerlineMaxSizeArray->SetNumberOfTuples(numberOfCenterlinePoints);
-  centerlineShapeArray->SetNumberOfTuples(numberOfCenterlinePoints);
-  centerlineClosedArray->SetNumberOfTuples(numberOfCenterlinePoints);
+  this->ComputeCenterlineSections(input,output);
 
-  int numberOfCenterlineCells = this->Centerlines->GetNumberOfCells();
-  int i;
-  for (i=0; i<numberOfCenterlineCells; i++)
-  {
-    this->ComputeCenterlineSections(input,i,output);
-  }
-
-  outputPoints->Delete();
-  outputPolys->Delete();
-
-  centerlineSectionAreaArray->Delete();
-  centerlineSectionMinSizeArray->Delete();
-  centerlineSectionMaxSizeArray->Delete();
-  centerlineSectionShapeArray->Delete();
-  centerlineSectionClosedArray->Delete();
- 
-  centerlineAreaArray->Delete();
-  centerlineMinSizeArray->Delete();
-  centerlineMaxSizeArray->Delete();
-  centerlineShapeArray->Delete();
-  centerlineClosedArray->Delete();
- 
   return 1;
 }
 
-void vtkvmtkPolyDataCenterlineSections::ComputeCenterlineSections(vtkPolyData* input, int cellId, vtkPolyData* output)
+void vtkvmtkPolyDataCenterlineSections::ComputeCenterlineSections(vtkPolyData* input, vtkPolyData* output)
 {
   vtkPoints* centerlineSectionPoints = output->GetPoints();
   vtkCellArray* centerlineSectionPolys = output->GetPolys();
@@ -246,89 +220,109 @@ void vtkvmtkPolyDataCenterlineSections::ComputeCenterlineSections(vtkPolyData* i
   vtkDoubleArray* centerlineShapeArray = vtkDoubleArray::SafeDownCast(this->Centerlines->GetPointData()->GetArray(this->CenterlineSectionShapeArrayName));
   vtkIntArray* centerlineClosedArray = vtkIntArray::SafeDownCast(this->Centerlines->GetPointData()->GetArray(this->CenterlineSectionClosedArrayName));
 
-  vtkCell* centerlineCell = this->Centerlines->GetCell(cellId);
-
-  vtkPoints* centerlineCellPoints = centerlineCell->GetPoints();
-
-  int numberOfCellPoints = centerlineCellPoints->GetNumberOfPoints();
-
-  int i;
-
-  for (i=0; i<numberOfCellPoints; i++)
-  {
-    double point[3];
-    centerlineCellPoints->GetPoint(i,point);
-
-    double tangent[3];
-    tangent[0] = tangent[1] = tangent[2] = 0.0;
-
-    double weightSum = 0.0;
-    if (i>0)
+  // Points are visited in the order of the centerline cells and of the points
+  // in each cell. A point shared by several cells gets a single section.
+  std::vector<bool> visited(this->Centerlines->GetNumberOfPoints(),false);
+  vtkNew<vtkIdList> cellPointIds;
+  for (vtkIdType cellId=0; cellId<this->Centerlines->GetNumberOfCells(); cellId++)
     {
-      double point0[3], point1[3];
-      centerlineCellPoints->GetPoint(i-1,point0);
-      centerlineCellPoints->GetPoint(i,point1);
-      double distance = sqrt(vtkMath::Distance2BetweenPoints(point0,point1));
-      tangent[0] += (point1[0] - point0[0]) / distance;
-      tangent[1] += (point1[1] - point0[1]) / distance;
-      tangent[2] += (point1[2] - point0[2]) / distance;
-      weightSum += 1.0;
+    this->Centerlines->GetCellPoints(cellId,cellPointIds);
+    for (vtkIdType i=0; i<cellPointIds->GetNumberOfIds(); i++)
+      {
+      vtkIdType pointId = cellPointIds->GetId(i);
+      if (visited[pointId])
+        {
+        continue;
+        }
+      visited[pointId] = true;
+
+      double origin[3], normal[3];
+      if (!this->ComputeSectionPlane(cellId,i,origin,normal))
+        {
+        continue;
+        }
+
+      vtkNew<vtkPolyData> section;
+      bool closed = false;
+      this->ExtractSection(input,origin,normal,section,closed);
+
+      section->BuildCells();
+      if (section->GetNumberOfCells() == 0)
+        {
+        // The plane does not cut the surface, for example past an open end
+        continue;
+        }
+
+      vtkPoints* sectionCellPoints = section->GetCell(0)->GetPoints();
+      int numberOfSectionCellPoints = sectionCellPoints->GetNumberOfPoints();
+      vtkIdType sectionId = centerlineSectionPolys->InsertNextCell(numberOfSectionCellPoints);
+      for (int k=0; k<numberOfSectionCellPoints; k++)
+        {
+        vtkIdType sectionPointId = centerlineSectionPoints->InsertNextPoint(sectionCellPoints->GetPoint(k));
+        centerlineSectionPolys->InsertCellPoint(sectionPointId);
+        }
+
+      double area = vtkvmtkPolyDataBranchSections::ComputeBranchSectionArea(section);
+      double sizeRange[2];
+      double shape = vtkvmtkPolyDataBranchSections::ComputeBranchSectionShape(section,origin,sizeRange);
+
+      centerlineSectionAreaArray->InsertNextValue(area);
+      centerlineSectionMinSizeArray->InsertNextValue(sizeRange[0]);
+      centerlineSectionMaxSizeArray->InsertNextValue(sizeRange[1]);
+      centerlineSectionShapeArray->InsertNextValue(shape);
+      centerlineSectionClosedArray->InsertNextValue(closed);
+
+      centerlineAreaArray->SetValue(pointId,area);
+      centerlineMinSizeArray->SetValue(pointId,sizeRange[0]);
+      centerlineMaxSizeArray->SetValue(pointId,sizeRange[1]);
+      centerlineShapeArray->SetValue(pointId,shape);
+      centerlineClosedArray->SetValue(pointId,closed);
+
+      this->ProcessSection(input,pointId,sectionId,section,origin,normal,closed);
+      }
+    }
+}
+
+bool vtkvmtkPolyDataCenterlineSections::ComputeSectionPlane(vtkIdType cellId, vtkIdType cellPointIndex, double origin[3], double normal[3])
+{
+  vtkNew<vtkIdList> cellPointIds;
+  this->Centerlines->GetCellPoints(cellId,cellPointIds);
+  const vtkIdType numberOfCellPoints = cellPointIds->GetNumberOfIds();
+
+  this->Centerlines->GetPoint(cellPointIds->GetId(cellPointIndex),origin);
+
+  // Average the directions from the previous and to the next point. Points
+  // that coincide with the section point, such as a duplicated end point, have
+  // no direction, so the nearest distinct point on each side is used instead.
+  normal[0] = normal[1] = normal[2] = 0.0;
+  double neighborPoint[3], direction[3];
+  for (vtkIdType step : {-1, 1})
+    {
+    for (vtkIdType j=cellPointIndex+step; j>=0 && j<numberOfCellPoints; j+=step)
+      {
+      this->Centerlines->GetPoint(cellPointIds->GetId(j),neighborPoint);
+      vtkMath::Subtract(neighborPoint,origin,direction);
+      double distance = vtkMath::Normalize(direction);
+      if (distance > 0.0)
+        {
+        normal[0] += step * direction[0];
+        normal[1] += step * direction[1];
+        normal[2] += step * direction[2];
+        break;
+        }
+      }
     }
 
-    if (i<numberOfCellPoints-1)
-    {
-      double point0[3], point1[3];
-      centerlineCellPoints->GetPoint(i,point0);
-      centerlineCellPoints->GetPoint(i+1,point1);
-      double distance = sqrt(vtkMath::Distance2BetweenPoints(point0,point1));
-      tangent[0] += (point1[0] - point0[0]) / distance;
-      tangent[1] += (point1[1] - point0[1]) / distance;
-      tangent[2] += (point1[2] - point0[2]) / distance;
-      weightSum += 1.0;
-    }
+  return vtkMath::Normalize(normal) > 0.0;
+}
 
-    tangent[0] /= weightSum;
-    tangent[1] /= weightSum;
-    tangent[2] /= weightSum;
+void vtkvmtkPolyDataCenterlineSections::ExtractSection(vtkPolyData* input, double origin[3], double normal[3], vtkPolyData* section, bool & closed)
+{
+  vtkvmtkPolyDataBranchSections::ExtractCylinderSection(input,origin,normal,section,closed);
+}
 
-    vtkMath::Normalize(tangent);
-
-    //now cut branch with plane and get section. Compute section properties and store them.
-
-    vtkPolyData* section = vtkPolyData::New();
-    bool closed = false;
-    vtkvmtkPolyDataBranchSections::ExtractCylinderSection(input,point,tangent,section,closed);
-
-    section->BuildCells();
-    vtkPoints* sectionCellPoints = section->GetCell(0)->GetPoints();
-    int numberOfSectionCellPoints = sectionCellPoints->GetNumberOfPoints();
-    centerlineSectionPolys->InsertNextCell(numberOfSectionCellPoints);
-    int k;
-    for (k=0; k<numberOfSectionCellPoints; k++)
-    {
-      vtkIdType branchPointId = centerlineSectionPoints->InsertNextPoint(sectionCellPoints->GetPoint(k));
-      centerlineSectionPolys->InsertCellPoint(branchPointId);
-    }
-    
-    double area = vtkvmtkPolyDataBranchSections::ComputeBranchSectionArea(section);
-    double sizeRange[2];
-    double shape = vtkvmtkPolyDataBranchSections::ComputeBranchSectionShape(section,point,sizeRange);
-
-    centerlineSectionAreaArray->InsertNextValue(area);
-    centerlineSectionMinSizeArray->InsertNextValue(sizeRange[0]);
-    centerlineSectionMaxSizeArray->InsertNextValue(sizeRange[1]);
-    centerlineSectionShapeArray->InsertNextValue(shape);
-    centerlineSectionClosedArray->InsertNextValue(closed);
-
-    vtkIdType pointId = centerlineCell->GetPointId(i);
-    centerlineAreaArray->InsertValue(pointId,area);
-    centerlineMinSizeArray->InsertValue(pointId,sizeRange[0]);
-    centerlineMaxSizeArray->InsertValue(pointId,sizeRange[1]);
-    centerlineShapeArray->InsertValue(pointId,shape);
-    centerlineClosedArray->InsertValue(pointId,closed);
-
-    section->Delete();
-  }  
+void vtkvmtkPolyDataCenterlineSections::ProcessSection(vtkPolyData* vtkNotUsed(input), vtkIdType vtkNotUsed(pointId), vtkIdType vtkNotUsed(sectionId), vtkPolyData* vtkNotUsed(section), double* vtkNotUsed(origin), double* vtkNotUsed(normal), bool vtkNotUsed(closed))
+{
 }
 
 void vtkvmtkPolyDataCenterlineSections::PrintSelf(std::ostream& os, vtkIndent indent)

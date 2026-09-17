@@ -163,3 +163,68 @@ def test_custom_array_names():
     for name in ['Area', 'MinSize', 'MaxSize', 'Shape', 'Closed']:
         assert sections.CenterlineSections.GetCellData().GetArray(name) is not None
         assert sections.Centerlines.GetPointData().GetArray(name) is not None
+
+
+def test_duplicated_end_point():
+    # Centerlines often end with the same point twice. Both copies get a section perpendicular to
+    # the centerline instead of a plane with an undefined normal.
+    zCoordinates = Z_BETWEEN_RINGS + [Z_BETWEEN_RINGS[-1]]
+    result = compute_sections(tube(), centerlines([zCoordinates]))
+    sections = result.CenterlineSections
+
+    assert sections.GetNumberOfCells() == len(zCoordinates)
+    area = sections.GetCellData().GetArray('CenterlineSectionArea')
+    for i in range(sections.GetNumberOfCells()):
+        assert area.GetValue(i) == pytest.approx(SECTION_AREA, rel=1e-6)
+
+
+def test_point_where_plane_misses_surface():
+    # A centerline point past the end of the tube gets no section, and zeros on the centerline
+    zCoordinates = Z_BETWEEN_RINGS + [TUBE_LENGTH + 1.0]
+    result = compute_sections(tube(), centerlines([zCoordinates]))
+    sections = result.CenterlineSections
+
+    assert sections.GetNumberOfCells() == len(Z_BETWEEN_RINGS)
+    centerlinePointData = result.Centerlines.GetPointData()
+    lastPointId = len(zCoordinates) - 1
+    for name in ARRAY_NAMES:
+        assert centerlinePointData.GetArray(name).GetTuple1(lastPointId) == 0
+    assert centerlinePointData.GetArray('CenterlineSectionArea').GetTuple1(0) == pytest.approx(SECTION_AREA, rel=1e-6)
+
+
+def test_point_shared_by_centerlines():
+    # A point shared by two centerline cells gets a single section
+    points = vtk.vtkPoints()
+    for z in Z_BETWEEN_RINGS:
+        points.InsertNextPoint(0.0, 0.0, z)
+    lines = vtk.vtkCellArray()
+    lines.InsertNextCell(5, [0, 1, 2, 3, 4])
+    lines.InsertNextCell(6, [4, 5, 6, 7, 8, 9])
+    polylines = vtk.vtkPolyData()
+    polylines.SetPoints(points)
+    polylines.SetLines(lines)
+
+    sections = compute_sections(tube(), polylines).CenterlineSections
+
+    assert sections.GetNumberOfCells() == len(Z_BETWEEN_RINGS)
+
+
+@pytest.mark.parametrize('surfaceFixture,centerlineFixture,numberOfSections,numberOfClosedSections,totalArea', [
+    ('aorta_surface', 'aorta_centerline', 409, 409, 54091.633),
+    ('aorta_surface_branches', 'aorta_centerline_branches', 417, 410, 55321.155),
+])
+def test_aorta(surfaceFixture, centerlineFixture, numberOfSections, numberOfClosedSections, totalArea, request):
+    # Both centerlines end with a duplicated point, which used to crash the filter
+    surface = request.getfixturevalue(surfaceFixture)
+    centerlinesCopy = vtk.vtkPolyData()
+    centerlinesCopy.DeepCopy(request.getfixturevalue(centerlineFixture))
+
+    sections = compute_sections(surface, centerlinesCopy).CenterlineSections
+
+    assert sections.GetNumberOfCells() == numberOfSections
+    cellData = sections.GetCellData()
+    closed = cellData.GetArray('CenterlineSectionClosed')
+    assert sum(closed.GetValue(i) for i in range(closed.GetNumberOfTuples())) == numberOfClosedSections
+    area = cellData.GetArray('CenterlineSectionArea')
+    assert area.GetValue(0) == pytest.approx(195.531177, rel=1e-6)
+    assert sum(area.GetValue(i) for i in range(area.GetNumberOfTuples())) == pytest.approx(totalArea, rel=1e-6)

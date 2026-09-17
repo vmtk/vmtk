@@ -115,7 +115,37 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataCenterlineSections :
 
   virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
-  void ComputeCenterlineSections(vtkPolyData* input, int cellId, vtkPolyData* output);
+  /**
+   * Cut a section of input at each centerline point and store it in output, with its properties
+   * both on output and on the centerline point. Points are visited in the order of the centerline
+   * cells and of the points in each cell; a point shared by several cells is visited once. A point
+   * gets no section if ComputeSectionPlane returns false for it or the plane does not cut input.
+   */
+  void ComputeCenterlineSections(vtkPolyData* input, vtkPolyData* output);
+
+  /**
+   * Compute the plane of the section at a centerline point, given as the index cellPointIndex of
+   * the point within centerline cell cellId. Return false to cut no section at that point.
+   * The default places the plane at the point, perpendicular to the average of the directions from
+   * the previous and to the next distinct point of the cell, and returns false only if the cell has
+   * no point distinct from it.
+   * Subclasses can override it, for example to use tangents computed in advance.
+   */
+  virtual bool ComputeSectionPlane(vtkIdType cellId, vtkIdType cellPointIndex, double origin[3], double normal[3]);
+
+  /**
+   * Cut input with the plane specified by origin and normal. The default calls
+   * vtkvmtkPolyDataBranchSections::ExtractCylinderSection. Subclasses can override it, for example
+   * to keep attributes of input on the section.
+   */
+  virtual void ExtractSection(vtkPolyData* input, double origin[3], double normal[3], vtkPolyData* section, bool & closed);
+
+  /**
+   * Called for each section after it has been added to the output as cell sectionId and its
+   * properties have been stored. pointId is the centerline point the section was cut at. The default
+   * does nothing. Subclasses can override it to compute and store additional section properties.
+   */
+  virtual void ProcessSection(vtkPolyData* input, vtkIdType pointId, vtkIdType sectionId, vtkPolyData* section, double origin[3], double normal[3], bool closed);
 
   vtkPolyData* Centerlines;
 
