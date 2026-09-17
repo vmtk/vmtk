@@ -226,10 +226,78 @@ class VTK_VMTK_COMPUTATIONAL_GEOMETRY_EXPORT vtkvmtkPolyDataBranchSections : pub
   static double ComputeBranchSectionShape(vtkPolyData* branchSection, double center[3], double sizeRange[2]);
 
   /**
-   * Cut cylinder with the plane through origin with the given normal, storing the resulting polygon
-   * in section and whether it forms a single closed loop in closed.
+   * Cut a surface with a plane (specified by origin and normal) and store the cross-section as a
+   * single polygon cell in section.
+   *
+   * The name comes from this class cutting one branch at a time, but the input does not have to be
+   * a cylinder or even tube-like: any polygonal surface can be cut, such as a whole vessel tree. When
+   * the plane cuts the surface along several separate contours (for example across two vessels),
+   * only the connected contour that contains the cut point closest to origin is kept. The polygon
+   * points are ordered along the contour, so section can be passed directly to
+   * ComputeBranchSectionArea and ComputeBranchSectionShape.
+   *
+   * closed is set to true if the contour is a closed loop. It is false if the contour is open, for
+   * example when the plane crosses an open end of the surface; the polygon then closes the gap with
+   * a straight edge, so its area and shape are not meaningful. If the plane does not cut the surface,
+   * section is left empty (it has no cells) and closed is false; any previous content of section is
+   * discarded.
+   *
+   * If idsArrayName is set, that point data array of cylinder, such as vessel or branch labels, is
+   * copied to the points of section, so that CountBranchSectionIds can be used on the result. The
+   * values are not interpolated: each section point takes the value of the nearer end point of the
+   * cut surface edge it lies on, so the array only contains values that exist on the surface. No
+   * other point data and no cell data is copied, and if cylinder has no such array, section has no
+   * point data. Default: none.
    */
-  static void ExtractCylinderSection(vtkPolyData* cylinder, double origin[3], double normal[3], vtkPolyData* section, bool & closed);
+  static void ExtractCylinderSection(vtkPolyData* cylinder, double origin[3], double normal[3], vtkPolyData* section, bool & closed, const char* idsArrayName = nullptr);
+
+  /**
+   * Count how many centerlines pass through a vessel cross-section.
+   *
+   * centerlines is cut with the plane (specified by origin and normal), and the crossing points
+   * that lie inside the first cell of section are counted. section must be the polygon returned by
+   * ExtractCylinderSection for the same plane. Returns 0 if section has fewer than 3 points or no
+   * centerline crosses the plane.
+   *
+   * The count tells whether a section cuts a single vessel or reaches into a bifurcation region:
+   * a section perpendicular to a branch contains only that branch's centerline, while near a
+   * bifurcation the section widens to include the centerlines of the child vessels as well. For
+   * example, cutting a section at each centerline point with the centerline tangent as normal and
+   * marking the points with a count other than 1 delineates the bifurcation regions along the
+   * centerlines. Similarly, the count can confirm that a section used for area or diameter
+   * measurement cuts only one vessel.
+   *
+   * Each crossing point is counted once, so centerlines must not overlap. Centerlines computed from
+   * the inlet to each outlet run almost on top of each other along their shared segments, where a
+   * section would count each of them; merge them into a single tree without duplicated segments
+   * first. A count of 1 is not a guarantee that the section is outside a bifurcation region, since
+   * an oblique plane may miss a nearby centerline; CountBranchSectionIds can be used as an
+   * additional check.
+   */
+  static int CountBranchSectionCenterlines(vtkPolyData* section, vtkPolyData* centerlines, double origin[3], double normal[3]);
+
+  /**
+   * Count how many labeled regions of a surface a vessel cross-section touches.
+   *
+   * The distinct values of the point data array idsArrayName on the points of section are counted.
+   * section must be extracted with ExtractCylinderSection, with the same idsArrayName, from a
+   * surface whose points carry idsArrayName as integer labels, for example the id of the vessel or
+   * branch each point belongs to. Values are converted to integers. Returns 0 if section has no such array.
+   *
+   * The count tells whether a section lies within a single labeled region: a section across one
+   * vessel touches only the label of that vessel, while a section that runs across a boundary
+   * between regions touches two or more. For example, together with CountBranchSectionCenterlines
+   * it can classify sections cut along centerlines: a section is in a single branch if both counts
+   * are 1. The two checks complement each other, since an
+   * oblique section can run onto the wall of a neighboring vessel whose centerline it does not
+   * contain. Similarly, the count can confirm that a section used for area or diameter measurement
+   * lies within one labeled region.
+   *
+   * ExtractCylinderSection copies the labels to the section points without interpolation, so only
+   * labels that exist on the surface are counted, even where regions with labels that are not
+   * consecutive integers meet (for example 0 and 3).
+   */
+  static int CountBranchSectionIds(vtkPolyData* section, const char* idsArrayName);
 
   protected:
   vtkvmtkPolyDataBranchSections();
