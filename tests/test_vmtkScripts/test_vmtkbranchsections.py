@@ -14,8 +14,12 @@
 ##       Richard Izzo (Github @rlizzo)
 ##       University at Buffalo
 
+import math
+
 import pytest
+import vtk
 import vmtk.vmtkbranchsections as branchsections
+from vmtk import vtkvmtk
 from vtk.numpy_interface import dataset_adapter as dsa
 import numpy as np
 
@@ -334,3 +338,205 @@ def test_cell_data_point_start_and_end_xyz_locations_two_spheres(branch_sections
 
     assert np.allclose(np.array(pointLocationStart), expectedlocationstart) == True
     assert np.allclose(np.array(pointLocationEnd), expectedlocationend) == True
+
+
+TUBE_LENGTH = 6.0
+TUBE_RADIUS = 1.0
+TUBE_RESOLUTION = 24
+
+
+def tube(rotationAngle, idsArrayName=None):
+    '''An open-ended circular tube along z, rotated about the x axis by rotationAngle degrees.
+    If idsArrayName is given, points with y >= 0 get id 1 and the rest id 0 in that point data array.'''
+    numberOfAxialPoints = 13
+    points = vtk.vtkPoints()
+    polys = vtk.vtkCellArray()
+    ids = vtk.vtkIntArray()
+    ids.SetName(idsArrayName)
+    for i in range(numberOfAxialPoints):
+        z = TUBE_LENGTH * i / (numberOfAxialPoints - 1.0)
+        for j in range(TUBE_RESOLUTION):
+            angle = 2.0 * math.pi * (j + 0.5) / TUBE_RESOLUTION
+            y = TUBE_RADIUS * math.sin(angle)
+            points.InsertNextPoint(TUBE_RADIUS * math.cos(angle), y, z)
+            ids.InsertNextValue(1 if y >= 0.0 else 0)
+    for i in range(numberOfAxialPoints - 1):
+        for j in range(TUBE_RESOLUTION):
+            p0 = i * TUBE_RESOLUTION + j
+            p1 = i * TUBE_RESOLUTION + (j + 1) % TUBE_RESOLUTION
+            polys.InsertNextCell(4, [p0, p1, p1 + TUBE_RESOLUTION, p0 + TUBE_RESOLUTION])
+    surface = vtk.vtkPolyData()
+    surface.SetPoints(points)
+    surface.SetPolys(polys)
+    if idsArrayName:
+        surface.GetPointData().AddArray(ids)
+    return transformed(surface, rotationAngle)
+
+
+def transformed(polyData, rotationAngle):
+    transform = vtk.vtkTransform()
+    transform.RotateX(rotationAngle)
+    transformFilter = vtk.vtkTransformPolyDataFilter()
+    transformFilter.SetInputData(polyData)
+    transformFilter.SetTransform(transform)
+    transformFilter.Update()
+    return transformFilter.GetOutput()
+
+
+def centerlines(rotationAngle, xOffsets):
+    '''Straight lines parallel to the axis of tube(rotationAngle), each shifted along x, running past both tube ends.'''
+    points = vtk.vtkPoints()
+    lines = vtk.vtkCellArray()
+    for xOffset in xOffsets:
+        lines.InsertNextCell(11)
+        for i in range(11):
+            lines.InsertCellPoint(points.InsertNextPoint(xOffset, 0.0, -1.0 + (TUBE_LENGTH + 2.0) * i / 10.0))
+    polyData = vtk.vtkPolyData()
+    polyData.SetPoints(points)
+    polyData.SetLines(lines)
+    return transformed(polyData, rotationAngle)
+
+
+def section_plane(rotationAngle):
+    transform = vtk.vtkTransform()
+    transform.RotateX(rotationAngle)
+    # Between two rings of tube points, so that the plane cuts edges rather than points
+    origin = list(transform.TransformPoint(0.0, 0.0, TUBE_LENGTH / 2.0 + 0.25))
+    normal = list(transform.TransformVector(0.0, 0.0, 1.0))
+    return origin, normal
+
+
+def extract_section_with_ids(surface, origin, normal, idsArrayName='BranchIds'):
+    section = vtk.vtkPolyData()
+    closed = vtk.reference(False)
+    vtkvmtk.vtkvmtkPolyDataBranchSections.ExtractCylinderSection(surface, origin, normal, section, closed, idsArrayName)
+    return section, bool(closed)
+
+
+# 45 degrees is where a projection that rotates the section plane the wrong way flattens it into a line
+@pytest.mark.parametrize('rotationAngle', [0.0, 45.0, 90.0, 135.0])
+def test_extract_cylinder_section_with_ids(rotationAngle):
+    origin, normal = section_plane(rotationAngle)
+    section, closed = extract_section_with_ids(tube(rotationAngle, 'BranchIds'), origin, normal)
+
+    assert closed
+    assert section.GetNumberOfCells() == 1
+    assert section.GetCell(0).GetCellType() == vtk.VTK_POLYGON
+    assert section.GetCell(0).GetNumberOfPoints() == TUBE_RESOLUTION
+    assert section.GetPointData().GetNumberOfArrays() == 1
+    assert section.GetPointData().GetArray('BranchIds') is not None
+    assert section.GetCellData().GetNumberOfArrays() == 0
+
+    expectedArea = 0.5 * TUBE_RESOLUTION * TUBE_RADIUS ** 2 * math.sin(2.0 * math.pi / TUBE_RESOLUTION)
+    area = vtkvmtk.vtkvmtkPolyDataBranchSections.ComputeBranchSectionArea(section)
+    assert area == pytest.approx(expectedArea, rel=1e-6)
+
+
+def test_extract_cylinder_section_drops_point_data():
+    origin, normal = section_plane(0.0)
+    section = vtk.vtkPolyData()
+    closed = vtk.reference(False)
+    vtkvmtk.vtkvmtkPolyDataBranchSections.ExtractCylinderSection(tube(0.0, 'BranchIds'), origin, normal, section, closed)
+
+    assert bool(closed)
+    assert section.GetCell(0).GetNumberOfPoints() == TUBE_RESOLUTION
+    assert section.GetPointData().GetNumberOfArrays() == 0
+    assert vtkvmtk.vtkvmtkPolyDataBranchSections.CountBranchSectionIds(section, 'BranchIds') == 0
+
+    # An ids array that the surface does not have
+    section, closed = extract_section_with_ids(tube(0.0, 'BranchIds'), origin, normal, 'NoSuchArray')
+    assert closed
+    assert section.GetCell(0).GetNumberOfPoints() == TUBE_RESOLUTION
+    assert section.GetPointData().GetNumberOfArrays() == 0
+
+
+def test_extract_cylinder_section_plane_misses_surface():
+    surface = tube(0.0)
+    origin, normal = section_plane(0.0)
+    section = vtk.vtkPolyData()
+    closed = vtk.reference(False)
+    vtkvmtk.vtkvmtkPolyDataBranchSections.ExtractCylinderSection(surface, origin, normal, section, closed)
+    assert bool(closed)
+    assert section.GetNumberOfCells() == 1
+
+    # Reuse the section for a plane beyond the end of the tube
+    vtkvmtk.vtkvmtkPolyDataBranchSections.ExtractCylinderSection(
+        surface, [0.0, 0.0, TUBE_LENGTH + 1.0], normal, section, closed)
+    assert not bool(closed)
+    assert section.GetNumberOfCells() == 0
+    assert section.GetNumberOfPoints() == 0
+
+
+@pytest.mark.parametrize('labelsAreActiveScalars', [False, True])
+def test_extract_cylinder_section_copies_labels_without_interpolation(labelsAreActiveScalars):
+    # Label the tube 0 below and 3 above the middle, and cut it with a plane tilted so that it
+    # crosses the edges between the two labels at a different position on each side of the tube.
+    # Interpolating the labels along those edges would give 1 and 2, which are not on the surface.
+    surface = tube(0.0)
+    middle = TUBE_LENGTH / 2.0 + 0.25
+    labels = vtk.vtkIntArray()
+    labels.SetName('Labels')
+    heights = vtk.vtkDoubleArray()
+    heights.SetName('Heights')
+    for i in range(surface.GetNumberOfPoints()):
+        z = surface.GetPoint(i)[2]
+        labels.InsertNextValue(3 if z > middle else 0)
+        heights.InsertNextValue(z)
+    surface.GetPointData().AddArray(labels)
+    surface.GetPointData().AddArray(heights)
+    if labelsAreActiveScalars:
+        surface.GetPointData().SetActiveScalars('Labels')
+
+    tilt = math.atan(0.4)
+    origin = [0.0, 0.0, middle]
+    normal = [0.0, math.sin(tilt), math.cos(tilt)]
+    section, closed = extract_section_with_ids(surface, origin, normal, 'Labels')
+
+    assert closed
+    sectionLabels = section.GetPointData().GetArray('Labels')
+    assert sectionLabels is not None
+    assert {sectionLabels.GetValue(i) for i in range(section.GetNumberOfPoints())} == {0, 3}
+    assert vtkvmtk.vtkvmtkPolyDataBranchSections.CountBranchSectionIds(section, 'Labels') == 2
+    for i in range(section.GetNumberOfPoints()):
+        z = section.GetPoint(i)[2]
+        # Each section point takes the label of the nearer tube ring
+        assert sectionLabels.GetValue(i) == (3 if z > middle else 0)
+
+    # Only the ids array is copied
+    assert section.GetPointData().GetNumberOfArrays() == 1
+
+
+def test_count_branch_section_ids():
+    origin, normal = section_plane(45.0)
+
+    section, _ = extract_section_with_ids(tube(45.0, 'BranchIds'), origin, normal)
+    assert vtkvmtk.vtkvmtkPolyDataBranchSections.CountBranchSectionIds(section, 'BranchIds') == 2
+
+    singleBranchTube = tube(45.0, 'BranchIds')
+    singleBranchTube.GetPointData().GetArray('BranchIds').Fill(3)
+    section, _ = extract_section_with_ids(singleBranchTube, origin, normal)
+    assert vtkvmtk.vtkvmtkPolyDataBranchSections.CountBranchSectionIds(section, 'BranchIds') == 1
+
+    assert vtkvmtk.vtkvmtkPolyDataBranchSections.CountBranchSectionIds(section, 'NoSuchArray') == 0
+
+
+@pytest.mark.parametrize('rotationAngle', [0.0, 45.0, 90.0, 135.0])
+@pytest.mark.parametrize('xOffsets,expectedCount', [
+    ([0.0], 1),
+    ([0.0, 3.0], 1),
+    ([-0.5, 0.5], 2),
+    ([3.0], 0),
+])
+def test_count_branch_section_centerlines(rotationAngle, xOffsets, expectedCount):
+    origin, normal = section_plane(rotationAngle)
+    section, _ = extract_section_with_ids(tube(rotationAngle), origin, normal)
+
+    count = vtkvmtk.vtkvmtkPolyDataBranchSections.CountBranchSectionCenterlines(
+        section, centerlines(rotationAngle, xOffsets), origin, normal)
+    assert count == expectedCount
+
+
+def test_count_branch_section_centerlines_empty_section():
+    origin, normal = section_plane(0.0)
+    assert vtkvmtk.vtkvmtkPolyDataBranchSections.CountBranchSectionCenterlines(
+        vtk.vtkPolyData(), centerlines(0.0, [0.0]), origin, normal) == 0

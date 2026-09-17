@@ -43,6 +43,14 @@ Version:   $Revision: 1.1 $
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 #include "vtkVersion.h"
+#include "vtkNew.h"
+#include "vtkGenericCell.h"
+#include "vtkIdList.h"
+#include "vtkIdTypeArray.h"
+#include "vtkSmartPointer.h"
+
+#include <set>
+#include <vector>
 
 #include "vtkvmtkCenterlineUtilities.h"
 #include "vtkvmtkPolyDataBranchUtilities.h"
@@ -509,36 +517,131 @@ void vtkvmtkPolyDataBranchSections::ComputeBranchSections(vtkPolyData* input, in
     }  
 }
 
-void vtkvmtkPolyDataBranchSections::ExtractCylinderSection(vtkPolyData* cylinder, double origin[3], double normal[3], vtkPolyData* section, bool & closed)
+namespace
 {
-  vtkPlane* plane = vtkPlane::New();
+const char* SourceCellIdsArrayName = "vtkvmtkPolyDataBranchSectionsSourceCellIds";
+
+// Copy surfaceIdsArray to the points of section, which are the points where
+// the plane cuts surface edges. Interpolating along an edge would turn labels
+// into values that do not exist on the surface (between labels 0 and 3 it gives
+// 1 or 2), so each section point takes the value of the nearer end point of its
+// cut edge. The edge is found through the source cell ids that the cutter
+// passed on to the section lines as cell data. Any other point data of section
+// is removed.
+void CopyIdsFromNearestEdgePoint(vtkPolyData* surface, vtkDataArray* surfaceIdsArray, vtkPolyData* section)
+{
+  vtkIdTypeArray* sourceCellIds = vtkIdTypeArray::SafeDownCast(section->GetCellData()->GetArray(SourceCellIdsArrayName));
+
+  const vtkIdType numberOfSectionPoints = section->GetNumberOfPoints();
+  vtkSmartPointer<vtkDataArray> sectionIdsArray = vtkSmartPointer<vtkDataArray>::Take(surfaceIdsArray->NewInstance());
+  sectionIdsArray->SetName(surfaceIdsArray->GetName());
+  sectionIdsArray->SetNumberOfComponents(surfaceIdsArray->GetNumberOfComponents());
+  sectionIdsArray->SetNumberOfTuples(numberOfSectionPoints);
+  sectionIdsArray->Fill(0.0);
+
+  vtkNew<vtkGenericCell> sourceCell;
+  vtkNew<vtkIdList> pointCellIds;
+  double point[3], edgePoint0[3], edgePoint1[3], closestPoint[3];
+  for (vtkIdType i=0; sourceCellIds != NULL && i<numberOfSectionPoints; i++)
+    {
+    section->GetPointCells(i,pointCellIds);
+    if (pointCellIds->GetNumberOfIds() == 0)
+      {
+      continue;
+      }
+    section->GetPoint(i,point);
+    surface->GetCell(sourceCellIds->GetValue(pointCellIds->GetId(0)),sourceCell);
+    double minDistance2 = VTK_DOUBLE_MAX;
+    vtkIdType nearestSurfacePointId = -1;
+    for (int e=0; e<sourceCell->GetNumberOfEdges(); e++)
+      {
+      vtkCell* edge = sourceCell->GetEdge(e);
+      vtkIdType edgePointId0 = edge->GetPointId(0);
+      vtkIdType edgePointId1 = edge->GetPointId(1);
+      surface->GetPoint(edgePointId0,edgePoint0);
+      surface->GetPoint(edgePointId1,edgePoint1);
+      double t;
+      double distance2 = vtkLine::DistanceToLine(point,edgePoint0,edgePoint1,t,closestPoint);
+      if (distance2 < minDistance2)
+        {
+        minDistance2 = distance2;
+        nearestSurfacePointId = vtkMath::Distance2BetweenPoints(point,edgePoint0) <= vtkMath::Distance2BetweenPoints(point,edgePoint1) ? edgePointId0 : edgePointId1;
+        }
+      }
+    if (nearestSurfacePointId >= 0)
+      {
+      sectionIdsArray->SetTuple(i,nearestSurfacePointId,surfaceIdsArray);
+      }
+    }
+
+  section->GetPointData()->Initialize();
+  section->GetPointData()->AddArray(sectionIdsArray);
+}
+}
+
+void vtkvmtkPolyDataBranchSections::ExtractCylinderSection(vtkPolyData* cylinder, double origin[3], double normal[3], vtkPolyData* section, bool & closed, const char* idsArrayName)
+{
+  // Start from an empty section, so that a section with no cells always
+  // means that no section was found, even if section held an earlier cut.
+  section->Initialize();
+  closed = false;
+
+  vtkNew<vtkPlane> plane;
   plane->SetOrigin(origin);
   plane->SetNormal(normal);
 
-  vtkCutter* cutter = vtkCutter::New();
-  cutter->SetInputData(cylinder);
+  vtkDataArray* surfaceIdsArray = idsArrayName != NULL ? cylinder->GetPointData()->GetArray(idsArrayName) : NULL;
+
+  vtkNew<vtkCutter> cutter;
+  vtkNew<vtkPolyData> cutInput;
+  if (surfaceIdsArray != NULL)
+    {
+    // The ids are not interpolated by the cutter but copied afterwards, so the
+    // surface is cut without its attributes, with only the source cell id of
+    // each cell attached.
+    cutInput->CopyStructure(cylinder);
+    vtkNew<vtkIdTypeArray> sourceCellIds;
+    sourceCellIds->SetName(SourceCellIdsArrayName);
+    sourceCellIds->SetNumberOfValues(cutInput->GetNumberOfCells());
+    for (vtkIdType i=0; i<cutInput->GetNumberOfCells(); i++)
+      {
+      sourceCellIds->SetValue(i,i);
+      }
+    cutInput->GetCellData()->AddArray(sourceCellIds);
+    cutter->SetInputData(cutInput);
+    }
+  else
+    {
+    cutter->SetInputData(cylinder);
+    }
   cutter->SetCutFunction(plane);
+  // Without cut scalars the cutter passes no cell data on to its output, so
+  // section points could not be traced back to the cut surface cells.
   cutter->GenerateCutScalarsOn();
   cutter->SetValue(0,0.0);
   cutter->Update();
 
-  // The section attributes are never used downstream, so only the geometry of
-  // the cut is passed on; interpolating and merging the attributes would be
-  // wasted work.
-  vtkPolyData* cutGeometry = vtkPolyData::New();
-  cutGeometry->CopyStructure(cutter->GetOutput());
-
-  vtkCleanPolyData* cleaner = vtkCleanPolyData::New();
-  cleaner->SetInputData(cutGeometry);
+  vtkNew<vtkCleanPolyData> cleaner;
+  if (surfaceIdsArray != NULL)
+    {
+    cleaner->SetInputConnection(cutter->GetOutputPort());
+    }
+  else
+    {
+    // Interpolating and merging attributes nobody reads would be wasted
+    // work, so only the geometry of the cut is passed on.
+    vtkNew<vtkPolyData> cutGeometry;
+    cutGeometry->CopyStructure(cutter->GetOutput());
+    cleaner->SetInputData(cutGeometry);
+    }
   cleaner->Update();
-  cutGeometry->Delete();
 
   if (cleaner->GetOutput()->GetNumberOfPoints() == 0)
     {
     return;
     }
 
-  vtkPolyDataConnectivityFilter* connectivityFilter = vtkPolyDataConnectivityFilter::New();
+  vtkNew<vtkPolyDataConnectivityFilter> connectivityFilter;
   connectivityFilter->SetInputConnection(cleaner->GetOutputPort());
   connectivityFilter->SetExtractionModeToClosestPointRegion();
   connectivityFilter->SetClosestPoint(origin);
@@ -555,6 +658,11 @@ void vtkvmtkPolyDataBranchSections::ExtractCylinderSection(vtkPolyData* cylinder
 
   section->BuildCells();
   section->BuildLinks();
+
+  if (surfaceIdsArray != NULL)
+    {
+    CopyIdsFromNearestEdgePoint(cylinder,surfaceIdsArray,section);
+    }
 
   // find first point
 
@@ -583,13 +691,11 @@ void vtkvmtkPolyDataBranchSections::ExtractCylinderSection(vtkPolyData* cylinder
     firstPointId = section->GetCell(0)->GetPointId(0);
     }
 
-  vtkIdList* polygonPointIds = vtkIdList::New();
+  vtkNew<vtkIdList> polygonPointIds;
   polygonPointIds->InsertNextId(firstPointId);
 
   bool done = false;
   vtkIdType pointId = firstPointId;
-
-  closed = false;
 
   vtkIdType cellId = -1;
   while (!done)
@@ -648,21 +754,18 @@ void vtkvmtkPolyDataBranchSections::ExtractCylinderSection(vtkPolyData* cylinder
   // discarded line cells, and vtkPolyData::BuildCells() does not rebuild an
   // existing map, so callers would crash reading the new cell through the
   // stale bookkeeping.
-  vtkCellArray* sectionLines = vtkCellArray::New();
+  vtkNew<vtkCellArray> sectionLines;
   section->SetLines(sectionLines);
-  sectionLines->Delete();
 
-  vtkCellArray* sectionPolys = vtkCellArray::New();
+  vtkNew<vtkCellArray> sectionPolys;
   sectionPolys->InsertNextCell(polygonPointIds);
   section->SetPolys(sectionPolys);
-  sectionPolys->Delete();
+
+  // The line cells carried the cell data; the polygon has none of its own.
+  section->GetCellData()->Initialize();
 
   section->DeleteCells();
   section->DeleteLinks();
-
-  cutter->Delete();
-  connectivityFilter->Delete();
-  polygonPointIds->Delete();
 }
 
 double vtkvmtkPolyDataBranchSections::ComputeBranchSectionArea(vtkPolyData* branchSection)
@@ -928,6 +1031,100 @@ double vtkvmtkPolyDataBranchSections::ComputeBranchSectionShape(vtkPolyData* bra
   return sectionShape;
 }
 #endif
+
+int vtkvmtkPolyDataBranchSections::CountBranchSectionCenterlines(vtkPolyData* section, vtkPolyData* centerlines, double origin[3], double normal[3])
+{
+  section->BuildCells();
+
+  if (section->GetNumberOfCells() == 0)
+    {
+    return 0;
+    }
+
+  vtkNew<vtkPlane> plane;
+  plane->SetOrigin(origin);
+  plane->SetNormal(normal);
+
+  vtkNew<vtkCutter> cutter;
+  cutter->SetInputData(centerlines);
+  cutter->SetCutFunction(plane);
+  cutter->SetValue(0,0.0);
+  cutter->Update();
+
+  vtkPoints* crossingPoints = cutter->GetOutput()->GetPoints();
+  if (crossingPoints == NULL)
+    {
+    return 0;
+    }
+
+  // Section and crossing points all lie in the cutting plane, so the
+  // inside test is done in an orthonormal frame of that plane, with z set to
+  // exactly 0. vtkPolygon::PointInPolygon rejects points outside the polygon
+  // bounds without tolerance, and the bounds of a planar section have no
+  // thickness along the normal, so a crossing point off the plane by rounding
+  // alone would otherwise be counted as outside.
+  double planeNormal[3] = {normal[0], normal[1], normal[2]};
+  vtkMath::Normalize(planeNormal);
+  double axis0[3], axis1[3];
+  vtkMath::Perpendiculars(planeNormal,axis0,axis1,0.0);
+
+  vtkPoints* sectionPoints = section->GetCell(0)->GetPoints();
+  const int numberOfPolygonPoints = static_cast<int>(sectionPoints->GetNumberOfPoints());
+  if (numberOfPolygonPoints < 3)
+    {
+    return 0;
+    }
+  std::vector<double> polygon(3*numberOfPolygonPoints);
+  double polygonBounds[6] = {VTK_DOUBLE_MAX, VTK_DOUBLE_MIN, VTK_DOUBLE_MAX, VTK_DOUBLE_MIN, 0.0, 0.0};
+  double point[3], planePoint[3];
+  for (int i=0; i<numberOfPolygonPoints; i++)
+    {
+    sectionPoints->GetPoint(i,point);
+    vtkMath::Subtract(point,origin,point);
+    double* polygonPoint = &polygon[3*i];
+    polygonPoint[0] = vtkMath::Dot(point,axis0);
+    polygonPoint[1] = vtkMath::Dot(point,axis1);
+    polygonPoint[2] = 0.0;
+    polygonBounds[0] = vtkMath::Min(polygonBounds[0],polygonPoint[0]);
+    polygonBounds[1] = vtkMath::Max(polygonBounds[1],polygonPoint[0]);
+    polygonBounds[2] = vtkMath::Min(polygonBounds[2],polygonPoint[1]);
+    polygonBounds[3] = vtkMath::Max(polygonBounds[3],polygonPoint[1]);
+    }
+  double polygonNormal[3] = {0.0, 0.0, 1.0};
+
+  int numberOfCenterlines = 0;
+  for (vtkIdType i=0; i<crossingPoints->GetNumberOfPoints(); i++)
+    {
+    crossingPoints->GetPoint(i,point);
+    vtkMath::Subtract(point,origin,point);
+    planePoint[0] = vtkMath::Dot(point,axis0);
+    planePoint[1] = vtkMath::Dot(point,axis1);
+    planePoint[2] = 0.0;
+    if (vtkPolygon::PointInPolygon(planePoint,numberOfPolygonPoints,polygon.data(),polygonBounds,polygonNormal) == 1)
+      {
+      ++numberOfCenterlines;
+      }
+    }
+
+  return numberOfCenterlines;
+}
+
+int vtkvmtkPolyDataBranchSections::CountBranchSectionIds(vtkPolyData* section, const char* idsArrayName)
+{
+  vtkDataArray* idsArray = section->GetPointData()->GetArray(idsArrayName);
+  if (idsArray == NULL)
+    {
+    return 0;
+    }
+
+  std::set<vtkIdType> ids;
+  for (vtkIdType i=0; i<idsArray->GetNumberOfTuples(); i++)
+    {
+    ids.insert(static_cast<vtkIdType>(idsArray->GetComponent(i,0)));
+    }
+
+  return static_cast<int>(ids.size());
+}
 
 void vtkvmtkPolyDataBranchSections::PrintSelf(std::ostream& os, vtkIndent indent)
 {
