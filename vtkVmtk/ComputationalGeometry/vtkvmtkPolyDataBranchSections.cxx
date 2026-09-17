@@ -49,6 +49,7 @@ Version:   $Revision: 1.1 $
 #include "vtkIdTypeArray.h"
 #include "vtkSmartPointer.h"
 
+#include <array>
 #include <set>
 #include <vector>
 
@@ -1041,18 +1042,69 @@ int vtkvmtkPolyDataBranchSections::CountBranchSectionCenterlines(vtkPolyData* se
     return 0;
     }
 
-  vtkNew<vtkPlane> plane;
-  plane->SetOrigin(origin);
-  plane->SetNormal(normal);
-
-  vtkNew<vtkCutter> cutter;
-  cutter->SetInputData(centerlines);
-  cutter->SetCutFunction(plane);
-  cutter->SetValue(0,0.0);
-  cutter->Update();
-
-  vtkPoints* crossingPoints = cutter->GetOutput()->GetPoints();
-  if (crossingPoints == NULL)
+  // The points where the centerline segments cross the plane. This is called
+  // for every centerline point, and the setup of a vtkCutter for lines of a
+  // few thousand points costs several times the crossings themselves, so they
+  // are computed here, the same way as vtkCutter with vtkLine::Contour: the
+  // signed distance of each point is stored as a float, a segment is crossed
+  // where the distance of one end is below 0 and of the other at or above 0,
+  // the crossing is interpolated from the end below 0 and stored with the
+  // precision of the centerline points, and crossings at the same coordinates
+  // are one point.
+  std::set<std::array<double,3>> crossingPoints;
+  if (centerlines->GetPoints())
+    {
+    std::vector<double> signedDistances(centerlines->GetNumberOfPoints());
+    double point[3];
+    for (vtkIdType i=0; i<centerlines->GetNumberOfPoints(); i++)
+      {
+      centerlines->GetPoint(i,point);
+      signedDistances[i] = static_cast<float>(normal[0] * (point[0] - origin[0]) + normal[1] * (point[1] - origin[1]) + normal[2] * (point[2] - origin[2]));
+      }
+    const bool floatPoints = centerlines->GetPoints()->GetDataType() == VTK_FLOAT;
+    vtkNew<vtkIdList> cellPointIds;
+    double point0[3], point1[3];
+    for (vtkIdType cellId=0; cellId<centerlines->GetNumberOfCells(); cellId++)
+      {
+      int cellType = centerlines->GetCellType(cellId);
+      if (cellType != VTK_LINE && cellType != VTK_POLY_LINE)
+        {
+        continue;
+        }
+      centerlines->GetCellPoints(cellId,cellPointIds);
+      for (vtkIdType k=0; k+1<cellPointIds->GetNumberOfIds(); k++)
+        {
+        vtkIdType pointId0 = cellPointIds->GetId(k);
+        vtkIdType pointId1 = cellPointIds->GetId(k+1);
+        double distance0 = signedDistances[pointId0];
+        double distance1 = signedDistances[pointId1];
+        if ((distance0 >= 0.0) == (distance1 >= 0.0))
+          {
+          continue;
+          }
+        // Interpolate from the end below 0 to the end at or above 0
+        if (distance0 >= 0.0)
+          {
+          std::swap(pointId0,pointId1);
+          std::swap(distance0,distance1);
+          }
+        centerlines->GetPoint(pointId0,point0);
+        centerlines->GetPoint(pointId1,point1);
+        const double t = (0.0 - distance0) / (distance1 - distance0);
+        std::array<double,3> crossing;
+        for (int j=0; j<3; j++)
+          {
+          crossing[j] = point0[j] + t * (point1[j] - point0[j]);
+          if (floatPoints)
+            {
+            crossing[j] = static_cast<float>(crossing[j]);
+            }
+          }
+        crossingPoints.insert(crossing);
+        }
+      }
+    }
+  if (crossingPoints.empty())
     {
     return 0;
     }
@@ -1093,10 +1145,9 @@ int vtkvmtkPolyDataBranchSections::CountBranchSectionCenterlines(vtkPolyData* se
   double polygonNormal[3] = {0.0, 0.0, 1.0};
 
   int numberOfCenterlines = 0;
-  for (vtkIdType i=0; i<crossingPoints->GetNumberOfPoints(); i++)
+  for (const std::array<double,3>& crossing : crossingPoints)
     {
-    crossingPoints->GetPoint(i,point);
-    vtkMath::Subtract(point,origin,point);
+    vtkMath::Subtract(crossing.data(),origin,point);
     planePoint[0] = vtkMath::Dot(point,axis0);
     planePoint[1] = vtkMath::Dot(point,axis1);
     planePoint[2] = 0.0;
