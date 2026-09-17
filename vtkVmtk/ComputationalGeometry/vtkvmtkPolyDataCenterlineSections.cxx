@@ -44,7 +44,9 @@ Version:   $Revision: 1.1 $
 #include "vtkObjectFactory.h"
 #include "vtkIdList.h"
 #include "vtkNew.h"
+#include "vtkVersionMacros.h"
 
+#include <algorithm>
 #include <vector>
 
 #include "vtkvmtkCenterlineUtilities.h"
@@ -52,6 +54,91 @@ Version:   $Revision: 1.1 $
 
 
 vtkStandardNewMacro(vtkvmtkPolyDataCenterlineSections);
+
+namespace
+{
+// Selects the cells of a polygonal surface that a plane crosses. Cutting only
+// these cells gives the same cut as cutting all cells, as the others contribute
+// nothing to it. Crossing cells are found from the signed distance of each
+// point to the plane, with a small tolerance, so that no cell that a cutter
+// would cut is left out.
+class CrossingCells
+{
+  public:
+  explicit CrossingCells(vtkPolyData* surface)
+    : Surface(surface),
+      Tolerance(1.0e-6 * surface->GetLength())
+    {
+    if (surface->GetNumberOfCells() == 0 || surface->GetNumberOfCells() != surface->GetNumberOfPolys())
+      {
+      return;
+      }
+    // Point coordinates and cell connectivity are copied once, as reading them
+    // through vtkPoints and vtkCellArray for every plane would take longer than
+    // the cut itself
+    this->Points.resize(3 * surface->GetNumberOfPoints());
+    for (vtkIdType k=0; k<surface->GetNumberOfPoints(); k++)
+      {
+      surface->GetPoint(k,&this->Points[3*k]);
+      }
+    vtkIdType numberOfCellPoints;
+    const vtkIdType* cellPoints;
+    vtkCellArray* polys = surface->GetPolys();
+    polys->InitTraversal();
+    this->CellOffsets.push_back(0);
+    while (polys->GetNextCell(numberOfCellPoints,cellPoints))
+      {
+      this->CellConnectivity.insert(this->CellConnectivity.end(),cellPoints,cellPoints + numberOfCellPoints);
+      this->CellOffsets.push_back(static_cast<vtkIdType>(this->CellConnectivity.size()));
+      }
+    this->SignedDistances.resize(surface->GetNumberOfPoints());
+    }
+
+  // Only surfaces that consist of polygons are supported
+  bool CanSelect() const
+    {
+    return !this->CellOffsets.empty();
+    }
+
+  // Set cells to the cells of the surface that the plane specified by origin and
+  // normal crosses, with the points and point data of the surface
+  void Select(const double origin[3], const double normal[3], vtkPolyData* cells)
+    {
+    for (size_t k=0; k<this->SignedDistances.size(); k++)
+      {
+      const double* point = &this->Points[3*k];
+      this->SignedDistances[k] = normal[0] * (point[0] - origin[0]) + normal[1] * (point[1] - origin[1]) + normal[2] * (point[2] - origin[2]);
+      }
+    vtkNew<vtkCellArray> crossingPolys;
+    for (size_t c=0; c+1<this->CellOffsets.size(); c++)
+      {
+      double minimumDistance = VTK_DOUBLE_MAX;
+      double maximumDistance = -VTK_DOUBLE_MAX;
+      for (vtkIdType k=this->CellOffsets[c]; k<this->CellOffsets[c+1]; k++)
+        {
+        minimumDistance = std::min(minimumDistance,this->SignedDistances[this->CellConnectivity[k]]);
+        maximumDistance = std::max(maximumDistance,this->SignedDistances[this->CellConnectivity[k]]);
+        }
+      if (minimumDistance <= this->Tolerance && maximumDistance >= -this->Tolerance)
+        {
+        crossingPolys->InsertNextCell(this->CellOffsets[c+1] - this->CellOffsets[c],&this->CellConnectivity[this->CellOffsets[c]]);
+        }
+      }
+    cells->Initialize();
+    cells->SetPoints(this->Surface->GetPoints());
+    cells->SetPolys(crossingPolys);
+    cells->GetPointData()->ShallowCopy(this->Surface->GetPointData());
+    }
+
+  private:
+  vtkPolyData* Surface;
+  const double Tolerance;
+  std::vector<double> Points;
+  std::vector<vtkIdType> CellOffsets;
+  std::vector<vtkIdType> CellConnectivity;
+  std::vector<double> SignedDistances;
+};
+}
 
 vtkvmtkPolyDataCenterlineSections::vtkvmtkPolyDataCenterlineSections()
 {
@@ -152,11 +239,32 @@ int vtkvmtkPolyDataCenterlineSections::RequestData(
     return 1;
     }
 
+  this->SetProgressText("Computing centerline sections");
+  this->UpdateProgress(0.0);
+  this->ComputeCenterlineSections(input,output);
+  this->UpdateProgress(1.0);
+
+  return 1;
+}
+
+bool vtkvmtkPolyDataCenterlineSections::AbortRequested()
+{
+#if VTK_MAJOR_VERSION > 9 || (VTK_MAJOR_VERSION == 9 && VTK_MINOR_VERSION >= 4)
+  return this->CheckAbort();
+#else
+  return this->GetAbortExecute() != 0;
+#endif
+}
+
+void vtkvmtkPolyDataCenterlineSections::ComputeCenterlineSections(vtkPolyData* input, vtkPolyData* output)
+{
   vtkNew<vtkPoints> outputPoints;
   vtkNew<vtkCellArray> outputPolys;
 
   output->SetPoints(outputPoints);
   output->SetPolys(outputPolys);
+  vtkPoints* centerlineSectionPoints = outputPoints;
+  vtkCellArray* centerlineSectionPolys = outputPolys;
 
   int numberOfCenterlinePoints = this->Centerlines->GetNumberOfPoints();
 
@@ -198,31 +306,18 @@ int vtkvmtkPolyDataCenterlineSections::RequestData(
     this->Centerlines->GetPointData()->AddArray(centerlineArray);
     }
 
-  this->ComputeCenterlineSections(input,output);
-
-  return 1;
-}
-
-void vtkvmtkPolyDataCenterlineSections::ComputeCenterlineSections(vtkPolyData* input, vtkPolyData* output)
-{
-  vtkPoints* centerlineSectionPoints = output->GetPoints();
-  vtkCellArray* centerlineSectionPolys = output->GetPolys();
-
-  vtkDoubleArray* centerlineSectionAreaArray = vtkDoubleArray::SafeDownCast(output->GetCellData()->GetArray(this->CenterlineSectionAreaArrayName));
-  vtkDoubleArray* centerlineSectionMinSizeArray = vtkDoubleArray::SafeDownCast(output->GetCellData()->GetArray(this->CenterlineSectionMinSizeArrayName));
-  vtkDoubleArray* centerlineSectionMaxSizeArray = vtkDoubleArray::SafeDownCast(output->GetCellData()->GetArray(this->CenterlineSectionMaxSizeArrayName));
-  vtkDoubleArray* centerlineSectionShapeArray = vtkDoubleArray::SafeDownCast(output->GetCellData()->GetArray(this->CenterlineSectionShapeArrayName));
-  vtkIntArray* centerlineSectionClosedArray = vtkIntArray::SafeDownCast(output->GetCellData()->GetArray(this->CenterlineSectionClosedArrayName));
-
-  vtkDoubleArray* centerlineAreaArray = vtkDoubleArray::SafeDownCast(this->Centerlines->GetPointData()->GetArray(this->CenterlineSectionAreaArrayName));
-  vtkDoubleArray* centerlineMinSizeArray = vtkDoubleArray::SafeDownCast(this->Centerlines->GetPointData()->GetArray(this->CenterlineSectionMinSizeArrayName));
-  vtkDoubleArray* centerlineMaxSizeArray = vtkDoubleArray::SafeDownCast(this->Centerlines->GetPointData()->GetArray(this->CenterlineSectionMaxSizeArrayName));
-  vtkDoubleArray* centerlineShapeArray = vtkDoubleArray::SafeDownCast(this->Centerlines->GetPointData()->GetArray(this->CenterlineSectionShapeArrayName));
-  vtkIntArray* centerlineClosedArray = vtkIntArray::SafeDownCast(this->Centerlines->GetPointData()->GetArray(this->CenterlineSectionClosedArrayName));
-
   // Points are visited in the order of the centerline cells and of the points
   // in each cell. A point shared by several cells gets a single section.
   std::vector<bool> visited(this->Centerlines->GetNumberOfPoints(),false);
+  // Progress is reported, and an abort checked for, about every 1% of points
+  const vtkIdType progressInterval = std::max<vtkIdType>(numberOfCenterlinePoints / 100, 1);
+  vtkIdType numberOfVisitedPoints = 0;
+
+  // The cutter visits every cell of its input, which dominates the time spent
+  // on a section, so only the cells that the plane crosses are cut
+  CrossingCells crossingCells(input);
+  vtkNew<vtkPolyData> sectionInput;
+
   vtkNew<vtkIdList> cellPointIds;
   for (vtkIdType cellId=0; cellId<this->Centerlines->GetNumberOfCells(); cellId++)
     {
@@ -236,6 +331,16 @@ void vtkvmtkPolyDataCenterlineSections::ComputeCenterlineSections(vtkPolyData* i
         }
       visited[pointId] = true;
 
+      if (numberOfVisitedPoints % progressInterval == 0)
+        {
+        this->UpdateProgress(static_cast<double>(numberOfVisitedPoints) / numberOfCenterlinePoints);
+        if (this->AbortRequested())
+          {
+          return;
+          }
+        }
+      numberOfVisitedPoints++;
+
       double origin[3], normal[3];
       if (!this->ComputeSectionPlane(cellId,i,origin,normal))
         {
@@ -244,7 +349,15 @@ void vtkvmtkPolyDataCenterlineSections::ComputeCenterlineSections(vtkPolyData* i
 
       vtkNew<vtkPolyData> section;
       bool closed = false;
-      this->ExtractSection(input,origin,normal,section,closed);
+      if (crossingCells.CanSelect())
+        {
+        crossingCells.Select(origin,normal,sectionInput);
+        this->ExtractSection(sectionInput,origin,normal,section,closed);
+        }
+      else
+        {
+        this->ExtractSection(input,origin,normal,section,closed);
+        }
 
       section->BuildCells();
       if (section->GetNumberOfCells() == 0)
