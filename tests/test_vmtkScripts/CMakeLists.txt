@@ -22,6 +22,7 @@ set(TEST_VMTKSCRIPTS_SRCS
     test_vmtkcenterlineoffsetattributes.py
     test_vmtkcenterlineresampling.py
     test_vmtkcenterlines.py
+    test_vmtkcenterlinesections.py
     test_vmtkcenterlinesnetwork.py
     test_vmtkcenterlinesmoothing.py
     test_vmtkentityextractor.py
