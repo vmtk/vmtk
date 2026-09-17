@@ -5,7 +5,7 @@ project(VMTK)
 # vmtk versions number
 set(VMTK_VERSION_MAJOR 1)
 set(VMTK_VERSION_MINOR 5)
-set(VMTK_VERSION_PATCH 0)
+set(VMTK_VERSION_PATCH 1)
 # Optional pre-release suffix used by the PyPI packages (setup.py appends it
 # to the version, e.g. "a1" -> 1.5.0a1, "b2" -> 1.5.0b2, "rc1" -> 1.5.0rc1;
 # see PEP 440). Leave empty for final releases. It intentionally does not
