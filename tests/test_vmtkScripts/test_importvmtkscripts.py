@@ -195,6 +195,11 @@ def vmtk_scripts():
 
 def test_import_vmtkScripts(vmtk_scripts):
     import importlib
+    from vmtk import vtkvmtk
     print(vmtk_scripts)
+    # See test_importvtkvmtk.py: without TetGen its script is not installed.
+    if not hasattr(vtkvmtk, 'vtkvmtkTetGenWrapper'):
+        print('built without TetGen: not checking the TetGen script')
+        vmtk_scripts = [name for name in vmtk_scripts if 'tetgen' not in name]
     for name in vmtk_scripts:
         assert importlib.import_module(name)

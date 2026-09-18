@@ -225,6 +225,13 @@ def vmtk_vtkvmtk_attributes():
 def test_import_vtkvmtk(vmtk_vtkvmtk_attributes):
     from vmtk import vtkvmtk
     print(vmtk_vtkvmtk_attributes)
+    # TetGen is optional and is left out of the PyPI packages for license
+    # reasons (see distribution/pypi/README.md), so the classes wrapping it
+    # are only required when it was built.
+    if not hasattr(vtkvmtk, 'vtkvmtkTetGenWrapper'):
+        print('built without TetGen: not checking the TetGen classes')
+        vmtk_vtkvmtk_attributes = [name for name in vmtk_vtkvmtk_attributes
+                                   if 'TetGen' not in name]
     for name in vmtk_vtkvmtk_attributes:
         assert hasattr(vtkvmtk, name)
         # assert importlib.__import__(name)
