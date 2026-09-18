@@ -6,6 +6,8 @@ command for every built wheel). It verifies that:
 
   * the wrapped vtkvmtk extension modules load (which exercises the
     linkage against the VTK libraries of the "vtk" wheel),
+  * every native library of the package finds its dependencies inside
+    the installed environment (see check_libraries.py),
   * the ITK-based segmentation classes work (which exercises the ITK
     libraries, statically linked on Windows and bundled on Linux/macOS),
   * the pype mechanism and the vmtk script modules import,
@@ -66,6 +68,31 @@ def test_import():
             "must not be distributed on PyPI (license terms)"
         )
         print("TetGen correctly excluded")
+
+
+def test_libraries():
+    """Check that the native libraries resolve inside the installation.
+
+    The imports above only prove that the libraries load on this machine,
+    where the build trees of the dependencies are still present; see
+    check_libraries.py.
+    """
+    import os
+    import sys
+    import vmtk
+
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import check_libraries
+
+    package_directory = os.path.dirname(os.path.realpath(vmtk.__file__))
+    checked, problems = check_libraries.check_package(
+        package_directory, os.path.realpath(sys.prefix))
+    for problem in problems:
+        print("ERROR:", problem)
+    assert not problems, (
+        "%d dependencies of the %d native libraries in %s are not available "
+        "in the installed environment" % (len(problems), checked, package_directory))
+    print("dependencies of", checked, "native libraries resolve inside the environment")
 
 
 def test_itk_filter():
@@ -140,6 +167,7 @@ def test_contrib():
 
 def main():
     test_import()
+    test_libraries()
     test_itk_filter()
     test_pypes()
     test_contrib()
