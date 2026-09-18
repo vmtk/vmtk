@@ -64,9 +64,14 @@ env:
   # @loader_path/../vtkmodules rpath, which only exists once the wheel is
   # installed next to the "vtk" package, so delocate cannot resolve them at
   # repair time (the ITK libraries resolve through the absolute rpath to the
-  # ITK build tree and are bundled). The test command below imports the
-  # installed wheel, which would catch any dependency that is truly missing.
-  CIBW_REPAIR_WHEEL_COMMAND_MACOS: delocate-wheel --exclude libvtk --ignore-missing-dependencies -w {dest_dir} {wheel}
+  # ITK build tree and are bundled). Nothing is excluded by name here:
+  # delocate applies --exclude to the libraries in the wheel as well, and
+  # any pattern that matches the VTK libraries also matches vmtk's own
+  # libvtkvmtk*.dylib, which delocate would then leave with unbundled ITK
+  # dependencies. Those resolve on the build machine, where the ITK build
+  # tree still exists, and nowhere else; check_libraries.py in the test
+  # command below fails the build if that happens again.
+  CIBW_REPAIR_WHEEL_COMMAND_MACOS: delocate-wheel --ignore-missing-dependencies -w {dest_dir} {wheel}
   # Windows: ITK is linked statically and the VTK DLLs come from the "vtk"
   # wheel, so there is nothing to repair.
   CIBW_REPAIR_WHEEL_COMMAND_WINDOWS: ""
@@ -153,6 +158,51 @@ jobs:
           name: wheels-${{ matrix.os }}
           path: wheelhouse/*.whl
 
+  test_wheels:
+    name: Test wheels (${{ matrix.os }})
+    needs: [build_wheels]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, ubuntu-24.04-arm, windows-latest, macos-15-intel, macos-latest]
+
+    # The smoke test that cibuildwheel runs for every wheel only exercises
+    # a few classes, and it runs on the machine that built the wheel, where
+    # the build trees of the dependencies still are. Here the full vmtk test
+    # suite runs against an installed wheel on a fresh runner, so anything
+    # the wheel fails to ship shows up as a failing test instead of in a
+    # user's bug report. One Python version is enough: the wheels differ
+    # only in the interpreter they are built against.
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true  # tests/vmtk-test-data
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: wheels-${{ matrix.os }}
+          path: wheelhouse
+
+      - name: Install the wheel
+        run: |
+          wheel=$(ls wheelhouse/*cp312-cp312*.whl)
+          echo "Installing ${wheel}"
+          python -m pip install --upgrade pip
+          python -m pip install pytest "${wheel}[all]"
+
+      - name: Run the test suite against the installed wheel
+        # From a directory that is not the source checkout: its "vmtk"
+        # directory would otherwise shadow the installed package.
+        run: |
+          mkdir -p "${RUNNER_TEMP}/run"
+          cd "${RUNNER_TEMP}/run"
+          python -m pytest -v --durations=20 "${GITHUB_WORKSPACE}/tests"
+
   build_sdist:
     name: Build sdist
     needs: [check_version]
@@ -170,7 +220,7 @@ jobs:
 
   upload_pypi:
     name: Upload packages to PyPI
-    needs: [build_wheels, build_sdist]
+    needs: [build_wheels, test_wheels, build_sdist]
     runs-on: ubuntu-latest
     environment: pypi
     permissions:

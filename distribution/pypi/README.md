@@ -72,8 +72,13 @@ list): `VMTK_VTK_VERSION`, `VTK_WHEEL_SDK_PATH`, `VMTK_ITK_VERSION`,
 On Linux/macOS a locally built (unrepaired) wheel resolves the shared ITK
 libraries through an absolute rpath pointing at the ITK build tree in
 `_deps/`; run `auditwheel repair --exclude "libvtk*"` (Linux) or
-`delocate-wheel --exclude libvtk` (macOS) to bundle ITK into the wheel and
-make it relocatable, exactly as the CI workflow does.
+`delocate-wheel --ignore-missing-dependencies` (macOS) to bundle ITK into
+the wheel and make it relocatable, exactly as the CI workflow does. Do not
+pass `--exclude libvtk` to delocate: it also matches vmtk's own
+`libvtkvmtk*.dylib`, which are then left with ITK dependencies that only
+resolve on the build machine.
+
+## Testing the packages
 
 Test an installed wheel with:
 
@@ -81,6 +86,25 @@ Test an installed wheel with:
 pip install dist/vmtk-*.whl
 python distribution/pypi/test_wheel.py
 ```
+
+`test_wheel.py` imports the package, exercises one class per wrapped kit
+and an ITK-based filter, and runs `check_libraries.py`, which verifies
+that every shared library and extension module of the installed package
+finds its dependencies inside the environment. That last check is what
+catches libraries whose dependencies resolve only through the build trees
+left on the machine that built the wheel. It can also be run on its own,
+against an installed package or the package directory of an unpacked
+wheel:
+
+```sh
+python distribution/pypi/check_libraries.py
+python distribution/pypi/check_libraries.py /tmp/unpacked-wheel/vmtk
+```
+
+The CI workflow goes further: after the wheels are built, the
+`test_wheels` job installs one per platform on a fresh runner and runs the
+whole vmtk test suite (`tests/`) against it. The packages are only
+uploaded to PyPI if that passes.
 
 ## Releases and pre-releases (beta builds)
 
