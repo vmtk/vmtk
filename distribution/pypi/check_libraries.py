@@ -244,8 +244,22 @@ def check_package(package_directory, environment):
     # The directories the package __init__ registers on Windows; harmless
     # to search on the other platforms, where the same locations are
     # reached through the relative run paths.
-    search_dirs = [package_directory,
-                   os.path.join(os.path.dirname(package_directory), "vtkmodules")]
+    #
+    # A wheel repaired by delvewheel or auditwheel keeps the libraries it
+    # bundles in a "<distribution>.libs" directory next to the package, and
+    # its package __init__ registers that directory (vtkmodules does so for
+    # the VTK DLLs in vtk.libs). Search all of them: they are part of the
+    # installed environment, unlike the build trees this check looks for.
+    site_packages = os.path.dirname(package_directory)
+    search_dirs = [package_directory, os.path.join(package_directory, ".dylibs"),
+                   os.path.join(site_packages, "vtkmodules")]
+    try:
+        search_dirs += [os.path.join(site_packages, entry)
+                        for entry in os.listdir(site_packages)
+                        if entry.endswith(".libs")
+                        and os.path.isdir(os.path.join(site_packages, entry))]
+    except OSError:
+        pass
     problems = []
     checked = 0
     for entry in sorted(os.listdir(package_directory)):
